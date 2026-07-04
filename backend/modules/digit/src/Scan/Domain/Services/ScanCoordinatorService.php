@@ -87,7 +87,7 @@ readonly class ScanCoordinatorService
             return ScanOutcomeDTO::rejected($attendeeId, __('Unable to process scan, please try again'));
         }
 
-        if ($result->errors->isNotEmpty()) {
+        if (!empty($result->errors->errors)) {
             return ScanOutcomeDTO::duplicate($attendeeId, $result->errors->toArray());
         }
 

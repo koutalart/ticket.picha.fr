@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Digit\Providers;
 
+use Digit\Console\Commands\DigitDemoSeedCommand;
 use Illuminate\Support\ServiceProvider;
 
 class DigitScanServiceProvider extends ServiceProvider
@@ -15,10 +16,13 @@ class DigitScanServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Migrations (scan_logs + unique index) load unconditionally — the
-        // DB constraint protects attendee_check_ins regardless of whether
-        // the DIGIT module itself is enabled.
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                DigitDemoSeedCommand::class,
+            ]);
+        }
 
         if (!$this->moduleShouldRun()) {
             return;
