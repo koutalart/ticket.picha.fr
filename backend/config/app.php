@@ -233,7 +233,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         \HiEvents\Providers\EventServiceProvider::class,
         \HiEvents\Providers\RouteServiceProvider::class,
-        \HiEvents\Providers\RepositoryServiceProvider::class
+        \HiEvents\Providers\RepositoryServiceProvider::class,
+        \Digit\Providers\DigitScanServiceProvider::class,
 
     ])->toArray(),
 
