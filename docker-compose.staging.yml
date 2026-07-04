@@ -1,0 +1,93 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    mem_limit: 768m
+    environment:
+      POSTGRES_DB: digit_ticket_staging
+      POSTGRES_USER: digit_staging
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U digit_staging -d digit_ticket_staging"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [digit-staging-net]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redisdata:/data
+    networks: [digit-staging-net]
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    mem_limit: 512m
+    env_file: backend/.env.staging
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks: [digit-staging-net]
+
+  queue-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    mem_limit: 256m
+    env_file: backend/.env.staging
+    command: ["php", "artisan", "queue:work", "--queue=default,webhook-queue", "--tries=3", "--backoff=5"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks: [digit-staging-net]
+
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    mem_limit: 128m
+    env_file: backend/.env.staging
+    command: ["sh", "-c", "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [digit-staging-net]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.ssr
+    restart: unless-stopped
+    mem_limit: 512m
+    env_file: frontend/.env.staging
+    ports:
+      - "127.0.0.1:3000:5678"
+    depends_on: [backend]
+    networks: [digit-staging-net]
+
+networks:
+  digit-staging-net:
+
+volumes:
+  pgdata:
+  redisdata:
