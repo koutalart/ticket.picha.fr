@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\DB;
  */
 return new class extends Migration
 {
+    /**
+     * CREATE INDEX CONCURRENTLY cannot run inside a transaction block.
+     * This MUST be a public property — Laravel's Migrator checks it as a
+     * property, not a method (a method here is silently ignored and the
+     * migration still runs inside a transaction, which is what happened
+     * on the first attempt).
+     */
+    public $withinTransaction = false;
+
     public function up(): void
     {
         DB::statement(<<<SQL
@@ -24,13 +33,5 @@ return new class extends Migration
     public function down(): void
     {
         DB::statement('DROP INDEX CONCURRENTLY IF EXISTS attendee_check_ins_unique_live_scan');
-    }
-
-    /**
-     * CREATE INDEX CONCURRENTLY cannot run inside a transaction block.
-     */
-    public function withinTransaction(): bool
-    {
-        return false;
     }
 };
