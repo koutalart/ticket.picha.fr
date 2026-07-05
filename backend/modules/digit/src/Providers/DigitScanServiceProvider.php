@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Digit\Providers;
 
 use Digit\Console\Commands\DigitDemoSeedCommand;
+use Digit\Console\Commands\DigitScanDeviceCreateCommand;
+use Digit\Console\Commands\DigitScanDeviceListCommand;
+use Digit\Console\Commands\DigitScanDeviceRevokeCommand;
 use Illuminate\Support\ServiceProvider;
 
 class DigitScanServiceProvider extends ServiceProvider
@@ -21,6 +24,9 @@ class DigitScanServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 DigitDemoSeedCommand::class,
+                DigitScanDeviceCreateCommand::class,
+                DigitScanDeviceListCommand::class,
+                DigitScanDeviceRevokeCommand::class,
             ]);
         }
 

@@ -33,7 +33,14 @@ class ScanCheckInAction extends BaseAction
         $attendeePublicId = (string) $request->input('public_id');
         $action = (string) $request->input('action', 'check-in');
         $idempotencyKey = $request->header('Idempotency-Key') ?? (string) Str::uuid();
-        $deviceIdentifier = (string) $request->header('X-Device-Id', 'unknown');
+
+        // Device identity now comes from AuthenticateScanDevice (verified token),
+        // not the client-supplied X-Device-Id header, which is no longer trusted
+        // for anything beyond an optional human-readable fallback label.
+        $device = $request->attributes->get('digit_scan_device');
+        $deviceIdentifier = $device !== null
+            ? sprintf('device:%d:%s', $device->id, $device->name)
+            : (string) $request->header('X-Device-Id', 'unknown');
 
         $attendee = $this->attendeeRepository->findFirstWhere(['public_id' => $attendeePublicId]);
 
