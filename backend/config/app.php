@@ -235,6 +235,7 @@ return [
         \HiEvents\Providers\RouteServiceProvider::class,
         \HiEvents\Providers\RepositoryServiceProvider::class,
         \Digit\Providers\DigitScanServiceProvider::class,
+        \Digit\Bracelets\Providers\DigitBraceletsServiceProvider::class,
 
     ])->toArray(),
 
