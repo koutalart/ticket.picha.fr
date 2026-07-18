@@ -616,6 +616,14 @@ export const router: RouteObject[] = [
         errorElement: <ErrorPage />,
     },
     {
+        path: "/digit/scan/:checkInListShortId",
+        async lazy() {
+            const ScannerDevicePage = await import("./pages/digit/ScannerDevicePage");
+            return { Component: ScannerDevicePage.default };
+        },
+        errorElement: <ErrorPage />,
+    },
+    {
         path: "/my-tickets/:token",
         async lazy() {
             const MyTickets = await import("./components/routes/my-tickets");

@@ -45,12 +45,16 @@ class AuthenticateScanDevice
 
         $checkInListShortId = $request->route('check_in_list_short_id');
 
-        if ($device->check_in_list_id !== null && $checkInListShortId !== null) {
+        if ($checkInListShortId !== null) {
             $checkInList = DB::table('check_in_lists')
                 ->where('short_id', $checkInListShortId)
                 ->first();
 
-            if ($checkInList === null || (int) $checkInList->id !== (int) $device->check_in_list_id) {
+            if ($checkInList === null) {
+                return $this->unauthorized('This device is not authorized for this check-in list');
+            }
+
+            if (!$this->isAuthorizedForCheckInList($device, $checkInList)) {
                 return $this->unauthorized('This device is not authorized for this check-in list');
             }
         }
@@ -67,6 +71,53 @@ class AuthenticateScanDevice
         }
 
         return $next($request);
+    }
+
+    /**
+     * Authorization order (revoked_at is already enforced above, at lookup
+     * time - this method never re-checks it):
+     *   1. all_check_in_lists=true -> authorized for any check-in list that
+     *      belongs to the same event_id as the device.
+     *   2. Otherwise, an explicit row in digit_scan_device_check_in_lists
+     *      for this device + this check-in list -> authorized.
+     *   3. Otherwise, if the device has ANY row at all in
+     *      digit_scan_device_check_in_lists, it is explicitly pivot-scoped
+     *      and a miss above means "not authorized" - it must NOT fall
+     *      through to the legacy null fallback below.
+     *   4. Otherwise, legacy fallback on digit_scan_devices.check_in_list_id:
+     *      - null (device provisioned before multi-list support, never
+     *        scoped, and never given any pivot row) -> authorized, exactly
+     *        as before this change.
+     *      - set -> authorized only if it matches the requested list.
+     */
+    private function isAuthorizedForCheckInList(object $device, object $checkInList): bool
+    {
+        if ($device->all_check_in_lists) {
+            return (int) $checkInList->event_id === (int) $device->event_id;
+        }
+
+        $hasPivotAssignment = DB::table('digit_scan_device_check_in_lists')
+            ->where('device_id', $device->id)
+            ->where('check_in_list_id', $checkInList->id)
+            ->exists();
+
+        if ($hasPivotAssignment) {
+            return true;
+        }
+
+        $hasAnyPivotRows = DB::table('digit_scan_device_check_in_lists')
+            ->where('device_id', $device->id)
+            ->exists();
+
+        if ($hasAnyPivotRows) {
+            return false;
+        }
+
+        if ($device->check_in_list_id === null) {
+            return true;
+        }
+
+        return (int) $checkInList->id === (int) $device->check_in_list_id;
     }
 
     private function extractToken(Request $request): ?string

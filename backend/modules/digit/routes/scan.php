@@ -1,5 +1,6 @@
 <?php
 
+use Digit\Bracelets\Http\Actions\ScanBraceletCheckInAction;
 use Digit\Scan\Http\Actions\ScanCheckInAction;
 use Digit\Scan\Http\Middleware\AuthenticateScanDevice;
 use Digit\Scan\Http\Middleware\FailOpenThrottle;
@@ -12,4 +13,5 @@ $router->prefix('/digit/scan')
     ->middleware([AuthenticateScanDevice::class, FailOpenThrottle::class])
     ->group(function (Router $router): void {
         $router->post('/check-in-lists/{check_in_list_short_id}/check-ins', ScanCheckInAction::class);
+        $router->post('/bracelets/{check_in_list_short_id}/check-ins', ScanBraceletCheckInAction::class);
     });

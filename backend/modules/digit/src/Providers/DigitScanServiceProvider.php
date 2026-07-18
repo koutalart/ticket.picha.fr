@@ -8,6 +8,11 @@ use Digit\Console\Commands\DigitDemoSeedCommand;
 use Digit\Console\Commands\DigitScanDeviceCreateCommand;
 use Digit\Console\Commands\DigitScanDeviceListCommand;
 use Digit\Console\Commands\DigitScanDeviceRevokeCommand;
+use Digit\Console\Commands\DigitScanDeviceReactivateCommand;
+use Digit\Console\Commands\DigitScanDeviceDisableCommand;
+use Digit\Console\Commands\DigitScanDeviceLostCommand;
+use Digit\Console\Commands\DigitScanDeviceActivationCodeCommand;
+use Digit\Console\Commands\DigitScanDeviceAssignListsCommand;
 use Illuminate\Support\ServiceProvider;
 
 class DigitScanServiceProvider extends ServiceProvider
@@ -27,6 +32,11 @@ class DigitScanServiceProvider extends ServiceProvider
                 DigitScanDeviceCreateCommand::class,
                 DigitScanDeviceListCommand::class,
                 DigitScanDeviceRevokeCommand::class,
+                DigitScanDeviceReactivateCommand::class,
+                DigitScanDeviceDisableCommand::class,
+                DigitScanDeviceLostCommand::class,
+                DigitScanDeviceActivationCodeCommand::class,
+                DigitScanDeviceAssignListsCommand::class,
             ]);
         }
 

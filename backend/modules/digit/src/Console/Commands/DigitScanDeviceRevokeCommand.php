@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Digit\Console\Commands;
 
+use Digit\Devices\Domain\Services\DeviceLifecycleService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class DigitScanDeviceRevokeCommand extends Command
 {
@@ -13,16 +13,16 @@ class DigitScanDeviceRevokeCommand extends Command
 
     protected $description = 'Revoke a DIGIT scan device token immediately.';
 
+    public function __construct(private readonly DeviceLifecycleService $lifecycleService)
+    {
+        parent::__construct();
+    }
+
     public function handle(): int
     {
         $deviceId = (int) $this->argument('device_id');
 
-        $updated = DB::table('digit_scan_devices')
-            ->where('id', $deviceId)
-            ->whereNull('revoked_at')
-            ->update(['revoked_at' => now(), 'updated_at' => now()]);
-
-        if ($updated === 0) {
+        if (!$this->lifecycleService->revoke($deviceId)) {
             $this->error("Device {$deviceId} not found or already revoked.");
             return self::FAILURE;
         }
