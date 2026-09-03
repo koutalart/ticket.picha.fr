@@ -25,3 +25,14 @@ prompts/
 /.env
 backend/.env.staging
 frontend/.env.staging
+
+# DIGIT — sauvegardes locales, jamais commitées
+*.bak
+*.bak-*
+
+# Dumps SQL + snapshots pré-édition (≈50 Mo) — stockage privé
+backups/
+frontend/backup-checkout-fix/
+
+# Sauvegardes de fichiers d'environnement de staging
+frontend/.env.staging.*
