@@ -14,8 +14,9 @@ return [
     'default_timezone' => 'America/Vancouver',
     'default_currency_code' => 'USD',
     'saas_mode_enabled' => env('APP_SAAS_MODE_ENABLED', false),
-    'saas_stripe_application_fee_percent' => env('APP_SAAS_STRIPE_APPLICATION_FEE_PERCENT', 1.5),
-    'saas_stripe_application_fee_fixed' => env('APP_SAAS_STRIPE_APPLICATION_FEE_FIXED', 0),
+    'default_application_fee_percentage' => env('APP_SAAS_STRIPE_APPLICATION_FEE_PERCENT', 1.5),
+    'default_application_fee_fixed' => env('APP_SAAS_STRIPE_APPLICATION_FEE_FIXED', 0.99),
+    'default_application_fee_currency' => env('APP_SAAS_STRIPE_APPLICATION_FEE_CURRENCY', 'EUR'),
     'saas_default_pass_platform_fee_to_buyer' => env('APP_SAAS_DEFAULT_PASS_PLATFORM_FEE_TO_BUYER', false),
     'disable_registration' => env('APP_DISABLE_REGISTRATION', false),
     'api_rate_limit_per_minute' => env('APP_API_RATE_LIMIT_PER_MINUTE', 180),
@@ -148,7 +149,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('APP_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
