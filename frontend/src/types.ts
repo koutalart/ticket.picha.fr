@@ -790,6 +790,7 @@ export interface OutgoingMessage {
 
 export enum QuestionType {
     ADDRESS = 'ADDRESS',
+    PHONE = 'PHONE',
     SINGLE_LINE_TEXT = 'SINGLE_LINE_TEXT',
     MULTI_LINE_TEXT = 'MULTI_LINE_TEXT',
     CHECKBOX = 'CHECKBOX',

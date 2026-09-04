@@ -92,6 +92,25 @@ const SingleLineTextInput = ({question, name, form}: QuestionInputProps) => {
     );
 }
 
+const PhoneInput = ({question, name, form}: QuestionInputProps) => {
+    return (
+        <>
+            <TextInput
+                classNames={{
+                    description: classes.descriptionWithNoStyle,
+                }}
+                {...form.getInputProps(`${name}.answer`)}
+                type="tel"
+                pattern="[0-9+\-\s()]{8,20}"
+                title={t`Please enter a valid phone number (digits, spaces, +, -, ( ) only, minimum 8 characters)`}
+                withAsterisk={question.required}
+                label={question.title}
+                description={(<UserGeneratedContent dangerouslySetInnerHTML={{__html: question.description || ''}}/>)}
+            />
+        </>
+    );
+}
+
 const RadioInput = ({question, name, form}: QuestionInputProps) => {
     return (
         <Radio.Group
@@ -197,6 +216,9 @@ export const QuestionInput = ({question, name, form}: QuestionInputProps) => {
             break;
         case QuestionType.SINGLE_LINE_TEXT:
             input = <SingleLineTextInput question={question} name={name} form={form}/>;
+            break;
+        case QuestionType.PHONE:
+            input = <PhoneInput question={question} name={name} form={form}/>;
             break;
         case QuestionType.DATE:
             input = <DateInput question={question} name={name} form={form}/>;

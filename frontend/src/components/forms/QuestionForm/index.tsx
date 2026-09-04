@@ -8,6 +8,7 @@ import {
     IconCircleCheck,
     IconForms,
     IconMapPin,
+    IconPhone,
     IconReceipt,
     IconSelector,
     IconSquareCheck,
@@ -130,6 +131,12 @@ export const QuestionForm = ({form, productCategories}: QuestionFormProps) => {
             label: t`Address`,
             value: QuestionType.ADDRESS,
             description: t`Shows common address fields, including country`,
+        },
+        {
+            icon: <IconPhone/>,
+            label: t`Phone Number`,
+            value: QuestionType.PHONE,
+            description: t`A phone number input with basic format validation`,
         },
         {
             icon: <IconCalendar/>,
