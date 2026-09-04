@@ -61,6 +61,9 @@ export interface BraceletScanResult {
     result: BraceletScanOutcome;
     attendee_check_in_id: number | null;
     messages: string[];
+    first_scanned_by_device?: string | null;
+    first_scanned_at?: string | null;
+    first_scanned_check_in_list_name?: string | null;
 }
 
 export const digitScanClient = {

@@ -25,12 +25,18 @@ const ScannerDeviceContent = () => {
     const [bannerMessage, setBannerMessage] = useState<string | null>(null);
     const [bannerStatus, setBannerStatus] = useState<'success' | 'error' | null>(null);
     const isProcessingRef = useRef(false);
+    const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const handleScanned = useCallback(async (rawPayload: string) => {
         if (!checkInListShortId || isProcessingRef.current) {
             return;
         }
         isProcessingRef.current = true;
+        if (resetTimeoutRef.current) {
+            clearTimeout(resetTimeoutRef.current);
+        }
+        setBannerMessage(null);
+        setBannerStatus(null);
 
         try {
             const result = await digitScanClient.scanBracelet(checkInListShortId, rawPayload);
@@ -67,6 +73,10 @@ const ScannerDeviceContent = () => {
             }
         } finally {
             isProcessingRef.current = false;
+            resetTimeoutRef.current = setTimeout(() => {
+                setBannerMessage(null);
+                setBannerStatus(null);
+            }, 2500);
         }
     }, [checkInListShortId]);
 

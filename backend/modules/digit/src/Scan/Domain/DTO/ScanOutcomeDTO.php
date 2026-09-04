@@ -11,6 +11,9 @@ readonly class ScanOutcomeDTO
         public string $result,
         public ?int $attendeeCheckInId = null,
         public array $messages = [],
+        public ?string $firstScannedByDevice = null,
+        public ?string $firstScannedAt = null,
+        public ?string $firstScannedCheckInListName = null,
     ) {
     }
 
@@ -19,9 +22,22 @@ readonly class ScanOutcomeDTO
         return new self($attendeeId, 'recorded', $attendeeCheckInId, []);
     }
 
-    public static function duplicate(int $attendeeId, array $messages = []): self
-    {
-        return new self($attendeeId, 'duplicate', null, $messages);
+    public static function duplicate(
+        int $attendeeId,
+        array $messages = [],
+        ?string $firstScannedByDevice = null,
+        ?string $firstScannedAt = null,
+        ?string $firstScannedCheckInListName = null,
+    ): self {
+        return new self(
+            $attendeeId,
+            'duplicate',
+            null,
+            $messages,
+            $firstScannedByDevice,
+            $firstScannedAt,
+            $firstScannedCheckInListName,
+        );
     }
 
     public static function rejected(int $attendeeId, string $message): self
@@ -31,7 +47,15 @@ readonly class ScanOutcomeDTO
 
     public function withResult(string $result): self
     {
-        return new self($this->attendeeId, $result, $this->attendeeCheckInId, $this->messages);
+        return new self(
+            $this->attendeeId,
+            $result,
+            $this->attendeeCheckInId,
+            $this->messages,
+            $this->firstScannedByDevice,
+            $this->firstScannedAt,
+            $this->firstScannedCheckInListName,
+        );
     }
 
     public function toArray(): array
@@ -41,6 +65,9 @@ readonly class ScanOutcomeDTO
             'result' => $this->result,
             'attendee_check_in_id' => $this->attendeeCheckInId,
             'messages' => $this->messages,
+            'first_scanned_by_device' => $this->firstScannedByDevice,
+            'first_scanned_at' => $this->firstScannedAt,
+            'first_scanned_check_in_list_name' => $this->firstScannedCheckInListName,
         ];
     }
 
@@ -51,6 +78,9 @@ readonly class ScanOutcomeDTO
             result: $data['result'],
             attendeeCheckInId: $data['attendee_check_in_id'] ?? null,
             messages: $data['messages'] ?? [],
+            firstScannedByDevice: $data['first_scanned_by_device'] ?? null,
+            firstScannedAt: $data['first_scanned_at'] ?? null,
+            firstScannedCheckInListName: $data['first_scanned_check_in_list_name'] ?? null,
         );
     }
 }
