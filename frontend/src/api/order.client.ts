@@ -9,6 +9,7 @@ import {
 } from "../types.ts";
 import {api} from "./client.ts";
 import {queryParamsHelper} from "../utilites/queryParamsHelper.ts";
+import {getStoredSessionIdentifier} from "../utilites/checkoutSession.ts";
 
 export interface OrderDetails {
     first_name: string,
@@ -55,6 +56,15 @@ export interface RefundOrderPayload {
     notify_buyer: boolean;
     cancel_order: boolean;
 }
+
+const withSessionIdentifier = (path: string): string => {
+    const sessionIdentifier = getStoredSessionIdentifier();
+    if (!sessionIdentifier) {
+        return path;
+    }
+    const separator = path.includes('?') ? '&' : '?';
+    return `${path}${separator}session_identifier=${encodeURIComponent(sessionIdentifier)}`;
+};
 
 export const orderClient = {
     all: async (eventId: IdParam, pagination: QueryFilters) => {
@@ -141,7 +151,9 @@ export const orderClientPublic = {
     },
 
     findOrderStripePaymentIntent: async (eventId: number, orderShortId: string) => {
-        return await publicApi.get<StripePaymentIntent>(`events/${eventId}/order/${orderShortId}/stripe/payment_intent`);
+        return await publicApi.get<StripePaymentIntent>(
+            withSessionIdentifier(`events/${eventId}/order/${orderShortId}/stripe/payment_intent`)
+        );
     },
 
     createStripePaymentIntent: async (eventId: number, orderShortId: string) => {
@@ -150,7 +162,7 @@ export const orderClientPublic = {
             account_id?: string,
             public_key: string,
             stripe_platform?: string,
-        }>(`events/${eventId}/order/${orderShortId}/stripe/payment_intent`);
+        }>(withSessionIdentifier(`events/${eventId}/order/${orderShortId}/stripe/payment_intent`));
         return response.data;
     },
 
@@ -159,25 +171,35 @@ export const orderClientPublic = {
         orderShortId: string,
         payload: FinaliseOrderPayload
     ) => {
-        const response = await publicApi.put<GenericDataResponse<Order>>(`events/${eventId}/order/${orderShortId}`, payload);
+        const response = await publicApi.put<GenericDataResponse<Order>>(
+            withSessionIdentifier(`events/${eventId}/order/${orderShortId}`),
+            payload
+        );
         return response.data;
     },
 
     transitionToOfflinePayment: async (eventId: IdParam, orderShortId: IdParam) => {
-        const response = await publicApi.post<GenericDataResponse<Order>>(`events/${eventId}/order/${orderShortId}/await-offline-payment`);
+        const response = await publicApi.post<GenericDataResponse<Order>>(
+            withSessionIdentifier(`events/${eventId}/order/${orderShortId}/await-offline-payment`)
+        );
         return response.data;
     },
 
     downloadInvoice: async (eventId: IdParam, orderShortId: IdParam): Promise<Blob> => {
-        const response = await publicApi.get(`events/${eventId}/order/${orderShortId}/invoice`, {
-            responseType: 'blob',
-        });
+        const response = await publicApi.get(
+            withSessionIdentifier(`events/${eventId}/order/${orderShortId}/invoice`),
+            {
+                responseType: 'blob',
+            }
+        );
 
         return new Blob([response.data]);
     },
 
     abandonOrder: async (eventId: IdParam, orderShortId: IdParam) => {
-        const response = await publicApi.post<GenericDataResponse<Order>>(`events/${eventId}/order/${orderShortId}/abandon`);
+        const response = await publicApi.post<GenericDataResponse<Order>>(
+            withSessionIdentifier(`events/${eventId}/order/${orderShortId}/abandon`)
+        );
         return response.data;
     },
 }

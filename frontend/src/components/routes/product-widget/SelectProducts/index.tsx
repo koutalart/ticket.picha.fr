@@ -149,10 +149,10 @@ const SelectProducts = (props: SelectProductsProps) => {
 
         onSuccess: (data) => queryClient.invalidateQueries()
             .then(() => {
-                const url = '/checkout/' + eventId + '/' + data.data.short_id + '/details';
+                const url = '/checkout/' + eventId + '/' + data.data.short_id + '/details' + '?session_identifier=' + data.data.session_identifier;
                 if (props.widgetMode === 'embedded') {
                     window.open(
-                        url + '?session_identifier=' + data.data.session_identifier + '&utm_source=embedded_widget',
+                        url + '&utm_source=embedded_widget',
                         '_blank'
                     );
                     setOrderInProcessOverlayVisible(true);
@@ -304,7 +304,7 @@ const SelectProducts = (props: SelectProductsProps) => {
     let productIndex = 0;
 
     return (
-        <div className={'hi-product-widget-container'}
+        <div className={classNames('hi-product-widget-container', {'hi-has-sticky-footer': props.widgetMode !== 'embedded'})}
              ref={resizeRef}
              style={{
                  '--widget-background-color': props.colors?.background,
@@ -538,7 +538,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                         })}
                     </div>
 
-                    <div className={'hi-footer-row'}>
+                    <div className={classNames('hi-footer-row', {'hi-footer-sticky': props.widgetMode !== 'embedded'})}>
                         {event?.settings?.product_page_message && (
                             <div dangerouslySetInnerHTML={{
                                 __html: event.settings.product_page_message.replace(/\n/g, '<br/>')
