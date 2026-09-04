@@ -9,6 +9,7 @@ COPY package.json yarn.lock ./
 RUN yarn install
 
 COPY . .
+RUN sh check-env-secrets.sh
 
 RUN yarn build
 
