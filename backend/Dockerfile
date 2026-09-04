@@ -9,7 +9,7 @@ RUN echo "" >> /usr/local/etc/php-fpm.d/docker-php-serversideup-pool.conf && \
     echo "user = www-data" >> /usr/local/etc/php-fpm.d/docker-php-serversideup-pool.conf && \
     echo "group = www-data" >> /usr/local/etc/php-fpm.d/docker-php-serversideup-pool.conf
 
-RUN install-php-extensions intl imagick
+RUN install-php-extensions intl imagick gd
 
 COPY --chown=www-data:www-data . .
 
@@ -26,6 +26,8 @@ RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --prefer-dist
+
+RUN php artisan storage:link
 
 RUN mkdir -p /var/www/html/vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer \
     && chmod -R 775 /var/www/html/vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer \

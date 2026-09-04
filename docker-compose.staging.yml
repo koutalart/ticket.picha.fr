@@ -43,6 +43,8 @@ services:
         condition: service_started
     ports:
       - "127.0.0.1:8080:8080"
+    volumes:
+      - backend_storage:/var/www/html/storage
     networks: [digit-staging-net]
 
   queue-worker:
@@ -58,6 +60,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    volumes:
+      - backend_storage:/var/www/html/storage
     networks: [digit-staging-net]
 
   scheduler:
@@ -71,6 +75,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - backend_storage:/var/www/html/storage
     networks: [digit-staging-net]
 
   frontend:
@@ -91,3 +97,4 @@ networks:
 volumes:
   pgdata:
   redisdata:
+  backend_storage:

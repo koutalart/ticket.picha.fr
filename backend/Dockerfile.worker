@@ -2,7 +2,7 @@ FROM serversideup/php:8.4-cli-alpine
 
 USER root
 
-RUN install-php-extensions intl imagick
+RUN install-php-extensions intl imagick gd
 
 COPY --chown=www-data:www-data . .
 
@@ -20,3 +20,5 @@ RUN composer install \
 RUN mkdir -p /var/www/html/vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer \
     && chmod -R 775 /var/www/html/vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer \
     && chown -R www-data:www-data /var/www/html/vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache/Serializer
+
+USER www-data
