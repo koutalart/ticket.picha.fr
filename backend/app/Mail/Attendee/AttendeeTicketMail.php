@@ -2,8 +2,10 @@
 
 namespace HiEvents\Mail\Attendee;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use HiEvents\DomainObjects\AttendeeDomainObject;
+use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
@@ -11,11 +13,13 @@ use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Helper\StringHelper;
 use HiEvents\Helper\Url;
 use HiEvents\Mail\BaseMail;
+use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\Email\DTO\RenderedEmailTemplateDTO;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Str;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\IcalendarGenerator\Components\Calendar;
 use Spatie\IcalendarGenerator\Components\Event;
 
@@ -112,7 +116,48 @@ class AttendeeTicketMail extends BaseMail
 
         return [
             Attachment::fromData(static fn() => $calendar, 'event.ics')
-                ->withMime('text/calendar')
+                ->withMime('text/calendar'),
+            Attachment::fromData(
+                fn() => $this->generateTicketPdf(),
+                'ticket-' . $this->attendee->getShortId() . '.pdf',
+            )->withMime('application/pdf'),
         ];
+    }
+
+    private function generateTicketPdf(): string
+    {
+        $product = $this->attendee->getProduct()
+            ?? app(ProductRepositoryInterface::class)->findById($this->attendee->getProductId());
+
+        $designSettings = $this->eventSettings->getTicketDesignSettings();
+        if (is_string($designSettings)) {
+            $designSettings = json_decode($designSettings, true) ?? [];
+        }
+        $designSettings ??= [];
+
+        $accentColor = $designSettings['accent_color'] ?? '#6B46C1';
+        $footerText = $designSettings['footer_text'] ?? null;
+        $dateDisplayMode = $designSettings['date_display_mode'] ?? 'START_DATE_TIME';
+
+        $logoImage = $this->event->getImages()
+            ?->first(fn($image) => $image->getType() === ImageType::TICKET_LOGO->name);
+        $logoUrl = $logoImage ? Url::getCdnUrl($logoImage->getPath()) : null;
+
+        $qrCodeBase64 = base64_encode(
+            QrCode::format('png')->size(300)->margin(1)->generate($this->attendee->getPublicId())
+        );
+
+        return Pdf::loadView('attendee-ticket-pdf', [
+            'attendee' => $this->attendee,
+            'event' => $this->event,
+            'eventSettings' => $this->eventSettings,
+            'organizer' => $this->organizer,
+            'product' => $product,
+            'qrCodeBase64' => $qrCodeBase64,
+            'accentColor' => $accentColor,
+            'footerText' => $footerText,
+            'dateDisplayMode' => $dateDisplayMode,
+            'logoUrl' => $logoUrl,
+        ])->output();
     }
 }
