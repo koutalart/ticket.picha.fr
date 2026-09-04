@@ -1,0 +1,68 @@
+.card {
+    position: relative;
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 32px 24px 24px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.cloud {
+    position: absolute;
+    top: -16px;
+    left: 20px;
+    padding: 8px 18px 10px;
+    border-radius: 40% 60% 55% 45% / 60% 45% 55% 40%;
+    font-weight: 900;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
+
+.headliner {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 20px 0 14px;
+    line-height: 1.1;
+}
+
+.lineup {
+    font-size: 0.8rem;
+    line-height: 1.75;
+    color: #9a94ac;
+    flex-grow: 1;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.price {
+    font-weight: 800;
+    font-size: 1rem;
+    color: #FFC72C;
+}
+
+.book {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #fff;
+    padding-bottom: 2px;
+}

@@ -1,0 +1,61 @@
+.hero {
+    position: relative;
+    min-height: 78vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.heroImg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+}
+
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 55%, rgba(10,10,10,1) 100%);
+}
+
+.heroContent {
+    position: relative;
+    width: 100%;
+    padding: 60px 36px 50px;
+    text-align: center;
+}
+
+.eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #FFC72C;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+}
+
+.title {
+    font-size: clamp(2.6rem, 9vw, 5.5rem);
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin: 0 0 14px;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.6);
+    color: #fff;
+}
+
+.sub {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-weight: 600;
+    color: #eae6f5;
+    margin-bottom: 30px;
+}
+
+.ctaRow {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}

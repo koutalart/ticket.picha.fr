@@ -630,6 +630,14 @@ export const router: RouteObject[] = [
             return { Component: MyTickets.default };
         },
         errorElement: <ErrorPage />,
+    },
+    {
+        path: "/festival/:eventSlug",
+        async lazy() {
+            const FestivalPage = await import("./components/routes/festival/FestivalPage");
+            return { Component: FestivalPage.default };
+        },
+        errorElement: <ErrorPage />,
     }
 ];
 

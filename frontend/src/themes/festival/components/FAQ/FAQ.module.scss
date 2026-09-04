@@ -1,0 +1,47 @@
+.section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 100px 24px;
+}
+
+.item {
+    background: #16121f;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.question {
+    padding: 20px 24px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.arrow {
+    transition: transform 0.25s ease;
+    color: #FFC72C;
+}
+
+.open .arrow {
+    transform: rotate(180deg);
+}
+
+.answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 24px;
+    color: #9a94ac;
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+
+.open .answer {
+    max-height: 200px;
+    padding: 0 24px 20px;
+}
