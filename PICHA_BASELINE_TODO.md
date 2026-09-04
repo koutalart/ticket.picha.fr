@@ -207,3 +207,214 @@ ou en pré-déploiement, pas dans le Dockerfile.
 
 **Effort :** ~30–45 min (déplacement du contrôle vers l'entrypoint runtime ou le pipeline de
 déploiement).
+
+---
+
+## T8 — `generate-domain-objects` produit des DO pour des tables hors domaine métier
+
+**Contexte :** `backend/app/Services/Infrastructure/DomainObjectGenerator/ClassGenerator.php:42-46`
+n'ignore que 3 tables :
+
+```php
+private array $ignoredTables = [
+    'migrations',
+    'job_batches',
+    'failed_jobs',
+];
+```
+
+`run()` (ligne 68) boucle sur **toutes** les tables retournées par `$schemaManager->listTables()`
+et génère un DomainObject pour chacune, sauf ces 3.
+
+**Preuve :** comparaison entre les fichiers `backend/app/DomainObjects/*.php` trackés dans ce repo
+et ceux présents dans un conteneur où le générateur a déjà tourné (staging) — 10 fichiers générés
+qui n'existent **pas** dans le dépôt :
+
+- `CacheDomainObject.php`, `CacheLockDomainObject.php`, `JobDomainObject.php` — tables techniques
+  Laravel (`cache`, `cache_locks`, `jobs`), pas des concepts métier.
+- `DigitBraceletDomainObject.php`, `DigitEventSecurityKeyDomainObject.php`,
+  `DigitScanDeviceDomainObject.php`, `DigitScanDeviceActivationCodeDomainObject.php`,
+  `DigitScanDeviceAuditLogDomainObject.php`, `DigitScanDeviceCheckInListDomainObject.php` — tables
+  du module `modules/digit` (créées par les migrations `2026_07_05_*` à `2026_07_11_*`).
+- `ScanLogDomainObject.php` — table `scan_logs` (migration `2026_07_18_000000`).
+
+**Impact réel :** aucun aujourd'hui (ces fichiers ne sont pas commités, donc pas utilisés). Le
+risque est pour la prochaine personne qui lance `generate-domain-objects` après une migration :
+elle se retrouvera avec ces 10 fichiers en `git status`, sans savoir s'ils doivent être commités
+ou non — pollution du diff, confusion sur ce qui est « domaine ».
+
+**Constat annexe :** reproduire la génération dans le conteneur `docker/development` fraîchement
+démarré échoue actuellement avec `unlink(): Permission denied` sur les fichiers existants —
+`app/DomainObjects/Generated/*.php` appartiennent à `ubuntu:docker` (bind-mount hôte) alors que le
+process PHP tourne en `www-data` (uid 82), qui n'a pas les droits d'écriture. Distinct de T8 mais
+bloquant pour qui voudrait régénérer localement : à corriger (utilisateur du conteneur aligné sur
+l'hôte, ou permissifs sur `backend/app/DomainObjects/`).
+
+**Correctif proposé :** étendre `$ignoredTables` (ou passer à une liste blanche de tables
+métier) pour exclure `cache`, `cache_locks`, `jobs`, `sessions`, `password_reset_tokens`,
+`personal_access_tokens`, et les tables `digit_*`/`scan_logs` si elles ne doivent pas avoir de
+DomainObject généré (à trancher : le module `digit` a peut-être besoin des siens, auquel cas les
+committer plutôt que les ignorer).
+
+**Effort :** ~20 min pour la liste d'exclusion + décision sur le sort des DO `Digit*`/`ScanLog`.
+
+---
+
+## T9 — Baseline `tsc --noEmit` : 96 erreurs, 94 héritées de l'amont + 2 imports inutilisés
+
+**Mesure (2026-09-04, `docker/development`, conteneur `frontend`, `npx tsc --noEmit`) : 96 erreurs
+au total.**
+
+**2 erreurs `TS6133` (déclaré mais jamais lu) localisées dans `themes/festival`, seul dossier
+PICHA-spécifique touché :**
+- `frontend/src/themes/festival/components/TicketCard/index.tsx:2` — import `classNames` inutilisé.
+- `frontend/src/themes/festival/services/ticketApi.ts:12` — paramètre `day` inutilisé.
+
+**94 erreurs réparties sur 54 fichiers du cœur Hi.Events amont**, aucun sous `themes/festival`,
+`modules/digit` ni tout autre chemin PICHA-spécifique — ex. `src/stores/app.store.ts` (module
+`zustand` introuvable), `src/components/modals/ManageOrderModal/index.tsx` (7 erreurs),
+`src/components/routes/event/GettingStarted/ConfettiAnimaiton/index.tsx` (7 erreurs),
+`src/components/routes/welcome/index.tsx` (6 erreurs), etc. Cohérent avec des erreurs préexistantes
+dans l'amont plutôt qu'introduites par les commits Somaroho/PICHA.
+
+**Impact réel :** `tsc --noEmit` n'est pas vert aujourd'hui et ne l'était probablement pas avant la
+baseline PICHA. À utiliser comme référence : toute PR Kiosk ne doit **pas augmenter** ce nombre
+(objectif : rester à 96, viser 0 en réduisant au fil de l'eau, en commençant par les 2 propres à
+PICHA qui sont triviales à corriger).
+
+**Correctif immédiat possible :** les 2 imports/paramètres inutilisés de `themes/festival`
+(5 min). Les 94 autres : hors périmètre Kiosk, à traiter séparément (montée de version amont ou
+nettoyage dédié).
+
+**Effort :** 5 min (les 2 PICHA) + non chiffré pour les 94 héritées (hors périmètre).
+
+---
+
+## T10 — Extension `gd` manquante dans `Dockerfile.dev` — CORRIGÉ
+
+**Contexte :** `backend/Dockerfile.dev` n'installait que `intl imagick` (`install-php-extensions
+intl imagick`). Le rendu du billet PDF (`AttendeeTicketMail::generateTicketPdf`,
+`attendee-ticket-pdf.blade.php`) dépend de `dompdf`, qui a besoin de `gd` pour le traitement des
+images embarquées (logo, QR).
+
+**Corrigé** par le commit `2809a04b infra(dev): extension gd dans Dockerfile.dev (PDF billet)` :
+
+```diff
+-RUN install-php-extensions intl imagick
++RUN install-php-extensions intl imagick gd
+```
+
+**Vérifié** dans le conteneur `docker/development` reconstruit le 2026-09-04 : `php -m | grep gd`
+→ `gd` présent.
+
+**Lien avec le constat terrain ci-dessous** : ce correctif répond directement au symptôme observé
+par Jo (500 après commit sur génération du PDF billet, faute de `gd`).
+
+---
+
+## T11 — Billet PDF ≈ 1,2 Mo, à optimiser
+
+**Mesure rapportée par Jo (poste de terrain).** Non re-mesurée dans cette session (nécessiterait un
+événement de test avec logo uploadé, hors périmètre « aucun code applicatif » de cette tâche) —
+mais cause probable confirmée par lecture du code :
+
+- `AttendeeTicketMail::generateTicketPdf()` (`backend/app/Mail/Attendee/AttendeeTicketMail.php:142-144`)
+  récupère l'URL du logo événement (`ImageType::TICKET_LOGO`) et le passe tel quel à la vue :
+  `$logoUrl = $logoImage ? Url::getCdnUrl($logoImage->getPath()) : null;` — **aucun
+  redimensionnement**, dompdf télécharge et embarque l'image dans sa résolution d'upload
+  d'origine.
+- `attendee-ticket-pdf.blade.php:66` : `<img src="{{ $logoUrl }}" class="logo" />` — le CSS
+  (`max-width: 120px; max-height: 60px`) ne contraint que l'**affichage**, pas les octets
+  embarqués dans le PDF.
+- Le QR (`qrCodeBase64`, ligne 146-148 du Mail) est généré en interne à taille fixe
+  (`size(300)`), donc pas la source principale du poids.
+
+**Correctif proposé :** contraindre/redimensionner le logo côté serveur avant de le passer à la
+vue (ex. réutiliser un pipeline d'image existant si disponible, ou limiter à une résolution
+raisonnable ~240×120 avant `base64_encode`/embarquement), plutôt que de laisser dompdf télécharger
+l'original.
+
+**Effort :** ~30 min (redimensionnement + test avec un logo réellement volumineux).
+
+---
+
+## T12 — 10 branches dependabot orphelines, jamais mergées
+
+**Constat (2026-09-04) :** 10 branches `origin/dependabot/*`, toutes **1 commit en avance / 23
+commits en retard** sur `origin/staging`, datées du **2026-07-04** (2 mois, avant toute la
+stabilisation Somaroho) — aucune n'a été mergée ni fermée :
+
+Backend (composer) :
+- `dependabot/composer/backend/barryvdh/laravel-dompdf-3.1.2`
+- `dependabot/composer/backend/ezyang/htmlpurifier-4.19.0`
+- `dependabot/composer/backend/league/flysystem-aws-s3-v3-3.35.1`
+- `dependabot/composer/backend/spatie/laravel-data-4.23.0`
+- `dependabot/composer/backend/spatie/laravel-ignition-2.12.0`
+
+Frontend (npm/yarn) :
+- `dependabot/npm_and_yarn/frontend/react-pdf/renderer-4.5.1`
+- `dependabot/npm_and_yarn/frontend/react-qr-code-2.2.0`
+- `dependabot/npm_and_yarn/frontend/remix-run/node-2.17.5`
+- `dependabot/npm_and_yarn/frontend/sass-1.101.0`
+- `dependabot/npm_and_yarn/frontend/tiptap/extension-text-align-2.27.2`
+
+(Le remote `upstream` en a 2 de plus — `laravel/vapor-core`, `nette/php-generator` — hors
+périmètre PICHA, ce sont celles du dépôt Hi.Events amont.)
+
+**Impact réel :** aucune régression de sécurité connue (ce sont des montées de version mineures),
+mais 23 commits de retard = risque de conflit croissant si elles sont mergées tardivement, et bruit
+dans la liste de branches.
+
+**Correctif proposé :** trier par lot — rebase + test rapide pour chaque, merger celles qui passent
+sans conflit (majorité probable pour de simples bumps de patch/minor), fermer/relancer dependabot
+pour les autres. Prioriser `barryvdh/laravel-dompdf` et `react-pdf/renderer` vu leur lien direct
+avec le Kiosk (génération PDF billet).
+
+**Effort :** ~1h30 pour les 10 (rebase + `composer install`/`yarn install` + test unitaire rapide
+par branche), en dehors du développement Kiosk lui-même.
+
+---
+
+## Constats complémentaires
+
+### Correction de l'audit v2 — `attendees.notes` existe bien
+
+`PICHA_BOX_OFFICE_AUDIT_v2.md §4.6` affirme : *« La table `attendees` **n'a pas de colonne
+`notes`** »*, en réfutation d'une affirmation de l'audit v1.
+
+**Ce constat est erroné.** La migration
+`backend/database/migrations/2024_12_09_234323_add_notes_to_attendees_table.php` ajoute bien
+`attendees.notes` (`text`, nullable), de façon idempotente (`if (Schema::hasColumn(...)) return;`).
+**Vérifié** sur la base migrée du conteneur `docker/development` (2026-09-04) :
+`Schema::hasColumn('attendees', 'notes')` → `true`.
+
+Le reste du constat §4.6 (recherche plein texte via `ILIKE` sur `first_name`/`last_name`/
+`public_id`/`email`, `filter_fields` limités à `status`/`product_id`/`product_price_id`) n'est pas
+remis en cause ici — seule l'affirmation sur l'absence de la colonne `notes` est fausse.
+
+### Constat terrain — trois doublons créés en réessayant après un 500 (`gd`) — preuve de S3
+
+Rapporté par Jo : sur le poste de terrain, avant le correctif T10, la génération du billet PDF
+échouait avec une 500 (extension `gd` manquante). L'agent guichet a réessayé l'opération plusieurs
+fois en pensant que la vente n'avait pas abouti — **trois participants en doublon** ont été créés
+pour la même personne, parce que **le mail billet (avec sa pièce jointe PDF) échoue après le commit
+de l'Order/Attendee**, pas avant : `CreateAttendeeHandler::handle()` committe la transaction
+(Order + OrderItem + Attendee `ACTIVE`) puis déclenche `OrderStatusChangedEvent` (ligne 245-248),
+qui envoie `AttendeeTicketMail` — la génération du PDF (et donc l'échec `gd`) a lieu **dans
+l'envoi du mail**, après que la vente est déjà actée en base.
+
+**Preuve concrète de S3** (`PICHA_BOX_OFFICE_SECURITY_FINDINGS.md` — aucune idempotence sur la
+création manuelle) : sans clé d'idempotence, un agent qui réessaie après une erreur perçue comme
+« la vente a échoué » crée autant de nouveaux Orders/Attendees qu'il y a de tentatives, chacun
+avec sa propre place détectée comme vendue (`quantity_sold` incrémenté à chaque fois). Le correctif
+`gd` (T10) supprime le déclencheur immédiat de ce cas précis, mais **ne corrige pas S3** : toute
+autre cause d'échec après commit (timeout réseau, mail indisponible, etc.) reproduirait le même
+doublon.
+
+**Confirme aussi le besoin de découpler vente et rendu PDF** (cf. `FIRST_SLICE` D19/T11) : tant que
+la génération du PDF est synchrone dans le flux de vente (même indirectement, via l'envoi de mail
+déclenché par l'event), une panne de rendu (police manquante, image distante indisponible, etc.)
+reste capable de faire échouer — ou de faire percevoir comme échouée — une vente déjà actée en
+base. Le slice 1 du Kiosk répond en partie à ceci en générant le PDF à la demande
+(`GET .../ticket.pdf`) plutôt que dans le flux de vente, mais le flux natif (mail de confirmation)
+reste exposé.
