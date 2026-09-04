@@ -52,14 +52,20 @@ async function main() {
         app.use(base, sirv(path.join(__dirname, "./dist/client"), { extensions: [] }));
     }
 
-    const getViteEnvironmentVariables = () => {
+    // DIGIT: mapping des domaines personnalises - organisateurs avec leur propre domaine.
+    // Ajouter une entree ici pour chaque nouveau domaine personnalise configure.
+    const CUSTOM_DOMAINS = {
+        'innocent976.yt': {organizerPath: '/events/6/innocent-event'},
+    };
+
+    const getViteEnvironmentVariables = (overrides = {}) => {
         const envVars = {};
         for (const key in process.env) {
             if (key.startsWith('VITE_')) {
                 envVars[key] = process.env[key];
             }
         }
-        return JSON.stringify(envVars);
+        return JSON.stringify({...envVars, ...overrides});
     };
 
     app.get('/robots.txt', (req, res) => {
@@ -79,7 +85,14 @@ Sitemap: ${frontendUrl}/sitemap.xml
     app.get('/sitemap-organizers-:page.xml', sitemapOrganizersHandler);
 
     app.use("*", async (req, res) => {
-        const url = req.originalUrl.replace(base, "");
+        let url = req.originalUrl.replace(base, "");
+
+        const requestHost = (req.get('host') || '').replace(/^www\./, '');
+        const customDomain = CUSTOM_DOMAINS[requestHost];
+        if (customDomain && (url === '/' || url === '')) {
+            res.redirect(302, customDomain.organizerPath);
+            return;
+        }
 
         try {
             let template;
@@ -104,7 +117,9 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 .map((value) => value.toString() || "")
                 .join(" ");
 
-            const envVariablesHtml = `<script>window.hievents = ${getViteEnvironmentVariables()};</script>`;
+            const envVariablesHtml = `<script>window.hievents = ${getViteEnvironmentVariables(
+                customDomain ? {VITE_FRONTEND_URL: `${req.protocol}://${requestHost}`} : {}
+            )};</script>`;
 
             const headSnippets = [];
             if (process.env.VITE_FATHOM_SITE_ID) {
