@@ -52,10 +52,12 @@ class AttendeeTicketPdfServiceTest extends TestCase
     {
         $document = (new PdfParser())->parseContent($pdf);
 
-        return array_map(
+        // getObjectsByType() keys results by internal PDF object id, not a
+        // 0-based index — array_values() gives predictable [0], [1]... access.
+        return array_values(array_map(
             static fn($image) => $image->getDetails(),
             $document->getObjectsByType('XObject', 'Image'),
-        );
+        ));
     }
 
     /**
