@@ -439,3 +439,22 @@ couverture par un test de composant l'est.
 pour un projet Vite comme celui-ci) avec Jo, puis écrire le test 41 une fois l'outillage en place.
 
 **Effort :** ~30 min d'installation/config + le temps d'écrire le test 41 lui-même.
+
+---
+
+## Note — `CreateAttendeeHandler` : résolution du générateur par service locator
+
+`app/Services/Application/Handlers/Attendee/CreateAttendeeHandler.php:233` résout
+`AttendeePublicIdGenerator` via `app(AttendeePublicIdGenerator::class)` **au point d'usage**,
+plutôt que par injection dans le constructeur du handler.
+
+**Choix délibéré**, pas un oubli : la consigne de la session Kiosk imposait « une seule ligne
+modifiée » dans ce fichier (préserver au maximum le chemin natif, non retouché depuis Somaroho).
+Ajouter une dépendance au constructeur aurait nécessité une deuxième ligne (le paramètre) plus la
+mise à jour de tout appelant construisant `CreateAttendeeHandler` explicitement — hors du budget de
+la modification autorisée. Le service locator garde le diff à un import + une ligne.
+
+**Dette assumée :** ce pattern s'écarte de l'injection de dépendances classique utilisée partout
+ailleurs dans le handler (tous les autres collaborateurs sont injectés au constructeur). À corriger
+si `CreateAttendeeHandler` est un jour retouché plus largement — remplacer par une injection
+normale à cette occasion plutôt que d'ajouter un deuxième service locator à côté.
