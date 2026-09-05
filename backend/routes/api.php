@@ -30,6 +30,9 @@ use HiEvents\Http\Actions\Auth\LogoutAction;
 use HiEvents\Http\Actions\Auth\RefreshTokenAction;
 use HiEvents\Http\Actions\Auth\ResetPasswordAction;
 use HiEvents\Http\Actions\Auth\ValidateResetPasswordTokenAction;
+use HiEvents\Http\Actions\BoxOffice\CreateBoxOfficeSaleAction;
+use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeTicketPdfAction;
+use HiEvents\Http\Actions\BoxOffice\ReprintBoxOfficeTicketAction;
 use HiEvents\Http\Actions\CapacityAssignments\CreateCapacityAssignmentAction;
 use HiEvents\Http\Actions\CapacityAssignments\DeleteCapacityAssignmentAction;
 use HiEvents\Http\Actions\CapacityAssignments\GetCapacityAssignmentAction;
@@ -354,6 +357,11 @@ $router->middleware(['auth:api'])->group(
         $router->post('/events/{event_id}/attendees/export', ExportAttendeesAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/resend-ticket', ResendAttendeeTicketAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/check_in', CheckInAttendeeAction::class);
+
+        // Box Office (PICHA Kiosk, slice 1)
+        $router->post('/events/{event_id}/box-office-sales', CreateBoxOfficeSaleAction::class);
+        $router->get('/events/{event_id}/attendees/{attendee_public_id}/ticket.pdf', GetBoxOfficeTicketPdfAction::class);
+        $router->post('/events/{event_id}/attendees/{attendee_public_id}/reprint', ReprintBoxOfficeTicketAction::class);
 
         // Orders
         $router->get('/events/{event_id}/orders', GetOrdersAction::class);

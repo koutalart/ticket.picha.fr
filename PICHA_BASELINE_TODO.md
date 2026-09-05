@@ -505,6 +505,27 @@ si elle existe, comme le fait déjà `attendee-ticket-pdf.blade.php:30` pour `da
 
 ---
 
+## T15 — Suite Feature : fuite de locale entre tests (`es` au lieu de `en`)
+
+**Découvert en lançant `--testsuite=Feature` en entier (2026-09-05), sans lien avec le Kiosk.**
+`EmailTemplateTokenTest::test_can_get_order_confirmation_tokens` échoue **uniquement** en suite
+complète (passe seul) : les descriptions de tokens reviennent en espagnol (« El nombre de la
+persona que realizó el pedido ») au lieu d'anglais. Reproduit sans aucun test Box Office dans la
+sélection — un autre test de la suite positionne la locale app sur `es` (probablement via une
+requête `locale=es`) sans la restaurer, et PHPUnit exécute tous les tests Feature dans le même
+processus PHP.
+
+**Impact réel :** aucun sur le Kiosk. Fragilise la suite Feature (dépendance à l'ordre
+d'exécution) — masque potentiellement d'autres bugs de locale ailleurs.
+
+**Correctif proposé :** identifier le test fautif (`grep -rn "locale.*=.*es\b" backend/tests/Feature`)
+et restaurer `App::setLocale('en')` dans son `tearDown()`, ou passer par `Illuminate\Testing`
+`withLocale`/isoler ces tests en base séparée.
+
+**Effort :** ~20 min (localisation + correctif).
+
+---
+
 ## Note — `CreateAttendeeHandler` : résolution du générateur par service locator
 
 `app/Services/Application/Handlers/Attendee/CreateAttendeeHandler.php:233` résout

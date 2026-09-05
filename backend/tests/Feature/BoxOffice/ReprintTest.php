@@ -32,8 +32,9 @@ class ReprintTest extends TestCase
 
         $token = $this->loginAndGetToken($user, self::PASSWORD);
 
-        $response = $this->getJson(
+        $response = $this->postJson(
             "/events/{$event->id}/attendees/{$attendee->public_id}/reprint",
+            [],
             ['Authorization' => 'Bearer ' . $token],
         );
 
@@ -49,8 +50,9 @@ class ReprintTest extends TestCase
         $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
         $token = $this->loginAndGetToken($user, self::PASSWORD);
 
-        $this->getJson(
+        $this->postJson(
             "/events/{$event->id}/attendees/{$attendee->public_id}/reprint",
+            [],
             ['Authorization' => 'Bearer ' . $token],
         );
 
@@ -69,8 +71,9 @@ class ReprintTest extends TestCase
         $otherUser = $this->createUnrelatedOrganizerUser(self::PASSWORD);
         $token = $this->loginAndGetToken($otherUser, self::PASSWORD);
 
-        $response = $this->getJson(
+        $response = $this->postJson(
             "/events/{$event->id}/attendees/{$attendee->public_id}/reprint",
+            [],
             ['Authorization' => 'Bearer ' . $token],
         );
 
