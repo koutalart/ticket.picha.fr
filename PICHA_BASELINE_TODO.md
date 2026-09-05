@@ -478,28 +478,38 @@ pour un projet Vite comme celui-ci) avec Jo, puis écrire le test 41 une fois l'
 
 ---
 
-## T14 — `OrderSummary` plante si l'événement n'a pas de date de fin
+## T14 — `OrderSummary` plantait si l'événement n'a pas de date de début — CORRIGÉ
 
 **Découvert en reproduisant le constat terrain ci-dessus (2026-09-05).** En appelant
-`CreateAttendeeHandler::handle()` sur un événement sans `end_date` (champ nullable), le mail
-`OrderSummary` (« commande confirmée ») lève :
+`CreateAttendeeHandler::handle()` sur un événement sans `start_date` (champ nullable en base), le
+mail `OrderSummary` (« commande confirmée ») levait :
 
 ```
 Illuminate\View\ViewException: HiEvents\Helper\DateHelper::convertFromUTC(): Argument #1
 ($eventDate) must be of type string, null given ... (View: resources/views/emails/orders/summary.blade.php)
 ```
 
-`summary.blade.php` appelle `DateHelper::convertFromUTC($event->getEndDate())` sans garde sur
-`null`. Comme `OrderSummary` hérite de `BaseMail` (`ShouldQueue` + `afterCommit()`, voir constat
-ci-dessus), ce plantage se produit **après le commit** de la vente — même symptôme que le
-plantage `gd` : vente actée, mail cassé, 500 renvoyé à l'appelant.
+**Correction au premier écrit de cette entrée (2026-09-05) :** attribué à `getEndDate()` — faux.
+Vérifié par lecture du fichier : `summary.blade.php` n'appelle `getEndDate()` **nulle part**. Les
+deux plantages venaient de `$event->getStartDate()` (lignes 17 et 45 après correctif), utilisé
+sans garde par `DateHelper::convertFromUTC(string $eventDate, ...)` — paramètre non nullable.
+`start_date` est nullable en base (`information_schema.columns`, vérifié) mais normalement toujours
+renseigné par le flux de création d'événement standard ; le cas ne se manifeste que si un événement
+est créé par un chemin qui l'omet (comme la fixture de test minimaliste utilisée pour reproduire le
+constat terrain).
 
-**Impact réel :** tout événement sans date de fin renseignée fait échouer le mail de confirmation
-(et la requête HTTP qui l'a déclenché) pour **toute** création d'attendee (manuelle, guichet,
-achat normal) — pas seulement au guichet.
+Comme `OrderSummary` hérite de `BaseMail` (`ShouldQueue` + `afterCommit()`, voir constat ci-dessus),
+ce plantage se produisait **après le commit** de la vente — même symptôme que le plantage `gd` :
+vente actée, mail cassé, 500 renvoyé à l'appelant.
 
-**Correctif proposé :** garde `null` dans `summary.blade.php` (ex. n'afficher la date de fin que
-si elle existe, comme le fait déjà `attendee-ticket-pdf.blade.php:30` pour `dateDisplayMode`).
+**Impact réel :** tout événement sans `start_date` renseignée faisait échouer le mail de
+confirmation (et la requête HTTP qui l'a déclenché) pour **toute** création d'attendee (manuelle,
+guichet, achat normal) — pas seulement au guichet.
+
+**Corrigé** (commit séparé, cherry-pickable vers staging) : garde `@if($event->getStartDate())`
+autour des deux blocs de `summary.blade.php` qui en dépendent, avec une phrase de repli sans date
+pour le premier paragraphe (traduite FR). Testé : `tests/Unit/Mail/Order/OrderSummaryTest.php`
+(rendu sans erreur sans `start_date`, et rendu inchangé — date/heure toujours affichées — avec).
 
 **Effort :** ~10 min.
 

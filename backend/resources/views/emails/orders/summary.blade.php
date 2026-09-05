@@ -13,7 +13,11 @@
 @if($order->isOrderAwaitingOfflinePayment() === false)
 
 <p>
+@if($event->getStartDate())
 {{ __('Congratulations! Your order for :eventTitle on :eventDate at :eventTime was successful. Please find your order details below.', ['eventTitle' => $event->getTitle(), 'eventDate' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('F j, Y'), 'eventTime' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('g:i A')]) }}
+@else
+{{ __('Congratulations! Your order for :eventTitle was successful. Please find your order details below.', ['eventTitle' => $event->getTitle()]) }}
+@endif
 </p>
 
 @else
@@ -37,7 +41,9 @@
 # {{ __('Event Details') }}
 **{{ __('Event Name:') }}** {{ $event->getTitle() }}
     <br>
+@if($event->getStartDate())
 **{{ __('Date & Time:') }}** {{ __(':date at :time', ['date' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('F j, Y'), 'time' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('g:i A')]) }}
+@endif
 
 </p>
 
