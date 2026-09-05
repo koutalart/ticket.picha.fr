@@ -111,7 +111,9 @@ class CreateBoxOfficeSaleHandler
                 product_id: $dto->product_id,
                 event_id: $dto->event_id,
                 send_confirmation_email: false,
-                amount_paid: $dto->amount,
+                // Defense in depth: pass the server-read price, not $dto->amount —
+                // even though validatePrice() already proved them equal above.
+                amount_paid: $productPrice->getPrice(),
                 locale: $dto->locale,
                 product_price_id: $dto->product_price_id,
             ));

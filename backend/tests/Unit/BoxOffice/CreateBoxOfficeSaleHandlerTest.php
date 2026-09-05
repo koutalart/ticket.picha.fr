@@ -12,6 +12,8 @@ use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Models\Order;
 use HiEvents\Models\ProductPrice;
+use HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler;
+use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\CreateBoxOfficeSaleHandler;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleDTO;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -399,5 +401,46 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
         );
 
         self::assertTrue($hasUniqueOrderIdIndex, 'box_office_sales.order_id must have a unique index');
+    }
+
+    /**
+     * Defense in depth (S1): the server-read price is forwarded to
+     * CreateAttendeeHandler as amount_paid, not the raw client amount —
+     * even in the edge case where number_format() rounds the client value
+     * to the same 2-decimal string as the server price, letting it past
+     * validatePrice()'s equality check.
+     */
+    public function test_server_price_not_client_amount_is_forwarded_to_create_attendee_handler(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $realHandler = app(CreateAttendeeHandler::class);
+        $capturedAmountPaid = null;
+
+        $this->mock(CreateAttendeeHandler::class, function ($mock) use (&$capturedAmountPaid, $realHandler) {
+            $mock->shouldReceive('handle')
+                ->once()
+                ->andReturnUsing(function (CreateAttendeeDTO $dto) use (&$capturedAmountPaid, $realHandler) {
+                    $capturedAmountPaid = $dto->amount_paid;
+
+                    return $realHandler->handle($dto);
+                });
+        });
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $handler->handle($this->makeDto(
+            eventId: $event->id,
+            agentUserId: $user->id,
+            productId: $product->id,
+            productPriceId: $productPrice->id,
+            // Rounds to "25.00" via number_format() — passes validatePrice()
+            // — but is not bit-identical to the server's 25.00.
+            amount: 25.004,
+            amountCollected: 25.004,
+        ));
+
+        self::assertSame(25.0, $capturedAmountPaid);
     }
 }
