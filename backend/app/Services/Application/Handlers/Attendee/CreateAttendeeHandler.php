@@ -27,6 +27,7 @@ use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\TaxAndFeeRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeTaxAndFeeDTO;
+use HiEvents\Services\Domain\Attendee\AttendeePublicIdGenerator;
 use HiEvents\Services\Domain\Order\OrderManagementService;
 use HiEvents\Services\Domain\Product\ProductQuantityUpdateService;
 use HiEvents\Services\Domain\Tax\TaxAndFeeRollupService;
@@ -230,7 +231,7 @@ class CreateAttendeeHandler
             AttendeeDomainObjectAbstract::FIRST_NAME => $attendeeDTO->first_name,
             AttendeeDomainObjectAbstract::LAST_NAME => $attendeeDTO->last_name,
             AttendeeDomainObjectAbstract::ORDER_ID => $order->getId(),
-            AttendeeDomainObjectAbstract::PUBLIC_ID => IdHelper::publicId(IdHelper::ATTENDEE_PREFIX),
+            AttendeeDomainObjectAbstract::PUBLIC_ID => app(AttendeePublicIdGenerator::class)->generateUnique(),
             AttendeeDomainObjectAbstract::SHORT_ID => IdHelper::shortId(IdHelper::ATTENDEE_PREFIX),
             AttendeeDomainObjectAbstract::LOCALE => $attendeeDTO->locale,
         ]);
