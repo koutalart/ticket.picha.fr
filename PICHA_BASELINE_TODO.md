@@ -394,14 +394,50 @@ remis en cause ici — seule l'affirmation sur l'absence de la colonne `notes` e
 
 ### Constat terrain — trois doublons créés en réessayant après un 500 (`gd`) — preuve de S3
 
-Rapporté par Jo : sur le poste de terrain, avant le correctif T10, la génération du billet PDF
-échouait avec une 500 (extension `gd` manquante). L'agent guichet a réessayé l'opération plusieurs
-fois en pensant que la vente n'avait pas abouti — **trois participants en doublon** ont été créés
-pour la même personne, parce que **le mail billet (avec sa pièce jointe PDF) échoue après le commit
-de l'Order/Attendee**, pas avant : `CreateAttendeeHandler::handle()` committe la transaction
-(Order + OrderItem + Attendee `ACTIVE`) puis déclenche `OrderStatusChangedEvent` (ligne 245-248),
-qui envoie `AttendeeTicketMail` — la génération du PDF (et donc l'échec `gd`) a lieu **dans
-l'envoi du mail**, après que la vente est déjà actée en base.
+Rapporté par Jo : sur `docker/development` (Mac de Jo, `QUEUE_CONNECTION=sync`), avant le correctif
+T10, la génération du billet PDF échouait avec une 500 (extension `gd` manquante). L'agent guichet
+a réessayé l'opération plusieurs fois en pensant que la vente n'avait pas abouti — **trois
+participants en doublon** ont été créés pour la même personne. Fait observé et confirmé : les
+Order/Attendee ont bien été persistés, le mail « commande confirmée » est parti, seul le mail
+billet a échoué (gd), et l'API a renvoyé 500 malgré la persistance réussie.
+
+**Mécanisme reproduit et vérifié (2026-09-05, non supposé)** : la cause n'est **pas** que
+`CreateAttendeeHandler::handle()` committe puis déclenche l'envoi du mail de façon synchrone dans
+le même flux — c'est plus précis que ça. `app/Mail/BaseMail.php:16-19` :
+
+```php
+public function __construct()
+{
+    $this->afterCommit();
+}
+```
+
+`BaseMail` (dont hérite `AttendeeTicketMail`, `OrderSummary`, etc.) est un `Mailable implements
+ShouldQueue`, et son constructeur appelle `$this->afterCommit()` — ce qui positionne la propriété
+`Queueable::$afterCommit = true` sur **chaque instance de mail**, indépendamment de la queue
+utilisée pour le *Job* qui l'envoie. Résultat, avec `QUEUE_CONNECTION=sync` :
+
+- `event(new OrderStatusChangedEvent(...))` (dans la transaction de `CreateAttendeeHandler::handle()`)
+  déclenche `SendOrderDetailsEmailListener` → `dispatch(new SendOrderDetailsEmailJob($order))` — ce
+  *Job* lui-même n'a pas `afterCommit=true`, donc il s'exécute **immédiatement**, toujours dans la
+  transaction ouverte.
+- Mais `SendOrderDetailsEmailJob::handle()` appelle `$this->mailer->send($mail)` où `$mail`
+  (`OrderSummary`, puis `AttendeeTicketMail`) a `afterCommit=true` — Laravel ne rend/envoie donc
+  **rien** à cet instant : il enregistre un callback différé (`db.transactions`-
+  `>addCallback(...)`, `SyncQueue::push()`), qui n'exécutera le rendu réel du mail (et donc la
+  génération PDF) **qu'après le COMMIT** de la transaction englobante.
+- La transaction de `CreateAttendeeHandler::handle()` se termine donc sans exception, **committe**
+  (Order + Attendee + OrderItem + `quantity_sold` incrémenté, tous durablement écrits) — puis,
+  juste après, les callbacks différés s'exécutent : le mail « commande confirmée » (`OrderSummary`,
+  pas de PDF) réussit, puis le rendu du billet (`AttendeeTicketMail::generateTicketPdf()`) plante
+  (gd manquant). L'exception remonte alors jusqu'à l'appelant HTTP — **après** le commit — d'où la
+  500 malgré une vente déjà actée en base.
+
+**Reproduit empiriquement** (script ad hoc, `AttendeeTicketPdfService` remplacé par un double qui
+lève une exception, `CreateAttendeeHandler::handle()` appelé sans transaction englobante
+supplémentaire) : `handle()` lève bien l'exception, mais `attendees=1`, `orders=1`,
+`quantity_sold=1` et `DB::transactionLevel()=0` **après** l'exception — la ligne est là, committée,
+malgré l'échec remonté à l'appelant.
 
 **Preuve concrète de S3** (`PICHA_BOX_OFFICE_SECURITY_FINDINGS.md` — aucune idempotence sur la
 création manuelle) : sans clé d'idempotence, un agent qui réessaie après une erreur perçue comme
@@ -439,6 +475,33 @@ couverture par un test de composant l'est.
 pour un projet Vite comme celui-ci) avec Jo, puis écrire le test 41 une fois l'outillage en place.
 
 **Effort :** ~30 min d'installation/config + le temps d'écrire le test 41 lui-même.
+
+---
+
+## T14 — `OrderSummary` plante si l'événement n'a pas de date de fin
+
+**Découvert en reproduisant le constat terrain ci-dessus (2026-09-05).** En appelant
+`CreateAttendeeHandler::handle()` sur un événement sans `end_date` (champ nullable), le mail
+`OrderSummary` (« commande confirmée ») lève :
+
+```
+Illuminate\View\ViewException: HiEvents\Helper\DateHelper::convertFromUTC(): Argument #1
+($eventDate) must be of type string, null given ... (View: resources/views/emails/orders/summary.blade.php)
+```
+
+`summary.blade.php` appelle `DateHelper::convertFromUTC($event->getEndDate())` sans garde sur
+`null`. Comme `OrderSummary` hérite de `BaseMail` (`ShouldQueue` + `afterCommit()`, voir constat
+ci-dessus), ce plantage se produit **après le commit** de la vente — même symptôme que le
+plantage `gd` : vente actée, mail cassé, 500 renvoyé à l'appelant.
+
+**Impact réel :** tout événement sans date de fin renseignée fait échouer le mail de confirmation
+(et la requête HTTP qui l'a déclenché) pour **toute** création d'attendee (manuelle, guichet,
+achat normal) — pas seulement au guichet.
+
+**Correctif proposé :** garde `null` dans `summary.blade.php` (ex. n'afficher la date de fin que
+si elle existe, comme le fait déjà `attendee-ticket-pdf.blade.php:30` pour `dateDisplayMode`).
+
+**Effort :** ~10 min.
 
 ---
 
