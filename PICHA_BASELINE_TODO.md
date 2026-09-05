@@ -418,3 +418,24 @@ reste capable de faire échouer — ou de faire percevoir comme échouée — un
 base. Le slice 1 du Kiosk répond en partie à ceci en générant le PDF à la demande
 (`GET .../ticket.pdf`) plutôt que dans le flux de vente, mais le flux natif (mail de confirmation)
 reste exposé.
+
+---
+
+## T13 — Aucun framework de test frontend configuré
+
+**Contexte :** le test 41 de `PICHA_BOX_OFFICE_FIRST_SLICE.md §5.3` (« la page n'affiche pas les
+produits non scannables ; le prix est en lecture seule ; le bouton se désactive pendant la
+mutation ; `idempotency_key` régénéré à chaque ouverture du formulaire ») nécessite un test de
+composant React. **Aucun outillage de test n'existe côté frontend** : pas de Vitest, pas de Jest,
+pas de React Testing Library dans `frontend/package.json`, aucun fichier `*.test.tsx`/`*.test.ts`
+dans le dépôt.
+
+**Impact réel :** le test 41 ne peut pas être écrit sans d'abord choisir et installer un
+framework — un vrai choix d'outillage (config, devDependencies), pas un TDD sur de l'existant.
+Reporté hors du slice 1 côté tests ; la page Box Office elle-même n'est pas bloquée, seule sa
+couverture par un test de composant l'est.
+
+**Correctif proposé :** décider du framework (Vitest + React Testing Library est le choix standard
+pour un projet Vite comme celui-ci) avec Jo, puis écrire le test 41 une fois l'outillage en place.
+
+**Effort :** ~30 min d'installation/config + le temps d'écrire le test 41 lui-même.

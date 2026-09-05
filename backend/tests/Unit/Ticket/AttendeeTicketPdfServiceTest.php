@@ -16,6 +16,7 @@ use HiEvents\Models\Order;
 use HiEvents\Models\Organizer as OrganizerModel;
 use HiEvents\Services\Domain\Ticket\AttendeeTicketPdfService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Smalot\PdfParser\Parser as PdfParser;
 use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
 
@@ -25,11 +26,37 @@ use Tests\TestCase;
  * PICHA_BOX_OFFICE_DESIGN_OPTIONS.md — "réutiliser la maquette
  * attendee-ticket-pdf.blade.php, extraite en service"). The service does
  * not exist yet.
+ *
+ * DomPDF compresses its content streams (FlateDecode) by default, so a raw
+ * substring search on the PDF bytes never matches — confirmed empirically
+ * against the current AttendeeTicketMail output. These tests extract real
+ * text via smalot/pdfparser (require-dev only) instead of comparing bytes,
+ * and check the QR by its presence as an embedded 300×300 image XObject
+ * (matching QrCode::format('png')->size(300) in AttendeeTicketMail today),
+ * not by decoding its payload.
  */
 class AttendeeTicketPdfServiceTest extends TestCase
 {
     use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+
+    private function extractText(string $pdf): string
+    {
+        return (new PdfParser())->parseContent($pdf)->getText();
+    }
+
+    /**
+     * @return array{width: int|string, height: int|string}[]
+     */
+    private function extractImages(string $pdf): array
+    {
+        $document = (new PdfParser())->parseContent($pdf);
+
+        return array_map(
+            static fn($image) => $image->getDetails(),
+            $document->getObjectsByType('XObject', 'Image'),
+        );
+    }
 
     /**
      * @return array{0: AttendeeDomainObject, 1: EventDomainObject, 2: EventSettingDomainObject, 3: OrganizerDomainObject, 4: OrderDomainObject}
@@ -81,7 +108,16 @@ class AttendeeTicketPdfServiceTest extends TestCase
         $pdf = $service->generate($attendee, $event, $eventSettings, $organizer);
 
         self::assertNotEmpty($pdf);
-        self::assertStringContainsString($attendee->getPublicId(), $pdf, 'AC-17: the public_id must appear in clear text on the ticket');
+        self::assertStringContainsString(
+            $attendee->getPublicId(),
+            $this->extractText($pdf),
+            'AC-17: the public_id must appear in clear text on the ticket',
+        );
+
+        $images = $this->extractImages($pdf);
+        self::assertCount(1, $images, 'AC-15: exactly one embedded image — the QR — is expected on the ticket');
+        self::assertSame('300', (string)$images[0]['Width']);
+        self::assertSame('300', (string)$images[0]['Height']);
     }
 
     /** AC-19 */
@@ -93,11 +129,18 @@ class AttendeeTicketPdfServiceTest extends TestCase
         $pdf = $service->generate($attendee, $event, $eventSettings, $organizer);
 
         self::assertNotEmpty($pdf, 'AC-19: PDF must render without a gd/font error for accented names');
+
+        $text = $this->extractText($pdf);
+        self::assertStringContainsString('François', $text);
+        self::assertStringContainsString('Ébène', $text);
     }
 
     /**
      * AC-18: extracting the PDF generation into a service must not change
-     * the bytes attached to the native confirmation mail.
+     * what is rendered on the native confirmation mail's ticket. Compared
+     * by extracted text and QR presence, not raw bytes — DomPDF is not
+     * byte-for-byte deterministic across two separate renders (see class
+     * docblock).
      */
     public function test_extracted_service_produces_same_output_as_mail_attachment(): void
     {
@@ -111,6 +154,13 @@ class AttendeeTicketPdfServiceTest extends TestCase
         $service = app(AttendeeTicketPdfService::class);
         $servicePdf = $service->generate($attendee, $event, $eventSettings, $organizer);
 
-        self::assertSame($mailPdf, $servicePdf);
+        self::assertSame($this->extractText($mailPdf), $this->extractText($servicePdf));
+
+        $mailImages = $this->extractImages($mailPdf);
+        $serviceImages = $this->extractImages($servicePdf);
+        self::assertCount(1, $mailImages);
+        self::assertCount(1, $serviceImages);
+        self::assertSame($mailImages[0]['Width'], $serviceImages[0]['Width']);
+        self::assertSame($mailImages[0]['Height'], $serviceImages[0]['Height']);
     }
 }
