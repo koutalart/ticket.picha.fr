@@ -1,0 +1,328 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit\BoxOffice;
+
+use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
+use HiEvents\DomainObjects\Status\OrderPaymentStatus;
+use HiEvents\Exceptions\BoxOfficePriceMismatchException;
+use HiEvents\Exceptions\ProductNotScannableException;
+use HiEvents\Exceptions\ResourceConflictException;
+use HiEvents\Models\Order;
+use HiEvents\Models\ProductPrice;
+use HiEvents\Services\Application\Handlers\BoxOffice\CreateBoxOfficeSaleHandler;
+use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleDTO;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Tests\Support\BoxOfficeTestFixtures;
+use Tests\TestCase;
+
+/**
+ * TDD (red) tests for the NOT-YET-IMPLEMENTED CreateBoxOfficeSaleHandler
+ * (Option A — PICHA_BOX_OFFICE_DESIGN_OPTIONS.md). None of the referenced
+ * classes (CreateBoxOfficeSaleHandler, CreateBoxOfficeSaleDTO,
+ * BoxOfficePaymentMethod, BoxOfficePriceMismatchException,
+ * ProductNotScannableException, the box_office_sales table) exist yet —
+ * every test below is expected to error ("Class not found" / "relation does
+ * not exist") until the slice 1 implementation lands. This is intentional:
+ * see FIRST_SLICE §5.2 ("rouges tant que non implémenté — TDD").
+ *
+ * AC references are to PICHA_BOX_OFFICE_FIRST_SLICE.md §4.
+ */
+class CreateBoxOfficeSaleHandlerTest extends TestCase
+{
+    use DatabaseTransactions;
+    use BoxOfficeTestFixtures;
+
+    private function makeDto(
+        int    $eventId,
+        int    $agentUserId,
+        int    $productId,
+        int    $productPriceId,
+        float  $amount,
+        float  $amountCollected,
+        BoxOfficePaymentMethod $paymentMethod = BoxOfficePaymentMethod::CASH,
+        ?string $idempotencyKey = null,
+    ): CreateBoxOfficeSaleDTO
+    {
+        return new CreateBoxOfficeSaleDTO(
+            event_id: $eventId,
+            agent_user_id: $agentUserId,
+            product_id: $productId,
+            product_price_id: $productPriceId,
+            first_name: 'Jane',
+            last_name: 'Doe',
+            email: 'jane@example.test',
+            locale: 'en',
+            amount: $amount,
+            payment_method: $paymentMethod,
+            amount_collected: $amountCollected,
+            idempotency_key: $idempotencyKey ?? \Illuminate\Support\Str::uuid()->toString(),
+        );
+    }
+
+    /** AC-2 */
+    public function test_price_is_resolved_server_side_and_client_amount_ignored(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $result = $handler->handle($this->makeDto(
+            eventId: $event->id,
+            agentUserId: $user->id,
+            productId: $product->id,
+            productPriceId: $productPrice->id,
+            amount: 25.00,
+            amountCollected: 25.00,
+        ));
+
+        $order = Order::find($result->order->getId());
+
+        self::assertSame(25.0, (float)$order->total_gross);
+    }
+
+    /** AC-2 — strict tolerance: any mismatch is a 422-equivalent rejection */
+    public function test_price_mismatch_beyond_tolerance_is_rejected(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $this->expectException(BoxOfficePriceMismatchException::class);
+
+        try {
+            $handler->handle($this->makeDto(
+                eventId: $event->id,
+                agentUserId: $user->id,
+                productId: $product->id,
+                productPriceId: $productPrice->id,
+                amount: 1.00, // real price is 25.00
+                amountCollected: 1.00,
+            ));
+        } finally {
+            self::assertSame(0, DB::table('box_office_sales')->where('product_price_id', $productPrice->id)->count());
+        }
+    }
+
+    /** AC-4 */
+    public function test_free_payment_method_sets_no_payment_required(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 0.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $result = $handler->handle($this->makeDto(
+            eventId: $event->id,
+            agentUserId: $user->id,
+            productId: $product->id,
+            productPriceId: $productPrice->id,
+            amount: 0.00,
+            amountCollected: 0.00,
+            paymentMethod: BoxOfficePaymentMethod::FREE,
+        ));
+
+        $order = Order::find($result->order->getId());
+
+        self::assertSame(OrderPaymentStatus::NO_PAYMENT_REQUIRED->name, $order->payment_status);
+    }
+
+    /** AC-3 — amount_collected is a distinct audit field, not constrained to equal the price */
+    public function test_amount_collected_stored_separately_from_price(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $result = $handler->handle($this->makeDto(
+            eventId: $event->id,
+            agentUserId: $user->id,
+            productId: $product->id,
+            productPriceId: $productPrice->id,
+            amount: 25.00,
+            amountCollected: 30.00, // e.g. cash tendered, change given — distinct from the price
+        ));
+
+        $sale = DB::table('box_office_sales')->where('id', $result->saleId)->first();
+
+        self::assertSame(30.0, (float)$sale->amount_collected);
+        self::assertSame(25.0, (float)Order::find($result->order->getId())->total_gross);
+    }
+
+    /** AC-13 — D11: product not attached to any active check-in list must be blocked */
+    public function test_product_without_active_checkin_list_is_rejected(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        // Deliberately NOT attached to any check-in list.
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $this->expectException(ProductNotScannableException::class);
+
+        try {
+            $handler->handle($this->makeDto(
+                eventId: $event->id,
+                agentUserId: $user->id,
+                productId: $product->id,
+                productPriceId: $productPrice->id,
+                amount: 25.00,
+                amountCollected: 25.00,
+            ));
+        } finally {
+            self::assertSame(0, DB::table('box_office_sales')->where('product_price_id', $productPrice->id)->count());
+        }
+    }
+
+    /** AC-9 */
+    public function test_out_of_stock_returns_conflict(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(
+            price: 25.00,
+            initialQuantityAvailable: 3,
+            quantitySold: 3,
+        );
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $this->expectException(ResourceConflictException::class);
+
+        try {
+            $handler->handle($this->makeDto(
+                eventId: $event->id,
+                agentUserId: $user->id,
+                productId: $product->id,
+                productPriceId: $productPrice->id,
+                amount: 25.00,
+                amountCollected: 25.00,
+            ));
+        } finally {
+            self::assertSame(0, DB::table('box_office_sales')->where('product_price_id', $productPrice->id)->count());
+        }
+    }
+
+    /** AC-5, AC-26 */
+    public function test_successful_sale_creates_order_attendee_and_box_office_sale_row(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $result = $handler->handle($this->makeDto(
+            eventId: $event->id,
+            agentUserId: $user->id,
+            productId: $product->id,
+            productPriceId: $productPrice->id,
+            amount: 25.00,
+            amountCollected: 25.00,
+        ));
+
+        self::assertNotNull($result->attendee->getPublicId());
+        self::assertSame('ACTIVE', $result->attendee->getStatus());
+        self::assertSame($productPrice->id, $result->attendee->getProductPriceId());
+
+        $sale = DB::table('box_office_sales')->where('id', $result->saleId)->first();
+        self::assertNotNull($sale);
+        self::assertSame('COMPLETED', $sale->status);
+        self::assertSame($result->order->getId(), $sale->order_id);
+        self::assertSame($result->attendee->getId(), $sale->attendee_id);
+    }
+
+    /** AC-6 */
+    public function test_quantity_sold_incremented_exactly_once(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $handler->handle($this->makeDto(
+            eventId: $event->id,
+            agentUserId: $user->id,
+            productId: $product->id,
+            productPriceId: $productPrice->id,
+            amount: 25.00,
+            amountCollected: 25.00,
+        ));
+
+        self::assertSame(1, ProductPrice::find($productPrice->id)->quantity_sold);
+    }
+
+    /** AC-7 — slice 1 always forces send_confirmation_email = false */
+    public function test_no_email_sent_when_send_confirmation_email_false(): void
+    {
+        Mail::fake();
+
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $handler->handle($this->makeDto(
+            eventId: $event->id,
+            agentUserId: $user->id,
+            productId: $product->id,
+            productPriceId: $productPrice->id,
+            amount: 25.00,
+            amountCollected: 25.00,
+        ));
+
+        Mail::assertNothingSent();
+    }
+
+    /** AC-26 — a downstream failure must not leave a COMPLETED box_office_sales row */
+    public function test_partial_failure_rolls_back_box_office_sale(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $otherProduct = \HiEvents\Models\Product::create([
+            'event_id' => $event->id,
+            'title' => 'Other Ticket',
+            'product_type' => \HiEvents\DomainObjects\Enums\ProductType::TICKET->name,
+            'type' => 'PAID',
+            'order' => 2,
+        ]);
+        $foreignPrice = \HiEvents\Models\ProductPrice::create([
+            'product_id' => $otherProduct->id,
+            'price' => 50.00,
+            'initial_quantity_available' => 10,
+            'quantity_sold' => 0,
+            'order' => 1,
+        ]);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        try {
+            // product_price_id belongs to a different product than product_id —
+            // CreateAttendeeHandler::getProductPriceId() rejects this internally,
+            // after CreateBoxOfficeSaleHandler has already inserted its own
+            // box_office_sales(PENDING) row.
+            $handler->handle($this->makeDto(
+                eventId: $event->id,
+                agentUserId: $user->id,
+                productId: $product->id,
+                productPriceId: $foreignPrice->id,
+                amount: 25.00,
+                amountCollected: 25.00,
+            ));
+            self::fail('expected an exception for a foreign product_price_id');
+        } catch (\Throwable) {
+            // any failure is acceptable here — what matters is the DB state below
+        }
+
+        self::assertSame(
+            0,
+            DB::table('box_office_sales')->where('status', 'COMPLETED')->count(),
+            'AC-26: no COMPLETED box_office_sales row must survive a partial failure',
+        );
+        self::assertSame(0, ProductPrice::find($productPrice->id)->quantity_sold);
+    }
+}

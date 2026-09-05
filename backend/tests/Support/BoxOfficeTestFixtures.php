@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Auth;
  */
 trait BoxOfficeTestFixtures
 {
-    private function createUserWithAccount(): User
+    private function createUserWithAccount(?string $password = null): User
     {
         AccountConfiguration::firstOrCreate(['id' => 1], [
             'id' => 1,
@@ -39,19 +39,40 @@ trait BoxOfficeTestFixtures
             ],
         ]);
 
-        return User::factory()->withAccount()->create();
+        $factory = User::factory()->withAccount();
+
+        if ($password !== null) {
+            $factory = $factory->password($password);
+        }
+
+        return $factory->create();
     }
 
     /**
-     * @return array{0: Event, 1: Product, 2: ProductPrice}
+     * Logs a user in via /auth/login and returns the X-Auth-Token header
+     * value, for Feature tests hitting authenticated routes.
+     */
+    private function loginAndGetToken(User $user, string $password): string
+    {
+        $response = $this->postJson('/auth/login', [
+            'email' => $user->email,
+            'password' => $password,
+        ]);
+
+        return $response->headers->get('X-Auth-Token');
+    }
+
+    /**
+     * @return array{0: Event, 1: Product, 2: ProductPrice, 3: User}
      */
     private function createEventWithProduct(
-        float $price = 25.00,
-        ?int  $initialQuantityAvailable = 100,
-        int   $quantitySold = 0,
+        float   $price = 25.00,
+        ?int    $initialQuantityAvailable = 100,
+        int     $quantitySold = 0,
+        ?string $userPassword = null,
     ): array
     {
-        $user = $this->createUserWithAccount();
+        $user = $this->createUserWithAccount($userPassword);
 
         /** @var Account $account */
         $account = $user->accounts()->first();
@@ -99,7 +120,7 @@ trait BoxOfficeTestFixtures
             'order' => 1,
         ]);
 
-        return [$event, $product, $productPrice];
+        return [$event, $product, $productPrice, $user];
     }
 
     private function attachCheckInList(Event $event, Product $product): CheckInList
@@ -113,5 +134,38 @@ trait BoxOfficeTestFixtures
         $checkInList->products()->attach($product->id);
 
         return $checkInList;
+    }
+
+    /**
+     * Creates an attendee through the existing, unmodified manual-sale path
+     * (CreateAttendeeHandler) — what the Box Office slice 1 (Option A)
+     * intends to reuse under CreateBoxOfficeSaleHandler.
+     */
+    private function createAttendeeViaHandler(int $eventId, int $productId, int $productPriceId): \HiEvents\Models\Attendee
+    {
+        $handler = app(\HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler::class);
+
+        $domainAttendee = $handler->handle(new \HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO(
+            first_name: 'Jane',
+            last_name: 'Doe',
+            email: 'jane@example.test',
+            product_id: $productId,
+            event_id: $eventId,
+            send_confirmation_email: false,
+            amount_paid: 25.00,
+            locale: 'en',
+            product_price_id: $productPriceId,
+        ));
+
+        return \HiEvents\Models\Attendee::find($domainAttendee->getId());
+    }
+
+    /**
+     * A second Account/User, unrelated to the event's owning account — for
+     * asserting cross-account authorization is enforced (403).
+     */
+    private function createUnrelatedOrganizerUser(string $password): User
+    {
+        return $this->createUserWithAccount($password);
     }
 }
