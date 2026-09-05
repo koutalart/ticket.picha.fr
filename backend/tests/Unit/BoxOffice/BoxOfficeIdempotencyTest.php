@@ -80,6 +80,7 @@ class BoxOfficeIdempotencyTest extends TestCase
             // Connection A inserts the idempotency row first (autocommit).
             DB::table('box_office_sales')->insert([
                 'idempotency_key' => $key,
+                'event_id' => $event->id,
                 'agent_user_id' => $user->id,
                 'status' => 'PENDING',
                 'created_at' => now(),
@@ -91,9 +92,9 @@ class BoxOfficeIdempotencyTest extends TestCase
             $this->expectException(\PDOException::class);
 
             $connB->prepare(
-                'INSERT INTO box_office_sales (idempotency_key, agent_user_id, status, created_at, updated_at)
-                 VALUES (?, ?, ?, now(), now())'
-            )->execute([$key, $user->id, 'PENDING']);
+                'INSERT INTO box_office_sales (idempotency_key, event_id, agent_user_id, status, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, now(), now())'
+            )->execute([$key, $event->id, $user->id, 'PENDING']);
         } finally {
             // Cleanup runs FIRST and unconditionally (this test committed
             // its setup data outside the DatabaseTransactions rollback —

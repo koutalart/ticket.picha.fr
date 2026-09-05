@@ -268,6 +268,24 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             ->exists();
     }
 
+    public function hasActiveCheckInList(int $productId): bool
+    {
+        return $this->db->table('product_check_in_lists')
+            ->join('check_in_lists', 'check_in_lists.id', '=', 'product_check_in_lists.check_in_list_id')
+            ->where('product_check_in_lists.product_id', $productId)
+            ->whereNull('product_check_in_lists.deleted_at')
+            ->whereNull('check_in_lists.deleted_at')
+            ->where(function ($query) {
+                $query->whereNull('check_in_lists.expires_at')
+                    ->orWhere('check_in_lists.expires_at', '>', now());
+            })
+            ->where(function ($query) {
+                $query->whereNull('check_in_lists.activates_at')
+                    ->orWhere('check_in_lists.activates_at', '<=', now());
+            })
+            ->exists();
+    }
+
     public function getModel(): string
     {
         return Product::class;

@@ -14,6 +14,7 @@ use HiEvents\Repository\Eloquent\AccountVatSettingRepository;
 use HiEvents\Repository\Eloquent\AffiliateRepository;
 use HiEvents\Repository\Eloquent\AttendeeCheckInRepository;
 use HiEvents\Repository\Eloquent\AttendeeRepository;
+use HiEvents\Repository\Eloquent\BoxOfficeSaleRepository;
 use HiEvents\Repository\Eloquent\CapacityAssignmentRepository;
 use HiEvents\Repository\Eloquent\CheckInListRepository;
 use HiEvents\Repository\Eloquent\EmailTemplateRepository;
@@ -61,6 +62,7 @@ use HiEvents\Repository\Interfaces\AccountVatSettingRepositoryInterface;
 use HiEvents\Repository\Interfaces\AffiliateRepositoryInterface;
 use HiEvents\Repository\Interfaces\AttendeeCheckInRepositoryInterface;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
+use HiEvents\Repository\Interfaces\BoxOfficeSaleRepositoryInterface;
 use HiEvents\Repository\Interfaces\CapacityAssignmentRepositoryInterface;
 use HiEvents\Repository\Interfaces\CheckInListRepositoryInterface;
 use HiEvents\Repository\Interfaces\EmailTemplateRepositoryInterface;
@@ -153,6 +155,7 @@ class RepositoryServiceProvider extends ServiceProvider
         TicketLookupTokenRepositoryInterface::class => TicketLookupTokenRepository::class,
         AccountMessagingTierRepositoryInterface::class => AccountMessagingTierRepository::class,
         WaitlistEntryRepositoryInterface::class => WaitlistEntryRepository::class,
+        BoxOfficeSaleRepositoryInterface::class => BoxOfficeSaleRepository::class,
     ];
 
     public function register(): void

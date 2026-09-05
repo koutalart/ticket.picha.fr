@@ -89,4 +89,11 @@ interface ProductRepositoryInterface extends RepositoryInterface
     public function bulkUpdateProductsAndCategories(int $eventId, array $productUpdates, array $categoryUpdates): void;
 
     public function hasAssociatedOrders(int $productId): bool;
+
+    /**
+     * D11 (PICHA_BOX_OFFICE_DECISIONS_REQUIRED.md): whether the product is
+     * attached to at least one check-in list that is currently active
+     * (not expired, already activated).
+     */
+    public function hasActiveCheckInList(int $productId): bool;
 }

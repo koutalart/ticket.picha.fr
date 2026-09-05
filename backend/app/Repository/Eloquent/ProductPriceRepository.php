@@ -11,6 +11,14 @@ use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
  */
 class ProductPriceRepository extends BaseRepository implements ProductPriceRepositoryInterface
 {
+    public function lockForUpdateById(int $id): ?ProductPriceDomainObject
+    {
+        $model = $this->model->where('id', $id)->lockForUpdate()->first();
+        $this->resetModel();
+
+        return $this->handleSingleResult($model);
+    }
+
     protected function getModel(): string
     {
         return ProductPrice::class;
