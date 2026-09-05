@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Application\Handlers\BoxOffice;
 
+use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
 use HiEvents\DomainObjects\Generated\BoxOfficeSaleDomainObjectAbstract;
+use HiEvents\DomainObjects\Status\BoxOfficeSaleStatus;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
@@ -69,9 +71,17 @@ class CreateBoxOfficeSaleHandler
                     BoxOfficeSaleDomainObjectAbstract::PAYMENT_METHOD => $dto->payment_method->name,
                     BoxOfficeSaleDomainObjectAbstract::AMOUNT => $dto->amount,
                     BoxOfficeSaleDomainObjectAbstract::AMOUNT_COLLECTED => $dto->amount_collected,
-                    BoxOfficeSaleDomainObjectAbstract::STATUS => 'PENDING',
+                    BoxOfficeSaleDomainObjectAbstract::STATUS => BoxOfficeSaleStatus::PENDING->name,
                 ]);
-            } catch (QueryException) {
+            } catch (QueryException $exception) {
+                // 23505 = unique_violation (Postgres). Anything else (a
+                // dropped connection, a NOT NULL violation from a caller
+                // bug, ...) is a real error and must not be swallowed as
+                // if it were an idempotency race.
+                if ($exception->getCode() !== '23505') {
+                    throw $exception;
+                }
+
                 if ($existing = $this->findCompletedSale($dto->idempotency_key)) {
                     return $existing;
                 }
@@ -111,7 +121,7 @@ class CreateBoxOfficeSaleHandler
             $this->boxOfficeSaleRepository->updateFromArray($sale->getId(), [
                 BoxOfficeSaleDomainObjectAbstract::ORDER_ID => $order->getId(),
                 BoxOfficeSaleDomainObjectAbstract::ATTENDEE_ID => $attendee->getId(),
-                BoxOfficeSaleDomainObjectAbstract::STATUS => 'COMPLETED',
+                BoxOfficeSaleDomainObjectAbstract::STATUS => BoxOfficeSaleStatus::COMPLETED->name,
             ]);
 
             return new BoxOfficeSaleResultDTO($sale->getId(), $attendee, $order);
@@ -124,7 +134,7 @@ class CreateBoxOfficeSaleHandler
             BoxOfficeSaleDomainObjectAbstract::IDEMPOTENCY_KEY => $idempotencyKey,
         ]);
 
-        if ($sale === null || $sale->getAttendeeId() === null || $sale->getOrderId() === null) {
+        if ($sale === null || $sale->getStatus() !== BoxOfficeSaleStatus::COMPLETED->name) {
             return null;
         }
 
@@ -143,6 +153,17 @@ class CreateBoxOfficeSaleHandler
         if ($serverPrice === null || number_format($serverPrice, 2, '.', '') !== number_format($dto->amount, 2, '.', '')) {
             throw new BoxOfficePriceMismatchException(
                 __('The amount does not match the current price of this ticket.')
+            );
+        }
+
+        // D21 (PICHA_BOX_OFFICE_DECISIONS_REQUIRED.md): FREE only reflects a
+        // product whose price is already 0 — it is not a mechanism to
+        // comp a normally-paid ticket. The equality check above already
+        // guarantees amount === serverPrice; this only needs to reject
+        // FREE + a non-zero price.
+        if ($dto->payment_method === BoxOfficePaymentMethod::FREE && number_format($serverPrice, 2, '.', '') !== '0.00') {
+            throw new BoxOfficePriceMismatchException(
+                __('FREE can only be used for a product whose price is 0 — inviting a normally-paid ticket is not supported.')
             );
         }
     }

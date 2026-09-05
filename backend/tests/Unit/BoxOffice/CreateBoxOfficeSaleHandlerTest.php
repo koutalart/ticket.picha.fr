@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\BoxOffice;
 
 use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
+use HiEvents\DomainObjects\Status\BoxOfficeSaleStatus;
 use HiEvents\DomainObjects\Status\OrderPaymentStatus;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\ProductNotScannableException;
@@ -230,7 +231,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
 
         $sale = DB::table('box_office_sales')->where('id', $result->saleId)->first();
         self::assertNotNull($sale);
-        self::assertSame('COMPLETED', $sale->status);
+        self::assertSame(BoxOfficeSaleStatus::COMPLETED->name, $sale->status);
         self::assertSame($result->order->getId(), $sale->order_id);
         self::assertSame($result->attendee->getId(), $sale->attendee_id);
     }
@@ -320,9 +321,83 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
 
         self::assertSame(
             0,
-            DB::table('box_office_sales')->where('status', 'COMPLETED')->count(),
+            DB::table('box_office_sales')->where('status', BoxOfficeSaleStatus::COMPLETED->name)->count(),
             'AC-26: no COMPLETED box_office_sales row must survive a partial failure',
         );
         self::assertSame(0, ProductPrice::find($productPrice->id)->quantity_sold);
+    }
+
+    /** D21 — FREE only reflects a product whose price is already 0 */
+    public function test_free_payment_method_rejected_when_server_price_is_not_zero(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $this->expectException(BoxOfficePriceMismatchException::class);
+
+        try {
+            $handler->handle($this->makeDto(
+                eventId: $event->id,
+                agentUserId: $user->id,
+                productId: $product->id,
+                productPriceId: $productPrice->id,
+                amount: 25.00, // matches the real (non-zero) price
+                amountCollected: 0.00,
+                paymentMethod: BoxOfficePaymentMethod::FREE,
+            ));
+        } finally {
+            self::assertSame(0, DB::table('box_office_sales')->where('product_price_id', $productPrice->id)->count());
+        }
+    }
+
+    /**
+     * A QueryException that is NOT a unique_violation (e.g. a genuine bug —
+     * a NOT NULL violation from bad caller data) must propagate as-is, not
+     * be misread as an idempotency-key race.
+     */
+    public function test_non_unique_violation_query_exception_is_not_swallowed(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        // agent_user_id is NOT NULL — an id that doesn't exist violates the
+        // foreign key (23503), a different SQLSTATE than unique_violation
+        // (23505), and must not be caught as an idempotency conflict.
+        $bogusAgentId = 999999999;
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $this->expectException(\Illuminate\Database\QueryException::class);
+
+        try {
+            $handler->handle($this->makeDto(
+                eventId: $event->id,
+                agentUserId: $bogusAgentId,
+                productId: $product->id,
+                productPriceId: $productPrice->id,
+                amount: 25.00,
+                amountCollected: 25.00,
+            ));
+        } finally {
+            self::assertSame(0, DB::table('box_office_sales')->where('product_price_id', $productPrice->id)->count());
+        }
+    }
+
+    /**
+     * box_office_sales.order_id must be unique (nullable — multiple PENDING
+     * rows may still be order_id = null): a completed sale never shares its
+     * order with another sale.
+     */
+    public function test_box_office_sales_order_id_has_unique_index(): void
+    {
+        $indexes = DB::select("SELECT indexdef FROM pg_indexes WHERE tablename = 'box_office_sales'");
+
+        $hasUniqueOrderIdIndex = collect($indexes)->contains(
+            fn($index) => str_contains($index->indexdef, 'UNIQUE') && str_contains($index->indexdef, 'order_id')
+        );
+
+        self::assertTrue($hasUniqueOrderIdIndex, 'box_office_sales.order_id must have a unique index');
     }
 }

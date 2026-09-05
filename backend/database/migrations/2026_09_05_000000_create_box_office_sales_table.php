@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->foreignId('agent_user_id')->constrained('users');
             $table->foreignId('product_id')->nullable()->constrained();
             $table->foreignId('product_price_id')->nullable()->constrained();
-            $table->foreignId('order_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('order_id')->nullable()->unique()->constrained()->nullOnDelete();
             $table->foreignId('attendee_id')->nullable()->constrained()->nullOnDelete();
             $table->string('payment_method')->nullable();
             $table->decimal('amount', 14, 2)->nullable();

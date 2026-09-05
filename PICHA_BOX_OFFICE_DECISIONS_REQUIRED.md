@@ -252,6 +252,27 @@ Les sections détaillées ci-dessous restent la référence pour le raisonnement
 
 ---
 
+## D21 — Invitation (billet offert) sur un produit normalement payant — TRANCHÉE (2026-09-05)
+
+**Contexte :** `CreateBoxOfficeSaleHandler` valide `AC-2` par égalité stricte serveur (`amount ===
+product_prices.price`). `payment_method = FREE` (D3) permet de tracer qu'un billet a été remis sans
+encaissement — mais ne dispense **pas** de cette égalité : un agent ne peut pas choisir `FREE` pour
+vendre à 0 € un billet dont `product_prices.price` est, par exemple, 25,00 €.
+
+**Décidé par Jo :** `FREE` n'est accepté que si le prix serveur du palier est **déjà** 0,00 €
+(produit gratuit). Offrir un billet normalement payant (invitation VIP, presse, staff comp) est
+**hors périmètre du slice 1** — aucun mécanisme de dérogation de prix n'est introduit ici.
+
+**Conséquence technique :** `CreateBoxOfficeSaleHandler::validatePrice()` rejette
+(`BoxOfficePriceMismatchException`) toute combinaison `payment_method = FREE` avec un prix serveur
+non nul, au même titre qu'un écart de prix classique — pas de branche de code séparée.
+
+**Reporté en backlog** (post-slice 1, si le besoin terrain se confirme) : un mécanisme explicite
+d'invitation/comp sur produit payant, avec sa propre autorisation et sa propre traçabilité
+(distincte de `payment_method`), à spécifier séparément.
+
+---
+
 ## D20 — Stratégie de baseline Git
 
 Voir D1. Sous-décisions :
