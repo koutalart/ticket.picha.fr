@@ -19,7 +19,7 @@ Légende impact : **[Baseline]** conditionne la création de branche · **[Code]
 | D11 | **B** — **bloquer** la vente d'un produit non rattaché à une check-in list active. |
 | D13 / D14 | **A** — `ORGANIZER` pour vendre **et** réimprimer ; réimpression tracée dans `print_jobs`. |
 | D18 | **A** — réutiliser la maquette `attendee-ticket-pdf.blade.php`. |
-| D19 | **Ouverte** — poste agent = **[macOS / Windows — à préciser]**, connexion ZD621 = **[USB / réseau — à préciser]**. Slice 1 : PDF + dialogue navigateur, abstraction `TicketRenderer` (aucun ZPL). |
+| D19 | **Tranchée (2026-09-05)** — poste agent = **macOS** pour le développement et le pilote initial (architecture cible compatible Windows ensuite) ; liaison ZD621 = **réseau (IP)** en mode principal, **USB en fallback/secours**. Slice 1 inchangé : PDF + dialogue navigateur, abstraction `TicketRenderer` (aucun ZPL). |
 | S4 | **Retenu** — index unique `attendees.public_id` **inclus dans les migrations du slice 1**. |
 | S9 | **Clos** — licence commerciale Hi.Events détenue par PICHA. |
 | **Tolérance de prix** | **STRICTE** — le prix est celui du palier (`product_prices.price`), **aucun écart accepté** (AC-2 = égalité stricte, pas d'intervalle). |
@@ -238,19 +238,17 @@ Les sections détaillées ci-dessous restent la référence pour le raisonnement
 
 ---
 
-## D19 — Matériel et connectivité Zebra ZD621
+## D19 — Matériel et connectivité Zebra ZD621 — TRANCHÉE (2026-09-05)
 
-**DÉCISION REQUISE — aucune option techniquement tranchée.** Éléments à décider avec PICHA :
+**Décidé par Jo :**
 
-| Sous-décision | Options | Conséquence technique |
+| Sous-décision | Décision | Conséquence technique |
 |---|---|---|
-| Support | étiquette adhésive 4×6" / billet carton / bracelet | dimensions de la maquette (D18), marge, DPI |
-| Résolution | ZD621 = 203 ou 300 dpi | taille min. du module QR (≥ 10 mil recommandé) pour scan fiable |
-| Langage | ZPL (natif Zebra) / rendu image (PNG) / PDF via pilote | ZPL = rendu net, code à générer ; PDF = simple mais dépend du pilote OS |
-| Connexion | USB au poste agent / Ethernet (IP) / Bluetooth | USB = impression via dialogue navigateur/OS ; IP = le backend peut POSTer du ZPL directement à l'imprimante |
-| Déclenchement | dialogue d'impression navigateur / service d'impression local / envoi backend→imprimante | détermine s'il faut un agent d'impression local |
+| Poste agent | **macOS** pour le développement et le pilote initial. **Architecture cible compatible Windows** ensuite (à ne pas fermer par des choix macOS-spécifiques). | Le chemin slice 1 (navigateur + `window.print()`) est déjà cross-OS — aucun impact. Pour le futur agent d'impression local (si Bluetooth/USB direct est un jour nécessaire), éviter les API strictement macOS (ex. bindings natifs) ; privilégier Node/Python/Go portables. |
+| Connexion ZD621 | **Réseau (IP)** en mode principal, **USB en fallback/secours**. | Confirme la voie « le backend peut POSTer du ZPL directement à l'imprimante » (port raw 9100 typique Zebra) comme cible pour le futur driver ZPL de `TicketRenderer` — pas de dépendance à un pilote d'impression OS côté poste agent en fonctionnement normal. L'USB reste le repli si le réseau imprimante tombe (pas de code spécifique au slice 1, prévoir au minimum que le dialogue navigateur reste disponible en secours). |
+| Support, résolution, langage, déclenchement | **Non tranchés dans cet échange** — restent ouverts pour le driver ZPL (hors slice 1). | Sans impact sur le slice 1 (PDF + dialogue navigateur, pas de ZPL). |
 
-**Recommandation de méthode** : pour le **premier slice**, viser le chemin le plus simple à tester — **PDF via `AttendeeTicketPdfService` + dialogue d'impression navigateur** (D10 de la mission), et **ne pas** coder de pilote ZPL tant que D19 n'est pas figée. Prévoir l'abstraction `TicketRenderer` (PDF | ZPL) pour n'avoir qu'un driver à ajouter ensuite.
+**Conséquence sur le slice 1 : aucune.** Le slice 1 reste PDF via `AttendeeTicketPdfService` + dialogue d'impression navigateur, sans pilote ZPL — cette décision ne fait que fixer la direction du futur driver réseau de `TicketRenderer`, à construire après le slice 1.
 
 ---
 
@@ -290,5 +288,5 @@ Voir D1. Sous-décisions :
 | D16 | Rapport de fin de service (agrégat SQL) | Code |
 | D17 | Online-only, réessai sûr grâce à l'idempotence | Code |
 | D18 | Réutiliser la maquette PDF Somaroho | Code |
-| D19 | **DÉCISION MATÉRIELLE OUVERTE** — MVP via PDF + dialogue navigateur, abstraction `TicketRenderer` | PICHA |
+| D19 | **Tranchée** — poste agent macOS (cible Windows ensuite), ZD621 en réseau (USB en fallback). MVP slice 1 inchangé : PDF + dialogue navigateur, abstraction `TicketRenderer` | Baseline |
 | D20 | Tag + `.gitignore` + sortir les dumps + trancher AGPL | Baseline/Juridique |

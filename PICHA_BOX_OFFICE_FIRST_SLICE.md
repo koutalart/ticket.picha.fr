@@ -7,7 +7,7 @@ Conditionné à : baseline figée (D1) + validation métier de D2, D3, D6, D9, D
 > D2=A · D3=A (`box_office_sales.payment_method` ∈ {CASH,CARD,FREE}, `amount_collected` séparé) · D6=B (email obligatoire, pas de fictif) · D9=A (`idempotency_key` UNIQUE, insérée 1re) · D11=B (bloquer si produit non scannable) · D13/D14=A (ORGANIZER vend+réimprime, `print_jobs`) · D18=A (maquette existante) · S4 inclus dans les migrations du slice 1 · S9 clos.
 > **Tolérance de prix = STRICTE** : `amount` serveur = `product_prices.price`, aucun écart. AC-2 devient une **égalité stricte**.
 > **Impression** : PDF + `window.print()`, abstraction `TicketRenderer` (PDF | ZPL), **aucun ZPL** au slice 1.
-> **D19 ouverte** : poste agent = [macOS/Windows], liaison ZD621 = [USB/réseau] — à préciser, sans impact sur le code du slice 1.
+> **D19 tranchée (5 sept. 2026)** : poste agent = macOS (dev + pilote, cible Windows ensuite), liaison ZD621 = réseau/IP en principal (USB en fallback) — sans impact sur le code du slice 1 (fixe la direction du futur driver ZPL réseau, hors slice 1).
 
 ---
 
@@ -215,9 +215,9 @@ Toutes les cases doivent être cochées :
 - [x] Tolérance de prix : **STRICTE** (AC-2 = égalité).
 - [x] Impression slice 1 : **PDF + `window.print()`**, abstraction `TicketRenderer`, pas de ZPL.
 - [x] S4 : index unique `attendees.public_id` inclus dans les migrations du slice 1.
-- [ ] D1 exécutée : tag `digit-staging-somaroho-2026` (après stabilisation baseline + tests sur le poste de Jo), branche `feat/picha-kiosk` créée depuis ce tag. *(Le tag n'est PAS créé dans la session de stabilisation.)*
-- [ ] Conteneur `docker/development` opérationnel avec base de test isolée **confirmée** (données fictives).
-- [ ] Tests 1–14 (caractérisation) écrits et exécutés : ils documentent l'état actuel (certains rouges = bugs connus S1/S2/S5).
-- [ ] D19 : poste agent (macOS/Windows) + liaison ZD621 (USB/réseau) précisés — sans impact sur le code du slice 1, mais nécessaires pour le test d'impression réel.
+- [x] D1 exécutée : tag `digit-staging-somaroho-2026` créé par Jo le 2026-09-04 sur le commit `2809a04b`, branche `feat/picha-kiosk` créée depuis ce tag (vérifié : `git log digit-staging-somaroho-2026..HEAD` ne montre que les commits post-baseline de cette session).
+- [x] Conteneur `docker/development` opérationnel avec base de test isolée **confirmée** (données fictives) — démarré et vérifié le 2026-09-04 (Postgres/Redis/Mailpit isolés de la stack staging qui tournait par ailleurs sous les mêmes noms `digit-ticket-*` ; voir `PICHA_BASELINE_TODO.md`).
+- [x] Tests 1–14 (caractérisation) écrits et exécutés le 2026-09-04 : 11 verts / 3 rouges (S1, S2, S5) — voir le tableau dans la session ou rejouer `docker compose -f docker/development/docker-compose.dev.yml exec backend php artisan test --filter=BoxOffice`.
+- [x] D19 tranchée par Jo le 2026-09-05 : poste agent **macOS** (dev + pilote, cible Windows ensuite), liaison ZD621 **réseau/IP en principal, USB en fallback**. Sans impact sur le code du slice 1 (voir `PICHA_BOX_OFFICE_DECISIONS_REQUIRED.md` §D19) — fixe la direction du futur driver ZPL réseau, hors slice 1.
 
-Tant que ces cases ne sont pas cochées : **pas de code applicatif Kiosk.**
+Toutes les cases sont cochées : **le code applicatif Kiosk (slice 1, Option A) peut démarrer.**
