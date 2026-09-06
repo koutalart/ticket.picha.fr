@@ -111,6 +111,21 @@ const BoxOffice = () => {
         (price) => price.id === selectedProductPriceId
     ) ?? null;
 
+    // GET /events/{id}/products does not expose quantity_remaining, only
+    // initial_quantity_available and quantity_sold. Derive the remaining stock
+    // when a limit is set; a null limit means unlimited.
+    const remainingStock = (price: ProductPrice): number | null => {
+        if (price.quantity_remaining !== undefined) {
+            return price.quantity_remaining;
+        }
+        if (price.initial_quantity_available === undefined || price.initial_quantity_available === null) {
+            return null;
+        }
+        return Math.max(0, price.initial_quantity_available - (price.quantity_sold ?? 0));
+    };
+
+    const selectedPriceRemaining = selectedPrice ? remainingStock(selectedPrice) : null;
+
     const selectProduct = (product: Product) => {
         setSelectedProductId(product.id ?? null);
         const prices = product.prices ?? [];
@@ -269,8 +284,8 @@ const BoxOffice = () => {
                                     {formatCurrency(selectedPrice.price, event?.currency)}
                                 </span>
                                 <span className={classes.priceSummaryStock}>
-                                    {selectedPrice.quantity_remaining !== undefined
-                                        ? t`${selectedPrice.quantity_remaining} remaining`
+                                    {selectedPriceRemaining !== null
+                                        ? t`${selectedPriceRemaining} remaining`
                                         : t`Unlimited`}
                                 </span>
                             </div>

@@ -689,6 +689,23 @@ frontend `initial_quantity_available - quantity_sold` quand `initial_quantity_av
 
 **Effort :** ~15 min + test manuel bout en bout au guichet.
 
+**Suivi 2026-09-06 — CORRIGÉ (frontend seul).** `BoxOffice/index.tsx` : helper `remainingStock(price)`
+qui renvoie `price.quantity_remaining` si présent (contrat préservé si la resource l'expose un jour),
+sinon `max(0, initial_quantity_available - quantity_sold)` quand `initial_quantity_available` est non
+nul, sinon `null` → « Illimité » (comportement inchangé pour les billets sans limite). Aucun fichier
+backend touché. Vérifié bout en bout sur l'événement 2 : « Pass 1 jour » 100 − 1 vendu → « 99 »,
+« Pass 2 jours » 50 → « 50 », « Pass VIP » 20 → « 20 » (au lieu de « Illimité » pour les trois).
+Pas de test auto ajouté : le frontend n'a pas d'outillage de test (ni Vitest ni Jest). Suite Unit
+backend relancée pour non-régression (5 échecs préexistants sans rapport : `PdfParser` absent ×3,
+2 tests de caractérisation de concurrence).
+
+Reste à voir (distinct de T19) : le libellé s'affiche « 99 remaining » et non « 99 restant(s) »
+dans le conteneur de dev — la traduction existe pourtant dans `fr.po` (`{0} restant(s)`, clé
+`2wRqU4`). Cause : l'i18n **client** tourne en anglais alors que le SSR rend en français
+(mismatch `navigator.language` / cookie `locale` non honoré au montage client) — pré-existant, visible
+sur tout texte rendu côté client uniquement (ex. le toast « Ticket created » lors du test T17).
+Candidat T20.
+
 ---
 
 ## Note — `CreateAttendeeHandler` : résolution du générateur par service locator
