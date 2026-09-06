@@ -137,6 +137,10 @@ class BoxOfficeOperatorLifecycleTest extends TestCase
             ['status' => 'REVOKED'],
             ['Authorization' => 'Bearer ' . $adminToken])->assertStatus(200);
 
+        // Re-auth as the operator: the JWT guard caches the last resolved user
+        // within a test, and the admin PATCH above left it as the admin.
+        \Illuminate\Support\Facades\Auth::logout();
+
         // Operator: 403 on A, still 201 on B.
         $this->postJson("/events/{$eventA->id}/box-office-sales",
             $this->salePayload($productA->id, $priceA->id),

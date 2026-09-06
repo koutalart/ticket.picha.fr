@@ -9,6 +9,4 @@ use HiEvents\DomainObjects\EventBoxOfficeOperatorDomainObject;
 /**
  * @extends RepositoryInterface<EventBoxOfficeOperatorDomainObject>
  */
-interface EventBoxOfficeOperatorRepositoryInterface extends RepositoryInterface
-{
-}
+interface EventBoxOfficeOperatorRepositoryInterface extends RepositoryInterface {}
