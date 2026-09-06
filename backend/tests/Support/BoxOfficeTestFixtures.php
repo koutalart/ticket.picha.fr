@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Tests\Support;
 
 use HiEvents\DomainObjects\Enums\ProductType;
+use HiEvents\DomainObjects\Enums\Role;
+use HiEvents\DomainObjects\Status\UserStatus;
+use HiEvents\DomainObjects\UserDomainObject;
 use HiEvents\Helper\IdHelper;
 use HiEvents\Models\Account;
 use HiEvents\Models\AccountConfiguration;
@@ -15,7 +18,9 @@ use HiEvents\Models\Organizer;
 use HiEvents\Models\Product;
 use HiEvents\Models\ProductPrice;
 use HiEvents\Models\User;
+use HiEvents\Repository\Interfaces\AccountUserRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Shared fixture builder for characterization tests that need a real
@@ -167,5 +172,87 @@ trait BoxOfficeTestFixtures
     private function createUnrelatedOrganizerUser(string $password): User
     {
         return $this->createUserWithAccount($password);
+    }
+
+    // ---------------------------------------------------------------------
+    // Kiosk v2 — operator account fixtures (D23 Option 1).
+    // event_box_office_operators and the Role::BOX_OFFICE_OPERATOR enum case
+    // do not exist yet — helpers that touch them will error until the
+    // slice v2.1 migration/enum land. This is the intended TDD-red state.
+    // ---------------------------------------------------------------------
+
+    /**
+     * Attach a brand-new user to the EVENT's owning account with the given
+     * role string (varchar column, so an as-yet-unknown enum value is fine).
+     */
+    private function attachUserToEventAccount(Event $event, string $role, string $password): User
+    {
+        $user = User::factory()->password($password)->create();
+
+        $user->accounts()->attach($event->account_id, [
+            'role' => $role,
+            'status' => UserStatus::ACTIVE->name,
+            'is_account_owner' => false,
+        ]);
+
+        return $user;
+    }
+
+    /**
+     * A real ORGANIZER on the event's account (distinct from the ADMIN
+     * account owner created by createEventWithProduct()).
+     */
+    private function makeOrganizerOnEvent(Event $event, string $password): User
+    {
+        return $this->attachUserToEventAccount($event, Role::ORGANIZER->name, $password);
+    }
+
+    /**
+     * A BOX_OFFICE_OPERATOR: account_users row (role BOX_OFFICE_OPERATOR,
+     * ACTIVE) + one event_box_office_operators row for $event.
+     */
+    private function makeBoxOfficeOperator(Event $event, string $password, string $status = 'ACTIVE'): User
+    {
+        $operator = $this->attachUserToEventAccount($event, 'BOX_OFFICE_OPERATOR', $password);
+        $this->assignOperatorToEvent($operator, $event, $status);
+
+        return $operator;
+    }
+
+    /**
+     * Add a single event_box_office_operators row (used for multi-event
+     * assignment and revocation scenarios).
+     */
+    private function assignOperatorToEvent(User $operator, Event $event, string $status = 'ACTIVE', ?int $createdByUserId = null): void
+    {
+        DB::table('event_box_office_operators')->insert([
+            'event_id' => $event->id,
+            'user_id' => $operator->id,
+            'created_by_user_id' => $createdByUserId ?? $operator->id,
+            'status' => $status,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    /**
+     * Hydrate a UserDomainObject with its current-account AccountUser set,
+     * exactly as AuthUserService::getUser() does — so IsAuthorizedService
+     * can be exercised directly without going through the login flow (which
+     * would blow up on Role::from('BOX_OFFICE_OPERATOR') until the enum case
+     * exists).
+     */
+    private function hydrateUserForAccount(User $user, int $accountId): UserDomainObject
+    {
+        $domainUser = UserDomainObject::hydrateFromModel($user);
+
+        $domainUser->setCurrentAccountUser(
+            app(AccountUserRepositoryInterface::class)->findFirstWhere([
+                'user_id' => $user->id,
+                'account_id' => $accountId,
+            ])
+        );
+
+        return $domainUser;
     }
 }
