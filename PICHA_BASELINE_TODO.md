@@ -602,6 +602,59 @@ ciblé pourrait casser l'autre appelant.
 **Effort :** ~30 min de correctif une fois l'usage attendu confirmé, + tests de non-régression sur
 les deux appelants de `ProductFilterService::filter()`.
 
+**Suivi 2026-09-06 — CORRIGÉ et mergé.** Branche `fix/products-list-500` (depuis `staging`),
+commit `a942b1a3` : `ProductFilterService::filterProductList()` (contrepartie liste plate de
+`filter()`, extraction commune dans `applyProductFilters()`), `GetProductsHandler` bascule dessus.
+Deux appelants par catégorie (`GetPublicEventHandler`, `GetProductCategoriesHandler`) inchangés.
+Tests : caractérisation HTTP 500→200 + unitaires `ProductFilterService`. Mergé dans `staging`
+(PR #11, `d8f76be2`) puis `feat/picha-kiosk` (`f8753f8d`). Vérifié : `GET /events/{id}/products`
+→ 200. **Mais la page Box Office reste vide** à cause d'un 2ᵉ bug frontend indépendant : voir T17.
+
+---
+
+## T17 — Page Box Office : filtre `product.status === ProductStatus.Active` toujours faux → grille vide
+
+**Découvert le 2026-09-06 en vérifiant la page Box Office après correction de T16.**
+`frontend/src/components/routes/event/BoxOffice/index.tsx:102` filtre les billets vendables sur
+`product.status === ProductStatus.Active`. Or l'API `GET /events/{id}/products` **ne renvoie jamais
+de champ `status`** (`ProductResource` ne l'émet pas, `ProductDomainObject`/son abstract n'ont pas
+cette propriété, pas de colonne `status` sur `products`). `ProductStatus` n'est utilisé nulle part
+ailleurs dans le frontend. Donc `undefined === 'ACTIVE'` → `false` pour tout produit →
+`eligibleProducts` toujours `[]` → la grille affiche en permanence l'état vide
+« No ticket is both active and attached to an active check-in list… », même pour un événement
+correctement configuré.
+
+**Vérifié empiriquement** contre `feat/picha-kiosk` mergé : `GET /events/17/products` → 2 billets
+TICKET non cachés, `GET /events/17/check-in-lists` → liste active avec les 2 produits ;
+`eligibleProducts` calculé = `[]` avec la condition `status`, `['Pass 1 jour','Pass VIP']` sans elle.
+
+**Correctif proposé :** retirer la condition `product.status === ProductStatus.Active` (le
+`ProductResource` expose déjà `is_hidden` et `is_available` — utiliser `!p.is_hidden` seul, ou
+`p.is_available`, selon l'intention), ou ajouter un vrai champ `status` au `ProductResource` si le
+backend doit en exposer un. Introduit par le commit frontend Kiosk `c84374d5`.
+
+**Effort :** ~15 min (frontend uniquement) + capture d'écran + test manuel bout en bout.
+
+---
+
+## T18 — Suite Feature locale destructrice : `migrate:fresh` via des tests hérités de l'amont
+
+La suite Feature locale utilise `migrate:fresh` via des tests hérités de l'amont
+(`tests/Feature/Auth/{Login,Register,ResetPassword}Test`, qui appliquent `RefreshDatabase`) —
+destructeur pour toute base de dev partagée — à isoler dans une base dédiée avant réutilisation.
+
+**Détail :** `backend/phpunit.xml` a `DB_DATABASE` commenté → les tests tournent sur la base
+`backend` de l'app de dev. `RefreshDatabase` = drop de toutes les tables au début du run.
+Constaté le 2026-09-06 : lancer `--testsuite=Feature` (ou `artisan test` complet) a effacé un jeu
+de démo « Ben Attoumani / Mayotte » préexistant. Contraire à `CLAUDE.md` (« DON'T use
+RefreshDatabase - use DatabaseTransactions instead »). `--testsuite=Unit` reste non destructif
+(les tests Unit utilisent `DatabaseTransactions`).
+
+**Correctif proposé :** `.env.testing` avec une base Postgres dédiée, ou décommenter
+`DB_DATABASE` dans `phpunit.xml`, ou convertir les 3 tests Auth en `DatabaseTransactions`.
+
+**Effort :** ~15 min.
+
 ---
 
 ## Note — `CreateAttendeeHandler` : résolution du générateur par service locator
