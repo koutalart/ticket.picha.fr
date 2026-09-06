@@ -20,6 +20,19 @@ class ProductDomainObject extends Generated\ProductDomainObjectAbstract implemen
 
     private ?int $quantityAvailable = null;
 
+    private ?bool $isScannable = null;
+
+    public function isScannable(): ?bool
+    {
+        return $this->isScannable;
+    }
+
+    public function setIsScannable(?bool $isScannable): self
+    {
+        $this->isScannable = $isScannable;
+        return $this;
+    }
+
     public static function getDefaultSort(): string
     {
         return self::ORDER;
