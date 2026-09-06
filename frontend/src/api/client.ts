@@ -6,6 +6,7 @@ const BASE_URL = isSsr()
     ? getConfig('VITE_API_URL_SERVER')
     : getConfig('VITE_API_URL_CLIENT');
 const LOGIN_PATH = "/auth/login";
+const KIOSK_LOGIN_PATH = "/kiosk/login";
 const PREVIOUS_URL_KEY = 'previous_url';
 
 // todo - This isn't scalable, we need to better way to manage this
@@ -26,6 +27,7 @@ const ALLOWED_UNAUTHENTICATED_PATHS = [
     'digit/scan',
     '/events/',
     'my-tickets',
+    'kiosk/login',
 ];
 
 export const api = axios.create({
@@ -43,7 +45,15 @@ api.interceptors.response.use(
         const currentPath = window?.location.pathname;
         const isAllowedUnauthenticatedPath = ALLOWED_UNAUTHENTICATED_PATHS.some(path => currentPath.includes(path));
         const isManageEventPath = currentPath.startsWith('/manage/event/');
+        const isKioskPath = currentPath.startsWith('/kiosk');
         const isAuthError = status === 401 || status === 403;
+
+        if (isKioskPath) {
+            if (status === 401 && !currentPath.includes('kiosk/login')) {
+                window?.location?.replace(KIOSK_LOGIN_PATH);
+            }
+            return Promise.reject(error);
+        }
 
         if (isAuthError && (!isAllowedUnauthenticatedPath || isManageEventPath)) {
             // Store the current URL before redirecting to the login page

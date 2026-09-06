@@ -13,10 +13,13 @@ const Root = () => {
     useEffect(() => {
         if (me.isFetched) {
             const searchParams = typeof window !== 'undefined' ? window.location.search : '';
-            const basePath = me.isSuccess ? "/manage/events" : "/auth/login";
+            const isOperator = me.isSuccess && me.data?.role === 'BOX_OFFICE_OPERATOR';
+            const basePath = me.isSuccess
+                ? (isOperator ? "/kiosk" : "/manage/events")
+                : "/auth/login";
             setRedirectPath(basePath + searchParams);
         }
-    }, [me.isFetched]);
+    }, [me.isFetched, me.isSuccess, me.data?.role]);
 
     if (redirectPath) {
         return <Navigate to={redirectPath} replace={true} />;
@@ -645,6 +648,63 @@ export const router: RouteObject[] = [
             return { Component: FestivalPage.default };
         },
         errorElement: <ErrorPage />,
+    },
+    {
+        path: "/kiosk",
+        errorElement: <ErrorPage />,
+        children: [
+            {
+                index: true,
+                async lazy() {
+                    const KioskHome = await import("./components/routes/kiosk/Home");
+                    return { Component: KioskHome.default };
+                }
+            },
+            {
+                path: "login",
+                async lazy() {
+                    const KioskLogin = await import("./components/routes/kiosk/Login");
+                    return { Component: KioskLogin.default };
+                }
+            },
+            {
+                path: "select-event",
+                async lazy() {
+                    const KioskSelectEvent = await import("./components/routes/kiosk/SelectEvent");
+                    return { Component: KioskSelectEvent.default };
+                }
+            },
+            {
+                path: "no-event",
+                async lazy() {
+                    const KioskNoEvent = await import("./components/routes/kiosk/NoEvent");
+                    return { Component: KioskNoEvent.default };
+                }
+            },
+            {
+                path: "event/:eventId",
+                async lazy() {
+                    const KioskLayout = await import("./components/layouts/Kiosk");
+                    return { Component: KioskLayout.default };
+                },
+                children: [
+                    {
+                        path: "sell",
+                        async lazy() {
+                            const KioskSell = await import("./components/routes/kiosk/Sell");
+                            return { Component: KioskSell.default };
+                        }
+                    },
+                    {
+                        path: "settings",
+                        async lazy() {
+                            const KioskSettings = await import("./components/routes/kiosk/Settings");
+                            return { Component: KioskSettings.default };
+                        }
+                    }
+                ]
+            }
+        ]
     }
 ];
 

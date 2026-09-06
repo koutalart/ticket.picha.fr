@@ -123,7 +123,7 @@ const AuthLayout = () => {
     }, []);
 
     if (me.isSuccess) {
-        return <Navigate to={'/manage/events'} />
+        return <Navigate to={me.data?.role === 'BOX_OFFICE_OPERATOR' ? '/kiosk' : '/manage/events'} />
     }
 
     return (

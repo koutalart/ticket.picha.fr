@@ -33,7 +33,7 @@ import {useGetEventStats} from "../../../queries/useGetEventStats";
 import Truncate from "../../common/Truncate";
 import {BreadcrumbItem, NavItem} from "../AppLayout/types.ts";
 import AppLayout from "../AppLayout";
-import {NavLink, useLocation, useParams} from "react-router";
+import {NavLink, Navigate, useLocation, useParams} from "react-router";
 import classes from './Event.module.scss';
 import {Button} from "@mantine/core";
 import {confirmationDialog} from "../../../utilites/confirmationDialog.tsx";
@@ -49,6 +49,7 @@ import {useGetMe} from "../../../queries/useGetMe.ts";
 import {useResendEmailConfirmation} from "../../../mutations/useResendEmailConfirmation.ts";
 import {useState} from "react";
 import {eventHomepageUrl} from "../../../utilites/urlHelper.ts";
+import {isBoxOfficeOperator} from "../../../utilites/kioskAuth.ts";
 
 const EventLayout = () => {
     const location = useLocation();
@@ -62,7 +63,11 @@ const EventLayout = () => {
     const {data: event, isFetched: isEventFetched} = useGetEvent(eventId);
     const {data: eventSettings, isFetched: isEventSettingsFetched} = useGetEventSettings(eventId);
     const {data: eventStats} = useGetEventStats(eventId);
-    const {data: me} = useGetMe();
+    const {data: me, isSuccess: isMeSuccess} = useGetMe();
+
+    if (isMeSuccess && isBoxOfficeOperator(me)) {
+        return <Navigate to="/kiosk" replace/>;
+    }
 
     const resendEmailConfirmationMutation = useResendEmailConfirmation();
     const [emailConfirmationResent, setEmailConfirmationResent] = useState(false);

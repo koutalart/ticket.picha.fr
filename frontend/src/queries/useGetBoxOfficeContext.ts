@@ -4,9 +4,10 @@ import {GenericDataResponse} from "../types.ts";
 
 export const GET_BOX_OFFICE_CONTEXT_QUERY_KEY = 'getBoxOfficeContext';
 
-export const useGetBoxOfficeContext = () => {
+export const useGetBoxOfficeContext = (enabled = true) => {
     return useQuery<GenericDataResponse<BoxOfficeContextEvent[]>>({
         queryKey: [GET_BOX_OFFICE_CONTEXT_QUERY_KEY],
         queryFn: () => boxOfficeClient.getContext(),
+        enabled,
     });
 };
