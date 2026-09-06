@@ -408,6 +408,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "box-office",
+                async lazy() {
+                    const BoxOffice = await import("./components/routes/event/BoxOffice");
+                    return { Component: BoxOffice.default };
+                }
+            },
+            {
                 path: "check-in",
                 async lazy() {
                     const CheckIn = await import("./components/routes/event/CheckInLists");

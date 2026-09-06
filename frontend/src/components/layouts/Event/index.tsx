@@ -1,5 +1,6 @@
 import {
     IconArrowLeft,
+    IconCashRegister,
     IconChartPie,
     IconChevronRight,
     IconDashboard,
@@ -112,6 +113,7 @@ const EventLayout = () => {
         {link: 'orders', label: t`Orders`, icon: IconReceipt, badge: eventStats?.total_orders},
         {link: 'promo-codes', label: t`Promo Codes`, icon: IconDiscount2},
         {link: 'affiliates', label: t`Affiliates`, icon: IconTrendingUp},
+        {link: 'box-office', label: t`Box Office`, icon: IconCashRegister},
 
         // 4. GUESTS
         {label: t`Guest Management`},
