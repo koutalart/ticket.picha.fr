@@ -507,14 +507,15 @@ d'événement en cours de service = revenir au sélecteur, **sans** re-login.
 
 **Conséquence de D23 Option 1 (CONFIRMÉ) :** un `BOX_OFFICE_OPERATOR` **ne peut pas** appeler les
 endpoints natifs `GET /events/{id}/orders` ni `GET /events/{id}/stats` (gâtés `ORGANIZER`, fermés
-par la garde `validateUserRole`). Les onglets **Commandes** et **Statistiques** sont donc, pour
-l'opérateur, soit **masqués** (visibles seulement si un ORGANIZER/ADMIN ouvre le shell), soit
-alimentés par de **nouveaux endpoints box-office-scoped** (cf. D27-B / D28-B, qui deviennent
-**obligatoires pour l'opérateur**, pas optionnels). Pour un ORGANIZER connecté au shell, les 4
-onglets fonctionnent avec les endpoints natifs.
+par la garde `validateUserRole`). Les onglets **Commandes** et **Statistiques** exigent, pour
+l'opérateur, de **nouveaux endpoints box-office-scoped** (D27-B / D28-B).
 
-**Catégorie : DÉCISION REQUISE** (A / B) — **Recommandation : A**. En v2.1 l'opérateur voit
-**Vente + Réglages** ; Commandes/Stats restent réservés à un ORGANIZER connecté au shell (voir parcours).
+**Recadrage acté (session 6 sept. 2026) :** Commandes et Statistiques sont **backlog pour cette
+itération, y compris pour un ORGANIZER**. Le shell v2.1 n'a que **2 onglets : Vente + Réglages**,
+pour tout le monde. Ne pas les ajouter sans nouvelle validation explicite.
+
+**Catégorie : ✅ DÉCIDÉE** (A, puis recadrage) — v2.1 = **Vente + Réglages** pour opérateur **et**
+ORGANIZER/ADMIN. Commandes/Stats = backlog, même pour un ORGANIZER.
 
 ---
 
@@ -553,7 +554,8 @@ Le seul manque : **filtrer « commandes du guichet uniquement »**. `CreateAtten
 vaut **pour un ORGANIZER** connecté au shell. **Pour un `BOX_OFFICE_OPERATOR`**, ce endpoint renvoie
 403 → si l'opérateur doit voir les commandes, la piste **B devient obligatoire** (endpoint
 `GET /events/{id}/box-office-sales` autorisé par `validateBoxOfficeEventScope`, ne renvoyant que ses
-ventes guichet). En v2.1, l'onglet Commandes est **hors périmètre pour l'opérateur** (backlog D27-B).
+ventes guichet). En v2.1, l'onglet Commandes est **hors périmètre pour tout le monde** (backlog,
+y compris ORGANIZER — recadrage 6 sept. 2026).
 
 **Catégorie : CONFIRMÉ** (réutilisable tel quel pour un ORGANIZER) **+ DÉCISION REQUISE**
 (A : Orders natif + filtre `is_manually_created`, réservé ORGANIZER ; B : endpoint box-office-scoped,
@@ -595,8 +597,8 @@ Weezevent croise **« Ventes vs Caisse », par opérateur, par session**. Or :
 **Conséquence de D23 Option 1 :** `GET /events/{id}/stats` est gâté `ORGANIZER` → 403 pour un
 `BOX_OFFICE_OPERATOR`. L'onglet Statistiques (piste A) est donc **réservé ORGANIZER** ; pour le
 donner à l'opérateur il faut la piste **B** (`GET /events/{id}/box-office-stats` autorisé par
-`validateBoxOfficeEventScope`). En v2.1, l'onglet Statistiques est **hors périmètre pour
-l'opérateur**.
+`validateBoxOfficeEventScope`). En v2.1, l'onglet Statistiques est **hors périmètre pour tout
+le monde** (backlog, y compris ORGANIZER — recadrage 6 sept. 2026).
 
 **Catégorie : CONFIRMÉ** (synthèse événement réutilisable pour un ORGANIZER) **+ DÉCISION REQUISE**
 (B, et quand — après D15 ?). **Recommandation : A pour l'accès ORGANIZER, B/C ensuite** (après D15 —
@@ -646,7 +648,7 @@ compte, pas d'un réglage local).
 | **D15** | Session de caisse | ✅ **BACKLOG confirmé (Jo, 6 sept.)** — ne pas traiter en v2.1 | — | — |
 | **D19b** | Paiement TPE intégré (réouvert) | Garder **A** (déclaratif) pour la v2.1 ; **B** (TPE API) = chantier dédié | Code élevé (B) | Prestataire monétique / parc TPE PICHA ? |
 | **D25** | Panier multi-billets (D4 rouverte) | **B** : nouveau handler multi-items au-dessus de `CreateAttendeeHandler`, 1 clé d'idempotence, N Orders assumés | Schéma + Code | Besoin d'une **facture unique** par lot ? (→ C sinon) |
-| **D26** | Navigation par onglets | **A** : layout `Kiosk` dédié + `/kiosk/select-event` si ≥2 événements ; en v2.1 l'opérateur voit **Vente + Réglages** (Commandes/Stats = ORGANIZER ou backlog) | Code moyen | — |
+| **D26** | Navigation par onglets | **A** + recadrage 6 sept. : layout `Kiosk` dédié + `/kiosk/select-event` si ≥2 ; v2.1 = **Vente + Réglages pour tout le monde** (Commandes/Stats = backlog, y compris ORGANIZER) | Code moyen | — |
 | **D27** | Écran Commandes | **A** (Orders natif + filtre `is_manually_created`) **pour un ORGANIZER** ; **B** (`GET /events/{id}/box-office-sales` scoped) obligatoire pour donner l'écran à l'opérateur | Code faible (A) / moyen (B) | Donner l'écran Commandes à l'opérateur en v2.1 ou plus tard ? |
 | **D28** | Écran Statistiques | **A** (`GET /events/{id}/stats`) **pour un ORGANIZER** ; **B/C** (agrégat box-office scoped) pour l'opérateur, après D15 | Code faible (A) | Séquencer après D15 |
 | **D29** | Réglages par poste | **A** : `localStorage` (préférences d'affichage/impression seulement — l'événement vient de l'auth) | Code faible | — |
@@ -688,7 +690,7 @@ Sur le modèle de `PICHA_BOX_OFFICE_FIRST_SLICE.md` : **le plus petit parcours d
 la vraie séparation** — un compte opérateur réel, distinct d'ADMIN/ORGANIZER, rattaché à un ou
 plusieurs événements précis, **incapable de toucher quoi que ce soit d'autre**, vérifié au niveau
 API. Hors périmètre v2.1 : panier multi-items (D25), session de caisse (D15), TPE API (D19b),
-onglets Commandes/Stats **pour l'opérateur** (D27-B/D28-B), stats par opérateur (D28-B).
+onglets Commandes/Stats **pour tout le monde** (y compris ORGANIZER ; D27/D28), stats par opérateur (D28-B).
 
 ---
 
@@ -722,8 +724,8 @@ Contrôles négatifs (tous → 403 API) :
   toute route /manage/* côté front
 ```
 
-Un **ORGANIZER** qui ouvre `kiosk.picha.fr` voit, lui, les 4 onglets (Vente/Commandes/Stats/Réglages)
-— Commandes et Stats appellent les endpoints natifs, auxquels il a droit.
+Un **ORGANIZER** qui ouvre `kiosk.picha.fr` voit **les mêmes 2 onglets** (Vente + Réglages) — pas
+Commandes ni Statistiques en v2.1 (backlog, même s'il a le droit API sur les endpoints natifs).
 
 ---
 
@@ -761,7 +763,7 @@ Un **ORGANIZER** qui ouvre `kiosk.picha.fr` voit, lui, les 4 onglets (Vente/Comm
 | 13 | `frontend/server.js` | host `kiosk.*` : si l'URL n'est pas sous `/kiosk` → `res.redirect(302, '/kiosk')`. (≈ la logique `CUSTOM_DOMAINS` existante, sans le mapping `organizerPath`.) |
 | 14 | Infra (hors dépôt, avec Jo) | `SESSION_DOMAIN=.picha.fr` ; `CORS_ALLOWED_ORIGINS` inclut `https://kiosk.picha.fr` ; DNS + vhost `kiosk.picha.fr` → conteneur `frontend`. **Le changement de `SESSION_DOMAIN` n'invalide AUCUNE session en cours** (preuve : D22 §CORS/cookie — le domaine n'est que dans l'en-tête `Set-Cookie`, pas dans le JWT ; les cookies existants restent acceptés jusqu'à expiration `JWT_TTL`/refresh). Il suffit qu'il soit posé **avant** la 1re connexion Kiosk. |
 | 15 | Routes `router.tsx` | `/kiosk/login`, `/kiosk/select-event`, `/kiosk/event/:eventId/{sell,settings}`, `/kiosk/no-event`. Toutes hors de l'arbre `/manage`. |
-| 16 | `components/layouts/Kiosk/` + `.module.scss` | barre d'onglets fixe (Mantine `Tabs`/`SegmentedControl` + `NavLink`). Onglets **Vente + Réglages** si rôle `BOX_OFFICE_OPERATOR` ; **+ Commandes + Statistiques** si ORGANIZER/ADMIN. Bouton « Changer d'événement » si `context.length ≥ 2`. |
+| 16 | `components/layouts/Kiosk/` + `.module.scss` | barre d'onglets fixe (Mantine `Tabs`/`SegmentedControl` + `NavLink`). Onglets **Vente + Réglages uniquement**, pour tous les rôles (opérateur, ORGANIZER, ADMIN). Bouton « Changer d'événement » si `context.length ≥ 2`. |
 | 17 | `/kiosk/login` | réutilise `authClient.login` ; après succès, `GET /box-office/context` → route selon 0 / 1 / ≥2. |
 | 18 | `useGetBoxOfficeContext` (React Query) + `boxOfficeClient` étendu | nouveau. |
 | 19 | Onglet **Vente** | ré-export de `components/routes/event/BoxOffice` (slice 1), `eventId` = param de route. |
@@ -772,11 +774,12 @@ Un **ORGANIZER** qui ouvre `kiosk.picha.fr` voit, lui, les 4 onglets (Vente/Comm
 
 | Ordre | Chantier | Décision préalable |
 |---|---|---|
-| 1 | Onglet Commandes **pour l'opérateur** (`GET /events/{id}/box-office-sales` scoped) | D27-B |
-| 2 | Onglet Statistiques **pour l'opérateur** (agrégat box-office scoped) | D28-B (après D15) |
-| 3 | Panier multi-billets | D25 (D4 rouverte) |
-| 4 | Session de caisse | D15 |
-| 5 | Paiement TPE intégré via API | D19b-B (+ prestataire) |
+| 1 | Onglets Commandes et Statistiques **pour tout le monde** (ORGANIZER : endpoints natifs ; opérateur : D27-B / D28-B scoped) | recadrage 6 sept. — hors v2.1 |
+| 2 | Onglet Commandes **scoped opérateur** (`GET /events/{id}/box-office-sales`) | D27-B |
+| 3 | Onglet Statistiques **scoped opérateur** (agrégat box-office) | D28-B (après D15) |
+| 4 | Panier multi-billets | D25 (D4 rouverte) |
+| 5 | Session de caisse | D15 |
+| 6 | Paiement TPE intégré via API | D19b-B (+ prestataire) |
 
 ---
 
@@ -814,7 +817,7 @@ Un **ORGANIZER** qui ouvre `kiosk.picha.fr` voit, lui, les 4 onglets (Vente/Comm
 - [ ] **AC-v2-19** `https://kiosk.picha.fr/` → 302 vers `/kiosk` ; `https://app.picha.fr` inchangé (back-office complet).
 - [ ] **AC-v2-20** CORS : requête `withCredentials` depuis `https://kiosk.picha.fr` vers l'API → acceptée (cookie `token` envoyé et honoré) ; une origine non listée → rejetée.
 - [ ] **AC-v2-21** Onglet Réglages : préférences persistées en `localStorage`, conservées au rechargement du poste ; le rendu **SSR** ne lit jamais `localStorage` (pas d'erreur d'hydratation, `try/catch` sur tous les accès).
-- [ ] **AC-v2-22** Un ORGANIZER connecté sur `kiosk.picha.fr` voit les 4 onglets ; Commandes et Statistiques chargent via les endpoints natifs `GET /events/{id}/orders` et `/stats`.
+- [ ] **AC-v2-22** Un ORGANIZER connecté sur `kiosk.picha.fr` voit **les mêmes 2 onglets** que l'opérateur (Vente + Réglages). Commandes et Statistiques **ne sont pas** dans le shell v2.1 (backlog).
 - [ ] **AC-v2-23** `npx tsc --noEmit` ne régresse pas (référence T9 = 96 erreurs héritées).
 
 **C.5 — Tests à écrire AVANT implémentation (TDD, `DatabaseTransactions`)**
@@ -868,7 +871,7 @@ nécessaire.
 | D23 : multi-événements + sélecteur | ✅ **validée** |
 | D22 : mécanisme sous-domaine (A) | ✅ validée (recommandation). `SESSION_DOMAIN` : **impact sur sessions en cours = nul** (prouvé). Reste à obtenir les valeurs infra actuelles + poser `SESSION_DOMAIN=.picha.fr` / `CORS_ALLOWED_ORIGINS` — **non bloquant pour la branche** (le front Kiosk se développe en local sur le même domaine). |
 | D15 : session de caisse | ✅ **backlog confirmé (Jo, 6 sept.)** — ne pas traiter en v2.1 |
-| D26 : shell à onglets, opérateur = Vente + Réglages | ✅ validée |
+| D26 : shell à onglets, **Vente + Réglages pour tout le monde** (Commandes/Stats backlog y compris ORGANIZER) | ✅ validée + recadrage 6 sept. |
 | D29 : réglages `localStorage` | ✅ validée |
 | Tests de caractérisation de la garde d'autorisation écrits **avant** le code | ⬜ à faire au démarrage du slice (TDD, comme le slice 1) |
 | Conteneur `docker/development` + base de test isolée | ✅ (déjà en place depuis le slice 1) |
