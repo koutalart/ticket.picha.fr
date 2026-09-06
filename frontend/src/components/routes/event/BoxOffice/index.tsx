@@ -13,7 +13,7 @@ import {useGetEventCheckInLists} from "../../../../queries/useGetCheckInLists.ts
 import {useCreateBoxOfficeSale} from "../../../../mutations/useCreateBoxOfficeSale.ts";
 import {useReprintBoxOfficeTicket} from "../../../../mutations/useReprintBoxOfficeTicket.ts";
 import {BoxOfficePaymentMethod, boxOfficeClient, BoxOfficeSale} from "../../../../api/box-office.client.ts";
-import {Product, ProductPrice, ProductStatus, ProductType} from "../../../../types.ts";
+import {Product, ProductPrice, ProductType} from "../../../../types.ts";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx";
 import {formatCurrency} from "../../../../utilites/currency.ts";
@@ -99,7 +99,7 @@ const BoxOffice = () => {
 
         return (productsResponse?.data ?? []).filter((product: Product) =>
             product.product_type === ProductType.Ticket
-            && product.status === ProductStatus.Active
+            && product.is_available
             && !product.is_hidden
             && product.id !== undefined
             && scannableProductIds.has(product.id)
