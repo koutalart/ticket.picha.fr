@@ -562,10 +562,22 @@ imbriqués via `getProducts()`) — pas des produits à plat. Le `flatMap` inter
 **Vérifié** : reproduit avec un événement neuf, avec et sans catégorie assignée aux produits — le
 plantage est systématique, pas lié à l'absence de catégorie.
 
+**Confirmé hérité de Somaroho, pas introduit par le Kiosk (2026-09-06)** : reproduit à l'identique
+sur le tag `digit-staging-somaroho-2026`, dans un worktree Git temporaire séparé, avec sa propre
+base Postgres neuve (`baseline_check`, supprimée après coup) et ses propres dépendances composer —
+aucun commit Kiosk présent. Même compte/organisateur/événement/produit minimal créés à la main,
+même appel `GetProductsHandler::handle()` → même `TypeError` exact. Confirmé aussi par diff :
+`git diff digit-staging-somaroho-2026 feat/picha-kiosk -- <les fichiers en cause>` ne montre
+**aucune** différence sur `GetProductsHandler.php`, `ProductFilterService.php`,
+`ProductRepository::findByEventId()` ni les Domain Objects concernés — seule modification de ce
+dernier fichier : l'ajout, à la fin, de la méthode `hasActiveCheckInList()` du Kiosk (sans rapport,
+n'affecte pas `findByEventId()`). Worktree, conteneur et base de test supprimés après vérification.
+
 **Impact réel :** la page de gestion **native** « Tickets & Products » (`/manage/event/:id/products`)
-est probablement cassée pour **tout** événement sur cette branche — à vérifier en priorité, car
-c'est une page cœur de métier, sans rapport avec le Kiosk. N'a pas permis d'obtenir une capture
-d'écran de la page Box Office avec données réelles (bloqué par ce bug, pas par le code du Kiosk).
+est cassée pour **tout** événement, y compris sur la baseline Somaroho figée — à vérifier en
+priorité auprès de Jo, car c'est une page cœur de métier, sans rapport avec le Kiosk et présente
+avant le début de ce travail. N'a pas permis d'obtenir une capture d'écran de la page Box Office
+avec données réelles (bloqué par ce bug préexistant, pas par le code du Kiosk).
 
 **Correctif proposé (à valider avec Jo avant d'agir, hors périmètre de cette session)** : soit
 `GetProductsHandler` doit appeler une méthode de filtrage adaptée aux listes plates (ou sauter le
