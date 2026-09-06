@@ -20,6 +20,19 @@ class ProductPriceDomainObject extends Generated\ProductPriceDomainObjectAbstrac
 
     private ?string $offSaleReason = null;
 
+    private ?int $quantityRemaining = null;
+
+    public function getQuantityRemaining(): ?int
+    {
+        return $this->quantityRemaining;
+    }
+
+    public function setQuantityRemaining(?int $quantityRemaining): self
+    {
+        $this->quantityRemaining = $quantityRemaining;
+        return $this;
+    }
+
     public function getPriceBeforeDiscount(): ?float
     {
         return $this->priceBeforeDiscount;
