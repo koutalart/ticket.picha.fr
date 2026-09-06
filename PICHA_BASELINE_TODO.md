@@ -657,6 +657,40 @@ RefreshDatabase - use DatabaseTransactions instead »). `--testsuite=Unit` reste
 
 ---
 
+## T19 — Page Guichet : stock affiché bloqué sur « Illimité » même après une vente
+
+**Découvert le 2026-09-06 pendant le test bout en bout du Guichet (post-T17).**
+Le récap de prix de `frontend/src/components/routes/event/BoxOffice/index.tsx` affiche
+`quantity_remaining` si présent, sinon « Illimité » :
+
+```tsx
+{selectedPrice.quantity_remaining !== undefined
+    ? t`${selectedPrice.quantity_remaining} remaining`
+    : t`Unlimited`}
+```
+
+Or `GET /events/{id}/products` ne renvoie **jamais** `quantity_remaining` : `ProductPriceResource`
+(`backend/app/Resources/Product/ProductPriceResource.php`) n'émet que `quantity_sold` et
+`initial_quantity_available`, pas de champ dérivé. Résultat : la ligne de stock affiche « Illimité »
+en permanence, y compris pour un billet à quantité finie et après des ventes au guichet.
+
+**Vérifié empiriquement** : billet « Pass 1 jour » avec `initial_quantity_available = 100`, une vente
+guichet effectuée → `product_prices.quantity_sold` passe bien de 0 à 1 en base et dans le payload,
+mais l'UI reste sur « Illimité ». La donnée de vente est correcte, seul l'indicateur d'UI est mort.
+
+**Impact réel :** trompeur pour l'opérateur au guichet (aucune visibilité sur le stock restant réel),
+sans risque de survente côté serveur (l'autorité reste `ProductNotScannableException` / les contrôles
+de quantité backend). À corriger avant utilisation opérationnelle réelle du Guichet.
+
+**Correctif proposé :** soit exposer `quantity_remaining` dans `ProductPriceResource` (attention aux
+autres consommateurs de la resource — page publique de l'événement notamment), soit calculer côté
+frontend `initial_quantity_available - quantity_sold` quand `initial_quantity_available` est non nul
+(et garder « Illimité » quand il est nul). Introduit par le commit frontend Kiosk `c84374d5`.
+
+**Effort :** ~15 min + test manuel bout en bout au guichet.
+
+---
+
 ## Note — `CreateAttendeeHandler` : résolution du générateur par service locator
 
 `app/Services/Application/Handlers/Attendee/CreateAttendeeHandler.php:233` résout
