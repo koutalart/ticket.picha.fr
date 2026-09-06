@@ -536,6 +536,50 @@ et restaurer `App::setLocale('en')` dans son `tearDown()`, ou passer par `Illumi
 
 ---
 
+## T16 — `GET /events/{id}/products` casse systématiquement (500) — URGENT, sans lien avec le Kiosk
+
+**Découvert en préparant la capture d'écran de la page Box Office (2026-09-06).** L'endpoint liste
+des produits (utilisé par la page de gestion « Tickets & Products », **et** par la nouvelle page
+Box Office) renvoie une 500 sur **tout** appel, y compris avec les paramètres de pagination par
+défaut — pas un cas limite :
+
+```
+TypeError: HiEvents\Services\Domain\Product\ProductFilterService::{closure...}():
+Argument #1 ($category) must be of type HiEvents\DomainObjects\ProductCategoryDomainObject,
+HiEvents\DomainObjects\ProductDomainObject given
+```
+
+**Cause identifiée avec précision** (lecture de code, pas supposition) :
+`GetProductsHandler::handle()` (`app/Services/Application/Handlers/Product/GetProductsHandler.php:21-31`)
+appelle `ProductRepository::findByEventId()` qui renvoie une pagination de
+**`ProductDomainObject`** bruts (liste plate, `app/Repository/Eloquent/ProductRepository.php:30-53`
+— c'est correct pour ce que fait cette méthode). Il transmet ensuite directement cette collection
+à `ProductFilterService::filter()`, dont la signature et le corps (`filter():44-59`) exigent
+explicitement une `Collection<ProductCategoryDomainObject>` (des catégories contenant des produits
+imbriqués via `getProducts()`) — pas des produits à plat. Le `flatMap` interne appelle
+`$category->getProducts()` sur ce qui est en réalité déjà un `ProductDomainObject` → plantage.
+
+**Vérifié** : reproduit avec un événement neuf, avec et sans catégorie assignée aux produits — le
+plantage est systématique, pas lié à l'absence de catégorie.
+
+**Impact réel :** la page de gestion **native** « Tickets & Products » (`/manage/event/:id/products`)
+est probablement cassée pour **tout** événement sur cette branche — à vérifier en priorité, car
+c'est une page cœur de métier, sans rapport avec le Kiosk. N'a pas permis d'obtenir une capture
+d'écran de la page Box Office avec données réelles (bloqué par ce bug, pas par le code du Kiosk).
+
+**Correctif proposé (à valider avec Jo avant d'agir, hors périmètre de cette session)** : soit
+`GetProductsHandler` doit appeler une méthode de filtrage adaptée aux listes plates (ou sauter le
+filtrage catégorie), soit `findByEventId` doit être adapté pour renvoyer des catégories — à trancher
+selon l'usage réel attendu de ce endpoint (affiche-t-il les produits groupés par catégorie côté
+front, ou une liste plate ?). Ne pas corriger à l'aveugle : `ProductFilterService::filter()` est
+probablement aussi appelé correctement ailleurs (page publique de l'événement) — un correctif mal
+ciblé pourrait casser l'autre appelant.
+
+**Effort :** ~30 min de correctif une fois l'usage attendu confirmé, + tests de non-régression sur
+les deux appelants de `ProductFilterService::filter()`.
+
+---
+
 ## Note — `CreateAttendeeHandler` : résolution du générateur par service locator
 
 `app/Services/Application/Handlers/Attendee/CreateAttendeeHandler.php:233` résout
