@@ -536,7 +536,7 @@ et restaurer `App::setLocale('en')` dans son `tearDown()`, ou passer par `Illumi
 
 ---
 
-## T16 — `GET /events/{id}/products` casse systématiquement (500) — URGENT, sans lien avec le Kiosk
+## T16 — `GET /events/{id}/products` casse systématiquement (500) — BLOQUANT pour le Kiosk, hérité de Somaroho
 
 **Découvert en préparant la capture d'écran de la page Box Office (2026-09-06).** L'endpoint liste
 des produits (utilisé par la page de gestion « Tickets & Products », **et** par la nouvelle page
@@ -576,8 +576,20 @@ n'affecte pas `findByEventId()`). Worktree, conteneur et base de test supprimés
 **Impact réel :** la page de gestion **native** « Tickets & Products » (`/manage/event/:id/products`)
 est cassée pour **tout** événement, y compris sur la baseline Somaroho figée — à vérifier en
 priorité auprès de Jo, car c'est une page cœur de métier, sans rapport avec le Kiosk et présente
-avant le début de ce travail. N'a pas permis d'obtenir une capture d'écran de la page Box Office
-avec données réelles (bloqué par ce bug préexistant, pas par le code du Kiosk).
+avant le début de ce travail.
+
+**⚠️ Ce n'est PAS qu'un problème de capture d'écran de démo — le slice 1 du Kiosk est
+fonctionnellement bloqué en pratique, pas seulement indisponible pour vérification visuelle**
+(vérifié le 2026-09-06, à la demande de Jo) : la page Box Office frontend
+(`frontend/src/components/routes/event/BoxOffice/index.tsx`) liste les produits vendables via
+`useGetProducts` (`frontend/src/queries/useGetProducts.ts`) → `productClient.all()` → **le même**
+`GET /events/{id}/products` → `GetProductsAction` → `GetProductsHandler` cassé. Tant que T16 n'est
+pas corrigé, la grille de produits de la page Box Office reste indéfiniment sur son état de
+chargement (squelette) — **aucun agent ne peut sélectionner un billet à vendre, sur aucun
+événement.** Le code du slice 1 (backend endpoints, handler, page frontend) est complet et testé
+de bout en bout côté backend (tests HTTP réels), mais **inutilisable en pratique tant que T16
+n'est pas corrigé** — T16 doit être traité avant toute mise en service du Kiosk, pas seulement «
+quand on aura le temps ».
 
 **Correctif proposé (à valider avec Jo avant d'agir, hors périmètre de cette session)** : soit
 `GetProductsHandler` doit appeler une méthode de filtrage adaptée aux listes plates (ou sauter le
