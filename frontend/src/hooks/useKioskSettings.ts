@@ -4,16 +4,22 @@ import {SupportedLocales} from "../locales.ts";
 
 export const KIOSK_SETTINGS_STORAGE_KEY = 'picha_kiosk_settings';
 
+export type KioskPrintOutput = 'none' | 'zebra';
+
 export interface KioskSettings {
     stationName: string;
     defaultTicketLocale: SupportedLocales | '';
     sendConfirmationEmail: boolean;
+    printOutput: KioskPrintOutput;
+    zebraPrinterHost: string;
 }
 
 const DEFAULT_SETTINGS: KioskSettings = {
     stationName: '',
     defaultTicketLocale: '',
     sendConfirmationEmail: false,
+    printOutput: 'zebra',
+    zebraPrinterHost: '',
 };
 
 const readSettings = (): KioskSettings => {
@@ -31,6 +37,8 @@ const readSettings = (): KioskSettings => {
             stationName: typeof parsed.stationName === 'string' ? parsed.stationName : '',
             defaultTicketLocale: parsed.defaultTicketLocale ?? '',
             sendConfirmationEmail: Boolean(parsed.sendConfirmationEmail),
+            printOutput: parsed.printOutput === 'none' ? 'none' : 'zebra',
+            zebraPrinterHost: typeof parsed.zebraPrinterHost === 'string' ? parsed.zebraPrinterHost : '',
         };
     } catch {
         return DEFAULT_SETTINGS;

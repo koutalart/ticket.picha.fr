@@ -1,8 +1,8 @@
 import {Navigate} from "react-router";
-import {useGetMe} from "../../../queries/useGetMe.ts";
-import {useGetBoxOfficeContext} from "../../../queries/useGetBoxOfficeContext.ts";
-import {kioskPathForEvents} from "../../../utilites/kioskAuth.ts";
-import {TableSkeleton} from "../../common/TableSkeleton";
+import {useGetMe} from "../../../../queries/useGetMe.ts";
+import {useGetBoxOfficeContext} from "../../../../queries/useGetBoxOfficeContext.ts";
+import {kioskPathForEvents} from "../../../../utilites/kioskAuth.ts";
+import {TableSkeleton} from "../../../common/TableSkeleton";
 
 const KioskHome = () => {
     const me = useGetMe();

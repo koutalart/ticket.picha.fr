@@ -13,16 +13,40 @@ class CreateBoxOfficeSaleRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'product_id' => ['required', 'int'],
-            'product_price_id' => ['required', 'int'],
-            'first_name' => ['required', 'string', 'max:40'],
-            'last_name' => ['string', 'max:40'],
-            'email' => ['required', 'email'],
+            'product_id' => ['required_without:items', 'int'],
+            'product_price_id' => ['required_without:items', 'int'],
+            'items' => ['required_without:product_id', 'array', 'min:1'],
+            'items.*.product_id' => ['required', 'int'],
+            'items.*.product_price_id' => ['required', 'int'],
+            'items.*.quantity' => ['required', 'int', 'min:1', 'max:50'],
+            'phone' => ['sometimes', 'nullable', 'string', 'max:25'],
+            'first_name' => ['sometimes', 'nullable', 'string', 'max:40'],
+            'last_name' => ['sometimes', 'nullable', 'string', 'max:40'],
+            'email' => ['sometimes', 'nullable', 'email'],
             'locale' => ['required', Rule::in(Locale::getSupportedLocales())],
             'amount' => ['required', ...RulesHelper::MONEY],
             'payment_method' => ['required', Rule::in(BoxOfficePaymentMethod::valuesArray())],
             'amount_collected' => ['required', ...RulesHelper::MONEY],
             'idempotency_key' => ['required', 'string', 'max:100'],
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator): void {
+            $items = $this->input('items');
+            if (! is_array($items)) {
+                return;
+            }
+
+            $total = 0;
+            foreach ($items as $item) {
+                $total += (int) ($item['quantity'] ?? 0);
+            }
+
+            if ($total > 50) {
+                $validator->errors()->add('items', __('A sale cannot contain more than 50 tickets.'));
+            }
+        });
     }
 }

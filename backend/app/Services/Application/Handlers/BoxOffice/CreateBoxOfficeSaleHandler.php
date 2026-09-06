@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Application\Handlers\BoxOffice;
 
+use HiEvents\Constants;
 use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
 use HiEvents\DomainObjects\Generated\BoxOfficeSaleDomainObjectAbstract;
+use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\Status\BoxOfficeSaleStatus;
 use HiEvents\DomainObjects\UserDomainObject;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
@@ -21,6 +23,7 @@ use HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeSaleResultDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleDTO;
+use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleItemDTO;
 use HiEvents\Services\Infrastructure\Authorization\IsAuthorizedService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\QueryException;
@@ -30,7 +33,8 @@ use Throwable;
  * Option A (PICHA_BOX_OFFICE_DESIGN_OPTIONS.md): a thin handler around the
  * unmodified CreateAttendeeHandler, carrying the guard rails the manual-sale
  * path is missing — server-side price (S1), a stock row lock (S2), and
- * idempotency (S3/D9).
+ * idempotency (S3/D9). Cart checkouts (D4 option B) wrap N CreateAttendeeHandler
+ * calls in the same transaction under one idempotency_key.
  */
 class CreateBoxOfficeSaleHandler
 {
@@ -68,6 +72,8 @@ class CreateBoxOfficeSaleHandler
                 return $existing;
             }
 
+            $items = $this->normalizedItems($dto);
+
             // idempotency_key is the table's only unique constraint, so any
             // violation here means a concurrent request won the race
             // between the check above and this insert (AC-11).
@@ -76,12 +82,13 @@ class CreateBoxOfficeSaleHandler
                     BoxOfficeSaleDomainObjectAbstract::IDEMPOTENCY_KEY => $dto->idempotency_key,
                     BoxOfficeSaleDomainObjectAbstract::EVENT_ID => $dto->event_id,
                     BoxOfficeSaleDomainObjectAbstract::AGENT_USER_ID => $dto->agent_user_id,
-                    BoxOfficeSaleDomainObjectAbstract::PRODUCT_ID => $dto->product_id,
-                    BoxOfficeSaleDomainObjectAbstract::PRODUCT_PRICE_ID => $dto->product_price_id,
+                    BoxOfficeSaleDomainObjectAbstract::PRODUCT_ID => $items[0]->product_id,
+                    BoxOfficeSaleDomainObjectAbstract::PRODUCT_PRICE_ID => $items[0]->product_price_id,
                     BoxOfficeSaleDomainObjectAbstract::PAYMENT_METHOD => $dto->payment_method->name,
                     BoxOfficeSaleDomainObjectAbstract::AMOUNT => $dto->amount,
                     BoxOfficeSaleDomainObjectAbstract::AMOUNT_COLLECTED => $dto->amount_collected,
                     BoxOfficeSaleDomainObjectAbstract::STATUS => BoxOfficeSaleStatus::PENDING->name,
+                    'phone' => $this->normalizePhone($dto->phone),
                 ]);
             } catch (QueryException $exception) {
                 // 23505 = unique_violation (Postgres). Anything else (a
@@ -101,14 +108,11 @@ class CreateBoxOfficeSaleHandler
                 );
             }
 
-            // Row lock on the stock we're about to sell (S2): any other sale
-            // on the same product_price_id blocks here until we commit, so
-            // the stock check below can never be raced.
-            $productPrice = $this->productPriceRepository->lockForUpdateById($dto->product_price_id);
+            $lockedPrices = $this->lockPrices($items);
 
-            $this->validatePrice($dto, $productPrice?->getPrice());
-            $this->validateScannable($dto);
-            $this->validateStock($dto);
+            $this->validateCartTotals($dto, $items, $lockedPrices);
+            $this->validateScannableItems($items);
+            $this->validateStock($items);
 
             // D23 TOCTOU: re-check the box office event scope now that we hold
             // the stock lock. An ADMIN could have revoked this operator's
@@ -119,33 +123,55 @@ class CreateBoxOfficeSaleHandler
                 $this->isAuthorizedService->validateBoxOfficeEventScope($dto->event_id, $agent);
             }
 
-            // CreateAttendeeHandler is reused unchanged (Option A) — it
-            // opens its own nested transaction (savepoint). If it throws,
-            // the whole transaction above (including the PENDING insert)
-            // rolls back too, satisfying AC-26.
-            $attendee = $this->createAttendeeHandler->handle(new CreateAttendeeDTO(
-                first_name: $dto->first_name,
-                last_name: $dto->last_name,
-                email: $dto->email,
-                product_id: $dto->product_id,
-                event_id: $dto->event_id,
-                send_confirmation_email: false,
-                // Defense in depth: pass the server-read price, not $dto->amount —
-                // even though validatePrice() already proved them equal above.
-                amount_paid: $productPrice->getPrice(),
-                locale: $dto->locale,
-                product_price_id: $dto->product_price_id,
-            ));
+            $attendees = [];
+            $itemRows = [];
+            $ticketIndex = 0;
 
-            $order = $this->orderRepository->findById($attendee->getOrderId());
+            foreach ($items as $item) {
+                $unitPrice = $lockedPrices[$item->product_price_id]->getPrice();
+
+                for ($i = 0; $i < $item->quantity; $i++) {
+                    // CreateAttendeeHandler is reused unchanged (Option A) — it
+                    // opens its own nested transaction (savepoint). If it throws,
+                    // the whole transaction above (including the PENDING insert)
+                    // rolls back too, satisfying AC-26.
+                    $attendee = $this->createAttendeeHandler->handle(new CreateAttendeeDTO(
+                        first_name: $dto->first_name,
+                        last_name: $dto->last_name,
+                        email: $this->attendeeEmail($dto, $ticketIndex),
+                        product_id: $item->product_id,
+                        event_id: $dto->event_id,
+                        send_confirmation_email: false,
+                        amount_paid: $unitPrice,
+                        locale: $dto->locale,
+                        product_price_id: $item->product_price_id,
+                    ));
+
+                    $order = $this->orderRepository->findById($attendee->getOrderId());
+                    $attendees[] = $attendee;
+                    $itemRows[] = [
+                        'product_id' => $item->product_id,
+                        'product_price_id' => $item->product_price_id,
+                        'unit_amount' => $unitPrice,
+                        'attendee_id' => $attendee->getId(),
+                        'order_id' => $order->getId(),
+                    ];
+                    $ticketIndex++;
+                }
+            }
+
+            $this->boxOfficeSaleRepository->createItems($sale->getId(), $itemRows);
+
+            $firstAttendee = $attendees[0];
+            $firstOrder = $this->orderRepository->findById($firstAttendee->getOrderId());
 
             $this->boxOfficeSaleRepository->updateFromArray($sale->getId(), [
-                BoxOfficeSaleDomainObjectAbstract::ORDER_ID => $order->getId(),
-                BoxOfficeSaleDomainObjectAbstract::ATTENDEE_ID => $attendee->getId(),
+                BoxOfficeSaleDomainObjectAbstract::ORDER_ID => $firstOrder->getId(),
+                BoxOfficeSaleDomainObjectAbstract::ATTENDEE_ID => $firstAttendee->getId(),
                 BoxOfficeSaleDomainObjectAbstract::STATUS => BoxOfficeSaleStatus::COMPLETED->name,
             ]);
 
-            return new BoxOfficeSaleResultDTO($sale->getId(), $attendee, $order);
+            return new BoxOfficeSaleResultDTO($sale->getId(), $firstAttendee, $firstOrder, $attendees);
         });
     }
 
@@ -159,30 +185,82 @@ class CreateBoxOfficeSaleHandler
             return null;
         }
 
+        $saleItems = $this->boxOfficeSaleRepository->findItemsBySaleId($sale->getId());
+        $attendees = [];
+
+        foreach ($saleItems as $saleItem) {
+            if ($saleItem->attendee_id !== null) {
+                $attendees[] = $this->attendeeRepository->findById($saleItem->attendee_id);
+            }
+        }
+
+        if ($attendees === []) {
+            $attendees[] = $this->attendeeRepository->findById($sale->getAttendeeId());
+        }
+
         return new BoxOfficeSaleResultDTO(
             $sale->getId(),
-            $this->attendeeRepository->findById($sale->getAttendeeId()),
+            $attendees[0],
             $this->orderRepository->findById($sale->getOrderId()),
+            $attendees,
         );
     }
 
     /**
+     * @param  CreateBoxOfficeSaleItemDTO[]  $items
+     * @return array<int, ProductPriceDomainObject>
+     */
+    private function lockPrices(array $items): array
+    {
+        $priceIds = array_values(array_unique(array_map(
+            static fn(CreateBoxOfficeSaleItemDTO $item) => $item->product_price_id,
+            $items,
+        )));
+        sort($priceIds, SORT_NUMERIC);
+
+        $locked = [];
+        foreach ($priceIds as $priceId) {
+            $locked[$priceId] = $this->productPriceRepository->lockForUpdateById($priceId);
+        }
+
+        return $locked;
+    }
+
+    /**
+     * @param  CreateBoxOfficeSaleItemDTO[]  $items
+     * @param  array<int, ProductPriceDomainObject|null>  $lockedPrices
+     *
      * @throws BoxOfficePriceMismatchException
      */
-    private function validatePrice(CreateBoxOfficeSaleDTO $dto, ?float $serverPrice): void
+    private function validateCartTotals(CreateBoxOfficeSaleDTO $dto, array $items, array $lockedPrices): void
     {
-        if ($serverPrice === null || number_format($serverPrice, 2, '.', '') !== number_format($dto->amount, 2, '.', '')) {
+        $expected = 0.0;
+        $allZero = true;
+
+        foreach ($items as $item) {
+            $serverPrice = $lockedPrices[$item->product_price_id]?->getPrice();
+
+            if ($serverPrice === null) {
+                throw new BoxOfficePriceMismatchException(
+                    __('The amount does not match the current price of this ticket.')
+                );
+            }
+
+            if (number_format($serverPrice, 2, '.', '') !== '0.00') {
+                $allZero = false;
+            }
+
+            $expected += $serverPrice * $item->quantity;
+        }
+
+        if (number_format($expected, 2, '.', '') !== number_format($dto->amount, 2, '.', '')) {
             throw new BoxOfficePriceMismatchException(
                 __('The amount does not match the current price of this ticket.')
             );
         }
 
-        // D21 (PICHA_BOX_OFFICE_DECISIONS_REQUIRED.md): FREE only reflects a
-        // product whose price is already 0 — it is not a mechanism to
-        // comp a normally-paid ticket. The equality check above already
-        // guarantees amount === serverPrice; this only needs to reject
-        // FREE + a non-zero price.
-        if ($dto->payment_method === BoxOfficePaymentMethod::FREE && number_format($serverPrice, 2, '.', '') !== '0.00') {
+        // D21: FREE only reflects products whose price is already 0.
+        if ($dto->payment_method === BoxOfficePaymentMethod::FREE && ! $allZero) {
             throw new BoxOfficePriceMismatchException(
                 __('FREE can only be used for a product whose price is 0 — inviting a normally-paid ticket is not supported.')
             );
@@ -190,29 +268,102 @@ class CreateBoxOfficeSaleHandler
     }
 
     /**
+     * @param  CreateBoxOfficeSaleItemDTO[]  $items
+     *
      * @throws ProductNotScannableException
      */
-    private function validateScannable(CreateBoxOfficeSaleDTO $dto): void
+    private function validateScannableItems(array $items): void
     {
-        if (! $this->productRepository->hasActiveCheckInList($dto->product_id)) {
-            throw new ProductNotScannableException(
-                __('This product is not attached to an active check-in list and would not be scannable at the door.')
-            );
+        $productIds = array_unique(array_map(
+            static fn(CreateBoxOfficeSaleItemDTO $item) => $item->product_id,
+            $items,
+        ));
+
+        foreach ($productIds as $productId) {
+            if (! $this->productRepository->hasActiveCheckInList($productId)) {
+                throw new ProductNotScannableException(
+                    __('This product is not attached to an active check-in list and would not be scannable at the door.')
+                );
+            }
         }
     }
 
     /**
+     * @param  CreateBoxOfficeSaleItemDTO[]  $items
+     *
      * @throws ResourceConflictException
      */
-    private function validateStock(CreateBoxOfficeSaleDTO $dto): void
+    private function validateStock(array $items): void
     {
-        $remaining = $this->productRepository->getQuantityRemainingForProductPrice(
-            $dto->product_id,
-            $dto->product_price_id,
-        );
+        $qtyByPrice = [];
 
-        if ($remaining <= 0) {
-            throw new ResourceConflictException(__('There are no tickets available for this price.'));
+        foreach ($items as $item) {
+            $key = $item->product_id . ':' . $item->product_price_id;
+            $qtyByPrice[$key] = ($qtyByPrice[$key] ?? 0) + $item->quantity;
         }
+
+        foreach ($qtyByPrice as $key => $quantity) {
+            [$productId, $productPriceId] = array_map('intval', explode(':', $key));
+            $remaining = $this->productRepository->getQuantityRemainingForProductPrice(
+                $productId,
+                $productPriceId,
+            );
+
+            if ($remaining !== Constants::INFINITE && $remaining < $quantity) {
+                throw new ResourceConflictException(__('There are no tickets available for this price.'));
+            }
+        }
+    }
+
+    /**
+     * @return CreateBoxOfficeSaleItemDTO[]
+     */
+    private function normalizedItems(CreateBoxOfficeSaleDTO $dto): array
+    {
+        if ($dto->items !== []) {
+            return array_values($dto->items);
+        }
+
+        return [
+            new CreateBoxOfficeSaleItemDTO(
+                product_id: $dto->product_id,
+                product_price_id: $dto->product_price_id,
+                quantity: 1,
+            ),
+        ];
+    }
+
+    private function normalizePhone(string $phone): ?string
+    {
+        $digits = preg_replace('/\D+/', '', $phone) ?? '';
+
+        if ($digits === '') {
+            return null;
+        }
+
+        if (str_starts_with($digits, '0') && strlen($digits) === 10) {
+            return '+33' . substr($digits, 1);
+        }
+
+        return '+' . $digits;
+    }
+
+    private function attendeeEmail(CreateBoxOfficeSaleDTO $dto, int $ticketIndex): string
+    {
+        if ($dto->email !== '') {
+            if ($ticketIndex === 0) {
+                return $dto->email;
+            }
+
+            [$local, $domain] = explode('@', $dto->email, 2);
+
+            return $local . '+t' . $ticketIndex . '@' . $domain;
+        }
+
+        $digits = preg_replace('/\D+/', '', $dto->phone) ?: '';
+        $token = $digits !== '' ? $digits : substr($dto->idempotency_key, 0, 12);
+        $suffix = $ticketIndex === 0 ? '' : '-' . $ticketIndex;
+
+        return 'kiosk+' . $token . $suffix . '@guichet.example.test';
     }
 }

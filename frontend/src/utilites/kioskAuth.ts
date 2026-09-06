@@ -1,6 +1,8 @@
 import {User} from "../types.ts";
 import {BoxOfficeContextEvent} from "../api/box-office.client.ts";
 
+export const KIOSK_CONNECTED_AT_KEY = 'picha_kiosk_connected_at';
+
 export const isBoxOfficeOperator = (user?: Pick<User, 'role'> | null): boolean => {
     return user?.role === 'BOX_OFFICE_OPERATOR';
 };

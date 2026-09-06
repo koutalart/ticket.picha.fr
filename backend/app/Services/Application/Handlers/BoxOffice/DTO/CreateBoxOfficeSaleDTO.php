@@ -14,6 +14,7 @@ class CreateBoxOfficeSaleDTO extends BaseDataObject
         public readonly int                    $agent_user_id,
         public readonly int                    $product_id,
         public readonly int                    $product_price_id,
+        public readonly string                 $phone,
         public readonly string                 $first_name,
         public readonly string                 $last_name,
         public readonly string                 $email,
@@ -22,6 +23,8 @@ class CreateBoxOfficeSaleDTO extends BaseDataObject
         public readonly BoxOfficePaymentMethod  $payment_method,
         public readonly float                  $amount_collected,
         public readonly string                 $idempotency_key,
+        /** @var CreateBoxOfficeSaleItemDTO[] */
+        public readonly array                  $items = [],
     )
     {
     }

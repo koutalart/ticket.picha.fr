@@ -50,6 +50,7 @@ import {useResendEmailConfirmation} from "../../../mutations/useResendEmailConfi
 import {useState} from "react";
 import {eventHomepageUrl} from "../../../utilites/urlHelper.ts";
 import {isBoxOfficeOperator} from "../../../utilites/kioskAuth.ts";
+import {useIsCurrentUserAdmin} from "../../../hooks/useIsCurrentUserAdmin.ts";
 
 const EventLayout = () => {
     const location = useLocation();
@@ -64,6 +65,7 @@ const EventLayout = () => {
     const {data: eventSettings, isFetched: isEventSettingsFetched} = useGetEventSettings(eventId);
     const {data: eventStats} = useGetEventStats(eventId);
     const {data: me, isSuccess: isMeSuccess} = useGetMe();
+    const isAdmin = useIsCurrentUserAdmin();
 
     if (isMeSuccess && isBoxOfficeOperator(me)) {
         return <Navigate to="/kiosk" replace/>;
@@ -118,7 +120,18 @@ const EventLayout = () => {
         {link: 'orders', label: t`Orders`, icon: IconReceipt, badge: eventStats?.total_orders},
         {link: 'promo-codes', label: t`Promo Codes`, icon: IconDiscount2},
         {link: 'affiliates', label: t`Affiliates`, icon: IconTrendingUp},
-        {link: 'box-office', label: t`Box Office`, icon: IconCashRegister},
+        {
+            link: 'box-office',
+            label: t`Box Office`,
+            icon: IconCashRegister,
+            isActive: (isActive) => isActive && !location.pathname.includes('/box-office/operators'),
+        },
+        {
+            link: 'box-office/operators',
+            label: t`Kiosk operators`,
+            icon: IconUsers,
+            showWhen: () => isAdmin,
+        },
 
         // 4. GUESTS
         {label: t`Guest Management`},

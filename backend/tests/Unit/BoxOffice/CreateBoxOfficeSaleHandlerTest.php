@@ -55,6 +55,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
             agent_user_id: $agentUserId,
             product_id: $productId,
             product_price_id: $productPriceId,
+            phone: '+33612345678',
             first_name: 'Jane',
             last_name: 'Doe',
             email: 'jane@example.test',
@@ -64,6 +65,63 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
             amount_collected: $amountCollected,
             idempotency_key: $idempotencyKey ?? \Illuminate\Support\Str::uuid()->toString(),
         );
+    }
+
+    public function test_phone_only_creates_placeholder_attendee_identity(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $result = $handler->handle(new CreateBoxOfficeSaleDTO(
+            event_id: $event->id,
+            agent_user_id: $user->id,
+            product_id: $product->id,
+            product_price_id: $productPrice->id,
+            phone: '06 12 34 56 78',
+            first_name: '',
+            last_name: '',
+            email: '',
+            locale: 'fr',
+            amount: 25.00,
+            payment_method: BoxOfficePaymentMethod::CASH,
+            amount_collected: 25.00,
+            idempotency_key: \Illuminate\Support\Str::uuid()->toString(),
+        ));
+
+        self::assertSame('', $result->attendee->getFirstName());
+        self::assertSame('', $result->attendee->getLastName());
+        self::assertStringEndsWith('@guichet.example.test', $result->attendee->getEmail());
+        self::assertSame('+33612345678', DB::table('box_office_sales')->where('id', $result->saleId)->value('phone'));
+    }
+
+    public function test_sale_without_phone_stores_null_and_placeholder_email(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+        $key = \Illuminate\Support\Str::uuid()->toString();
+
+        $result = $handler->handle(new CreateBoxOfficeSaleDTO(
+            event_id: $event->id,
+            agent_user_id: $user->id,
+            product_id: $product->id,
+            product_price_id: $productPrice->id,
+            phone: '',
+            first_name: '',
+            last_name: '',
+            email: '',
+            locale: 'fr',
+            amount: 25.00,
+            payment_method: BoxOfficePaymentMethod::CASH,
+            amount_collected: 25.00,
+            idempotency_key: $key,
+        ));
+
+        self::assertNull(DB::table('box_office_sales')->where('id', $result->saleId)->value('phone'));
+        self::assertStringEndsWith('@guichet.example.test', $result->attendee->getEmail());
     }
 
     /** AC-2 */
@@ -323,8 +381,16 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
 
         self::assertSame(
             0,
-            DB::table('box_office_sales')->where('status', BoxOfficeSaleStatus::COMPLETED->name)->count(),
+            DB::table('box_office_sales')
+                ->where('event_id', $event->id)
+                ->where('status', BoxOfficeSaleStatus::COMPLETED->name)
+                ->count(),
             'AC-26: no COMPLETED box_office_sales row must survive a partial failure',
+        );
+        self::assertSame(
+            0,
+            DB::table('box_office_sales')->where('event_id', $event->id)->count(),
+            'AC-26: a failed sale must not leave a box_office_sales row',
         );
         self::assertSame(0, ProductPrice::find($productPrice->id)->quantity_sold);
     }
@@ -442,5 +508,43 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
         ));
 
         self::assertSame(25.0, $capturedAmountPaid);
+    }
+
+    public function test_cart_items_create_one_sale_and_n_attendees(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(
+            price: 25.00,
+            initialQuantityAvailable: 10,
+        );
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $result = $handler->handle(new CreateBoxOfficeSaleDTO(
+            event_id: $event->id,
+            agent_user_id: $user->id,
+            product_id: $product->id,
+            product_price_id: $productPrice->id,
+            phone: '',
+            first_name: '',
+            last_name: '',
+            email: '',
+            locale: 'fr',
+            amount: 50.00,
+            payment_method: BoxOfficePaymentMethod::CASH,
+            amount_collected: 50.00,
+            idempotency_key: \Illuminate\Support\Str::uuid()->toString(),
+            items: [
+                new \HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleItemDTO(
+                    product_id: $product->id,
+                    product_price_id: $productPrice->id,
+                    quantity: 2,
+                ),
+            ],
+        ));
+
+        self::assertCount(2, $result->attendees);
+        self::assertSame(2, ProductPrice::find($productPrice->id)->quantity_sold);
+        self::assertSame(2, DB::table('box_office_sale_items')->where('box_office_sale_id', $result->saleId)->count());
     }
 }

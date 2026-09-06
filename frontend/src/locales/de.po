@@ -13,12 +13,12 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/components/layouts/Event/index.tsx:199
+#: src/components/layouts/Event/index.tsx:212
 #: src/components/layouts/OrganizerLayout/index.tsx:218
 msgid "- Click to Publish"
 msgstr "- Zum Veröffentlichen klicken"
 
-#: src/components/layouts/Event/index.tsx:201
+#: src/components/layouts/Event/index.tsx:214
 #: src/components/layouts/OrganizerLayout/index.tsx:220
 msgid "- Click to Unpublish"
 msgstr "- Zum Rückgängigmachen der Veröffentlichung klicken"
@@ -81,6 +81,10 @@ msgstr "{0} Veranstalter"
 msgid "{0} tickets"
 msgstr "{0} Tickets"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:366
+msgid "{0} tickets created"
+msgstr ""
+
 #: src/components/modals/EditTaxOrFeeModal/index.tsx:42
 msgid "{0} updated successfully"
 msgstr "{0} erfolgreich aktualisiert"
@@ -114,7 +118,7 @@ msgstr "{minutes} Minuten und {seconds} Sekunden"
 msgid "{organizerName}'s first event"
 msgstr "Erste Veranstaltung von {organizerName}"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:266
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:885
 msgid "{selectedPriceRemaining} remaining"
 msgstr "{selectedPriceRemaining} übrig"
 
@@ -216,7 +220,7 @@ msgstr "1 Ticketart"
 msgid "1 week before event"
 msgstr "1 Woche vor der Veranstaltung"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:207
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:826
 msgid "1. Choose a ticket"
 msgstr ""
 
@@ -230,7 +234,7 @@ msgstr "Hauptstraße 123"
 msgid "123 Sample Street"
 msgstr "Musterstraße 123"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:275
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:894
 msgid "2. Attendee details"
 msgstr ""
 
@@ -238,7 +242,7 @@ msgstr ""
 msgid "20"
 msgstr "20"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:305
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:931
 msgid "3. Payment method"
 msgstr ""
 
@@ -324,9 +328,13 @@ msgstr "Eine einzelne Frage pro Produkt. Z.B., Welche T-Shirt-Größe haben Sie?
 msgid "A standard tax, like VAT or GST"
 msgstr "Eine Standardsteuer wie Mehrwertsteuer oder GST"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:98
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:161
 msgid "A valid email is required"
 msgstr ""
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:154
+msgid "A valid phone number is required"
+msgstr "Eine gültige Telefonnummer ist erforderlich"
 
 #: src/components/common/OrdersTable/index.tsx:436
 msgid "Abandoned"
@@ -379,6 +387,10 @@ msgstr "Einladung annehmen"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:609
 msgid "Access Denied"
 msgstr "Zugriff verweigert"
+
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:38
+msgid "Access revoked for this event"
+msgstr "Zugang für diese Veranstaltung widerrufen"
 
 #: src/components/common/AdminOrdersTable/index.tsx:70
 #: src/components/routes/account/ManageAccount/index.tsx:24
@@ -463,6 +475,7 @@ msgstr "Aktivierungsdatum"
 #: src/components/modals/EditUserModal/index.tsx:110
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:105
 #: src/components/routes/event/attendees.tsx:26
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:116
 msgid "Active"
 msgstr "Aktiv"
 
@@ -539,6 +552,13 @@ msgstr "Steuern oder Gebühren hinzufügen"
 msgid "Add this event to your calendar"
 msgstr "Fügen Sie dieses Event zu Ihrem Kalender hinzu"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:557
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:602
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:732
+msgid "Add ticket"
+msgstr "Ticket hinzufügen"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:761
 #: src/components/routes/event/GettingStarted/index.tsx:132
 msgid "Add tickets"
 msgstr "Tickets hinzufügen"
@@ -656,7 +676,7 @@ msgstr "Partnerverkäufe werden nicht verfolgt. Dies deaktiviert den Partner."
 msgid "Affiliate updated successfully"
 msgstr "Partner erfolgreich aktualisiert"
 
-#: src/components/layouts/Event/index.tsx:120
+#: src/components/layouts/Event/index.tsx:122
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Affiliates/index.tsx:63
 msgid "Affiliates"
@@ -789,11 +809,12 @@ msgstr "Erstaunlich, Ereignis, Schlüsselwörter..."
 msgid "Amount"
 msgstr "Betrag"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:331
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:677
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:957
 msgid "Amount collected"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:99
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:162
 msgid "Amount collected is required"
 msgstr ""
 
@@ -974,12 +995,12 @@ msgstr "Bist du sicher, dass du diesen Webhook löschen möchtest?"
 msgid "Are you sure you want to leave?"
 msgstr "Möchten Sie wirklich gehen?"
 
-#: src/components/layouts/Event/index.tsx:161
+#: src/components/layouts/Event/index.tsx:174
 #: src/components/routes/event/EventDashboard/index.tsx:81
 msgid "Are you sure you want to make this event draft? This will make the event invisible to the public"
 msgstr "Möchten Sie diese Veranstaltung wirklich als Entwurf speichern? Dadurch wird die Veranstaltung für die Öffentlichkeit unsichtbar."
 
-#: src/components/layouts/Event/index.tsx:162
+#: src/components/layouts/Event/index.tsx:175
 #: src/components/routes/event/EventDashboard/index.tsx:82
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "Möchten Sie diese Veranstaltung wirklich öffentlich machen? Dadurch wird die Veranstaltung für die Öffentlichkeit sichtbar"
@@ -1172,7 +1193,7 @@ msgstr "Ticket des Teilnehmers nicht in dieser Liste enthalten"
 #: src/components/common/EventCard/index.tsx:227
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:382
 #: src/components/common/StatBoxes/index.tsx:45
-#: src/components/layouts/Event/index.tsx:125
+#: src/components/layouts/Event/index.tsx:138
 #: src/components/modals/ManageOrderModal/index.tsx:126
 #: src/components/routes/admin/Messages/index.tsx:90
 #: src/components/routes/admin/Messages/index.tsx:139
@@ -1285,6 +1306,10 @@ msgstr "Awesome Events GmbH"
 msgid "Awesome Organizer Ltd."
 msgstr "Awesome Organizer Ltd."
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:488
+msgid "Back"
+msgstr "Zurück"
+
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:114
 msgid "Back to Accounts"
 msgstr "Zurück zu Konten"
@@ -1354,10 +1379,9 @@ msgstr "Inhalt ist erforderlich"
 msgid "Bookmark this page to manage your order anytime."
 msgstr "Setzen Sie ein Lesezeichen für diese Seite, um Ihre Bestellung jederzeit zu verwalten."
 
-#: src/components/layouts/Event/index.tsx:121
-#: src/components/layouts/Kiosk/index.tsx:42
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:199
-#: src/components/routes/kiosk/Login/index.tsx:64
+#: src/components/layouts/Event/index.tsx:125
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:492
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:806
 msgid "Box Office"
 msgstr ""
 
@@ -1533,15 +1557,22 @@ msgstr "Kapazitätszuweisung erfolgreich gelöscht"
 msgid "Capacity Assignments"
 msgstr "Kapazitätszuweisungen"
 
-#: src/components/layouts/Event/index.tsx:129
+#: src/components/layouts/Event/index.tsx:142
 msgid "Capacity Management"
 msgstr "Kapazitätsverwaltung"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:309
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:639
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:935
 msgid "Card"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:308
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:708
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:773
+msgid "Cart contents"
+msgstr "Warenkorb"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:638
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:934
 msgid "Cash"
 msgstr ""
 
@@ -1566,7 +1597,7 @@ msgstr "Kategorie"
 msgid "Category Created Successfully"
 msgstr "Kategorie erfolgreich erstellt"
 
-#: src/components/layouts/Kiosk/index.tsx:66
+#: src/components/layouts/Kiosk/index.tsx:78
 msgid "Change event"
 msgstr "Event wechseln"
 
@@ -1648,7 +1679,7 @@ msgstr "Eincheckliste nicht gefunden"
 msgid "Check-in Lists"
 msgstr "Check-in-Listen"
 
-#: src/components/layouts/Event/index.tsx:126
+#: src/components/layouts/Event/index.tsx:139
 #: src/components/modals/DuplicateEventModal/index.tsx:29
 #: src/components/routes/event/CheckInLists/index.tsx:34
 msgid "Check-In Lists"
@@ -1716,7 +1747,8 @@ msgstr "Chinesisch (Traditionell)"
 msgid "Choose a color for your background"
 msgstr "Wählen Sie eine Farbe für Ihren Hintergrund"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:242
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:570
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:861
 msgid "Choose a price"
 msgstr ""
 
@@ -1728,7 +1760,7 @@ msgstr "Wählen Sie eine Schriftart, die zu Ihrer Marke passt. Schriften werden 
 msgid "Choose an account"
 msgstr "Wähle einen Account"
 
-#: src/components/routes/kiosk/SelectEvent/index.tsx:42
+#: src/components/routes/kiosk/SelectEvent/index.tsx:41
 msgid "Choose an event"
 msgstr "Event wählen"
 
@@ -1759,6 +1791,10 @@ msgstr "Wählen Sie, wer die Plattformgebühr zahlt. Dies hat keine Auswirkungen
 #: src/components/routes/product-widget/CollectInformation/index.tsx:535
 msgid "City"
 msgstr "Stadt"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:751
+msgid "Clear basket"
+msgstr "Warenkorb leeren"
 
 #: src/components/common/SearchBar/index.tsx:75
 msgid "Clear Search Text"
@@ -1867,6 +1903,11 @@ msgstr "Spalten"
 #: src/constants/eventCategories.ts:9
 msgid "Comedy"
 msgstr "Comedy"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:666
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:671
+msgid "Coming soon"
+msgstr "Demnächst"
 
 #: src/components/layouts/AppLayout/Sidebar/index.tsx:68
 msgid "Coming Soon"
@@ -2026,7 +2067,7 @@ msgstr "Bestätige das Passwort"
 msgid "Confirm Password"
 msgstr "Bestätige das Passwort"
 
-#: src/components/layouts/Event/index.tsx:264
+#: src/components/layouts/Event/index.tsx:277
 msgid "Confirm your email to access all features."
 msgstr "Bestätigen Sie Ihre E-Mail-Adresse, um alle Funktionen zu nutzen."
 
@@ -2107,6 +2148,10 @@ msgstr "Verbinden Sie Ihr Stripe-Konto, um Zahlungen zu akzeptieren."
 msgid "Connect your Stripe account to start receiving payments."
 msgstr "Verbinden Sie Ihr Stripe-Konto, um Zahlungen zu empfangen."
 
+#: src/components/routes/kiosk/Settings/index.tsx:162
+msgid "Connected at"
+msgstr "Angemeldet um"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:392
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:629
 msgid "Connected to Stripe"
@@ -2137,6 +2182,7 @@ msgstr "Kontakt-E-Mail für Support"
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:481
 #: src/components/routes/product-widget/SelectProducts/index.tsx:550
 msgid "Continue"
 msgstr "Weitermachen"
@@ -2259,11 +2305,11 @@ msgstr "In die Zwischenablage kopieren"
 msgid "Copy URL"
 msgstr "URL kopieren"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:135
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:291
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:142
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:314
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
 
@@ -2666,7 +2712,7 @@ msgid "Dark"
 msgstr "Dunkel"
 
 #: src/components/layouts/Admin/index.tsx:13
-#: src/components/layouts/Event/index.tsx:100
+#: src/components/layouts/Event/index.tsx:102
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:160
 msgid "Dashboard"
 msgstr "Dashboard"
@@ -2686,6 +2732,10 @@ msgstr "Datum"
 #: src/components/common/AttendeeTicket/index.tsx:78
 msgid "Date & Time"
 msgstr "Datum & Zeit"
+
+#: src/components/routes/kiosk/Settings/index.tsx:166
+msgid "Date and time"
+msgstr "Datum und Uhrzeit"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:35
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:69
@@ -2720,7 +2770,7 @@ msgstr "Standard-Gebührenbehandlung"
 msgid "Default template will be used"
 msgstr "Standardvorlage wird verwendet"
 
-#: src/components/routes/kiosk/Settings/index.tsx:25
+#: src/components/routes/kiosk/Settings/index.tsx:130
 msgid "Default ticket language"
 msgstr "Standard-Ticketsprache"
 
@@ -2883,10 +2933,13 @@ msgstr "Spende"
 msgid "Donation / Pay what you'd like product"
 msgstr "Spende / Produkt mit freier Preiswahl"
 
+#: src/components/layouts/Kiosk/index.tsx:83
 #: src/components/modals/CheckInListSuccessModal/index.tsx:59
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:72
 #: src/components/modals/CreateWebhookModal/index.tsx:72
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:123
+#: src/components/routes/kiosk/NoEvent/index.tsx:29
+#: src/components/routes/kiosk/SelectEvent/index.tsx:57
 msgid "Done"
 msgstr "Fertig"
 
@@ -2920,7 +2973,7 @@ msgid "Downloading Invoice"
 msgstr "Rechnung wird heruntergeladen"
 
 #: src/components/common/EventCard/index.tsx:84
-#: src/components/layouts/Event/index.tsx:198
+#: src/components/layouts/Event/index.tsx:211
 #: src/components/layouts/OrganizerLayout/index.tsx:217
 msgid "Draft"
 msgstr "Entwurf"
@@ -3139,6 +3192,7 @@ msgstr "Berechtigte Check-In-Listen"
 #: src/components/common/QuestionsTable/index.tsx:253
 #: src/components/forms/AffiliateForm/index.tsx:89
 #: src/components/modals/EditUserModal/index.tsx:80
+#: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:52
 #: src/components/modals/InviteUserModal/index.tsx:61
 #: src/components/modals/JoinWaitlistModal/index.tsx:171
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:128
@@ -3147,8 +3201,9 @@ msgstr "Berechtigte Check-In-Listen"
 #: src/components/routes/auth/ForgotPassword/index.tsx:65
 #: src/components/routes/auth/Login/index.tsx:93
 #: src/components/routes/auth/Register/index.tsx:104
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:289
-#: src/components/routes/kiosk/Login/index.tsx:70
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:99
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:915
+#: src/components/routes/kiosk/Login/index.tsx:75
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:68
@@ -3204,7 +3259,7 @@ msgstr "E-Mail-Änderung ausstehend"
 msgid "Email confirmation resent"
 msgstr "E-Mail-Bestätigung erneut gesendet"
 
-#: src/components/layouts/Event/index.tsx:80
+#: src/components/layouts/Event/index.tsx:82
 #: src/components/layouts/OrganizerLayout/index.tsx:107
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
@@ -3447,6 +3502,7 @@ msgstr "EUR"
 #: src/components/routes/admin/Messages/index.tsx:277
 #: src/components/routes/event/EventDashboard/index.tsx:299
 #: src/components/routes/events/Dashboard/index.tsx:184
+#: src/components/routes/kiosk/Settings/index.tsx:154
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:19
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:41
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:43
@@ -3567,7 +3623,7 @@ msgstr "Veranstaltung nicht verfügbar"
 msgid "Event organizer name"
 msgstr "Name des Veranstalters"
 
-#: src/components/layouts/Event/index.tsx:253
+#: src/components/layouts/Event/index.tsx:266
 msgid "Event Page"
 msgstr "Veranstaltungsseite"
 
@@ -3575,14 +3631,14 @@ msgstr "Veranstaltungsseite"
 msgid "Event restored successfully"
 msgstr "Veranstaltung erfolgreich wiederhergestellt"
 
-#: src/components/layouts/Event/index.tsx:110
+#: src/components/layouts/Event/index.tsx:112
 #: src/components/routes/event/Settings/index.tsx:159
 msgid "Event Settings"
 msgstr "Veranstaltungseinstellungen"
 
 #: src/components/common/EventCard/index.tsx:70
 #: src/components/common/StatusToggle/index.tsx:63
-#: src/components/layouts/Event/index.tsx:177
+#: src/components/layouts/Event/index.tsx:190
 #: src/components/routes/event/EventDashboard/index.tsx:96
 #: src/components/routes/event/GettingStarted/index.tsx:68
 msgid "Event status update failed. Please try again later"
@@ -3590,7 +3646,7 @@ msgstr "Die Aktualisierung des Ereignisstatus ist fehlgeschlagen. Bitte versuche
 
 #: src/components/common/EventCard/index.tsx:67
 #: src/components/common/StatusToggle/index.tsx:55
-#: src/components/layouts/Event/index.tsx:173
+#: src/components/layouts/Event/index.tsx:186
 #: src/components/routes/event/EventDashboard/index.tsx:93
 #: src/components/routes/event/GettingStarted/index.tsx:65
 msgid "Event status updated"
@@ -4042,6 +4098,10 @@ msgstr "Filter"
 msgid "Filters ({activeFilterCount})"
 msgstr "Filter ({activeFilterCount})"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
+msgid "Finish"
+msgstr "Abschließen"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:214
 msgid "Finish Setup"
 msgstr "Einrichtung abschließen"
@@ -4074,7 +4134,7 @@ msgstr "Erste Rechnungsnummer"
 #: src/components/modals/CreateAttendeeModal/index.tsx:129
 #: src/components/modals/ManageAttendeeModal/index.tsx:110
 #: src/components/modals/ManageOrderModal/index.tsx:144
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:278
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:904
 #: src/components/routes/product-widget/CollectInformation/index.tsx:436
 #: src/components/routes/product-widget/CollectInformation/index.tsx:648
 msgid "First name"
@@ -4082,6 +4142,7 @@ msgstr "Vorname"
 
 #: src/components/common/QuestionsTable/index.tsx:251
 #: src/components/modals/EditUserModal/index.tsx:71
+#: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:48
 #: src/components/modals/InviteUserModal/index.tsx:57
 #: src/components/modals/JoinWaitlistModal/index.tsx:161
 #: src/components/routes/auth/AcceptInvitation/index.tsx:97
@@ -4095,7 +4156,7 @@ msgid "First Name"
 msgstr "Vorname"
 
 #: src/components/modals/JoinWaitlistModal/index.tsx:46
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:97
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:158
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:29
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:29
 msgid "First name is required"
@@ -4165,6 +4226,10 @@ msgstr "Fußzeilentext"
 msgid "Forgot password?"
 msgstr "Passwort vergessen?"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:496
+msgid "Form"
+msgstr "Formular"
+
 #: src/components/common/AttendeeTicket/index.tsx:66
 #: src/components/common/Currency/index.tsx:90
 #: src/components/common/OrderSummary/index.tsx:46
@@ -4172,12 +4237,14 @@ msgstr "Passwort vergessen?"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:113
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:123
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:180
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:310
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:640
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:936
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Frei"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:320
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:946
 msgid "Free can only be used for a ticket priced at 0"
 msgstr ""
 
@@ -4250,7 +4317,7 @@ msgstr "Tickets erhalten"
 msgid "Get your event ready"
 msgstr "Bereiten Sie Ihre Veranstaltung vor"
 
-#: src/components/layouts/Event/index.tsx:96
+#: src/components/layouts/Event/index.tsx:98
 msgid "Getting Started"
 msgstr "Erste Schritte"
 
@@ -4302,7 +4369,7 @@ msgstr "Bruttoumsatz"
 msgid "Gross Sales"
 msgstr "Bruttoverkäufe"
 
-#: src/components/layouts/Event/index.tsx:124
+#: src/components/layouts/Event/index.tsx:137
 msgid "Guest Management"
 msgstr "Gästeverwaltung"
 
@@ -4460,7 +4527,7 @@ msgstr "Hervorgehobene Produkte haben eine andere Hintergrundfarbe, um sie auf d
 msgid "Homepage Design"
 msgstr "Homepage-Design"
 
-#: src/components/layouts/Event/index.tsx:111
+#: src/components/layouts/Event/index.tsx:113
 #: src/components/layouts/OrganizerLayout/index.tsx:96
 msgid "Homepage Designer"
 msgstr "Homepage-Designer"
@@ -4655,6 +4722,10 @@ msgstr "Geben Sie an, ob Sie in der EU umsatzsteuerregistriert sind"
 msgid "Individual attendees"
 msgstr "Einzelne Teilnehmer"
 
+#: src/components/routes/kiosk/Settings/index.tsx:46
+msgid "Information"
+msgstr "Informationen"
+
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:99
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:120
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:143
@@ -4679,7 +4750,7 @@ msgstr "Instagram"
 msgid "Instant Payouts"
 msgstr "Sofortige Auszahlungen"
 
-#: src/components/layouts/Event/index.tsx:132
+#: src/components/layouts/Event/index.tsx:145
 #: src/components/layouts/OrganizerLayout/index.tsx:98
 msgid "Integrations"
 msgstr "Integrationen"
@@ -4724,9 +4795,30 @@ msgstr "Einladung erneut verschickt!"
 msgid "Invitation revoked!"
 msgstr "Einladung widerrufen!"
 
+#: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:42
+msgid "Invite a kiosk operator"
+msgstr "Einen Kiosk-Betreiber einladen"
+
 #: src/components/modals/InviteUserModal/index.tsx:54
 msgid "Invite a team member"
 msgstr "Teammitglied einladen"
+
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:77
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:88
+msgid "Invite operator"
+msgstr "Betreiber einladen"
+
+#: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:59
+msgid "Invite Operator"
+msgstr "Betreiber einladen"
+
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:70
+msgid "Invite people who can sell tickets at the door. They only see the kiosk, not this back office."
+msgstr "Laden Sie Personen ein, die Tickets an der Tür verkaufen können. Sie sehen nur den Kiosk, nicht dieses Backoffice."
+
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:86
+msgid "Invite someone to sell tickets at the door. They will receive an email to set their password, then sign in at the kiosk."
+msgstr "Laden Sie jemanden ein, Tickets an der Tür zu verkaufen. Die Person erhält eine E-Mail zum Festlegen des Passworts und meldet sich dann am Kiosk an."
 
 #: src/components/modals/InviteUserModal/index.tsx:74
 msgid "Invite Team Member"
@@ -4856,9 +4948,14 @@ msgstr "Suchen Sie nur nach Ihren Tickets?"
 msgid "Keep me updated on news and events from {0}"
 msgstr "Halte mich über Neuigkeiten und Veranstaltungen von {0} auf dem Laufenden"
 
-#: src/components/layouts/Kiosk/index.tsx:43
+#: src/components/layouts/Kiosk/index.tsx:45
 msgid "Kiosk"
 msgstr "Kasse"
+
+#: src/components/layouts/Event/index.tsx:131
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:72
+msgid "Kiosk operators"
+msgstr "Kiosk-Betreiber"
 
 #: src/components/forms/ProductForm/index.tsx:85
 msgid "Label"
@@ -4922,12 +5019,13 @@ msgstr "Letzte Anmeldung"
 #: src/components/modals/CreateAttendeeModal/index.tsx:136
 #: src/components/modals/ManageAttendeeModal/index.tsx:111
 #: src/components/modals/ManageOrderModal/index.tsx:150
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:284
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:910
 msgid "Last name"
 msgstr "Nachname"
 
 #: src/components/common/QuestionsTable/index.tsx:252
 #: src/components/modals/EditUserModal/index.tsx:72
+#: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:49
 #: src/components/modals/InviteUserModal/index.tsx:58
 #: src/components/modals/JoinWaitlistModal/index.tsx:166
 #: src/components/routes/auth/AcceptInvitation/index.tsx:102
@@ -4952,7 +5050,8 @@ msgstr "Nachname ist erforderlich"
 msgid "Last Response"
 msgstr "Letzte Antwort"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:355
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:689
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:981
 msgid "Last ticket: <0>{0}</0>"
 msgstr ""
 
@@ -5002,7 +5101,7 @@ msgid "Links Allowed"
 msgstr "Links erlaubt"
 
 #: src/components/common/EventCard/index.tsx:87
-#: src/components/layouts/Event/index.tsx:200
+#: src/components/layouts/Event/index.tsx:213
 #: src/components/layouts/OrganizerLayout/index.tsx:219
 msgid "Live"
 msgstr "Live"
@@ -5052,18 +5151,12 @@ msgstr "Standort"
 
 #: src/components/routes/auth/Login/index.tsx:104
 #: src/components/routes/auth/Register/index.tsx:78
-#: src/components/routes/kiosk/Login/index.tsx:82
+#: src/components/routes/kiosk/Login/index.tsx:95
 msgid "Log in"
 msgstr "Anmelden"
 
-#: src/components/layouts/Kiosk/index.tsx:70
-#: src/components/routes/kiosk/NoEvent/index.tsx:28
-#: src/components/routes/kiosk/SelectEvent/index.tsx:58
-msgid "Log out"
-msgstr "Abmelden"
-
 #: src/components/routes/auth/Login/index.tsx:104
-#: src/components/routes/kiosk/Login/index.tsx:82
+#: src/components/routes/kiosk/Login/index.tsx:95
 msgid "Logging in"
 msgstr "Einloggen"
 
@@ -5130,6 +5223,10 @@ msgstr "Teilnehmer verwalten"
 #: src/components/common/EventCard/index.tsx:136
 msgid "Manage event"
 msgstr "Veranstaltung verwalten"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:816
+msgid "Manage kiosk operators"
+msgstr "Kiosk-Betreiber verwalten"
 
 #: src/components/common/OrdersTable/index.tsx:153
 msgid "Manage order"
@@ -5268,7 +5365,7 @@ msgid "Message Sent"
 msgstr "Nachricht gesendet"
 
 #: src/components/layouts/Admin/index.tsx:18
-#: src/components/layouts/Event/index.tsx:127
+#: src/components/layouts/Event/index.tsx:140
 #: src/components/routes/event/messages.tsx:225
 msgid "Messages"
 msgstr "Mitteilungen"
@@ -5334,7 +5431,8 @@ msgstr "Mehrzeiliges Textfeld"
 msgid "Multiple price options. Perfect for early bird products etc."
 msgstr "Mehrere Preisoptionen. Perfekt für Frühbucherprodukte usw."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:234
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:537
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:853
 msgid "Multiple prices"
 msgstr ""
 
@@ -5380,6 +5478,7 @@ msgstr "Nam placerat elementum..."
 #: src/components/modals/DuplicateEventModal/index.tsx:109
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:63
 #: src/components/routes/admin/Configurations/index.tsx:219
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:98
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:75
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:231
 msgid "Name"
@@ -5493,6 +5592,10 @@ msgstr "Keine Kapazität"
 msgid "No Capacity Assignments"
 msgstr "Keine Kapazitätszuweisungen"
 
+#: src/components/routes/kiosk/Settings/index.tsx:171
+msgid "No cash session on this kiosk"
+msgstr "Keine Kassensitzung an diesem Kiosk"
+
 #: src/components/common/CheckInListList/index.tsx:44
 msgid "No Check-In Lists"
 msgstr "Keine Einchecklisten"
@@ -5529,7 +5632,7 @@ msgstr "Kein Enddatum"
 msgid "No ended events to show."
 msgstr "Keine beendeten Veranstaltungen anzuzeigen."
 
-#: src/components/routes/kiosk/NoEvent/index.tsx:25
+#: src/components/routes/kiosk/NoEvent/index.tsx:24
 msgid "No event assigned"
 msgstr "Kein Event zugewiesen"
 
@@ -5565,6 +5668,10 @@ msgstr "Keine Auswirkungen auf Ihre aktuellen oder vergangenen Transaktionen"
 msgid "No invoice"
 msgstr "Keine Rechnung"
 
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:85
+msgid "No kiosk operators yet"
+msgstr "Noch keine Kiosk-Betreiber"
+
 #: src/components/modals/OrganizerWebhookLogsModal/index.tsx:163
 #: src/components/modals/WebhookLogsModal/index.tsx:177
 msgid "No logs found"
@@ -5581,6 +5688,10 @@ msgstr "Keine Nachrichten gefunden"
 #: src/components/routes/event/messages.tsx:321
 msgid "No messages to show"
 msgstr "Keine Nachrichten zum Anzeigen"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:194
+msgid "No more tickets available for this price."
+msgstr "Keine Tickets mehr für diesen Preis."
 
 #: src/components/common/QuestionsTable/index.tsx:489
 msgid "No order questions yet"
@@ -5626,6 +5737,10 @@ msgstr "Keine Zahlung erforderlich"
 #: src/components/routes/admin/Dashboard/index.tsx:282
 msgid "No popular events in the last 14 days"
 msgstr "Keine beliebten Events in den letzten 14 Tagen"
+
+#: src/components/routes/kiosk/Settings/index.tsx:78
+msgid "No printing"
+msgstr "Kein Druck"
 
 #: src/components/modals/ManageAttendeeModal/index.tsx:177
 msgid "No product associated with this attendee."
@@ -5701,7 +5816,8 @@ msgstr "Keine Suchergebnisse."
 msgid "No Taxes or Fees have been added."
 msgstr "Es wurden keine Steuern oder Gebühren hinzugefügt."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:211
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:509
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:830
 msgid "No ticket is both active and attached to an active check-in list. Attach a product to a check-in list first — otherwise it would not be scannable at the door."
 msgstr ""
 
@@ -5947,6 +6063,15 @@ msgstr "Seitenleiste öffnen"
 msgid "Open Stripe Dashboard"
 msgstr "Stripe-Dashboard öffnen"
 
+#: src/components/layouts/Kiosk/index.tsx:64
+#: src/components/routes/kiosk/Settings/index.tsx:150
+msgid "Operator"
+msgstr "Operator"
+
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:39
+msgid "Operator restored for this event"
+msgstr "Betreiber für diese Veranstaltung wiederhergestellt"
+
 #: src/components/forms/QuestionForm/index.tsx:46
 msgid "Option {i}"
 msgstr "Option {i}"
@@ -5963,11 +6088,16 @@ msgstr "Optionales Präfix für Rechnungsnummern (z. B. INV-)"
 msgid "Optional text for disclaimers, contact info, or thank you notes (single line only)"
 msgstr "Optionaler Text für Haftungsausschlüsse, Kontaktinformationen oder Dankesnachrichten (nur einzeilig)"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:629
+msgid "Optional. Skip this step if you are in a hurry — the attendee can add their details later on their phone."
+msgstr "Optional. Überspringen Sie diesen Schritt bei Zeitdruck — der Teilnehmer kann seine Daten später am Handy ergänzen."
+
 #: src/components/common/QuestionsTable/index.tsx:125
 msgid "options"
 msgstr "Optionen"
 
 #: src/components/forms/QuestionForm/index.tsx:29
+#: src/components/routes/kiosk/Settings/index.tsx:45
 msgid "Options"
 msgstr "Optionen"
 
@@ -6180,7 +6310,7 @@ msgid "Order was cancelled"
 msgstr "Bestellung wurde storniert"
 
 #: src/components/layouts/Admin/index.tsx:17
-#: src/components/layouts/Event/index.tsx:118
+#: src/components/layouts/Event/index.tsx:120
 #: src/components/routes/admin/Attribution/index.tsx:138
 #: src/components/routes/admin/Orders/index.tsx:44
 #: src/components/routes/event/orders.tsx:115
@@ -6248,7 +6378,7 @@ msgstr "Veranstalter"
 msgid "Organizer archived successfully"
 msgstr "Veranstalter erfolgreich archiviert"
 
-#: src/components/layouts/Event/index.tsx:90
+#: src/components/layouts/Event/index.tsx:92
 #: src/components/layouts/OrganizerLayout/index.tsx:83
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:160
 msgid "Organizer Dashboard"
@@ -6328,7 +6458,7 @@ msgstr "Andere Listen (Ticket Nicht Enthalten)"
 msgid "Outgoing Messages"
 msgstr "Ausgehende Nachrichten"
 
-#: src/components/layouts/Event/index.tsx:93
+#: src/components/layouts/Event/index.tsx:95
 msgid "Overview"
 msgstr "Übersicht"
 
@@ -6401,7 +6531,7 @@ msgstr "An Käufer weitergeben"
 #: src/components/routes/auth/AcceptInvitation/index.tsx:127
 #: src/components/routes/auth/Login/index.tsx:98
 #: src/components/routes/auth/Register/index.tsx:112
-#: src/components/routes/kiosk/Login/index.tsx:76
+#: src/components/routes/kiosk/Login/index.tsx:81
 #: src/components/routes/profile/ManageProfile/index.tsx:119
 msgid "Password"
 msgstr "Passwort"
@@ -6473,6 +6603,7 @@ msgstr "Nutzlast"
 #: src/components/common/OrdersTable/index.tsx:375
 #: src/components/common/ProgressStepper/index.tsx:19
 #: src/components/forms/StripeCheckoutForm/index.tsx:127
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
 msgid "Payment"
 msgstr "Zahlung"
 
@@ -6627,6 +6758,11 @@ msgstr "Persönliche Daten"
 msgid "Phone"
 msgstr "Telefon"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:621
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:897
+msgid "Phone number"
+msgstr "Telefonnummer"
+
 #: src/components/forms/QuestionForm/index.tsx:137
 msgid "Phone Number"
 msgstr ""
@@ -6678,7 +6814,7 @@ msgid "Please check the provided information is correct"
 msgstr "Bitte überprüfen Sie, ob die angegebenen Informationen korrekt sind"
 
 #: src/components/routes/auth/Login/index.tsx:53
-#: src/components/routes/kiosk/Login/index.tsx:51
+#: src/components/routes/kiosk/Login/index.tsx:56
 msgid "Please check your email and password and try again"
 msgstr "Bitte überprüfen Sie Ihre E-Mail und Ihr Passwort und versuchen Sie es erneut"
 
@@ -6829,8 +6965,8 @@ msgstr "Vorschau"
 msgid "Preview checkout form"
 msgstr "Vorschau des Bestellformulars"
 
-#: src/components/layouts/Event/index.tsx:246
-#: src/components/layouts/Event/index.tsx:250
+#: src/components/layouts/Event/index.tsx:259
+#: src/components/layouts/Event/index.tsx:263
 msgid "Preview Event page"
 msgstr "Vorschau der Veranstaltungsseite"
 
@@ -6889,11 +7025,23 @@ msgstr "Tickets drucken"
 msgid "Print to PDF"
 msgstr "Als PDF drucken"
 
+#: src/components/routes/kiosk/Settings/index.tsx:91
+msgid "Printer IP address"
+msgstr "IP-Adresse des Druckers"
+
+#: src/components/routes/kiosk/Settings/index.tsx:44
+msgid "Printing"
+msgstr "Druck"
+
 #: src/components/common/CookieConsentBanner/index.tsx:51
 #: src/components/layouts/EventHomepage/index.tsx:623
 #: src/components/layouts/OrganizerHomepage/index.tsx:341
 msgid "Privacy Policy"
 msgstr "Datenschutzerklärung"
+
+#: src/components/routes/kiosk/Settings/index.tsx:92
+msgid "Private LAN address of the Zebra (port 9100)."
+msgstr "Private LAN-Adresse der Zebra (Port 9100)."
 
 #: src/components/modals/RefundOrderModal/index.tsx:150
 msgid "Process Refund"
@@ -6903,7 +7051,8 @@ msgstr "Erstattung verarbeiten"
 msgid "Processing order"
 msgstr "Bestellung wird verarbeitet"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:348
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:974
 msgid "Processing…"
 msgstr ""
 
@@ -7015,7 +7164,7 @@ msgstr "Aktionscode-Seite"
 msgid "Promo code usage and discount breakdown"
 msgstr "Nutzung von Rabattcodes und Rabattaufschlüsselung"
 
-#: src/components/layouts/Event/index.tsx:119
+#: src/components/layouts/Event/index.tsx:121
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/event/promo-codes.tsx:33
 msgid "Promo Codes"
@@ -7125,6 +7274,10 @@ msgstr "Rate"
 msgid "Rate limit exceeded. Please try again later."
 msgstr "Ratenlimit überschritten. Bitte versuchen Sie es später erneut."
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:495
+msgid "Rates"
+msgstr "Tarife"
+
 #: src/components/common/WaitlistTable/index.tsx:69
 msgid "Re-offer Spot"
 msgstr "Platz erneut anbieten"
@@ -7136,6 +7289,10 @@ msgstr "Bereit für das Upgrade? Das dauert nur wenige Minuten."
 #: src/components/layouts/AuthLayout/index.tsx:41
 msgid "Real-Time Analytics"
 msgstr "Echtzeit-Analysen"
+
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:138
+msgid "Reassign"
+msgstr "Erneut zuweisen"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:157
 #: src/components/routes/auth/Register/index.tsx:133
@@ -7263,7 +7420,7 @@ msgid "Register"
 msgstr "Registrieren"
 
 #: src/components/common/QuestionsTable/index.tsx:412
-#: src/components/layouts/Event/index.tsx:113
+#: src/components/layouts/Event/index.tsx:115
 msgid "Registration Questions"
 msgstr "Registrierungsfragen"
 
@@ -7286,18 +7443,25 @@ msgstr "entfernen"
 msgid "Remove"
 msgstr "Entfernen"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:545
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:592
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:723
+msgid "Remove ticket"
+msgstr "Ticket entfernen"
+
 #: src/components/routes/organizer/Reports/ReportLayout/index.tsx:26
 msgid "Report not found"
 msgstr "Bericht nicht gefunden"
 
-#: src/components/layouts/Event/index.tsx:103
+#: src/components/layouts/Event/index.tsx:105
 #: src/components/layouts/OrganizerLayout/index.tsx:86
 #: src/components/routes/event/Reports/index.tsx:39
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
 msgstr "Berichte"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:363
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:697
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:989
 msgid "Reprint"
 msgstr ""
 
@@ -7325,7 +7489,7 @@ msgstr "Bestätigung erneut senden"
 msgid "Resend Confirmation Email"
 msgstr "Bestätigungs-E-Mail erneut senden"
 
-#: src/components/layouts/Event/index.tsx:266
+#: src/components/layouts/Event/index.tsx:279
 msgid "Resend email"
 msgstr "E-Mail erneut senden"
 
@@ -7450,6 +7614,11 @@ msgstr "Einnahmen"
 msgid "Revenue Summary"
 msgstr "Umsatzübersicht"
 
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:51
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:129
+msgid "Revoke"
+msgstr "Widerrufen"
+
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:130
 msgid "Revoke invitation"
 msgstr "Einladung widerrufen"
@@ -7457,6 +7626,14 @@ msgstr "Einladung widerrufen"
 #: src/components/common/WaitlistTable/index.tsx:78
 msgid "Revoke Offer"
 msgstr ""
+
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:49
+msgid "Revoke this operator for this event? They will no longer be able to sell tickets here. Past sales stay in the audit trail."
+msgstr "Diesen Betreiber für diese Veranstaltung widerrufen? Er kann hier keine Tickets mehr verkaufen. Vergangene Verkäufe bleiben im Prüfprotokoll."
+
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:116
+msgid "Revoked"
+msgstr "Widerrufen"
 
 #: src/components/modals/EditUserModal/index.tsx:93
 #: src/components/modals/InviteUserModal/index.tsx:64
@@ -7500,6 +7677,7 @@ msgid "Sale starts {0}"
 msgstr "Verkauf beginnt {0}"
 
 #: src/components/common/AffiliateTable/index.tsx:145
+#: src/components/layouts/Kiosk/index.tsx:51
 msgid "Sales"
 msgstr "Verkauf"
 
@@ -7867,11 +8045,7 @@ msgstr "Wählen..."
 msgid "Selected"
 msgstr "Ausgewählt"
 
-#: src/components/layouts/Kiosk/index.tsx:49
-msgid "Sell"
-msgstr "Verkauf"
-
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:198
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:805
 msgid "Sell a ticket at the door and print it immediately."
 msgstr ""
 
@@ -7891,10 +8065,6 @@ msgstr "Eine Nachricht schicken"
 #: src/components/modals/SendMessageModal/index.tsx:468
 msgid "Send as test"
 msgstr "Als Test senden"
-
-#: src/components/routes/kiosk/Settings/index.tsx:41
-msgid "Send confirmation email by default"
-msgstr "Bestätigungs-E-Mail standardmäßig senden"
 
 #: src/components/routes/event/messages.tsx:324
 msgid "Send emails to attendees, ticket holders, or order owners. Messages can be sent immediately or scheduled for later."
@@ -7932,6 +8102,10 @@ msgstr "Link zum Zurücksetzen senden"
 #: src/components/modals/SendMessageModal/index.tsx:450
 msgid "Send Test"
 msgstr "Test senden"
+
+#: src/components/routes/kiosk/Settings/index.tsx:116
+msgid "Send tickets by email when possible"
+msgstr "Tickets per E-Mail senden, wenn möglich"
 
 #: src/components/routes/event/messages.tsx:334
 msgid "Send your first message"
@@ -7987,6 +8161,10 @@ msgstr "SEO-Titel"
 msgid "Service Fee"
 msgstr "Servicegebühr"
 
+#: src/components/routes/kiosk/Settings/index.tsx:170
+msgid "Session"
+msgstr "Sitzung"
+
 #: src/components/forms/ProductForm/index.tsx:168
 msgid "Set a minimum price and let users pay more if they choose"
 msgstr "Legen Sie einen Mindestpreis fest und lassen Sie die Nutzer mehr zahlen, wenn sie wollen."
@@ -8002,6 +8180,10 @@ msgstr "Legen Sie Standardeinstellungen für neue Veranstaltungen fest, die unte
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:207
 msgid "Set the starting number for invoice numbering. This cannot be changed once invoices have been generated."
 msgstr "Legen Sie die Startnummer für die Rechnungsnummerierung fest. Dies kann nicht geändert werden, sobald Rechnungen generiert wurden."
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:279
+msgid "Set the Zebra printer IP in Settings before printing."
+msgstr "Tragen Sie die Zebra-IP in den Einstellungen ein, bevor Sie drucken."
 
 #: src/components/routes/event/CheckInLists/index.tsx:32
 msgid "Set up check-in lists for different entrances, sessions, or days."
@@ -8029,14 +8211,14 @@ msgstr "Einstellung aktualisiert"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/Kiosk/index.tsx:56
+#: src/components/layouts/Kiosk/index.tsx:58
 #: src/components/layouts/OrganizerLayout/index.tsx:93
 #: src/components/modals/DuplicateEventModal/index.tsx:26
-#: src/components/routes/kiosk/Settings/index.tsx:12
+#: src/components/routes/kiosk/Settings/index.tsx:51
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/components/layouts/Event/index.tsx:109
+#: src/components/layouts/Event/index.tsx:111
 msgid "Setup & Design"
 msgstr "Einrichtung & Design"
 
@@ -8054,8 +8236,8 @@ msgstr "Teilen"
 msgid "Share Affiliate Link"
 msgstr "Partnerlink teilen"
 
-#: src/components/layouts/Event/index.tsx:216
-#: src/components/layouts/Event/index.tsx:222
+#: src/components/layouts/Event/index.tsx:229
+#: src/components/layouts/Event/index.tsx:235
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:102
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:131
 msgid "Share Event"
@@ -8122,10 +8304,6 @@ msgstr "Wird dem Kunden vor dem Bezahlvorgang angezeigt"
 #: src/components/forms/QuestionForm/index.tsx:133
 msgid "Shows common address fields, including country"
 msgstr "Zeigt allgemeine Adressfelder an, einschließlich Land"
-
-#: src/components/routes/kiosk/Login/index.tsx:65
-msgid "Sign in to sell tickets at the door."
-msgstr "Melden Sie sich an, um Tickets vor Ort zu verkaufen."
 
 #: src/components/routes/admin/Dashboard/index.tsx:402
 msgid "Signed Up"
@@ -8208,9 +8386,10 @@ msgstr "Etwas ist schief gelaufen."
 msgid "Something went wrong. Please try again later."
 msgstr "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut."
 
-#: src/components/layouts/Event/index.tsx:84
+#: src/components/layouts/Event/index.tsx:86
 #: src/components/layouts/OrganizerLayout/index.tsx:111
 #: src/components/routes/auth/Login/index.tsx:72
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:42
 #: src/components/routes/my-tickets/index.tsx:145
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
@@ -8237,7 +8416,8 @@ msgstr "Spanisch"
 msgid "Sports"
 msgstr "Sport"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:251
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:584
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:870
 msgid "Standard"
 msgstr ""
 
@@ -8276,7 +8456,8 @@ msgstr "Startzeit der Veranstaltung"
 msgid "State or Region"
 msgstr "Staat oder Region"
 
-#: src/components/routes/kiosk/Settings/index.tsx:17
+#: src/components/routes/kiosk/Settings/index.tsx:121
+#: src/components/routes/kiosk/Settings/index.tsx:158
 msgid "Station name"
 msgstr "Stationsname"
 
@@ -8306,6 +8487,7 @@ msgstr "Statistiken basieren auf dem Erstellungsdatum des Kontos"
 #: src/components/routes/admin/Messages/index.tsx:120
 #: src/components/routes/admin/Messages/index.tsx:167
 #: src/components/routes/admin/Messages/index.tsx:293
+#: src/components/routes/event/BoxOffice/Operators/index.tsx:100
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:88
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
 msgid "Status"
@@ -8378,6 +8560,10 @@ msgstr "Zwischensumme"
 #: src/components/layouts/Checkout/index.tsx:91
 msgid "Success"
 msgstr "Erfolg"
+
+#: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:34
+msgid "Success! {0} can sign in on the kiosk after setting a password."
+msgstr "Erfolg! {0} kann sich nach dem Festlegen eines Passworts am Kiosk anmelden."
 
 #: src/components/modals/EditUserModal/index.tsx:40
 #: src/components/modals/InviteUserModal/index.tsx:32
@@ -8574,7 +8760,7 @@ msgstr "Systemstandard"
 msgid "T-shirt"
 msgstr "T-Shirt"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:348
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:974
 msgid "Take Payment & Create Ticket"
 msgstr ""
 
@@ -8713,6 +8899,10 @@ msgstr "Dieser Aktionscode ist ungültig"
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
 msgstr "Die Hintergrundfarbe der Seite. Bei Verwendung eines Titelbilds wird dies als Overlay angewendet."
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:710
+msgid "The basket is empty."
+msgstr "Der Warenkorb ist leer."
+
 #: src/components/layouts/CheckIn/index.tsx:353
 msgid "The check-in list you are looking for does not exist."
 msgstr "Die gesuchte Eincheckliste existiert nicht."
@@ -8803,7 +8993,8 @@ msgstr "Der dem Kunden angezeigte Preis versteht sich inklusive Steuern und Geb�
 msgid "The price displayed to the customer will not include taxes and fees. They will be shown separately"
 msgstr "Der dem Kunden angezeigte Preis enthält keine Steuern und Gebühren. Diese werden separat ausgewiesen"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:177
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:372
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:422
 msgid "The price has changed — please reselect the ticket type."
 msgstr ""
 
@@ -8828,6 +9019,10 @@ msgstr "Die geplante Zeit muss in der Zukunft liegen"
 msgid "The template body contains invalid Liquid syntax. Please correct it and try again."
 msgstr "Der Vorlagenkörper enthält ungültige Liquid-Syntax. Bitte korrigieren Sie sie und versuchen Sie es erneut."
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:306
+msgid "The ticket was created but the Zebra printer did not respond."
+msgstr "Das Ticket wurde erstellt, aber der Zebra-Drucker hat nicht geantwortet."
+
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:63
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:63
 msgid "The title of the event that will be displayed in search engine results and when sharing on social media. By default, the event title will be used"
@@ -8836,6 +9031,10 @@ msgstr "Der Titel der Veranstaltung, der in Suchmaschinenergebnissen und beim Te
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:87
 msgid "The VAT number could not be validated. Please check the number and try again."
 msgstr "Die Umsatzsteuer-Identifikationsnummer konnte nicht validiert werden. Bitte überprüfen Sie die Nummer und versuchen Sie es erneut."
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:305
+msgid "The Zebra printer did not respond."
+msgstr "Der Zebra-Drucker hat nicht geantwortet."
 
 #: src/constants/eventCategories.ts:10
 msgid "Theater"
@@ -8874,13 +9073,13 @@ msgstr "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten"
 msgid "These details will only be shown if order is completed successfully. Orders awaiting payment will not show this message."
 msgstr "Diese Details werden nur angezeigt, wenn die Bestellung erfolgreich abgeschlossen wurde. Bestellungen, die auf Zahlung warten, zeigen diese Nachricht nicht an."
 
-#: src/components/routes/kiosk/Settings/index.tsx:13
-msgid "These preferences stay on this device. They are not saved to your account."
-msgstr "Diese Einstellungen bleiben auf diesem Gerät. Sie werden nicht in Ihrem Konto gespeichert."
-
 #: src/components/common/WidgetEditor/index.tsx:178
 msgid "These settings apply only to copied embed code and won't be stored."
 msgstr "Diese Einstellungen gelten nur für kopierten Einbettungscode und werden nicht gespeichert."
+
+#: src/components/routes/kiosk/Settings/index.tsx:66
+msgid "These settings will apply only to this sales station."
+msgstr "Diese Einstellungen gelten nur für diese Verkaufsstation."
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:326
 msgid "These templates will be used as defaults for all events in your organization. Individual events can override these templates with their own custom versions."
@@ -8889,6 +9088,10 @@ msgstr "Diese Vorlagen werden als Standards für alle Veranstaltungen in Ihrer O
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:319
 msgid "These templates will override the organizer defaults for this event only. If no custom template is set here, the organizer template will be used instead."
 msgstr "Diese Vorlagen überschreiben die Veranstalter-Standards nur für diese Veranstaltung. Wenn hier keine benutzerdefinierte Vorlage festgelegt ist, wird stattdessen die Veranstaltervorlage verwendet."
+
+#: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:44
+msgid "They will receive an email to set a password, then sign in at the kiosk. They cannot access this back office."
+msgstr "Sie erhalten eine E-Mail zum Festlegen eines Passworts und melden sich dann am Kiosk an. Sie haben keinen Zugriff auf dieses Backoffice."
 
 #: src/components/common/CheckIn/CheckInOptionsModal.tsx:35
 msgid "This attendee has an unpaid order."
@@ -9055,7 +9258,8 @@ msgstr "Dieser Bericht dient nur zu Informationszwecken. Konsultieren Sie immer 
 msgid "This reset password link is invalid or expired."
 msgstr "Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:182
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:374
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:427
 msgid "This sale could not be completed. Please try again."
 msgstr ""
 
@@ -9094,7 +9298,8 @@ msgstr "Ticket"
 msgid "Ticket Cancelled"
 msgstr "Ticket storniert"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:168
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:365
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:411
 msgid "Ticket created — {0}"
 msgstr ""
 
@@ -9106,7 +9311,7 @@ msgstr "Ticketdesign"
 msgid "Ticket design saved successfully"
 msgstr "Ticketdesign erfolgreich gespeichert"
 
-#: src/components/layouts/Event/index.tsx:112
+#: src/components/layouts/Event/index.tsx:114
 msgid "Ticket Designer"
 msgstr "Ticket-Designer"
 
@@ -9139,7 +9344,7 @@ msgstr "Ticketinhaber"
 msgid "Ticket ID"
 msgstr "Ticket-ID"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:296
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:922
 msgid "Ticket language"
 msgstr ""
 
@@ -9184,7 +9389,7 @@ msgstr "Tickettyp"
 msgid "Ticket URL"
 msgstr "Ticket-URL"
 
-#: src/components/layouts/Event/index.tsx:116
+#: src/components/layouts/Event/index.tsx:118
 msgid "Ticketing & Sales"
 msgstr "Ticketing & Verkauf"
 
@@ -9192,11 +9397,12 @@ msgstr "Ticketing & Verkauf"
 msgid "tickets"
 msgstr "Tickets"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:506
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "Tickets"
 
-#: src/components/layouts/Event/index.tsx:117
+#: src/components/layouts/Event/index.tsx:119
 #: src/components/routes/event/products.tsx:48
 msgid "Tickets & Products"
 msgstr "Tickets & Produkte"
@@ -9212,6 +9418,10 @@ msgstr "Tickets verfügbar"
 #: src/components/routes/product-widget/PrintOrder/index.tsx:40
 msgid "Tickets for"
 msgstr "Tickets für"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:777
+msgid "tickets in the basket"
+msgstr "Tickets im Warenkorb"
 
 #: src/components/routes/admin/Dashboard/index.tsx:140
 msgid "Tickets Sold"
@@ -9516,7 +9726,7 @@ msgstr ""
 #: src/components/forms/ProductForm/index.tsx:321
 #: src/components/forms/PromoCodeForm/index.tsx:112
 #: src/components/modals/OfferWaitlistModal/index.tsx:189
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:267
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:886
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:78
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:84
 msgid "Unlimited"
@@ -9815,7 +10025,7 @@ msgstr "Verifiziert"
 msgid "Verify Email"
 msgstr "E-Mail verifizieren"
 
-#: src/components/layouts/Event/index.tsx:263
+#: src/components/layouts/Event/index.tsx:276
 msgid "Verify your email"
 msgstr "Bestätigen Sie Ihre E-Mail-Adresse"
 
@@ -9950,7 +10160,7 @@ msgstr "Wartend"
 msgid "Waiting for payment"
 msgstr "Warten auf Zahlung"
 
-#: src/components/layouts/Event/index.tsx:128
+#: src/components/layouts/Event/index.tsx:141
 #: src/components/routes/event/Settings/index.tsx:76
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:51
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:49
@@ -10094,7 +10304,7 @@ msgstr "Webhook sendet keine Benachrichtigungen"
 msgid "Webhook will send notifications"
 msgstr "Webhook sendet Benachrichtigungen"
 
-#: src/components/layouts/Event/index.tsx:134
+#: src/components/layouts/Event/index.tsx:147
 #: src/components/layouts/OrganizerLayout/index.tsx:99
 #: src/components/modals/DuplicateEventModal/index.tsx:32
 #: src/components/routes/event/Webhooks/index.tsx:32
@@ -10290,7 +10500,7 @@ msgstr "Wer organisiert diese Veranstaltung?"
 msgid "Who should be asked this question?"
 msgstr "Wem sollte diese Frage gestellt werden?"
 
-#: src/components/layouts/Event/index.tsx:133
+#: src/components/layouts/Event/index.tsx:146
 msgid "Widget Embed"
 msgstr "Widget einbetten"
 
@@ -10390,7 +10600,7 @@ msgstr "Sie können zusätzliche Servicegebühren und Steuern in Ihren Kontoeins
 msgid "You can create a promo code which targets this product on the"
 msgstr "Sie können einen Promo-Code erstellen, der sich auf dieses Produkt richtet auf der"
 
-#: src/components/routes/kiosk/SelectEvent/index.tsx:43
+#: src/components/routes/kiosk/SelectEvent/index.tsx:42
 msgid "You can sell tickets for these events."
 msgstr "Sie können Tickets für diese Events verkaufen."
 
@@ -10637,7 +10847,6 @@ msgstr "Adresse Ihres Veranstalters"
 
 #: src/components/routes/auth/Login/index.tsx:99
 #: src/components/routes/auth/Register/index.tsx:113
-#: src/components/routes/kiosk/Login/index.tsx:77
 msgid "Your password"
 msgstr "Ihr Passwort"
 
@@ -10697,6 +10906,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:67
 msgid "YouTube"
 msgstr "YouTube"
+
+#: src/components/routes/kiosk/Settings/index.tsx:86
+msgid "Zebra ZD621 (silent)"
+msgstr "Zebra ZD621 (lautlos)"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:549
 msgid "ZIP / Postal Code"

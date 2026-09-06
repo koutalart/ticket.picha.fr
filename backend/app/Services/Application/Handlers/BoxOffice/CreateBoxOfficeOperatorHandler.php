@@ -52,8 +52,10 @@ class CreateBoxOfficeOperatorHandler
     {
         return $this->databaseManager->transaction(function () use ($dto) {
             $user = $this->resolveOperatorUser($dto);
+            $assignment = $this->assignToEvent($dto, $user->getId());
+            $assignment->setUser($user);
 
-            return $this->assignToEvent($dto, $user->getId());
+            return $assignment;
         });
     }
 

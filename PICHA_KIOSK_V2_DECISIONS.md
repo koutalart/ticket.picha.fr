@@ -434,6 +434,11 @@ un parc TPE / un prestataire monétique imposé ? modèle des terminaux ? Sans c
 spécifiable. **Recommandation de séquencement : garder A pour la v2.1**, traiter B comme un chantier
 dédié une fois le prestataire connu.
 
+**Backlog Jo (6 sept. 2026, hors v2.1) :** le kiosque devra **communiquer** avec **MVola**,
+**Orange Money** et les **TPE**. **Carte** (déjà à l'encaissement) = le TPE plus tard — pas de
+second bouton. Placeholders grisés **MVola / Orange Money** sur l'étape Paiement du kiosque.
+Aucune API, aucun `payment_method` nouveau.
+
 ---
 
 ## D25 — Panier multi-billets (lien avec D4)

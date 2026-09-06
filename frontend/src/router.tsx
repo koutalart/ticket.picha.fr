@@ -418,6 +418,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "box-office/operators",
+                async lazy() {
+                    const BoxOfficeOperators = await import("./components/routes/event/BoxOffice/Operators");
+                    return { Component: BoxOfficeOperators.default };
+                }
+            },
+            {
                 path: "check-in",
                 async lazy() {
                     const CheckIn = await import("./components/routes/event/CheckInLists");

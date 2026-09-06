@@ -31,6 +31,7 @@ class BoxOfficeOperatorScopeTest extends TestCase
         return [
             'product_id' => $productId,
             'product_price_id' => $productPriceId,
+            'phone' => '+33612345678',
             'first_name' => 'Jane',
             'last_name' => 'Doe',
             'email' => 'jane@example.test',

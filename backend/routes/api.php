@@ -37,6 +37,7 @@ use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeTicketPdfAction;
 use HiEvents\Http\Actions\BoxOffice\Operators\CreateBoxOfficeOperatorAction;
 use HiEvents\Http\Actions\BoxOffice\Operators\GetBoxOfficeOperatorsAction;
 use HiEvents\Http\Actions\BoxOffice\Operators\UpdateBoxOfficeOperatorAction;
+use HiEvents\Http\Actions\BoxOffice\PrintBoxOfficeZplAction;
 use HiEvents\Http\Actions\BoxOffice\ReprintBoxOfficeTicketAction;
 use HiEvents\Http\Actions\CapacityAssignments\CreateCapacityAssignmentAction;
 use HiEvents\Http\Actions\CapacityAssignments\DeleteCapacityAssignmentAction;
@@ -367,6 +368,7 @@ $router->middleware(['auth:api'])->group(
         $router->post('/events/{event_id}/box-office-sales', CreateBoxOfficeSaleAction::class);
         $router->get('/events/{event_id}/attendees/{attendee_public_id}/ticket.pdf', GetBoxOfficeTicketPdfAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/reprint', ReprintBoxOfficeTicketAction::class);
+        $router->post('/events/{event_id}/attendees/{attendee_public_id}/print-zpl', PrintBoxOfficeZplAction::class);
 
         // Box Office (PICHA Kiosk v2 — operator account, D23)
         $router->get('/box-office/context', GetBoxOfficeContextAction::class);

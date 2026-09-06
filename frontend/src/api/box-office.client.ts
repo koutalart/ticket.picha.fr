@@ -7,12 +7,20 @@ export enum BoxOfficePaymentMethod {
     Free = 'FREE',
 }
 
-export interface CreateBoxOfficeSaleRequest {
+export interface CreateBoxOfficeSaleItem {
     product_id: number;
     product_price_id: number;
-    first_name: string;
+    quantity: number;
+}
+
+export interface CreateBoxOfficeSaleRequest {
+    product_id?: number;
+    product_price_id?: number;
+    items?: CreateBoxOfficeSaleItem[];
+    phone?: string;
+    first_name?: string;
     last_name?: string;
-    email: string;
+    email?: string;
     locale: string;
     amount: number;
     payment_method: BoxOfficePaymentMethod;
@@ -24,6 +32,7 @@ export interface BoxOfficeSale {
     sale_id: number | string;
     attendee: Attendee;
     order: Order;
+    attendees?: Attendee[];
 }
 
 /** GET /box-office/context — events the authenticated user may operate. */
@@ -50,6 +59,24 @@ export interface BoxOfficeProduct {
     is_hidden: boolean;
     is_scannable: boolean;
     prices: BoxOfficeProductPrice[];
+}
+
+export type BoxOfficeOperatorStatus = 'ACTIVE' | 'REVOKED';
+
+export interface BoxOfficeOperator {
+    user_id: number;
+    event_id: number;
+    status: BoxOfficeOperatorStatus;
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    created_at: string;
+}
+
+export interface CreateBoxOfficeOperatorRequest {
+    first_name: string;
+    last_name?: string;
+    email: string;
 }
 
 export const boxOfficeClient = {
@@ -86,6 +113,36 @@ export const boxOfficeClient = {
         const response = await api.post(
             `events/${eventId}/attendees/${attendeePublicId}/reprint`, {},
             {responseType: 'blob'},
+        );
+        return response.data;
+    },
+
+    printZpl: async (eventId: IdParam, attendeePublicId: string, printerHost: string) => {
+        await api.post(
+            `events/${eventId}/attendees/${attendeePublicId}/print-zpl`,
+            {printer_host: printerHost},
+        );
+    },
+
+    getOperators: async (eventId: IdParam) => {
+        const response = await api.get<GenericDataResponse<BoxOfficeOperator[]>>(
+            `events/${eventId}/box-office/operators`,
+        );
+        return response.data;
+    },
+
+    createOperator: async (eventId: IdParam, operator: CreateBoxOfficeOperatorRequest) => {
+        const response = await api.post<GenericDataResponse<BoxOfficeOperator>>(
+            `events/${eventId}/box-office/operators`,
+            operator,
+        );
+        return response.data;
+    },
+
+    updateOperator: async (eventId: IdParam, userId: IdParam, status: BoxOfficeOperatorStatus) => {
+        const response = await api.patch<GenericDataResponse<BoxOfficeOperator>>(
+            `events/${eventId}/box-office/operators/${userId}`,
+            {status},
         );
         return response.data;
     },

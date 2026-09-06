@@ -11,7 +11,8 @@ import {showError} from "../../../../utilites/notifications.tsx";
 import {ChooseAccountModal} from "../../../modals/ChooseAccountModal";
 import {GET_ME_QUERY_KEY} from "../../../../queries/useGetMe.ts";
 import {GET_BOX_OFFICE_CONTEXT_QUERY_KEY} from "../../../../queries/useGetBoxOfficeContext.ts";
-import {kioskPathForEvents} from "../../../../utilites/kioskAuth.ts";
+import {kioskPathForEvents, KIOSK_CONNECTED_AT_KEY} from "../../../../utilites/kioskAuth.ts";
+import {KioskLogo} from "../../../layouts/Kiosk/KioskLogo";
 import classes from "../../../layouts/Kiosk/Kiosk.module.scss";
 
 const KioskLogin = () => {
@@ -38,6 +39,10 @@ const KioskLogin = () => {
     const {mutate: loginUser, isPending, data} = useMutation({
         mutationFn: (userData: LoginData) => authClient.login(userData),
         onSuccess: async (response: LoginResponse) => {
+            if (typeof window !== 'undefined') {
+                window.sessionStorage.setItem(KIOSK_CONNECTED_AT_KEY, new Date().toISOString());
+            }
+
             if (response.token) {
                 await redirectFromContext();
                 return;
@@ -59,37 +64,46 @@ const KioskLogin = () => {
     }, [form.values.account_id]);
 
     return (
-        <div className={classes.loginCard}>
-            <header>
-                <h2>{t`Box Office`}</h2>
-                <p>{t`Sign in to sell tickets at the door.`}</p>
-            </header>
-            <form onSubmit={form.onSubmit((values) => loginUser(values))}>
-                <TextInput
-                    {...form.getInputProps('email')}
-                    label={t`Email`}
-                    placeholder="hello@example.com"
-                    required
-                />
-                <PasswordInput
-                    {...form.getInputProps('password')}
-                    label={t`Password`}
-                    placeholder={t`Your password`}
-                    required
-                    mt="md"
-                />
-                <Button type="submit" fullWidth loading={isPending} disabled={isPending} mt="lg">
-                    {isPending ? t`Logging in` : t`Log in`}
-                </Button>
-            </form>
-            {showChooseAccount && (
-                <ChooseAccountModal
-                    accounts={data?.accounts || []}
-                    onAccountChosen={(accountId) => {
-                        form.setFieldValue('account_id', String(accountId));
-                    }}
-                />
-            )}
+        <div className={classes.loginShell}>
+            <div className={classes.loginCard}>
+                <header className={classes.loginBrand}>
+                    <KioskLogo className={classes.loginBrandLogo} onDark={false}/>
+                </header>
+                <form onSubmit={form.onSubmit((values) => loginUser(values))}>
+                    <TextInput
+                        {...form.getInputProps('email')}
+                        placeholder={t`Email`}
+                        required
+                        size="md"
+                    />
+                    <PasswordInput
+                        {...form.getInputProps('password')}
+                        placeholder={t`Password`}
+                        required
+                        mt="md"
+                        size="md"
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        loading={isPending}
+                        disabled={isPending}
+                        mt="xl"
+                        size="lg"
+                        className={classes.loginSubmit}
+                    >
+                        {isPending ? t`Logging in` : t`Log in`}
+                    </Button>
+                </form>
+                {showChooseAccount && (
+                    <ChooseAccountModal
+                        accounts={data?.accounts || []}
+                        onAccountChosen={(accountId) => {
+                            form.setFieldValue('account_id', String(accountId));
+                        }}
+                    />
+                )}
+            </div>
         </div>
     );
 };

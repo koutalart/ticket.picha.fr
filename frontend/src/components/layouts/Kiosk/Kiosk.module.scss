@@ -1,102 +1,795 @@
 @use "../../../styles/mixins";
 
+$navy: #12081c;
+$navy-footer: #2a1648;
+$purple: #3f296b;
+$purple-soft: #efe8f7;
+$orange: #fbb405;
+$bg: #eceff3;
+$muted: #6b7280;
+
 .shell {
+  --kiosk-purple: #{$purple};
+  --kiosk-orange: #{$orange};
+  --kiosk-navy: #{$navy};
+  --kiosk-footer: #{$navy-footer};
+  --kiosk-bg: #{$bg};
   min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  background: $bg;
+  color: #1f2937;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 104px;
+  flex: 0 0 104px;
+  background: $navy;
+  color: #fff;
   display: flex;
   flex-direction: column;
-  background: var(--mantine-color-body);
+  align-items: stretch;
 }
 
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 2;
+.brand {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
+  justify-content: center;
+  height: 88px;
+  padding: 16px 10px 8px;
 }
 
-.eventTitle {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  flex: 1 1 auto;
+.brandLogo {
+  max-width: 92px;
+  max-height: 64px;
+  object-fit: contain;
 }
 
-.tabs {
+.nav {
   display: flex;
+  flex-direction: column;
   gap: 4px;
+  padding: 8px 8px 0;
 }
 
 .tab {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  color: inherit;
+  min-height: 76px;
+  padding: 10px 6px;
+  border-radius: 6px;
+  color: #fff;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
 
   &:hover {
-    background: var(--mantine-color-gray-1);
+    background: rgba(255, 255, 255, 0.08);
   }
 }
 
 .tabActive {
-  background: var(--mantine-color-gray-2);
+  background: $purple;
+
+  &:hover {
+    background: $purple;
+  }
 }
 
-.actions {
+.sidebarSpacer {
+  flex: 1;
+}
+
+.operatorLine {
   display: flex;
-  gap: 8px;
-  margin-left: auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 6px 12px;
+  margin: 0 8px 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: center;
+}
+
+.operatorLabel {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.operatorName {
+  max-width: 100%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebarActions {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  padding-bottom: 16px;
+  gap: 4px;
+}
+
+.sidebarButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 72px;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: $bg;
 }
 
 .content {
   flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.standalonePage {
+  min-height: 100vh;
+  background: $bg;
+}
+
+.textAction {
+  display: block;
+  margin: 32px auto 0;
+  border: 0;
+  background: none;
+  color: $muted;
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
 }
 
 .page {
-  max-width: 720px;
-  margin: 2rem auto;
-  padding: 0 16px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 28px 48px;
+  width: 100%;
+}
+
+.pageTitle {
+  margin: 0 0 8px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #374151;
+  text-align: center;
+}
+
+.pageLead {
+  margin: 0 0 28px;
+  color: $muted;
+  text-align: center;
+  line-height: 1.45;
 }
 
 .eventGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-  margin-top: 1.5rem;
+  gap: 16px;
 }
 
 .eventCard {
-  text-align: left;
-  padding: 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 16px;
+  border: 1px solid #d9dce3;
+  border-radius: 8px;
   background: #fff;
   cursor: pointer;
   font: inherit;
+  text-align: center;
 
   &:hover {
-    border-color: var(--mantine-color-secondary-5);
+    border-color: $purple;
   }
+}
+
+.eventCardSelected {
+  background: $purple-soft;
+  border-color: $purple;
 }
 
 .eventCardTitle {
   display: block;
-  font-weight: 600;
-  margin-bottom: 4px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.eventCardMeta {
+  color: $muted;
+  font-size: 0.9rem;
+}
+
+.loginShell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 24px;
 }
 
 .loginCard {
+  width: 100%;
   max-width: 420px;
-  margin: 3rem auto;
-  padding: 0 16px;
+}
+
+.loginBrand {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.loginBrandLogo {
+  max-width: 280px;
+  max-height: 88px;
+  margin: 0 auto;
+  display: block;
+  object-fit: contain;
+}
+
+.loginSubmit {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  background: $purple !important;
+}
+
+.infoBanner {
+  background: $purple-soft;
+  color: $purple;
+  padding: 14px 18px;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+}
+
+.settingsLayout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+  min-height: 100%;
+  background: #fff;
+
+  @include mixins.respond-below('md') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.settingsNav {
+  background: #f3f4f6;
+  padding: 16px 0;
+}
+
+.settingsNavItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  color: #4b5563;
+  text-align: left;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+}
+
+.settingsNavItemActive {
+  color: #111827;
+  background: #fff;
+  box-shadow: inset 3px 0 0 $purple;
+}
+
+.settingsPane {
+  padding: 28px 32px 48px;
+}
+
+.choiceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.choiceCard {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border: 1px solid #d9dce3;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: center;
+
+  &:hover {
+    border-color: $purple;
+  }
+}
+
+.choiceCardActive {
+  background: $purple-soft;
+  border: 2px solid $purple;
+}
+
+.optionRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.infoList {
+  display: grid;
+  gap: 12px;
+  max-width: 560px;
+}
+
+.infoRow {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  font-size: 0.95rem;
+}
+
+.infoLabel {
+  color: $muted;
+}
+
+.saleShell {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: $bg;
+}
+
+.saleHeader {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 20px 0;
+}
+
+.saleEvent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.step {
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6b7280;
+  background: #fff;
+  border: 0;
+  cursor: default;
+}
+
+.stepActive {
+  background: $purple-soft;
+  color: $purple;
+}
+
+.saleBody {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 28px 24px 16px;
+}
+
+.categoryLabel {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.ticketGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.ticketCard {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 0;
+  border: 1px solid #d9dce3;
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.ticketCardHit {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 100px;
+  padding: 18px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+
+  &:hover {
+    background: #fafafa;
+  }
+}
+
+.ticketCardSelected {
+  background: $purple-soft;
+  border-color: $purple;
+}
+
+.ticketQtyBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px 12px;
+}
+
+.qtyButton {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9dce3;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  color: inherit;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.ticketQty {
+  min-width: 28px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.ticketTitle {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ticketPrice {
+  color: $purple;
+  font-weight: 800;
+  font-size: 1.15rem;
+}
+
+.formCard {
+  max-width: 520px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.paymentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.paymentCard {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #d9dce3;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+
+  &:hover:not(:disabled) {
+    border-color: $purple;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.paymentCardComingSoon {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.paymentCardSelected {
+  background: $purple-soft;
+  border: 2px solid $purple;
+}
+
+.saleFooter {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 76px;
+  padding: 10px 16px;
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+}
+
+.basketHit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+
+.saleFooterReady {
+  background: $navy-footer;
+  color: #fff;
+  border-top: 0;
+}
+
+.basketCount {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $purple;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.2rem;
+  border-radius: 4px;
+  flex: 0 0 48px;
+}
+
+.basketMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.basketLabel {
+  font-size: 0.9rem;
+}
+
+.basketDetail {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.footerTotal {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.continueButton {
+  min-width: 180px;
+  min-height: 52px;
+  border: 0;
+  border-radius: 4px;
+  background: #d1d5db;
+  color: #6b7280;
+  font: inherit;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: not-allowed;
+}
+
+.continueButtonReady {
+  background: $orange;
+  color: $navy;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: wait;
+  }
+}
+
+.emptyState {
+  color: $muted;
+  max-width: 520px;
+}
+
+.lastSale {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.cartOverlay {
+  position: absolute;
+  inset: 0 0 76px;
+  background: rgba(17, 17, 17, 0.35);
+  display: flex;
+  align-items: flex-end;
+  z-index: 4;
+}
+
+.cartPanel {
+  width: 100%;
+  max-height: 70%;
+  overflow: auto;
+  background: #fff;
+  padding: 20px 24px 24px;
+  border-radius: 16px 16px 0 0;
+}
+
+.cartTitle {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+}
+
+.cartRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.cartRowInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.9rem;
+}
+
+.cartRowTotal {
+  font-weight: 800;
+  min-width: 72px;
+  text-align: right;
+}
+
+.cartActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.cartSecondary,
+.cartPrimary {
+  min-height: 52px;
+  border: 0;
+  border-radius: 4px;
+  font: inherit;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.cartSecondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.cartPrimary {
+  background: $purple;
+  color: #fff;
 }

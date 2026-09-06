@@ -1,5 +1,4 @@
 import {Navigate, useNavigate} from "react-router";
-import {Button} from "@mantine/core";
 import {t} from "@lingui/macro";
 import {useGetMe} from "../../../../queries/useGetMe.ts";
 import {useGetBoxOfficeContext} from "../../../../queries/useGetBoxOfficeContext.ts";
@@ -35,12 +34,12 @@ const KioskSelectEvent = () => {
     };
 
     return (
-        <div className={classes.page}>
+        <div className={`${classes.standalonePage} ${classes.page}`}>
             <TableSkeleton isVisible={!context.isFetched}/>
             {context.isFetched && (
                 <>
-                    <h1>{t`Choose an event`}</h1>
-                    <p>{t`You can sell tickets for these events.`}</p>
+                    <h1 className={classes.pageTitle}>{t`Choose an event`}</h1>
+                    <p className={classes.pageLead}>{t`You can sell tickets for these events.`}</p>
                     <div className={classes.eventGrid}>
                         {events.map((event) => (
                             <button
@@ -50,13 +49,13 @@ const KioskSelectEvent = () => {
                                 onClick={() => navigate(`/kiosk/event/${event.id}/sell`)}
                             >
                                 <span className={classes.eventCardTitle}>{event.title}</span>
-                                <span>{event.currency}</span>
+                                <span className={classes.eventCardMeta}>{event.currency}</span>
                             </button>
                         ))}
                     </div>
-                    <Button variant="subtle" mt="lg" onClick={handleLogout}>
-                        {t`Log out`}
-                    </Button>
+                    <button type="button" className={classes.textAction} onClick={handleLogout}>
+                        {t`Done`}
+                    </button>
                 </>
             )}
         </div>

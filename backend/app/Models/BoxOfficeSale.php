@@ -3,6 +3,7 @@
 namespace HiEvents\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BoxOfficeSale extends BaseModel
 {
@@ -32,5 +33,10 @@ class BoxOfficeSale extends BaseModel
     public function attendee(): BelongsTo
     {
         return $this->belongsTo(Attendee::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(BoxOfficeSaleItem::class);
     }
 }

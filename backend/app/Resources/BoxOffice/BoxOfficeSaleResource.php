@@ -19,6 +19,7 @@ class BoxOfficeSaleResource extends JsonResource
             'sale_id' => $this->saleId,
             'attendee' => new AttendeeResource($this->attendee),
             'order' => new OrderResource($this->order),
+            'attendees' => AttendeeResource::collection($this->attendees !== [] ? $this->attendees : [$this->attendee]),
         ];
     }
 }

@@ -33,6 +33,7 @@ class BoxOfficeEndToEndTest extends TestCase
             [
                 'product_id' => $product->id,
                 'product_price_id' => $productPrice->id,
+                'phone' => '+33612345678',
                 'first_name' => 'Jane',
                 'last_name' => 'Doe',
                 'email' => 'jane@example.test',
