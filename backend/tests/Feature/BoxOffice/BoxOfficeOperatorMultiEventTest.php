@@ -46,9 +46,9 @@ class BoxOfficeOperatorMultiEventTest extends TestCase
     public function test_context_returns_only_assigned_active_events(): void
     {
         [$eventA, , ] = $this->createEventWithProduct(price: 25.00);
-        [$eventB] = $this->createEventWithProduct(price: 25.00);
-        // A third event on A's account the operator is NOT assigned to.
-        $this->createEventWithProduct(price: 25.00);
+        [$eventB] = $this->createEventWithProductOnAccount($eventA->account_id);
+        // A third event on the SAME account the operator is NOT assigned to.
+        $this->createEventWithProductOnAccount($eventA->account_id);
 
         $operator = $this->makeBoxOfficeOperator($eventA, self::PASSWORD);
         $this->assignOperatorToEvent($operator, $eventB, status: 'ACTIVE');
@@ -102,11 +102,11 @@ class BoxOfficeOperatorMultiEventTest extends TestCase
         $this->assignOperatorToEvent($operator, $event, status: 'ACTIVE');
     }
 
-    /** AC-v2-9 — operator assigned to two events can sell on the second one */
+    /** AC-v2-9 — operator assigned to two events (same account) can sell on the second one */
     public function test_operator_can_sell_on_a_second_assigned_event(): void
     {
         [$eventA, , ] = $this->createEventWithProduct(price: 25.00);
-        [$eventB, $productB, $productPriceB] = $this->createEventWithProduct(price: 25.00);
+        [$eventB, $productB, $productPriceB] = $this->createEventWithProductOnAccount($eventA->account_id);
         $this->attachCheckInList($eventB, $productB);
 
         $operator = $this->makeBoxOfficeOperator($eventA, self::PASSWORD);
@@ -125,7 +125,7 @@ class BoxOfficeOperatorMultiEventTest extends TestCase
     {
         [$event, , ] = $this->createEventWithProduct(price: 25.00);
         // second event, same account
-        $this->createEventWithProduct(price: 25.00);
+        $this->createEventWithProductOnAccount($event->account_id);
         $organizer = $this->makeOrganizerOnEvent($event, self::PASSWORD);
         $token = $this->loginAndGetToken($organizer, self::PASSWORD);
 

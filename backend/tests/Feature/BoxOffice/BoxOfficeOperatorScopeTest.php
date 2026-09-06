@@ -58,14 +58,18 @@ class BoxOfficeOperatorScopeTest extends TestCase
         )->assertStatus(201);
     }
 
-    /** AC-v2-2 */
-    public function test_operator_cannot_create_sale_on_unassigned_event(): void
+    /**
+     * AC-v2-2 — the interesting case: eventB is on the SAME account as eventA,
+     * so a plain account check would let the operator through. Only the
+     * per-event scope (event_box_office_operators) must stop them.
+     */
+    public function test_operator_cannot_create_sale_on_unassigned_event_of_same_account(): void
     {
-        [$eventA, , ] = $this->createEventWithProduct(price: 25.00);
-        [$eventB, $productB, $productPriceB] = $this->createEventWithProduct(price: 25.00);
+        [$eventA, , , $admin] = $this->createEventWithProduct(price: 25.00);
+        [$eventB, $productB, $productPriceB] = $this->createEventWithProductOnAccount($eventA->account_id);
         $this->attachCheckInList($eventB, $productB);
 
-        // operator assigned to A only
+        // operator assigned to A only (same account owns both)
         $operator = $this->makeBoxOfficeOperator($eventA, self::PASSWORD);
         $token = $this->loginAndGetToken($operator, self::PASSWORD);
 

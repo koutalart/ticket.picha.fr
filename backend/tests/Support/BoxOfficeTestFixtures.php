@@ -128,6 +128,65 @@ trait BoxOfficeTestFixtures
         return [$event, $product, $productPrice, $user];
     }
 
+    /**
+     * A second Event/Product/ProductPrice graph on an EXISTING account
+     * (createEventWithProduct always spins a fresh account). Needed to test
+     * per-event scoping *within one account* — the interesting case that a
+     * cross-account graph would mask.
+     *
+     * @return array{0: Event, 1: Product, 2: ProductPrice}
+     */
+    private function createEventWithProductOnAccount(int $accountId, float $price = 25.00): array
+    {
+        $ownerId = DB::table('account_users')
+            ->where('account_id', $accountId)
+            ->where('is_account_owner', true)
+            ->value('user_id');
+
+        // Event::boot() reads auth()->user()->id unconditionally on creating().
+        Auth::login(User::findOrFail($ownerId));
+
+        $organizer = Organizer::create([
+            'account_id' => $accountId,
+            'name' => 'Test Organizer 2',
+            'email' => 'organizer2@example.test',
+            'currency' => 'USD',
+            'timezone' => 'UTC',
+        ]);
+
+        $event = Event::create([
+            'title' => 'Second Test Event',
+            'account_id' => $accountId,
+            'organizer_id' => $organizer->id,
+            'currency' => 'USD',
+            'status' => 'LIVE',
+            'short_id' => IdHelper::shortId(IdHelper::EVENT_PREFIX),
+        ]);
+
+        EventSetting::create([
+            'event_id' => $event->id,
+            'allow_orders_awaiting_offline_payment_to_check_in' => true,
+        ]);
+
+        $product = Product::create([
+            'event_id' => $event->id,
+            'title' => 'GA Ticket 2',
+            'product_type' => ProductType::TICKET->name,
+            'type' => 'PAID',
+            'order' => 1,
+        ]);
+
+        $productPrice = ProductPrice::create([
+            'product_id' => $product->id,
+            'price' => $price,
+            'initial_quantity_available' => 100,
+            'quantity_sold' => 0,
+            'order' => 1,
+        ]);
+
+        return [$event, $product, $productPrice];
+    }
+
     private function attachCheckInList(Event $event, Product $product): CheckInList
     {
         $checkInList = CheckInList::create([
