@@ -3,7 +3,6 @@
 namespace HiEvents\Http\Actions\BoxOffice;
 
 use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
-use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
@@ -26,7 +25,7 @@ class CreateBoxOfficeSaleAction extends BaseAction
 
     public function __invoke(CreateBoxOfficeSaleRequest $request, int $eventId): JsonResponse
     {
-        $this->isActionAuthorized($eventId, EventDomainObject::class);
+        $this->isBoxOfficeActionAuthorized($eventId);
 
         try {
             $result = $this->createBoxOfficeSaleHandler->handle(new CreateBoxOfficeSaleDTO(

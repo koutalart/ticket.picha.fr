@@ -2,7 +2,6 @@
 
 namespace HiEvents\Http\Actions\BoxOffice;
 
-use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\ResponseCodes;
@@ -22,7 +21,7 @@ class ReprintBoxOfficeTicketAction extends BaseAction
 
     public function __invoke(int $eventId, string $attendeePublicId): Response
     {
-        $this->isActionAuthorized($eventId, EventDomainObject::class);
+        $this->isBoxOfficeActionAuthorized($eventId);
 
         $attendee = $this->attendeeRepository->findFirstWhere([
             AttendeeDomainObjectAbstract::PUBLIC_ID => $attendeePublicId,
