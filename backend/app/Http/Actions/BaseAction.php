@@ -175,6 +175,21 @@ abstract class BaseAction extends Controller
         );
     }
 
+    /**
+     * PICHA Kiosk v2 (D23) — authorization for the box office endpoints.
+     * Accepts an ORGANIZER/ADMIN of the event's account OR a
+     * BOX_OFFICE_OPERATOR with an ACTIVE assignment for this event; refuses
+     * everyone else (the operator is closed out of every other endpoint by
+     * IsAuthorizedService::validateUserRole()).
+     */
+    protected function isBoxOfficeActionAuthorized(int $eventId): void
+    {
+        /** @var IsAuthorizedService $authService */
+        $authService = app()->make(IsAuthorizedService::class);
+
+        $authService->validateBoxOfficeEventScope($eventId, $this->getAuthenticatedUser());
+    }
+
     protected function getAuthenticatedAccountId(): int
     {
         if (Auth::check()) {
