@@ -64,17 +64,7 @@ class ProductFilterService
                 : $productsCategories;
         }
 
-        $eventId = $products->first()->getEventId();
-        $this->loadAccountConfiguration($eventId);
-
-        $productQuantities = $this
-            ->fetchAvailableProductQuantitiesService
-            ->getAvailableProductQuantities($eventId);
-
-        $filteredProducts = $products
-            ->map(fn(ProductDomainObject $product) => $this->processProduct($product, $productQuantities->productQuantities, $promoCode))
-            ->reject(fn(ProductDomainObject $product) => $this->filterProduct($product, $promoCode, $hideSoldOutProducts))
-            ->each(fn(ProductDomainObject $product) => $this->processProductPrices($product, $hideSoldOutProducts));
+        $filteredProducts = $this->applyProductFilters($products, $promoCode, $hideSoldOutProducts);
 
         $filteredCategories = $hideHiddenCategories
             ? $productsCategories->reject(fn(ProductCategoryDomainObject $category) => $category->getIsHidden())
@@ -86,6 +76,53 @@ class ProductFilterService
                     static fn(ProductDomainObject $product) => $product->getProductCategoryId() === $category->getId()
                 )
             ));
+    }
+
+    /**
+     * The flat-list counterpart of filter(): same per-product processing, but for
+     * a Collection of products that is not wrapped in categories.
+     *
+     * @param Collection<ProductDomainObject> $products
+     * @param PromoCodeDomainObject|null $promoCode
+     * @param bool $hideSoldOutProducts
+     * @return Collection<ProductDomainObject>
+     */
+    public function filterProductList(
+        Collection             $products,
+        ?PromoCodeDomainObject $promoCode = null,
+        bool                   $hideSoldOutProducts = true,
+    ): Collection
+    {
+        if ($products->isEmpty()) {
+            return $products;
+        }
+
+        return $this->applyProductFilters($products, $promoCode, $hideSoldOutProducts);
+    }
+
+    /**
+     * @param Collection<ProductDomainObject> $products
+     * @param PromoCodeDomainObject|null $promoCode
+     * @param bool $hideSoldOutProducts
+     * @return Collection<ProductDomainObject>
+     */
+    private function applyProductFilters(
+        Collection             $products,
+        ?PromoCodeDomainObject $promoCode,
+        bool                   $hideSoldOutProducts,
+    ): Collection
+    {
+        $eventId = $products->first()->getEventId();
+        $this->loadAccountConfiguration($eventId);
+
+        $productQuantities = $this
+            ->fetchAvailableProductQuantitiesService
+            ->getAvailableProductQuantities($eventId);
+
+        return $products
+            ->map(fn(ProductDomainObject $product) => $this->processProduct($product, $productQuantities->productQuantities, $promoCode))
+            ->reject(fn(ProductDomainObject $product) => $this->filterProduct($product, $promoCode, $hideSoldOutProducts))
+            ->each(fn(ProductDomainObject $product) => $this->processProductPrices($product, $hideSoldOutProducts));
     }
 
     private function loadAccountConfiguration(int $eventId): void
