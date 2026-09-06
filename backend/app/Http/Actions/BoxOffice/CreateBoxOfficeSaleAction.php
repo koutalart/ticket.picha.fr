@@ -19,29 +19,32 @@ class CreateBoxOfficeSaleAction extends BaseAction
 {
     public function __construct(
         private readonly CreateBoxOfficeSaleHandler $createBoxOfficeSaleHandler,
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(CreateBoxOfficeSaleRequest $request, int $eventId): JsonResponse
     {
         $this->isBoxOfficeActionAuthorized($eventId);
 
         try {
-            $result = $this->createBoxOfficeSaleHandler->handle(new CreateBoxOfficeSaleDTO(
-                event_id: $eventId,
-                agent_user_id: $this->getAuthenticatedUser()->getId(),
-                product_id: (int)$request->validated('product_id'),
-                product_price_id: (int)$request->validated('product_price_id'),
-                first_name: $request->validated('first_name'),
-                last_name: $request->validated('last_name') ?? '',
-                email: $request->validated('email'),
-                locale: $request->validated('locale'),
-                amount: (float)$request->validated('amount'),
-                payment_method: BoxOfficePaymentMethod::fromName($request->validated('payment_method')),
-                amount_collected: (float)$request->validated('amount_collected'),
-                idempotency_key: $request->validated('idempotency_key'),
-            ));
+            $result = $this->createBoxOfficeSaleHandler->handle(
+                new CreateBoxOfficeSaleDTO(
+                    event_id: $eventId,
+                    agent_user_id: $this->getAuthenticatedUser()->getId(),
+                    product_id: (int) $request->validated('product_id'),
+                    product_price_id: (int) $request->validated('product_price_id'),
+                    first_name: $request->validated('first_name'),
+                    last_name: $request->validated('last_name') ?? '',
+                    email: $request->validated('email'),
+                    locale: $request->validated('locale'),
+                    amount: (float) $request->validated('amount'),
+                    payment_method: BoxOfficePaymentMethod::fromName($request->validated('payment_method')),
+                    amount_collected: (float) $request->validated('amount_collected'),
+                    idempotency_key: $request->validated('idempotency_key'),
+                ),
+                // Passed so CreateBoxOfficeSaleHandler can re-check the box
+                // office event scope (D23) inside its locked transaction.
+                $this->getAuthenticatedUser(),
+            );
         } catch (BoxOfficePriceMismatchException $exception) {
             throw ValidationException::withMessages(['amount' => $exception->getMessage()]);
         } catch (ProductNotScannableException|ResourceConflictException $exception) {

@@ -708,6 +708,56 @@ Candidat T20.
 
 ---
 
+## T21 — `IsAuthorizedService::validateUserRole()` : NPE si compte orphelin sur le chemin `minimumAllowedRole()`
+
+**Découvert le 2026-09-06 pendant la revue de la garde opérateur du Kiosk v2 (D23). Bug latent
+pré-existant, hors périmètre Kiosk — à traiter séparément.**
+
+**Trace exacte.** `app/Services/Infrastructure/Authorization/IsAuthorizedService.php`, méthode
+`validateUserRole(Role $minimumRole, UserDomainObject $authUser)` :
+
+```php
+// lignes ~53-61 (numérotation post-Kiosk-v2)
+if ($minimumRole === Role::ADMIN
+    && in_array($authUser->getCurrentAccountUser()->getRole(), [...], true) === false
+) { ... }
+
+if ($minimumRole === Role::SUPERADMIN && $authUser->getCurrentAccountUser()->getRole() !== ...) { ... }
+```
+
+`getCurrentAccountUser()` peut renvoyer **`null`** (`UserDomainObject::$currentAccountUser` non
+positionné — cf. `AuthUserService::getUser()` qui ne l'alimente que `if ($accountId = $this->getAuthenticatedAccountId())`).
+Ces deux lignes appellent `->getRole()` **sans `?->`** → `Error: Call to a member function getRole()
+on null` → **HTTP 500** au lieu du **403** attendu.
+
+**Pourquoi ce n'est pas déjà arrivé en pratique.** Le chemin `isActionAuthorized()` appelle
+`validateUserStatus()` **avant** `validateUserRole()` (`IsAuthorizedService.php` ~122-123), et
+`validateUserStatus()` lève proprement (`getCurrentAccountUser()?->getStatus() !== ACTIVE` →
+`UnauthorizedException` + `Auth::logout()`) quand le compte est orphelin. Le trou est le chemin
+**`BaseAction::minimumAllowedRole()`** (`app/Http/Actions/BaseAction.php` ~228-234) qui appelle
+`$authService->validateUserRole($minimumRole, $this->getAuthenticatedUser())` **directement, sans
+`validateUserStatus()` préalable**. Appelants concernés : toute action faisant
+`$this->minimumAllowedRole(Role::ADMIN)` ou `Role::SUPERADMIN` — ex. `CreateUserAction:35`,
+`GetUsersAction:26`, `GetEventsAction` (ORGANIZER, non touché car pas ADMIN/SUPERADMIN).
+
+**Cas déclencheur.** Un JWT valide dont le compte `account_users` a été supprimé/désactivé pendant
+la session (le claim `account_id` pointe alors sur une ligne absente → `currentAccountUser` reste
+`null`), sur un endpoint gâté `minimumAllowedRole(ADMIN)`.
+
+**Correctif proposé (hors session Kiosk).** Soit ajouter `?->` + court-circuit `null → throw
+UnauthorizedException` sur les deux lignes, soit faire appeler `validateUserStatus()` par
+`validateUserRole()` (ou par `minimumAllowedRole()`) comme le fait déjà `isActionAuthorized()`.
+Préférer la seconde (cohérence avec l'autre chemin). Ajouter un test :
+`minimumAllowedRole(ADMIN)` avec un `UserDomainObject` sans `currentAccountUser` → 403, pas 500.
+
+**Note Kiosk v2 :** la garde `BOX_OFFICE_OPERATOR` ajoutée en tête de `validateUserRole()` utilise
+`?->` et n'aggrave pas ce trou ; `validateBoxOfficeEventScope()` (nouveau) appelle
+`validateUserStatus()` en premier et n'est donc pas concerné.
+
+**Effort :** ~20 min (correctif + 1 test).
+
+---
+
 ## Note — `CreateAttendeeHandler` : résolution du générateur par service locator
 
 `app/Services/Application/Handlers/Attendee/CreateAttendeeHandler.php:233` résout

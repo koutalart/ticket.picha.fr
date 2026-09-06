@@ -7,9 +7,11 @@ namespace HiEvents\Services\Application\Handlers\BoxOffice;
 use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
 use HiEvents\DomainObjects\Generated\BoxOfficeSaleDomainObjectAbstract;
 use HiEvents\DomainObjects\Status\BoxOfficeSaleStatus;
+use HiEvents\DomainObjects\UserDomainObject;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
+use HiEvents\Exceptions\UnauthorizedException;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\BoxOfficeSaleRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
@@ -19,6 +21,7 @@ use HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeSaleResultDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleDTO;
+use HiEvents\Services\Infrastructure\Authorization\IsAuthorizedService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\QueryException;
 use Throwable;
@@ -33,25 +36,32 @@ class CreateBoxOfficeSaleHandler
 {
     public function __construct(
         private readonly BoxOfficeSaleRepositoryInterface $boxOfficeSaleRepository,
-        private readonly ProductPriceRepositoryInterface  $productPriceRepository,
-        private readonly ProductRepositoryInterface       $productRepository,
-        private readonly OrderRepositoryInterface         $orderRepository,
-        private readonly AttendeeRepositoryInterface      $attendeeRepository,
-        private readonly CreateAttendeeHandler            $createAttendeeHandler,
-        private readonly DatabaseManager                  $databaseManager,
-    )
-    {
-    }
+        private readonly ProductPriceRepositoryInterface $productPriceRepository,
+        private readonly ProductRepositoryInterface $productRepository,
+        private readonly OrderRepositoryInterface $orderRepository,
+        private readonly AttendeeRepositoryInterface $attendeeRepository,
+        private readonly CreateAttendeeHandler $createAttendeeHandler,
+        private readonly IsAuthorizedService $isAuthorizedService,
+        private readonly DatabaseManager $databaseManager,
+    ) {}
 
     /**
+     * @param  UserDomainObject|null  $agent  The authenticated agent, when the sale
+     *                                        comes from the HTTP action. Passed so the box office event scope
+     *                                        (D23) can be re-checked inside the locked transaction — an ADMIN
+     *                                        may have revoked a BOX_OFFICE_OPERATOR's assignment between the
+     *                                        action's guard and here (TOCTOU). Null for direct callers/tests
+     *                                        that are not exercising operator scope.
+     *
      * @throws BoxOfficePriceMismatchException
      * @throws ProductNotScannableException
      * @throws ResourceConflictException
+     * @throws UnauthorizedException
      * @throws Throwable
      */
-    public function handle(CreateBoxOfficeSaleDTO $dto): BoxOfficeSaleResultDTO
+    public function handle(CreateBoxOfficeSaleDTO $dto, ?UserDomainObject $agent = null): BoxOfficeSaleResultDTO
     {
-        return $this->databaseManager->transaction(function () use ($dto) {
+        return $this->databaseManager->transaction(function () use ($dto, $agent) {
             // AC-10: a sequential replay with the same idempotency_key
             // returns the sale already completed by the first call.
             if ($existing = $this->findCompletedSale($dto->idempotency_key)) {
@@ -99,6 +109,15 @@ class CreateBoxOfficeSaleHandler
             $this->validatePrice($dto, $productPrice?->getPrice());
             $this->validateScannable($dto);
             $this->validateStock($dto);
+
+            // D23 TOCTOU: re-check the box office event scope now that we hold
+            // the stock lock. An ADMIN could have revoked this operator's
+            // event_box_office_operators row between the action's guard and
+            // here. Placed AFTER price/scannable/stock so a sale that would be
+            // rejected anyway never pays this extra query.
+            if ($agent !== null) {
+                $this->isAuthorizedService->validateBoxOfficeEventScope($dto->event_id, $agent);
+            }
 
             // CreateAttendeeHandler is reused unchanged (Option A) — it
             // opens its own nested transaction (savepoint). If it throws,
@@ -175,7 +194,7 @@ class CreateBoxOfficeSaleHandler
      */
     private function validateScannable(CreateBoxOfficeSaleDTO $dto): void
     {
-        if (!$this->productRepository->hasActiveCheckInList($dto->product_id)) {
+        if (! $this->productRepository->hasActiveCheckInList($dto->product_id)) {
             throw new ProductNotScannableException(
                 __('This product is not attached to an active check-in list and would not be scannable at the door.')
             );
