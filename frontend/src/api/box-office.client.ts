@@ -26,7 +26,47 @@ export interface BoxOfficeSale {
     order: Order;
 }
 
+/** GET /box-office/context — events the authenticated user may operate. */
+export interface BoxOfficeContextEvent {
+    id: number;
+    title: string;
+    currency: string;
+    timezone: string;
+}
+
+/** GET /events/{id}/box-office/products — sellable catalogue (scoped). */
+export interface BoxOfficeProductPrice {
+    id: number;
+    label: string | null;
+    price: number;
+    quantity_remaining: number | null;
+}
+
+export interface BoxOfficeProduct {
+    id: number;
+    title: string;
+    product_type: string;
+    is_available: boolean;
+    is_hidden: boolean;
+    is_scannable: boolean;
+    prices: BoxOfficeProductPrice[];
+}
+
 export const boxOfficeClient = {
+    getContext: async () => {
+        const response = await api.get<GenericDataResponse<BoxOfficeContextEvent[]>>(
+            'box-office/context',
+        );
+        return response.data;
+    },
+
+    getProducts: async (eventId: IdParam) => {
+        const response = await api.get<GenericDataResponse<BoxOfficeProduct[]>>(
+            `events/${eventId}/box-office/products`,
+        );
+        return response.data;
+    },
+
     createSale: async (eventId: IdParam, sale: CreateBoxOfficeSaleRequest) => {
         const response = await api.post<GenericDataResponse<BoxOfficeSale>>(
             `events/${eventId}/box-office-sales`, sale,

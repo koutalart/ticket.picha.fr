@@ -3,6 +3,7 @@ import {IdParam} from "../types.ts";
 import {boxOfficeClient, CreateBoxOfficeSaleRequest} from "../api/box-office.client.ts";
 import {GET_PRODUCTS_QUERY_KEY} from "../queries/useGetProducts.ts";
 import {GET_EVENT_QUERY_KEY} from "../queries/useGetEvent.ts";
+import {GET_BOX_OFFICE_PRODUCTS_QUERY_KEY} from "../queries/useGetBoxOfficeProducts.ts";
 
 export const useCreateBoxOfficeSale = () => {
     const queryClient = useQueryClient();
@@ -18,6 +19,7 @@ export const useCreateBoxOfficeSale = () => {
             return Promise.all([
                 queryClient.invalidateQueries({queryKey: [GET_PRODUCTS_QUERY_KEY, variables.eventId]}),
                 queryClient.invalidateQueries({queryKey: [GET_EVENT_QUERY_KEY, variables.eventId]}),
+                queryClient.invalidateQueries({queryKey: [GET_BOX_OFFICE_PRODUCTS_QUERY_KEY, variables.eventId]}),
             ]);
         },
     });
