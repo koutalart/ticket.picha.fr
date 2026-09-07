@@ -14,11 +14,9 @@ class BoxOfficeSaleResultDTO extends BaseDataObject
      * @param  AttendeeDomainObject[]  $attendees
      */
     public function __construct(
-        public readonly int                  $saleId,
+        public readonly int $saleId,
         public readonly AttendeeDomainObject $attendee,
-        public readonly OrderDomainObject    $order,
-        public readonly array                $attendees = [],
-    )
-    {
-    }
+        public readonly OrderDomainObject $order,
+        public readonly array $attendees = [],
+    ) {}
 }

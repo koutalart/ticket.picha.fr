@@ -633,10 +633,15 @@ la maille « par session » n'a de sens qu'une fois la session définie).
 ### Contexte (lu)
 
 Weezevent (capture 5) : réglages **explicitement locaux au poste** (imprimante, options d'envoi
-email, langue) — **pas** stockés sur le compte. Aujourd'hui le Kiosk slice 1 n'a **aucun** réglage :
-`send_confirmation_email: false` est **codé en dur** (`CreateBoxOfficeSaleHandler.php:113`), la
-langue du billet est un champ du formulaire par vente (`BoxOffice/index.tsx:77,317-325`),
-l'impression passe par `window.open(...).print()` sans configuration (`BoxOffice/index.tsx:46-50`).
+email, langue) — **pas** stockés sur le compte. Les préférences du poste sont lues depuis
+`localStorage` (`picha_kiosk_settings`, écran `/kiosk/.../settings`) : imprimante/format,
+`send_confirmation_email` par défaut, langue par défaut du billet. **Jamais en SSR.**
+
+`send_confirmation_email` n'est **plus** codé en dur à `false`. La vente envoie
+`send_confirmation_email: settings.sendConfirmationEmail && email renseigné` ; le backend
+refuse tout envoi si `attendees.email` est `NULL` (D6 option D). La langue du billet vient
+du formulaire (défaut = réglage poste). L'impression Zebra passe par `print-zpl` (IP privée,
+port 9100) ; le PDF navigateur reste disponible.
 
 L'app est **SSR** — `window`/`document`/`localStorage` doivent être gardés (`CLAUDE.md` : « ensure
 safe usage of `window` and `document` »). Le patron de stockage local existe déjà dans le dépôt
@@ -797,8 +802,8 @@ Commandes ni Statistiques en v2.1 (backlog, même s'il a le droit API sur les en
 
 | Ordre | Chantier | Décision préalable |
 |---|---|---|
-| 1 | Onglets Commandes et Statistiques **pour tout le monde** (ORGANIZER : endpoints natifs ; opérateur : D27-B / D28-B scoped) | recadrage 6 sept. — hors v2.1 |
-| 2 | Onglet Commandes **scoped opérateur** (`GET /events/{id}/box-office-sales`) | D27-B |
+| 1 | Onglets Commandes et Statistiques **pour tout le monde** (ORGANIZER : endpoints natifs ; opérateur : D27-B / D28-B scoped) | recadrage 6 sept. — hors v2.1. **API** `GET /events/{id}/box-office-sales` et `GET /events/{id}/box-office-stats` **livrées** (7 sept.) pour ce backlog ; **pas** d'onglets dans le shell. |
+| 2 | Onglet Commandes **scoped opérateur** (UI) | D27-B — API déjà là, écran kiosk reporté |
 | 3 | Onglet Statistiques **scoped opérateur** (agrégat box-office) | D28-B (après D15) |
 | 4 | Panier multi-billets | D25 (D4 rouverte) |
 | 5 | Session de caisse | D15 |

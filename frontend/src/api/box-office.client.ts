@@ -1,5 +1,5 @@
 import {api} from "./client";
-import {Attendee, GenericDataResponse, IdParam, Order} from "../types";
+import {Attendee, GenericDataResponse, GenericPaginatedResponse, IdParam, Order} from "../types";
 
 export enum BoxOfficePaymentMethod {
     Cash = 'CASH',
@@ -26,6 +26,7 @@ export interface CreateBoxOfficeSaleRequest {
     payment_method: BoxOfficePaymentMethod;
     amount_collected: number;
     idempotency_key: string;
+    send_confirmation_email?: boolean;
 }
 
 export interface BoxOfficeSale {
@@ -79,6 +80,41 @@ export interface CreateBoxOfficeOperatorRequest {
     email: string;
 }
 
+export interface BoxOfficeSaleListItem {
+    id: number;
+    created_at: string;
+    payment_method: string | null;
+    amount: number;
+    amount_collected: number;
+    phone: string | null;
+    ticket_count: number;
+    agent_user_id: number;
+    agent_name: string;
+    attendee_name: string;
+    attendee_public_id: string | null;
+    order_public_id: string | null;
+    attendee_public_ids: string[];
+    checked_in_count: number;
+}
+
+export interface BoxOfficeStatsBreakdown {
+    payment_method?: string | null;
+    agent_user_id?: number;
+    agent_name?: string;
+    sales_count: number;
+    total_amount: number;
+    total_collected: number;
+}
+
+export interface BoxOfficeStats {
+    sales_count: number;
+    ticket_count: number;
+    total_amount: number;
+    total_collected: number;
+    by_payment_method: BoxOfficeStatsBreakdown[];
+    by_agent: BoxOfficeStatsBreakdown[];
+}
+
 export const boxOfficeClient = {
     getContext: async () => {
         const response = await api.get<GenericDataResponse<BoxOfficeContextEvent[]>>(
@@ -97,6 +133,24 @@ export const boxOfficeClient = {
     createSale: async (eventId: IdParam, sale: CreateBoxOfficeSaleRequest) => {
         const response = await api.post<GenericDataResponse<BoxOfficeSale>>(
             `events/${eventId}/box-office-sales`, sale,
+        );
+        return response.data;
+    },
+
+    getSales: async (eventId: IdParam, page = 1, query = '') => {
+        const params = new URLSearchParams({page: String(page)});
+        if (query.trim()) {
+            params.set('query', query.trim());
+        }
+        const response = await api.get<GenericPaginatedResponse<BoxOfficeSaleListItem>>(
+            `events/${eventId}/box-office-sales?${params.toString()}`,
+        );
+        return response.data;
+    },
+
+    getStats: async (eventId: IdParam) => {
+        const response = await api.get<GenericDataResponse<BoxOfficeStats>>(
+            `events/${eventId}/box-office-stats`,
         );
         return response.data;
     },

@@ -23,12 +23,10 @@ class ReprintBoxOfficeTicketHandler
 {
     public function __construct(
         private readonly AttendeeRepositoryInterface $attendeeRepository,
-        private readonly EventRepositoryInterface    $eventRepository,
+        private readonly EventRepositoryInterface $eventRepository,
         private readonly PrintJobRepositoryInterface $printJobRepository,
-        private readonly AttendeeTicketPdfService    $attendeeTicketPdfService,
-    )
-    {
-    }
+        private readonly AttendeeTicketPdfService $attendeeTicketPdfService,
+    ) {}
 
     public function handle(ReprintBoxOfficeTicketDTO $dto): string
     {

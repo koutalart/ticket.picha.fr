@@ -10,9 +10,9 @@ use HiEvents\DomainObjects\Status\OrderPaymentStatus;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
+use HiEvents\Jobs\Order\SendOrderDetailsEmailJob;
 use HiEvents\Models\Order;
 use HiEvents\Models\ProductPrice;
-use HiEvents\Jobs\Order\SendOrderDetailsEmailJob;
 use HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\CreateBoxOfficeSaleHandler;
@@ -38,21 +38,20 @@ use Tests\TestCase;
  */
 class CreateBoxOfficeSaleHandlerTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private function makeDto(
-        int    $eventId,
-        int    $agentUserId,
-        int    $productId,
-        int    $productPriceId,
-        float  $amount,
-        float  $amountCollected,
+        int $eventId,
+        int $agentUserId,
+        int $productId,
+        int $productPriceId,
+        float $amount,
+        float $amountCollected,
         BoxOfficePaymentMethod $paymentMethod = BoxOfficePaymentMethod::CASH,
         ?string $idempotencyKey = null,
         bool $sendConfirmationEmail = false,
-    ): CreateBoxOfficeSaleDTO
-    {
+    ): CreateBoxOfficeSaleDTO {
         return new CreateBoxOfficeSaleDTO(
             event_id: $eventId,
             agent_user_id: $agentUserId,
@@ -147,7 +146,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
 
         $order = Order::find($result->order->getId());
 
-        self::assertSame(25.0, (float)$order->total_gross);
+        self::assertSame(25.0, (float) $order->total_gross);
     }
 
     /** AC-2 — strict tolerance: any mismatch is a 422-equivalent rejection */
@@ -216,8 +215,8 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
 
         $sale = DB::table('box_office_sales')->where('id', $result->saleId)->first();
 
-        self::assertSame(30.0, (float)$sale->amount_collected);
-        self::assertSame(25.0, (float)Order::find($result->order->getId())->total_gross);
+        self::assertSame(30.0, (float) $sale->amount_collected);
+        self::assertSame(25.0, (float) Order::find($result->order->getId())->total_gross);
     }
 
     /** AC-13 — D11: product not attached to any active check-in list must be blocked */
@@ -518,7 +517,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
         $indexes = DB::select("SELECT indexdef FROM pg_indexes WHERE tablename = 'box_office_sales'");
 
         $hasUniqueOrderIdIndex = collect($indexes)->contains(
-            fn($index) => str_contains($index->indexdef, 'UNIQUE') && str_contains($index->indexdef, 'order_id')
+            fn ($index) => str_contains($index->indexdef, 'UNIQUE') && str_contains($index->indexdef, 'order_id')
         );
 
         self::assertTrue($hasUniqueOrderIdIndex, 'box_office_sales.order_id must have a unique index');

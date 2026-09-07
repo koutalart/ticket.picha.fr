@@ -13,11 +13,9 @@ use Illuminate\Http\Response;
 class ReprintBoxOfficeTicketAction extends BaseAction
 {
     public function __construct(
-        private readonly AttendeeRepositoryInterface     $attendeeRepository,
-        private readonly ReprintBoxOfficeTicketHandler   $reprintBoxOfficeTicketHandler,
-    )
-    {
-    }
+        private readonly AttendeeRepositoryInterface $attendeeRepository,
+        private readonly ReprintBoxOfficeTicketHandler $reprintBoxOfficeTicketHandler,
+    ) {}
 
     public function __invoke(int $eventId, string $attendeePublicId): Response
     {
@@ -28,7 +26,7 @@ class ReprintBoxOfficeTicketAction extends BaseAction
             AttendeeDomainObjectAbstract::EVENT_ID => $eventId,
         ]);
 
-        if (!$attendee) {
+        if (! $attendee) {
             return $this->notFoundResponse();
         }
 

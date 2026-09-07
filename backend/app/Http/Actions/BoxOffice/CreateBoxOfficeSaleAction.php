@@ -27,7 +27,7 @@ class CreateBoxOfficeSaleAction extends BaseAction
         $this->isBoxOfficeActionAuthorized($eventId);
 
         $itemDtos = array_map(
-            static fn(array $item) => new CreateBoxOfficeSaleItemDTO(
+            static fn (array $item) => new CreateBoxOfficeSaleItemDTO(
                 product_id: (int) $item['product_id'],
                 product_price_id: (int) $item['product_price_id'],
                 quantity: (int) $item['quantity'],

@@ -24,8 +24,8 @@ use Tests\TestCase;
  */
 class BoxOfficeOperatorLifecycleTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private const PASSWORD = 'password123!';
 
@@ -58,7 +58,7 @@ class BoxOfficeOperatorLifecycleTest extends TestCase
         $response = $this->postJson(
             "/events/{$event->id}/box-office/operators",
             ['first_name' => 'Olivia', 'last_name' => 'Op', 'email' => 'olivia.op@example.test'],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         $response->assertStatus(201);
@@ -75,14 +75,14 @@ class BoxOfficeOperatorLifecycleTest extends TestCase
     /** AC-v2-14 — an ORGANIZER cannot invite an operator */
     public function test_organizer_cannot_invite_an_operator(): void
     {
-        [$event, , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $organizer = $this->makeOrganizerOnEvent($event, self::PASSWORD);
         $token = $this->loginAndGetToken($organizer, self::PASSWORD);
 
         $this->postJson(
             "/events/{$event->id}/box-office/operators",
             ['first_name' => 'Olivia', 'last_name' => 'Op', 'email' => 'olivia.op@example.test'],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         )->assertStatus(403);
     }
 
@@ -104,7 +104,7 @@ class BoxOfficeOperatorLifecycleTest extends TestCase
         $this->postJson(
             "/events/{$eventB->id}/box-office/operators",
             ['first_name' => 'Olivia', 'last_name' => 'Op', 'email' => $operatorEmail],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         )->assertStatus(201);
 
         $this->assertSame($usersBefore, DB::table('users')->count(), 'no new users row for an existing operator');
@@ -129,14 +129,14 @@ class BoxOfficeOperatorLifecycleTest extends TestCase
         // A sale on A while still active.
         $this->postJson("/events/{$eventA->id}/box-office-sales",
             $this->salePayload($productA->id, $priceA->id),
-            ['Authorization' => 'Bearer ' . $opToken])->assertStatus(201);
+            ['Authorization' => 'Bearer '.$opToken])->assertStatus(201);
         $salesOnABefore = DB::table('box_office_sales')->where('event_id', $eventA->id)->count();
 
         // ADMIN revokes on A.
         $adminToken = $this->loginAndGetToken($admin, self::PASSWORD);
         $this->patchJson("/events/{$eventA->id}/box-office/operators/{$operator->id}",
             ['status' => 'REVOKED'],
-            ['Authorization' => 'Bearer ' . $adminToken])->assertStatus(200);
+            ['Authorization' => 'Bearer '.$adminToken])->assertStatus(200);
 
         // Re-auth as the operator: the JWT guard caches the last resolved user
         // within a test, and the admin PATCH above left it as the admin.
@@ -145,10 +145,10 @@ class BoxOfficeOperatorLifecycleTest extends TestCase
         // Operator: 403 on A, still 201 on B.
         $this->postJson("/events/{$eventA->id}/box-office-sales",
             $this->salePayload($productA->id, $priceA->id),
-            ['Authorization' => 'Bearer ' . $opToken])->assertStatus(403);
+            ['Authorization' => 'Bearer '.$opToken])->assertStatus(403);
         $this->postJson("/events/{$eventB->id}/box-office-sales",
             $this->salePayload($productB->id, $priceB->id),
-            ['Authorization' => 'Bearer ' . $opToken])->assertStatus(201);
+            ['Authorization' => 'Bearer '.$opToken])->assertStatus(201);
 
         // Past sale on A untouched.
         $this->assertSame($salesOnABefore, DB::table('box_office_sales')->where('event_id', $eventA->id)->count());

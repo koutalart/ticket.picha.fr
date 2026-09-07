@@ -211,7 +211,7 @@ class CreateBoxOfficeSaleHandler
     private function lockPrices(array $items): array
     {
         $priceIds = array_values(array_unique(array_map(
-            static fn(CreateBoxOfficeSaleItemDTO $item) => $item->product_price_id,
+            static fn (CreateBoxOfficeSaleItemDTO $item) => $item->product_price_id,
             $items,
         )));
         sort($priceIds, SORT_NUMERIC);
@@ -273,7 +273,7 @@ class CreateBoxOfficeSaleHandler
     private function validateScannableItems(array $items): void
     {
         $productIds = array_unique(array_map(
-            static fn(CreateBoxOfficeSaleItemDTO $item) => $item->product_id,
+            static fn (CreateBoxOfficeSaleItemDTO $item) => $item->product_id,
             $items,
         ));
 
@@ -296,7 +296,7 @@ class CreateBoxOfficeSaleHandler
         $qtyByPrice = [];
 
         foreach ($items as $item) {
-            $key = $item->product_id . ':' . $item->product_price_id;
+            $key = $item->product_id.':'.$item->product_price_id;
             $qtyByPrice[$key] = ($qtyByPrice[$key] ?? 0) + $item->quantity;
         }
 
@@ -340,9 +340,9 @@ class CreateBoxOfficeSaleHandler
         }
 
         if (str_starts_with($digits, '0') && strlen($digits) === 10) {
-            return '+33' . substr($digits, 1);
+            return '+33'.substr($digits, 1);
         }
 
-        return '+' . $digits;
+        return '+'.$digits;
     }
 }

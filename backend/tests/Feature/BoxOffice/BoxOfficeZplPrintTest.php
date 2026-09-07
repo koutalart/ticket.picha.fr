@@ -12,8 +12,8 @@ use Tests\TestCase;
 
 class BoxOfficeZplPrintTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private const PASSWORD = 'password123!';
 
@@ -33,7 +33,7 @@ class BoxOfficeZplPrintTest extends TestCase
         $this->postJson(
             "/events/{$event->id}/attendees/{$attendee->public_id}/print-zpl",
             ['printer_host' => '192.168.10.20'],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         )->assertNoContent();
     }
 
@@ -53,7 +53,7 @@ class BoxOfficeZplPrintTest extends TestCase
         $this->postJson(
             "/events/{$event->id}/attendees/{$attendee->public_id}/print-zpl",
             ['printer_host' => '1.1.1.1'],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         )->assertUnprocessable();
     }
 
@@ -68,7 +68,7 @@ class BoxOfficeZplPrintTest extends TestCase
         $this->postJson(
             "/events/{$event->id}/attendees/{$attendee->public_id}/print-zpl",
             ['printer_host' => '192.168.1.1'],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         )->assertStatus(403);
     }
 }

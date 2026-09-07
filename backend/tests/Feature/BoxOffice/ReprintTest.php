@@ -18,8 +18,8 @@ use Tests\TestCase;
  */
 class ReprintTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private const PASSWORD = 'password123!';
 
@@ -35,7 +35,7 @@ class ReprintTest extends TestCase
         $response = $this->postJson(
             "/events/{$event->id}/attendees/{$attendee->public_id}/reprint",
             [],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         $response->assertStatus(200);
@@ -53,7 +53,7 @@ class ReprintTest extends TestCase
         $this->postJson(
             "/events/{$event->id}/attendees/{$attendee->public_id}/reprint",
             [],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         self::assertSame(
@@ -74,7 +74,7 @@ class ReprintTest extends TestCase
         $response = $this->postJson(
             "/events/{$event->id}/attendees/{$attendee->public_id}/reprint",
             [],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         $response->assertStatus(403);

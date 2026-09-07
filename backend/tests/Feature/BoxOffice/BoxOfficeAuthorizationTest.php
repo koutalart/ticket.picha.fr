@@ -15,8 +15,8 @@ use Tests\TestCase;
  */
 class BoxOfficeAuthorizationTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private const PASSWORD = 'password123!';
 
@@ -48,7 +48,7 @@ class BoxOfficeAuthorizationTest extends TestCase
         $response = $this->postJson(
             "/events/{$event->id}/box-office-sales",
             $this->payload($product->id, $productPrice->id),
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         $response->assertStatus(201);
@@ -66,7 +66,7 @@ class BoxOfficeAuthorizationTest extends TestCase
         $response = $this->postJson(
             "/events/{$event->id}/box-office-sales",
             $this->payload($product->id, $productPrice->id),
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         $response->assertStatus(403);

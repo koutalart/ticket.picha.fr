@@ -21,8 +21,8 @@ use Tests\TestCase;
  */
 class BoxOfficeOperatorScopeTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private const PASSWORD = 'password123!';
 
@@ -55,7 +55,7 @@ class BoxOfficeOperatorScopeTest extends TestCase
         $this->postJson(
             "/events/{$event->id}/box-office-sales",
             $this->salePayload($product->id, $productPrice->id),
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         )->assertStatus(201);
     }
 
@@ -77,95 +77,95 @@ class BoxOfficeOperatorScopeTest extends TestCase
         $this->postJson(
             "/events/{$eventB->id}/box-office-sales",
             $this->salePayload($productB->id, $productPriceB->id),
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         )->assertStatus(403);
     }
 
     /** AC-v2-3 — native ORGANIZER-gated read endpoints are closed to the operator */
     public function test_operator_gets_403_on_native_orders_endpoint(): void
     {
-        [$event, , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
         $token = $this->loginAndGetToken($operator, self::PASSWORD);
 
-        $this->getJson("/events/{$event->id}/orders", ['Authorization' => 'Bearer ' . $token])
+        $this->getJson("/events/{$event->id}/orders", ['Authorization' => 'Bearer '.$token])
             ->assertStatus(403);
     }
 
     /** AC-v2-3 */
     public function test_operator_gets_403_on_native_stats_endpoint(): void
     {
-        [$event, , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
         $token = $this->loginAndGetToken($operator, self::PASSWORD);
 
-        $this->getJson("/events/{$event->id}/stats", ['Authorization' => 'Bearer ' . $token])
+        $this->getJson("/events/{$event->id}/stats", ['Authorization' => 'Bearer '.$token])
             ->assertStatus(403);
     }
 
     /** AC-v2-3 */
     public function test_operator_gets_403_on_event_settings_endpoint(): void
     {
-        [$event, , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
         $token = $this->loginAndGetToken($operator, self::PASSWORD);
 
-        $this->getJson("/events/{$event->id}/settings", ['Authorization' => 'Bearer ' . $token])
+        $this->getJson("/events/{$event->id}/settings", ['Authorization' => 'Bearer '.$token])
             ->assertStatus(403);
     }
 
     /** AC-v2-3 */
     public function test_operator_gets_403_on_orders_export(): void
     {
-        [$event, , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
         $token = $this->loginAndGetToken($operator, self::PASSWORD);
 
-        $this->postJson("/events/{$event->id}/orders/export", [], ['Authorization' => 'Bearer ' . $token])
+        $this->postJson("/events/{$event->id}/orders/export", [], ['Authorization' => 'Bearer '.$token])
             ->assertStatus(403);
     }
 
     /** AC-v2-3 — cannot enumerate the account's events */
     public function test_operator_gets_403_on_events_list(): void
     {
-        [$event, , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
         $token = $this->loginAndGetToken($operator, self::PASSWORD);
 
-        $this->getJson('/events', ['Authorization' => 'Bearer ' . $token])
+        $this->getJson('/events', ['Authorization' => 'Bearer '.$token])
             ->assertStatus(403);
     }
 
     /** AC-v2-4 — an operator cannot create another operator, even for its own event */
     public function test_operator_cannot_create_another_operator(): void
     {
-        [$event, , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
         $token = $this->loginAndGetToken($operator, self::PASSWORD);
 
         $this->postJson(
             "/events/{$event->id}/box-office/operators",
             ['first_name' => 'Bob', 'last_name' => 'Smith', 'email' => 'bob@example.test'],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         )->assertStatus(403);
     }
 
     /** AC-v2-22 — an ORGANIZER connected to the shell keeps the native endpoints */
     public function test_organizer_still_reaches_native_orders_endpoint(): void
     {
-        [$event, , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $organizer = $this->makeOrganizerOnEvent($event, self::PASSWORD);
         $token = $this->loginAndGetToken($organizer, self::PASSWORD);
 
         // ORGANIZER: 200 on native orders.
-        $this->getJson("/events/{$event->id}/orders", ['Authorization' => 'Bearer ' . $token])
+        $this->getJson("/events/{$event->id}/orders", ['Authorization' => 'Bearer '.$token])
             ->assertStatus(200);
 
         // …while the operator on the same event is refused (red today).
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
         $operatorToken = $this->loginAndGetToken($operator, self::PASSWORD);
 
-        $this->getJson("/events/{$event->id}/orders", ['Authorization' => 'Bearer ' . $operatorToken])
+        $this->getJson("/events/{$event->id}/orders", ['Authorization' => 'Bearer '.$operatorToken])
             ->assertStatus(403);
     }
 
@@ -180,7 +180,7 @@ class BoxOfficeOperatorScopeTest extends TestCase
         $this->postJson(
             "/events/{$event->id}/box-office-sales",
             $this->salePayload($product->id, $productPrice->id),
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         )->assertStatus(201);
 
         $this->assertSame(

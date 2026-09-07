@@ -16,8 +16,8 @@ use Tests\TestCase;
 
 class BoxOfficeSaleNoEmailTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private const PASSWORD = 'password123!';
 

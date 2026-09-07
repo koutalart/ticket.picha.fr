@@ -15,8 +15,8 @@ use Tests\TestCase;
  */
 class BoxOfficeEndToEndTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private const PASSWORD = 'password123!';
 
@@ -44,7 +44,7 @@ class BoxOfficeEndToEndTest extends TestCase
                 'send_confirmation_email' => false,
                 'idempotency_key' => \Illuminate\Support\Str::uuid()->toString(),
             ],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
         $saleResponse->assertStatus(201);
         $publicId = $saleResponse->json('data.attendee.public_id');
@@ -52,7 +52,7 @@ class BoxOfficeEndToEndTest extends TestCase
         // 2. Fetch the PDF.
         $pdfResponse = $this->getJson(
             "/events/{$event->id}/attendees/{$publicId}/ticket.pdf",
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
         $pdfResponse->assertStatus(200);
         self::assertSame('application/pdf', $pdfResponse->headers->get('Content-Type'));

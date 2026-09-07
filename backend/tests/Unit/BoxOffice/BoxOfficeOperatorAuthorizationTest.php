@@ -27,8 +27,8 @@ use Tests\TestCase;
  */
 class BoxOfficeOperatorAuthorizationTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private const PASSWORD = 'password123!';
 
@@ -59,7 +59,7 @@ class BoxOfficeOperatorAuthorizationTest extends TestCase
      */
     public function test_operator_passes_validate_user_role_at_the_box_office_floor(): void
     {
-        [$event, , , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
         $authUser = $this->hydrateUserForAccount($operator, $event->account_id);
 
@@ -75,7 +75,7 @@ class BoxOfficeOperatorAuthorizationTest extends TestCase
      */
     public function test_organizer_unaffected_while_operator_blocked(): void
     {
-        [$event, , , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
 
         $organizer = $this->makeOrganizerOnEvent($event, self::PASSWORD);
         $organizerAuth = $this->hydrateUserForAccount($organizer, $event->account_id);
@@ -103,7 +103,7 @@ class BoxOfficeOperatorAuthorizationTest extends TestCase
      */
     public function test_event_scope_passes_for_an_active_assignment(): void
     {
-        [$event, , , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD, status: 'ACTIVE');
         $authUser = $this->hydrateUserForAccount($operator, $event->account_id);
 
@@ -118,8 +118,8 @@ class BoxOfficeOperatorAuthorizationTest extends TestCase
      */
     public function test_event_scope_rejects_an_unassigned_event(): void
     {
-        [$eventA, , , ] = $this->createEventWithProduct(price: 25.00);
-        [$eventB, , , ] = $this->createEventWithProduct(price: 25.00);
+        [$eventA] = $this->createEventWithProduct(price: 25.00);
+        [$eventB] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($eventA, self::PASSWORD);
         $authUser = $this->hydrateUserForAccount($operator, $eventA->account_id);
 
@@ -134,7 +134,7 @@ class BoxOfficeOperatorAuthorizationTest extends TestCase
      */
     public function test_event_scope_rejects_a_revoked_assignment(): void
     {
-        [$event, , , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD, status: 'REVOKED');
         $authUser = $this->hydrateUserForAccount($operator, $event->account_id);
 
@@ -151,7 +151,7 @@ class BoxOfficeOperatorAuthorizationTest extends TestCase
      */
     public function test_event_scope_is_a_noop_for_organizer(): void
     {
-        [$event, , , ] = $this->createEventWithProduct(price: 25.00);
+        [$event] = $this->createEventWithProduct(price: 25.00);
         $organizer = $this->makeOrganizerOnEvent($event, self::PASSWORD);
         $authUser = $this->hydrateUserForAccount($organizer, $event->account_id);
 

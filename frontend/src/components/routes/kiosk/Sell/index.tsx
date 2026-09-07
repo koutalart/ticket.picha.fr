@@ -33,6 +33,7 @@ const KioskSell = () => {
             printMode={settings.printOutput as KioskPrintOutput}
             zebraPrinterHost={settings.zebraPrinterHost}
             defaultLocale={settings.defaultTicketLocale}
+            sendConfirmationEmail={settings.sendConfirmationEmail}
         />
     );
 };

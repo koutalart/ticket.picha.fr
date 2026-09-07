@@ -17,8 +17,8 @@ use Tests\TestCase;
  */
 class AttendeePublicIdUniquenessTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     /**
      * This queries the REAL, current schema — no new code involved. It is
@@ -32,7 +32,7 @@ class AttendeePublicIdUniquenessTest extends TestCase
         $indexes = DB::select("SELECT indexdef FROM pg_indexes WHERE tablename = 'attendees'");
 
         $hasUniquePublicIdIndex = collect($indexes)->contains(
-            fn($index) => str_contains($index->indexdef, 'UNIQUE') && str_contains($index->indexdef, 'public_id')
+            fn ($index) => str_contains($index->indexdef, 'UNIQUE') && str_contains($index->indexdef, 'public_id')
         );
 
         self::assertTrue($hasUniquePublicIdIndex, 'S4: attendees.public_id has no unique index yet');

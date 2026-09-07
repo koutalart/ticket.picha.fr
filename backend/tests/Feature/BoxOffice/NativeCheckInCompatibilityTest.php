@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\BoxOffice;
 
-use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\Helper\IdHelper;
 use HiEvents\Models\Attendee;
 use HiEvents\Repository\Eloquent\AttendeeCheckInRepository;
@@ -30,8 +29,8 @@ use Tests\TestCase;
  */
 class NativeCheckInCompatibilityTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private function createAttendee(int $eventId, int $productId, int $productPriceId): Attendee
     {
@@ -141,33 +140,25 @@ class NativeCheckInCompatibilityTest extends TestCase
 
         $this->app->bind(
             AttendeeCheckInRepositoryInterface::class,
-            fn(Application $app) => new class(
-                $app,
-                $app->make(DatabaseManager::class),
-                $attendee->id,
-                $checkInList->id,
-                $product->id,
-                $event->id,
-            ) extends AttendeeCheckInRepository {
+            fn (Application $app) => new class($app, $app->make(DatabaseManager::class), $attendee->id, $checkInList->id, $product->id, $event->id) extends AttendeeCheckInRepository
+            {
                 public function __construct(
-                    Application                     $application,
-                    DatabaseManager                 $db,
+                    Application $application,
+                    DatabaseManager $db,
                     private readonly int $raceAttendeeId,
                     private readonly int $raceCheckInListId,
                     private readonly int $raceProductId,
                     private readonly int $raceEventId,
-                )
-                {
+                ) {
                     parent::__construct($application, $db);
                 }
 
                 public function findWhereIn(
                     string $field,
-                    array  $values,
-                    array  $additionalWhere = [],
-                    array  $columns = ['*'],
-                ): Collection
-                {
+                    array $values,
+                    array $additionalWhere = [],
+                    array $columns = ['*'],
+                ): Collection {
                     $result = parent::findWhereIn($field, $values, $additionalWhere, $columns);
 
                     // The "winning" concurrent request commits its check-in

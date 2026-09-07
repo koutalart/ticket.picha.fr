@@ -17,11 +17,9 @@ class GetBoxOfficeTicketPdfAction extends BaseAction
 {
     public function __construct(
         private readonly AttendeeRepositoryInterface $attendeeRepository,
-        private readonly EventRepositoryInterface    $eventRepository,
-        private readonly AttendeeTicketPdfService    $attendeeTicketPdfService,
-    )
-    {
-    }
+        private readonly EventRepositoryInterface $eventRepository,
+        private readonly AttendeeTicketPdfService $attendeeTicketPdfService,
+    ) {}
 
     public function __invoke(int $eventId, string $attendeePublicId): Response
     {
@@ -32,7 +30,7 @@ class GetBoxOfficeTicketPdfAction extends BaseAction
             AttendeeDomainObjectAbstract::EVENT_ID => $eventId,
         ]);
 
-        if (!$attendee) {
+        if (! $attendee) {
             return $this->notFoundResponse();
         }
 

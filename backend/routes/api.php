@@ -33,6 +33,8 @@ use HiEvents\Http\Actions\Auth\ValidateResetPasswordTokenAction;
 use HiEvents\Http\Actions\BoxOffice\CreateBoxOfficeSaleAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeContextAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeProductsAction;
+use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeSalesAction;
+use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeStatsAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeTicketPdfAction;
 use HiEvents\Http\Actions\BoxOffice\Operators\CreateBoxOfficeOperatorAction;
 use HiEvents\Http\Actions\BoxOffice\Operators\GetBoxOfficeOperatorsAction;
@@ -366,6 +368,8 @@ $router->middleware(['auth:api'])->group(
 
         // Box Office (PICHA Kiosk, slice 1)
         $router->post('/events/{event_id}/box-office-sales', CreateBoxOfficeSaleAction::class);
+        $router->get('/events/{event_id}/box-office-sales', GetBoxOfficeSalesAction::class);
+        $router->get('/events/{event_id}/box-office-stats', GetBoxOfficeStatsAction::class);
         $router->get('/events/{event_id}/attendees/{attendee_public_id}/ticket.pdf', GetBoxOfficeTicketPdfAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/reprint', ReprintBoxOfficeTicketAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/print-zpl', PrintBoxOfficeZplAction::class);

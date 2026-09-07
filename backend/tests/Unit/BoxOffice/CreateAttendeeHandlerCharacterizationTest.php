@@ -29,8 +29,8 @@ use Tests\TestCase;
  */
 class CreateAttendeeHandlerCharacterizationTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     public function test_manual_sale_zero_amount_creates_no_payment_required_order(): void
     {
@@ -53,7 +53,7 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
         $order = Order::find($attendee->getOrderId());
 
         self::assertSame(OrderPaymentStatus::NO_PAYMENT_REQUIRED->name, $order->payment_status);
-        self::assertSame(0.0, (float)$order->total_gross);
+        self::assertSame(0.0, (float) $order->total_gross);
     }
 
     public function test_manual_sale_paid_amount_sets_payment_received(): void
@@ -77,7 +77,7 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
         $order = Order::find($attendee->getOrderId());
 
         self::assertSame(OrderPaymentStatus::PAYMENT_RECEIVED->name, $order->payment_status);
-        self::assertSame(25.0, (float)$order->total_gross);
+        self::assertSame(25.0, (float) $order->total_gross);
     }
 
     /**
@@ -113,14 +113,14 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
 
         self::assertSame(
             25.0,
-            (float)$order->total_gross,
+            (float) $order->total_gross,
             'S1: amount_paid must be validated against product_prices.price, not trusted verbatim from the client',
         );
     }
 
     public function test_manual_sale_negative_amount_is_rejected_by_validation(): void
     {
-        $rules = (new CreateAttendeeRequest())->rules();
+        $rules = (new CreateAttendeeRequest)->rules();
 
         $validator = Validator::make([
             'product_id' => 1,

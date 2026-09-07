@@ -15,8 +15,8 @@ use Tests\TestCase;
 
 class BoxOfficeSaleCartTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private const PASSWORD = 'password123!';
 
@@ -48,7 +48,7 @@ class BoxOfficeSaleCartTest extends TestCase
                 'amount_collected' => 50.00,
                 'idempotency_key' => $key,
             ],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         $response->assertCreated();
@@ -76,7 +76,7 @@ class BoxOfficeSaleCartTest extends TestCase
                 'amount_collected' => 50.00,
                 'idempotency_key' => $key,
             ],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         $replay->assertCreated();
@@ -111,7 +111,7 @@ class BoxOfficeSaleCartTest extends TestCase
                 'amount_collected' => 50.00,
                 'idempotency_key' => Str::uuid()->toString(),
             ],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         $response->assertConflict();
@@ -146,7 +146,7 @@ class BoxOfficeSaleCartTest extends TestCase
                 'amount_collected' => 25.00,
                 'idempotency_key' => Str::uuid()->toString(),
             ],
-            ['Authorization' => 'Bearer ' . $token],
+            ['Authorization' => 'Bearer '.$token],
         );
 
         $response->assertUnprocessable();

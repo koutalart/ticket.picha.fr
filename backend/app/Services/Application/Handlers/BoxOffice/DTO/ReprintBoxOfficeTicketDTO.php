@@ -12,7 +12,5 @@ class ReprintBoxOfficeTicketDTO extends BaseDataObject
         public readonly int $attendee_id,
         public readonly int $event_id,
         public readonly int $agent_user_id,
-    )
-    {
-    }
+    ) {}
 }

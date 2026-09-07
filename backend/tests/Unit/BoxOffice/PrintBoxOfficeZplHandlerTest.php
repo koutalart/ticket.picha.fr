@@ -17,8 +17,8 @@ use Tests\TestCase;
 
 class PrintBoxOfficeZplHandlerTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     public function test_sends_zpl_to_private_host_and_records_print_job(): void
     {

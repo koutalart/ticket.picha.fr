@@ -12,6 +12,5 @@ class CreateBoxOfficeSaleItemDTO extends BaseDataObject
         public readonly int $product_id,
         public readonly int $product_price_id,
         public readonly int $quantity,
-    ) {
-    }
+    ) {}
 }

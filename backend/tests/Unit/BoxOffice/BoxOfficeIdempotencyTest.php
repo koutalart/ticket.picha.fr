@@ -20,8 +20,8 @@ use Tests\TestCase;
  */
 class BoxOfficeIdempotencyTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private function makeDto(int $eventId, int $agentUserId, int $productId, int $productPriceId, string $idempotencyKey): CreateBoxOfficeSaleDTO
     {

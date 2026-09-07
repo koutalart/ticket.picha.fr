@@ -26,8 +26,8 @@ use Tests\TestCase;
  */
 class BoxOfficeStockLockTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     private function makeDto(int $eventId, int $agentUserId, int $productId, int $productPriceId): CreateBoxOfficeSaleDTO
     {
@@ -68,7 +68,7 @@ class BoxOfficeStockLockTest extends TestCase
             $handler->handle($this->makeDto($event->id, $user->id, $product->id, $productPrice->id));
         } finally {
             self::assertSame(
-                (int)ProductPrice::find($productPrice->id)->initial_quantity_available,
+                (int) ProductPrice::find($productPrice->id)->initial_quantity_available,
                 ProductPrice::find($productPrice->id)->quantity_sold,
                 'AC-8: quantity_sold must never exceed what was available',
             );

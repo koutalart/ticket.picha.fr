@@ -23,8 +23,8 @@ use Tests\TestCase;
  */
 class StockRaceCharacterizationTest extends TestCase
 {
-    use DatabaseTransactions;
     use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
 
     public function test_two_sequential_sales_on_last_ticket_second_fails(): void
     {
@@ -36,7 +36,7 @@ class StockRaceCharacterizationTest extends TestCase
 
         $handler = app(CreateAttendeeHandler::class);
 
-        $dto = fn() => new CreateAttendeeDTO(
+        $dto = fn () => new CreateAttendeeDTO(
             first_name: 'Jane',
             last_name: 'Doe',
             email: 'jane@example.test',
@@ -106,11 +106,11 @@ class StockRaceCharacterizationTest extends TestCase
             // "Sale A" (Laravel's default connection, now autocommitting)
             // and "Sale B" (a fresh, independent session) both check stock
             // BEFORE either one has written anything back.
-            $remainingA = (int)DB::selectOne($remainingSql, [$productPrice->id])->remaining;
+            $remainingA = (int) DB::selectOne($remainingSql, [$productPrice->id])->remaining;
 
             $stmtB = $connB->prepare($remainingSql);
             $stmtB->execute([$productPrice->id]);
-            $remainingB = (int)$stmtB->fetchColumn();
+            $remainingB = (int) $stmtB->fetchColumn();
 
             self::assertSame(1, $remainingA, 'sale A sees 1 ticket available');
             self::assertSame(1, $remainingB, 'sale B ALSO sees 1 ticket available — the race window that causes S2');
@@ -123,7 +123,7 @@ class StockRaceCharacterizationTest extends TestCase
             $connB->prepare('UPDATE product_prices SET quantity_sold = quantity_sold + 1 WHERE id = ?')
                 ->execute([$productPrice->id]);
 
-            $finalSold = (int)DB::selectOne(
+            $finalSold = (int) DB::selectOne(
                 'SELECT quantity_sold FROM product_prices WHERE id = ?',
                 [$productPrice->id]
             )->quantity_sold;
@@ -134,7 +134,7 @@ class StockRaceCharacterizationTest extends TestCase
             // succeed and the stock ends up oversold (2 sold on a stock of
             // 1). The failure itself is the proof of S2.
             self::assertLessThanOrEqual(
-                (int)ProductPrice::find($productPrice->id)->initial_quantity_available,
+                (int) ProductPrice::find($productPrice->id)->initial_quantity_available,
                 $finalSold,
                 'S2: stock must not be oversold, but no row lock exists today on the stock read',
             );
