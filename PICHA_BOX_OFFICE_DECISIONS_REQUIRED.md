@@ -14,7 +14,7 @@ Légende impact : **[Baseline]** conditionne la création de branche · **[Code]
 | D1 | **Faite** — baseline figée, tag `digit-staging-somaroho-2026` (création du tag hors session de stabilisation, sur le poste de Jo, après exécution des tests). |
 | D2 | **A** — encaissement **avant** validation, Order `COMPLETED`. |
 | D3 | **A** — table `box_office_sales` avec `payment_method` ∈ {`CASH`,`CARD`,`FREE`}, `amount_collected` stocké séparément du prix. |
-| D6 | **B** — email **obligatoire** au guichet, **aucune** adresse fictive. |
+| D6 | **D (7 sept. 2026)** — e-mail **optionnel** au guichet, `attendees.email = NULL` (jamais fictif), complété a posteriori. **B (obligatoire) annulée.** |
 | D9 | **A** — `box_office_sales.idempotency_key` **UNIQUE**, insérée en premier dans la transaction. |
 | D11 | **B** — **bloquer** la vente d'un produit non rattaché à une check-in list active. |
 | D13 / D14 | **A** — `ORGANIZER` pour vendre **et** réimprimer ; réimpression tracée dans `print_jobs`. |
@@ -88,15 +88,16 @@ Les sections détaillées ci-dessous restent la référence pour le raisonnement
 
 ---
 
-## D6 — Email non fourni
+## D6 — Email non fourni — **ROUVERTE (7 sept. 2026), option D**
 
 | Option | Détail | Impact |
 |---|---|---|
-| A | Rendre `email` nullable | **[Schéma]** `attendees.email` est **`NOT NULL`** en base → migration + revue de tous les Mailables/exports/webhooks qui supposent un email. **Risqué**, large surface. |
-| **B (recommandée MVP)** | `email` **obligatoire au guichet** (comme le contrat natif). L'agent demande une adresse ; sinon la vente se fait avec l'email de l'organisateur/guichet **explicitement choisi par l'agent** (pas généré automatiquement) | **[Code]** nul. Conforme au contrat natif. Aucune adresse fictive. |
-| C | Adresse générée `guichet+<id>@<domaine>` | **explicitement écarté** par la mission (« Ne recommande pas d'adresse email fictive »). |
+| A | Rendre `email` nullable | **[Schéma]** `attendees.email` nullable. |
+| B | `email` **obligatoire au guichet** | **Annulée (7 sept. 2026).** |
+| C | Adresse générée `guichet+<id>@<domaine>` | **écarté** (jamais d'adresse fictive). |
+| **D (retenue)** | E-mail **optionnel**. Sans e-mail : `attendees.email = NULL`. Complété a posteriori par ADMIN/ORGANIZER (`PATCH .../attendees/{id}`). Aucun mail tant que l'e-mail est absent. Au moins un identifiant (nom, e-mail ou téléphone). | **[Schéma]** + **[Code]** ciblé. |
 
-**Recommandation : B.** Décision : PICHA confirme-t-il « email obligatoire au guichet » ? Si un cas terrain « client sans email » est fréquent → rouvrir A avec un vrai budget de revue.
+**Décision : D.** D6 = B (obligatoire) n'est plus en vigueur.
 
 ---
 
@@ -296,7 +297,7 @@ Voir D1. Sous-décisions :
 | D3 | Table `box_office_sales` avec `payment_method` (`CASH/CARD/FREE/OTHER`) | Schéma |
 | D4 | Boucle N × `CreateAttendeeHandler` en transaction, 1 Order/billet assumé | Code |
 | D5 | Pas d'acheteur distinct | Métier |
-| D6 | Email **obligatoire** au guichet, pas d'adresse fictive | Métier |
+| D6 | Email **optionnel** au guichet, `NULL` si absent, pas d'adresse fictive (option D, 7 sept. 2026) | Métier |
 | D7 | Téléphone/orga via questions + nouveau service (si besoin), sinon hors MVP | Métier/Code |
 | D8 | Respecter les questions `required` (si D7 actif) | Métier |
 | D9 | `idempotency_key` UNIQUE sur `box_office_sales`, insérée en premier | Schéma |

@@ -35,6 +35,10 @@ class SendAttendeeTicketService
             $organizer
         );
 
+        if ($attendee->getEmail() === null || $attendee->getEmail() === '') {
+            return;
+        }
+
         $this->mailer
             ->to($attendee->getEmail())
             ->locale($attendee->getLocale())

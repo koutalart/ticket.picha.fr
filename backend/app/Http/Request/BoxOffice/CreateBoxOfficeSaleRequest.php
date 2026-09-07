@@ -28,12 +28,24 @@ class CreateBoxOfficeSaleRequest extends BaseRequest
             'payment_method' => ['required', Rule::in(BoxOfficePaymentMethod::valuesArray())],
             'amount_collected' => ['required', ...RulesHelper::MONEY],
             'idempotency_key' => ['required', 'string', 'max:100'],
+            'send_confirmation_email' => ['sometimes', 'boolean'],
         ];
     }
 
     public function withValidator($validator): void
     {
         $validator->after(function ($validator): void {
+            $hasIdentifier = filled(trim((string) $this->input('first_name')))
+                || filled(trim((string) $this->input('email')))
+                || filled(trim((string) $this->input('phone')));
+
+            if (! $hasIdentifier) {
+                $validator->errors()->add(
+                    'email',
+                    __('Saisir au moins un nom, un e-mail ou un téléphone.'),
+                );
+            }
+
             $items = $this->input('items');
             if (! is_array($items)) {
                 return;

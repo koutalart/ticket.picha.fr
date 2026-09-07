@@ -23,6 +23,12 @@ msgstr "- Nhấp để xuất bản"
 msgid "- Click to Unpublish"
 msgstr "- Nhấp để gỡ bỏ"
 
+#: src/components/common/AttendeeDetails/index.tsx:27
+#: src/components/common/AttendeeTable/index.tsx:177
+#: src/components/common/AttendeeTicket/index.tsx:118
+msgid "—"
+msgstr "—"
+
 #: src/components/common/NoResultsSplash/index.tsx:14
 msgid "'There\\'s nothing to show yet'"
 msgstr ""
@@ -73,15 +79,20 @@ msgstr "Còn {0}"
 msgid "{0} logo"
 msgstr "Logo {0}"
 
+#: src/components/routes/kiosk/Orders/index.tsx:146
+msgid "{0} orders"
+msgstr "{0} đơn"
+
 #: src/components/routes/events/Dashboard/index.tsx:141
 msgid "{0} organizers"
 msgstr "{0} nhà tổ chức"
 
+#: src/components/routes/kiosk/Orders/index.tsx:147
 #: src/components/routes/product-widget/CollectInformation/index.tsx:597
 msgid "{0} tickets"
 msgstr "{0} vé"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:366
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:378
 msgid "{0} tickets created"
 msgstr ""
 
@@ -118,7 +129,7 @@ msgstr "{phút} phút và {giây} giây"
 msgid "{organizerName}'s first event"
 msgstr "Sự kiện đầu tiên của {organizerName}"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:885
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:924
 msgid "{selectedPriceRemaining} remaining"
 msgstr "còn {selectedPriceRemaining}"
 
@@ -220,7 +231,7 @@ msgstr "1 loại vé"
 msgid "1 week before event"
 msgstr "1 tuần trước sự kiện"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:826
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:865
 msgid "1. Choose a ticket"
 msgstr ""
 
@@ -234,7 +245,7 @@ msgstr "123 Phố chính"
 msgid "123 Sample Street"
 msgstr "123 Đường Mẫu"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:894
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:933
 msgid "2. Attendee details"
 msgstr ""
 
@@ -242,7 +253,7 @@ msgstr ""
 msgid "20"
 msgstr "20"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:931
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:968
 msgid "3. Payment method"
 msgstr ""
 
@@ -328,11 +339,11 @@ msgstr "Một câu hỏi duy nhất cho mỗi sản phẩm. Ví dụ: Kích thư
 msgid "A standard tax, like VAT or GST"
 msgstr "Thuế tiêu chuẩn, như VAT hoặc GST"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:161
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:172
 msgid "A valid email is required"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:154
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:163
 msgid "A valid phone number is required"
 msgstr "Cần số điện thoại hợp lệ"
 
@@ -448,7 +459,7 @@ msgstr "Cần hành động: Cần thông tin VAT"
 
 #: src/components/common/AdminEventsTable/index.tsx:112
 #: src/components/common/AffiliateTable/index.tsx:167
-#: src/components/common/AttendeeTable/index.tsx:346
+#: src/components/common/AttendeeTable/index.tsx:353
 #: src/components/common/OrdersTable/index.tsx:445
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:467
 #: src/components/common/WaitlistTable/index.tsx:55
@@ -457,7 +468,7 @@ msgstr "Cần hành động: Cần thông tin VAT"
 msgid "Actions"
 msgstr "Hành động"
 
-#: src/components/common/AttendeeTable/index.tsx:370
+#: src/components/common/AttendeeTable/index.tsx:377
 msgid "Activate"
 msgstr "Kích hoạt"
 
@@ -467,7 +478,7 @@ msgstr "Ngày kích hoạt"
 
 #: src/components/common/AffiliateTable/index.tsx:131
 #: src/components/common/AttendeeStatusBadge/index.tsx:27
-#: src/components/common/AttendeeTable/index.tsx:283
+#: src/components/common/AttendeeTable/index.tsx:290
 #: src/components/common/CheckInListList/index.tsx:114
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:267
 #: src/components/forms/AffiliateForm/index.tsx:21
@@ -552,13 +563,13 @@ msgstr "Thêm thuế hoặc phí"
 msgid "Add this event to your calendar"
 msgstr "Thêm sự kiện này vào lịch của bạn"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:557
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:602
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:732
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:574
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:619
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:771
 msgid "Add ticket"
 msgstr "Thêm vé"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:761
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:800
 #: src/components/routes/event/GettingStarted/index.tsx:132
 msgid "Add tickets"
 msgstr "Thêm vé"
@@ -809,12 +820,12 @@ msgstr "Tuyệt vời, sự kiện, từ khóa ..."
 msgid "Amount"
 msgstr "Số tiền"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:677
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:957
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:716
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:994
 msgid "Amount collected"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:162
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:174
 msgid "Amount collected is required"
 msgstr ""
 
@@ -1289,7 +1300,7 @@ msgid "Awaiting payment"
 msgstr "Đang chờ thanh toán"
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:29
-#: src/components/common/AttendeeTable/index.tsx:289
+#: src/components/common/AttendeeTable/index.tsx:296
 #: src/components/common/OrdersTable/index.tsx:424
 #: src/components/common/OrderStatusBadge/index.tsx:10
 #: src/components/routes/event/attendees.tsx:28
@@ -1306,7 +1317,7 @@ msgstr "Công ty TNHH Awesome Events"
 msgid "Awesome Organizer Ltd."
 msgstr "Nhà tổ chức tuyệt vời Ltd."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:488
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:505
 msgid "Back"
 msgstr "Quay lại"
 
@@ -1380,8 +1391,8 @@ msgid "Bookmark this page to manage your order anytime."
 msgstr "Đánh dấu trang này để quản lý đơn hàng của bạn bất cứ lúc nào."
 
 #: src/components/layouts/Event/index.tsx:125
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:492
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:806
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:509
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:845
 msgid "Box Office"
 msgstr ""
 
@@ -1439,6 +1450,14 @@ msgstr ""
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "Bằng cách tiếp tục, bạn đồng ý với <0>Điều khoản dịch vụ của {0}</0>"
 
+#: src/components/routes/kiosk/Stats/index.tsx:83
+msgid "By operator"
+msgstr "Theo nhân viên"
+
+#: src/components/routes/kiosk/Stats/index.tsx:56
+msgid "By payment method"
+msgstr "Theo phương thức thanh toán"
+
 #: src/components/routes/auth/Register/index.tsx:141
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 msgstr "Bằng cách đăng ký, bạn đồng ý với các <0>Điều khoản dịch vụ của chúng tôi</0> và <1>Chính sách bảo mật</1>."
@@ -1472,7 +1491,7 @@ msgstr "Máy quét camera"
 msgid "Campaign"
 msgstr "Chiến dịch"
 
-#: src/components/common/AttendeeTable/index.tsx:370
+#: src/components/common/AttendeeTable/index.tsx:377
 #: src/components/common/CheckIn/CheckInOptionsModal.tsx:59
 #: src/components/common/CheckIn/ScannerSelectionModal.tsx:57
 #: src/components/common/ContactOrganizerModal/index.tsx:104
@@ -1483,6 +1502,7 @@ msgstr "Chiến dịch"
 #: src/components/common/WaitlistTable/index.tsx:132
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
+#: src/components/routes/kiosk/Orders/index.tsx:121
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:85
@@ -1515,7 +1535,7 @@ msgid "Canceling will cancel all attendees associated with this order, and relea
 msgstr "Hủy sẽ hủy tất cả người tham dự liên quan đến đơn hàng này và trả vé về pool có sẵn."
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:28
-#: src/components/common/AttendeeTable/index.tsx:295
+#: src/components/common/AttendeeTable/index.tsx:302
 #: src/components/common/AttendeeTicket/index.tsx:155
 #: src/components/common/OrdersTable/index.tsx:430
 #: src/components/common/OrderStatusBadge/index.tsx:9
@@ -1561,18 +1581,22 @@ msgstr "Phân bổ sức chứa"
 msgid "Capacity Management"
 msgstr "Quản lý sức chứa"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:639
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:935
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:685
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:972
+#: src/components/routes/kiosk/Orders/index.tsx:24
+#: src/components/routes/kiosk/Stats/index.tsx:15
 msgid "Card"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:708
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:773
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:747
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:812
 msgid "Cart contents"
 msgstr "Giỏ hàng"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:638
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:934
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:684
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:971
+#: src/components/routes/kiosk/Orders/index.tsx:21
+#: src/components/routes/kiosk/Stats/index.tsx:12
 msgid "Cash"
 msgstr ""
 
@@ -1597,7 +1621,7 @@ msgstr "Danh mục"
 msgid "Category Created Successfully"
 msgstr "Danh mục được tạo thành công"
 
-#: src/components/layouts/Kiosk/index.tsx:78
+#: src/components/layouts/Kiosk/index.tsx:92
 msgid "Change event"
 msgstr "Đổi sự kiện"
 
@@ -1693,7 +1717,7 @@ msgstr "Danh sách check-in cho phép bạn kiểm soát lối vào theo ngày, 
 msgid "Check-in Rate"
 msgstr "Tỷ lệ check-in"
 
-#: src/components/common/AttendeeTable/index.tsx:307
+#: src/components/common/AttendeeTable/index.tsx:314
 #: src/components/common/CheckInStatusModal/index.tsx:36
 #: src/components/common/CheckInStatusModal/index.tsx:134
 msgid "Check-In Status"
@@ -1708,7 +1732,7 @@ msgstr "Tóm tắt Check-in"
 msgid "Check-In URL copied to clipboard"
 msgstr "URL check-in đã được sao chép vào clipboard"
 
-#: src/components/common/AttendeeDetails/index.tsx:47
+#: src/components/common/AttendeeDetails/index.tsx:49
 msgid "Check-Ins"
 msgstr "Check-In"
 
@@ -1720,7 +1744,7 @@ msgstr "Tùy chọn checkbox cho phép chọn nhiều mục"
 msgid "Checkboxes"
 msgstr "Checkbox"
 
-#: src/components/common/AttendeeTable/index.tsx:322
+#: src/components/common/AttendeeTable/index.tsx:329
 #: src/components/common/CheckInStatusModal/index.tsx:110
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:40
 msgid "Checked In"
@@ -1747,8 +1771,8 @@ msgstr "Tiếng Trung (Phồn thể)"
 msgid "Choose a color for your background"
 msgstr "Chọn một màu cho nền của bạn"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:570
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:861
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:587
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:900
 msgid "Choose a price"
 msgstr ""
 
@@ -1792,7 +1816,7 @@ msgstr "Chọn ai trả phí nền tảng. Điều này không ảnh hưởng đ
 msgid "City"
 msgstr "Thành phố"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:751
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:790
 msgid "Clear basket"
 msgstr "Xóa giỏ"
 
@@ -1804,7 +1828,7 @@ msgstr "Xoá văn bản tìm kiếm"
 msgid "Click to copy"
 msgstr "Bấm để sao chép"
 
-#: src/components/common/AttendeeTable/index.tsx:207
+#: src/components/common/AttendeeTable/index.tsx:214
 msgid "Click to view notes"
 msgstr "Nhấp để xem ghi chú"
 
@@ -1879,6 +1903,12 @@ msgstr "Thu thập thông tin theo đơn hàng"
 msgid "Collect details per ticket"
 msgstr "Thu thập thông tin theo vé"
 
+#: src/components/routes/kiosk/Stats/index.tsx:47
+#: src/components/routes/kiosk/Stats/index.tsx:66
+#: src/components/routes/kiosk/Stats/index.tsx:89
+msgid "Collected"
+msgstr "Đã thu"
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
 msgid "Color"
@@ -1904,8 +1934,8 @@ msgstr "Cột"
 msgid "Comedy"
 msgstr "Hài kịch"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:666
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:671
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:705
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:710
 msgid "Coming soon"
 msgstr "Sắp ra mắt"
 
@@ -2182,7 +2212,7 @@ msgstr "Email liên hệ hỗ trợ"
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:481
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:498
 #: src/components/routes/product-widget/SelectProducts/index.tsx:550
 msgid "Continue"
 msgstr "Tiếp tục"
@@ -2274,7 +2304,7 @@ msgstr ""
 msgid "Copy details to first attendee"
 msgstr "Sao chép chi tiết cho người tham dự đầu tiên"
 
-#: src/components/common/AttendeeTable/index.tsx:197
+#: src/components/common/AttendeeTable/index.tsx:199
 #: src/components/common/OrdersTable/index.tsx:263
 msgid "Copy Email"
 msgstr "Sao chép Email"
@@ -2305,11 +2335,11 @@ msgstr "Sao chép vào bộ nhớ tạm"
 msgid "Copy URL"
 msgstr "Sao chép URL"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:291
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:302
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:314
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:325
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
 
@@ -2700,7 +2730,7 @@ msgstr "Chi tiết doanh số hàng ngày, thuế và phí"
 msgid "Danger zone"
 msgstr "Vùng nguy hiểm"
 
-#: src/components/common/AttendeeTable/index.tsx:367
+#: src/components/common/AttendeeTable/index.tsx:374
 #: src/components/common/DangerZone/index.tsx:30
 #: src/components/routes/event/Settings/index.tsx:88
 #: src/components/routes/organizer/Settings/index.tsx:78
@@ -2933,7 +2963,7 @@ msgstr "Quyên góp"
 msgid "Donation / Pay what you'd like product"
 msgstr "Sản phẩm quyên góp / Trả số tiền bạn muốn"
 
-#: src/components/layouts/Kiosk/index.tsx:83
+#: src/components/layouts/Kiosk/index.tsx:97
 #: src/components/modals/CheckInListSuccessModal/index.tsx:59
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:72
 #: src/components/modals/CreateWebhookModal/index.tsx:72
@@ -3202,7 +3232,8 @@ msgstr "Danh Sách Đăng Ký Đủ Điều Kiện"
 #: src/components/routes/auth/Login/index.tsx:93
 #: src/components/routes/auth/Register/index.tsx:104
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:99
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:915
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:658
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:953
 #: src/components/routes/kiosk/Login/index.tsx:75
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
@@ -3370,6 +3401,10 @@ msgstr "Kết thúc"
 msgid "English"
 msgstr "Tiếng Anh"
 
+#: src/components/routes/kiosk/Orders/index.tsx:133
+msgid "Enter a name, email or ticket number"
+msgstr "Nhập tên, email hoặc số đơn / vé"
+
 #: src/components/common/EmailTemplateEditor/EmailTemplatePreviewPane.tsx:58
 msgid "Enter a subject and body to see the preview"
 msgstr "Nhập tiêu đề và nội dung để xem trước"
@@ -3385,6 +3420,10 @@ msgstr "Nhập tên đối tác"
 #: src/components/modals/CreateAttendeeModal/index.tsx:181
 msgid "Enter an amount excluding taxes and fees."
 msgstr "Nhập một số tiền không bao gồm thuế và phí."
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:475
+msgid "Enter at least a first name, an email, or a phone number."
+msgstr "Nhập ít nhất họ tên, email hoặc số điện thoại."
 
 #: src/components/modals/EditAccountVatSettingsModal/index.tsx:149
 msgid "Enter business address"
@@ -4098,7 +4137,7 @@ msgstr "Bộ lọc"
 msgid "Filters ({activeFilterCount})"
 msgstr "Bộ lọc ({activeFilterCount})"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
 msgid "Finish"
 msgstr "Hoàn tất"
 
@@ -4134,7 +4173,8 @@ msgstr "Số hóa đơn đầu tiên"
 #: src/components/modals/CreateAttendeeModal/index.tsx:129
 #: src/components/modals/ManageAttendeeModal/index.tsx:110
 #: src/components/modals/ManageOrderModal/index.tsx:144
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:904
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:638
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:936
 #: src/components/routes/product-widget/CollectInformation/index.tsx:436
 #: src/components/routes/product-widget/CollectInformation/index.tsx:648
 msgid "First name"
@@ -4156,7 +4196,6 @@ msgid "First Name"
 msgstr "Tên"
 
 #: src/components/modals/JoinWaitlistModal/index.tsx:46
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:158
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:29
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:29
 msgid "First name is required"
@@ -4226,7 +4265,7 @@ msgstr "Văn bản chân trang"
 msgid "Forgot password?"
 msgstr "Quên mật khẩu?"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:496
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:513
 msgid "Form"
 msgstr "Biểu mẫu"
 
@@ -4237,14 +4276,14 @@ msgstr "Biểu mẫu"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:113
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:123
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:180
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:640
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:936
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:973
+#: src/components/routes/kiosk/Orders/index.tsx:27
+#: src/components/routes/kiosk/Stats/index.tsx:18
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Miễn phí"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:946
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:983
 msgid "Free can only be used for a ticket priced at 0"
 msgstr ""
 
@@ -4961,7 +5000,7 @@ msgstr "Nhân viên kiosk"
 msgid "Label"
 msgstr "Nhãn"
 
-#: src/components/common/AttendeeDetails/index.tsx:38
+#: src/components/common/AttendeeDetails/index.tsx:40
 #: src/components/modals/CreateAttendeeModal/index.tsx:155
 #: src/components/routes/profile/ManageProfile/index.tsx:196
 msgid "Language"
@@ -5019,7 +5058,8 @@ msgstr "Đăng nhập cuối cùng"
 #: src/components/modals/CreateAttendeeModal/index.tsx:136
 #: src/components/modals/ManageAttendeeModal/index.tsx:111
 #: src/components/modals/ManageOrderModal/index.tsx:150
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:910
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:643
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:941
 msgid "Last name"
 msgstr "Họ"
 
@@ -5050,8 +5090,8 @@ msgstr "Họ là bắt buộc"
 msgid "Last Response"
 msgstr "Phản hồi cuối cùng"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:689
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:981
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:728
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1018
 msgid "Last ticket: <0>{0}</0>"
 msgstr ""
 
@@ -5216,7 +5256,7 @@ msgstr "Làm cho sự kiện của bạn hoạt động"
 msgid "Manage"
 msgstr "Quản lý"
 
-#: src/components/common/AttendeeTable/index.tsx:349
+#: src/components/common/AttendeeTable/index.tsx:356
 msgid "Manage attendee"
 msgstr "Quản lý người tham dự"
 
@@ -5224,7 +5264,7 @@ msgstr "Quản lý người tham dự"
 msgid "Manage event"
 msgstr "Quản lý sự kiện"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:816
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:855
 msgid "Manage kiosk operators"
 msgstr "Quản lý nhân viên kiosk"
 
@@ -5272,7 +5312,7 @@ msgstr "Các câu hỏi bắt buộc phải được trả lời trước khi kh
 msgid "Manual offer"
 msgstr "Ưu đãi thủ công"
 
-#: src/components/common/AttendeeTable/index.tsx:410
+#: src/components/common/AttendeeTable/index.tsx:417
 msgid "Manually add an Attendee"
 msgstr "Thêm một người tham dự theo cách thủ công"
 
@@ -5301,7 +5341,7 @@ msgstr "Tối đa mỗi đơn hàng"
 msgid "Medium"
 msgstr "Phương tiện"
 
-#: src/components/common/AttendeeTable/index.tsx:188
+#: src/components/common/AttendeeTable/index.tsx:189
 #: src/components/common/ContactOrganizerModal/index.tsx:88
 #: src/components/common/OrdersTable/index.tsx:254
 #: src/components/modals/SendMessageModal/index.tsx:353
@@ -5312,7 +5352,7 @@ msgstr "Tin nhắn"
 msgid "Message approved successfully"
 msgstr "Tin nhắn được phê duyệt thành công"
 
-#: src/components/common/AttendeeTable/index.tsx:354
+#: src/components/common/AttendeeTable/index.tsx:361
 msgid "Message attendee"
 msgstr "Tin nhắn cho người tham dự"
 
@@ -5431,8 +5471,8 @@ msgstr "Hộp văn bản đa dòng"
 msgid "Multiple price options. Perfect for early bird products etc."
 msgstr "Nhiều tùy chọn giá. Hoàn hảo cho sản phẩm giảm giá sớm, v.v."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:537
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:853
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:554
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:892
 msgid "Multiple prices"
 msgstr ""
 
@@ -5576,13 +5616,18 @@ msgstr "Không có người tham dự tìm thấy cho đơn hàng này."
 msgid "No attendees have been added to this order."
 msgstr "Không có người tham dự đã được thêm vào đơn hàng này."
 
-#: src/components/common/AttendeeTable/index.tsx:399
+#: src/components/common/AttendeeTable/index.tsx:406
 msgid "No Attendees to show"
 msgstr "Không có người tham dự để hiển thị"
 
 #: src/components/routes/admin/Attribution/index.tsx:121
 msgid "No attribution data found"
 msgstr "Không tìm thấy dữ liệu phân bổ"
+
+#: src/components/routes/kiosk/Orders/index.tsx:158
+#: src/components/routes/kiosk/Stats/index.tsx:58
+msgid "No box office sales yet."
+msgstr "Chưa có bán vé tại quầy."
 
 #: src/components/modals/OfferWaitlistModal/index.tsx:187
 msgid "No capacity"
@@ -5689,7 +5734,7 @@ msgstr "Không tìm thấy tin nhắn"
 msgid "No messages to show"
 msgstr "Không có tin nhắn nào hiển thị"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:194
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:206
 msgid "No more tickets available for this price."
 msgstr "Hết vé cho mức giá này."
 
@@ -5816,8 +5861,8 @@ msgstr "Không có kết quả tìm kiếm."
 msgid "No Taxes or Fees have been added."
 msgstr "Không có thuế hoặc phí đã được thêm vào."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:509
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:830
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:526
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:869
 msgid "No ticket is both active and attached to an active check-in list. Attach a product to a check-in list first — otherwise it would not be scannable at the door."
 msgstr ""
 
@@ -5874,7 +5919,7 @@ msgstr "Không"
 msgid "Not available"
 msgstr "Không có sẵn"
 
-#: src/components/common/AttendeeTable/index.tsx:327
+#: src/components/common/AttendeeTable/index.tsx:334
 #: src/components/common/CheckInStatusModal/index.tsx:110
 msgid "Not Checked In"
 msgstr "Chưa Đăng Ký"
@@ -5882,6 +5927,11 @@ msgstr "Chưa Đăng Ký"
 #: src/components/common/CheckInStatusModal/index.tsx:118
 msgid "Not Eligible"
 msgstr "Không Đủ Điều Kiện"
+
+#: src/components/routes/kiosk/Orders/index.tsx:55
+#: src/components/routes/kiosk/Orders/index.tsx:56
+msgid "Not scanned"
+msgstr "Chưa quét"
 
 #: src/components/modals/ManageAttendeeModal/index.tsx:130
 #: src/components/modals/ManageOrderModal/index.tsx:164
@@ -6063,8 +6113,9 @@ msgstr "Mở thanh bên"
 msgid "Open Stripe Dashboard"
 msgstr "Mở bảng điều khiển Stripe"
 
-#: src/components/layouts/Kiosk/index.tsx:64
+#: src/components/layouts/Kiosk/index.tsx:78
 #: src/components/routes/kiosk/Settings/index.tsx:150
+#: src/components/routes/kiosk/Stats/index.tsx:87
 msgid "Operator"
 msgstr "Nhân viên"
 
@@ -6080,6 +6131,10 @@ msgstr "Tùy chọn {i}"
 msgid "Optional additional information to appear on all invoices (e.g., payment terms, late payment fees, return policy)"
 msgstr "Thông tin bổ sung tùy chọn xuất hiện trên tất cả các hóa đơn (ví dụ: điều khoản thanh toán, phí thanh toán trễ, chính sách trả lại)"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:675
+msgid "Optional in a rush — enter at least a first name, an email, or a phone number. The email can be completed later from the attendees screen."
+msgstr "Tùy chọn khi vội — ít nhất tên, email hoặc điện thoại. Email có thể bổ sung sau trên màn hình Người tham dự."
+
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:200
 msgid "Optional prefix for invoice numbers (e.g., INV-)"
 msgstr "Tiền tố tùy chọn cho số hóa đơn (ví dụ: Inv-)"
@@ -6087,10 +6142,6 @@ msgstr "Tiền tố tùy chọn cho số hóa đơn (ví dụ: Inv-)"
 #: src/components/routes/event/TicketDesigner/index.tsx:165
 msgid "Optional text for disclaimers, contact info, or thank you notes (single line only)"
 msgstr "Văn bản tùy chọn cho tuyên bố từ chối, thông tin liên hệ hoặc ghi chú cảm ơn (chỉ một dòng)"
-
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:629
-msgid "Optional. Skip this step if you are in a hurry — the attendee can add their details later on their phone."
-msgstr "Tùy chọn. Bỏ qua nếu đang vội — khách có thể tự điền thông tin sau trên điện thoại."
 
 #: src/components/common/QuestionsTable/index.tsx:125
 msgid "options"
@@ -6125,7 +6176,7 @@ msgstr "Hoặc"
 msgid "Order"
 msgstr "Đơn hàng"
 
-#: src/components/common/AttendeeTable/index.tsx:240
+#: src/components/common/AttendeeTable/index.tsx:247
 msgid "Order & Ticket"
 msgstr "Đơn hàng & Vé"
 
@@ -6311,6 +6362,7 @@ msgstr "Đơn hàng đã bị hủy"
 
 #: src/components/layouts/Admin/index.tsx:17
 #: src/components/layouts/Event/index.tsx:120
+#: src/components/layouts/Kiosk/index.tsx:58
 #: src/components/routes/admin/Attribution/index.tsx:138
 #: src/components/routes/admin/Orders/index.tsx:44
 #: src/components/routes/event/orders.tsx:115
@@ -6520,6 +6572,11 @@ msgstr "Hoàn lại tiền một phần"
 msgid "Partially refunded: {0}"
 msgstr "Hoàn tiền một phần: {0}"
 
+#: src/components/routes/kiosk/Orders/index.tsx:49
+#: src/components/routes/kiosk/Orders/index.tsx:50
+msgid "Partially scanned"
+msgstr "Quét một phần"
+
 #: src/components/common/PlatformFeesSettings/index.tsx:191
 msgid "Pass fee to buyer"
 msgstr "Chuyển phí cho người mua"
@@ -6603,7 +6660,7 @@ msgstr "Tải trọng"
 #: src/components/common/OrdersTable/index.tsx:375
 #: src/components/common/ProgressStepper/index.tsx:19
 #: src/components/forms/StripeCheckoutForm/index.tsx:127
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:514
 msgid "Payment"
 msgstr "Thanh toán"
 
@@ -6637,6 +6694,7 @@ msgstr "Thanh toán thất bại"
 msgid "Payment Instructions"
 msgstr "Hướng dẫn thanh toán"
 
+#: src/components/routes/kiosk/Stats/index.tsx:64
 #: src/components/routes/product-widget/Payment/index.tsx:114
 msgid "Payment method"
 msgstr "Phương thức thanh toán"
@@ -6758,8 +6816,8 @@ msgstr "Thông tin cá nhân"
 msgid "Phone"
 msgstr "Điện thoại"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:621
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:897
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:946
 msgid "Phone number"
 msgstr "Số điện thoại"
 
@@ -7051,12 +7109,12 @@ msgstr "Xử lý hoàn tiền"
 msgid "Processing order"
 msgstr "Đang xử lý đơn hàng"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:974
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1011
 msgid "Processing…"
 msgstr ""
 
-#: src/components/common/AttendeeDetails/index.tsx:30
+#: src/components/common/AttendeeDetails/index.tsx:32
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:285
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:482
 #: src/components/common/WaitlistTable/index.tsx:170
@@ -7274,7 +7332,7 @@ msgstr "Tỷ lệ"
 msgid "Rate limit exceeded. Please try again later."
 msgstr "Vượt quá giới hạn yêu cầu. Vui lòng thử lại sau."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:495
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:512
 msgid "Rates"
 msgstr "Giá vé"
 
@@ -7443,9 +7501,9 @@ msgstr "Loại bỏ"
 msgid "Remove"
 msgstr "Hủy bỏ"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:545
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:592
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:723
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:562
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:609
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:762
 msgid "Remove ticket"
 msgstr "Xóa vé"
 
@@ -7460,10 +7518,20 @@ msgstr "Không tìm thấy báo cáo"
 msgid "Reports"
 msgstr "Báo cáo"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:697
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:989
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:736
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1026
+#: src/components/routes/kiosk/Orders/index.tsx:121
+#: src/components/routes/kiosk/Orders/index.tsx:190
 msgid "Reprint"
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:105
+msgid "Reprint {0} tickets?"
+msgstr "In lại {0} vé?"
+
+#: src/components/routes/kiosk/Orders/index.tsx:105
+msgid "Reprint this ticket?"
+msgstr "In lại vé này?"
 
 #: src/components/routes/my-tickets/index.tsx:169
 msgid "Request a new link"
@@ -7513,7 +7581,7 @@ msgstr "Gửi lại email đơn hàng"
 msgid "Resend Ticket"
 msgstr "Gửi lại vé"
 
-#: src/components/common/AttendeeTable/index.tsx:359
+#: src/components/common/AttendeeTable/index.tsx:366
 msgid "Resend ticket email"
 msgstr "Gửi lại email vé"
 
@@ -7530,6 +7598,8 @@ msgid "Reserved until"
 msgstr "Đặt trước đến"
 
 #: src/components/common/FilterModal/index.tsx:279
+#: src/components/routes/kiosk/Orders/index.tsx:139
+#: src/components/routes/kiosk/Orders/index.tsx:150
 msgid "Reset"
 msgstr "Đặt lại"
 
@@ -7678,6 +7748,9 @@ msgstr "Đợt giảm giá bắt đầu {0}"
 
 #: src/components/common/AffiliateTable/index.tsx:145
 #: src/components/layouts/Kiosk/index.tsx:51
+#: src/components/routes/kiosk/Stats/index.tsx:39
+#: src/components/routes/kiosk/Stats/index.tsx:65
+#: src/components/routes/kiosk/Stats/index.tsx:88
 msgid "Sales"
 msgstr "Bán hàng"
 
@@ -7790,6 +7863,11 @@ msgstr ""
 #: src/pages/digit/ScannerDevicePage.tsx:71
 msgid "Scan failed"
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:42
+#: src/components/routes/kiosk/Orders/index.tsx:43
+msgid "Scanned"
+msgstr "Đã quét"
 
 #: src/components/modals/SendMessageModal/index.tsx:381
 msgid "Schedule for later"
@@ -8045,7 +8123,7 @@ msgstr "Chọn ..."
 msgid "Selected"
 msgstr "Đã chọn"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:805
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:844
 msgid "Sell a ticket at the door and print it immediately."
 msgstr ""
 
@@ -8181,7 +8259,8 @@ msgstr "Đặt cài đặt mặc định cho các sự kiện mới được t�
 msgid "Set the starting number for invoice numbering. This cannot be changed once invoices have been generated."
 msgstr "Đặt số bắt đầu cho hóa đơn. Sau khi hóa đơn được tạo, số này không thể thay đổi."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:279
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:290
+#: src/components/routes/kiosk/Orders/index.tsx:94
 msgid "Set the Zebra printer IP in Settings before printing."
 msgstr "Nhập IP Zebra trong Cài đặt trước khi in."
 
@@ -8211,7 +8290,7 @@ msgstr "Đã cập nhật cài đặt"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/Kiosk/index.tsx:58
+#: src/components/layouts/Kiosk/index.tsx:72
 #: src/components/layouts/OrganizerLayout/index.tsx:93
 #: src/components/modals/DuplicateEventModal/index.tsx:26
 #: src/components/routes/kiosk/Settings/index.tsx:51
@@ -8416,8 +8495,8 @@ msgstr "Tiếng Tây Ban Nha"
 msgid "Sports"
 msgstr "Thể thao"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:584
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:870
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:601
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:909
 msgid "Standard"
 msgstr ""
 
@@ -8462,6 +8541,8 @@ msgid "Station name"
 msgstr "Tên quầy"
 
 #: src/components/common/AdminEventsTable/index.tsx:110
+#: src/components/layouts/Kiosk/index.tsx:65
+#: src/components/routes/kiosk/Stats/index.tsx:33
 msgid "Statistics"
 msgstr "Thống kê"
 
@@ -8472,7 +8553,7 @@ msgstr "Thống kê dựa trên ngày tạo tài khoản"
 #: src/components/common/AdminEventsTable/index.tsx:111
 #: src/components/common/AdminOrdersTable/index.tsx:85
 #: src/components/common/AffiliateTable/index.tsx:83
-#: src/components/common/AttendeeTable/index.tsx:274
+#: src/components/common/AttendeeTable/index.tsx:281
 #: src/components/common/OrderDetails/index.tsx:51
 #: src/components/common/OrdersTable/index.tsx:403
 #: src/components/common/OrganizerWebhookTable/index.tsx:238
@@ -8760,7 +8841,7 @@ msgstr "Mặc định hệ thống"
 msgid "T-shirt"
 msgstr "Áo thun"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:974
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1011
 msgid "Take Payment & Create Ticket"
 msgstr ""
 
@@ -8899,7 +8980,7 @@ msgstr "Mã khuyến mãi không hợp lệ"
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
 msgstr "Màu nền của trang. Khi sử dụng ảnh bìa, màu này được áp dụng dưới dạng lớp phủ."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:710
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:749
 msgid "The basket is empty."
 msgstr "Giỏ hàng trống."
 
@@ -8993,8 +9074,8 @@ msgstr "Giá hiển thị cho khách hàng sẽ bao gồm thuế và phí."
 msgid "The price displayed to the customer will not include taxes and fees. They will be shown separately"
 msgstr "Giá hiển thị cho khách hàng sẽ không bao gồm thuế và phí. Chúng sẽ được hiển thị riêng biệt."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:372
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:422
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:384
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:434
 msgid "The price has changed — please reselect the ticket type."
 msgstr ""
 
@@ -9019,7 +9100,7 @@ msgstr "Thời gian lên lịch phải ở trong tương lai"
 msgid "The template body contains invalid Liquid syntax. Please correct it and try again."
 msgstr "Nội dung template chứa cú pháp Liquid không hợp lệ. Vui lòng sửa và thử lại."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:306
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:317
 msgid "The ticket was created but the Zebra printer did not respond."
 msgstr "Vé đã được tạo nhưng máy in Zebra không phản hồi."
 
@@ -9032,7 +9113,8 @@ msgstr "Tiêu đề của sự kiện sẽ được hiển thị trong kết qu�
 msgid "The VAT number could not be validated. Please check the number and try again."
 msgstr "Không thể xác thực số VAT. Vui lòng kiểm tra số và thử lại."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:305
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:316
+#: src/components/routes/kiosk/Orders/index.tsx:116
 msgid "The Zebra printer did not respond."
 msgstr "Máy in Zebra không phản hồi."
 
@@ -9258,10 +9340,14 @@ msgstr "Báo cáo này chỉ dành cho mục đích thông tin. Luôn tham khả
 msgid "This reset password link is invalid or expired."
 msgstr "Liên kết mật khẩu đặt lại này không hợp lệ hoặc hết hạn."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:374
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:427
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:386
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:439
 msgid "This sale could not be completed. Please try again."
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:100
+msgid "This sale has no ticket to reprint."
+msgstr "Giao dịch này không có vé để in lại."
 
 #: src/components/layouts/CheckIn/index.tsx:205
 msgid "This ticket was just scanned. Please wait before scanning again."
@@ -9279,7 +9365,7 @@ msgstr "Thông tin này sẽ được dùng để gửi thông báo và liên h�
 msgid "This will not be visible to customers, but helps you identify the affiliate."
 msgstr "Thông tin này sẽ không hiển thị với khách hàng, nhưng giúp bạn nhận diện đối tác."
 
-#: src/components/common/AttendeeTable/index.tsx:370
+#: src/components/common/AttendeeTable/index.tsx:377
 #: src/components/routes/my-tickets/index.tsx:85
 msgid "ticket"
 msgstr "vé"
@@ -9298,8 +9384,8 @@ msgstr "Vé"
 msgid "Ticket Cancelled"
 msgstr "Vé đã hủy"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:365
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:411
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:377
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:423
 msgid "Ticket created — {0}"
 msgstr ""
 
@@ -9344,7 +9430,8 @@ msgstr "Người giữ vé"
 msgid "Ticket ID"
 msgstr "ID vé"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:922
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:665
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:959
 msgid "Ticket language"
 msgstr ""
 
@@ -9380,6 +9467,10 @@ msgstr "Giá vé"
 msgid "Ticket resent successfully"
 msgstr "Vé đã được gửi lại thành công"
 
+#: src/components/routes/kiosk/Orders/index.tsx:113
+msgid "Ticket sent to the printer."
+msgstr "Đã gửi vé tới máy in."
+
 #: src/components/common/AttendeeTicket/index.tsx:105
 #: src/components/routes/event/attendees.tsx:66
 msgid "Ticket Type"
@@ -9389,6 +9480,10 @@ msgstr "Loại vé"
 msgid "Ticket URL"
 msgstr "URL vé"
 
+#: src/components/routes/kiosk/Stats/index.tsx:51
+msgid "Ticket value"
+msgstr "Giá trị vé"
+
 #: src/components/layouts/Event/index.tsx:118
 msgid "Ticketing & Sales"
 msgstr "Bán vé"
@@ -9397,7 +9492,8 @@ msgstr "Bán vé"
 msgid "tickets"
 msgstr "vé"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:506
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:523
+#: src/components/routes/kiosk/Stats/index.tsx:43
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "Vé"
@@ -9419,9 +9515,13 @@ msgstr "Vé còn sẵn"
 msgid "Tickets for"
 msgstr "Vé cho"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:777
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:816
 msgid "tickets in the basket"
 msgstr "vé trong giỏ"
+
+#: src/components/routes/kiosk/Orders/index.tsx:114
+msgid "Tickets sent to the printer."
+msgstr "Đã gửi vé tới máy in."
 
 #: src/components/routes/admin/Dashboard/index.tsx:140
 msgid "Tickets Sold"
@@ -9473,6 +9573,10 @@ msgstr "Tip"
 #: src/components/routes/event/messages.tsx:93
 msgid "To"
 msgstr "Đến"
+
+#: src/components/common/AttendeeTable/index.tsx:206
+msgid "To complete"
+msgstr "Cần bổ sung"
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:207
 msgid "To edit configurations, go to the Configurations section in the admin menu."
@@ -9726,7 +9830,7 @@ msgstr ""
 #: src/components/forms/ProductForm/index.tsx:321
 #: src/components/forms/PromoCodeForm/index.tsx:112
 #: src/components/modals/OfferWaitlistModal/index.tsx:189
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:886
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:925
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:78
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:84
 msgid "Unlimited"
@@ -10174,6 +10278,10 @@ msgstr ""
 #: src/components/routes/product-widget/CollectInformation/index.tsx:373
 msgid "Waitlist offer expired"
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:170
+msgid "Walk-up customer"
+msgstr "Khách tại quầy"
 
 #: src/components/routes/admin/Configurations/index.tsx:212
 msgid "Warning: This is the system default configuration. Changes will affect all accounts that don't have a specific configuration assigned."
@@ -10753,7 +10861,7 @@ msgstr "Danh sách đối tác của bạn đã được xuất thành công."
 msgid "Your attendees have been exported successfully."
 msgstr "Những người tham dự của bạn đã được xuất thành công."
 
-#: src/components/common/AttendeeTable/index.tsx:404
+#: src/components/common/AttendeeTable/index.tsx:411
 msgid "Your attendees will appear here once they have registered for your event. You can also manually add attendees."
 msgstr "Người tham dự của bạn sẽ xuất hiện ở đây sau khi họ đăng ký tham gia sự kiện. Bạn cũng có thể thêm người tham dự theo cách thủ công."
 

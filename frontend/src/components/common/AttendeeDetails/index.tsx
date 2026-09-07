@@ -22,7 +22,9 @@ export const AttendeeDetails = ({attendee}: { attendee: Attendee }) => {
                     {t`Email`}
                 </div>
                 <div className={classes.value}>
-                    <Anchor href={'mailto:' + attendee.email} target={'_blank'}>{attendee.email}</Anchor>
+                    {attendee.email
+                        ? <Anchor href={'mailto:' + attendee.email} target={'_blank'}>{attendee.email}</Anchor>
+                        : t`—`}
                 </div>
             </div>
             <div className={classes.block}>

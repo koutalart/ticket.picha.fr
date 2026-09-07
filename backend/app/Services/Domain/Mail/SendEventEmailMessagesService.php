@@ -146,6 +146,10 @@ class SendEventEmailMessagesService
 
         $sentEmails = [];
         $attendees->each(function (AttendeeDomainObject $attendee) use (&$sentEmails, $event, $messageData) {
+            if ($attendee->getEmail() === null || $attendee->getEmail() === '') {
+                return;
+            }
+
             if (in_array($attendee->getEmail(), $sentEmails, true)) {
                 return;
             }

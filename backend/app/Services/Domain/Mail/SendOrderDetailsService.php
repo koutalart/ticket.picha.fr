@@ -49,7 +49,7 @@ class SendOrderDetailsService
             $this->sendAttendeeTicketEmails($order, $event);
         }
 
-        if ($order->isOrderFailed()) {
+        if ($order->isOrderFailed() && $order->getEmail()) {
             $this->mailer
                 ->to($order->getEmail())
                 ->locale($order->getLocale())
@@ -78,6 +78,10 @@ class SendOrderDetailsService
             $invoice
         );
 
+        if ($order->getEmail() === null || $order->getEmail() === '') {
+            return;
+        }
+
         $this->mailer
             ->to($order->getEmail())
             ->locale($order->getLocale())
@@ -88,6 +92,10 @@ class SendOrderDetailsService
     {
         $sentEmails = [];
         foreach ($order->getAttendees() as $attendee) {
+            if ($attendee->getEmail() === null || $attendee->getEmail() === '') {
+                continue;
+            }
+
             if (in_array($attendee->getEmail(), $sentEmails, true)) {
                 continue;
             }

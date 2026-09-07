@@ -1,7 +1,7 @@
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
 import {useGetMe} from "../../../../queries/useGetMe.ts";
 import {t} from "@lingui/macro";
-import {IdParam} from "../../../../types.ts";
+import {Attendee, IdParam} from "../../../../types.ts";
 import {AttendeeTicket} from "../../../common/AttendeeTicket";
 import classes from './TicketPreview.module.scss';
 import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
@@ -107,7 +107,7 @@ export const TicketPreview = ({settings, eventId, logoUrl}: TicketPreviewProps) 
         <div className={classes.previewWrapper}>
             <AttendeeTicket
                 event={eventWithDesignSettings}
-                attendee={mockAttendee}
+                attendee={mockAttendee as unknown as Attendee}
                 product={mockProduct}
                 hideButtons={true}
             />

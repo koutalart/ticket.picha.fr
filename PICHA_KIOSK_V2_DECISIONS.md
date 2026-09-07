@@ -72,6 +72,21 @@ Catégories (par point) :
 
 ---
 
+---
+
+## D6 — E-mail au guichet — **ROUVERTE (7 sept. 2026). Option D retenue**
+
+**D6 — ROUVERTE (7 sept. 2026). Option D retenue :** e-mail **optionnel** au guichet.
+Sans e-mail, le participant est créé avec `attendees.email = NULL` (colonne rendue nullable)
+— **jamais** d'adresse fictive. Complété a posteriori par un ADMIN/ORGANIZER via l'écran
+Participants (`PATCH .../attendees/{id}`), qui peut ensuite renvoyer le billet. Aucun mail
+tant que l'e-mail est absent. Au moins un identifiant (nom, e-mail ou téléphone) requis
+par vente.
+
+L'ancienne option **D6 = B (e-mail obligatoire au guichet)** est **annulée**.
+
+---
+
 ## D22 — Sous-domaine `kiosk.picha.fr`
 
 ### Contexte (lu)
@@ -515,9 +530,11 @@ endpoints natifs `GET /events/{id}/orders` ni `GET /events/{id}/stats` (gâtés 
 par la garde `validateUserRole`). Les onglets **Commandes** et **Statistiques** exigent, pour
 l'opérateur, de **nouveaux endpoints box-office-scoped** (D27-B / D28-B).
 
-**Recadrage acté (session 6 sept. 2026) :** Commandes et Statistiques sont **backlog pour cette
-itération, y compris pour un ORGANIZER**. Le shell v2.1 n'a que **2 onglets : Vente + Réglages**,
-pour tout le monde. Ne pas les ajouter sans nouvelle validation explicite.
+**Recadrage acté (session 7 sept. 2026) :** onglets **Commandes** et **Statistiques**
+ajoutés au shell kiosque. Endpoints scopés `GET /events/{id}/box-office-sales` et
+`GET /events/{id}/box-office-stats` (D27-B / D28-B). Un opérateur ne voit que **ses**
+ventes ; ADMIN/ORGANIZER voient toutes les ventes guichet de l'événement. Pas de
+session de caisse (D15).
 
 **Catégorie : ✅ DÉCIDÉE** (A, puis recadrage) — v2.1 = **Vente + Réglages** pour opérateur **et**
 ORGANIZER/ADMIN. Commandes/Stats = backlog, même pour un ORGANIZER.
@@ -648,6 +665,7 @@ compte, pas d'un réglage local).
 
 | # | Sujet | Recommandation | Nature | Dépendances / à obtenir |
 |---|---|---|---|---|
+| **D6** | E-mail au guichet | **✅ ROUVERTE (7 sept. 2026) — Option D** : e-mail optionnel, `attendees.email = NULL` (jamais fictif), complété a posteriori via Participants. Au moins un identifiant (nom / e-mail / téléphone). | Schéma (nullable) + Code | **Aucune** — décidé. |
 | **D22** | Sous-domaine `kiosk.picha.fr` | **A** : même bundle, shell `/kiosk` allégé, garde par host dans `server.js` (+ B pour généraliser `CUSTOM_DOMAINS`) | Infra + Code | Valeurs `SESSION_DOMAIN`, `CORS_ALLOWED_ORIGINS` en place ; topologie proxy/API |
 | **D23** | Compte opérateur de guichet | **✅ VALIDÉE** — Option 1 : rôle `BOX_OFFICE_OPERATOR` (compte `users` réel) + table `event_box_office_operators` (multi-événements, `unique(event_id, user_id)`) + garde négative `validateUserRole` + `validateBoxOfficeEventScope`. Création **réservée ADMIN**. Sélecteur d'événement si ≥2. 1 table neuve, 0 migration sur `box_office_sales`/`print_jobs`. | Schéma (1 table) + Code moyen | **Aucune** — décidé. Prêt à implémenter. |
 | **D15** | Session de caisse | ✅ **BACKLOG confirmé (Jo, 6 sept.)** — ne pas traiter en v2.1 | — | — |

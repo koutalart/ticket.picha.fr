@@ -23,6 +23,12 @@ msgstr "- 點擊發布"
 msgid "- Click to Unpublish"
 msgstr "- 點擊取消發布"
 
+#: src/components/common/AttendeeDetails/index.tsx:27
+#: src/components/common/AttendeeTable/index.tsx:177
+#: src/components/common/AttendeeTicket/index.tsx:118
+msgid "—"
+msgstr "—"
+
 #: src/components/common/NoResultsSplash/index.tsx:14
 msgid "'There\\'s nothing to show yet'"
 msgstr ""
@@ -73,15 +79,20 @@ msgstr "剩餘 {0}"
 msgid "{0} logo"
 msgstr "{0} 標誌"
 
+#: src/components/routes/kiosk/Orders/index.tsx:146
+msgid "{0} orders"
+msgstr "{0} 筆訂單"
+
 #: src/components/routes/events/Dashboard/index.tsx:141
 msgid "{0} organizers"
 msgstr "{0} 位主辦單位"
 
+#: src/components/routes/kiosk/Orders/index.tsx:147
 #: src/components/routes/product-widget/CollectInformation/index.tsx:597
 msgid "{0} tickets"
 msgstr "{0}張門票"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:366
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:378
 msgid "{0} tickets created"
 msgstr ""
 
@@ -118,7 +129,7 @@ msgstr "{分}分鐘和{秒}秒鐘"
 msgid "{organizerName}'s first event"
 msgstr "{組織者名稱}的首次活動"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:885
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:924
 msgid "{selectedPriceRemaining} remaining"
 msgstr "尚餘 {selectedPriceRemaining}"
 
@@ -220,7 +231,7 @@ msgstr "1 種門票類型"
 msgid "1 week before event"
 msgstr "活動前1週"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:826
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:865
 msgid "1. Choose a ticket"
 msgstr ""
 
@@ -234,7 +245,7 @@ msgstr "緬因街 123 號"
 msgid "123 Sample Street"
 msgstr "示例街123號"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:894
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:933
 msgid "2. Attendee details"
 msgstr ""
 
@@ -242,7 +253,7 @@ msgstr ""
 msgid "20"
 msgstr "20"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:931
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:968
 msgid "3. Payment method"
 msgstr ""
 
@@ -328,11 +339,11 @@ msgstr "每個產品一個問題。例如，您的T恤尺碼是多少？"
 msgid "A standard tax, like VAT or GST"
 msgstr "標準税，如增值税或消費税"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:161
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:172
 msgid "A valid email is required"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:154
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:163
 msgid "A valid phone number is required"
 msgstr "請輸入有效電話號碼"
 
@@ -448,7 +459,7 @@ msgstr "需要操作：需提供增值稅資料"
 
 #: src/components/common/AdminEventsTable/index.tsx:112
 #: src/components/common/AffiliateTable/index.tsx:167
-#: src/components/common/AttendeeTable/index.tsx:346
+#: src/components/common/AttendeeTable/index.tsx:353
 #: src/components/common/OrdersTable/index.tsx:445
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:467
 #: src/components/common/WaitlistTable/index.tsx:55
@@ -457,7 +468,7 @@ msgstr "需要操作：需提供增值稅資料"
 msgid "Actions"
 msgstr "操作"
 
-#: src/components/common/AttendeeTable/index.tsx:370
+#: src/components/common/AttendeeTable/index.tsx:377
 msgid "Activate"
 msgstr "激活"
 
@@ -467,7 +478,7 @@ msgstr "激活日期"
 
 #: src/components/common/AffiliateTable/index.tsx:131
 #: src/components/common/AttendeeStatusBadge/index.tsx:27
-#: src/components/common/AttendeeTable/index.tsx:283
+#: src/components/common/AttendeeTable/index.tsx:290
 #: src/components/common/CheckInListList/index.tsx:114
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:267
 #: src/components/forms/AffiliateForm/index.tsx:21
@@ -552,13 +563,13 @@ msgstr "加税或費用"
 msgid "Add this event to your calendar"
 msgstr "將此活動添加到您的日曆"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:557
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:602
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:732
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:574
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:619
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:771
 msgid "Add ticket"
 msgstr "新增門票"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:761
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:800
 #: src/components/routes/event/GettingStarted/index.tsx:132
 msgid "Add tickets"
 msgstr "添加機票"
@@ -809,12 +820,12 @@ msgstr "令人驚歎, 活動, 關鍵詞..."
 msgid "Amount"
 msgstr "金額"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:677
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:957
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:716
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:994
 msgid "Amount collected"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:162
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:174
 msgid "Amount collected is required"
 msgstr ""
 
@@ -1289,7 +1300,7 @@ msgid "Awaiting payment"
 msgstr "等待付款"
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:29
-#: src/components/common/AttendeeTable/index.tsx:289
+#: src/components/common/AttendeeTable/index.tsx:296
 #: src/components/common/OrdersTable/index.tsx:424
 #: src/components/common/OrderStatusBadge/index.tsx:10
 #: src/components/routes/event/attendees.tsx:28
@@ -1306,7 +1317,7 @@ msgstr "Awesome Events 有限公司"
 msgid "Awesome Organizer Ltd."
 msgstr "Awesome Organizer Ltd."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:488
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:505
 msgid "Back"
 msgstr "返回"
 
@@ -1380,8 +1391,8 @@ msgid "Bookmark this page to manage your order anytime."
 msgstr "收藏此頁面，隨時管理您的訂單。"
 
 #: src/components/layouts/Event/index.tsx:125
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:492
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:806
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:509
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:845
 msgid "Box Office"
 msgstr ""
 
@@ -1439,6 +1450,14 @@ msgstr ""
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "繼續即表示您同意 <0>{0} 服務條款</0>"
 
+#: src/components/routes/kiosk/Stats/index.tsx:83
+msgid "By operator"
+msgstr "按操作員"
+
+#: src/components/routes/kiosk/Stats/index.tsx:56
+msgid "By payment method"
+msgstr "按付款方式"
+
 #: src/components/routes/auth/Register/index.tsx:141
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 msgstr "註冊即表示您同意我們的<0>服務條款</0>和<1>隱私政策</1>。"
@@ -1472,7 +1491,7 @@ msgstr "相機掃描器"
 msgid "Campaign"
 msgstr "活動"
 
-#: src/components/common/AttendeeTable/index.tsx:370
+#: src/components/common/AttendeeTable/index.tsx:377
 #: src/components/common/CheckIn/CheckInOptionsModal.tsx:59
 #: src/components/common/CheckIn/ScannerSelectionModal.tsx:57
 #: src/components/common/ContactOrganizerModal/index.tsx:104
@@ -1483,6 +1502,7 @@ msgstr "活動"
 #: src/components/common/WaitlistTable/index.tsx:132
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
+#: src/components/routes/kiosk/Orders/index.tsx:121
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:85
@@ -1515,7 +1535,7 @@ msgid "Canceling will cancel all attendees associated with this order, and relea
 msgstr "取消將取消與此訂單關聯的所有參與者，並將門票釋放回可用池。"
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:28
-#: src/components/common/AttendeeTable/index.tsx:295
+#: src/components/common/AttendeeTable/index.tsx:302
 #: src/components/common/AttendeeTicket/index.tsx:155
 #: src/components/common/OrdersTable/index.tsx:430
 #: src/components/common/OrderStatusBadge/index.tsx:9
@@ -1561,18 +1581,22 @@ msgstr "容量分配"
 msgid "Capacity Management"
 msgstr "容量管理"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:639
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:935
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:685
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:972
+#: src/components/routes/kiosk/Orders/index.tsx:24
+#: src/components/routes/kiosk/Stats/index.tsx:15
 msgid "Card"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:708
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:773
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:747
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:812
 msgid "Cart contents"
 msgstr "購物車"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:638
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:934
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:684
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:971
+#: src/components/routes/kiosk/Orders/index.tsx:21
+#: src/components/routes/kiosk/Stats/index.tsx:12
 msgid "Cash"
 msgstr ""
 
@@ -1597,7 +1621,7 @@ msgstr "類別"
 msgid "Category Created Successfully"
 msgstr "類別創建成功"
 
-#: src/components/layouts/Kiosk/index.tsx:78
+#: src/components/layouts/Kiosk/index.tsx:92
 msgid "Change event"
 msgstr "切換活動"
 
@@ -1693,7 +1717,7 @@ msgstr "簽到名單讓您可以按日期、區域或門票類型控制入場。
 msgid "Check-in Rate"
 msgstr "簽到率"
 
-#: src/components/common/AttendeeTable/index.tsx:307
+#: src/components/common/AttendeeTable/index.tsx:314
 #: src/components/common/CheckInStatusModal/index.tsx:36
 #: src/components/common/CheckInStatusModal/index.tsx:134
 msgid "Check-In Status"
@@ -1708,7 +1732,7 @@ msgstr "簽到摘要"
 msgid "Check-In URL copied to clipboard"
 msgstr "簽到鏈接已複製到剪貼板"
 
-#: src/components/common/AttendeeDetails/index.tsx:47
+#: src/components/common/AttendeeDetails/index.tsx:49
 msgid "Check-Ins"
 msgstr "簽到"
 
@@ -1720,7 +1744,7 @@ msgstr "複選框選項允許多重選擇"
 msgid "Checkboxes"
 msgstr "複選框"
 
-#: src/components/common/AttendeeTable/index.tsx:322
+#: src/components/common/AttendeeTable/index.tsx:329
 #: src/components/common/CheckInStatusModal/index.tsx:110
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:40
 msgid "Checked In"
@@ -1747,8 +1771,8 @@ msgstr "中文（繁體）"
 msgid "Choose a color for your background"
 msgstr "選擇背景顏色"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:570
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:861
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:587
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:900
 msgid "Choose a price"
 msgstr ""
 
@@ -1792,7 +1816,7 @@ msgstr "選擇誰支付平台費用。這不會影響您在帳戶設置中配置
 msgid "City"
 msgstr "城市"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:751
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:790
 msgid "Clear basket"
 msgstr "清空購物車"
 
@@ -1804,7 +1828,7 @@ msgstr "清除搜索文本"
 msgid "Click to copy"
 msgstr "點擊複製"
 
-#: src/components/common/AttendeeTable/index.tsx:207
+#: src/components/common/AttendeeTable/index.tsx:214
 msgid "Click to view notes"
 msgstr "點擊查看備註"
 
@@ -1879,6 +1903,12 @@ msgstr "按訂單收集資料"
 msgid "Collect details per ticket"
 msgstr "按門票收集資料"
 
+#: src/components/routes/kiosk/Stats/index.tsx:47
+#: src/components/routes/kiosk/Stats/index.tsx:66
+#: src/components/routes/kiosk/Stats/index.tsx:89
+msgid "Collected"
+msgstr "已收款"
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
 msgid "Color"
@@ -1904,8 +1934,8 @@ msgstr "欄位"
 msgid "Comedy"
 msgstr "喜劇"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:666
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:671
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:705
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:710
 msgid "Coming soon"
 msgstr "即將推出"
 
@@ -2182,7 +2212,7 @@ msgstr "支援聯絡電郵"
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:481
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:498
 #: src/components/routes/product-widget/SelectProducts/index.tsx:550
 msgid "Continue"
 msgstr "繼續"
@@ -2274,7 +2304,7 @@ msgstr ""
 msgid "Copy details to first attendee"
 msgstr "將詳情複製到第一位參與者"
 
-#: src/components/common/AttendeeTable/index.tsx:197
+#: src/components/common/AttendeeTable/index.tsx:199
 #: src/components/common/OrdersTable/index.tsx:263
 msgid "Copy Email"
 msgstr "複製郵箱"
@@ -2305,11 +2335,11 @@ msgstr "複製到剪貼簿"
 msgid "Copy URL"
 msgstr "複製 URL"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:291
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:302
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:314
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:325
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
 
@@ -2700,7 +2730,7 @@ msgstr "每日銷售、税費和費用明細"
 msgid "Danger zone"
 msgstr "危險區"
 
-#: src/components/common/AttendeeTable/index.tsx:367
+#: src/components/common/AttendeeTable/index.tsx:374
 #: src/components/common/DangerZone/index.tsx:30
 #: src/components/routes/event/Settings/index.tsx:88
 #: src/components/routes/organizer/Settings/index.tsx:78
@@ -2933,7 +2963,7 @@ msgstr "捐款"
 msgid "Donation / Pay what you'd like product"
 msgstr "捐贈 / 自由定價產品"
 
-#: src/components/layouts/Kiosk/index.tsx:83
+#: src/components/layouts/Kiosk/index.tsx:97
 #: src/components/modals/CheckInListSuccessModal/index.tsx:59
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:72
 #: src/components/modals/CreateWebhookModal/index.tsx:72
@@ -3202,7 +3232,8 @@ msgstr "符合條件的簽到列表"
 #: src/components/routes/auth/Login/index.tsx:93
 #: src/components/routes/auth/Register/index.tsx:104
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:99
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:915
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:658
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:953
 #: src/components/routes/kiosk/Login/index.tsx:75
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
@@ -3370,6 +3401,10 @@ msgstr "完工"
 msgid "English"
 msgstr "英語"
 
+#: src/components/routes/kiosk/Orders/index.tsx:133
+msgid "Enter a name, email or ticket number"
+msgstr "輸入姓名、電郵或訂單／門票編號"
+
 #: src/components/common/EmailTemplateEditor/EmailTemplatePreviewPane.tsx:58
 msgid "Enter a subject and body to see the preview"
 msgstr "輸入主題和正文以查看預覽"
@@ -3385,6 +3420,10 @@ msgstr "輸入推廣夥伴名稱"
 #: src/components/modals/CreateAttendeeModal/index.tsx:181
 msgid "Enter an amount excluding taxes and fees."
 msgstr "輸入不含税費的金額。"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:475
+msgid "Enter at least a first name, an email, or a phone number."
+msgstr "請至少填寫名字、電郵或電話。"
 
 #: src/components/modals/EditAccountVatSettingsModal/index.tsx:149
 msgid "Enter business address"
@@ -4098,7 +4137,7 @@ msgstr "篩選器"
 msgid "Filters ({activeFilterCount})"
 msgstr "篩選器 ({activeFilterCount})"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
 msgid "Finish"
 msgstr "完成"
 
@@ -4134,7 +4173,8 @@ msgstr "第一張發票號碼"
 #: src/components/modals/CreateAttendeeModal/index.tsx:129
 #: src/components/modals/ManageAttendeeModal/index.tsx:110
 #: src/components/modals/ManageOrderModal/index.tsx:144
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:904
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:638
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:936
 #: src/components/routes/product-widget/CollectInformation/index.tsx:436
 #: src/components/routes/product-widget/CollectInformation/index.tsx:648
 msgid "First name"
@@ -4156,7 +4196,6 @@ msgid "First Name"
 msgstr "姓名"
 
 #: src/components/modals/JoinWaitlistModal/index.tsx:46
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:158
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:29
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:29
 msgid "First name is required"
@@ -4226,7 +4265,7 @@ msgstr "頁腳文字"
 msgid "Forgot password?"
 msgstr "忘記密碼？"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:496
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:513
 msgid "Form"
 msgstr "表格"
 
@@ -4237,14 +4276,14 @@ msgstr "表格"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:113
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:123
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:180
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:640
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:936
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:973
+#: src/components/routes/kiosk/Orders/index.tsx:27
+#: src/components/routes/kiosk/Stats/index.tsx:18
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "免費"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:946
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:983
 msgid "Free can only be used for a ticket priced at 0"
 msgstr ""
 
@@ -4961,7 +5000,7 @@ msgstr "售票亭操作員"
 msgid "Label"
 msgstr "標籤"
 
-#: src/components/common/AttendeeDetails/index.tsx:38
+#: src/components/common/AttendeeDetails/index.tsx:40
 #: src/components/modals/CreateAttendeeModal/index.tsx:155
 #: src/components/routes/profile/ManageProfile/index.tsx:196
 msgid "Language"
@@ -5019,7 +5058,8 @@ msgstr "最後登錄"
 #: src/components/modals/CreateAttendeeModal/index.tsx:136
 #: src/components/modals/ManageAttendeeModal/index.tsx:111
 #: src/components/modals/ManageOrderModal/index.tsx:150
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:910
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:643
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:941
 msgid "Last name"
 msgstr "姓氏"
 
@@ -5050,8 +5090,8 @@ msgstr "姓氏為必填項"
 msgid "Last Response"
 msgstr "最新響應"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:689
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:981
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:728
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1018
 msgid "Last ticket: <0>{0}</0>"
 msgstr ""
 
@@ -5216,7 +5256,7 @@ msgstr "讓您的活動上線"
 msgid "Manage"
 msgstr "管理"
 
-#: src/components/common/AttendeeTable/index.tsx:349
+#: src/components/common/AttendeeTable/index.tsx:356
 msgid "Manage attendee"
 msgstr "管理與會者"
 
@@ -5224,7 +5264,7 @@ msgstr "管理與會者"
 msgid "Manage event"
 msgstr "管理活動"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:816
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:855
 msgid "Manage kiosk operators"
 msgstr "管理售票亭操作員"
 
@@ -5272,7 +5312,7 @@ msgstr "在顧客結賬前，必須回答必填問題。"
 msgid "Manual offer"
 msgstr "手動提供"
 
-#: src/components/common/AttendeeTable/index.tsx:410
+#: src/components/common/AttendeeTable/index.tsx:417
 msgid "Manually add an Attendee"
 msgstr "手動添加與會者"
 
@@ -5301,7 +5341,7 @@ msgstr "每份訂單的最高限額"
 msgid "Medium"
 msgstr "媒介"
 
-#: src/components/common/AttendeeTable/index.tsx:188
+#: src/components/common/AttendeeTable/index.tsx:189
 #: src/components/common/ContactOrganizerModal/index.tsx:88
 #: src/components/common/OrdersTable/index.tsx:254
 #: src/components/modals/SendMessageModal/index.tsx:353
@@ -5312,7 +5352,7 @@ msgstr "訊息"
 msgid "Message approved successfully"
 msgstr "訊息批准成功"
 
-#: src/components/common/AttendeeTable/index.tsx:354
+#: src/components/common/AttendeeTable/index.tsx:361
 msgid "Message attendee"
 msgstr "與會者留言"
 
@@ -5431,8 +5471,8 @@ msgstr "多行文本框"
 msgid "Multiple price options. Perfect for early bird products etc."
 msgstr "多種價格選項。非常適合早鳥產品等。"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:537
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:853
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:554
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:892
 msgid "Multiple prices"
 msgstr ""
 
@@ -5576,13 +5616,18 @@ msgstr "未找到此訂單的參會者。"
 msgid "No attendees have been added to this order."
 msgstr "尚未向此訂單添加參會者。"
 
-#: src/components/common/AttendeeTable/index.tsx:399
+#: src/components/common/AttendeeTable/index.tsx:406
 msgid "No Attendees to show"
 msgstr "無與會者"
 
 #: src/components/routes/admin/Attribution/index.tsx:121
 msgid "No attribution data found"
 msgstr "未找到歸因數據"
+
+#: src/components/routes/kiosk/Orders/index.tsx:158
+#: src/components/routes/kiosk/Stats/index.tsx:58
+msgid "No box office sales yet."
+msgstr "暫無現場售票。"
 
 #: src/components/modals/OfferWaitlistModal/index.tsx:187
 msgid "No capacity"
@@ -5689,7 +5734,7 @@ msgstr "未找到訊息"
 msgid "No messages to show"
 msgstr "無信息顯示"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:194
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:206
 msgid "No more tickets available for this price."
 msgstr "此票價已售罄。"
 
@@ -5816,8 +5861,8 @@ msgstr "沒有搜索結果。"
 msgid "No Taxes or Fees have been added."
 msgstr "未加收任何税費。"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:509
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:830
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:526
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:869
 msgid "No ticket is both active and attached to an active check-in list. Attach a product to a check-in list first — otherwise it would not be scannable at the door."
 msgstr ""
 
@@ -5874,7 +5919,7 @@ msgstr "無"
 msgid "Not available"
 msgstr "不詳"
 
-#: src/components/common/AttendeeTable/index.tsx:327
+#: src/components/common/AttendeeTable/index.tsx:334
 #: src/components/common/CheckInStatusModal/index.tsx:110
 msgid "Not Checked In"
 msgstr "未簽到"
@@ -5882,6 +5927,11 @@ msgstr "未簽到"
 #: src/components/common/CheckInStatusModal/index.tsx:118
 msgid "Not Eligible"
 msgstr "不符合條件"
+
+#: src/components/routes/kiosk/Orders/index.tsx:55
+#: src/components/routes/kiosk/Orders/index.tsx:56
+msgid "Not scanned"
+msgstr "未掃描"
 
 #: src/components/modals/ManageAttendeeModal/index.tsx:130
 #: src/components/modals/ManageOrderModal/index.tsx:164
@@ -6063,8 +6113,9 @@ msgstr "打開側邊欄"
 msgid "Open Stripe Dashboard"
 msgstr "打開 Stripe 儀表板"
 
-#: src/components/layouts/Kiosk/index.tsx:64
+#: src/components/layouts/Kiosk/index.tsx:78
 #: src/components/routes/kiosk/Settings/index.tsx:150
+#: src/components/routes/kiosk/Stats/index.tsx:87
 msgid "Operator"
 msgstr "操作員"
 
@@ -6080,6 +6131,10 @@ msgstr "方案 {i}"
 msgid "Optional additional information to appear on all invoices (e.g., payment terms, late payment fees, return policy)"
 msgstr "所有發票上顯示的可選附加信息（例如，付款條款、逾期付款費用、退貨政策）"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:675
+msgid "Optional in a rush — enter at least a first name, an email, or a phone number. The email can be completed later from the attendees screen."
+msgstr "繁忙時可選——至少填寫名字、電郵或電話。電郵可稍後在「參加者」補上。"
+
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:200
 msgid "Optional prefix for invoice numbers (e.g., INV-)"
 msgstr "發票編號的可選前綴（例如，INV-）"
@@ -6087,10 +6142,6 @@ msgstr "發票編號的可選前綴（例如，INV-）"
 #: src/components/routes/event/TicketDesigner/index.tsx:165
 msgid "Optional text for disclaimers, contact info, or thank you notes (single line only)"
 msgstr "免責聲明、聯繫信息或感謝說明的可選文本（僅單行）"
-
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:629
-msgid "Optional. Skip this step if you are in a hurry — the attendee can add their details later on their phone."
-msgstr "可選。趕時間可跳過此步，參加者稍後可在手機上自行填寫資料。"
 
 #: src/components/common/QuestionsTable/index.tsx:125
 msgid "options"
@@ -6125,7 +6176,7 @@ msgstr "或"
 msgid "Order"
 msgstr "訂購"
 
-#: src/components/common/AttendeeTable/index.tsx:240
+#: src/components/common/AttendeeTable/index.tsx:247
 msgid "Order & Ticket"
 msgstr "訂單及門票"
 
@@ -6311,6 +6362,7 @@ msgstr "訂單已被取消"
 
 #: src/components/layouts/Admin/index.tsx:17
 #: src/components/layouts/Event/index.tsx:120
+#: src/components/layouts/Kiosk/index.tsx:58
 #: src/components/routes/admin/Attribution/index.tsx:138
 #: src/components/routes/admin/Orders/index.tsx:44
 #: src/components/routes/event/orders.tsx:115
@@ -6520,6 +6572,11 @@ msgstr "部分退款"
 msgid "Partially refunded: {0}"
 msgstr "部分退款：{0}"
 
+#: src/components/routes/kiosk/Orders/index.tsx:49
+#: src/components/routes/kiosk/Orders/index.tsx:50
+msgid "Partially scanned"
+msgstr "部分掃描"
+
 #: src/components/common/PlatformFeesSettings/index.tsx:191
 msgid "Pass fee to buyer"
 msgstr "將費用轉嫁給買家"
@@ -6603,7 +6660,7 @@ msgstr "負載數據"
 #: src/components/common/OrdersTable/index.tsx:375
 #: src/components/common/ProgressStepper/index.tsx:19
 #: src/components/forms/StripeCheckoutForm/index.tsx:127
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:514
 msgid "Payment"
 msgstr "付款方式"
 
@@ -6637,6 +6694,7 @@ msgstr "付款失敗"
 msgid "Payment Instructions"
 msgstr "支付説明"
 
+#: src/components/routes/kiosk/Stats/index.tsx:64
 #: src/components/routes/product-widget/Payment/index.tsx:114
 msgid "Payment method"
 msgstr "付款方式"
@@ -6758,8 +6816,8 @@ msgstr "個人資料"
 msgid "Phone"
 msgstr "電話"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:621
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:897
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:946
 msgid "Phone number"
 msgstr "電話號碼"
 
@@ -7051,12 +7109,12 @@ msgstr "處理退款"
 msgid "Processing order"
 msgstr "處理訂單中"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:974
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1011
 msgid "Processing…"
 msgstr ""
 
-#: src/components/common/AttendeeDetails/index.tsx:30
+#: src/components/common/AttendeeDetails/index.tsx:32
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:285
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:482
 #: src/components/common/WaitlistTable/index.tsx:170
@@ -7274,7 +7332,7 @@ msgstr "費率"
 msgid "Rate limit exceeded. Please try again later."
 msgstr "超出速率限制。請稍後再試。"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:495
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:512
 msgid "Rates"
 msgstr "票價"
 
@@ -7443,9 +7501,9 @@ msgstr "去除"
 msgid "Remove"
 msgstr "移除"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:545
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:592
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:723
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:562
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:609
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:762
 msgid "Remove ticket"
 msgstr "移除門票"
 
@@ -7460,10 +7518,20 @@ msgstr "未找到報告"
 msgid "Reports"
 msgstr "報告"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:697
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:989
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:736
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1026
+#: src/components/routes/kiosk/Orders/index.tsx:121
+#: src/components/routes/kiosk/Orders/index.tsx:190
 msgid "Reprint"
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:105
+msgid "Reprint {0} tickets?"
+msgstr "重新列印 {0} 張門票？"
+
+#: src/components/routes/kiosk/Orders/index.tsx:105
+msgid "Reprint this ticket?"
+msgstr "重新列印此門票？"
 
 #: src/components/routes/my-tickets/index.tsx:169
 msgid "Request a new link"
@@ -7513,7 +7581,7 @@ msgstr "重新發送訂單電子郵件"
 msgid "Resend Ticket"
 msgstr "重新發送門票"
 
-#: src/components/common/AttendeeTable/index.tsx:359
+#: src/components/common/AttendeeTable/index.tsx:366
 msgid "Resend ticket email"
 msgstr "重新發送門票電郵"
 
@@ -7530,6 +7598,8 @@ msgid "Reserved until"
 msgstr "保留至"
 
 #: src/components/common/FilterModal/index.tsx:279
+#: src/components/routes/kiosk/Orders/index.tsx:139
+#: src/components/routes/kiosk/Orders/index.tsx:150
 msgid "Reset"
 msgstr "重置"
 
@@ -7678,6 +7748,9 @@ msgstr "銷售於 {0} 開始"
 
 #: src/components/common/AffiliateTable/index.tsx:145
 #: src/components/layouts/Kiosk/index.tsx:51
+#: src/components/routes/kiosk/Stats/index.tsx:39
+#: src/components/routes/kiosk/Stats/index.tsx:65
+#: src/components/routes/kiosk/Stats/index.tsx:88
 msgid "Sales"
 msgstr "銷售"
 
@@ -7790,6 +7863,11 @@ msgstr ""
 #: src/pages/digit/ScannerDevicePage.tsx:71
 msgid "Scan failed"
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:42
+#: src/components/routes/kiosk/Orders/index.tsx:43
+msgid "Scanned"
+msgstr "已掃描"
 
 #: src/components/modals/SendMessageModal/index.tsx:381
 msgid "Schedule for later"
@@ -8045,7 +8123,7 @@ msgstr "選擇..."
 msgid "Selected"
 msgstr "已選擇"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:805
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:844
 msgid "Sell a ticket at the door and print it immediately."
 msgstr ""
 
@@ -8181,7 +8259,8 @@ msgstr "為此主辦單位下創建的新活動設定預設設定。"
 msgid "Set the starting number for invoice numbering. This cannot be changed once invoices have been generated."
 msgstr "設置發票編號的起始編號。一旦發票生成，就無法更改。"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:279
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:290
+#: src/components/routes/kiosk/Orders/index.tsx:94
 msgid "Set the Zebra printer IP in Settings before printing."
 msgstr "列印前請在設定中填寫 Zebra 的 IP。"
 
@@ -8211,7 +8290,7 @@ msgstr "設定已更新"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/Kiosk/index.tsx:58
+#: src/components/layouts/Kiosk/index.tsx:72
 #: src/components/layouts/OrganizerLayout/index.tsx:93
 #: src/components/modals/DuplicateEventModal/index.tsx:26
 #: src/components/routes/kiosk/Settings/index.tsx:51
@@ -8416,8 +8495,8 @@ msgstr "西班牙語"
 msgid "Sports"
 msgstr "體育"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:584
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:870
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:601
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:909
 msgid "Standard"
 msgstr ""
 
@@ -8462,6 +8541,8 @@ msgid "Station name"
 msgstr "工位名稱"
 
 #: src/components/common/AdminEventsTable/index.tsx:110
+#: src/components/layouts/Kiosk/index.tsx:65
+#: src/components/routes/kiosk/Stats/index.tsx:33
 msgid "Statistics"
 msgstr "統計數據"
 
@@ -8472,7 +8553,7 @@ msgstr "統計數據基於帳戶創建日期"
 #: src/components/common/AdminEventsTable/index.tsx:111
 #: src/components/common/AdminOrdersTable/index.tsx:85
 #: src/components/common/AffiliateTable/index.tsx:83
-#: src/components/common/AttendeeTable/index.tsx:274
+#: src/components/common/AttendeeTable/index.tsx:281
 #: src/components/common/OrderDetails/index.tsx:51
 #: src/components/common/OrdersTable/index.tsx:403
 #: src/components/common/OrganizerWebhookTable/index.tsx:238
@@ -8760,7 +8841,7 @@ msgstr "系統預設"
 msgid "T-shirt"
 msgstr "T恤衫"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:974
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1011
 msgid "Take Payment & Create Ticket"
 msgstr ""
 
@@ -8899,7 +8980,7 @@ msgstr "促銷代碼無效"
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
 msgstr "頁面的背景顏色。使用封面圖片時，這會作為覆蓋層應用。"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:710
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:749
 msgid "The basket is empty."
 msgstr "購物車是空的。"
 
@@ -8993,8 +9074,8 @@ msgstr "顯示給客户的價格將包括税費。"
 msgid "The price displayed to the customer will not include taxes and fees. They will be shown separately"
 msgstr "顯示給客户的價格不包括税費。税費將單獨顯示"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:372
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:422
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:384
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:434
 msgid "The price has changed — please reselect the ticket type."
 msgstr ""
 
@@ -9019,7 +9100,7 @@ msgstr "排程時間必須是將來的時間"
 msgid "The template body contains invalid Liquid syntax. Please correct it and try again."
 msgstr "模板正文包含無效的Liquid語法。請更正後再試。"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:306
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:317
 msgid "The ticket was created but the Zebra printer did not respond."
 msgstr "票已建立，但 Zebra 打印機無回應。"
 
@@ -9032,7 +9113,8 @@ msgstr "活動標題，將顯示在搜索引擎結果中，並在社交媒體上
 msgid "The VAT number could not be validated. Please check the number and try again."
 msgstr "無法驗證增值稅號碼。請檢查號碼並重試。"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:305
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:316
+#: src/components/routes/kiosk/Orders/index.tsx:116
 msgid "The Zebra printer did not respond."
 msgstr "Zebra 打印機無回應。"
 
@@ -9258,10 +9340,14 @@ msgstr "此報告僅供參考。在將此數據用於會計或稅務目的之前
 msgid "This reset password link is invalid or expired."
 msgstr "此重置密碼鏈接無效或已過期。"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:374
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:427
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:386
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:439
 msgid "This sale could not be completed. Please try again."
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:100
+msgid "This sale has no ticket to reprint."
+msgstr "此銷售沒有可重印的門票。"
 
 #: src/components/layouts/CheckIn/index.tsx:205
 msgid "This ticket was just scanned. Please wait before scanning again."
@@ -9279,7 +9365,7 @@ msgstr "這將用於通知和與使用者的溝通。"
 msgid "This will not be visible to customers, but helps you identify the affiliate."
 msgstr "呢個唔會俾客戶睇到，但可以幫你識別推廣夥伴。"
 
-#: src/components/common/AttendeeTable/index.tsx:370
+#: src/components/common/AttendeeTable/index.tsx:377
 #: src/components/routes/my-tickets/index.tsx:85
 msgid "ticket"
 msgstr "入場券"
@@ -9298,8 +9384,8 @@ msgstr "門票"
 msgid "Ticket Cancelled"
 msgstr "門票已取消"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:365
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:411
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:377
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:423
 msgid "Ticket created — {0}"
 msgstr ""
 
@@ -9344,7 +9430,8 @@ msgstr "票務持有人"
 msgid "Ticket ID"
 msgstr "門票 ID"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:922
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:665
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:959
 msgid "Ticket language"
 msgstr ""
 
@@ -9380,6 +9467,10 @@ msgstr "門票價格"
 msgid "Ticket resent successfully"
 msgstr "門票重新發送成功"
 
+#: src/components/routes/kiosk/Orders/index.tsx:113
+msgid "Ticket sent to the printer."
+msgstr "門票已傳送到打印機。"
+
 #: src/components/common/AttendeeTicket/index.tsx:105
 #: src/components/routes/event/attendees.tsx:66
 msgid "Ticket Type"
@@ -9389,6 +9480,10 @@ msgstr "門票類型"
 msgid "Ticket URL"
 msgstr "門票連結"
 
+#: src/components/routes/kiosk/Stats/index.tsx:51
+msgid "Ticket value"
+msgstr "票面金額"
+
 #: src/components/layouts/Event/index.tsx:118
 msgid "Ticketing & Sales"
 msgstr "票務與銷售"
@@ -9397,7 +9492,8 @@ msgstr "票務與銷售"
 msgid "tickets"
 msgstr "門票"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:506
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:523
+#: src/components/routes/kiosk/Stats/index.tsx:43
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "門票"
@@ -9419,9 +9515,13 @@ msgstr "門票有售"
 msgid "Tickets for"
 msgstr "門票"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:777
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:816
 msgid "tickets in the basket"
 msgstr "購物車中的門票"
+
+#: src/components/routes/kiosk/Orders/index.tsx:114
+msgid "Tickets sent to the printer."
+msgstr "門票已傳送到打印機。"
 
 #: src/components/routes/admin/Dashboard/index.tsx:140
 msgid "Tickets Sold"
@@ -9473,6 +9573,10 @@ msgstr "TIP"
 #: src/components/routes/event/messages.tsx:93
 msgid "To"
 msgstr "收件人"
+
+#: src/components/common/AttendeeTable/index.tsx:206
+msgid "To complete"
+msgstr "待補全"
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:207
 msgid "To edit configurations, go to the Configurations section in the admin menu."
@@ -9726,7 +9830,7 @@ msgstr ""
 #: src/components/forms/ProductForm/index.tsx:321
 #: src/components/forms/PromoCodeForm/index.tsx:112
 #: src/components/modals/OfferWaitlistModal/index.tsx:189
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:886
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:925
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:78
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:84
 msgid "Unlimited"
@@ -10174,6 +10278,10 @@ msgstr ""
 #: src/components/routes/product-widget/CollectInformation/index.tsx:373
 msgid "Waitlist offer expired"
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:170
+msgid "Walk-up customer"
+msgstr "現場購票客戶"
 
 #: src/components/routes/admin/Configurations/index.tsx:212
 msgid "Warning: This is the system default configuration. Changes will affect all accounts that don't have a specific configuration assigned."
@@ -10753,7 +10861,7 @@ msgstr "你嘅推廣夥伴已經成功匯出。"
 msgid "Your attendees have been exported successfully."
 msgstr "您的與會者已成功導出。"
 
-#: src/components/common/AttendeeTable/index.tsx:404
+#: src/components/common/AttendeeTable/index.tsx:411
 msgid "Your attendees will appear here once they have registered for your event. You can also manually add attendees."
 msgstr "與會者註冊參加活動後，就會出現在這裏。您也可以手動添加與會者。"
 

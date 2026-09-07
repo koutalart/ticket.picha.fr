@@ -8,7 +8,6 @@ import {
     IconChevronLeft,
     IconCreditCard,
     IconDeviceMobile,
-    IconGift,
     IconMinus,
     IconPlus,
     IconPrinter,
@@ -80,6 +79,7 @@ interface SaleFormProps {
     printMode?: KioskPrintOutput | 'a4';
     zebraPrinterHost?: string;
     defaultLocale?: SupportedLocales | '';
+    sendConfirmationEmail?: boolean;
 }
 
 const generateIdempotencyKey = (): string => {
@@ -87,6 +87,13 @@ const generateIdempotencyKey = (): string => {
         return '';
     }
     return window.crypto.randomUUID();
+};
+
+const hasSaleIdentifier = (values: Pick<SaleFormValues, 'first_name' | 'email' | 'phone'>): boolean => {
+    const digits = values.phone.replace(/\D/g, '');
+    return values.first_name.trim().length > 0
+        || values.email.trim().length > 0
+        || digits.length >= 8;
 };
 
 const openPdfBlobInNewTab = (blob: Blob) => {
@@ -116,6 +123,7 @@ export const SaleForm = ({
     printMode = 'a4',
     zebraPrinterHost = '',
     defaultLocale = '',
+    sendConfirmationEmail = false,
 }: SaleFormProps) => {
     const errorHandler = useFormErrorResponseHandler();
     const isAdmin = useIsCurrentUserAdmin();
@@ -153,12 +161,15 @@ export const SaleForm = ({
                 }
                 return digits.length >= 8 ? null : t`A valid phone number is required`;
             },
-            first_name: (value) => (variant === 'kiosk' || value.trim().length > 0)
-                ? null
-                : t`First name is required`,
-            email: (value) => (variant === 'kiosk' || /^\S+@\S+\.\S+$/.test(value))
-                ? null
-                : t`A valid email is required`,
+            first_name: () => null,
+            email: (value) => {
+                if (value.trim().length === 0) {
+                    return null;
+                }
+                return /^\S+@\S+\.\S+$/.test(value)
+                    ? null
+                    : t`A valid email is required`;
+            },
             amount_collected: (value) => (value === '' || value === null) ? t`Amount collected is required` : null,
         },
     });
@@ -347,6 +358,7 @@ export const SaleForm = ({
                     payment_method: values.payment_method,
                     amount_collected: Number(values.amount_collected),
                     idempotency_key: generateIdempotencyKey() || idempotencyKey,
+                    send_confirmation_email: sendConfirmationEmail && values.email.trim().length > 0,
                 },
             });
 
@@ -433,10 +445,11 @@ export const SaleForm = ({
     };
 
     const isSubmitDisabled = variant === 'kiosk'
-        ? (isCheckingOut || basketCount === 0)
+        ? (isCheckingOut || basketCount === 0 || !hasSaleIdentifier(form.values))
         : (createSale.isPending
             || !selectedProduct
             || !selectedPrice
+            || !hasSaleIdentifier(form.values)
             || (form.values.payment_method === BoxOfficePaymentMethod.Free && selectedPrice.price > 0));
 
     const canContinueFromTarifs = basketCount > 0;
@@ -453,9 +466,15 @@ export const SaleForm = ({
 
         if (step === 'formulaire') {
             const phone = form.validateField('phone');
-            if (!phone.hasError) {
-                setStep('paiement');
+            const email = form.validateField('email');
+            if (phone.hasError || email.hasError) {
+                return;
             }
+            if (!hasSaleIdentifier(form.values)) {
+                form.setFieldError('email', t`Enter at least a first name, an email, or a phone number.`);
+                return;
+            }
+            setStep('paiement');
             return;
         }
 
@@ -615,15 +634,44 @@ export const SaleForm = ({
                     {!isLoading && step === 'formulaire' && (
                         <div className={kiosk.formCard}>
                             <TextInput
+                                label={t`First name`}
+                                size="lg"
+                                {...form.getInputProps('first_name')}
+                            />
+                            <TextInput
+                                label={t`Last name`}
+                                size="lg"
+                                mt="md"
+                                {...form.getInputProps('last_name')}
+                            />
+                            <TextInput
                                 label={t`Phone number`}
                                 placeholder="06 12 34 56 78"
                                 type="tel"
                                 inputMode="tel"
                                 size="lg"
+                                mt="md"
                                 {...form.getInputProps('phone')}
                             />
+                            <TextInput
+                                label={t`Email`}
+                                type="email"
+                                size="lg"
+                                mt="md"
+                                {...form.getInputProps('email')}
+                            />
+                            <Select
+                                label={t`Ticket language`}
+                                size="lg"
+                                mt="md"
+                                data={availableLocales.map((locale) => ({
+                                    value: locale,
+                                    label: getLocaleName(locale as SupportedLocales),
+                                }))}
+                                {...form.getInputProps('locale')}
+                            />
                             <p className={kiosk.emptyState} style={{marginTop: 16}}>
-                                {t`Optional. Skip this step if you are in a hurry — the attendee can add their details later on their phone.`}
+                                {t`Optional in a rush — enter at least a first name, an email, or a phone number. The email can be completed later from the attendees screen.`}
                             </p>
                         </div>
                     )}
@@ -884,15 +932,7 @@ export const SaleForm = ({
                             <h2 className={classes.sectionTitle}>{t`2. Attendee details`}</h2>
 
                             <TextInput
-                                label={t`Phone number`}
-                                type="tel"
-                                inputMode="tel"
-                                {...form.getInputProps('phone')}
-                                mb="sm"
-                            />
-                            <TextInput
                                 label={t`First name`}
-                                required
                                 {...form.getInputProps('first_name')}
                                 mb="sm"
                             />
@@ -902,9 +942,15 @@ export const SaleForm = ({
                                 mb="sm"
                             />
                             <TextInput
+                                label={t`Phone number`}
+                                type="tel"
+                                inputMode="tel"
+                                {...form.getInputProps('phone')}
+                                mb="sm"
+                            />
+                            <TextInput
                                 label={t`Email`}
                                 type="email"
-                                required
                                 {...form.getInputProps('email')}
                                 mb="sm"
                             />

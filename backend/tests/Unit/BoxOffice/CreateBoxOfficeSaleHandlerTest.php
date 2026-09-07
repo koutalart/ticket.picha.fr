@@ -12,6 +12,7 @@ use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Models\Order;
 use HiEvents\Models\ProductPrice;
+use HiEvents\Jobs\Order\SendOrderDetailsEmailJob;
 use HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\CreateBoxOfficeSaleHandler;
@@ -19,6 +20,7 @@ use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleDTO;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
 
@@ -48,6 +50,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
         float  $amountCollected,
         BoxOfficePaymentMethod $paymentMethod = BoxOfficePaymentMethod::CASH,
         ?string $idempotencyKey = null,
+        bool $sendConfirmationEmail = false,
     ): CreateBoxOfficeSaleDTO
     {
         return new CreateBoxOfficeSaleDTO(
@@ -64,6 +67,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
             payment_method: $paymentMethod,
             amount_collected: $amountCollected,
             idempotency_key: $idempotencyKey ?? \Illuminate\Support\Str::uuid()->toString(),
+            send_confirmation_email: $sendConfirmationEmail,
         );
     }
 
@@ -92,11 +96,11 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
 
         self::assertSame('', $result->attendee->getFirstName());
         self::assertSame('', $result->attendee->getLastName());
-        self::assertStringEndsWith('@guichet.example.test', $result->attendee->getEmail());
+        self::assertNull($result->attendee->getEmail());
         self::assertSame('+33612345678', DB::table('box_office_sales')->where('id', $result->saleId)->value('phone'));
     }
 
-    public function test_sale_without_phone_stores_null_and_placeholder_email(): void
+    public function test_sale_without_phone_stores_null_email(): void
     {
         [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
         $this->attachCheckInList($event, $product);
@@ -110,9 +114,9 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
             product_id: $product->id,
             product_price_id: $productPrice->id,
             phone: '',
-            first_name: '',
+            first_name: 'Jane',
             last_name: '',
-            email: '',
+            email: null,
             locale: 'fr',
             amount: 25.00,
             payment_method: BoxOfficePaymentMethod::CASH,
@@ -121,7 +125,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
         ));
 
         self::assertNull(DB::table('box_office_sales')->where('id', $result->saleId)->value('phone'));
-        self::assertStringEndsWith('@guichet.example.test', $result->attendee->getEmail());
+        self::assertNull($result->attendee->getEmail());
     }
 
     /** AC-2 */
@@ -336,6 +340,57 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
         ));
 
         Mail::assertNothingSent();
+    }
+
+    public function test_confirmation_email_queued_when_requested_with_email(): void
+    {
+        Queue::fake();
+
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $handler->handle($this->makeDto(
+            eventId: $event->id,
+            agentUserId: $user->id,
+            productId: $product->id,
+            productPriceId: $productPrice->id,
+            amount: 25.00,
+            amountCollected: 25.00,
+            sendConfirmationEmail: true,
+        ));
+
+        Queue::assertPushed(SendOrderDetailsEmailJob::class);
+    }
+
+    public function test_confirmation_email_not_queued_without_attendee_email(): void
+    {
+        Queue::fake();
+
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $handler->handle(new CreateBoxOfficeSaleDTO(
+            event_id: $event->id,
+            agent_user_id: $user->id,
+            product_id: $product->id,
+            product_price_id: $productPrice->id,
+            phone: '0612345678',
+            first_name: '',
+            last_name: '',
+            email: '',
+            locale: 'fr',
+            amount: 25.00,
+            payment_method: BoxOfficePaymentMethod::CASH,
+            amount_collected: 25.00,
+            idempotency_key: \Illuminate\Support\Str::uuid()->toString(),
+            send_confirmation_email: true,
+        ));
+
+        Queue::assertNotPushed(SendOrderDetailsEmailJob::class);
     }
 
     /** AC-26 — a downstream failure must not leave a COMPLETED box_office_sales row */

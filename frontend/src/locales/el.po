@@ -23,6 +23,12 @@ msgstr "- Κάντε κλικ για Δημοσίευση"
 msgid "- Click to Unpublish"
 msgstr "- Κάντε κλικ για Κατάργηση Δημοσίευσης"
 
+#: src/components/common/AttendeeDetails/index.tsx:27
+#: src/components/common/AttendeeTable/index.tsx:177
+#: src/components/common/AttendeeTicket/index.tsx:118
+msgid "—"
+msgstr "—"
+
 #: src/components/common/NoResultsSplash/index.tsx:14
 msgid "'There\\'s nothing to show yet'"
 msgstr "Δεν υπάρχει τίποτα να εμφανιστεί ακόμα"
@@ -73,15 +79,20 @@ msgstr "{0} απομένουν"
 msgid "{0} logo"
 msgstr "Λογότυπο {0}"
 
+#: src/components/routes/kiosk/Orders/index.tsx:146
+msgid "{0} orders"
+msgstr "{0} παραγγελίες"
+
 #: src/components/routes/events/Dashboard/index.tsx:141
 msgid "{0} organizers"
 msgstr "{0} διοργανωτές"
 
+#: src/components/routes/kiosk/Orders/index.tsx:147
 #: src/components/routes/product-widget/CollectInformation/index.tsx:597
 msgid "{0} tickets"
 msgstr "{0} εισιτήρια"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:366
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:378
 msgid "{0} tickets created"
 msgstr ""
 
@@ -118,7 +129,7 @@ msgstr "{minutes} λεπτά και {seconds} δευτερόλεπτα"
 msgid "{organizerName}'s first event"
 msgstr "Πρώτη εκδήλωση του {organizerName}"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:885
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:924
 msgid "{selectedPriceRemaining} remaining"
 msgstr "απομένουν {selectedPriceRemaining}"
 
@@ -220,7 +231,7 @@ msgstr "1 τύπος εισιτηρίου"
 msgid "1 week before event"
 msgstr "1 εβδομάδα πριν την εκδήλωση"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:826
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:865
 msgid "1. Choose a ticket"
 msgstr ""
 
@@ -234,7 +245,7 @@ msgstr "Οδός Βασιλέως 123"
 msgid "123 Sample Street"
 msgstr "Παράδειγμα Οδού 123"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:894
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:933
 msgid "2. Attendee details"
 msgstr ""
 
@@ -242,7 +253,7 @@ msgstr ""
 msgid "20"
 msgstr "20"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:931
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:968
 msgid "3. Payment method"
 msgstr ""
 
@@ -328,11 +339,11 @@ msgstr "Μία ερώτηση ανά προϊόν. Π.χ., Ποιο είναι �
 msgid "A standard tax, like VAT or GST"
 msgstr "Ένας τυπικός φόρος, όπως ΦΠΑ ή GST"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:161
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:172
 msgid "A valid email is required"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:154
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:163
 msgid "A valid phone number is required"
 msgstr "Απαιτείται έγκυρος αριθμός τηλεφώνου"
 
@@ -448,7 +459,7 @@ msgstr "Απαιτείται Ενέργεια: Χρειάζονται Στοιχ
 
 #: src/components/common/AdminEventsTable/index.tsx:112
 #: src/components/common/AffiliateTable/index.tsx:167
-#: src/components/common/AttendeeTable/index.tsx:346
+#: src/components/common/AttendeeTable/index.tsx:353
 #: src/components/common/OrdersTable/index.tsx:445
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:467
 #: src/components/common/WaitlistTable/index.tsx:55
@@ -457,7 +468,7 @@ msgstr "Απαιτείται Ενέργεια: Χρειάζονται Στοιχ
 msgid "Actions"
 msgstr "Ενέργειες"
 
-#: src/components/common/AttendeeTable/index.tsx:370
+#: src/components/common/AttendeeTable/index.tsx:377
 msgid "Activate"
 msgstr "Ενεργοποίηση"
 
@@ -467,7 +478,7 @@ msgstr "Ημερομηνία ενεργοποίησης"
 
 #: src/components/common/AffiliateTable/index.tsx:131
 #: src/components/common/AttendeeStatusBadge/index.tsx:27
-#: src/components/common/AttendeeTable/index.tsx:283
+#: src/components/common/AttendeeTable/index.tsx:290
 #: src/components/common/CheckInListList/index.tsx:114
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:267
 #: src/components/forms/AffiliateForm/index.tsx:21
@@ -552,13 +563,13 @@ msgstr "Προσθήκη Φόρου ή Τέλους"
 msgid "Add this event to your calendar"
 msgstr "Προσθήκη αυτής της εκδήλωσης στο ημερολόγιό σας"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:557
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:602
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:732
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:574
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:619
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:771
 msgid "Add ticket"
 msgstr "Προσθήκη εισιτηρίου"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:761
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:800
 #: src/components/routes/event/GettingStarted/index.tsx:132
 msgid "Add tickets"
 msgstr "Προσθήκη εισιτηρίων"
@@ -809,12 +820,12 @@ msgstr "Εκπληκτικό, Εκδήλωση, Λέξεις-κλειδιά..."
 msgid "Amount"
 msgstr "Ποσό"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:677
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:957
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:716
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:994
 msgid "Amount collected"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:162
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:174
 msgid "Amount collected is required"
 msgstr ""
 
@@ -1289,7 +1300,7 @@ msgid "Awaiting payment"
 msgstr "Αναμονή πληρωμής"
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:29
-#: src/components/common/AttendeeTable/index.tsx:289
+#: src/components/common/AttendeeTable/index.tsx:296
 #: src/components/common/OrdersTable/index.tsx:424
 #: src/components/common/OrderStatusBadge/index.tsx:10
 #: src/components/routes/event/attendees.tsx:28
@@ -1306,7 +1317,7 @@ msgstr "Εκδηλώσεις Α.Ε."
 msgid "Awesome Organizer Ltd."
 msgstr "Διοργανωτής Α.Ε."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:488
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:505
 msgid "Back"
 msgstr "Πίσω"
 
@@ -1380,8 +1391,8 @@ msgid "Bookmark this page to manage your order anytime."
 msgstr "Αποθηκεύστε αυτή τη σελίδα για να διαχειρίζεστε την παραγγελία σας ανά πάσα στιγμή."
 
 #: src/components/layouts/Event/index.tsx:125
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:492
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:806
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:509
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:845
 msgid "Box Office"
 msgstr ""
 
@@ -1439,6 +1450,14 @@ msgstr "Με την προσθήκη pixels παρακολούθησης, ανα
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "Συνεχίζοντας, αποδέχεστε τους <0>Όρους Χρήσης {0}</0>"
 
+#: src/components/routes/kiosk/Stats/index.tsx:83
+msgid "By operator"
+msgstr "Ανά χειριστή"
+
+#: src/components/routes/kiosk/Stats/index.tsx:56
+msgid "By payment method"
+msgstr "Ανά τρόπο πληρωμής"
+
 #: src/components/routes/auth/Register/index.tsx:141
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 msgstr "Με την εγγραφή σας συμφωνείτε με τους <0>Όρους Χρήσης</0> και την <1>Πολιτική Απορρήτου</1>."
@@ -1472,7 +1491,7 @@ msgstr "Σαρωτής Κάμερας"
 msgid "Campaign"
 msgstr "Καμπάνια"
 
-#: src/components/common/AttendeeTable/index.tsx:370
+#: src/components/common/AttendeeTable/index.tsx:377
 #: src/components/common/CheckIn/CheckInOptionsModal.tsx:59
 #: src/components/common/CheckIn/ScannerSelectionModal.tsx:57
 #: src/components/common/ContactOrganizerModal/index.tsx:104
@@ -1483,6 +1502,7 @@ msgstr "Καμπάνια"
 #: src/components/common/WaitlistTable/index.tsx:132
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
+#: src/components/routes/kiosk/Orders/index.tsx:121
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:85
@@ -1515,7 +1535,7 @@ msgid "Canceling will cancel all attendees associated with this order, and relea
 msgstr "Η ακύρωση θα ακυρώσει όλους τους συμμετέχοντες που σχετίζονται με αυτή την παραγγελία και θα ελευθερώσει τα εισιτήρια στη διαθέσιμη δεξαμενή."
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:28
-#: src/components/common/AttendeeTable/index.tsx:295
+#: src/components/common/AttendeeTable/index.tsx:302
 #: src/components/common/AttendeeTicket/index.tsx:155
 #: src/components/common/OrdersTable/index.tsx:430
 #: src/components/common/OrderStatusBadge/index.tsx:9
@@ -1561,18 +1581,22 @@ msgstr "Αναθέσεις Χωρητικότητας"
 msgid "Capacity Management"
 msgstr "Διαχείριση Χωρητικότητας"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:639
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:935
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:685
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:972
+#: src/components/routes/kiosk/Orders/index.tsx:24
+#: src/components/routes/kiosk/Stats/index.tsx:15
 msgid "Card"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:708
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:773
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:747
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:812
 msgid "Cart contents"
 msgstr "Περιεχόμενο καλαθιού"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:638
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:934
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:684
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:971
+#: src/components/routes/kiosk/Orders/index.tsx:21
+#: src/components/routes/kiosk/Stats/index.tsx:12
 msgid "Cash"
 msgstr ""
 
@@ -1597,7 +1621,7 @@ msgstr "Κατηγορία"
 msgid "Category Created Successfully"
 msgstr "Η Κατηγορία Δημιουργήθηκε Επιτυχώς"
 
-#: src/components/layouts/Kiosk/index.tsx:78
+#: src/components/layouts/Kiosk/index.tsx:92
 msgid "Change event"
 msgstr "Αλλαγή εκδήλωσης"
 
@@ -1693,7 +1717,7 @@ msgstr "Οι λίστες check-in σας επιτρέπουν να ελέγχε
 msgid "Check-in Rate"
 msgstr "Ρυθμός Check-in"
 
-#: src/components/common/AttendeeTable/index.tsx:307
+#: src/components/common/AttendeeTable/index.tsx:314
 #: src/components/common/CheckInStatusModal/index.tsx:36
 #: src/components/common/CheckInStatusModal/index.tsx:134
 msgid "Check-In Status"
@@ -1708,7 +1732,7 @@ msgstr "Σύνοψη Check-in"
 msgid "Check-In URL copied to clipboard"
 msgstr "Το URL Check-In αντιγράφηκε στο πρόχειρο"
 
-#: src/components/common/AttendeeDetails/index.tsx:47
+#: src/components/common/AttendeeDetails/index.tsx:49
 msgid "Check-Ins"
 msgstr "Check-Ins"
 
@@ -1720,7 +1744,7 @@ msgstr "Οι επιλογές τύπου Checkbox επιτρέπουν πολλ�
 msgid "Checkboxes"
 msgstr "Πλαίσια Ελέγχου"
 
-#: src/components/common/AttendeeTable/index.tsx:322
+#: src/components/common/AttendeeTable/index.tsx:329
 #: src/components/common/CheckInStatusModal/index.tsx:110
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:40
 msgid "Checked In"
@@ -1747,8 +1771,8 @@ msgstr "Κινεζικά (Παραδοσιακά)"
 msgid "Choose a color for your background"
 msgstr "Επιλέξτε χρώμα για το φόντο σας"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:570
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:861
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:587
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:900
 msgid "Choose a price"
 msgstr ""
 
@@ -1792,7 +1816,7 @@ msgstr "Επιλέξτε ποιος πληρώνει το τέλος πλατφ�
 msgid "City"
 msgstr "Πόλη"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:751
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:790
 msgid "Clear basket"
 msgstr "Άδειασμα καλαθιού"
 
@@ -1804,7 +1828,7 @@ msgstr "Εκκαθάριση Κειμένου Αναζήτησης"
 msgid "Click to copy"
 msgstr "Κλικ για αντιγραφή"
 
-#: src/components/common/AttendeeTable/index.tsx:207
+#: src/components/common/AttendeeTable/index.tsx:214
 msgid "Click to view notes"
 msgstr "Κλικ για προβολή σημειώσεων"
 
@@ -1879,6 +1903,12 @@ msgstr "Συλλογή στοιχείων ανά παραγγελία"
 msgid "Collect details per ticket"
 msgstr "Συλλογή στοιχείων ανά εισιτήριο"
 
+#: src/components/routes/kiosk/Stats/index.tsx:47
+#: src/components/routes/kiosk/Stats/index.tsx:66
+#: src/components/routes/kiosk/Stats/index.tsx:89
+msgid "Collected"
+msgstr "Εισπράχθηκαν"
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
 msgid "Color"
@@ -1904,8 +1934,8 @@ msgstr "Στήλες"
 msgid "Comedy"
 msgstr "Κωμωδία"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:666
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:671
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:705
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:710
 msgid "Coming soon"
 msgstr "Σύντομα"
 
@@ -2182,7 +2212,7 @@ msgstr "Email επικοινωνίας για υποστήριξη"
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:481
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:498
 #: src/components/routes/product-widget/SelectProducts/index.tsx:550
 msgid "Continue"
 msgstr "Συνέχεια"
@@ -2274,7 +2304,7 @@ msgstr "Αντιγραφή συνδέσμου πελάτη"
 msgid "Copy details to first attendee"
 msgstr "Αντιγραφή στοιχείων στον πρώτο συμμετέχοντα"
 
-#: src/components/common/AttendeeTable/index.tsx:197
+#: src/components/common/AttendeeTable/index.tsx:199
 #: src/components/common/OrdersTable/index.tsx:263
 msgid "Copy Email"
 msgstr "Αντιγραφή Email"
@@ -2305,11 +2335,11 @@ msgstr "Αντιγραφή στο πρόχειρο"
 msgid "Copy URL"
 msgstr "Αντιγραφή URL"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:291
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:302
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:314
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:325
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
 
@@ -2700,7 +2730,7 @@ msgstr "Ανάλυση καθημερινών πωλήσεων, φόρων κα�
 msgid "Danger zone"
 msgstr "Επικίνδυνη ζώνη"
 
-#: src/components/common/AttendeeTable/index.tsx:367
+#: src/components/common/AttendeeTable/index.tsx:374
 #: src/components/common/DangerZone/index.tsx:30
 #: src/components/routes/event/Settings/index.tsx:88
 #: src/components/routes/organizer/Settings/index.tsx:78
@@ -2933,7 +2963,7 @@ msgstr "Δωρεά"
 msgid "Donation / Pay what you'd like product"
 msgstr "Δωρεά / Πληρώστε όσο θέλετε"
 
-#: src/components/layouts/Kiosk/index.tsx:83
+#: src/components/layouts/Kiosk/index.tsx:97
 #: src/components/modals/CheckInListSuccessModal/index.tsx:59
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:72
 #: src/components/modals/CreateWebhookModal/index.tsx:72
@@ -3204,7 +3234,8 @@ msgstr "Επιλέξιμες Λίστες Check-In"
 #: src/components/routes/auth/Login/index.tsx:93
 #: src/components/routes/auth/Register/index.tsx:104
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:99
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:915
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:658
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:953
 #: src/components/routes/kiosk/Login/index.tsx:75
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
@@ -3372,6 +3403,10 @@ msgstr "Τελείωσε"
 msgid "English"
 msgstr "Αγγλικά"
 
+#: src/components/routes/kiosk/Orders/index.tsx:133
+msgid "Enter a name, email or ticket number"
+msgstr "Εισάγετε όνομα, email ή αριθμό παραγγελίας / εισιτηρίου"
+
 #: src/components/common/EmailTemplateEditor/EmailTemplatePreviewPane.tsx:58
 msgid "Enter a subject and body to see the preview"
 msgstr "Εισάγετε θέμα και σώμα για προεπισκόπηση"
@@ -3387,6 +3422,10 @@ msgstr "Εισάγετε όνομα συνεργάτη"
 #: src/components/modals/CreateAttendeeModal/index.tsx:181
 msgid "Enter an amount excluding taxes and fees."
 msgstr "Εισάγετε ποσό χωρίς φόρους και τέλη."
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:475
+msgid "Enter at least a first name, an email, or a phone number."
+msgstr "Συμπληρώστε τουλάχιστον όνομα, email ή τηλέφωνο."
 
 #: src/components/modals/EditAccountVatSettingsModal/index.tsx:149
 msgid "Enter business address"
@@ -4100,7 +4139,7 @@ msgstr "Φίλτρα"
 msgid "Filters ({activeFilterCount})"
 msgstr "Φίλτρα ({activeFilterCount})"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
 msgid "Finish"
 msgstr "Ολοκλήρωση"
 
@@ -4136,7 +4175,8 @@ msgstr "Πρώτος Αριθμός Τιμολογίου"
 #: src/components/modals/CreateAttendeeModal/index.tsx:129
 #: src/components/modals/ManageAttendeeModal/index.tsx:110
 #: src/components/modals/ManageOrderModal/index.tsx:144
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:904
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:638
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:936
 #: src/components/routes/product-widget/CollectInformation/index.tsx:436
 #: src/components/routes/product-widget/CollectInformation/index.tsx:648
 msgid "First name"
@@ -4158,7 +4198,6 @@ msgid "First Name"
 msgstr "Όνομα"
 
 #: src/components/modals/JoinWaitlistModal/index.tsx:46
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:158
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:29
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:29
 msgid "First name is required"
@@ -4228,7 +4267,7 @@ msgstr "Κείμενο Υποσέλιδου"
 msgid "Forgot password?"
 msgstr "Ξεχάσατε τον κωδικό;"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:496
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:513
 msgid "Form"
 msgstr "Φόρμα"
 
@@ -4239,14 +4278,14 @@ msgstr "Φόρμα"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:113
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:123
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:180
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:640
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:936
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:973
+#: src/components/routes/kiosk/Orders/index.tsx:27
+#: src/components/routes/kiosk/Stats/index.tsx:18
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Δωρεάν"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:946
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:983
 msgid "Free can only be used for a ticket priced at 0"
 msgstr ""
 
@@ -4963,7 +5002,7 @@ msgstr "Χειριστές κιόσκι"
 msgid "Label"
 msgstr "Ετικέτα"
 
-#: src/components/common/AttendeeDetails/index.tsx:38
+#: src/components/common/AttendeeDetails/index.tsx:40
 #: src/components/modals/CreateAttendeeModal/index.tsx:155
 #: src/components/routes/profile/ManageProfile/index.tsx:196
 msgid "Language"
@@ -5021,7 +5060,8 @@ msgstr "Τελευταία σύνδεση"
 #: src/components/modals/CreateAttendeeModal/index.tsx:136
 #: src/components/modals/ManageAttendeeModal/index.tsx:111
 #: src/components/modals/ManageOrderModal/index.tsx:150
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:910
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:643
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:941
 msgid "Last name"
 msgstr "Επώνυμο"
 
@@ -5052,8 +5092,8 @@ msgstr "Το επώνυμο είναι υποχρεωτικό"
 msgid "Last Response"
 msgstr "Τελευταία Απάντηση"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:689
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:981
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:728
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1018
 msgid "Last ticket: <0>{0}</0>"
 msgstr ""
 
@@ -5218,7 +5258,7 @@ msgstr "Δημοσιεύστε την εκδήλωσή σας"
 msgid "Manage"
 msgstr "Διαχείριση"
 
-#: src/components/common/AttendeeTable/index.tsx:349
+#: src/components/common/AttendeeTable/index.tsx:356
 msgid "Manage attendee"
 msgstr "Διαχείριση συμμετέχοντα"
 
@@ -5226,7 +5266,7 @@ msgstr "Διαχείριση συμμετέχοντα"
 msgid "Manage event"
 msgstr "Διαχείριση εκδήλωσης"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:816
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:855
 msgid "Manage kiosk operators"
 msgstr "Διαχείριση χειριστών κιόσκι"
 
@@ -5274,7 +5314,7 @@ msgstr "Οι υποχρεωτικές ερωτήσεις πρέπει να απ�
 msgid "Manual offer"
 msgstr "Χειροκίνητη προσφορά"
 
-#: src/components/common/AttendeeTable/index.tsx:410
+#: src/components/common/AttendeeTable/index.tsx:417
 msgid "Manually add an Attendee"
 msgstr "Χειροκίνητη προσθήκη Συμμετέχοντα"
 
@@ -5303,7 +5343,7 @@ msgstr "Μέγιστο ανά Παραγγελία"
 msgid "Medium"
 msgstr "Μεσαίο"
 
-#: src/components/common/AttendeeTable/index.tsx:188
+#: src/components/common/AttendeeTable/index.tsx:189
 #: src/components/common/ContactOrganizerModal/index.tsx:88
 #: src/components/common/OrdersTable/index.tsx:254
 #: src/components/modals/SendMessageModal/index.tsx:353
@@ -5314,7 +5354,7 @@ msgstr "Μήνυμα"
 msgid "Message approved successfully"
 msgstr "Το μήνυμα εγκρίθηκε επιτυχώς"
 
-#: src/components/common/AttendeeTable/index.tsx:354
+#: src/components/common/AttendeeTable/index.tsx:361
 msgid "Message attendee"
 msgstr "Αποστολή μηνύματος σε συμμετέχοντα"
 
@@ -5433,8 +5473,8 @@ msgstr "Πεδίο κειμένου πολλαπλών γραμμών"
 msgid "Multiple price options. Perfect for early bird products etc."
 msgstr "Πολλαπλές επιλογές τιμής. Ιδανικό για προϊόντα πρώιμης αγοράς κ.λπ."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:537
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:853
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:554
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:892
 msgid "Multiple prices"
 msgstr ""
 
@@ -5578,13 +5618,18 @@ msgstr "Δεν βρέθηκαν συμμετέχοντες για αυτή τη�
 msgid "No attendees have been added to this order."
 msgstr "Δεν έχουν προστεθεί συμμετέχοντες σε αυτή την παραγγελία."
 
-#: src/components/common/AttendeeTable/index.tsx:399
+#: src/components/common/AttendeeTable/index.tsx:406
 msgid "No Attendees to show"
 msgstr "Δεν υπάρχουν Συμμετέχοντες για εμφάνιση"
 
 #: src/components/routes/admin/Attribution/index.tsx:121
 msgid "No attribution data found"
 msgstr "Δεν βρέθηκαν δεδομένα απόδοσης"
+
+#: src/components/routes/kiosk/Orders/index.tsx:158
+#: src/components/routes/kiosk/Stats/index.tsx:58
+msgid "No box office sales yet."
+msgstr "Δεν υπάρχουν ακόμα πωλήσεις ταμείου."
 
 #: src/components/modals/OfferWaitlistModal/index.tsx:187
 msgid "No capacity"
@@ -5691,7 +5736,7 @@ msgstr "Δεν βρέθηκαν μηνύματα"
 msgid "No messages to show"
 msgstr "Δεν υπάρχουν μηνύματα για εμφάνιση"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:194
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:206
 msgid "No more tickets available for this price."
 msgstr "Δεν υπάρχουν άλλα εισιτήρια σε αυτή την τιμή."
 
@@ -5818,8 +5863,8 @@ msgstr "Δεν βρέθηκαν αποτελέσματα αναζήτησης."
 msgid "No Taxes or Fees have been added."
 msgstr "Δεν έχουν προστεθεί Φόροι ή Τέλη."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:509
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:830
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:526
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:869
 msgid "No ticket is both active and attached to an active check-in list. Attach a product to a check-in list first — otherwise it would not be scannable at the door."
 msgstr ""
 
@@ -5876,7 +5921,7 @@ msgstr "Κανένα"
 msgid "Not available"
 msgstr "Δεν είναι διαθέσιμο"
 
-#: src/components/common/AttendeeTable/index.tsx:327
+#: src/components/common/AttendeeTable/index.tsx:334
 #: src/components/common/CheckInStatusModal/index.tsx:110
 msgid "Not Checked In"
 msgstr "Δεν Εισήλθε"
@@ -5884,6 +5929,11 @@ msgstr "Δεν Εισήλθε"
 #: src/components/common/CheckInStatusModal/index.tsx:118
 msgid "Not Eligible"
 msgstr "Μη Επιλέξιμο"
+
+#: src/components/routes/kiosk/Orders/index.tsx:55
+#: src/components/routes/kiosk/Orders/index.tsx:56
+msgid "Not scanned"
+msgstr "Δεν σαρώθηκε"
 
 #: src/components/modals/ManageAttendeeModal/index.tsx:130
 #: src/components/modals/ManageOrderModal/index.tsx:164
@@ -6065,8 +6115,9 @@ msgstr "Άνοιγμα πλαϊνής μπάρας"
 msgid "Open Stripe Dashboard"
 msgstr "Άνοιγμα Πίνακα Stripe"
 
-#: src/components/layouts/Kiosk/index.tsx:64
+#: src/components/layouts/Kiosk/index.tsx:78
 #: src/components/routes/kiosk/Settings/index.tsx:150
+#: src/components/routes/kiosk/Stats/index.tsx:87
 msgid "Operator"
 msgstr "Χειριστής"
 
@@ -6082,6 +6133,10 @@ msgstr "Επιλογή {i}"
 msgid "Optional additional information to appear on all invoices (e.g., payment terms, late payment fees, return policy)"
 msgstr "Προαιρετικές πρόσθετες πληροφορίες για εμφάνιση σε όλα τα τιμολόγια (π.χ., όροι πληρωμής, τέλη καθυστέρησης, πολιτική επιστροφής)"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:675
+msgid "Optional in a rush — enter at least a first name, an email, or a phone number. The email can be completed later from the attendees screen."
+msgstr "Προαιρετικό στη βιασύνη — τουλάχιστον όνομα, email ή τηλέφωνο. Το email συμπληρώνεται αργότερα από την οθόνη συμμετεχόντων."
+
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:200
 msgid "Optional prefix for invoice numbers (e.g., INV-)"
 msgstr "Προαιρετικό πρόθεμα αριθμών τιμολογίου (π.χ., ΤΙΜ-)"
@@ -6089,10 +6144,6 @@ msgstr "Προαιρετικό πρόθεμα αριθμών τιμολογίο�
 #: src/components/routes/event/TicketDesigner/index.tsx:165
 msgid "Optional text for disclaimers, contact info, or thank you notes (single line only)"
 msgstr "Προαιρετικό κείμενο για αποποιήσεις, στοιχεία επικοινωνίας ή σημειώσεις ευχαριστίας (μόνο μία γραμμή)"
-
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:629
-msgid "Optional. Skip this step if you are in a hurry — the attendee can add their details later on their phone."
-msgstr "Προαιρετικό. Παραλείψτε το αν βιάζεστε — ο θεατής μπορεί να συμπληρώσει τα στοιχεία αργότερα από το κινητό."
 
 #: src/components/common/QuestionsTable/index.tsx:125
 msgid "options"
@@ -6127,7 +6178,7 @@ msgstr "ή"
 msgid "Order"
 msgstr "Παραγγελία"
 
-#: src/components/common/AttendeeTable/index.tsx:240
+#: src/components/common/AttendeeTable/index.tsx:247
 msgid "Order & Ticket"
 msgstr "Παραγγελία & Εισιτήριο"
 
@@ -6313,6 +6364,7 @@ msgstr "Η παραγγελία ακυρώθηκε"
 
 #: src/components/layouts/Admin/index.tsx:17
 #: src/components/layouts/Event/index.tsx:120
+#: src/components/layouts/Kiosk/index.tsx:58
 #: src/components/routes/admin/Attribution/index.tsx:138
 #: src/components/routes/admin/Orders/index.tsx:44
 #: src/components/routes/event/orders.tsx:115
@@ -6522,6 +6574,11 @@ msgstr "Μερικώς Επιστράφηκε"
 msgid "Partially refunded: {0}"
 msgstr "Μερική επιστροφή: {0}"
 
+#: src/components/routes/kiosk/Orders/index.tsx:49
+#: src/components/routes/kiosk/Orders/index.tsx:50
+msgid "Partially scanned"
+msgstr "Μερικώς σαρωμένο"
+
 #: src/components/common/PlatformFeesSettings/index.tsx:191
 msgid "Pass fee to buyer"
 msgstr "Μεταβίβαση τέλους στον αγοραστή"
@@ -6605,7 +6662,7 @@ msgstr "Ωφέλιμο Φορτίο"
 #: src/components/common/OrdersTable/index.tsx:375
 #: src/components/common/ProgressStepper/index.tsx:19
 #: src/components/forms/StripeCheckoutForm/index.tsx:127
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:514
 msgid "Payment"
 msgstr "Πληρωμή"
 
@@ -6639,6 +6696,7 @@ msgstr "Η Πληρωμή Απέτυχε"
 msgid "Payment Instructions"
 msgstr "Οδηγίες Πληρωμής"
 
+#: src/components/routes/kiosk/Stats/index.tsx:64
 #: src/components/routes/product-widget/Payment/index.tsx:114
 msgid "Payment method"
 msgstr "Μέθοδος πληρωμής"
@@ -6760,8 +6818,8 @@ msgstr "Προσωπικές Πληροφορίες"
 msgid "Phone"
 msgstr "Τηλέφωνο"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:621
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:897
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:946
 msgid "Phone number"
 msgstr "Αριθμός τηλεφώνου"
 
@@ -7053,12 +7111,12 @@ msgstr "Επεξεργασία Επιστροφής"
 msgid "Processing order"
 msgstr "Επεξεργασία παραγγελίας"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:974
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1011
 msgid "Processing…"
 msgstr ""
 
-#: src/components/common/AttendeeDetails/index.tsx:30
+#: src/components/common/AttendeeDetails/index.tsx:32
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:285
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:482
 #: src/components/common/WaitlistTable/index.tsx:170
@@ -7278,7 +7336,7 @@ msgstr "Ρυθμός"
 msgid "Rate limit exceeded. Please try again later."
 msgstr "Υπερβάθηκε το όριο αιτημάτων. Δοκιμάστε ξανά αργότερα."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:495
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:512
 msgid "Rates"
 msgstr "Τιμές"
 
@@ -7447,9 +7505,9 @@ msgstr "αφαίρεση"
 msgid "Remove"
 msgstr "Αφαίρεση"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:545
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:592
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:723
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:562
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:609
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:762
 msgid "Remove ticket"
 msgstr "Αφαίρεση εισιτηρίου"
 
@@ -7464,10 +7522,20 @@ msgstr "Η αναφορά δεν βρέθηκε"
 msgid "Reports"
 msgstr "Αναφορές"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:697
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:989
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:736
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1026
+#: src/components/routes/kiosk/Orders/index.tsx:121
+#: src/components/routes/kiosk/Orders/index.tsx:190
 msgid "Reprint"
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:105
+msgid "Reprint {0} tickets?"
+msgstr "Επανεκτύπωση {0} εισιτηρίων;"
+
+#: src/components/routes/kiosk/Orders/index.tsx:105
+msgid "Reprint this ticket?"
+msgstr "Επανεκτύπωση αυτού του εισιτηρίου;"
 
 #: src/components/routes/my-tickets/index.tsx:169
 msgid "Request a new link"
@@ -7517,7 +7585,7 @@ msgstr "Επαναποστολή email παραγγελίας"
 msgid "Resend Ticket"
 msgstr "Επαναποστολή Εισιτηρίου"
 
-#: src/components/common/AttendeeTable/index.tsx:359
+#: src/components/common/AttendeeTable/index.tsx:366
 msgid "Resend ticket email"
 msgstr "Επαναποστολή email εισιτηρίου"
 
@@ -7534,6 +7602,8 @@ msgid "Reserved until"
 msgstr "Δεσμευμένο μέχρι"
 
 #: src/components/common/FilterModal/index.tsx:279
+#: src/components/routes/kiosk/Orders/index.tsx:139
+#: src/components/routes/kiosk/Orders/index.tsx:150
 msgid "Reset"
 msgstr "Επαναφορά"
 
@@ -7682,6 +7752,9 @@ msgstr "Η πώληση ξεκινά {0}"
 
 #: src/components/common/AffiliateTable/index.tsx:145
 #: src/components/layouts/Kiosk/index.tsx:51
+#: src/components/routes/kiosk/Stats/index.tsx:39
+#: src/components/routes/kiosk/Stats/index.tsx:65
+#: src/components/routes/kiosk/Stats/index.tsx:88
 msgid "Sales"
 msgstr "Πωλήσεις"
 
@@ -7794,6 +7867,11 @@ msgstr ""
 #: src/pages/digit/ScannerDevicePage.tsx:71
 msgid "Scan failed"
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:42
+#: src/components/routes/kiosk/Orders/index.tsx:43
+msgid "Scanned"
+msgstr "Σαρώθηκε"
 
 #: src/components/modals/SendMessageModal/index.tsx:381
 msgid "Schedule for later"
@@ -8049,7 +8127,7 @@ msgstr "Επιλογή..."
 msgid "Selected"
 msgstr "Επιλεγμένο"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:805
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:844
 msgid "Sell a ticket at the door and print it immediately."
 msgstr ""
 
@@ -8185,7 +8263,8 @@ msgstr "Ορίστε προεπιλεγμένες ρυθμίσεις για νέ
 msgid "Set the starting number for invoice numbering. This cannot be changed once invoices have been generated."
 msgstr "Ορίστε τον αρχικό αριθμό για την αρίθμηση τιμολογίων. Δεν μπορεί να αλλαχθεί μόλις δημιουργηθούν τιμολόγια."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:279
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:290
+#: src/components/routes/kiosk/Orders/index.tsx:94
 msgid "Set the Zebra printer IP in Settings before printing."
 msgstr "Ορίστε τη διεύθυνση IP της Zebra στις ρυθμίσεις πριν την εκτύπωση."
 
@@ -8215,7 +8294,7 @@ msgstr "Η ρύθμιση ενημερώθηκε"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/Kiosk/index.tsx:58
+#: src/components/layouts/Kiosk/index.tsx:72
 #: src/components/layouts/OrganizerLayout/index.tsx:93
 #: src/components/modals/DuplicateEventModal/index.tsx:26
 #: src/components/routes/kiosk/Settings/index.tsx:51
@@ -8420,8 +8499,8 @@ msgstr "Ισπανικά"
 msgid "Sports"
 msgstr "Αθλητισμός"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:584
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:870
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:601
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:909
 msgid "Standard"
 msgstr ""
 
@@ -8466,6 +8545,8 @@ msgid "Station name"
 msgstr "Όνομα θέσης"
 
 #: src/components/common/AdminEventsTable/index.tsx:110
+#: src/components/layouts/Kiosk/index.tsx:65
+#: src/components/routes/kiosk/Stats/index.tsx:33
 msgid "Statistics"
 msgstr "Στατιστικά"
 
@@ -8476,7 +8557,7 @@ msgstr "Τα στατιστικά βασίζονται στην ημερομην
 #: src/components/common/AdminEventsTable/index.tsx:111
 #: src/components/common/AdminOrdersTable/index.tsx:85
 #: src/components/common/AffiliateTable/index.tsx:83
-#: src/components/common/AttendeeTable/index.tsx:274
+#: src/components/common/AttendeeTable/index.tsx:281
 #: src/components/common/OrderDetails/index.tsx:51
 #: src/components/common/OrdersTable/index.tsx:403
 #: src/components/common/OrganizerWebhookTable/index.tsx:238
@@ -8764,7 +8845,7 @@ msgstr "Προεπιλογή Συστήματος"
 msgid "T-shirt"
 msgstr "Μπλούζα"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:974
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1011
 msgid "Take Payment & Create Ticket"
 msgstr ""
 
@@ -8903,7 +8984,7 @@ msgstr "Αυτός ο κωδικός προσφοράς δεν είναι έγκ
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
 msgstr "Το χρώμα φόντου της σελίδας. Όταν χρησιμοποιείται εικόνα εξωφύλλου, εφαρμόζεται ως επικάλυψη."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:710
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:749
 msgid "The basket is empty."
 msgstr "Το καλάθι είναι άδειο."
 
@@ -8997,8 +9078,8 @@ msgstr "Η τιμή που εμφανίζεται στον πελάτη θα π�
 msgid "The price displayed to the customer will not include taxes and fees. They will be shown separately"
 msgstr "Η τιμή που εμφανίζεται στον πελάτη δεν θα περιλαμβάνει φόρους και τέλη. Θα εμφανίζονται ξεχωριστά"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:372
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:422
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:384
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:434
 msgid "The price has changed — please reselect the ticket type."
 msgstr ""
 
@@ -9023,7 +9104,7 @@ msgstr "Η προγραμματισμένη ώρα πρέπει να είναι 
 msgid "The template body contains invalid Liquid syntax. Please correct it and try again."
 msgstr "Το σώμα προτύπου περιέχει μη έγκυρη σύνταξη Liquid. Παρακαλώ διορθώστε και δοκιμάστε ξανά."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:306
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:317
 msgid "The ticket was created but the Zebra printer did not respond."
 msgstr "Το εισιτήριο δημιουργήθηκε αλλά ο εκτυπωτής Zebra δεν απάντησε."
 
@@ -9036,7 +9117,8 @@ msgstr "Ο τίτλος εκδήλωσης που θα εμφανίζεται σ
 msgid "The VAT number could not be validated. Please check the number and try again."
 msgstr "Ο αριθμός ΦΠΑ δεν μπόρεσε να επαληθευτεί. Παρακαλώ ελέγξτε τον αριθμό και δοκιμάστε ξανά."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:305
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:316
+#: src/components/routes/kiosk/Orders/index.tsx:116
 msgid "The Zebra printer did not respond."
 msgstr "Ο εκτυπωτής Zebra δεν απάντησε."
 
@@ -9262,10 +9344,14 @@ msgstr "Αυτή η αναφορά είναι μόνο για ενημερωτι
 msgid "This reset password link is invalid or expired."
 msgstr "Αυτός ο σύνδεσμος επαναφοράς κωδικού δεν είναι έγκυρος ή έχει λήξει."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:374
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:427
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:386
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:439
 msgid "This sale could not be completed. Please try again."
 msgstr ""
+
+#: src/components/routes/kiosk/Orders/index.tsx:100
+msgid "This sale has no ticket to reprint."
+msgstr "Αυτή η πώληση δεν έχει εισιτήριο για επανεκτύπωση."
 
 #: src/components/layouts/CheckIn/index.tsx:205
 msgid "This ticket was just scanned. Please wait before scanning again."
@@ -9283,7 +9369,7 @@ msgstr "Αυτό θα χρησιμοποιηθεί για ειδοποιήσει
 msgid "This will not be visible to customers, but helps you identify the affiliate."
 msgstr "Αυτό δεν θα είναι ορατό στους πελάτες, αλλά σας βοηθά να αναγνωρίσετε τον συνεργάτη."
 
-#: src/components/common/AttendeeTable/index.tsx:370
+#: src/components/common/AttendeeTable/index.tsx:377
 #: src/components/routes/my-tickets/index.tsx:85
 msgid "ticket"
 msgstr "εισιτήριο"
@@ -9302,8 +9388,8 @@ msgstr "Εισιτήριο"
 msgid "Ticket Cancelled"
 msgstr "Εισιτήριο Ακυρώθηκε"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:365
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:411
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:377
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:423
 msgid "Ticket created — {0}"
 msgstr ""
 
@@ -9348,7 +9434,8 @@ msgstr "Κάτοχοι Εισιτηρίων"
 msgid "Ticket ID"
 msgstr "ID Εισιτηρίου"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:922
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:665
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:959
 msgid "Ticket language"
 msgstr ""
 
@@ -9384,6 +9471,10 @@ msgstr "Τιμή Εισιτηρίου"
 msgid "Ticket resent successfully"
 msgstr "Το εισιτήριο εστάλη ξανά επιτυχώς"
 
+#: src/components/routes/kiosk/Orders/index.tsx:113
+msgid "Ticket sent to the printer."
+msgstr "Το εισιτήριο στάλθηκε στον εκτυπωτή."
+
 #: src/components/common/AttendeeTicket/index.tsx:105
 #: src/components/routes/event/attendees.tsx:66
 msgid "Ticket Type"
@@ -9393,6 +9484,10 @@ msgstr "Τύπος Εισιτηρίου"
 msgid "Ticket URL"
 msgstr "URL Εισιτηρίου"
 
+#: src/components/routes/kiosk/Stats/index.tsx:51
+msgid "Ticket value"
+msgstr "Αξία εισιτηρίων"
+
 #: src/components/layouts/Event/index.tsx:118
 msgid "Ticketing & Sales"
 msgstr "Εισιτήρια & Πωλήσεις"
@@ -9401,7 +9496,8 @@ msgstr "Εισιτήρια & Πωλήσεις"
 msgid "tickets"
 msgstr "εισιτήρια"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:506
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:523
+#: src/components/routes/kiosk/Stats/index.tsx:43
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "Εισιτήρια"
@@ -9423,9 +9519,13 @@ msgstr "Διαθέσιμα Εισιτήρια"
 msgid "Tickets for"
 msgstr "Εισιτήρια για"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:777
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:816
 msgid "tickets in the basket"
 msgstr "εισιτήρια στο καλάθι"
+
+#: src/components/routes/kiosk/Orders/index.tsx:114
+msgid "Tickets sent to the printer."
+msgstr "Τα εισιτήρια στάλθηκαν στον εκτυπωτή."
 
 #: src/components/routes/admin/Dashboard/index.tsx:140
 msgid "Tickets Sold"
@@ -9477,6 +9577,10 @@ msgstr "ΣΥΜΒΟΥΛΗ"
 #: src/components/routes/event/messages.tsx:93
 msgid "To"
 msgstr "Προς"
+
+#: src/components/common/AttendeeTable/index.tsx:206
+msgid "To complete"
+msgstr "Προς συμπλήρωση"
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:207
 msgid "To edit configurations, go to the Configurations section in the admin menu."
@@ -9730,7 +9834,7 @@ msgstr ""
 #: src/components/forms/ProductForm/index.tsx:321
 #: src/components/forms/PromoCodeForm/index.tsx:112
 #: src/components/modals/OfferWaitlistModal/index.tsx:189
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:886
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:925
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:78
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:84
 msgid "Unlimited"
@@ -10178,6 +10282,10 @@ msgstr "Λίστα Αναμονής Ενεργή"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:373
 msgid "Waitlist offer expired"
 msgstr "Η προσφορά λίστας αναμονής έληξε"
+
+#: src/components/routes/kiosk/Orders/index.tsx:170
+msgid "Walk-up customer"
+msgstr "Πελάτης ταμείου"
 
 #: src/components/routes/admin/Configurations/index.tsx:212
 msgid "Warning: This is the system default configuration. Changes will affect all accounts that don't have a specific configuration assigned."
@@ -10757,7 +10865,7 @@ msgstr "Οι συνεργάτες σας εξήχθησαν επιτυχώς."
 msgid "Your attendees have been exported successfully."
 msgstr "Οι συμμετέχοντές σας εξήχθησαν επιτυχώς."
 
-#: src/components/common/AttendeeTable/index.tsx:404
+#: src/components/common/AttendeeTable/index.tsx:411
 msgid "Your attendees will appear here once they have registered for your event. You can also manually add attendees."
 msgstr "Οι συμμετέχοντές σας θα εμφανίζονται εδώ μόλις εγγραφούν. Μπορείτε επίσης να τους προσθέσετε χειροκίνητα."
 

@@ -4,7 +4,7 @@ Date : 3 septembre 2026 · **Aucun code écrit.** Ce document définit le plus p
 Conditionné à : baseline figée (D1) + validation métier de D2, D3, D6, D9, D11, D13, D14, D18 (les autres peuvent rester ouvertes pour le slice 1).
 
 > **Décisions PICHA ratifiées le 3 sept. 2026** (cf. `PICHA_BOX_OFFICE_DECISIONS_REQUIRED.md`, section « ratifiées ») :
-> D2=A · D3=A (`box_office_sales.payment_method` ∈ {CASH,CARD,FREE}, `amount_collected` séparé) · D6=B (email obligatoire, pas de fictif) · D9=A (`idempotency_key` UNIQUE, insérée 1re) · D11=B (bloquer si produit non scannable) · D13/D14=A (ORGANIZER vend+réimprime, `print_jobs`) · D18=A (maquette existante) · S4 inclus dans les migrations du slice 1 · S9 clos.
+> D2=A · D3=A (`box_office_sales.payment_method` ∈ {CASH,CARD,FREE}, `amount_collected` séparé) · D6=D (e-mail optionnel, `attendees.email = NULL`, jamais fictif ; B obligatoire annulée le 7 sept. 2026) · D9=A (`idempotency_key` UNIQUE, insérée 1re) · D11=B (bloquer si produit non scannable) · D13/D14=A (ORGANIZER vend+réimprime, `print_jobs`) · D18=A (maquette existante) · S4 inclus dans les migrations du slice 1 · S9 clos.
 > **Tolérance de prix = STRICTE** : `amount` serveur = `product_prices.price`, aucun écart. AC-2 devient une **égalité stricte**.
 > **Impression** : PDF + `window.print()`, abstraction `TicketRenderer` (PDF | ZPL), **aucun ZPL** au slice 1.
 > **D19 tranchée (5 sept. 2026)** : poste agent = macOS (dev + pilote, cible Windows ensuite), liaison ZD621 = réseau/IP en principal (USB en fallback) — sans impact sur le code du slice 1 (fixe la direction du futur driver ZPL réseau, hors slice 1).
@@ -33,7 +33,7 @@ Conditionné à : baseline figée (D1) + validation métier de D2, D3, D6, D9, D
 - Mode hors-ligne (D17 = online-only).
 - Pilote ZPL / connexion IP imprimante (D19).
 - Correction du 500 concurrent sur le check-in natif (S5) — sauf si le slice pilote lui-même le scan (il ne le fait pas ici : le scan reste l'app native).
-- `email` nullable (D6 = email obligatoire au guichet).
+- `email` nullable (D6 = option D, e-mail optionnel au guichet).
 
 ---
 

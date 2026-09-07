@@ -115,7 +115,7 @@ export const AttendeeTicket = ({
                         <div className={classes.attendeeName}>
                             {attendee.first_name} {attendee.last_name}
                         </div>
-                        <div className={classes.attendeeEmail}>{attendee.email}</div>
+                        <div className={classes.attendeeEmail}>{attendee.email ?? t`—`}</div>
                     </div>
 
                 </div>

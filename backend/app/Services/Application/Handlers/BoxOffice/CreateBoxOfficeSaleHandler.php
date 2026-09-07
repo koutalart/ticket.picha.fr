@@ -125,7 +125,6 @@ class CreateBoxOfficeSaleHandler
 
             $attendees = [];
             $itemRows = [];
-            $ticketIndex = 0;
 
             foreach ($items as $item) {
                 $unitPrice = $lockedPrices[$item->product_price_id]->getPrice();
@@ -138,10 +137,10 @@ class CreateBoxOfficeSaleHandler
                     $attendee = $this->createAttendeeHandler->handle(new CreateAttendeeDTO(
                         first_name: $dto->first_name,
                         last_name: $dto->last_name,
-                        email: $this->attendeeEmail($dto, $ticketIndex),
+                        email: $dto->email ?: null,
                         product_id: $item->product_id,
                         event_id: $dto->event_id,
-                        send_confirmation_email: false,
+                        send_confirmation_email: (bool) $dto->send_confirmation_email && ($dto->email ?: null) !== null,
                         amount_paid: $unitPrice,
                         locale: $dto->locale,
                         product_price_id: $item->product_price_id,
@@ -156,7 +155,6 @@ class CreateBoxOfficeSaleHandler
                         'attendee_id' => $attendee->getId(),
                         'order_id' => $order->getId(),
                     ];
-                    $ticketIndex++;
                 }
             }
 
@@ -346,24 +344,5 @@ class CreateBoxOfficeSaleHandler
         }
 
         return '+' . $digits;
-    }
-
-    private function attendeeEmail(CreateBoxOfficeSaleDTO $dto, int $ticketIndex): string
-    {
-        if ($dto->email !== '') {
-            if ($ticketIndex === 0) {
-                return $dto->email;
-            }
-
-            [$local, $domain] = explode('@', $dto->email, 2);
-
-            return $local . '+t' . $ticketIndex . '@' . $domain;
-        }
-
-        $digits = preg_replace('/\D+/', '', $dto->phone) ?: '';
-        $token = $digits !== '' ? $digits : substr($dto->idempotency_key, 0, 12);
-        $suffix = $ticketIndex === 0 ? '' : '-' . $ticketIndex;
-
-        return 'kiosk+' . $token . $suffix . '@guichet.example.test';
     }
 }

@@ -582,7 +582,7 @@ export interface Attendee {
     status: 'ACTIVE' | 'CANCELLED' | 'AWAITING_PAYMENT';
     first_name: string;
     last_name: string;
-    email: string;
+    email: string | null;
     notes?: string;
     order?: Order;
     public_id: string;

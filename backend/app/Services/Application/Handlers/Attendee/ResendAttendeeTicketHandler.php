@@ -7,6 +7,7 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
+use HiEvents\Exceptions\AttendeeEmailMissingException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
@@ -29,6 +30,7 @@ readonly class ResendAttendeeTicketHandler
 
     /**
      * @throws ResourceConflictException
+     * @throws AttendeeEmailMissingException
      */
     public function handle(ResendAttendeeTicketDTO $resendAttendeeProductDTO): void
     {
@@ -43,6 +45,12 @@ readonly class ResendAttendeeTicketHandler
 
         if (!$attendee) {
             throw new ResourceNotFoundException();
+        }
+
+        if ($attendee->getEmail() === null || $attendee->getEmail() === '') {
+            throw new AttendeeEmailMissingException(
+                __('Ce participant n\'a pas encore d\'e-mail. Renseignez-le d\'abord.')
+            );
         }
 
         if ($attendee->getStatus() !== AttendeeStatus::ACTIVE->name) {

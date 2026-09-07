@@ -1,4 +1,4 @@
-import {ActionIcon, Anchor, Avatar, Button, Group, Popover, Tooltip} from '@mantine/core';
+import {ActionIcon, Anchor, Avatar, Badge, Button, Group, Popover, Tooltip} from '@mantine/core';
 import {Attendee, IdParam, MessageType} from "../../../types.ts";
 import {
     IconCheck,
@@ -174,7 +174,7 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                                                 className={classes.attendeeEmail}
                                                 style={{cursor: 'pointer'}}
                                             >
-                                                {info.row.original.email}
+                                                {info.row.original.email ?? t`—`}
                                             </Anchor>
                                         </Popover.Target>
                                         <Popover.Dropdown>
@@ -184,6 +184,7 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                                                     variant="light"
                                                     leftSection={<IconSend size={16}/>}
                                                     onClick={() => handleMessageFromEmail(info.row.original)}
+                                                    disabled={!info.row.original.email}
                                                 >
                                                     {t`Message`}
                                                 </Button>
@@ -192,13 +193,19 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                                                     variant="light"
                                                     color="gray"
                                                     leftSection={<IconCopy size={16}/>}
-                                                    onClick={() => handleCopyEmail(info.row.original.email)}
+                                                    onClick={() => info.row.original.email && handleCopyEmail(info.row.original.email)}
+                                                    disabled={!info.row.original.email}
                                                 >
                                                     {t`Copy Email`}
                                                 </Button>
                                             </Group>
                                         </Popover.Dropdown>
                                     </Popover>
+                                    {!info.row.original.email && (
+                                        <Badge size="xs" variant="light" color="orange" ml={6}>
+                                            {t`To complete`}
+                                        </Badge>
+                                    )}
                                     <div className={classes.emailActions}>
                                         {info.row.original.notes && (
                                             <Tooltip
@@ -359,7 +366,7 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                                             label: t`Resend ticket email`,
                                             icon: <IconMailForward size={14}/>,
                                             onClick: () => handleResendTicket(info.row.original),
-                                            visible: info.row.original.status === 'ACTIVE',
+                                            visible: info.row.original.status === 'ACTIVE' && Boolean(info.row.original.email),
                                         },
                                     ],
                                 },

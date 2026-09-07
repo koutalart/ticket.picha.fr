@@ -11,7 +11,7 @@ class CreateAttendeeDTO extends BaseDTO
     public function __construct(
         public readonly string      $first_name,
         public readonly string      $last_name,
-        public readonly string      $email,
+        public readonly ?string     $email,
         public readonly int         $product_id,
         public readonly int         $event_id,
         public readonly bool        $send_confirmation_email,
