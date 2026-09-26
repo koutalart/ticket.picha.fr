@@ -760,6 +760,8 @@ Préférer la seconde (cohérence avec l'autre chemin). Ajouter un test :
 
 ## T22 — Sentinelle kiosk : ne pas envoyer de mail vers `.invalid` (garde unique)
 
+**Statut (26 sept.) :** livré avec D6-S (`KioskSentinelEmail` / `isKioskSentinelEmail`).
+
 **Découvert / cadré le 2026-09-26** avec D6-S. **Pas de dette « mail fantôme accepté ».**
 
 Après rollback de `attendees.email` NOT NULL, une vente guichet sans e-mail réel stockera une

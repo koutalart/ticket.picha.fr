@@ -80,6 +80,7 @@ interface SaleFormProps {
     zebraPrinterHost?: string;
     defaultLocale?: SupportedLocales | '';
     sendConfirmationEmail?: boolean;
+    phoneCallingCode?: string;
 }
 
 const generateIdempotencyKey = (): string => {
@@ -124,11 +125,13 @@ export const SaleForm = ({
     zebraPrinterHost = '',
     defaultLocale = '',
     sendConfirmationEmail = false,
+    phoneCallingCode = '',
 }: SaleFormProps) => {
     const errorHandler = useFormErrorResponseHandler();
     const isAdmin = useIsCurrentUserAdmin();
     const createSale = useCreateBoxOfficeSale();
     const reprintTicket = useReprintBoxOfficeTicket();
+    const callingCodeDigits = phoneCallingCode.replace(/\D/g, '');
 
     const [idempotencyKey, setIdempotencyKey] = useState('');
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
@@ -158,6 +161,9 @@ export const SaleForm = ({
                 const digits = value.replace(/\D/g, '');
                 if (digits.length === 0) {
                     return null;
+                }
+                if (!callingCodeDigits && !value.trim().startsWith('+')) {
+                    return t`Missing phone calling code — set it in station settings.`;
                 }
                 return digits.length >= 8 ? null : t`A valid phone number is required`;
             },
@@ -350,6 +356,7 @@ export const SaleForm = ({
                         quantity: line.qty,
                     })),
                     phone: values.phone || undefined,
+                    phone_calling_code: callingCodeDigits || undefined,
                     first_name: values.first_name || undefined,
                     last_name: values.last_name || undefined,
                     email: values.email || undefined,
@@ -380,7 +387,9 @@ export const SaleForm = ({
             const status = error?.response?.status;
             if (status === 422) {
                 const priceError = error.response?.data?.errors?.amount;
-                showError(priceError || t`The price has changed — please reselect the ticket type.`);
+                const callingError = error.response?.data?.errors?.phone_calling_code;
+                const callingMessage = Array.isArray(callingError) ? callingError[0] : callingError;
+                showError(callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
             } else if (status === 409) {
                 showError(error.response?.data?.message || t`This sale could not be completed. Please try again.`);
             } else {
@@ -407,6 +416,7 @@ export const SaleForm = ({
                 product_id: selectedProduct.id,
                 product_price_id: selectedPrice.id,
                 phone: values.phone || undefined,
+                phone_calling_code: callingCodeDigits || undefined,
                 first_name: values.first_name || undefined,
                 last_name: values.last_name || undefined,
                 email: values.email || undefined,
@@ -430,7 +440,9 @@ export const SaleForm = ({
 
                 if (status === 422) {
                     const priceError = error.response?.data?.errors?.amount;
-                    showError(priceError || t`The price has changed — please reselect the ticket type.`);
+                    const callingError = error.response?.data?.errors?.phone_calling_code;
+                    const callingMessage = Array.isArray(callingError) ? callingError[0] : callingError;
+                    showError(callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
                     return;
                 }
 
@@ -646,11 +658,16 @@ export const SaleForm = ({
                             />
                             <TextInput
                                 label={t`Phone number`}
-                                placeholder="06 12 34 56 78"
+                                placeholder={callingCodeDigits ? '639780773' : '06 12 34 56 78'}
                                 type="tel"
                                 inputMode="tel"
                                 size="lg"
                                 mt="md"
+                                leftSection={callingCodeDigits ? `+${callingCodeDigits}` : undefined}
+                                leftSectionPointerEvents="none"
+                                description={callingCodeDigits
+                                    ? t`Local number without the leading 0.`
+                                    : t`Missing phone calling code — set it in station settings.`}
                                 {...form.getInputProps('phone')}
                             />
                             <TextInput
@@ -945,6 +962,11 @@ export const SaleForm = ({
                                 label={t`Phone number`}
                                 type="tel"
                                 inputMode="tel"
+                                leftSection={callingCodeDigits ? `+${callingCodeDigits}` : undefined}
+                                leftSectionPointerEvents="none"
+                                description={callingCodeDigits
+                                    ? t`Local number without the leading 0.`
+                                    : t`Missing phone calling code — set it in station settings.`}
                                 {...form.getInputProps('phone')}
                                 mb="sm"
                             />

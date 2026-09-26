@@ -180,6 +180,30 @@ class BoxOfficeSaleNoEmailTest extends TestCase
         $response->assertJsonValidationErrors(['email']);
     }
 
+    public function test_local_phone_without_calling_code_is_422(): void
+    {
+        [$event, $product, $productPrice, $token] = $this->authenticatedEvent();
+
+        $response = $this->postJson(
+            "/events/{$event->id}/box-office-sales",
+            [
+                'product_id' => $product->id,
+                'product_price_id' => $productPrice->id,
+                'phone' => '639780773',
+                'first_name' => 'Jane',
+                'locale' => 'fr',
+                'payment_method' => 'CASH',
+                'amount' => 25.00,
+                'amount_collected' => 25.00,
+                'idempotency_key' => Str::uuid()->toString(),
+            ],
+            ['Authorization' => 'Bearer '.$token],
+        );
+
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['phone_calling_code']);
+    }
+
     public function test_resend_order_confirmation_is_422_for_sentinel_email(): void
     {
         [$event, $product, $productPrice, $token] = $this->authenticatedEvent();

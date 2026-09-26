@@ -40,6 +40,13 @@ const KioskSettings = () => {
         setConnectedAt(window.sessionStorage.getItem(KIOSK_CONNECTED_AT_KEY) || me.data?.last_login_at || null);
     }, [me.data?.last_login_at]);
 
+    useEffect(() => {
+        if (!isHydrated || settings.phoneCallingCode || !currentEvent?.calling_code) {
+            return;
+        }
+        setSettings({...settings, phoneCallingCode: currentEvent.calling_code});
+    }, [isHydrated, currentEvent?.calling_code, settings.phoneCallingCode, setSettings]);
+
     const navItems: { id: SettingsSection; label: string }[] = [
         {id: 'printing', label: t`Printing`},
         {id: 'options', label: t`Options`},
@@ -138,6 +145,20 @@ const KioskSettings = () => {
                                 onChange={(value) => setSettings({
                                     ...settings,
                                     defaultTicketLocale: (value as SupportedLocales | null) ?? '',
+                                })}
+                            />
+                        </div>
+                        <div className={classes.optionRow}>
+                            <TextInput
+                                style={{flex: 1}}
+                                label={t`Phone calling code`}
+                                description={t`Default from the event country. Override if this station sells for another country.`}
+                                disabled={!isHydrated}
+                                placeholder={currentEvent?.calling_code ? `+${currentEvent.calling_code}` : '+262'}
+                                value={isHydrated ? (settings.phoneCallingCode ? `+${settings.phoneCallingCode}` : '') : ''}
+                                onChange={(event) => setSettings({
+                                    ...settings,
+                                    phoneCallingCode: event.currentTarget.value.replace(/\D/g, ''),
                                 })}
                             />
                         </div>

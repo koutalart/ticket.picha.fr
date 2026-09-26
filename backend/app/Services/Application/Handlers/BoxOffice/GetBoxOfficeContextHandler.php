@@ -6,11 +6,16 @@ namespace HiEvents\Services\Application\Handlers\BoxOffice;
 
 use HiEvents\DomainObjects\Enums\Role;
 use HiEvents\DomainObjects\EventBoxOfficeOperatorDomainObject;
+use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\EventBoxOfficeOperatorDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
 use HiEvents\DomainObjects\Status\BoxOfficeOperatorStatus;
+use HiEvents\Helper\PhoneCallingCode;
 use HiEvents\Repository\Interfaces\EventBoxOfficeOperatorRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
+use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeContextEventDTO;
 use Illuminate\Support\Collection;
 
 /**
@@ -25,6 +30,7 @@ class GetBoxOfficeContextHandler
     public function __construct(
         private readonly EventBoxOfficeOperatorRepositoryInterface $operatorRepository,
         private readonly EventRepositoryInterface $eventRepository,
+        private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
     ) {}
 
     public function handle(int $userId, string $role, int $accountId): Collection
@@ -42,11 +48,43 @@ class GetBoxOfficeContextHandler
                 return collect();
             }
 
-            return $this->eventRepository->findWhereIn(EventDomainObjectAbstract::ID, $eventIds);
+            return $this->mapEvents(
+                $this->eventRepository->findWhereIn(EventDomainObjectAbstract::ID, $eventIds)
+            );
         }
 
-        return $this->eventRepository->findWhere([
+        return $this->mapEvents($this->eventRepository->findWhere([
             EventDomainObjectAbstract::ACCOUNT_ID => $accountId,
-        ]);
+        ]));
+    }
+
+    /**
+     * @param  Collection<int, EventDomainObject>  $events
+     * @return Collection<int, BoxOfficeContextEventDTO>
+     */
+    private function mapEvents(Collection $events): Collection
+    {
+        if ($events->isEmpty()) {
+            return collect();
+        }
+
+        $settingsByEventId = $this->eventSettingsRepository
+            ->findWhereIn('event_id', $events->map(fn (EventDomainObject $event) => $event->getId())->all())
+            ->keyBy(fn (EventSettingDomainObject $settings) => $settings->getEventId());
+
+        return $events->map(function (EventDomainObject $event) use ($settingsByEventId) {
+            $country = PhoneCallingCode::iso2FromLocationDetails(
+                $settingsByEventId->get($event->getId())?->getLocationDetails()
+            );
+
+            return new BoxOfficeContextEventDTO(
+                id: $event->getId(),
+                title: $event->getTitle(),
+                currency: $event->getCurrency(),
+                timezone: $event->getTimezone(),
+                country: $country,
+                calling_code: PhoneCallingCode::fromIso2($country),
+            );
+        });
     }
 }

@@ -11,12 +11,16 @@ use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\Status\BoxOfficeSaleStatus;
 use HiEvents\DomainObjects\UserDomainObject;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
+use HiEvents\Exceptions\MissingPhoneCallingCodeException;
 use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Exceptions\UnauthorizedException;
 use HiEvents\Helper\KioskSentinelEmail;
+use HiEvents\Helper\PhoneCallingCode;
+use HiEvents\Helper\PhoneNormalizer;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\BoxOfficeSaleRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
@@ -48,6 +52,7 @@ class CreateBoxOfficeSaleHandler
         private readonly CreateAttendeeHandler $createAttendeeHandler,
         private readonly IsAuthorizedService $isAuthorizedService,
         private readonly DatabaseManager $databaseManager,
+        private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
     ) {}
 
     /**
@@ -62,6 +67,7 @@ class CreateBoxOfficeSaleHandler
      * @throws ProductNotScannableException
      * @throws ResourceConflictException
      * @throws UnauthorizedException
+     * @throws MissingPhoneCallingCodeException
      * @throws Throwable
      */
     public function handle(CreateBoxOfficeSaleDTO $dto, ?UserDomainObject $agent = null): BoxOfficeSaleResultDTO
@@ -89,7 +95,7 @@ class CreateBoxOfficeSaleHandler
                     BoxOfficeSaleDomainObjectAbstract::AMOUNT => $dto->amount,
                     BoxOfficeSaleDomainObjectAbstract::AMOUNT_COLLECTED => $dto->amount_collected,
                     BoxOfficeSaleDomainObjectAbstract::STATUS => BoxOfficeSaleStatus::PENDING->name,
-                    'phone' => $this->normalizePhone($dto->phone),
+                    'phone' => PhoneNormalizer::normalize($dto->phone, $this->resolveCallingCode($dto)),
                 ]);
             } catch (QueryException $exception) {
                 // 23505 = unique_violation (Postgres). Anything else (a
@@ -346,18 +352,19 @@ class CreateBoxOfficeSaleHandler
         return KioskSentinelEmail::forBoxOfficeSale($saleId);
     }
 
-    private function normalizePhone(string $phone): ?string
+    private function resolveCallingCode(CreateBoxOfficeSaleDTO $dto): string
     {
-        $digits = preg_replace('/\D+/', '', $phone) ?? '';
-
-        if ($digits === '') {
-            return null;
+        $override = preg_replace('/\D+/', '', $dto->phone_calling_code) ?? '';
+        if ($override !== '') {
+            return $override;
         }
 
-        if (str_starts_with($digits, '0') && strlen($digits) === 10) {
-            return '+33'.substr($digits, 1);
-        }
+        $settings = $this->eventSettingsRepository->findFirstWhere([
+            'event_id' => $dto->event_id,
+        ]);
 
-        return '+'.$digits;
+        return PhoneCallingCode::fromIso2(
+            PhoneCallingCode::iso2FromLocationDetails($settings?->getLocationDetails())
+        ) ?? '';
     }
 }

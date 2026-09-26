@@ -73,6 +73,29 @@ class BoxOfficeOperatorMultiEventTest extends TestCase
             ->assertJsonCount(1, 'data');
     }
 
+    public function test_context_includes_event_country_calling_code(): void
+    {
+        [$event] = $this->createEventWithProduct(price: 25.00);
+        \HiEvents\Models\EventSetting::query()->where('event_id', $event->id)->update([
+            'location_details' => [
+                'country' => 'YT',
+                'address_line_1' => 'Rue',
+                'city' => 'Mamoudzou',
+                'zip_or_postal_code' => '97600',
+            ],
+        ]);
+        $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
+        $token = $this->loginAndGetToken($operator, self::PASSWORD);
+
+        $this->getJson('/box-office/context', ['Authorization' => 'Bearer '.$token])
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'id' => $event->id,
+                'country' => 'YT',
+                'calling_code' => '262',
+            ]);
+    }
+
     /** AC-v2-11 — all assignments revoked → empty context, no sale possible */
     public function test_revoked_only_assignment_yields_empty_context(): void
     {

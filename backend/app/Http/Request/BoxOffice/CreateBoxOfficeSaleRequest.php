@@ -20,6 +20,7 @@ class CreateBoxOfficeSaleRequest extends BaseRequest
             'items.*.product_price_id' => ['required', 'int'],
             'items.*.quantity' => ['required', 'int', 'min:1', 'max:50'],
             'phone' => ['sometimes', 'nullable', 'string', 'max:25'],
+            'phone_calling_code' => ['sometimes', 'nullable', 'string', 'max:8'],
             'first_name' => ['sometimes', 'nullable', 'string', 'max:40'],
             'last_name' => ['sometimes', 'nullable', 'string', 'max:40'],
             'email' => ['sometimes', 'nullable', 'email'],

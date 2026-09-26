@@ -34,6 +34,7 @@ const KioskSell = () => {
             zebraPrinterHost={settings.zebraPrinterHost}
             defaultLocale={settings.defaultTicketLocale}
             sendConfirmationEmail={settings.sendConfirmationEmail}
+            phoneCallingCode={settings.phoneCallingCode || currentEvent?.calling_code || ''}
         />
     );
 };

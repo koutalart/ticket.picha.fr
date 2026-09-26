@@ -18,6 +18,7 @@ export interface CreateBoxOfficeSaleRequest {
     product_price_id?: number;
     items?: CreateBoxOfficeSaleItem[];
     phone?: string;
+    phone_calling_code?: string;
     first_name?: string;
     last_name?: string;
     email?: string;
@@ -42,6 +43,8 @@ export interface BoxOfficeContextEvent {
     title: string;
     currency: string;
     timezone: string;
+    country?: string | null;
+    calling_code?: string | null;
 }
 
 /** GET /events/{id}/box-office/products — sellable catalogue (scoped). */

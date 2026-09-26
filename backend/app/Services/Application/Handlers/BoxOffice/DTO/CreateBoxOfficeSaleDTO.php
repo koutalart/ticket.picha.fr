@@ -26,5 +26,6 @@ class CreateBoxOfficeSaleDTO extends BaseDataObject
         /** @var CreateBoxOfficeSaleItemDTO[] */
         public readonly array $items = [],
         public readonly bool $send_confirmation_email = false,
+        public readonly string $phone_calling_code = '',
     ) {}
 }

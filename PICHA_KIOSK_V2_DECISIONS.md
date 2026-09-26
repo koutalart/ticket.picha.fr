@@ -811,7 +811,7 @@ compte, pas d'un réglage local).
 
 ---
 
-## D30 — Téléphone au guichet : indicatif événement + override poste — **design retenu, pas encore codé (26 sept. 2026)**
+## D30 — Téléphone au guichet : indicatif événement + override poste — **codé (26 sept. 2026), F1**
 
 ### Contexte (lu — ne pas inventer de champ)
 
@@ -868,7 +868,7 @@ Cas : `location_details` absent / `country` vide / ISO2 inconnu de la table ITU,
 | F2 | Persister les chiffres **tels quels** sans `+indicatif` | Cassé pour SMS / carnet ; dette. |
 | F3 | Repli opérationnel PICHA `+262` | Devine Mayotte pour tout événement sans pays — faux pour un guest FR/MG. |
 
-**Ne pas coder F2/F3 sans validation Jo.** F1 est la proposition technique ; ce n’est pas encore une décision.
+**Ne pas coder F2/F3 sans validation Jo.** **F1 validée (Jo, 26 sept.)** et implémentée : 422 `phone_calling_code` si un téléphone local est saisi sans indicatif résolu.
 
 ### Tests TDD obligatoires **quand** on corrigera `normalizePhone` (pas encore écrits)
 
@@ -894,7 +894,7 @@ Cas : `location_details` absent / `country` vide / ISO2 inconnu de la table ITU,
 | **D27** | Écran Commandes | **A** (Orders natif + filtre `is_manually_created`) **pour un ORGANIZER** ; **B** (`GET /events/{id}/box-office-sales` scoped) obligatoire pour donner l'écran à l'opérateur | Code faible (A) / moyen (B) | Donner l'écran Commandes à l'opérateur en v2.1 ou plus tard ? |
 | **D28** | Écran Statistiques | **A** (`GET /events/{id}/stats`) **pour un ORGANIZER** ; **B/C** (agrégat box-office scoped) pour l'opérateur, après D15 | Code faible (A) | Séquencer après D15 |
 | **D29** | Réglages par poste | **A** : `localStorage` (affichage/impression + **indicatif D30**) — l'événement vient de l'auth | Code faible | Jo tranche D30-F1 |
-| **D30** | Téléphone / indicatif | Design retenu, **pas codé**. Pays = ISO2 `location_details.country`. Override D29. Pas d'IP. Plus de `+33` magique. Repli **F1 proposé**. | Code | Jo tranche F1/F2/F3 |
+| **D30** | Téléphone / indicatif | **Codé.** Pays = ISO2 `location_details.country` → ITU (`YT`/`RE` = `262`). Override D29 `phoneCallingCode`. Context box-office expose `country` + `calling_code`. Repli **F1** (422). Plus de `+33` magique. | Code | Fait |
 
 ### Ce qui est réutilisable **tel quel** (CONFIRMÉ) — pour un ORGANIZER connecté au shell
 

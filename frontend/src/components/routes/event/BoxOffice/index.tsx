@@ -1,6 +1,8 @@
 import {useMemo} from "react";
 import {useParams} from "react-router";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
+import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
+import {callingCodeFromIso2} from "../../../../utilites/phoneCallingCode.ts";
 import {useGetProducts} from "../../../../queries/useGetProducts.ts";
 import {useGetEventCheckInLists} from "../../../../queries/useGetCheckInLists.ts";
 import {Product, ProductType} from "../../../../types.ts";
@@ -9,6 +11,7 @@ import {SaleForm} from "./SaleForm";
 const BoxOffice = () => {
     const {eventId} = useParams();
     const {data: event} = useGetEvent(eventId);
+    const eventSettingsQuery = useGetEventSettings(eventId);
     const {data: productsResponse} = useGetProducts(eventId, {pageNumber: 1, perPage: 100});
     const {data: checkInListsResponse} = useGetEventCheckInLists(eventId);
 
@@ -34,6 +37,7 @@ const BoxOffice = () => {
         <SaleForm
             eventId={eventId}
             currency={event?.currency}
+            phoneCallingCode={callingCodeFromIso2(eventSettingsQuery.data?.location_details?.country)}
             products={eligibleProducts}
             isLoading={!productsResponse || !checkInListsResponse}
         />

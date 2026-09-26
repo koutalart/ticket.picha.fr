@@ -4,6 +4,7 @@ namespace HiEvents\Http\Actions\BoxOffice;
 
 use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
+use HiEvents\Exceptions\MissingPhoneCallingCodeException;
 use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Http\Actions\BaseAction;
@@ -63,11 +64,14 @@ class CreateBoxOfficeSaleAction extends BaseAction
                     idempotency_key: $request->validated('idempotency_key'),
                     items: $itemDtos,
                     send_confirmation_email: (bool) ($request->validated('send_confirmation_email') ?? false),
+                    phone_calling_code: (string) ($request->validated('phone_calling_code') ?? ''),
                 ),
                 $this->getAuthenticatedUser(),
             );
         } catch (BoxOfficePriceMismatchException $exception) {
             throw ValidationException::withMessages(['amount' => $exception->getMessage()]);
+        } catch (MissingPhoneCallingCodeException $exception) {
+            throw ValidationException::withMessages(['phone_calling_code' => $exception->getMessage()]);
         } catch (ProductNotScannableException|ResourceConflictException $exception) {
             return $this->errorResponse($exception->getMessage(), ResponseCodes::HTTP_CONFLICT);
         }

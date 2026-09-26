@@ -12,6 +12,7 @@ export interface KioskSettings {
     sendConfirmationEmail: boolean;
     printOutput: KioskPrintOutput;
     zebraPrinterHost: string;
+    phoneCallingCode: string;
 }
 
 const DEFAULT_SETTINGS: KioskSettings = {
@@ -20,6 +21,7 @@ const DEFAULT_SETTINGS: KioskSettings = {
     sendConfirmationEmail: false,
     printOutput: 'zebra',
     zebraPrinterHost: '',
+    phoneCallingCode: '',
 };
 
 const readSettings = (): KioskSettings => {
@@ -39,6 +41,9 @@ const readSettings = (): KioskSettings => {
             sendConfirmationEmail: Boolean(parsed.sendConfirmationEmail),
             printOutput: parsed.printOutput === 'none' ? 'none' : 'zebra',
             zebraPrinterHost: typeof parsed.zebraPrinterHost === 'string' ? parsed.zebraPrinterHost : '',
+            phoneCallingCode: typeof parsed.phoneCallingCode === 'string'
+                ? parsed.phoneCallingCode.replace(/\D/g, '')
+                : '',
         };
     } catch {
         return DEFAULT_SETTINGS;

@@ -8,9 +8,11 @@ use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
 use HiEvents\DomainObjects\Status\BoxOfficeSaleStatus;
 use HiEvents\DomainObjects\Status\OrderPaymentStatus;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
+use HiEvents\Exceptions\MissingPhoneCallingCodeException;
 use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Jobs\Order\SendOrderDetailsEmailJob;
+use HiEvents\Models\EventSetting;
 use HiEvents\Models\Order;
 use HiEvents\Models\ProductPrice;
 use HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler;
@@ -91,12 +93,73 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
             payment_method: BoxOfficePaymentMethod::CASH,
             amount_collected: 25.00,
             idempotency_key: \Illuminate\Support\Str::uuid()->toString(),
+            phone_calling_code: '33',
         ));
 
         self::assertSame('', $result->attendee->getFirstName());
         self::assertSame('', $result->attendee->getLastName());
         self::assertTrue(\HiEvents\Helper\KioskSentinelEmail::isKioskSentinelEmail($result->attendee->getEmail()));
         self::assertSame('+33612345678', DB::table('box_office_sales')->where('id', $result->saleId)->value('phone'));
+    }
+
+    public function test_mayotte_event_country_prefixes_262_not_33(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+        EventSetting::query()->where('event_id', $event->id)->update([
+            'location_details' => [
+                'country' => 'YT',
+                'address_line_1' => 'Rue',
+                'city' => 'Mamoudzou',
+                'zip_or_postal_code' => '97600',
+            ],
+        ]);
+
+        $handler = app(CreateBoxOfficeSaleHandler::class);
+
+        $result = $handler->handle(new CreateBoxOfficeSaleDTO(
+            event_id: $event->id,
+            agent_user_id: $user->id,
+            product_id: $product->id,
+            product_price_id: $productPrice->id,
+            phone: '639780773',
+            first_name: 'Jane',
+            last_name: '',
+            email: null,
+            locale: 'fr',
+            amount: 25.00,
+            payment_method: BoxOfficePaymentMethod::CASH,
+            amount_collected: 25.00,
+            idempotency_key: \Illuminate\Support\Str::uuid()->toString(),
+        ));
+
+        $stored = DB::table('box_office_sales')->where('id', $result->saleId)->value('phone');
+        self::assertSame('+262639780773', $stored);
+        self::assertStringNotContainsString('+33', (string) $stored);
+    }
+
+    public function test_local_phone_without_calling_code_is_rejected(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $this->expectException(MissingPhoneCallingCodeException::class);
+
+        app(CreateBoxOfficeSaleHandler::class)->handle(new CreateBoxOfficeSaleDTO(
+            event_id: $event->id,
+            agent_user_id: $user->id,
+            product_id: $product->id,
+            product_price_id: $productPrice->id,
+            phone: '639780773',
+            first_name: 'Jane',
+            last_name: '',
+            email: null,
+            locale: 'fr',
+            amount: 25.00,
+            payment_method: BoxOfficePaymentMethod::CASH,
+            amount_collected: 25.00,
+            idempotency_key: \Illuminate\Support\Str::uuid()->toString(),
+        ));
     }
 
     public function test_sale_without_phone_stores_null_email(): void
@@ -387,6 +450,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
             amount_collected: 25.00,
             idempotency_key: \Illuminate\Support\Str::uuid()->toString(),
             send_confirmation_email: true,
+            phone_calling_code: '33',
         ));
 
         Queue::assertNotPushed(SendOrderDetailsEmailJob::class);
