@@ -14,6 +14,7 @@ use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\ProductNotScannableException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Exceptions\UnauthorizedException;
+use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\BoxOfficeSaleRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
@@ -125,6 +126,9 @@ class CreateBoxOfficeSaleHandler
 
             $attendees = [];
             $itemRows = [];
+            $attendeeEmail = $this->resolveAttendeeEmail($dto->email, $sale->getId());
+            $sendConfirmation = (bool) $dto->send_confirmation_email
+                && ! KioskSentinelEmail::isKioskSentinelEmail($attendeeEmail);
 
             foreach ($items as $item) {
                 $unitPrice = $lockedPrices[$item->product_price_id]->getPrice();
@@ -137,10 +141,10 @@ class CreateBoxOfficeSaleHandler
                     $attendee = $this->createAttendeeHandler->handle(new CreateAttendeeDTO(
                         first_name: $dto->first_name,
                         last_name: $dto->last_name,
-                        email: $dto->email ?: null,
+                        email: $attendeeEmail,
                         product_id: $item->product_id,
                         event_id: $dto->event_id,
-                        send_confirmation_email: (bool) $dto->send_confirmation_email && ($dto->email ?: null) !== null,
+                        send_confirmation_email: $sendConfirmation,
                         amount_paid: $unitPrice,
                         locale: $dto->locale,
                         product_price_id: $item->product_price_id,
@@ -329,6 +333,17 @@ class CreateBoxOfficeSaleHandler
                 quantity: 1,
             ),
         ];
+    }
+
+    private function resolveAttendeeEmail(?string $email, int $saleId): string
+    {
+        $trimmed = trim((string) $email);
+
+        if ($trimmed !== '' && ! KioskSentinelEmail::isKioskSentinelEmail($trimmed)) {
+            return $trimmed;
+        }
+
+        return KioskSentinelEmail::forBoxOfficeSale($saleId);
     }
 
     private function normalizePhone(string $phone): ?string

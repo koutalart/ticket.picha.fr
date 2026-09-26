@@ -15,6 +15,7 @@ import {OrderDetails} from "../../common/OrderDetails";
 import {QuestionList} from "../../common/QuestionAndAnswerList";
 import {AttendeeTicket} from "../../common/AttendeeTicket";
 import {getInitials} from "../../../utilites/helpers.ts";
+import {displayAttendeeEmail} from "../../../utilites/isKioskSentinelEmail.ts";
 import {t} from "@lingui/macro";
 import classes from './ManageAttendeeModal.module.scss';
 import {useEffect, useState} from "react";
@@ -58,7 +59,7 @@ export const ManageAttendeeModal = ({onClose, attendeeId}: ManageAttendeeModalPr
             form.initialize({
                 first_name: attendee.first_name,
                 last_name: attendee.last_name,
-                email: attendee.email ?? "",
+                email: displayAttendeeEmail(attendee.email) ?? "",
                 notes: attendee.notes || "",
                 product_id: String(attendee.product_id),
                 product_price_id: attendee.product_price_id ? String(attendee.product_price_id) : "",

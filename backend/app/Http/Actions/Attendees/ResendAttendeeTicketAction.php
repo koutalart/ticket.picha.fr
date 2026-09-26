@@ -5,6 +5,7 @@ namespace HiEvents\Http\Actions\Attendees;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
 use HiEvents\Exceptions\AttendeeEmailMissingException;
+use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\ResponseCodes;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
@@ -19,8 +20,7 @@ class ResendAttendeeTicketAction extends BaseAction
     public function __construct(
         private readonly ResendAttendeeTicketHandler $handler,
         private readonly AttendeeRepositoryInterface $attendeeRepository,
-    ) {
-    }
+    ) {}
 
     public function __invoke(int $eventId, string $attendeePublicId): JsonResponse|Response
     {
@@ -42,7 +42,7 @@ class ResendAttendeeTicketAction extends BaseAction
             return $this->errorResponse(__('Attendee not found.'), Response::HTTP_CONFLICT);
         }
 
-        if ($attendee->getEmail() === null || $attendee->getEmail() === '') {
+        if (KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail())) {
             return $this->errorResponse(
                 __('Ce participant n\'a pas encore d\'e-mail. Renseignez-le d\'abord.'),
                 ResponseCodes::HTTP_UNPROCESSABLE_ENTITY,

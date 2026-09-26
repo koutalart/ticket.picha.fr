@@ -9,8 +9,8 @@ use HiEvents\DomainObjects\InvoiceDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Mail\Order\OrderFailed;
-use HiEvents\Mail\Order\OrderSummary;
 use HiEvents\Mail\Organizer\OrderSummaryForOrganizer;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -22,14 +22,12 @@ use Illuminate\Mail\Mailer;
 class SendOrderDetailsService
 {
     public function __construct(
-        private readonly EventRepositoryInterface  $eventRepository,
-        private readonly OrderRepositoryInterface  $orderRepository,
-        private readonly Mailer                    $mailer,
+        private readonly EventRepositoryInterface $eventRepository,
+        private readonly OrderRepositoryInterface $orderRepository,
+        private readonly Mailer $mailer,
         private readonly SendAttendeeTicketService $sendAttendeeTicketService,
-        private readonly MailBuilderService        $mailBuilderService,
-    )
-    {
-    }
+        private readonly MailBuilderService $mailBuilderService,
+    ) {}
 
     public function sendOrderSummaryAndTicketEmails(OrderDomainObject $order): void
     {
@@ -63,13 +61,12 @@ class SendOrderDetailsService
     }
 
     public function sendCustomerOrderSummary(
-        OrderDomainObject        $order,
-        EventDomainObject        $event,
-        OrganizerDomainObject    $organizer,
+        OrderDomainObject $order,
+        EventDomainObject $event,
+        OrganizerDomainObject $organizer,
         EventSettingDomainObject $eventSettings,
-        ?InvoiceDomainObject     $invoice = null
-    ): void
-    {
+        ?InvoiceDomainObject $invoice = null
+    ): void {
         $mail = $this->mailBuilderService->buildOrderSummaryMail(
             $order,
             $event,
@@ -78,7 +75,7 @@ class SendOrderDetailsService
             $invoice
         );
 
-        if ($order->getEmail() === null || $order->getEmail() === '') {
+        if (KioskSentinelEmail::isKioskSentinelEmail($order->getEmail())) {
             return;
         }
 
@@ -92,7 +89,7 @@ class SendOrderDetailsService
     {
         $sentEmails = [];
         foreach ($order->getAttendees() as $attendee) {
-            if ($attendee->getEmail() === null || $attendee->getEmail() === '') {
+            if (KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail())) {
                 continue;
             }
 
@@ -122,7 +119,7 @@ class SendOrderDetailsService
             invoice: $order->getLatestInvoice(),
         );
 
-        if ($order->getIsManuallyCreated() || !$event->getEventSettings()->getNotifyOrganizerOfNewOrders()) {
+        if ($order->getIsManuallyCreated() || ! $event->getEventSettings()->getNotifyOrganizerOfNewOrders()) {
             return;
         }
 

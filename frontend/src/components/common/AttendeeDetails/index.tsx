@@ -1,6 +1,7 @@
 import {Anchor} from "@mantine/core";
 import {Attendee, Product} from "../../../types.ts";
 import classes from "./AttendeeDetails.module.scss";
+import {displayAttendeeEmail} from "../../../utilites/isKioskSentinelEmail.ts";
 import {t} from "@lingui/macro";
 import {getAttendeeProductTitle} from "../../../utilites/products.ts";
 import {getLocaleName, SupportedLocales} from "../../../locales.ts";
@@ -22,8 +23,8 @@ export const AttendeeDetails = ({attendee}: { attendee: Attendee }) => {
                     {t`Email`}
                 </div>
                 <div className={classes.value}>
-                    {attendee.email
-                        ? <Anchor href={'mailto:' + attendee.email} target={'_blank'}>{attendee.email}</Anchor>
+                    {displayAttendeeEmail(attendee.email)
+                        ? <Anchor href={'mailto:' + displayAttendeeEmail(attendee.email)} target={'_blank'}>{displayAttendeeEmail(attendee.email)}</Anchor>
                         : t`—`}
                 </div>
             </div>

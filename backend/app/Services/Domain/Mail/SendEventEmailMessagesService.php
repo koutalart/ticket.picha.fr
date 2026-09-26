@@ -11,6 +11,7 @@ use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\MessageStatus;
 use HiEvents\Exceptions\UnableToSendMessageException;
+use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Jobs\Event\SendEventEmailJob;
 use HiEvents\Mail\Event\EventMessage;
 use HiEvents\Repository\Eloquent\Value\Relationship;
@@ -29,16 +30,14 @@ class SendEventEmailMessagesService
     private array $sentEmails = [];
 
     public function __construct(
-        private readonly OrderRepositoryInterface    $orderRepository,
+        private readonly OrderRepositoryInterface $orderRepository,
         private readonly AttendeeRepositoryInterface $attendeeRepository,
-        private readonly EventRepositoryInterface    $eventRepository,
-        private readonly MessageRepositoryInterface  $messageRepository,
-        private readonly UserRepositoryInterface     $userRepository,
-        private readonly Logger                      $logger,
-        private readonly Dispatcher                  $dispatcher,
-    )
-    {
-    }
+        private readonly EventRepositoryInterface $eventRepository,
+        private readonly MessageRepositoryInterface $messageRepository,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly Logger $logger,
+        private readonly Dispatcher $dispatcher,
+    ) {}
 
     /**
      * @throws UnableToSendMessageException
@@ -58,7 +57,7 @@ class SendEventEmailMessagesService
             'event_id' => $messageData->event_id,
         ]);
 
-        if ((!$order && $messageData->type === MessageTypeEnum::ORDER_OWNER) || !$messageData->id) {
+        if ((! $order && $messageData->type === MessageTypeEnum::ORDER_OWNER) || ! $messageData->id) {
             $message = 'Unable to send message. Order or message ID not present.';
             $this->logger->error($message, $messageData->toArray());
             $this->updateMessageStatus($messageData, MessageStatus::FAILED);
@@ -117,12 +116,15 @@ class SendEventEmailMessagesService
     }
 
     private function sendOrderMessages(
-        SendMessageDTO    $messageData,
+        SendMessageDTO $messageData,
         EventDomainObject $event,
         OrderDomainObject $order,
-    ): void
-    {
+    ): void {
         $this->sendEmailToMessageSender($messageData, $event);
+
+        if (KioskSentinelEmail::isKioskSentinelEmail($order->getEmail())) {
+            return;
+        }
 
         $this->sendMessage(
             emailAddress: $order->getEmail(),
@@ -133,11 +135,10 @@ class SendEventEmailMessagesService
     }
 
     private function emailAttendees(
-        Collection        $attendees,
-        SendMessageDTO    $messageData,
+        Collection $attendees,
+        SendMessageDTO $messageData,
         EventDomainObject $event,
-    ): void
-    {
+    ): void {
         $this->sendEmailToMessageSender($messageData, $event);
 
         if ($messageData->is_test) {
@@ -146,7 +147,7 @@ class SendEventEmailMessagesService
 
         $sentEmails = [];
         $attendees->each(function (AttendeeDomainObject $attendee) use (&$sentEmails, $event, $messageData) {
-            if ($attendee->getEmail() === null || $attendee->getEmail() === '') {
+            if (KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail())) {
                 return;
             }
 
@@ -201,7 +202,7 @@ class SendEventEmailMessagesService
 
     private function sendEmailToMessageSender(SendMessageDTO $messageData, EventDomainObject $event): void
     {
-        if (!$messageData->send_copy_to_current_user && !$messageData->is_test) {
+        if (! $messageData->send_copy_to_current_user && ! $messageData->is_test) {
             return;
         }
 
@@ -230,6 +231,10 @@ class SendEventEmailMessagesService
         $this->sendEmailToMessageSender($messageData, $event);
 
         $orders->each(function (OrderDomainObject $order) use ($messageData, $event) {
+            if (KioskSentinelEmail::isKioskSentinelEmail($order->getEmail())) {
+                return;
+            }
+
             $this->sendMessage(
                 emailAddress: $order->getEmail(),
                 fullName: $order->getFullName(),
@@ -240,12 +245,11 @@ class SendEventEmailMessagesService
     }
 
     private function sendMessage(
-        string            $emailAddress,
-        string            $fullName,
-        SendMessageDTO    $messageData,
+        string $emailAddress,
+        string $fullName,
+        SendMessageDTO $messageData,
         EventDomainObject $event,
-    ): void
-    {
+    ): void {
         if (in_array($emailAddress, $this->sentEmails, true)) {
             return;
         }

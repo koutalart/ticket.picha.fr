@@ -758,6 +758,32 @@ Préférer la seconde (cohérence avec l'autre chemin). Ajouter un test :
 
 ---
 
+## T22 — Sentinelle kiosk : ne pas envoyer de mail vers `.invalid` (garde unique)
+
+**Découvert / cadré le 2026-09-26** avec D6-S. **Pas de dette « mail fantôme accepté ».**
+
+Après rollback de `attendees.email` NOT NULL, une vente guichet sans e-mail réel stockera une
+sentinelle (`kiosk.{public_id}@no-mail.picha.invalid`). Les 4 actions orga suivantes appellent
+`Mail::to($order->getEmail())` / `sendMessage($order->getEmail())` **sans garde** :
+
+1. `ResendOrderConfirmationAction.php:65`
+2. `OrderCancelService.php:61`
+3. `RefundOrderHandler.php:92` (`notifyBuyer`)
+4. `SendEventEmailMessagesService.php:128` (`sendOrderMessages`) — plus L234 `sendProductMessages`
+
+Sans garde : plus de 500 (l'adresse est une string), mais l'orga croit avoir notifié le client.
+
+**Correctif (à livrer avec D6-S, pas 4 patches métier) :**
+
+- Un helper unique, ex. `HiEvents\Helper\KioskSentinelEmail::matches(string $email): bool`
+  (suffixe stable `@no-mail.picha.invalid`).
+- Aux 4+1 call sites : `if (KioskSentinelEmail::matches(...)) { skip send + message agent }`.
+- Tests : sentinelle → rien n'est queued ; e-mail réel → comportement inchangé.
+
+**Effort :** ~1 h (helper + 5 branches + tests). Bloquant pour coder D6-S.
+
+---
+
 ## Note — `CreateAttendeeHandler` : résolution du générateur par service locator
 
 `app/Services/Application/Handlers/Attendee/CreateAttendeeHandler.php:233` résout

@@ -57,7 +57,8 @@ class BoxOfficeSaleNoEmailTest extends TestCase
         self::assertSame('+33612345678', $sale?->phone);
 
         $attendee = Attendee::query()->find($sale->attendee_id);
-        self::assertNull($attendee->email);
+        self::assertNotNull($attendee->email);
+        self::assertTrue(\HiEvents\Helper\KioskSentinelEmail::isKioskSentinelEmail($attendee->email));
         self::assertSame('Jane', $attendee->first_name);
 
         $pdf = $this->get(
@@ -177,5 +178,40 @@ class BoxOfficeSaleNoEmailTest extends TestCase
 
         $response->assertUnprocessable();
         $response->assertJsonValidationErrors(['email']);
+    }
+
+    public function test_resend_order_confirmation_is_422_for_sentinel_email(): void
+    {
+        [$event, $product, $productPrice, $token] = $this->authenticatedEvent();
+
+        $sale = $this->postJson(
+            "/events/{$event->id}/box-office-sales",
+            [
+                'product_id' => $product->id,
+                'product_price_id' => $productPrice->id,
+                'phone' => '+33612345678',
+                'first_name' => 'Jane',
+                'locale' => 'fr',
+                'payment_method' => 'CASH',
+                'amount' => 25.00,
+                'amount_collected' => 25.00,
+                'idempotency_key' => Str::uuid()->toString(),
+            ],
+            ['Authorization' => 'Bearer '.$token],
+        );
+        $sale->assertCreated();
+        $orderId = $sale->json('data.order.id');
+
+        Mail::fake();
+
+        $resend = $this->postJson(
+            "/events/{$event->id}/orders/{$orderId}/resend_confirmation",
+            [],
+            ['Authorization' => 'Bearer '.$token],
+        );
+
+        $resend->assertUnprocessable();
+        Mail::assertNothingQueued();
+        Mail::assertNothingSent();
     }
 }

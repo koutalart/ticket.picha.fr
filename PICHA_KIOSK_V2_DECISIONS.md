@@ -74,18 +74,163 @@ Catégories (par point) :
 
 ---
 
-## D6 — E-mail au guichet — **ROUVERTE (7 sept. 2026). Option D retenue**
+## D6 — E-mail au guichet — **ANNULÉE (26 sept. 2026) : plus de NULL en base**
 
-**D6 — ROUVERTE (7 sept. 2026). Option D retenue :** e-mail **optionnel** au guichet.
-Sans e-mail, le participant est créé avec `attendees.email = NULL` (colonne rendue nullable)
-— **jamais** d'adresse fictive. Complété a posteriori par un ADMIN/ORGANIZER via l'écran
-Participants (`PATCH .../attendees/{id}`), qui peut ensuite renvoyer le billet. Aucun mail
-tant que l'e-mail est absent. Au moins un identifiant (nom, e-mail ou téléphone) requis
-par vente.
+**Historique.** Le 7 sept., option D : `attendees.email` nullable, jamais d'adresse fictive.
+**Annulée le 26 sept.** Les 4 ruptures natives (renvoi confirmation commande, annulation,
+remboursement, message au titulaire) sont des actions orga quotidiennes. Patcher le cœur
+Hi.Events à chaque trou n'est pas acceptable pour ce chantier.
 
-L'ancienne option **D6 = B (e-mail obligatoire au guichet)** est **annulée**.
+**Décidé :** rollback de la nullabilité (`CreateAttendeeDTO::$email` redevient `string`,
+migration `make_attendees_email_nullable` revert + `AttendeeDomainObjectAbstract::getEmail(): string`).
+`orders.email` n'a **pas** été rendu nullable par D6 (déjà nullable dans `schema.sql:327`) ;
+on arrête simplement d'y écrire `NULL` depuis le guichet.
+
+**Pas encore codé** (cette section = proposition). Voir « D6-S » ci-dessous.
+
+### D6 — Audit null-safety `attendees.email` (natif + kiosk) — **26 sept. 2026**
+(preuve du rollback ; l'option D n'est plus retenue)
+
+La migration `2026_09_07_000000_make_attendees_email_nullable.php` et `CreateAttendeeDTO::$email: ?string` touchent le **cœur Hi.Events**, pas seulement le guichet. `CreateAttendeeHandler` recopie le même e-mail sur **`orders.email`** (`CreateAttendeeHandler.php:124` et `:230`). Une vente guichet sans e-mail crée donc **les deux** à `NULL`.
+
+`orders.email` est **déjà nullable** dans `schema.sql:327` (`email varchar(255)` sans `not null`) et `OrderDomainObjectAbstract::getEmail(): ?string`. Ce n’est **pas** une nouvelle migration orders.
+
+`CreateAttendeeRequest` (HTTP natif `/manage` → `POST …/attendees`) garde `'email' => ['required', 'email']` — le back-office **n’autorise toujours pas** un participant sans e-mail. Seul le kiosk passe `null` via le handler.
+
+Aucune app mobile native (iOS/Android/Flutter/RN) dans ce dépôt. Check-in public : `AttendeeWithCheckInPublicResource` **n’expose pas** `email` (preuve : `AttendeeWithCheckInPublicResourceTest`). Module Digit bracelets : commentaire explicite « never attendee PII (name, email) ».
+
+| Endroit | Preuve | Verdict |
+|---|---|---|
+| `SendAttendeeTicketService::send` | garde `getEmail() === null \|\| === ''` puis `return` **avant** `->to()` | **null-safe** (kiosk + natif) |
+| `ResendAttendeeTicketAction` / `ResendAttendeeTicketHandler` | même garde + 422 métier kiosk | **null-safe** |
+| `SendOrderDetailsService` | `order->getEmail()` null → skip résumé acheteur ; attendees : skip si e-mail vide | **null-safe** |
+| `SendEventEmailMessagesService::emailAttendees` | skip si e-mail null/vide | **null-safe** (messages « tous les participants ») |
+| `EmailTokenContextBuilder` | `'email' => $attendee->getEmail() ?? ''` | **null-safe** (token Liquid vide, pas de crash) |
+| `AttendeeResource` / `AttendeeResourcePublic` / webhooks `dispatchAttendeeWebhook` | `'email' => $this->getEmail()` ; payload = `AttendeeResource` | **null-safe JSON** (`"email": null`). Consommateurs externes **non audités** — un webhook PICHA qui suppose une string cassera **chez eux**, pas ici. |
+| `AttendeesExport` | `$attendee->getEmail()` dans la cellule Excel | **null-safe** (cellule vide). Pas de plantage PHP. |
+| Vue `question_and_answer_views` | `a.email AS attendee_email` recréée nullable ; DO `?string` | **null-safe** |
+| Recherche participants `AttendeeRepository` `ilike` sur `attendees.email` | un `NULL` SQL ne matche pas la requête | **null-safe** (le participant n’apparaît pas par e-mail ; searchable par nom / public_id) |
+| Index `idx_attendees_email_trgm` | GIN sur colonne devenue nullable | **OK Postgres** (NULL indexés, pas UNIQUE) |
+| PDF `attendee-ticket-pdf.blade.php:61` | `{{ $attendee->getEmail() }}` | **null-safe affichage** (ligne vide). Pas de crash. |
+| Front `Attendee.email: string \| null` + `AttendeeTable` / `AttendeeDetails` / `AttendeeTicket` | `?? t\`—\``, mailto et resend **disabled** sans e-mail | **null-safe** (kiosk déjà traité) |
+| `CreateAttendeeModal` + `CreateAttendeeRequest` | e-mail **required** | **inchangé** — chemin natif « ajouter un participant » refuse le vide |
+| `EditAttendeeRequest` | `RulesHelper::REQUIRED_EMAIL` | **volontaire** : le PUT « modifier » force un e-mail (compléter a posteriori) |
+| `PartialEditAttendeeRequest` | `'email' => ['sometimes', 'email']` | **OK** pour PATCH remplir ; **interdit** d’envoyer `null` pour vider |
+| **`SendEventEmailMessagesService::sendOrderMessages`** | `sendMessage(emailAddress: $order->getEmail(), …)` et `sendMessage()` type **`string $emailAddress`** | **PLANTE** (TypeError PHP 8) si un orga envoie un message au **titulaire de commande** d’une vente guichet sans e-mail |
+| **`ResendOrderConfirmationAction:65`** | `->to($order->getEmail())` sans garde | **PLANTE** (`Mail::to(null)`) sur « Renvoyer la confirmation » d’une commande kiosk sans e-mail |
+| **`OrderCancelService:61`** | `->to($order->getEmail())` sans garde | **PLANTE** à l’annulation d’une commande kiosk sans e-mail |
+| **`RefundOrderHandler::notifyBuyer`** | `->to($order->getEmail())` | **PLANTE** au remboursement Stripe d’une telle commande (peu probable au guichet cash/TPE, mais le handler est natif) |
+| **`StripeRefundExpiredOrderService:70`** | `->to($order->getEmail())` | **PLANTE** idem (checkout Stripe expiré — pas le chemin kiosk) |
+| **`SelfServiceEditAttendeeService::sendChangeNotificationToOldEmail`** | paramètre `string $oldEmail` + `Mail::to($oldEmail)` | **PLANTE** si self-service change l’e-mail alors que l’ancien est `null` (TypeError). Peu probable : le self-service s’ouvre surtout via lien e-mail. Le PATCH admin n’emprunte pas ce service. |
+| Widget `EditAttendeeModal` | `email: attendee.email` sans `?? ''` + validate required | **UX cassée / validation** si un participant kiosk ouvre le self-service : champ `null` |
+| Checkout `CompleteOrderHandler` | copie `orderDTO->email` ou `$attendee->email` depuis le widget | **hors danger** : le checkout public exige toujours un e-mail |
+| Ticket lookup `SendTicketLookupEmailHandler` | cherche `orders.email = $email` puis mail à **cette** adresse | **null-safe** : une commande sans e-mail est **invisible** au lookup (pas de crash ; le client ne récupère pas ses billets par e-mail) |
+| Facture `invoice.blade.php:353` | `{{ $order->getEmail() }}` | **null-safe affichage**. Pas d’usage attendee. |
+| Stripe PaymentIntent | `order->getEmail()` dans metadata customer | **hors chemin kiosk** (pas de Stripe Intent à la vente guichet actuelle) |
+
+**Décision Jo 26 sept. :** rollback NULL. Une **seule** garde sentinelle partagée (T22), pas 4 correctifs métier séparés.
+
+### D6-S — Vente guichet sans e-mail **sans** toucher `attendees.email` / `CreateAttendeeDTO` — **proposé, pas codé**
+
+Besoin réel : l'agent peut vendre avec nom et/ou téléphone seulement. Le cœur Hi.Events exige un
+`email` string non vide (`CreateAttendeeRequest` natif `'email' => ['required', 'email']`,
+`CreateAttendeeHandler` écrit `attendees.email` **et** `orders.email`).
+
+**Option retenue à valider : S — sentinelle RFC 2606, uniquement dans le handler guichet.**
+
+1. `CreateBoxOfficeSaleRequest` : `email` reste `nullable` (contrainte **Request guichet**, pas le DTO natif).
+2. `CreateBoxOfficeSaleHandler`, **avant** `new CreateAttendeeDTO` : si l'agent n'a pas saisi d'e-mail,
+   `$email = 'kiosk.' . $attendeePublicId . '@no-mail.picha.invalid'` (TLD **`.invalid`**, RFC 2606 —
+   aucun MX, aucune livraison). Unicité par `public_id` déjà généré pour le billet.
+3. `CreateAttendeeDTO::$email` : **`string`**, jamais `null`. `CreateAttendeeHandler` **inchangé**.
+4. `send_confirmation_email` : `true` seulement si l'agent a saisi un e-mail **réel** (pas la sentinelle).
+5. Front Participants / kiosk : une adresse `*@no-mail.picha.invalid` s'affiche « — / À compléter »
+   (même UX qu'aujourd'hui). PATCH admin avec un vrai e-mail **remplace** la sentinelle.
+6. Resend **billet** : sentinelle → 422 (même helper T22).
+7. **T22 (obligatoire avec D6-S, pas de « mail fantôme ») :** helper unique
+   `isKioskSentinelEmail(string $email): bool` (suffixe `@no-mail.picha.invalid`).
+   Branché aux 4 actions orga **plus** `sendProductMessages` : pas d'envoi, réponse/flash
+   explicite (« ce participant n'a pas d'e-mail réel »). Un appelant, une règle — pas 4
+   copies de logique métier.
+
+#### Laravel `'email'` vs TLD `.invalid` (26 sept. 2026)
+
+**Ce qui est dans ce dépôt (lu, pas exécuté — Docker/PHP absents de cette session) :**
+
+- `CreateAttendeeRequest.php:17` : `'email' => ['required', 'email']` — **pas** `email:dns`.
+- Aucun `Email::defaults()`, aucun `email:dns` / `email:strict` dans `app/` ni `config/`.
+- Laravel 12 `ValidatesAttributes::validateEmail` (`vendor/.../ValidatesAttributes.php:936-954`) :
+  paramètres vides → **uniquement** `Egulias\RFCValidation` (parseur RFC). Le check MX/DNS
+  n'est **pas** le défaut ; il s'active seulement avec le paramètre `dns`.
+- `DNSCheckValidation` (Egulias) **rejette** le TLD `invalid` (liste RFC 2606
+  `RESERVED_DNS_TOP_LEVEL_NAMES` : `invalid`, `test`, `example`, `localhost` — lignes 23-28
+  de `DNSCheckValidation.php`). Donc `email:dns` **ferait échouer** `kiosk.*@no-mail.picha.invalid`.
+  Ce n'est **pas** la règle utilisée aujourd'hui.
+
+**Exécution empirique `Validator::make` :** **non faite** ici (pas de binaire `php`, daemon
+Docker down). À lancer **avant** d'implémenter D6-S, dans le conteneur backend :
+
+```
+Validator::make(
+  ['email' => 'kiosk.A-ABC1234@no-mail.picha.invalid'],
+  ['email' => (new CreateAttendeeRequest)->rules()['email']]
+)->passes();
+```
+
+Attendu d'après le code Laravel ci-dessus : **true**. Si false : basculer sur l'alternative
+ci-dessous, ne pas forcer `.invalid`.
+
+**Alternative si `'email'` ou un futur `email:dns` refuse `.invalid` :** domaine PICHA **réel**
+sans boîte (ex. `kiosk.{id}@noreply.ticket.picha.fr`) avec MX vers un puits / pas de catch-all
+— passe `email` **et** `email:dns`, mais **n'est plus « jamais livrable par construction RFC »**.
+À n'utiliser que si le test empirique échoue. Pas `noreply@picha.fr` partagé (collision).
+
+**Test à committer avec D6-S (pas avant) :** Unit qui appelle
+`(new CreateAttendeeRequest)->rules()['email']` via `Validator::make` sur la sentinelle —
+PASS obligatoire ; un second assert `email:dns` FAIL documente le piège Egulias.
+
+#### Preuve de non-régression des 4 ruptures (crash `Mail::to(null)` / TypeError)
+
+Après rollback + S, `getEmail()` sur attendee **et** order d'une vente guichet sans saisie e-mail
+est une **string non vide** (`kiosk.{id}@no-mail.picha.invalid`). Les 4 appels reçoivent un
+destinataire syntaxiquement valide : Laravel n'élève plus `InvalidArgumentException` / TypeError.
+
+| Endroit | Code aujourd'hui (preuve du crash si NULL) | Après S (preuve : plus de NULL) |
+|---|---|---|
+| Renvoi confirmation commande | `ResendOrderConfirmationAction.php:65` `$this->mailer->to($order->getEmail())` sans garde | `$order->getEmail()` = sentinelle `string` → `Mail::to()` **n'explose pas** |
+| Annulation | `OrderCancelService.php:61` `->to($order->getEmail())` | idem |
+| Remboursement | `RefundOrderHandler.php:92` `notifyBuyer` `->to($order->getEmail())` | idem |
+| Message titulaire | `SendEventEmailMessagesService.php:128` `sendMessage(emailAddress: $order->getEmail())` or `php:234` `sendProductMessages` ; `sendMessage()` exige `string $emailAddress` (`php:242-247`) | plus de TypeError (null n'est plus passé) |
+
+**Crash :** plus de `Mail::to(null)` (string sentinelle). **Mail fantôme :** **interdit** —
+T22 (`PICHA_BASELINE_TODO.md`). Helper unique, 4+1 call sites, message agent, pas d'envoi.
+
+**Ce que S ne fait pas :**
+
+- Pas de nouvelle colonne, pas de `attendees.email` nullable, pas de `?string` sur le DTO natif.
+- Pas de géoloc, pas d'e-mail « vrai » inventé (`gmail.com`, domaine PICHA avec MX).
+- Les webhooks / exports verront la sentinelle en clair sauf masquage front. Acceptable vs NULL
+  qui cassait le cœur ; à documenter pour l'orga (« kiosk.…@no-mail.picha.invalid » = e-mail à
+  compléter).
+
+**Rollback technique (prochaine étape, après validation S) :**
+
+- Nouvelle migration : backfill `UPDATE attendees SET email = 'kiosk.' \|\| public_id \|\| '@no-mail.picha.invalid' WHERE email IS NULL` puis `ALTER … SET NOT NULL` (recréer la vue Q&A comme l'ancienne migration).
+- `CreateAttendeeDTO::$email: string` ; `generate-domain-objects` pour `getEmail(): string`.
+- Handler guichet : plus jamais `email: $dto->email ?: null`.
+- Tests `BoxOfficeSaleNoEmailTest` : assert sentinelle + aucun mail queued, plus `assertNull($attendee->email)`.
+
+**Options écartées :**
+
+| | |
+|---|---|
+| 4 correctifs métier séparés dans Cancel/Refund/Resend/Message | Remplacé par **T22** : 1 helper, 4+1 appels |
+| Garder NULL | Refusé (26 sept.) |
+| `noreply@picha.fr` unique partagé | Collision métier + MX réel possible |
+| E-mail vide `''` | Rate `email` Laravel + NOT NULL OK mais `Mail::to('')` **plante encore** |
 
 ---
+
 
 ## D22 — Sous-domaine `kiosk.picha.fr`
 
@@ -657,7 +802,7 @@ le périmètre.
 
 | # | Option | Détail | Impact |
 |---|---|---|---|
-| **A (recommandée)** | Préférences du poste en **`localStorage`** (clé `picha_kiosk_settings`), écran `/kiosk/.../settings` : imprimante/format, `send_confirmation_email` par défaut, langue par défaut du billet, nom d'affichage du poste. Lu au montage client, jamais en SSR. `eventId` **non** stocké ici (vient de l'auth). | **[Code]** faible (front only). **[Schéma]** nul. Conforme aux captures (local à l'appareil). |
+| **A (recommandée)** | Préférences du poste en **`localStorage`** (clé `picha_kiosk_settings`), écran `/kiosk/.../settings` : imprimante/format, `send_confirmation_email` par défaut, langue par défaut du billet, nom d'affichage du poste, **indicatif téléphone de secours (D30)**. Lu au montage client, jamais en SSR. `eventId` **non** stocké ici (vient de l'auth). | **[Code]** faible (front only). **[Schéma]** nul. Conforme aux captures (local à l'appareil). |
 | B | Préférences côté serveur, table `box_office_terminals`. | **[Schéma]** + **[Code]**. Contredit l'intention Weezevent (« pas au compte »), utile seulement si PICHA veut administrer les postes à distance. |
 
 **Catégorie : DÉCISION REQUISE** (A / B) — **Recommandation : A**. Le point sensible « poste mal
@@ -666,11 +811,80 @@ compte, pas d'un réglage local).
 
 ---
 
+## D30 — Téléphone au guichet : indicatif événement + override poste — **design retenu, pas encore codé (26 sept. 2026)**
+
+### Contexte (lu — ne pas inventer de champ)
+
+Il n’existe **pas** de colonne `calling_code` / `phone_country` / indicatif E.164 sur l’événement.
+
+Le pays du **lieu** est déjà dans les réglages événement :
+
+- JSON `event_settings.location_details.country` — code **ISO 3166-1 alpha-2**, 2 caractères (`EventRules` / `UpdateEventSettingsRequest` : `max:2`, message « 2 character ISO 3166 code »).
+- UI : `LocationSettings` + `frontend/data/countries.json` (valeur `YT` = Mayotte, `RE` = Réunion, `FR` = France — **libellés, pas d’indicatifs**).
+- Lecture domaine : `EventSettingDomainObject::getAddress()` → `AddressDTO::$country` depuis `getLocationDetails()['country']`. `getAddressString()` formate l’adresse **texte** via `AddressHelper` ; ce n’est **pas** un indicatif.
+
+Ce n’est **pas** `AccountDomainObject::getCountry()` (pays du **compte** organisateur, autre table). Ne pas s’en servir comme indicatif du lieu de l’événement.
+
+`GET /box-office/context` aujourd’hui ne renvoie que `id, title, currency, timezone` (`BoxOfficeContextResource`). Un opérateur a **403** sur `GET /events/{id}/settings`. Donc le pays ISO2 **doit être ajouté au context box-office** (ou équivalent autorisé opérateur) pour que le poste lise l’indicatif sans passer par un endpoint gâté ORGANIZER.
+
+**Aucune** table ISO2 → indicatif ITU n’existe dans le dépôt. Il faudra en introduire une (ex. `YT`/`RE` → `262`, `FR` → `33`). Mayotte et Réunion partagent **+262** ; ne pas déduire l’indicatif du fuseau `timezone` seul.
+
+### Design UI retenu
+
+1. Indicatif **par défaut** = mapping du `location_details.country` de l’événement (via context).
+2. Champ vente : préfixe **fixe non éditable** dans le flux normal (ex. `+262`). L’agent saisit **uniquement** le numéro local **sans le 0 initial**.
+3. **D29** : clé locale (ex. `phoneCallingCode`) — pré-remplie depuis le pays de l’événement, **surchargeable** sur le poste (poste partagé entre événements de pays différents).
+4. **Géolocalisation IP : écartée.** Peu fiable sur un Wi-Fi festival / VPN ; un poste fixe a déjà sa localisation métier via l’événement.
+
+### `normalizePhone()` actuel (à corriger au moment du code, pas avant)
+
+```334:347:backend/app/Services/Application/Handlers/BoxOffice/CreateBoxOfficeSaleHandler.php
+    private function normalizePhone(string $phone): ?string
+    {
+        $digits = preg_replace('/\D+/', '', $phone) ?? '';
+        // ...
+        if (str_starts_with($digits, '0') && strlen($digits) === 10) {
+            return '+33'.substr($digits, 1);
+        }
+        return '+'.$digits;
+    }
+```
+
+Règle cible : **plus de `+33` ni de « 10 chiffres commençant par 0 = France »**. Signature du type `normalizePhone(string $phone, string $callingCode): ?string` — `$callingCode` = override D29 s’il est posé, sinon indicatif dérivé du pays ISO2 de l’événement.
+
+Comportement visé (chiffres locaux sans `+`) :
+
+- strip non-digits ; si vide → `null` ;
+- si l’agent a malgré tout saisi un `0` initial, le retirer (national trunk) **sans** interpréter la longueur 10 comme FR ;
+- préfixer `+` + indicatif (chiffres only, sans `+` doublon).
+
+### Repli si aucun indicatif n’est résolu — **proposé, pas décidé**
+
+Cas : `location_details` absent / `country` vide / ISO2 inconnu de la table ITU, **et** pas d’override D29.
+
+| # | Option | Effet |
+|---|---|---|
+| **F1 (recommandée à Jo)** | Refuser la vente **si** un téléphone est saisi : 422, message du type « Indicatif téléphone manquant — renseignez-le dans Réglages du poste ». Téléphone vide + autre identifiant (D6) → vente OK, `phone` null. | Zéro numéro mal préfixé en base. Force l’override sur un événement mal configuré. |
+| F2 | Persister les chiffres **tels quels** sans `+indicatif` | Cassé pour SMS / carnet ; dette. |
+| F3 | Repli opérationnel PICHA `+262` | Devine Mayotte pour tout événement sans pays — faux pour un guest FR/MG. |
+
+**Ne pas coder F2/F3 sans validation Jo.** F1 est la proposition technique ; ce n’est pas encore une décision.
+
+### Tests TDD obligatoires **quand** on corrigera `normalizePhone` (pas encore écrits)
+
+À placer dans un test Unit dédié (idéalement extraire `normalizePhone` hors du handler pour le tester sans DB) :
+
+1. **Mayotte** — indicatif `262` (pays `YT`), saisie locale `639780773` (sans 0) → `+262639780773`. Contrôle négatif : **ne doit pas** produire `+33…`.
+2. **Aucun indicatif** — `callingCode` vide / pays absent : le comportement **exact** suit F1/F2/F3 une fois Jo tranché. Le test doit **échouer aujourd’hui** sur le code `+33` magique, et figer le repli choisi.
+3. (non bloquant mais utile) France `FR` / `33` + `612345678` → `+33612345678` ; saisie `0612345678` + `33` → même résultat (0 trunk strip). Réunion `RE` = `262` comme Mayotte.
+
+---
+
 ## Récapitulatif des décisions requises
 
 | # | Sujet | Recommandation | Nature | Dépendances / à obtenir |
 |---|---|---|---|---|
-| **D6** | E-mail au guichet | **✅ ROUVERTE (7 sept. 2026) — Option D** : e-mail optionnel, `attendees.email = NULL` (jamais fictif), complété a posteriori via Participants. Au moins un identifiant (nom / e-mail / téléphone). | Schéma (nullable) + Code | **Aucune** — décidé. |
+| **D6** | E-mail au guichet | Rollback NULL + D6-S sentinelle. Laravel `'email'` = RFC pas DNS (preuve vendor). **T22** = 1 helper, 4+1 call sites, pas de mail fantôme. Pas codé. | Guichet + helper | Validator empirique en conteneur avant implémentation |
 | **D22** | Sous-domaine `kiosk.picha.fr` | **A** : même bundle, shell `/kiosk` allégé, garde par host dans `server.js` (+ B pour généraliser `CUSTOM_DOMAINS`) | Infra + Code | Valeurs `SESSION_DOMAIN`, `CORS_ALLOWED_ORIGINS` en place ; topologie proxy/API |
 | **D23** | Compte opérateur de guichet | **✅ VALIDÉE** — Option 1 : rôle `BOX_OFFICE_OPERATOR` (compte `users` réel) + table `event_box_office_operators` (multi-événements, `unique(event_id, user_id)`) + garde négative `validateUserRole` + `validateBoxOfficeEventScope`. Création **réservée ADMIN**. Sélecteur d'événement si ≥2. 1 table neuve, 0 migration sur `box_office_sales`/`print_jobs`. | Schéma (1 table) + Code moyen | **Aucune** — décidé. Prêt à implémenter. |
 | **D15** | Session de caisse | ✅ **BACKLOG confirmé (Jo, 6 sept.)** — ne pas traiter en v2.1 | — | — |
@@ -679,7 +893,8 @@ compte, pas d'un réglage local).
 | **D26** | Navigation par onglets | **A** + recadrage 6 sept. : layout `Kiosk` dédié + `/kiosk/select-event` si ≥2 ; v2.1 = **Vente + Réglages pour tout le monde** (Commandes/Stats = backlog, y compris ORGANIZER) | Code moyen | — |
 | **D27** | Écran Commandes | **A** (Orders natif + filtre `is_manually_created`) **pour un ORGANIZER** ; **B** (`GET /events/{id}/box-office-sales` scoped) obligatoire pour donner l'écran à l'opérateur | Code faible (A) / moyen (B) | Donner l'écran Commandes à l'opérateur en v2.1 ou plus tard ? |
 | **D28** | Écran Statistiques | **A** (`GET /events/{id}/stats`) **pour un ORGANIZER** ; **B/C** (agrégat box-office scoped) pour l'opérateur, après D15 | Code faible (A) | Séquencer après D15 |
-| **D29** | Réglages par poste | **A** : `localStorage` (préférences d'affichage/impression seulement — l'événement vient de l'auth) | Code faible | — |
+| **D29** | Réglages par poste | **A** : `localStorage` (affichage/impression + **indicatif D30**) — l'événement vient de l'auth | Code faible | Jo tranche D30-F1 |
+| **D30** | Téléphone / indicatif | Design retenu, **pas codé**. Pays = ISO2 `location_details.country`. Override D29. Pas d'IP. Plus de `+33` magique. Repli **F1 proposé**. | Code | Jo tranche F1/F2/F3 |
 
 ### Ce qui est réutilisable **tel quel** (CONFIRMÉ) — pour un ORGANIZER connecté au shell
 

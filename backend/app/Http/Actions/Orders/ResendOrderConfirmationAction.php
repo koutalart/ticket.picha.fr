@@ -8,30 +8,30 @@ use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\InvoiceDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Http\Actions\BaseAction;
-use HiEvents\Mail\Order\OrderSummary;
+use HiEvents\Http\ResponseCodes;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Services\Domain\Email\MailBuilderService;
+use Illuminate\Contracts\Mail\Mailer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Mail\Mailer;
 
 class ResendOrderConfirmationAction extends BaseAction
 {
     public function __construct(
         private readonly EventRepositoryInterface $eventRepository,
         private readonly OrderRepositoryInterface $orderRepository,
-        private readonly Mailer                   $mailer,
-        private readonly MailBuilderService       $mailBuilderService,
-    )
-    {
-    }
+        private readonly Mailer $mailer,
+        private readonly MailBuilderService $mailBuilderService,
+    ) {}
 
     /**
      * @todo - move this to a handler
      */
-    public function __invoke(int $eventId, int $orderId): Response
+    public function __invoke(int $eventId, int $orderId): JsonResponse|Response
     {
         $this->isActionAuthorized($eventId, EventDomainObject::class);
 
@@ -43,11 +43,18 @@ class ResendOrderConfirmationAction extends BaseAction
                 OrderDomainObjectAbstract::ID => $orderId,
             ]);
 
-        if (!$order) {
+        if (! $order) {
             return $this->notFoundResponse();
         }
 
         if ($order->isOrderCompleted()) {
+            if (KioskSentinelEmail::isKioskSentinelEmail($order->getEmail())) {
+                return $this->errorResponse(
+                    __('Ce participant n\'a pas encore d\'e-mail. Renseignez-le d\'abord.'),
+                    ResponseCodes::HTTP_UNPROCESSABLE_ENTITY,
+                );
+            }
+
             $event = $this->eventRepository
                 ->loadRelation(new Relationship(OrganizerDomainObject::class, name: 'organizer'))
                 ->loadRelation(new Relationship(EventSettingDomainObject::class))

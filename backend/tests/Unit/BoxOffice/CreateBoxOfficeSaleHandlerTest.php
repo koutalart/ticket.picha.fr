@@ -95,7 +95,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
 
         self::assertSame('', $result->attendee->getFirstName());
         self::assertSame('', $result->attendee->getLastName());
-        self::assertNull($result->attendee->getEmail());
+        self::assertTrue(\HiEvents\Helper\KioskSentinelEmail::isKioskSentinelEmail($result->attendee->getEmail()));
         self::assertSame('+33612345678', DB::table('box_office_sales')->where('id', $result->saleId)->value('phone'));
     }
 
@@ -124,7 +124,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
         ));
 
         self::assertNull(DB::table('box_office_sales')->where('id', $result->saleId)->value('phone'));
-        self::assertNull($result->attendee->getEmail());
+        self::assertTrue(\HiEvents\Helper\KioskSentinelEmail::isKioskSentinelEmail($result->attendee->getEmail()));
     }
 
     /** AC-2 */
