@@ -3,6 +3,7 @@
 namespace HiEvents\Http\Actions\BoxOffice;
 
 use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
+use HiEvents\Exceptions\BoxOfficeEventNotActiveException;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\MissingPhoneCallingCodeException;
 use HiEvents\Exceptions\ProductNotScannableException;
@@ -70,6 +71,8 @@ class CreateBoxOfficeSaleAction extends BaseAction
             );
         } catch (BoxOfficePriceMismatchException $exception) {
             throw ValidationException::withMessages(['amount' => $exception->getMessage()]);
+        } catch (BoxOfficeEventNotActiveException $exception) {
+            throw ValidationException::withMessages(['event_id' => $exception->getMessage()]);
         } catch (MissingPhoneCallingCodeException $exception) {
             throw ValidationException::withMessages(['phone_calling_code' => $exception->getMessage()]);
         } catch (ProductNotScannableException|ResourceConflictException $exception) {

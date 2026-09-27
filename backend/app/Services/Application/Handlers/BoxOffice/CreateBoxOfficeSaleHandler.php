@@ -11,6 +11,7 @@ use HiEvents\DomainObjects\Generated\BoxOfficeSaleDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\Status\BoxOfficeSaleStatus;
 use HiEvents\DomainObjects\UserDomainObject;
+use HiEvents\Exceptions\BoxOfficeEventNotActiveException;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\MissingPhoneCallingCodeException;
 use HiEvents\Exceptions\ProductNotScannableException;
@@ -21,6 +22,7 @@ use HiEvents\Helper\PhoneCallingCode;
 use HiEvents\Helper\PhoneNormalizer;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\BoxOfficeSaleRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
@@ -29,6 +31,7 @@ use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeSaleResultDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleItemDTO;
 use HiEvents\Services\Domain\BoxOffice\BoxOfficeCartOrderService;
+use HiEvents\Services\Domain\BoxOffice\BoxOfficeEventAvailabilityService;
 use HiEvents\Services\Infrastructure\Authorization\IsAuthorizedService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\QueryException;
@@ -52,6 +55,8 @@ class CreateBoxOfficeSaleHandler
         private readonly IsAuthorizedService $isAuthorizedService,
         private readonly DatabaseManager $databaseManager,
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
+        private readonly EventRepositoryInterface $eventRepository,
+        private readonly BoxOfficeEventAvailabilityService $eventAvailabilityService,
     ) {}
 
     /**
@@ -62,6 +67,7 @@ class CreateBoxOfficeSaleHandler
      *                                        action's guard and here (TOCTOU). Null for direct callers/tests
      *                                        that are not exercising operator scope.
      *
+     * @throws BoxOfficeEventNotActiveException
      * @throws BoxOfficePriceMismatchException
      * @throws ProductNotScannableException
      * @throws ResourceConflictException
@@ -77,6 +83,8 @@ class CreateBoxOfficeSaleHandler
             if ($existing = $this->findCompletedSale($dto->idempotency_key)) {
                 return $existing;
             }
+
+            $this->assertEventIsActive($dto->event_id);
 
             $items = $this->normalizedItems($dto);
 
@@ -167,6 +175,20 @@ class CreateBoxOfficeSaleHandler
 
             return new BoxOfficeSaleResultDTO($sale->getId(), $firstAttendee, $order, $attendees);
         });
+    }
+
+    /**
+     * @throws BoxOfficeEventNotActiveException
+     */
+    private function assertEventIsActive(int $eventId): void
+    {
+        $event = $this->eventRepository->findById($eventId);
+
+        if (! $this->eventAvailabilityService->isSellable($event)) {
+            throw new BoxOfficeEventNotActiveException(
+                __('Sales are only possible for published events that have not ended.')
+            );
+        }
     }
 
     private function findCompletedSale(string $idempotencyKey): ?BoxOfficeSaleResultDTO

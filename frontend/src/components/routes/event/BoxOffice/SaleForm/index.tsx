@@ -456,7 +456,9 @@ export const SaleForm = ({
                 const priceError = error.response?.data?.errors?.amount;
                 const callingError = error.response?.data?.errors?.phone_calling_code;
                 const callingMessage = Array.isArray(callingError) ? callingError[0] : callingError;
-                showError(callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
+                const eventError = error.response?.data?.errors?.event_id;
+                const eventMessage = Array.isArray(eventError) ? eventError[0] : eventError;
+                showError(eventMessage || callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
             } else if (status === 409) {
                 showError(error.response?.data?.message || t`This sale could not be completed. Please try again.`);
             } else {
@@ -508,7 +510,9 @@ export const SaleForm = ({
                     const priceError = error.response?.data?.errors?.amount;
                     const callingError = error.response?.data?.errors?.phone_calling_code;
                     const callingMessage = Array.isArray(callingError) ? callingError[0] : callingError;
-                    showError(callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
+                    const eventError = error.response?.data?.errors?.event_id;
+                    const eventMessage = Array.isArray(eventError) ? eventError[0] : eventError;
+                    showError(eventMessage || callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
                     return;
                 }
 

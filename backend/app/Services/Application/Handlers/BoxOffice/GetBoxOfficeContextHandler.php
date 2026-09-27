@@ -19,6 +19,7 @@ use HiEvents\Repository\Interfaces\EventBoxOfficeOperatorRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeContextEventDTO;
+use HiEvents\Services\Domain\BoxOffice\BoxOfficeEventAvailabilityService;
 use Illuminate\Support\Collection;
 
 /**
@@ -35,6 +36,7 @@ class GetBoxOfficeContextHandler
         private readonly EventRepositoryInterface $eventRepository,
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
         private readonly BoxOfficePrinterPreferenceRepositoryInterface $printerPreferenceRepository,
+        private readonly BoxOfficeEventAvailabilityService $eventAvailabilityService,
     ) {}
 
     public function handle(int $userId, string $role, int $accountId): Collection
@@ -69,6 +71,10 @@ class GetBoxOfficeContextHandler
      */
     private function mapEvents(Collection $events, int $userId): Collection
     {
+        $events = $events
+            ->filter(fn (EventDomainObject $event) => $this->eventAvailabilityService->isSellable($event))
+            ->values();
+
         if ($events->isEmpty()) {
             return collect();
         }
