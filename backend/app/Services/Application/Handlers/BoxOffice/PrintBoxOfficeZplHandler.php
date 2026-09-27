@@ -12,6 +12,7 @@ use HiEvents\Exceptions\InvalidZebraPrinterHostException;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Exceptions\ZebraPrinterUnreachableException;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
+use HiEvents\Repository\Interfaces\BoxOfficePrinterPreferenceRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
@@ -34,6 +35,7 @@ class PrintBoxOfficeZplHandler
         private readonly ProductRepositoryInterface $productRepository,
         private readonly ProductPriceRepositoryInterface $productPriceRepository,
         private readonly PrintJobRepositoryInterface $printJobRepository,
+        private readonly BoxOfficePrinterPreferenceRepositoryInterface $printerPreferenceRepository,
         private readonly AttendeeTicketZplService $attendeeTicketZplService,
         private readonly ZebraPrinterClientInterface $zebraPrinterClient,
     ) {}
@@ -119,6 +121,8 @@ class PrintBoxOfficeZplHandler
             PrintJobDomainObjectAbstract::AGENT_USER_ID => $dto->agent_user_id,
             PrintJobDomainObjectAbstract::PRINTED_AT => now()->toDateTimeString(),
         ]);
+
+        $this->printerPreferenceRepository->rememberHost($dto->agent_user_id, $dto->event_id, $dto->printer_host);
     }
 
     private function formatTicketPrice(float $amount, string $currency): string
