@@ -633,8 +633,17 @@ fiche d'achat.
    uniformément** pour tenir dans la longueur réglée sur le poste : ratio = min(1, longueur / 800 pts,
    largeur / 620 pts) à 203 dpi, soit **×0,869 en 79 × 87** (−13 %). Elle est centrée
    horizontalement via `^LH` (38 pts). Positions, polices, cadres et blocs de texte suivent le ratio ;
-   les pictos `^GFA` sont repositionnés mais gardent leur taille. **Le QR n'est pas réduit** (voir
-   ci-dessous).
+   les pictos `^GFA` sont repositionnés mais gardent leur taille.
+
+   **QR agrandi (choix Jo)** : `^BQ` plafonne au grossissement 10 (21 × 10 = 210 pts, 26 mm), il ne
+   peut pas grandir. Le QR est donc encodé côté serveur (`bacon-qr-code`, correction Q, comme
+   `QA,`) et imprimé en image `^GFA` via `ZplQrCodeRenderer` : boîte de 252 pts à 203 dpi
+   (modules de 12 pts pour un ID `A-XXXXXXX`, soit **31,5 mm, +20 %**). Il est positionné dans la mise
+   en page réduite mais **garde sa taille** ; l'ID et le nom sont centrés dessous. Le contenu du QR
+   reste lisible dans le ZPL via un commentaire `^FXQR:<public_id>`. Le sponsor est borné à la
+   colonne de gauche (`^FB`, 2 lignes) pour ne plus déborder sous le nom.
+   Limite connue : un type de billet très long (≈ 20+ caractères) peut encore toucher le QR,
+   comme dans la maquette d'origine.
 
    Correctif initialement recommandé :
    - `^MNM` à la place de `^MNN`, pour synchroniser chaque billet sur la marque noire. Le

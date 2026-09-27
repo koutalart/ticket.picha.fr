@@ -8,9 +8,7 @@ use HiEvents\Services\Domain\Ticket\DTO\ZplLabelFormatDTO;
 
 class AttendeeTicketZplService
 {
-    private const QR_MAGNIFICATION = 10;
-
-    private const QR_MAX_MAGNIFICATION = 10;
+    private const QR_BOX = 252;
 
     private const VENUE_MAX_LENGTH_BESIDE_NAME = 14;
 
@@ -26,6 +24,10 @@ class AttendeeTicketZplService
         'icon-venue.gfa' => 5,
         'icon-megaphone.gfa' => 7,
     ];
+
+    public function __construct(
+        private readonly ZplQrCodeRenderer $qrCodeRenderer = new ZplQrCodeRenderer,
+    ) {}
 
     public function generate(
         string $publicId,
@@ -128,15 +130,36 @@ class AttendeeTicketZplService
 
         $sponsor = $this->field($sponsorName, 32);
         if ($sponsor !== '' && strtoupper($sponsor) !== 'XXXXX') {
-            $lines[] = $at(104, 640).$font(18).'^FD'.$this->field(__('Sponsored by: :name', ['name' => $sponsor]), 36).'^FS';
+            $lines[] = sprintf(
+                '%s%s^FB%d,2,%d,L^FD%s\\&^FS',
+                $at(104, 640),
+                $font(18),
+                $format->layout(365) - $format->layout(104) - $format->layout(12),
+                $format->layout(2),
+                $this->field(__('Sponsored by: :name', ['name' => $sponsor]), 48),
+            );
         }
 
         $lines[] = '^FB0';
-        $lines[] = sprintf('%s^BQN,2,%d^FDQA,%s^FS', $at(365, 280), $this->qrMagnification($format), $safeId);
-        $lines[] = sprintf('%s%s%s^FD%s\\&^FS', $at(370, 535), $font(20), $block(190, 1, 0, 'C'), $idLabel);
+        $qrX = $format->layout(365);
+        $qrY = $format->layout(270);
+        $qr = $this->qrCodeRenderer->renderToFit($safeId, $format->scale(self::QR_BOX));
+        $lines[] = '^FXQR:'.$safeId.'^FS';
+        $lines[] = '^FO'.$qrX.','.$qrY.$qr->zpl.'^FS';
+
+        $idY = $qrY + $qr->size + $format->layout(20);
+        $lines[] = sprintf('^FO%d,%d%s^FB%d,1,0,C^FD%s\\&^FS', $qrX, $idY, $font(20), $qr->size, $idLabel);
 
         if ($name !== '') {
-            $lines[] = sprintf('%s%s%s^FD%s\\&^FS', $at(345, 570), $font(26), $block(240, 2, 4, 'C'), $name);
+            $lines[] = sprintf(
+                '^FO%d,%d%s^FB%d,2,%d,C^FD%s\\&^FS',
+                $qrX,
+                $idY + $format->layout(30),
+                $font(26),
+                $qr->size,
+                $format->layout(4),
+                $name,
+            );
         }
 
         $lines[] = $at(34, 692).$box(570, 2, 2).'^FS';
@@ -148,11 +171,6 @@ class AttendeeTicketZplService
         $lines[] = '^XZ';
 
         return implode("\n", $lines);
-    }
-
-    private function qrMagnification(ZplLabelFormatDTO $format): int
-    {
-        return max(1, min(self::QR_MAX_MAGNIFICATION, $format->scale(self::QR_MAGNIFICATION)));
     }
 
     /**

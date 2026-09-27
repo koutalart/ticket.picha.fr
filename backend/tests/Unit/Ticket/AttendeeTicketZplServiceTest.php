@@ -32,8 +32,8 @@ class AttendeeTicketZplServiceTest extends TestCase
         self::assertStringStartsWith('^XA', $zpl);
         self::assertStringEndsWith('^XZ', trim($zpl));
         self::assertStringContainsString('^PW639', $zpl);
-        self::assertStringContainsString('^FO365,280^BQN,2,10', $zpl);
-        self::assertStringContainsString('QA,A-SFMVW8P', $zpl);
+        self::assertStringContainsString('^FO365,270^GFA,8064,8064,32,', $zpl);
+        self::assertStringContainsString('^FXQR:A-SFMVW8P', $zpl);
         self::assertStringContainsString('A - SFMVW8P', $zpl);
         self::assertStringContainsString('Triangle des bermudes', $zpl);
         self::assertStringContainsString('Entrée simple', $zpl);
@@ -53,7 +53,7 @@ class AttendeeTicketZplServiceTest extends TestCase
         self::assertStringContainsString('^GFA,2328,2328,24,', $zpl);
         self::assertStringContainsString('^FO38,16^GFA,', $zpl);
         self::assertStringContainsString('^FO320,18^GB2,100,2', $zpl);
-        self::assertStringContainsString('^FO345,570^A0N,26,26^FB240,2,4,C^FDJane Doe\\&^FS', $zpl);
+        self::assertStringContainsString('^FO365,572^A0N,26,26^FB252,2,4,C^FDJane Doe\\&^FS', $zpl);
         self::assertStringNotContainsString('Billet certifié', $zpl);
         self::assertStringNotContainsString('XXXXX', $zpl);
     }
@@ -70,8 +70,8 @@ class AttendeeTicketZplServiceTest extends TestCase
         );
 
         self::assertStringNotContainsString('HEURE', $zpl);
-        self::assertStringNotContainsString('^FO345,570', $zpl);
-        self::assertStringContainsString('QA,a_SAFE', $zpl);
+        self::assertStringNotContainsString('^FB252,2,4,C', $zpl);
+        self::assertStringContainsString('^FXQR:a_SAFE', $zpl);
     }
 
     public function test_zpl_escapes_control_characters_in_user_text(): void
@@ -87,7 +87,7 @@ class AttendeeTicketZplServiceTest extends TestCase
         self::assertStringContainsString('^FDAnn e\\&^FS', $zpl);
         self::assertStringContainsString('Night Out', $zpl);
         self::assertStringContainsString('VIP Pass', $zpl);
-        self::assertStringContainsString('QA,a_SAFE', $zpl);
+        self::assertStringContainsString('^FXQR:a_SAFE', $zpl);
     }
 
     public function test_zpl_uses_custom_sponsor_name(): void
