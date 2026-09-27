@@ -45,6 +45,7 @@ import {ColumnVisibilityToggle} from "../ColumnVisibilityToggle";
 import {CellContext} from "@tanstack/react-table";
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {eventCheckoutUrl} from "../../../utilites/urlHelper.ts";
+import {displayAttendeeEmail} from "../../../utilites/isKioskSentinelEmail.ts";
 
 interface OrdersTableProps {
     event: Event,
@@ -224,6 +225,9 @@ export const OrdersTable = ({orders, event}: OrdersTableProps) => {
                                     </Text>
                                 )}
                             </div>
+                            {!displayAttendeeEmail(order.email) ? (
+                                <Text className={classes.customerEmail}>{t`—`}</Text>
+                            ) : (
                             <Popover
                                 opened={emailPopoverId === order.id}
                                 onChange={(opened) => {
@@ -265,6 +269,7 @@ export const OrdersTable = ({orders, event}: OrdersTableProps) => {
                                     </Group>
                                 </Popover.Dropdown>
                             </Popover>
+                            )}
                         </div>
                     );
                 },
