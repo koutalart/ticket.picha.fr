@@ -58,7 +58,9 @@
                 <div class="row">
                     <div class="label">{{ __('Attendee') }}</div>
                     <div class="attendee-name">{{ $attendee->getFirstName() }} {{ $attendee->getLastName() }}</div>
+                    @if($attendee->getEmail() && ! \HiEvents\Helper\KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail()))
                     <div class="value">{{ $attendee->getEmail() }}</div>
+                    @endif
                 </div>
             </td>
             <td class="qr">

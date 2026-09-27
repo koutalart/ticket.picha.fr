@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class AttendeeTicketPdfTemplateTest extends TestCase
 {
-    private function render(?array $locationDetails = null, string $locale = 'fr'): string
+    private function render(?array $locationDetails = null, string $locale = 'fr', string $email = 'amina@example.invalid'): string
     {
         $event = (new EventDomainObject)
             ->setId(1)
@@ -27,7 +27,7 @@ class AttendeeTicketPdfTemplateTest extends TestCase
         $attendee = (new AttendeeDomainObject)
             ->setFirstName('Amina')
             ->setLastName('Test')
-            ->setEmail('amina@example.invalid')
+            ->setEmail($email)
             ->setPublicId('A-TEST123')
             ->setLocale($locale);
 
@@ -84,5 +84,17 @@ class AttendeeTicketPdfTemplateTest extends TestCase
 
         self::assertStringContainsString('Lieu', $html);
         self::assertStringContainsString('Stade de Cavani', $html);
+    }
+
+    public function test_kiosk_sentinel_email_is_never_printed(): void
+    {
+        $html = $this->render(email: 'kiosk.s1620@no-mail.picha.invalid');
+
+        self::assertStringNotContainsString('no-mail.picha.invalid', $html);
+    }
+
+    public function test_real_email_is_still_printed(): void
+    {
+        self::assertStringContainsString('amina@example.invalid', $this->render());
     }
 }
