@@ -62,9 +62,17 @@ msgstr "{0} <0>utcheckad</0> lyckades"
 msgid "{0} Active Webhooks"
 msgstr "{0} aktiva webhooks"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:56
+msgid "{0} already entered at {1}"
+msgstr "{0} gick redan in kl. {1}"
+
 #: src/components/routes/product-widget/SelectProducts/index.tsx:476
 msgid "{0} available"
 msgstr "{0} tillgängliga"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:54
+msgid "{0} checked in"
+msgstr "Inpassering registrerad för {0}"
 
 #: src/components/modals/CreateTaxOrFeeModal/index.tsx:36
 msgid "{0} created successfully"
@@ -87,7 +95,7 @@ msgstr "{0} arrangörer"
 msgid "{0} tickets"
 msgstr "{0} biljetter"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:449
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:350
 msgid "{0} tickets created"
 msgstr "{0} biljetter skapade"
 
@@ -124,7 +132,7 @@ msgstr "{minutes} minuter och {seconds} sekunder"
 msgid "{organizerName}'s first event"
 msgstr "{organizerName}s första evenemang"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1065
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:926
 msgid "{selectedPriceRemaining} remaining"
 msgstr "{selectedPriceRemaining} kvar"
 
@@ -226,7 +234,7 @@ msgstr "1 biljettyp"
 msgid "1 week before event"
 msgstr "1 vecka före evenemanget"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1006
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:867
 msgid "1. Choose a ticket"
 msgstr ""
 
@@ -240,7 +248,7 @@ msgstr "Huvudgatan 123"
 msgid "123 Sample Street"
 msgstr "Exempelgatan 123"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1074
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:935
 msgid "2. Attendee details"
 msgstr ""
 
@@ -248,7 +256,7 @@ msgstr ""
 msgid "20"
 msgstr "20"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1114
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:975
 msgid "3. Payment method"
 msgstr ""
 
@@ -334,11 +342,11 @@ msgstr "En enda fråga per produkt. T.ex. Vilken är din t-shirtstorlek?"
 msgid "A standard tax, like VAT or GST"
 msgstr "En standardskatt, såsom moms"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:191
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:185
 msgid "A valid email is required"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:182
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:176
 msgid "A valid phone number is required"
 msgstr "Ett giltigt telefonnummer krävs"
 
@@ -558,13 +566,13 @@ msgstr "Lägg till skatt eller avgift"
 msgid "Add this event to your calendar"
 msgstr "Lägg till detta evenemang i din kalender"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:713
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:758
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:900
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:574
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:619
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:761
 msgid "Add ticket"
 msgstr "Lägg till biljett"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:926
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:787
 #: src/components/routes/event/GettingStarted/index.tsx:132
 msgid "Add tickets"
 msgstr "Lägg till biljetter"
@@ -815,12 +823,12 @@ msgstr "Fantastiskt, Evenemang, Nyckelord..."
 msgid "Amount"
 msgstr "Belopp"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:860
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1140
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:721
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1001
 msgid "Amount collected"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:193
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:187
 msgid "Amount collected is required"
 msgstr ""
 
@@ -1320,7 +1328,7 @@ msgstr "Awesome Events Ltd."
 msgid "Awesome Organizer Ltd."
 msgstr "Awesome Organizer Ltd."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:627
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:488
 msgid "Back"
 msgstr "Tillbaka"
 
@@ -1363,6 +1371,14 @@ msgstr "Bakgrundsfärg"
 msgid "Background Type"
 msgstr "Bakgrundstyp"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:163
+msgid "Badge + entry"
+msgstr "Namnbricka + inpassering"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:172
+msgid "Badge only"
+msgstr "Endast namnbricka"
+
 #: src/components/routes/organizer/Settings/index.tsx:30
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
@@ -1394,8 +1410,8 @@ msgid "Bookmark this page to manage your order anytime."
 msgstr "Bokmärk denna sida för att hantera din order när som helst."
 
 #: src/components/layouts/Event/index.tsx:125
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:631
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:986
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:492
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:847
 msgid "Box Office"
 msgstr ""
 
@@ -1538,6 +1554,7 @@ msgstr "Avbrytande kommer att avbryta alla deltagare som är kopplade till denna
 #: src/components/routes/event/attendees.tsx:27
 #: src/components/routes/event/orders.tsx:24
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:75
+#: src/components/routes/kiosk/Welcome/index.tsx:95
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:353
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:98
 msgid "Cancelled"
@@ -1575,18 +1592,18 @@ msgstr "Kapacitetstilldelningar"
 msgid "Capacity Management"
 msgstr "Kapacitetshantering"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:829
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1118
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:690
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:979
 msgid "Card"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:876
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:938
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:737
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:799
 msgid "Cart contents"
 msgstr "Varukorg"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:828
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1117
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:689
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:978
 msgid "Cash"
 msgstr ""
 
@@ -1611,7 +1628,7 @@ msgstr "Kategori"
 msgid "Category Created Successfully"
 msgstr "Kategori skapades"
 
-#: src/components/layouts/Kiosk/index.tsx:78
+#: src/components/layouts/Kiosk/index.tsx:85
 msgid "Change event"
 msgstr "Byt evenemang"
 
@@ -1668,6 +1685,10 @@ msgstr "Incheckning skapad"
 #: src/components/forms/WebhookForm/index.tsx:127
 msgid "Check-in Deleted"
 msgstr "Incheckning borttagen"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:67
+msgid "Check-in failed. Please try again."
+msgstr "Incheckningen misslyckades. Försök igen."
 
 #: src/components/modals/CheckInListSuccessModal/index.tsx:20
 msgid "Check-In List Created"
@@ -1761,8 +1782,8 @@ msgstr "Kinesiska (traditionell)"
 msgid "Choose a color for your background"
 msgstr "Välj en färg för din bakgrund"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:726
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1041
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:587
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:902
 msgid "Choose a price"
 msgstr ""
 
@@ -1914,8 +1935,8 @@ msgstr "Kolumner"
 msgid "Comedy"
 msgstr "Komedi"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:849
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:854
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:710
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:715
 msgid "Coming soon"
 msgstr "Kommer snart"
 
@@ -2192,7 +2213,7 @@ msgstr "Kontakt-e-post för support"
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:619
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
 #: src/components/routes/product-widget/SelectProducts/index.tsx:550
 msgid "Continue"
 msgstr "Fortsätt"
@@ -2319,11 +2340,11 @@ msgstr "Kopiera till urklipp"
 msgid "Copy URL"
 msgstr "Kopiera URL"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:330
+#: src/hooks/useKioskTicketPrinter.tsx:67
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:340
+#: src/hooks/useKioskTicketPrinter.tsx:77
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
 
@@ -2951,7 +2972,7 @@ msgstr "Donation"
 msgid "Donation / Pay what you'd like product"
 msgstr "Donation eller betala vad du vill-produkt"
 
-#: src/components/layouts/Kiosk/index.tsx:83
+#: src/components/layouts/Kiosk/index.tsx:90
 #: src/components/modals/CheckInListSuccessModal/index.tsx:59
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:72
 #: src/components/modals/CreateWebhookModal/index.tsx:72
@@ -3220,8 +3241,8 @@ msgstr "Giltiga incheckningslistor"
 #: src/components/routes/auth/Login/index.tsx:93
 #: src/components/routes/auth/Register/index.tsx:104
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:99
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:802
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1099
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:663
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:960
 #: src/components/routes/kiosk/Login/index.tsx:75
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
@@ -3328,13 +3349,13 @@ msgstr "Inbäddningsskript"
 msgid "Embed Widget"
 msgstr "Bädda in widget"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:266
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:962
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:963
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:260
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:823
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:824
 msgid "Empty basket"
 msgstr "Töm varukorg"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:264
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:258
 msgid "Empty the basket? All selected tickets and the customer details will be removed."
 msgstr "Töm varukorgen? Alla valda biljetter och kunduppgifter tas bort."
 
@@ -3415,7 +3436,7 @@ msgstr "Ange partnernamn"
 msgid "Enter an amount excluding taxes and fees."
 msgstr "Ange ett belopp exklusive skatter och avgifter"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:556
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:457
 msgid "Enter at least a first name, an email, or a phone number."
 msgstr "Ange minst ett förnamn, en e-postadress eller ett telefonnummer."
 
@@ -3476,6 +3497,10 @@ msgstr "Ange ditt namn"
 msgid "Enter your VAT number including the country code, without spaces (e.g., IE1234567A, DE123456789)"
 msgstr "Ange ditt momsnummer inklusive landskod, utan mellanslag (t.ex. IE1234567A, DE123456789)"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:101
+msgid "Entered at {0}"
+msgstr "Inne kl. {0}"
+
 #: src/components/common/WaitlistTable/index.tsx:240
 msgid "Entries will appear here when customers join the waitlist for sold out products."
 msgstr "Poster visas här när kunder ansluter sig till väntelistan för slutsålda produkter."
@@ -3483,6 +3508,10 @@ msgstr "Poster visas här när kunder ansluter sig till väntelistan för sluts�
 #: src/pages/digit/ScannerDevicePage.tsx:46
 msgid "Entry confirmed"
 msgstr ""
+
+#: src/components/routes/kiosk/Welcome/index.tsx:181
+msgid "Entry only"
+msgstr "Endast inpassering"
 
 #: src/components/common/OrdersTable/index.tsx:106
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
@@ -4131,7 +4160,7 @@ msgstr "Filter"
 msgid "Filters ({activeFilterCount})"
 msgstr "Filter ({activeFilterCount})"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:618
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:479
 msgid "Finish"
 msgstr "Avsluta"
 
@@ -4167,8 +4196,8 @@ msgstr "Första fakturanummer"
 #: src/components/modals/CreateAttendeeModal/index.tsx:129
 #: src/components/modals/ManageAttendeeModal/index.tsx:111
 #: src/components/modals/ManageOrderModal/index.tsx:144
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:777
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1077
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:638
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:938
 #: src/components/routes/product-widget/CollectInformation/index.tsx:437
 #: src/components/routes/product-widget/CollectInformation/index.tsx:649
 msgid "First name"
@@ -4259,7 +4288,7 @@ msgstr "Sidfotstext"
 msgid "Forgot password?"
 msgstr "Glömt lösenord?"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:635
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:496
 msgid "Form"
 msgstr "Formulär"
 
@@ -4270,12 +4299,12 @@ msgstr "Formulär"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:113
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:123
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:180
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1119
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:980
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Gratis"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1129
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:990
 msgid "Free can only be used for a ticket priced at 0"
 msgstr ""
 
@@ -4967,7 +4996,7 @@ msgstr "Klicka bara på knappen nedan för att återansluta ditt Stripe-konto."
 msgid "Just looking for your tickets?"
 msgstr "Letar du bara efter dina biljetter?"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:266
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:260
 msgid "Keep"
 msgstr "Behåll"
 
@@ -5046,8 +5075,8 @@ msgstr "Senaste inloggning"
 #: src/components/modals/CreateAttendeeModal/index.tsx:136
 #: src/components/modals/ManageAttendeeModal/index.tsx:112
 #: src/components/modals/ManageOrderModal/index.tsx:150
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:782
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1082
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:643
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:943
 msgid "Last name"
 msgstr "Efternamn"
 
@@ -5078,12 +5107,12 @@ msgstr "Efternamn är obligatoriskt"
 msgid "Last Response"
 msgstr "Senaste svar"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:650
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:511
 msgid "Last sale: <0>{0} tickets</0>"
 msgstr "Senaste försäljning: <0>{0} biljetter</0>"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1164
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:510
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1025
 msgid "Last ticket: <0>{0}</0>"
 msgstr ""
 
@@ -5176,8 +5205,8 @@ msgstr "Laddar webhooks"
 msgid "Loading..."
 msgstr "Laddar..."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:797
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1093
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:658
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:954
 msgid "Local number without the leading 0."
 msgstr "Lokalt nummer utan inledande 0."
 
@@ -5265,7 +5294,7 @@ msgstr "Hantera deltagare"
 msgid "Manage event"
 msgstr "Hantera evenemang"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:996
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:857
 msgid "Manage kiosk operators"
 msgstr "Hantera kioskoperatörer"
 
@@ -5440,9 +5469,9 @@ msgstr "Övrigt"
 msgid "Miscellaneous Settings"
 msgstr "Övriga inställningar"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:180
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:798
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1094
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:174
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:659
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:955
 msgid "Missing phone calling code — set it in station settings."
 msgstr "Riktnummer saknas — ange det i stationsinställningarna."
 
@@ -5478,8 +5507,8 @@ msgstr "Flerradigt textfält"
 msgid "Multiple price options. Perfect for early bird products etc."
 msgstr "Flera prisalternativ. Perfekt för till exempel early bird-produkter."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:693
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1033
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:554
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:894
 msgid "Multiple prices"
 msgstr ""
 
@@ -5547,6 +5576,10 @@ msgstr "Namnet måste vara kortare än 255 tecken"
 msgid "Name of the event"
 msgstr "Evenemangets namn"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:126
+msgid "Name, e-mail or ticket number — or scan the QR code"
+msgstr "Namn, e-post eller biljettnummer — eller skanna QR-koden"
+
 #: src/components/common/QuestionAndAnswerList/index.tsx:181
 #: src/components/common/QuestionAndAnswerList/index.tsx:289
 msgid "Navigate to Attendee"
@@ -5610,6 +5643,10 @@ msgstr "Inga affiliates att visa"
 #: src/components/common/NoEventsBlankSlate/index.tsx:21
 msgid "No archived events to show."
 msgstr "Inga arkiverade evenemang att visa."
+
+#: src/components/routes/kiosk/Welcome/index.tsx:140
+msgid "No attendee found."
+msgstr "Ingen deltagare hittades."
 
 #: src/components/common/QuestionsTable/index.tsx:490
 msgid "No attendee questions yet"
@@ -5736,7 +5773,7 @@ msgstr "Inga meddelanden hittades"
 msgid "No messages to show"
 msgstr "Inga meddelanden att visa"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:225
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:219
 msgid "No more tickets available for this price."
 msgstr "Inga fler biljetter för detta pris."
 
@@ -5863,8 +5900,8 @@ msgstr "Inga sökresultat."
 msgid "No Taxes or Fees have been added."
 msgstr "Inga skatter eller avgifter har lagts till."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:665
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1010
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:526
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:871
 msgid "No ticket is both active and attached to an active check-in list. Attach a product to a check-in list first — otherwise it would not be scannable at the door."
 msgstr ""
 
@@ -5902,7 +5939,7 @@ msgstr "Inga webhook-händelser har registrerats för denna endpoint ännu. Hän
 msgid "No Webhooks"
 msgstr "Inga webhooks"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:587
+#: src/hooks/useKioskTicketPrinter.tsx:153
 msgid "No Zebra printer IP is set for this station. Enter it to print, or open the tickets as PDF."
 msgstr "Ingen IP-adress för Zebra-skrivaren är angiven för den här stationen. Ange den för att skriva ut, eller öppna biljetterna som PDF."
 
@@ -6114,11 +6151,11 @@ msgstr "Öppna sidomeny"
 msgid "Open Stripe Dashboard"
 msgstr "Öppna Stripe-instrumentpanelen"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:601
+#: src/hooks/useKioskTicketPrinter.tsx:167
 msgid "Open tickets as PDF"
 msgstr "Öppna biljetter som PDF"
 
-#: src/components/layouts/Kiosk/index.tsx:64
+#: src/components/layouts/Kiosk/index.tsx:71
 #: src/components/routes/kiosk/Settings/index.tsx:172
 msgid "Operator"
 msgstr "Operatör"
@@ -6135,7 +6172,7 @@ msgstr "Alternativ {i}"
 msgid "Optional additional information to appear on all invoices (e.g., payment terms, late payment fees, return policy)"
 msgstr "Valfri extra information som visas på alla fakturor, till exempel betalningsvillkor, förseningsavgifter eller returpolicy"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:819
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:680
 msgid "Optional in a rush — enter at least a first name, an email, or a phone number. The email can be completed later from the attendees screen."
 msgstr "Valfritt i rusning — minst förnamn, e-post eller telefon. E-post kan fyllas i senare under Deltagare."
 
@@ -6658,7 +6695,7 @@ msgstr "Payload"
 #: src/components/common/OrdersTable/index.tsx:375
 #: src/components/common/ProgressStepper/index.tsx:19
 #: src/components/forms/StripeCheckoutForm/index.tsx:127
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:636
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
 msgid "Payment"
 msgstr "Betalning"
 
@@ -6699,6 +6736,10 @@ msgstr "Betalningsmetod"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:105
 msgid "Payment Methods"
 msgstr "Betalningsmetoder"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:98
+msgid "Payment pending"
+msgstr "Betalning väntar"
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:474
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:486
@@ -6817,8 +6858,8 @@ msgstr "Telefon"
 msgid "Phone calling code"
 msgstr "Riktnummer"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:788
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1087
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:948
 msgid "Phone number"
 msgstr "Telefonnummer"
 
@@ -7085,12 +7126,12 @@ msgstr "Skriv ut biljetter"
 msgid "Print to PDF"
 msgstr "Skriv ut till PDF"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:590
 #: src/components/routes/kiosk/Settings/index.tsx:99
+#: src/hooks/useKioskTicketPrinter.tsx:156
 msgid "Printer IP address"
 msgstr "Skrivarens IP-adress"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:580
+#: src/hooks/useKioskTicketPrinter.tsx:146
 msgid "Printer not reachable"
 msgstr "Skrivaren kan inte nås"
 
@@ -7120,8 +7161,8 @@ msgstr "Genomför återbetalning"
 msgid "Processing order"
 msgstr "Behandlar order"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:618
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1157
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:479
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1018
 msgid "Processing…"
 msgstr ""
 
@@ -7343,7 +7384,7 @@ msgstr "Sats"
 msgid "Rate limit exceeded. Please try again later."
 msgstr "Hastighetsgränsen har överskridits. Försök igen senare."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:634
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:495
 msgid "Rates"
 msgstr "Priser"
 
@@ -7488,6 +7529,10 @@ msgstr "Regionala inställningar"
 msgid "Register"
 msgstr "Registrera"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:103
+msgid "Registered"
+msgstr "Registrerad"
+
 #: src/components/common/QuestionsTable/index.tsx:412
 #: src/components/layouts/Event/index.tsx:115
 msgid "Registration Questions"
@@ -7512,9 +7557,9 @@ msgstr "ta bort"
 msgid "Remove"
 msgstr "Ta bort"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:701
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:748
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:891
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:562
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:609
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:752
 msgid "Remove ticket"
 msgstr "Ta bort biljett"
 
@@ -7529,8 +7574,8 @@ msgstr "Rapporten hittades inte"
 msgid "Reports"
 msgstr "Rapporter"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:658
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1172
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:519
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1033
 msgid "Reprint"
 msgstr ""
 
@@ -7651,7 +7696,7 @@ msgid "Restore this organizer and make it active again."
 msgstr "Återställ denna arrangör och gör den aktiv igen."
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:609
+#: src/hooks/useKioskTicketPrinter.tsx:175
 msgid "Retry"
 msgstr "Försök igen"
 
@@ -7882,6 +7927,10 @@ msgstr "Schemalagd tid"
 #: src/components/routes/event/Affiliates/index.tsx:68
 msgid "Search affiliates..."
 msgstr "Sök affiliates..."
+
+#: src/components/routes/kiosk/Welcome/index.tsx:129
+msgid "Search attendee"
+msgstr "Sök deltagare"
 
 #: src/components/routes/admin/Accounts/index.tsx:60
 msgid "Search by account name or email..."
@@ -8115,7 +8164,7 @@ msgstr "Välj..."
 msgid "Selected"
 msgstr "Vald"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:985
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:846
 msgid "Sell a ticket at the door and print it immediately."
 msgstr ""
 
@@ -8277,7 +8326,7 @@ msgstr "Inställningen uppdaterades"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/Kiosk/index.tsx:58
+#: src/components/layouts/Kiosk/index.tsx:65
 #: src/components/layouts/OrganizerLayout/index.tsx:93
 #: src/components/modals/DuplicateEventModal/index.tsx:26
 #: src/components/routes/kiosk/Settings/index.tsx:59
@@ -8424,7 +8473,7 @@ msgstr "Slutsålt"
 msgid "Sold Out"
 msgstr "Slutsålt"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:384
+#: src/hooks/useKioskTicketPrinter.tsx:124
 msgid "Some tickets could not be printed."
 msgstr "Vissa biljetter kunde inte skrivas ut."
 
@@ -8486,8 +8535,8 @@ msgstr "Spanska"
 msgid "Sports"
 msgstr "Sport"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:740
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1050
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:601
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:911
 msgid "Standard"
 msgstr ""
 
@@ -8826,7 +8875,7 @@ msgstr "Systemstandard"
 msgid "T-shirt"
 msgstr "T-shirt"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1157
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1018
 msgid "Take Payment & Create Ticket"
 msgstr ""
 
@@ -8969,7 +9018,7 @@ msgstr "Den kampanjkoden är ogiltig"
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
 msgstr "Sidans bakgrundsfärg. När en omslagsbild används appliceras detta som en överlagring."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:878
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:739
 msgid "The basket is empty."
 msgstr "Korgen är tom."
 
@@ -9063,8 +9112,8 @@ msgstr "Priset som visas för kunden inkluderar moms och avgifter."
 msgid "The price displayed to the customer will not include taxes and fees. They will be shown separately"
 msgstr "Priset som visas för kunden inkluderar inte moms och avgifter. De visas separat"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:461
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:515
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:362
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:416
 msgid "The price has changed — please reselect the ticket type."
 msgstr ""
 
@@ -9098,11 +9147,11 @@ msgstr "Titeln för evenemanget som visas i sökresultat och vid delning i socia
 msgid "The VAT number could not be validated. Please check the number and try again."
 msgstr "Momsnumret kunde inte valideras. Kontrollera numret och försök igen."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:586
+#: src/hooks/useKioskTicketPrinter.tsx:152
 msgid "The Zebra printer at {0} did not respond. Enter its current IP address to try again, or open the tickets as PDF."
 msgstr "Zebra-skrivaren på {0} svarade inte. Ange dess aktuella IP-adress för att försöka igen, eller öppna biljetterna som PDF."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:378
+#: src/hooks/useKioskTicketPrinter.tsx:118
 msgid "The Zebra printer did not respond."
 msgstr "Zebra-skrivaren svarade inte."
 
@@ -9328,10 +9377,14 @@ msgstr "Denna rapport är endast informativ. Rådgör alltid med en skatteexpert
 msgid "This reset password link is invalid or expired."
 msgstr "Den här länken för att återställa lösenordet är ogiltig eller har löpt ut."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:463
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:520
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:364
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:421
 msgid "This sale could not be completed. Please try again."
 msgstr ""
+
+#: src/components/routes/kiosk/Welcome/index.tsx:58
+msgid "This ticket cannot be checked in."
+msgstr "Den här biljetten kan inte checkas in."
 
 #: src/components/layouts/CheckIn/index.tsx:205
 msgid "This ticket was just scanned. Please wait before scanning again."
@@ -9368,8 +9421,8 @@ msgstr "Biljett"
 msgid "Ticket Cancelled"
 msgstr "Biljett avbruten"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:448
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:502
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:349
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:403
 msgid "Ticket created — {0}"
 msgstr ""
 
@@ -9414,8 +9467,8 @@ msgstr "Biljettinnehavare"
 msgid "Ticket ID"
 msgstr "Biljett-ID"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:809
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1105
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:670
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:966
 msgid "Ticket language"
 msgstr ""
 
@@ -9468,7 +9521,7 @@ msgstr "Biljetter och försäljning"
 msgid "tickets"
 msgstr "biljetter"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:662
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:523
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "Biljetter"
@@ -9490,7 +9543,7 @@ msgstr "Tillgängliga biljetter"
 msgid "Tickets for"
 msgstr "Biljetter för"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:942
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:803
 msgid "tickets in the basket"
 msgstr "biljetter i korgen"
 
@@ -9712,6 +9765,10 @@ msgstr "Typ"
 msgid "Type \"delete\" to confirm"
 msgstr "Skriv \"ta bort\" för att bekräfta"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:136
+msgid "Type at least 2 characters, or scan the attendee's QR code."
+msgstr "Skriv minst 2 tecken eller skanna deltagarens QR-kod."
+
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:58
 msgid "Type of ticket"
 msgstr "Typ av biljett"
@@ -9797,7 +9854,7 @@ msgstr ""
 #: src/components/forms/ProductForm/index.tsx:321
 #: src/components/forms/PromoCodeForm/index.tsx:112
 #: src/components/modals/OfferWaitlistModal/index.tsx:189
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1066
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:927
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:78
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:84
 msgid "Unlimited"
@@ -10395,6 +10452,10 @@ msgstr "Vecka"
 msgid "Weibo"
 msgstr "Weibo"
 
+#: src/components/layouts/Kiosk/index.tsx:58
+msgid "Welcome"
+msgstr "Mottagning"
+
 #: src/components/routes/auth/AcceptInvitation/index.tsx:77
 msgid "Welcome aboard! Please login to continue."
 msgstr "Välkommen ombord! Logga in för att fortsätta."
@@ -10406,6 +10467,10 @@ msgstr "Välkommen tillbaka"
 #: src/components/routes/event/EventDashboard/index.tsx:115
 msgid "Welcome back{0} 👋"
 msgstr "Välkommen tillbaka{0} 👋"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:111
+msgid "Welcome desk — find a registered attendee, print the badge and record the entry."
+msgstr "Mottagning — hitta en registrerad deltagare, skriv ut namnbrickan och registrera inpasseringen."
 
 #: src/components/routes/welcome/index.tsx:477
 msgid "Welcome to {0}, {1} 👋"

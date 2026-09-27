@@ -37,6 +37,25 @@ export interface BoxOfficeSale {
     attendees?: Attendee[];
 }
 
+export interface BoxOfficeAttendeeSearchResult {
+    public_id: string;
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    product_title: string | null;
+    status: 'ACTIVE' | 'CANCELLED' | 'AWAITING_PAYMENT' | string;
+    checked_in_at: string | null;
+}
+
+export type BoxOfficeCheckInStatus = 'CHECKED_IN' | 'ALREADY_CHECKED_IN' | 'REFUSED';
+
+export interface BoxOfficeCheckInResult {
+    attendee_public_id: string;
+    status: BoxOfficeCheckInStatus;
+    checked_in_at: string | null;
+    message: string | null;
+}
+
 /** GET /box-office/context — events the authenticated user may operate. */
 export interface BoxOfficeContextEvent {
     id: number;
@@ -155,6 +174,21 @@ export const boxOfficeClient = {
     getStats: async (eventId: IdParam) => {
         const response = await api.get<GenericDataResponse<BoxOfficeStats>>(
             `events/${eventId}/box-office-stats`,
+        );
+        return response.data;
+    },
+
+    searchAttendees: async (eventId: IdParam, query: string) => {
+        const response = await api.get<GenericDataResponse<BoxOfficeAttendeeSearchResult[]>>(
+            `events/${eventId}/box-office/attendees`,
+            {params: {query}},
+        );
+        return response.data;
+    },
+
+    checkInAttendee: async (eventId: IdParam, attendeePublicId: string) => {
+        const response = await api.post<GenericDataResponse<BoxOfficeCheckInResult>>(
+            `events/${eventId}/box-office/attendees/${attendeePublicId}/check-in`,
         );
         return response.data;
     },

@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {t, Trans} from "@lingui/macro";
-import {Button, Group, Modal, NumberInput, Select, Stack, TextInput} from "@mantine/core";
+import {Button, Group, NumberInput, Select, TextInput} from "@mantine/core";
 import {NavLink} from "react-router";
 import {useForm} from "@mantine/form";
 import {
@@ -18,8 +18,8 @@ import {PageBody} from "../../../../common/PageBody";
 import {PageTitle} from "../../../../common/PageTitle";
 import {TableSkeleton} from "../../../../common/TableSkeleton";
 import {useCreateBoxOfficeSale} from "../../../../../mutations/useCreateBoxOfficeSale.ts";
-import {useReprintBoxOfficeTicket} from "../../../../../mutations/useReprintBoxOfficeTicket.ts";
-import {BoxOfficePaymentMethod, boxOfficeClient, BoxOfficeSale} from "../../../../../api/box-office.client.ts";
+import {useKioskTicketPrinter} from "../../../../../hooks/useKioskTicketPrinter.tsx";
+import {BoxOfficePaymentMethod, BoxOfficeSale} from "../../../../../api/box-office.client.ts";
 import {IdParam} from "../../../../../types.ts";
 import {KioskPrintOutput} from "../../../../../hooks/useKioskSettings.ts";
 import {showError, showSuccess} from "../../../../../utilites/notifications.tsx";
@@ -87,11 +87,6 @@ interface SaleFormProps {
     onZebraPrinterHostChange?: (host: string) => void;
 }
 
-interface PrinterPrompt {
-    attendeePublicIds: string[];
-    host: string;
-    isReprint: boolean;
-}
 
 const generateIdempotencyKey = (): string => {
     if (typeof window === 'undefined' || !window.crypto?.randomUUID) {
@@ -107,11 +102,6 @@ const hasSaleIdentifier = (values: Pick<SaleFormValues, 'first_name' | 'email' |
         || digits.length >= 8;
 };
 
-const openPdfBlobInNewTab = (blob: Blob) => {
-    const blobUrl = URL.createObjectURL(blob);
-    const printWindow = window.open(blobUrl, '_blank');
-    printWindow?.print();
-};
 
 const remainingStock = (price: SaleFormPrice): number | null => {
     if (price.quantity_remaining !== undefined) {
@@ -141,8 +131,14 @@ export const SaleForm = ({
     const errorHandler = useFormErrorResponseHandler();
     const isAdmin = useIsCurrentUserAdmin();
     const createSale = useCreateBoxOfficeSale();
-    const reprintTicket = useReprintBoxOfficeTicket();
     const callingCodeDigits = phoneCallingCode.replace(/\D/g, '');
+    const {printTickets, printerPromptModal, isReprinting} = useKioskTicketPrinter({
+        eventId,
+        printMode,
+        skipPrint,
+        zebraPrinterHost,
+        onZebraPrinterHostChange,
+    });
 
     const [idempotencyKey, setIdempotencyKey] = useState('');
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
@@ -153,8 +149,6 @@ export const SaleForm = ({
     const [cartOpen, setCartOpen] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
     const [lastSaleAttendeeIds, setLastSaleAttendeeIds] = useState<string[]>([]);
-    const [printerPrompt, setPrinterPrompt] = useState<PrinterPrompt | null>(null);
-    const [isRetryingPrint, setIsRetryingPrint] = useState(false);
 
     useEffect(() => {
         setIdempotencyKey(generateIdempotencyKey());
@@ -304,99 +298,6 @@ export const SaleForm = ({
         form.reset();
         form.setFieldValue('locale', (defaultLocale || getClientLocale()) as SupportedLocales);
         setIdempotencyKey(generateIdempotencyKey());
-    };
-
-    const printOnZebra = async (attendeePublicIds: string[], host: string): Promise<string[]> => {
-        const failed: string[] = [];
-        for (const attendeePublicId of attendeePublicIds) {
-            if (failed.length > 0) {
-                failed.push(attendeePublicId);
-                continue;
-            }
-            try {
-                await boxOfficeClient.printZpl(eventId, attendeePublicId, host);
-            } catch {
-                failed.push(attendeePublicId);
-            }
-        }
-        return failed;
-    };
-
-    const openTicketPdf = async (attendeePublicId: string) => {
-        try {
-            const pdf = await boxOfficeClient.getTicketPdf(eventId, attendeePublicId);
-            openPdfBlobInNewTab(pdf);
-        } catch {
-            showError(t`Could not open the ticket PDF. Use the reprint button to try again.`);
-        }
-    };
-
-    const openTicketPdfs = async (attendeePublicIds: string[], isReprint: boolean) => {
-        for (const attendeePublicId of attendeePublicIds) {
-            if (isReprint) {
-                try {
-                    openPdfBlobInNewTab(await reprintTicket.mutateAsync({eventId, attendeePublicId}));
-                } catch {
-                    showError(t`Could not reprint the ticket. Please try again.`);
-                }
-                continue;
-            }
-            await openTicketPdf(attendeePublicId);
-        }
-    };
-
-    const printTickets = async (attendeePublicIds: string[], isReprint = false) => {
-        if (attendeePublicIds.length === 0 || printMode === 'none' || skipPrint) {
-            return;
-        }
-
-        if (printMode !== 'zebra') {
-            await openTicketPdfs(attendeePublicIds, isReprint);
-            return;
-        }
-
-        const host = zebraPrinterHost.trim();
-        const failed = host ? await printOnZebra(attendeePublicIds, host) : attendeePublicIds;
-        if (failed.length > 0) {
-            setPrinterPrompt({attendeePublicIds: failed, host, isReprint});
-        }
-    };
-
-    const retryPrinterPrompt = async () => {
-        if (!printerPrompt) {
-            return;
-        }
-        const host = printerPrompt.host.trim();
-        if (!host) {
-            return;
-        }
-
-        setIsRetryingPrint(true);
-        try {
-            const failed = await printOnZebra(printerPrompt.attendeePublicIds, host);
-            if (failed.length === printerPrompt.attendeePublicIds.length) {
-                showError(t`The Zebra printer did not respond.`);
-                return;
-            }
-            onZebraPrinterHostChange?.(host);
-            if (failed.length > 0) {
-                setPrinterPrompt({...printerPrompt, attendeePublicIds: failed, host});
-                showError(t`Some tickets could not be printed.`);
-                return;
-            }
-            setPrinterPrompt(null);
-        } finally {
-            setIsRetryingPrint(false);
-        }
-    };
-
-    const openPrinterPromptPdfs = async () => {
-        if (!printerPrompt) {
-            return;
-        }
-        const {attendeePublicIds, isReprint} = printerPrompt;
-        setPrinterPrompt(null);
-        await openTicketPdfs(attendeePublicIds, isReprint);
     };
 
     const handleReprint = (attendeePublicIds: string[]) => {
@@ -573,46 +474,6 @@ export const SaleForm = ({
         }
     };
 
-    const printerPromptModal = (
-        <Modal
-            opened={printerPrompt !== null}
-            onClose={() => setPrinterPrompt(null)}
-            title={t`Printer not reachable`}
-            centered
-        >
-            <Stack>
-                <p>
-                    {printerPrompt?.host
-                        ? t`The Zebra printer at ${printerPrompt.host} did not respond. Enter its current IP address to try again, or open the tickets as PDF.`
-                        : t`No Zebra printer IP is set for this station. Enter it to print, or open the tickets as PDF.`}
-                </p>
-                <TextInput
-                    label={t`Printer IP address`}
-                    placeholder="192.168.1.50"
-                    value={printerPrompt?.host ?? ''}
-                    onChange={(event) => {
-                        const host = event.currentTarget.value.trim();
-                        setPrinterPrompt((current) => current ? {...current, host} : current);
-                    }}
-                    data-autofocus
-                />
-                <Group justify="flex-end">
-                    <Button variant="default" onClick={() => void openPrinterPromptPdfs()}>
-                        {t`Open tickets as PDF`}
-                    </Button>
-                    <Button
-                        leftSection={<IconPrinter/>}
-                        loading={isRetryingPrint}
-                        disabled={!printerPrompt?.host}
-                        onClick={() => void retryPrinterPrompt()}
-                    >
-                        {t`Retry`}
-                    </Button>
-                </Group>
-            </Stack>
-        </Modal>
-    );
-
     if (variant === 'kiosk') {
         const continueLabel = step === 'paiement'
             ? (isCheckingOut ? t`Processing…` : t`Finish`)
@@ -652,7 +513,7 @@ export const SaleForm = ({
                                     <Button
                                         variant="light"
                                         leftSection={<IconPrinter/>}
-                                        loading={reprintTicket.isPending}
+                                        loading={isReprinting}
                                         onClick={() => handleReprint(lastSaleAttendeeIds)}
                                     >
                                         {t`Reprint`}
@@ -1166,7 +1027,7 @@ export const SaleForm = ({
                                 <Button
                                     variant="light"
                                     leftSection={<IconPrinter/>}
-                                    loading={reprintTicket.isPending}
+                                    loading={isReprinting}
                                     onClick={() => handleReprint(lastSaleAttendeeIds)}
                                 >
                                     {t`Reprint`}

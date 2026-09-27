@@ -62,9 +62,17 @@ msgstr "{0} <0>sorti</0> avec succès"
 msgid "{0} Active Webhooks"
 msgstr "{0} webhooks actifs"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:56
+msgid "{0} already entered at {1}"
+msgstr "{0} est déjà entré(e) à {1}"
+
 #: src/components/routes/product-widget/SelectProducts/index.tsx:476
 msgid "{0} available"
 msgstr "{0} disponible"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:54
+msgid "{0} checked in"
+msgstr "Entrée de {0} enregistrée"
 
 #: src/components/modals/CreateTaxOrFeeModal/index.tsx:36
 msgid "{0} created successfully"
@@ -87,7 +95,7 @@ msgstr "{0} organisateurs"
 msgid "{0} tickets"
 msgstr "{0} billets"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:449
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:350
 msgid "{0} tickets created"
 msgstr "{0} billets créés"
 
@@ -124,7 +132,7 @@ msgstr "{minutes} minutes et {secondes} secondes"
 msgid "{organizerName}'s first event"
 msgstr "Premier événement de {organizerName}"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1065
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:926
 msgid "{selectedPriceRemaining} remaining"
 msgstr "{selectedPriceRemaining} restant(s)"
 
@@ -226,7 +234,7 @@ msgstr "1 type de billet"
 msgid "1 week before event"
 msgstr "1 semaine avant l'événement"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1006
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:867
 msgid "1. Choose a ticket"
 msgstr "1. Choisir un billet"
 
@@ -240,7 +248,7 @@ msgstr "123, rue Principale"
 msgid "123 Sample Street"
 msgstr "123 Rue Exemple"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1074
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:935
 msgid "2. Attendee details"
 msgstr "2. Coordonnées du participant"
 
@@ -248,7 +256,7 @@ msgstr "2. Coordonnées du participant"
 msgid "20"
 msgstr "20"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1114
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:975
 msgid "3. Payment method"
 msgstr "3. Moyen de paiement"
 
@@ -334,11 +342,11 @@ msgstr "Une seule question par produit. Par exemple, Quelle est votre taille de 
 msgid "A standard tax, like VAT or GST"
 msgstr "Une taxe standard, comme la TVA ou la TPS"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:191
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:185
 msgid "A valid email is required"
 msgstr "Une adresse e-mail valide est requise"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:182
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:176
 msgid "A valid phone number is required"
 msgstr "Un numéro de téléphone valide est requis"
 
@@ -558,13 +566,13 @@ msgstr "Ajouter une taxe ou des frais"
 msgid "Add this event to your calendar"
 msgstr "Ajouter cet événement à votre calendrier"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:713
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:758
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:900
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:574
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:619
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:761
 msgid "Add ticket"
 msgstr "Ajouter un billet"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:926
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:787
 #: src/components/routes/event/GettingStarted/index.tsx:132
 msgid "Add tickets"
 msgstr "Ajouter des billets"
@@ -815,12 +823,12 @@ msgstr "Incroyable, Événement, Mots-clés..."
 msgid "Amount"
 msgstr "Montant"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:860
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1140
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:721
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1001
 msgid "Amount collected"
 msgstr "Montant encaissé"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:193
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:187
 msgid "Amount collected is required"
 msgstr "Le montant encaissé est requis"
 
@@ -1320,7 +1328,7 @@ msgstr "Awesome Events SARL"
 msgid "Awesome Organizer Ltd."
 msgstr "Organisateur génial Ltd."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:627
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:488
 msgid "Back"
 msgstr "Retour"
 
@@ -1363,6 +1371,14 @@ msgstr "Couleur de fond"
 msgid "Background Type"
 msgstr "Type d'arrière-plan"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:163
+msgid "Badge + entry"
+msgstr "Badge + entrée"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:172
+msgid "Badge only"
+msgstr "Badge seul"
+
 #: src/components/routes/organizer/Settings/index.tsx:30
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
@@ -1394,8 +1410,8 @@ msgid "Bookmark this page to manage your order anytime."
 msgstr "Ajoutez cette page à vos favoris pour gérer votre commande à tout moment."
 
 #: src/components/layouts/Event/index.tsx:125
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:631
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:986
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:492
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:847
 msgid "Box Office"
 msgstr "Guichet"
 
@@ -1538,6 +1554,7 @@ msgstr "L'annulation annulera tous les participants associés à cette commande 
 #: src/components/routes/event/attendees.tsx:27
 #: src/components/routes/event/orders.tsx:24
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:75
+#: src/components/routes/kiosk/Welcome/index.tsx:95
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:353
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:98
 msgid "Cancelled"
@@ -1575,18 +1592,18 @@ msgstr "Attributions de capacité"
 msgid "Capacity Management"
 msgstr "Gestion de capacité"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:829
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1118
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:690
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:979
 msgid "Card"
 msgstr "Carte"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:876
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:938
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:737
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:799
 msgid "Cart contents"
 msgstr "Contenu du panier"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:828
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1117
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:689
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:978
 msgid "Cash"
 msgstr "Espèces"
 
@@ -1611,7 +1628,7 @@ msgstr "Catégorie"
 msgid "Category Created Successfully"
 msgstr "Catégorie créée avec succès"
 
-#: src/components/layouts/Kiosk/index.tsx:78
+#: src/components/layouts/Kiosk/index.tsx:85
 msgid "Change event"
 msgstr "Changer d'événement"
 
@@ -1668,6 +1685,10 @@ msgstr "Enregistrement créé"
 #: src/components/forms/WebhookForm/index.tsx:127
 msgid "Check-in Deleted"
 msgstr "Enregistrement supprimé"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:67
+msgid "Check-in failed. Please try again."
+msgstr "L'enregistrement a échoué. Veuillez réessayer."
 
 #: src/components/modals/CheckInListSuccessModal/index.tsx:20
 msgid "Check-In List Created"
@@ -1761,8 +1782,8 @@ msgstr "Chinois (traditionnel)"
 msgid "Choose a color for your background"
 msgstr "Choisissez une couleur pour votre arrière-plan"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:726
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1041
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:587
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:902
 msgid "Choose a price"
 msgstr "Choisir un tarif"
 
@@ -1914,8 +1935,8 @@ msgstr "Colonnes"
 msgid "Comedy"
 msgstr "Comédie"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:849
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:854
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:710
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:715
 msgid "Coming soon"
 msgstr "Bientôt disponible"
 
@@ -2192,7 +2213,7 @@ msgstr "Email de contact pour le support"
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:619
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:480
 #: src/components/routes/product-widget/SelectProducts/index.tsx:550
 msgid "Continue"
 msgstr "Continuer"
@@ -2319,11 +2340,11 @@ msgstr "Copier dans le presse-papiers"
 msgid "Copy URL"
 msgstr "Copier le lien"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:330
+#: src/hooks/useKioskTicketPrinter.tsx:67
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr "Impossible d'ouvrir le PDF du billet. Utilisez le bouton de réimpression pour réessayer."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:340
+#: src/hooks/useKioskTicketPrinter.tsx:77
 msgid "Could not reprint the ticket. Please try again."
 msgstr "Impossible de réimprimer le billet. Veuillez réessayer."
 
@@ -2951,7 +2972,7 @@ msgstr "Don"
 msgid "Donation / Pay what you'd like product"
 msgstr "Produit de don / Payez ce que vous voulez"
 
-#: src/components/layouts/Kiosk/index.tsx:83
+#: src/components/layouts/Kiosk/index.tsx:90
 #: src/components/modals/CheckInListSuccessModal/index.tsx:59
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:72
 #: src/components/modals/CreateWebhookModal/index.tsx:72
@@ -3222,8 +3243,8 @@ msgstr "Listes d'Enregistrement Éligibles"
 #: src/components/routes/auth/Login/index.tsx:93
 #: src/components/routes/auth/Register/index.tsx:104
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:99
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:802
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1099
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:663
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:960
 #: src/components/routes/kiosk/Login/index.tsx:75
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
@@ -3330,13 +3351,13 @@ msgstr "Script d'intégration"
 msgid "Embed Widget"
 msgstr "Widget intégré"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:266
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:962
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:963
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:260
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:823
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:824
 msgid "Empty basket"
 msgstr "Vider le panier"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:264
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:258
 msgid "Empty the basket? All selected tickets and the customer details will be removed."
 msgstr "Vider le panier ? Tous les billets sélectionnés et les informations du client seront supprimés."
 
@@ -3417,7 +3438,7 @@ msgstr "Saisir le nom de l'affilié"
 msgid "Enter an amount excluding taxes and fees."
 msgstr "Saisissez un montant hors taxes et frais."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:556
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:457
 msgid "Enter at least a first name, an email, or a phone number."
 msgstr "Saisir au moins un prénom, un e-mail ou un téléphone."
 
@@ -3478,6 +3499,10 @@ msgstr "Entrez votre nom"
 msgid "Enter your VAT number including the country code, without spaces (e.g., IE1234567A, DE123456789)"
 msgstr "Entrez votre numéro de TVA avec le code pays, sans espaces (par ex., IE1234567A, DE123456789)"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:101
+msgid "Entered at {0}"
+msgstr "Entré(e) à {0}"
+
 #: src/components/common/WaitlistTable/index.tsx:240
 msgid "Entries will appear here when customers join the waitlist for sold out products."
 msgstr "Les inscriptions apparaîtront ici lorsque les clients rejoindront la liste d'attente pour les produits épuisés."
@@ -3485,6 +3510,10 @@ msgstr "Les inscriptions apparaîtront ici lorsque les clients rejoindront la li
 #: src/pages/digit/ScannerDevicePage.tsx:46
 msgid "Entry confirmed"
 msgstr "Entrée confirmée"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:181
+msgid "Entry only"
+msgstr "Entrée seule"
 
 #: src/components/common/OrdersTable/index.tsx:106
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
@@ -4133,7 +4162,7 @@ msgstr "Filtres"
 msgid "Filters ({activeFilterCount})"
 msgstr "Filtres ({activeFilterCount})"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:618
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:479
 msgid "Finish"
 msgstr "Terminer"
 
@@ -4169,8 +4198,8 @@ msgstr "Premier numéro de facture"
 #: src/components/modals/CreateAttendeeModal/index.tsx:129
 #: src/components/modals/ManageAttendeeModal/index.tsx:111
 #: src/components/modals/ManageOrderModal/index.tsx:144
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:777
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1077
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:638
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:938
 #: src/components/routes/product-widget/CollectInformation/index.tsx:437
 #: src/components/routes/product-widget/CollectInformation/index.tsx:649
 msgid "First name"
@@ -4261,7 +4290,7 @@ msgstr "Texte de Pied de Page"
 msgid "Forgot password?"
 msgstr "Mot de passe oublié?"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:635
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:496
 msgid "Form"
 msgstr "Formulaire"
 
@@ -4272,12 +4301,12 @@ msgstr "Formulaire"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:113
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:123
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:180
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1119
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:980
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Gratuit"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1129
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:990
 msgid "Free can only be used for a ticket priced at 0"
 msgstr "Gratuit ne peut être utilisé que pour un billet dont le prix est 0"
 
@@ -4969,7 +4998,7 @@ msgstr "Cliquez simplement sur le bouton ci-dessous pour reconnecter votre compt
 msgid "Just looking for your tickets?"
 msgstr "Vous cherchez vos billets ?"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:266
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:260
 msgid "Keep"
 msgstr "Conserver"
 
@@ -5048,8 +5077,8 @@ msgstr "Dernière connexion"
 #: src/components/modals/CreateAttendeeModal/index.tsx:136
 #: src/components/modals/ManageAttendeeModal/index.tsx:112
 #: src/components/modals/ManageOrderModal/index.tsx:150
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:782
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1082
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:643
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:943
 msgid "Last name"
 msgstr "Nom de famille"
 
@@ -5080,12 +5109,12 @@ msgstr "Le nom est obligatoire"
 msgid "Last Response"
 msgstr "Dernière réponse"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:650
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:511
 msgid "Last sale: <0>{0} tickets</0>"
 msgstr "Dernière vente : <0>{0} billets</0>"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1164
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:510
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1025
 msgid "Last ticket: <0>{0}</0>"
 msgstr "Dernier billet : <0>{0}</0>"
 
@@ -5178,8 +5207,8 @@ msgstr "Chargement des webhooks"
 msgid "Loading..."
 msgstr "Chargement..."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:797
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1093
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:658
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:954
 msgid "Local number without the leading 0."
 msgstr "Numéro local sans le 0 initial."
 
@@ -5267,7 +5296,7 @@ msgstr "Gérer le participant"
 msgid "Manage event"
 msgstr "Gérer l'événement"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:996
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:857
 msgid "Manage kiosk operators"
 msgstr "Gérer les opérateurs de guichet"
 
@@ -5442,9 +5471,9 @@ msgstr "Divers"
 msgid "Miscellaneous Settings"
 msgstr "Paramètres divers"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:180
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:798
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1094
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:174
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:659
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:955
 msgid "Missing phone calling code — set it in station settings."
 msgstr "Indicatif téléphone manquant — renseignez-le dans Réglages du poste."
 
@@ -5480,8 +5509,8 @@ msgstr "Zone de texte multiligne"
 msgid "Multiple price options. Perfect for early bird products etc."
 msgstr "Options de prix multiples. Parfait pour les produits en prévente, etc."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:693
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1033
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:554
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:894
 msgid "Multiple prices"
 msgstr "Plusieurs tarifs"
 
@@ -5549,6 +5578,10 @@ msgstr "Le nom doit comporter moins de 255 caractères"
 msgid "Name of the event"
 msgstr "Nom de l'événement"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:126
+msgid "Name, e-mail or ticket number — or scan the QR code"
+msgstr "Nom, e-mail ou n° de billet — ou scannez le QR code"
+
 #: src/components/common/QuestionAndAnswerList/index.tsx:181
 #: src/components/common/QuestionAndAnswerList/index.tsx:289
 msgid "Navigate to Attendee"
@@ -5612,6 +5645,10 @@ msgstr "Aucun affilié à afficher"
 #: src/components/common/NoEventsBlankSlate/index.tsx:21
 msgid "No archived events to show."
 msgstr "Aucun événement archivé à afficher."
+
+#: src/components/routes/kiosk/Welcome/index.tsx:140
+msgid "No attendee found."
+msgstr "Aucun participant trouvé."
 
 #: src/components/common/QuestionsTable/index.tsx:490
 msgid "No attendee questions yet"
@@ -5738,7 +5775,7 @@ msgstr "Aucun message trouvé"
 msgid "No messages to show"
 msgstr "Aucun message à afficher"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:225
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:219
 msgid "No more tickets available for this price."
 msgstr "Plus de billets disponibles pour ce tarif."
 
@@ -5865,8 +5902,8 @@ msgstr "Aucun résultat trouvé."
 msgid "No Taxes or Fees have been added."
 msgstr "Aucune taxe ou frais n'a été ajouté."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:665
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1010
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:526
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:871
 msgid "No ticket is both active and attached to an active check-in list. Attach a product to a check-in list first — otherwise it would not be scannable at the door."
 msgstr "Aucun billet n'est à la fois actif et rattaché à une liste de contrôle active. Rattachez d'abord un produit à une liste de contrôle — sinon il ne serait pas scannable à l'entrée."
 
@@ -5904,7 +5941,7 @@ msgstr "Aucun événement webhook n'a encore été enregistré pour ce point de 
 msgid "No Webhooks"
 msgstr "Aucun webhook"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:587
+#: src/hooks/useKioskTicketPrinter.tsx:153
 msgid "No Zebra printer IP is set for this station. Enter it to print, or open the tickets as PDF."
 msgstr "Aucune adresse IP d'imprimante Zebra n'est définie pour ce poste. Saisissez-la pour imprimer, ou ouvrez les billets en PDF."
 
@@ -6116,11 +6153,11 @@ msgstr "Ouvrir la barre latérale"
 msgid "Open Stripe Dashboard"
 msgstr "Ouvrir le tableau de bord Stripe"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:601
+#: src/hooks/useKioskTicketPrinter.tsx:167
 msgid "Open tickets as PDF"
 msgstr "Ouvrir les billets en PDF"
 
-#: src/components/layouts/Kiosk/index.tsx:64
+#: src/components/layouts/Kiosk/index.tsx:71
 #: src/components/routes/kiosk/Settings/index.tsx:172
 msgid "Operator"
 msgstr "Opérateur"
@@ -6137,7 +6174,7 @@ msgstr "Option {i}"
 msgid "Optional additional information to appear on all invoices (e.g., payment terms, late payment fees, return policy)"
 msgstr "Informations supplémentaires optionnelles à apparaître sur toutes les factures (par exemple, conditions de paiement, frais de retard, politique de retour)"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:819
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:680
 msgid "Optional in a rush — enter at least a first name, an email, or a phone number. The email can be completed later from the attendees screen."
 msgstr "Optionnel en rush — saisissez au moins un prénom, un e-mail ou un téléphone. L’e-mail pourra être complété plus tard dans l’écran Participants."
 
@@ -6660,7 +6697,7 @@ msgstr "Charge utile"
 #: src/components/common/OrdersTable/index.tsx:375
 #: src/components/common/ProgressStepper/index.tsx:19
 #: src/components/forms/StripeCheckoutForm/index.tsx:127
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:636
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:497
 msgid "Payment"
 msgstr "Paiement"
 
@@ -6701,6 +6738,10 @@ msgstr "Mode de paiement"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:105
 msgid "Payment Methods"
 msgstr "Méthodes de paiement"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:98
+msgid "Payment pending"
+msgstr "Paiement en attente"
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:474
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:486
@@ -6819,8 +6860,8 @@ msgstr "Téléphone"
 msgid "Phone calling code"
 msgstr "Indicatif téléphonique"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:788
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1087
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:649
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:948
 msgid "Phone number"
 msgstr "Numéro de téléphone"
 
@@ -7087,12 +7128,12 @@ msgstr "Imprimer les billets"
 msgid "Print to PDF"
 msgstr "Imprimer en PDF"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:590
 #: src/components/routes/kiosk/Settings/index.tsx:99
+#: src/hooks/useKioskTicketPrinter.tsx:156
 msgid "Printer IP address"
 msgstr "Adresse IP de l’imprimante"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:580
+#: src/hooks/useKioskTicketPrinter.tsx:146
 msgid "Printer not reachable"
 msgstr "Imprimante injoignable"
 
@@ -7122,8 +7163,8 @@ msgstr "Traiter le remboursement"
 msgid "Processing order"
 msgstr "Traitement de la commande"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:618
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1157
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:479
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1018
 msgid "Processing…"
 msgstr "Traitement en cours…"
 
@@ -7347,7 +7388,7 @@ msgstr "Taux"
 msgid "Rate limit exceeded. Please try again later."
 msgstr "Limite de débit dépassée. Veuillez réessayer plus tard."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:634
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:495
 msgid "Rates"
 msgstr "Tarifs"
 
@@ -7492,6 +7533,10 @@ msgstr "Paramètres régionaux"
 msgid "Register"
 msgstr "S'inscrire"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:103
+msgid "Registered"
+msgstr "Inscrit"
+
 #: src/components/common/QuestionsTable/index.tsx:412
 #: src/components/layouts/Event/index.tsx:115
 msgid "Registration Questions"
@@ -7516,9 +7561,9 @@ msgstr "retirer"
 msgid "Remove"
 msgstr "Retirer"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:701
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:748
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:891
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:562
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:609
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:752
 msgid "Remove ticket"
 msgstr "Retirer un billet"
 
@@ -7533,8 +7578,8 @@ msgstr "Rapport non trouvé"
 msgid "Reports"
 msgstr "Rapports"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:658
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1172
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:519
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1033
 msgid "Reprint"
 msgstr "Réimprimer"
 
@@ -7655,7 +7700,7 @@ msgid "Restore this organizer and make it active again."
 msgstr "Restaurez cet organisateur et rendez-le à nouveau actif."
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:609
+#: src/hooks/useKioskTicketPrinter.tsx:175
 msgid "Retry"
 msgstr "Réessayer"
 
@@ -7886,6 +7931,10 @@ msgstr "Heure programmée"
 #: src/components/routes/event/Affiliates/index.tsx:68
 msgid "Search affiliates..."
 msgstr "Rechercher des affiliés..."
+
+#: src/components/routes/kiosk/Welcome/index.tsx:129
+msgid "Search attendee"
+msgstr "Rechercher un participant"
 
 #: src/components/routes/admin/Accounts/index.tsx:60
 msgid "Search by account name or email..."
@@ -8119,7 +8168,7 @@ msgstr "Sélectionner..."
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:985
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:846
 msgid "Sell a ticket at the door and print it immediately."
 msgstr "Vendez un billet au guichet et imprimez-le immédiatement."
 
@@ -8281,7 +8330,7 @@ msgstr "Paramètre mis à jour"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/Kiosk/index.tsx:58
+#: src/components/layouts/Kiosk/index.tsx:65
 #: src/components/layouts/OrganizerLayout/index.tsx:93
 #: src/components/modals/DuplicateEventModal/index.tsx:26
 #: src/components/routes/kiosk/Settings/index.tsx:59
@@ -8428,7 +8477,7 @@ msgstr "Épuisé"
 msgid "Sold Out"
 msgstr "Épuisé"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:384
+#: src/hooks/useKioskTicketPrinter.tsx:124
 msgid "Some tickets could not be printed."
 msgstr "Certains billets n'ont pas pu être imprimés."
 
@@ -8490,8 +8539,8 @@ msgstr "Espagnol"
 msgid "Sports"
 msgstr "Sports"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:740
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1050
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:601
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:911
 msgid "Standard"
 msgstr "Standard"
 
@@ -8830,7 +8879,7 @@ msgstr "Par défaut du système"
 msgid "T-shirt"
 msgstr "T-shirt"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1157
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1018
 msgid "Take Payment & Create Ticket"
 msgstr "Encaisser et créer le billet"
 
@@ -8973,7 +9022,7 @@ msgstr "Ce code promotionnel n'est pas valide"
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
 msgstr "La couleur de fond de la page. Lors de l'utilisation d'une image de couverture, ceci est appliqué en superposition."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:878
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:739
 msgid "The basket is empty."
 msgstr "Le panier est vide."
 
@@ -9067,8 +9116,8 @@ msgstr "Le prix affiché au client comprendra les taxes et frais."
 msgid "The price displayed to the customer will not include taxes and fees. They will be shown separately"
 msgstr "Le prix affiché au client ne comprendra pas les taxes et frais. Ils seront présentés séparément"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:461
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:515
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:362
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:416
 msgid "The price has changed — please reselect the ticket type."
 msgstr "Le prix a changé — veuillez resélectionner le type de billet."
 
@@ -9102,11 +9151,11 @@ msgstr "Le titre de l'événement qui sera affiché dans les résultats des mote
 msgid "The VAT number could not be validated. Please check the number and try again."
 msgstr "Le numéro de TVA n'a pas pu être validé. Veuillez vérifier le numéro et réessayer."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:586
+#: src/hooks/useKioskTicketPrinter.tsx:152
 msgid "The Zebra printer at {0} did not respond. Enter its current IP address to try again, or open the tickets as PDF."
 msgstr "L'imprimante Zebra à l'adresse {0} n'a pas répondu. Saisissez son adresse IP actuelle pour réessayer, ou ouvrez les billets en PDF."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:378
+#: src/hooks/useKioskTicketPrinter.tsx:118
 msgid "The Zebra printer did not respond."
 msgstr "L’imprimante Zebra n’a pas répondu."
 
@@ -9332,10 +9381,14 @@ msgstr "Ce rapport est fourni à titre informatif uniquement. Consultez toujours
 msgid "This reset password link is invalid or expired."
 msgstr "Ce lien de réinitialisation du mot de passe est invalide ou a expiré."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:463
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:520
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:364
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:421
 msgid "This sale could not be completed. Please try again."
 msgstr "Cette vente n'a pas pu être finalisée. Veuillez réessayer."
+
+#: src/components/routes/kiosk/Welcome/index.tsx:58
+msgid "This ticket cannot be checked in."
+msgstr "Ce billet ne peut pas être enregistré."
 
 #: src/components/layouts/CheckIn/index.tsx:205
 msgid "This ticket was just scanned. Please wait before scanning again."
@@ -9372,8 +9425,8 @@ msgstr "Billet"
 msgid "Ticket Cancelled"
 msgstr "Billet annulé"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:448
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:502
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:349
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:403
 msgid "Ticket created — {0}"
 msgstr "Billet créé — {0}"
 
@@ -9418,8 +9471,8 @@ msgstr "Titulaires de billets"
 msgid "Ticket ID"
 msgstr "ID du billet"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:809
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1105
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:670
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:966
 msgid "Ticket language"
 msgstr "Langue du billet"
 
@@ -9472,7 +9525,7 @@ msgstr "Billetterie et ventes"
 msgid "tickets"
 msgstr "billets"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:662
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:523
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "Billets"
@@ -9494,7 +9547,7 @@ msgstr "Billets disponibles"
 msgid "Tickets for"
 msgstr "Billets pour"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:942
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:803
 msgid "tickets in the basket"
 msgstr "billets dans le panier"
 
@@ -9716,6 +9769,10 @@ msgstr "Taper"
 msgid "Type \"delete\" to confirm"
 msgstr "Tapez \"supprimer\" pour confirmer"
 
+#: src/components/routes/kiosk/Welcome/index.tsx:136
+msgid "Type at least 2 characters, or scan the attendee's QR code."
+msgstr "Saisissez au moins 2 caractères, ou scannez le QR code du participant."
+
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:58
 msgid "Type of ticket"
 msgstr "Type de billet"
@@ -9801,7 +9858,7 @@ msgstr "Bracelet inconnu"
 #: src/components/forms/ProductForm/index.tsx:321
 #: src/components/forms/PromoCodeForm/index.tsx:112
 #: src/components/modals/OfferWaitlistModal/index.tsx:189
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1066
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:927
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:78
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:84
 msgid "Unlimited"
@@ -10399,6 +10456,10 @@ msgstr "Semaine"
 msgid "Weibo"
 msgstr "Weibo"
 
+#: src/components/layouts/Kiosk/index.tsx:58
+msgid "Welcome"
+msgstr "Accueil"
+
 #: src/components/routes/auth/AcceptInvitation/index.tsx:77
 msgid "Welcome aboard! Please login to continue."
 msgstr "Bienvenue à bord! Merci de vous connecter pour continuer."
@@ -10410,6 +10471,10 @@ msgstr "Bon retour"
 #: src/components/routes/event/EventDashboard/index.tsx:115
 msgid "Welcome back{0} 👋"
 msgstr "Bon retour{0} 👋"
+
+#: src/components/routes/kiosk/Welcome/index.tsx:111
+msgid "Welcome desk — find a registered attendee, print the badge and record the entry."
+msgstr "Accueil — retrouvez un inscrit, imprimez son badge et enregistrez son entrée."
 
 #: src/components/routes/welcome/index.tsx:477
 msgid "Welcome to {0}, {1} 👋"
