@@ -45,6 +45,7 @@ export interface BoxOfficeContextEvent {
     timezone: string;
     country?: string | null;
     calling_code?: string | null;
+    last_printer_host?: string | null;
 }
 
 /** GET /events/{id}/box-office/products — sellable catalogue (scoped). */

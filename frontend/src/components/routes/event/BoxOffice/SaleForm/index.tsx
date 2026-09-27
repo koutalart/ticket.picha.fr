@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {t, Trans} from "@lingui/macro";
-import {Button, Group, NumberInput, Select, TextInput} from "@mantine/core";
+import {Button, Group, Modal, NumberInput, Select, Stack, TextInput} from "@mantine/core";
 import {NavLink} from "react-router";
 import {useForm} from "@mantine/form";
 import {
@@ -81,6 +81,13 @@ interface SaleFormProps {
     defaultLocale?: SupportedLocales | '';
     sendConfirmationEmail?: boolean;
     phoneCallingCode?: string;
+    onZebraPrinterHostChange?: (host: string) => void;
+}
+
+interface PrinterPrompt {
+    attendeePublicIds: string[];
+    host: string;
+    isReprint: boolean;
 }
 
 const generateIdempotencyKey = (): string => {
@@ -126,6 +133,7 @@ export const SaleForm = ({
     defaultLocale = '',
     sendConfirmationEmail = false,
     phoneCallingCode = '',
+    onZebraPrinterHostChange,
 }: SaleFormProps) => {
     const errorHandler = useFormErrorResponseHandler();
     const isAdmin = useIsCurrentUserAdmin();
@@ -141,6 +149,9 @@ export const SaleForm = ({
     const [basket, setBasket] = useState<BasketLine[]>([]);
     const [cartOpen, setCartOpen] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const [lastSaleAttendeeIds, setLastSaleAttendeeIds] = useState<string[]>([]);
+    const [printerPrompt, setPrinterPrompt] = useState<PrinterPrompt | null>(null);
+    const [isRetryingPrint, setIsRetryingPrint] = useState(false);
 
     useEffect(() => {
         setIdempotencyKey(generateIdempotencyKey());
@@ -289,14 +300,20 @@ export const SaleForm = ({
         setIdempotencyKey(generateIdempotencyKey());
     };
 
-    const printOnZebra = async (attendeePublicId: string) => {
-        const host = zebraPrinterHost.trim();
-        if (!host) {
-            showError(t`Set the Zebra printer IP in Settings before printing.`);
-            return;
+    const printOnZebra = async (attendeePublicIds: string[], host: string): Promise<string[]> => {
+        const failed: string[] = [];
+        for (const attendeePublicId of attendeePublicIds) {
+            if (failed.length > 0) {
+                failed.push(attendeePublicId);
+                continue;
+            }
+            try {
+                await boxOfficeClient.printZpl(eventId, attendeePublicId, host);
+            } catch {
+                failed.push(attendeePublicId);
+            }
         }
-
-        await boxOfficeClient.printZpl(eventId, attendeePublicId, host);
+        return failed;
     };
 
     const openTicketPdf = async (attendeePublicId: string) => {
@@ -308,35 +325,76 @@ export const SaleForm = ({
         }
     };
 
-    const printTicket = async (attendeePublicId: string, isReprint = false) => {
-        if (printMode === 'none' || skipPrint) {
-            return;
-        }
-
-        if (printMode === 'zebra') {
-            try {
-                await printOnZebra(attendeePublicId);
-            } catch {
-                showError(isReprint
-                    ? t`The Zebra printer did not respond.`
-                    : t`The ticket was created but the Zebra printer did not respond.`);
+    const openTicketPdfs = async (attendeePublicIds: string[], isReprint: boolean) => {
+        for (const attendeePublicId of attendeePublicIds) {
+            if (isReprint) {
+                try {
+                    openPdfBlobInNewTab(await reprintTicket.mutateAsync({eventId, attendeePublicId}));
+                } catch {
+                    showError(t`Could not reprint the ticket. Please try again.`);
+                }
+                continue;
             }
-            return;
+            await openTicketPdf(attendeePublicId);
         }
-
-        if (isReprint) {
-            reprintTicket.mutate({eventId, attendeePublicId}, {
-                onSuccess: (pdf) => openPdfBlobInNewTab(pdf),
-                onError: () => showError(t`Could not reprint the ticket. Please try again.`),
-            });
-            return;
-        }
-
-        await openTicketPdf(attendeePublicId);
     };
 
-    const handleReprint = (attendeePublicId: string) => {
-        void printTicket(attendeePublicId, true);
+    const printTickets = async (attendeePublicIds: string[], isReprint = false) => {
+        if (attendeePublicIds.length === 0 || printMode === 'none' || skipPrint) {
+            return;
+        }
+
+        if (printMode !== 'zebra') {
+            await openTicketPdfs(attendeePublicIds, isReprint);
+            return;
+        }
+
+        const host = zebraPrinterHost.trim();
+        const failed = host ? await printOnZebra(attendeePublicIds, host) : attendeePublicIds;
+        if (failed.length > 0) {
+            setPrinterPrompt({attendeePublicIds: failed, host, isReprint});
+        }
+    };
+
+    const retryPrinterPrompt = async () => {
+        if (!printerPrompt) {
+            return;
+        }
+        const host = printerPrompt.host.trim();
+        if (!host) {
+            return;
+        }
+
+        setIsRetryingPrint(true);
+        try {
+            const failed = await printOnZebra(printerPrompt.attendeePublicIds, host);
+            if (failed.length === printerPrompt.attendeePublicIds.length) {
+                showError(t`The Zebra printer did not respond.`);
+                return;
+            }
+            onZebraPrinterHostChange?.(host);
+            if (failed.length > 0) {
+                setPrinterPrompt({...printerPrompt, attendeePublicIds: failed, host});
+                showError(t`Some tickets could not be printed.`);
+                return;
+            }
+            setPrinterPrompt(null);
+        } finally {
+            setIsRetryingPrint(false);
+        }
+    };
+
+    const openPrinterPromptPdfs = async () => {
+        if (!printerPrompt) {
+            return;
+        }
+        const {attendeePublicIds, isReprint} = printerPrompt;
+        setPrinterPrompt(null);
+        await openTicketPdfs(attendeePublicIds, isReprint);
+    };
+
+    const handleReprint = (attendeePublicIds: string[]) => {
+        void printTickets(attendeePublicIds, true);
     };
 
     const checkoutBasket = async (values: SaleFormValues) => {
@@ -345,6 +403,11 @@ export const SaleForm = ({
         }
 
         setIsCheckingOut(true);
+
+        const saleIdempotencyKey = idempotencyKey || generateIdempotencyKey();
+        if (!idempotencyKey) {
+            setIdempotencyKey(saleIdempotencyKey);
+        }
 
         try {
             const response = await createSale.mutateAsync({
@@ -364,25 +427,23 @@ export const SaleForm = ({
                     amount: Number(basketTotal.toFixed(2)),
                     payment_method: values.payment_method,
                     amount_collected: Number(values.amount_collected),
-                    idempotency_key: generateIdempotencyKey() || idempotencyKey,
+                    idempotency_key: saleIdempotencyKey,
                     send_confirmation_email: sendConfirmationEmail && values.email.trim().length > 0,
                 },
             });
 
             const sale = response.data;
             const soldAttendees = sale.attendees?.length ? sale.attendees : [sale.attendee];
+            const soldAttendeeIds = soldAttendees.map((attendee) => attendee.public_id);
             setLastSale(sale);
-
-            if (!skipPrint) {
-                for (const attendee of soldAttendees) {
-                    await printTicket(attendee.public_id);
-                }
-            }
+            setLastSaleAttendeeIds(soldAttendeeIds);
 
             showSuccess(soldAttendees.length === 1
                 ? t`Ticket created — ${sale.attendee.public_id}`
                 : t`${soldAttendees.length} tickets created`);
             resetForNextSale();
+
+            await printTickets(soldAttendeeIds);
         } catch (error: any) {
             const status = error?.response?.status;
             if (status === 422) {
@@ -429,11 +490,10 @@ export const SaleForm = ({
         }, {
             onSuccess: (response) => {
                 setLastSale(response.data);
+                setLastSaleAttendeeIds([response.data.attendee.public_id]);
                 showSuccess(t`Ticket created — ${response.data.attendee.public_id}`);
-                if (!skipPrint) {
-                    void printTicket(response.data.attendee.public_id);
-                }
                 resetForNextSale();
+                void printTickets([response.data.attendee.public_id]);
             },
             onError: (error: any) => {
                 const status = error?.response?.status;
@@ -503,6 +563,46 @@ export const SaleForm = ({
         }
     };
 
+    const printerPromptModal = (
+        <Modal
+            opened={printerPrompt !== null}
+            onClose={() => setPrinterPrompt(null)}
+            title={t`Printer not reachable`}
+            centered
+        >
+            <Stack>
+                <p>
+                    {printerPrompt?.host
+                        ? t`The Zebra printer at ${printerPrompt.host} did not respond. Enter its current IP address to try again, or open the tickets as PDF.`
+                        : t`No Zebra printer IP is set for this station. Enter it to print, or open the tickets as PDF.`}
+                </p>
+                <TextInput
+                    label={t`Printer IP address`}
+                    placeholder="192.168.1.50"
+                    value={printerPrompt?.host ?? ''}
+                    onChange={(event) => {
+                        const host = event.currentTarget.value.trim();
+                        setPrinterPrompt((current) => current ? {...current, host} : current);
+                    }}
+                    data-autofocus
+                />
+                <Group justify="flex-end">
+                    <Button variant="default" onClick={() => void openPrinterPromptPdfs()}>
+                        {t`Open tickets as PDF`}
+                    </Button>
+                    <Button
+                        leftSection={<IconPrinter/>}
+                        loading={isRetryingPrint}
+                        disabled={!printerPrompt?.host}
+                        onClick={() => void retryPrinterPrompt()}
+                    >
+                        {t`Retry`}
+                    </Button>
+                </Group>
+            </Stack>
+        </Modal>
+    );
+
     if (variant === 'kiosk') {
         const continueLabel = step === 'paiement'
             ? (isCheckingOut ? t`Processing…` : t`Finish`)
@@ -510,6 +610,7 @@ export const SaleForm = ({
 
         return (
             <div className={kiosk.saleShell}>
+                {printerPromptModal}
                 <header className={kiosk.saleHeader}>
                     <h1 className={kiosk.saleEvent}>
                         {step !== 'tarifs' && (
@@ -531,6 +632,23 @@ export const SaleForm = ({
 
                     {!isLoading && step === 'tarifs' && (
                         <>
+                            {lastSale && lastSaleAttendeeIds.length > 0 && (
+                                <div className={kiosk.lastSale}>
+                                    <p>
+                                        {lastSaleAttendeeIds.length === 1
+                                            ? <Trans>Last ticket: <strong>{lastSaleAttendeeIds[0]}</strong></Trans>
+                                            : <Trans>Last sale: <strong>{lastSaleAttendeeIds.length} tickets</strong></Trans>}
+                                    </p>
+                                    <Button
+                                        variant="light"
+                                        leftSection={<IconPrinter/>}
+                                        loading={reprintTicket.isPending}
+                                        onClick={() => handleReprint(lastSaleAttendeeIds)}
+                                    >
+                                        {t`Reprint`}
+                                    </Button>
+                                </div>
+                            )}
                             <p className={kiosk.categoryLabel}>{t`Tickets`}</p>
                             {products.length === 0 && (
                                 <p className={kiosk.emptyState}>
@@ -738,21 +856,6 @@ export const SaleForm = ({
                                     size="md"
                                 />
                             </div>
-                            {lastSale && (
-                                <div className={kiosk.lastSale}>
-                                    <p>
-                                        <Trans>Last ticket: <strong>{lastSale.attendee.public_id}</strong></Trans>
-                                    </p>
-                                    <Button
-                                        variant="light"
-                                        leftSection={<IconPrinter/>}
-                                        loading={reprintTicket.isPending}
-                                        onClick={() => handleReprint(lastSale.attendee.public_id)}
-                                    >
-                                        {t`Reprint`}
-                                    </Button>
-                                </div>
-                            )}
                         </>
                     )}
                 </div>
@@ -857,6 +960,7 @@ export const SaleForm = ({
 
     return (
         <PageBody>
+            {printerPromptModal}
             <PageTitle subheading={t`Sell a ticket at the door and print it immediately.`}>
                 {t`Box Office`}
             </PageTitle>
@@ -1042,7 +1146,7 @@ export const SaleForm = ({
                                     variant="light"
                                     leftSection={<IconPrinter/>}
                                     loading={reprintTicket.isPending}
-                                    onClick={() => handleReprint(lastSale.attendee.public_id)}
+                                    onClick={() => handleReprint(lastSaleAttendeeIds)}
                                 >
                                     {t`Reprint`}
                                 </Button>

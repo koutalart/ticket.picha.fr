@@ -9,7 +9,7 @@ const KioskSell = () => {
     const {eventId} = useParams();
     const context = useGetBoxOfficeContext();
     const productsQuery = useGetBoxOfficeProducts(eventId);
-    const {settings} = useKioskSettings();
+    const {settings, setSettings} = useKioskSettings();
 
     const currentEvent = (context.data?.data ?? []).find((event) => String(event.id) === String(eventId));
 
@@ -31,7 +31,8 @@ const KioskSell = () => {
             isLoading={productsQuery.isLoading || !productsQuery.isFetched}
             skipPrint={settings.printOutput === 'none'}
             printMode={settings.printOutput as KioskPrintOutput}
-            zebraPrinterHost={settings.zebraPrinterHost}
+            zebraPrinterHost={settings.zebraPrinterHost || currentEvent?.last_printer_host || ''}
+            onZebraPrinterHostChange={(zebraPrinterHost) => setSettings({...settings, zebraPrinterHost})}
             defaultLocale={settings.defaultTicketLocale}
             sendConfirmationEmail={settings.sendConfirmationEmail}
             phoneCallingCode={settings.phoneCallingCode || currentEvent?.calling_code || ''}
