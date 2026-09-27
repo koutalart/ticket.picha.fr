@@ -61,17 +61,26 @@ class AttendeeTicketPdfService
             (string)QrCode::format('png')->size(300)->margin(1)->generate($attendee->getPublicId())
         );
 
-        return Pdf::loadView('attendee-ticket-pdf', [
-            'attendee' => $attendee,
-            'event' => $event,
-            'eventSettings' => $eventSettings,
-            'organizer' => $organizer,
-            'product' => $product,
-            'qrCodeBase64' => $qrCodeBase64,
-            'accentColor' => $accentColor,
-            'footerText' => $footerText,
-            'dateDisplayMode' => $dateDisplayMode,
-            'logoUrl' => $logoUrl,
-        ])->output();
+        $previousLocale = app()->getLocale();
+        if ($attendee->getLocale()) {
+            app()->setLocale($attendee->getLocale());
+        }
+
+        try {
+            return Pdf::loadView('attendee-ticket-pdf', [
+                'attendee' => $attendee,
+                'event' => $event,
+                'eventSettings' => $eventSettings,
+                'organizer' => $organizer,
+                'product' => $product,
+                'qrCodeBase64' => $qrCodeBase64,
+                'accentColor' => $accentColor,
+                'footerText' => $footerText,
+                'dateDisplayMode' => $dateDisplayMode,
+                'logoUrl' => $logoUrl,
+            ])->output();
+        } finally {
+            app()->setLocale($previousLocale);
+        }
     }
 }

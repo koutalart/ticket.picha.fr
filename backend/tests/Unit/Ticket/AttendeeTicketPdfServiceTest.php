@@ -122,6 +122,20 @@ class AttendeeTicketPdfServiceTest extends TestCase
         self::assertSame('300', (string)$images[0]['Height']);
     }
 
+    public function test_pdf_is_rendered_in_attendee_locale_and_restores_app_locale(): void
+    {
+        [$attendee, $event, $eventSettings, $organizer] = $this->buildDomainObjects('Amina', 'Test');
+        $attendee->setLocale('fr');
+        app()->setLocale('en');
+
+        $pdf = app(AttendeeTicketPdfService::class)->generate($attendee, $event, $eventSettings, $organizer);
+
+        $text = mb_strtolower($this->extractText($pdf));
+        self::assertStringContainsString('date et heure', $text);
+        self::assertStringNotContainsString('date & time', $text);
+        self::assertSame('en', app()->getLocale());
+    }
+
     /** AC-19 */
     public function test_pdf_renders_french_accents(): void
     {
