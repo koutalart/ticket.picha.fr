@@ -642,7 +642,18 @@ fiche d'achat.
    en page réduite mais **garde sa taille** ; l'ID et le nom sont centrés dessous. Le contenu du QR
    reste lisible dans le ZPL via un commentaire `^FXQR:<public_id>`. Le sponsor est borné à la
    colonne de gauche (`^FB`, 2 lignes) pour ne plus déborder sous le nom.
-   Limite connue : un type de billet très long (≈ 20+ caractères) peut encore toucher le QR,
+   **Design PICHA 79 × 87 (Jo, 27 sept.)** — remplace la maquette « Triangle des Bermudes » :
+   en-tête logo événement | séparateur | « Sponsor » + logo sponsor ; « É V É N E M E N T » + titre
+   (1 ligne en 50 pts, 2 lignes en 36 pts au-delà de 22 caractères) + trait arrondi ; lignes
+   Type d'entrée / Date (« Sam. 5 sept. 2026 ») / Heure / Lieu avec pictos dans des cercles et
+   pointillés ; QR (231 pts, 29 mm) dans un cadre arrondi avec ID espacé sans préfixe (le QR garde
+   l'ID complet) et nom ; pied « Billetterie & gestion » + logo PICHA Ticket | globe +
+   ticket.picha.fr. Le canevas de référence devient 631 × 695 pts. Retirés à la demande de Jo : prix,
+   téléphone organisateur, bloc « Votre prochain événement ? ». Gris du mockup → contours noirs
+   (imprimante 1 bit). Logos événement et sponsor : texte de secours en attendant les commits
+   suivants. Aperçu vérifié avec un moteur de rendu ZPL local (zebrash), qui ne gère pas `^GE`
+   (ellipse du globe) : la ZD621 l'imprime.
+   Historique —  (≈ 20+ caractères) peut encore toucher le QR,
    comme dans la maquette d'origine.
 
    Correctif initialement recommandé :

@@ -44,50 +44,23 @@ class ZplLabelFormatTest extends TestCase
         self::assertSame(1, (new ZplLabelFormatDTO(dpi: 300))->scale(1));
     }
 
-    public function test_layout_shrinks_to_fit_label_length(): void
+    public function test_layout_is_drawn_for_the_picha_roll_and_shrinks_on_smaller_labels(): void
     {
-        self::assertEqualsWithDelta(0.869, (new ZplLabelFormatDTO)->fitRatio(), 0.001);
+        self::assertSame(1.0, (new ZplLabelFormatDTO)->fitRatio());
         self::assertSame(1.0, (new ZplLabelFormatDTO(width_mm: 80.0, length_mm: 101.0))->fitRatio());
-        self::assertSame(36, (new ZplLabelFormatDTO)->layout(42));
-        self::assertSame(42, (new ZplLabelFormatDTO(width_mm: 80.0, length_mm: 101.0))->layout(42));
+        self::assertEqualsWithDelta(0.761, (new ZplLabelFormatDTO(width_mm: 60.0, length_mm: 70.0))->fitRatio(), 0.001);
+        self::assertSame(34, (new ZplLabelFormatDTO)->layout(34));
+        self::assertSame(26, (new ZplLabelFormatDTO(width_mm: 60.0, length_mm: 70.0))->layout(34));
     }
 
-    public function test_generator_fits_whole_layout_on_87_mm_label(): void
+    public function test_generator_centres_layout_on_wider_label(): void
     {
-        $zpl = $this->generate(null);
+        $zpl = $this->generate(new ZplLabelFormatDTO(width_mm: 80.0, length_mm: 101.0));
 
-        self::assertStringContainsString('^FO36,146^A0N,40,40^FB447,2,2,L^FDMayotte', $zpl);
-        self::assertStringContainsString('^FO30,601^GB495,2,2^FS', $zpl);
-        self::assertStringContainsString('^FO104,667^A0N,18,18^FDpicha.fr', $zpl);
-
-        self::assertStringContainsString("^LH38,0\n", $zpl);
-
-        preg_match_all('/\^FO\d+,(\d+)/', $zpl, $matches);
-        self::assertLessThan(695, max(array_map('intval', $matches[1])));
-    }
-
-    public function test_qr_code_is_enlarged_instead_of_shrunk_on_87_mm_label(): void
-    {
-        $zpl = $this->generate(null);
-
-        self::assertStringContainsString('^FXQR:a_SAFE', $zpl);
-        self::assertStringContainsString('^FO317,235^GFA,8064,8064,32,', $zpl);
-        self::assertStringContainsString('^FO317,504^A0N,17,17^FB252,1,0,C^FDA_SAFE', $zpl);
-        self::assertStringContainsString('^FO317,530^A0N,23,23^FB252,2,3,C^FDJane', $zpl);
-        self::assertStringNotContainsString('^BQN', $zpl);
-    }
-
-    public function test_sponsor_wraps_inside_left_column_beside_qr_code(): void
-    {
-        $zpl = (new AttendeeTicketZplService)->generate(
-            publicId: 'a_SAFE',
-            eventTitle: 'Mayotte',
-            productTitle: 'PASS',
-            attendeeName: 'Jane',
-            sponsorName: 'Digital Studio Mayotte',
-        );
-
-        self::assertStringContainsString('^FO90,556^A0N,16,16^FB217,2,2,L^FDSponsored by: Digital Studio Mayotte\\&^FS', $zpl);
+        self::assertStringContainsString("^PW639\n", $zpl);
+        self::assertStringContainsString("^LL807\n", $zpl);
+        self::assertStringContainsString("^LH4,0\n", $zpl);
+        self::assertStringContainsString('^FO34,182^A0N,50,50^FDMayotte^FS', $zpl);
     }
 
     public function test_generator_uses_label_size_from_format(): void
@@ -100,23 +73,19 @@ class ZplLabelFormatTest extends TestCase
 
     public function test_generator_scales_layout_for_300_dpi(): void
     {
-        $zpl = $this->generate(new ZplLabelFormatDTO(dpi: 300, width_mm: 80.0, length_mm: 101.0));
+        $zpl = $this->generate(new ZplLabelFormatDTO(dpi: 300));
 
-        self::assertStringContainsString("^PW945\n", $zpl);
-        self::assertStringContainsString("^LL1193\n", $zpl);
-        self::assertStringContainsString('^FO62,248^A0N,68,68^FB761,2,3,L^FDMayotte', $zpl);
-        self::assertStringContainsString('^FO539,399^GFA,', $zpl);
-        self::assertStringNotContainsString('^FO365,280', $zpl);
+        self::assertStringContainsString("^PW933\n", $zpl);
+        self::assertStringContainsString("^LL1028\n", $zpl);
+        self::assertStringContainsString('^FO50,269^A0N,74,74^FDMayotte^FS', $zpl);
+        self::assertStringContainsString('^FXQR:a_SAFE^FS', $zpl);
     }
 
-    public function test_generator_keeps_reference_layout_on_80_by_101_mm_label(): void
+    public function test_generator_shrinks_layout_on_smaller_label(): void
     {
-        $zpl = $this->generate(new ZplLabelFormatDTO(dpi: 203, width_mm: 80.0, length_mm: 101.0));
+        $zpl = $this->generate(new ZplLabelFormatDTO(width_mm: 60.0, length_mm: 70.0));
 
-        self::assertStringContainsString("^PW639\n", $zpl);
-        self::assertStringContainsString("^LH0,0\n", $zpl);
-        self::assertStringContainsString('^FO42,168^A0N,46,46^FB515,2,2,L^FDMayotte', $zpl);
-        self::assertStringContainsString('^FO365,270^GFA,8064,8064,32,', $zpl);
+        self::assertStringContainsString('^FO26,138^A0N,38,38^FDMayotte^FS', $zpl);
     }
 
     private function generate(?ZplLabelFormatDTO $format): string

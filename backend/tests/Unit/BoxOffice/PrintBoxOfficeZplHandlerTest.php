@@ -85,6 +85,32 @@ class PrintBoxOfficeZplHandlerTest extends TestCase
         ));
     }
 
+    public function test_prints_french_long_date_and_start_time(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
+        DB::table('events')->where('id', $event->id)->update([
+            'start_date' => '2026-09-05 21:00:00',
+            'end_date' => null,
+            'timezone' => 'UTC',
+        ]);
+
+        $printer = Mockery::mock(ZebraPrinterClientInterface::class);
+        $printer->shouldReceive('send')
+            ->once()
+            ->with('192.168.1.50', 9100, Mockery::on(
+                fn (string $zpl) => str_contains($zpl, '^FDSam. 5 sept. 2026^FS') && str_contains($zpl, '^FD21h00^FS')
+            ));
+        $this->app->instance(ZebraPrinterClientInterface::class, $printer);
+
+        app(PrintBoxOfficeZplHandler::class)->handle(new PrintBoxOfficeZplDTO(
+            event_id: $event->id,
+            attendee_public_id: $attendee->public_id,
+            agent_user_id: $user->id,
+            printer_host: '192.168.1.50',
+        ));
+    }
+
     public function test_rejects_public_ip_without_contacting_printer(): void
     {
         [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);

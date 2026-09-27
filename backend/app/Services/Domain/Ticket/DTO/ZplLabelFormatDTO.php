@@ -12,11 +12,9 @@ class ZplLabelFormatDTO extends BaseDataObject
 
     public const LAYOUT_REFERENCE_DPI = 203;
 
-    public const LAYOUT_REFERENCE_WIDTH = 620;
+    public const LAYOUT_REFERENCE_WIDTH = 631;
 
-    public const LAYOUT_REFERENCE_LENGTH = 800;
-
-    public const LAYOUT_CANVAS_WIDTH = 639;
+    public const LAYOUT_REFERENCE_LENGTH = 695;
 
     private const MM_PER_INCH = 25.4;
 
@@ -57,7 +55,7 @@ class ZplLabelFormatDTO extends BaseDataObject
 
     public function horizontalOffset(): int
     {
-        return max(0, intdiv($this->widthDots() - $this->layout(self::LAYOUT_CANVAS_WIDTH) + 1, 2));
+        return max(0, intdiv($this->widthDots() - $this->layout(self::LAYOUT_REFERENCE_WIDTH) + 1, 2));
     }
 
     private function dpiRatio(): float

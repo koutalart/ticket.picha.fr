@@ -17,11 +17,11 @@ use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\PrintJobRepositoryInterface;
-use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\PrintBoxOfficeZplDTO;
 use HiEvents\Services\Domain\Ticket\AttendeeTicketZplService;
 use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
+use Illuminate\Support\Str;
 
 class PrintBoxOfficeZplHandler
 {
@@ -33,7 +33,6 @@ class PrintBoxOfficeZplHandler
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
         private readonly OrganizerRepositoryInterface $organizerRepository,
         private readonly ProductRepositoryInterface $productRepository,
-        private readonly ProductPriceRepositoryInterface $productPriceRepository,
         private readonly PrintJobRepositoryInterface $printJobRepository,
         private readonly AttendeeTicketZplService $attendeeTicketZplService,
         private readonly ZebraPrinterClientInterface $zebraPrinterClient,
@@ -77,21 +76,11 @@ class PrintBoxOfficeZplHandler
         $eventSettings = $this->eventSettingsRepository->findFirstWhere(['event_id' => $event->getId()]);
         [$venueName, $venueCity] = $this->eventVenue($event, $eventSettings);
 
-        $priceLabel = '';
-        $productPrice = $this->productPriceRepository->findById($attendee->getProductPriceId());
-        if ($productPrice !== null) {
-            $priceLabel = $this->formatTicketPrice($productPrice->getPrice(), $event->getCurrency());
-        }
-
         $organizerName = '';
-        $organizerPhone = '';
         if ($event->getOrganizerId()) {
             $organizer = $event->getOrganizer()
                 ?? $this->organizerRepository->findById($event->getOrganizerId());
-            if ($organizer !== null) {
-                $organizerName = $organizer->getName();
-                $organizerPhone = $this->formatOrganizerPhone($organizer->getPhone());
-            }
+            $organizerName = $organizer?->getName() ?? '';
         }
 
         $previousLocale = app()->getLocale();
@@ -103,10 +92,8 @@ class PrintBoxOfficeZplHandler
                 productTitle: $product->getTitle(),
                 attendeeName: $name,
                 eventWhen: $when,
-                priceLabel: $priceLabel,
                 sponsorName: (string) $eventSettings?->getTicketSponsorName(),
                 organizerName: $organizerName,
-                organizerPhone: $organizerPhone,
                 eventHours: $hours,
                 venueName: $venueName,
                 venueCity: $venueCity,
@@ -125,56 +112,9 @@ class PrintBoxOfficeZplHandler
         ]);
     }
 
-    private function formatTicketPrice(float $amount, string $currency): string
-    {
-        $currency = strtoupper($currency);
-        if ($currency === 'EUR') {
-            $formatted = fmod($amount, 1.0) < 0.001
-                ? (string) (int) round($amount)
-                : number_format($amount, 2, ',', ' ');
-
-            return $formatted.' €';
-        }
-
-        return number_format($amount, 2, '.', ' ').' '.$currency;
-    }
-
-    private function formatOrganizerPhone(?string $phone): string
-    {
-        if ($phone === null || trim($phone) === '') {
-            return '';
-        }
-
-        $digits = preg_replace('/\D+/', '', $phone) ?? '';
-        if (str_starts_with($digits, '262') && strlen($digits) >= 12) {
-            $digits = '0'.substr($digits, -9);
-        } elseif (str_starts_with($digits, '33') && strlen($digits) >= 11) {
-            $digits = '0'.substr($digits, -9);
-        } elseif (strlen($digits) === 9) {
-            $digits = '0'.$digits;
-        }
-
-        if (strlen($digits) < 10) {
-            return trim($phone);
-        }
-
-        return implode(' ', str_split(substr($digits, -10), 2));
-    }
-
     private function formatTicketDate(Carbon $start): string
     {
-        $days = [
-            'dimanche' => 'DIM',
-            'lundi' => 'LUN',
-            'mardi' => 'MAR',
-            'mercredi' => 'MER',
-            'jeudi' => 'JEU',
-            'vendredi' => 'VEN',
-            'samedi' => 'SAM',
-        ];
-        $weekday = $days[$start->isoFormat('dddd')] ?? mb_strtoupper(mb_substr($start->isoFormat('ddd'), 0, 3));
-
-        return $weekday.' '.$start->format('d/m/y');
+        return Str::ucfirst($start->isoFormat('ddd D MMM YYYY'));
     }
 
     private function formatTicketHours(Carbon $start, ?Carbon $end): string

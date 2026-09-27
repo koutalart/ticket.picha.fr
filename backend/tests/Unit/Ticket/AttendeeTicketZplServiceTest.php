@@ -5,151 +5,167 @@ declare(strict_types=1);
 namespace Tests\Unit\Ticket;
 
 use HiEvents\Services\Domain\Ticket\AttendeeTicketZplService;
-use HiEvents\Services\Domain\Ticket\DTO\ZplLabelFormatDTO;
 use Tests\TestCase;
 
 class AttendeeTicketZplServiceTest extends TestCase
 {
-    public function test_zpl_contains_qr_payload_and_ticket_fields(): void
+    protected function setUp(): void
     {
+        parent::setUp();
         app()->setLocale('fr');
+    }
 
-        $zpl = (new AttendeeTicketZplService)->generate(
-            publicId: 'A-SFMVW8P',
-            eventTitle: 'Triangle des bermudes',
-            productTitle: 'Entrée simple',
-            attendeeName: 'Jane Doe',
-            eventWhen: 'DIM 11/10/26',
-            priceLabel: '25 €',
-            organizerName: 'Picha Live',
-            organizerPhone: '06 39 12 34 56',
-            eventHours: '16h00 - 02h30',
-            venueName: 'Le 5/5',
-            venueCity: 'Mamoudzou',
-            labelFormat: new ZplLabelFormatDTO(width_mm: 80.0, length_mm: 101.0),
-        );
+    public function test_header_prints_organizer_and_sponsor_beside_divider(): void
+    {
+        $zpl = $this->generate(organizerName: 'Mayotte la 1ère', sponsorName: 'Bé digital');
 
-        self::assertStringStartsWith('^XA', $zpl);
-        self::assertStringEndsWith('^XZ', trim($zpl));
-        self::assertStringContainsString('^PW639', $zpl);
-        self::assertStringContainsString('^FO365,270^GFA,8064,8064,32,', $zpl);
-        self::assertStringContainsString('^FXQR:A-SFMVW8P', $zpl);
-        self::assertStringContainsString('A - SFMVW8P', $zpl);
-        self::assertStringContainsString('Triangle des bermudes', $zpl);
-        self::assertStringContainsString('Entrée simple', $zpl);
-        self::assertStringContainsString('25 €', $zpl);
-        self::assertStringContainsString('DIM 11/10/26', $zpl);
-        self::assertStringContainsString('16h00 - 02h30', $zpl);
-        self::assertStringContainsString('Le 5/5', $zpl);
-        self::assertStringContainsString('Mamoudzou', $zpl);
-        self::assertStringContainsString('TYPE D\'ENTRÉE', $zpl);
-        self::assertStringContainsString('HEURE', $zpl);
-        self::assertStringContainsString('Picha Live', $zpl);
-        self::assertStringContainsString('06 39 12 34 56', $zpl);
-        self::assertStringContainsString('06 39 78 07 73', $zpl);
-        self::assertStringContainsString('Votre prochain événement ?', $zpl);
-        self::assertStringContainsString('PICHA Ticket s\'en occupe.', $zpl);
-        self::assertStringContainsString('picha.fr', $zpl);
-        self::assertStringContainsString('^GFA,2328,2328,24,', $zpl);
-        self::assertStringContainsString('^FO38,16^GFA,', $zpl);
-        self::assertStringContainsString('^FO320,18^GB2,100,2', $zpl);
-        self::assertStringContainsString('^FO365,572^A0N,26,26^FB252,2,4,C^FDJane Doe\\&^FS', $zpl);
-        self::assertStringNotContainsString('Billet certifié', $zpl);
+        self::assertStringContainsString('^FO40,64^A0N,40,40^FDMayotte la 1ère^FS', $zpl);
+        self::assertStringContainsString('^FO366,44^GB2,86,2^FS', $zpl);
+        self::assertStringContainsString('^FO386,44^A0N,18,18^FB205,1,0,R^FDSponsor\&^FS', $zpl);
+        self::assertStringContainsString('^FO386,70^A0N,32,32^FB205,2,2,R^FDBé digital\&^FS', $zpl);
+    }
+
+    public function test_long_organizer_name_uses_two_smaller_lines(): void
+    {
+        $zpl = $this->generate(organizerName: 'Association culturelle de Mamoudzou');
+
+        self::assertStringContainsString('^FO40,56^A0N,30,30^FB310,2,2,L^FDAssociation culturelle de Mamoudzou\&^FS', $zpl);
+    }
+
+    public function test_long_values_are_cut_on_a_word_boundary(): void
+    {
+        $zpl = $this->generate(productTitle: 'Pass VIP accès backstage', venueName: 'Salle polyvalente de Cavani');
+
+        self::assertStringContainsString('^FDPass VIP accès^FS', $zpl);
+        self::assertStringContainsString('^FDSalle polyvalente^FS', $zpl);
+    }
+
+    public function test_header_omits_sponsor_block_without_sponsor(): void
+    {
+        $zpl = $this->generate(sponsorName: 'XXXXX');
+
+        self::assertStringNotContainsString('^FO366,44', $zpl);
+        self::assertStringNotContainsString('Sponsor', $zpl);
         self::assertStringNotContainsString('XXXXX', $zpl);
     }
 
-    public function test_zpl_omits_optional_rows_when_empty(): void
+    public function test_event_title_block(): void
     {
-        app()->setLocale('fr');
+        $zpl = $this->generate();
 
-        $zpl = (new AttendeeTicketZplService)->generate(
-            publicId: 'a_SAFE',
-            eventTitle: 'Mayotte',
-            productTitle: 'PASS',
-            attendeeName: '',
-        );
-
-        self::assertStringNotContainsString('HEURE', $zpl);
-        self::assertStringNotContainsString('^FB252,2,4,C', $zpl);
-        self::assertStringContainsString('^FXQR:a_SAFE', $zpl);
+        self::assertStringContainsString('^FO34,160^A0N,16,16^FDÉ V É N E M E N T^FS', $zpl);
+        self::assertStringContainsString('^FO34,182^A0N,50,50^FDJPO Mayotte la 1ère^FS', $zpl);
+        self::assertStringContainsString('^FO34,240^GB110,8,8,B,8^FS', $zpl);
     }
 
-    public function test_zpl_escapes_control_characters_in_user_text(): void
+    public function test_long_event_title_wraps_on_two_smaller_lines(): void
     {
-        $zpl = (new AttendeeTicketZplService)->generate(
-            publicId: 'a_SAFE',
-            eventTitle: 'Night^Out',
-            productTitle: 'VIP~Pass',
-            attendeeName: 'Ann\\e',
-        );
+        $zpl = $this->generate(eventTitle: 'Journée portes ouvertes Mayotte la 1ère');
+
+        self::assertStringContainsString('^FO34,182^A0N,36,36^FB563,2,2,L^FDJournée portes ouvertes Mayotte la 1ère\&^FS', $zpl);
+        self::assertStringContainsString('^FO34,264^GB110,8,8,B,8^FS', $zpl);
+    }
+
+    public function test_detail_rows_with_venue_use_compact_pitch(): void
+    {
+        $zpl = $this->generate(venueName: 'Le 5/5', venueCity: 'Mamoudzou');
+
+        self::assertStringContainsString('^FO30,282^GC62,2^FS', $zpl);
+        self::assertStringContainsString('^FO37,290^GFA,', $zpl);
+        self::assertStringContainsString("^FO108,288^A0N,15,15^FDT Y P E   D ' E N T R É E^FS", $zpl);
+        self::assertStringContainsString('^FO108,308^A0N,30,27^FDPass VIP^FS', $zpl);
+        self::assertStringContainsString('^FO30,348^GB2,1,1^FS', $zpl);
+        self::assertStringContainsString('^FO108,378^A0N,30,27^FDSam. 5 sept. 2026^FS', $zpl);
+        self::assertStringContainsString('^FO108,448^A0N,30,27^FD21h00^FS', $zpl);
+        self::assertStringContainsString('^FO30,492^GC62,2^FS', $zpl);
+        self::assertStringContainsString('^FO108,498^A0N,15,15^FDL I E U^FS', $zpl);
+        self::assertStringContainsString('^FO108,518^A0N,30,27^FDLe 5/5, Mamoudzou^FS', $zpl);
+    }
+
+    public function test_detail_rows_without_venue_follow_design_pitch(): void
+    {
+        $zpl = $this->generate();
+
+        self::assertStringContainsString('^FO30,374^GC62,2^FS', $zpl);
+        self::assertStringContainsString('^FO30,466^GC62,2^FS', $zpl);
+        self::assertStringContainsString('^FO30,359^GB2,1,1^FS', $zpl);
+        self::assertStringNotContainsString('L I E U', $zpl);
+    }
+
+    public function test_qr_code_sits_in_frame_with_spaced_id_and_name(): void
+    {
+        $zpl = $this->generate();
+
+        self::assertStringContainsString('^FO346,268^GB258,294,3,B,1^FS', $zpl);
+        self::assertStringContainsString('^FXQR:A-C369BTS^FS', $zpl);
+        self::assertStringContainsString('^FO359,276^GFA,', $zpl);
+        self::assertStringContainsString('^FO346,515^A0N,20,20^FB258,1,0,C^FDC 3 6 9 B T S\&^FS', $zpl);
+        self::assertStringContainsString('^FO346,539^A0N,20,20^FB258,1,0,C^FDAnli Madi\&^FS', $zpl);
+        self::assertStringNotContainsString('^BQN', $zpl);
+    }
+
+    public function test_footer_shows_picha_brand_and_site(): void
+    {
+        $zpl = $this->generate();
+
+        self::assertStringContainsString('^FO30,574^GB8,2,2^FS', $zpl);
+        self::assertStringContainsString('^FO48,586^A0N,18,18^FDBilletterie & gestion^FS', $zpl);
+        self::assertStringContainsString('^FO48,610^GFA,', $zpl);
+        self::assertStringContainsString('^FO268,600^GB2,80,2^FS', $zpl);
+        self::assertStringContainsString('^FO306,624^GC32,2^FS', $zpl);
+        self::assertStringContainsString('^FO352,624^A0N,32,32^FDticket.picha.fr^FS', $zpl);
+        self::assertStringNotContainsString('Votre prochain', $zpl);
+    }
+
+    public function test_everything_fits_on_79_by_87_mm_label(): void
+    {
+        $zpl = $this->generate(venueName: 'Le 5/5', venueCity: 'Mamoudzou');
+
+        self::assertStringContainsString("^PW631\n", $zpl);
+        self::assertStringContainsString("^LL695\n", $zpl);
+        self::assertStringContainsString("^MNM\n", $zpl);
+        preg_match_all('/\^FO(\d+),(\d+)/', $zpl, $matches);
+        self::assertLessThan(631, max(array_map('intval', $matches[1])));
+        self::assertLessThan(680, max(array_map('intval', $matches[2])));
+    }
+
+    public function test_escapes_control_characters_in_user_text(): void
+    {
+        $zpl = $this->generate(eventTitle: 'Night^Out', productTitle: 'VIP~Pass', attendeeName: 'Ann\\e');
 
         self::assertStringNotContainsString('Night^Out', $zpl);
-        self::assertStringContainsString('^FDAnn e\\&^FS', $zpl);
-        self::assertStringContainsString('Night Out', $zpl);
-        self::assertStringContainsString('VIP Pass', $zpl);
-        self::assertStringContainsString('^FXQR:a_SAFE', $zpl);
+        self::assertStringContainsString('^FDNight Out^FS', $zpl);
+        self::assertStringContainsString('^FDVIP Pass^FS', $zpl);
+        self::assertStringContainsString('^FDAnn e\&^FS', $zpl);
     }
 
-    public function test_zpl_uses_custom_sponsor_name(): void
+    public function test_omits_name_when_empty(): void
     {
-        $zpl = (new AttendeeTicketZplService)->generate(
-            publicId: 'a_SAFE',
-            eventTitle: 'Mayotte',
-            productTitle: 'PASS',
-            attendeeName: 'Jane',
-            sponsorName: 'Digital',
-        );
+        $zpl = $this->generate(attendeeName: '');
 
-        self::assertStringContainsString('Digital', $zpl);
-        self::assertStringNotContainsString('XXXXX', $zpl);
+        self::assertStringNotContainsString('^FO346,539', $zpl);
     }
 
-    public function test_zpl_omits_placeholder_sponsor(): void
-    {
-        $zpl = (new AttendeeTicketZplService)->generate(
-            publicId: 'a_SAFE',
-            eventTitle: 'Mayotte',
-            productTitle: 'PASS',
-            attendeeName: 'Jane',
-            sponsorName: 'XXXXX',
+    private function generate(
+        string $eventTitle = 'JPO Mayotte la 1ère',
+        string $productTitle = 'Pass VIP',
+        string $attendeeName = 'Anli Madi',
+        string $sponsorName = '',
+        string $organizerName = '',
+        string $venueName = '',
+        string $venueCity = '',
+    ): string {
+        return (new AttendeeTicketZplService)->generate(
+            publicId: 'A-C369BTS',
+            eventTitle: $eventTitle,
+            productTitle: $productTitle,
+            attendeeName: $attendeeName,
+            eventWhen: 'Sam. 5 sept. 2026',
+            sponsorName: $sponsorName,
+            organizerName: $organizerName,
+            eventHours: '21h00',
+            venueName: $venueName,
+            venueCity: $venueCity,
         );
-
-        self::assertStringNotContainsString('XXXXX', $zpl);
-        self::assertStringNotContainsString('SPONSORISÉ PAR', $zpl);
-    }
-
-    public function test_attendee_name_is_truncated_to_two_lines(): void
-    {
-        $zpl = (new AttendeeTicketZplService)->generate(
-            publicId: 'a_SAFE',
-            eventTitle: 'Mayotte',
-            productTitle: 'PASS',
-            attendeeName: str_repeat('A', 60),
-        );
-
-        self::assertStringContainsString('^FD'.str_repeat('A', 40).'\\&^FS', $zpl);
-        self::assertStringNotContainsString(str_repeat('A', 41), $zpl);
-    }
-
-    public function test_venue_is_shortened_to_left_column_when_name_is_printed(): void
-    {
-        $withName = (new AttendeeTicketZplService)->generate(
-            publicId: 'a_SAFE',
-            eventTitle: 'Mayotte',
-            productTitle: 'PASS',
-            attendeeName: 'Jane',
-            venueName: 'Salle polyvalente de Cavani',
-            labelFormat: new ZplLabelFormatDTO(width_mm: 80.0, length_mm: 101.0),
-        );
-        $withoutName = (new AttendeeTicketZplService)->generate(
-            publicId: 'a_SAFE',
-            eventTitle: 'Mayotte',
-            productTitle: 'PASS',
-            attendeeName: '',
-            venueName: 'Salle polyvalente de Cavani',
-        );
-
-        self::assertStringContainsString('^FO104,566^A0N,34,34^FDSalle polyvale^FS', $withName);
-        self::assertStringContainsString('^FDSalle polyvalente de Cavani^FS', $withoutName);
     }
 }

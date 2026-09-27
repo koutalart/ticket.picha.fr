@@ -8,21 +8,25 @@ use HiEvents\Services\Domain\Ticket\DTO\ZplLabelFormatDTO;
 
 class AttendeeTicketZplService
 {
-    private const QR_BOX = 252;
+    private const QR_BOX = 231;
 
-    private const VENUE_MAX_LENGTH_BESIDE_NAME = 14;
+    private const SHORT_TITLE_MAX_LENGTH = 22;
 
-    private const PICHA_PHONE = '06 39 78 07 73';
+    private const SHORT_ORGANIZER_MAX_LENGTH = 16;
+
+    private const ROW_TOP = 282;
+
+    private const ROW_CIRCLE = 62;
+
+    private const PICHA_SITE = 'ticket.picha.fr';
 
     /** @var array<string, int> */
     private const GRAPHICS = [
-        'picha-logo.gfa' => 24,
+        'picha-logo-footer.gfa' => 19,
         'icon-ticket.gfa' => 6,
-        'icon-price.gfa' => 5,
         'icon-date.gfa' => 5,
         'icon-time.gfa' => 5,
         'icon-venue.gfa' => 5,
-        'icon-megaphone.gfa' => 7,
     ];
 
     public function __construct(
@@ -35,33 +39,23 @@ class AttendeeTicketZplService
         string $productTitle,
         string $attendeeName,
         string $eventWhen = '',
-        string $priceLabel = '',
         string $sponsorName = '',
         string $organizerName = '',
-        string $organizerPhone = '',
         string $eventHours = '',
         string $venueName = '',
         string $venueCity = '',
         ?ZplLabelFormatDTO $labelFormat = null,
     ): string {
         $format = $labelFormat ?? new ZplLabelFormatDTO;
-        $at = fn (int $x, int $y): string => '^FO'.$format->layout($x).','.$format->layout($y);
-        $font = fn (int $height): string => '^A0N,'.$format->layout($height).','.$format->layout($height);
-        $box = fn (int $width, int $height, int $thickness): string => '^GB'.$format->layout($width).','
-            .$format->layout($height).','.$format->layout($thickness);
-        $block = fn (int $width, int $lines, int $spacing, string $align): string => '^FB'.$format->layout($width)
-            .','.$lines.','.$format->layout($spacing).','.$align;
+        $d = fn (int $dots): int => $format->layout($dots);
+        $at = fn (int $x, int $y): string => '^FO'.$d($x).','.$d($y);
+        $font = fn (int $height, ?int $width = null): string => '^A0N,'.$d($height).','.$d($width ?? $height);
+        $box = fn (int $width, int $height, int $thickness, int $rounding = 0): string => '^GB'.$d($width).','
+            .$d($height).','.$d($thickness).($rounding > 0 ? ',B,'.$rounding : '');
+        $block = fn (int $width, int $lines, int $spacing, string $align): string => '^FB'.$d($width)
+            .','.$lines.','.$d($spacing).','.$align;
 
         $safeId = $this->field($publicId, 48);
-        $idLabel = $this->formatPublicIdLabel($safeId);
-        $title = $this->field($eventTitle, 40);
-        $product = $this->field($productTitle, 28);
-        $when = $this->field($eventWhen, 24);
-        $hours = $this->field($eventHours, 24);
-        $name = $this->field($attendeeName, 40);
-        $venue = $this->field($venueName, $name !== '' ? self::VENUE_MAX_LENGTH_BESIDE_NAME : 28);
-        $city = $this->field($venueCity, 24);
-        $price = $this->field($priceLabel, 16);
 
         $lines = [
             '^XA',
@@ -74,99 +68,84 @@ class AttendeeTicketZplService
             '^FWN',
         ];
 
-        $logo = $this->graphic('picha-logo.gfa', $at(38, 16));
-        if ($logo !== []) {
-            $lines = array_merge($lines, $logo);
-        } else {
-            $lines[] = $at(38, 28).$font(44).'^FDPICHA^FS';
+        $organizer = $this->words($organizerName, 44);
+        if ($organizer !== '' && mb_strlen($organizer) <= self::SHORT_ORGANIZER_MAX_LENGTH) {
+            $lines[] = $at(40, 64).$font(40).'^FD'.$organizer.'^FS';
+        } elseif ($organizer !== '') {
+            $lines[] = $at(40, 56).$font(30).$block(310, 2, 2, 'L').'^FD'.$organizer.'\&^FS';
         }
 
-        $lines[] = $at(320, 18).$box(2, 100, 2).'^FS';
-
-        $organizer = $this->field($organizerName, 28);
-        if ($organizer !== '') {
-            $lines[] = sprintf('%s%s%s^FD%s\\&^FS', $at(340, 22), $font(19), $block(270, 2, 2, 'L'), $organizer);
-        }
-        $phone = $this->field($organizerPhone, 20);
-        if ($phone !== '') {
-            $lines[] = $at(340, 70).$font(19).'^FD'.$phone.'^FS';
-        }
-
-        $lines[] = $at(42, 142).$font(18).'^FD'.$this->field(mb_strtoupper(__('Event')), 16).'^FS';
-        $lines[] = sprintf('%s%s%s^FD%s\\&^FS', $at(42, 168), $font(46), $block(515, 2, 2, 'L'), $title);
-        $lines[] = $at(42, 232).$box(82, 6, 6).'^FS';
-
-        $lines = array_merge($lines, $this->graphic('icon-ticket.gfa', $at(42, 278)));
-        $lines[] = $at(104, 276).$font(16).'^FD'.$this->field(mb_strtoupper(__('Ticket type')), 22).'^FS';
-        $lines[] = $at(104, 300).$font(32).'^FD'.$product.'^FS';
-
-        if ($price !== '') {
-            $lines = array_merge($lines, $this->graphic('icon-price.gfa', $at(45, 350)));
-            $lines[] = $at(104, 348).$font(16).'^FD'.$this->field(mb_strtoupper(__('Price')), 16).'^FS';
-            $lines[] = $at(104, 372).$font(32).'^FD'.$price.'^FS';
-        }
-
-        if ($when !== '') {
-            $lines = array_merge($lines, $this->graphic('icon-date.gfa', $at(44, 421)));
-            $lines[] = $at(104, 419).$font(16).'^FD'.$this->field(mb_strtoupper(__('Date')), 16).'^FS';
-            $lines[] = $at(104, 443).$font(31).'^FD'.$when.'^FS';
-        }
-
-        if ($hours !== '') {
-            $lines = array_merge($lines, $this->graphic('icon-time.gfa', $at(44, 493)));
-            $lines[] = $at(104, 491).$font(16).'^FD'.$this->field(mb_strtoupper(__('Time')), 16).'^FS';
-            $lines[] = $at(104, 515).$font(31).'^FD'.$hours.'^FS';
-        }
-
-        if ($venue !== '' || $city !== '') {
-            $lines = array_merge($lines, $this->graphic('icon-venue.gfa', $at(44, 565)));
-            if ($venue !== '') {
-                $lines[] = $at(104, 566).$font(34).'^FD'.$venue.'^FS';
-            }
-            if ($city !== '') {
-                $lines[] = $at(104, 603).$font(20).'^FD'.$city.'^FS';
-            }
-        }
-
-        $sponsor = $this->field($sponsorName, 32);
+        $sponsor = $this->words($sponsorName, 24);
         if ($sponsor !== '' && strtoupper($sponsor) !== 'XXXXX') {
-            $lines[] = sprintf(
-                '%s%s^FB%d,2,%d,L^FD%s\\&^FS',
-                $at(104, 640),
-                $font(18),
-                $format->layout(365) - $format->layout(104) - $format->layout(12),
-                $format->layout(2),
-                $this->field(__('Sponsored by: :name', ['name' => $sponsor]), 48),
-            );
+            $lines[] = $at(366, 44).$box(2, 86, 2).'^FS';
+            $lines[] = $at(386, 44).$font(18).$block(205, 1, 0, 'R').'^FD'.$this->field(__('Sponsor'), 16).'\&^FS';
+            $lines[] = $at(386, 70).$font(32).$block(205, 2, 2, 'R').'^FD'.$sponsor.'\&^FS';
         }
 
-        $lines[] = '^FB0';
-        $qrX = $format->layout(365);
-        $qrY = $format->layout(270);
+        $lines[] = $at(34, 160).$font(16).'^FD'.$this->spaced(mb_strtoupper($this->field(__('Event'), 16))).'^FS';
+
+        $title = $this->field($eventTitle, 40);
+        if (mb_strlen($title) <= self::SHORT_TITLE_MAX_LENGTH) {
+            $lines[] = $at(34, 182).$font(50).'^FD'.$title.'^FS';
+            $titleHeight = 50;
+        } else {
+            $lines[] = $at(34, 182).$font(36).$block(563, 2, 2, 'L').'^FD'.$title.'\&^FS';
+            $titleHeight = 74;
+        }
+        $lines[] = $at(34, 182 + $titleHeight + 8).$box(110, 8, 8, 8).'^FS';
+
+        $venue = implode(', ', array_filter([$this->field($venueName, 40), $this->field($venueCity, 40)]));
+        $rows = array_values(array_filter([
+            ['icon-ticket.gfa', __('Ticket type'), $productTitle],
+            ['icon-date.gfa', __('Date'), $eventWhen],
+            ['icon-time.gfa', __('Time'), $eventHours],
+            ['icon-venue.gfa', __('Venue'), $venue],
+        ], fn (array $row): bool => trim($row[2]) !== ''));
+        $pitch = count($rows) > 3 ? 70 : 92;
+
+        foreach ($rows as $index => [$icon, $label, $value]) {
+            $top = self::ROW_TOP + $index * $pitch;
+            $lines[] = $at(30, $top).'^GC'.$d(self::ROW_CIRCLE).','.$d(2).'^FS';
+            [$iconWidth, $iconHeight] = $this->graphicSize($icon);
+            $lines = array_merge($lines, $this->graphic(
+                $icon,
+                $at(30 + intdiv(self::ROW_CIRCLE - $iconWidth, 2), $top + intdiv(self::ROW_CIRCLE - $iconHeight, 2)),
+            ));
+            $lines[] = $at(108, $top + 6).$font(15).'^FD'.$this->spaced(mb_strtoupper($this->field($label, 20))).'^FS';
+            $lines[] = $at(108, $top + 26).$font(30, 27).'^FD'.$this->words($value, 19).'^FS';
+
+            if ($index < count($rows) - 1) {
+                $separatorY = $top + self::ROW_CIRCLE + intdiv($pitch - self::ROW_CIRCLE, 2);
+                for ($x = 30; $x <= 330; $x += 6) {
+                    $lines[] = $at($x, $separatorY).$box(2, 1, 1).'^FS';
+                }
+            }
+        }
+
+        $lines[] = $at(346, 268).$box(258, 294, 3, 1).'^FS';
         $qr = $this->qrCodeRenderer->renderToFit($safeId, $format->scale(self::QR_BOX));
+        $qrX = $d(346) + intdiv($d(258) - $qr->size, 2);
+        $qrY = $d(276);
         $lines[] = '^FXQR:'.$safeId.'^FS';
         $lines[] = '^FO'.$qrX.','.$qrY.$qr->zpl.'^FS';
+        $idY = $qrY + $qr->size + $d(8);
+        $lines[] = '^FO'.$d(346).','.$idY.$font(20).$block(258, 1, 0, 'C').'^FD'.$this->spaced($this->displayId($safeId)).'\&^FS';
 
-        $idY = $qrY + $qr->size + $format->layout(20);
-        $lines[] = sprintf('^FO%d,%d%s^FB%d,1,0,C^FD%s\\&^FS', $qrX, $idY, $font(20), $qr->size, $idLabel);
-
+        $name = $this->words($attendeeName, 28);
         if ($name !== '') {
-            $lines[] = sprintf(
-                '^FO%d,%d%s^FB%d,2,%d,C^FD%s\\&^FS',
-                $qrX,
-                $idY + $format->layout(30),
-                $font(26),
-                $qr->size,
-                $format->layout(4),
-                $name,
-            );
+            $lines[] = '^FO'.$d(346).','.($idY + $d(24)).$font(20).$block(258, 1, 0, 'C').'^FD'.$name.'\&^FS';
         }
 
-        $lines[] = $at(34, 692).$box(570, 2, 2).'^FS';
-        $lines = array_merge($lines, $this->graphic('icon-megaphone.gfa', $at(42, 718)));
-        $lines[] = $at(120, 706).$font(19).'^FD'.$this->field(__('Your next event?'), 36).'^FS';
-        $lines[] = $at(120, 733).$font(25).'^FD'.$this->field(__('PICHA Ticket takes care of it.'), 40).'^FS';
-        $lines[] = $at(120, 768).$font(21).'^FDpicha.fr   >   '.self::PICHA_PHONE.'^FS';
+        for ($x = 30; $x <= 594; $x += 14) {
+            $lines[] = $at($x, 574).$box(8, 2, 2).'^FS';
+        }
+        $lines[] = $at(48, 586).$font(18).'^FD'.$this->field(__('Ticketing & management'), 32).'^FS';
+        $lines = array_merge($lines, $this->graphic('picha-logo-footer.gfa', $at(48, 610)));
+        $lines[] = $at(268, 600).$box(2, 80, 2).'^FS';
+        $lines[] = $at(306, 624).'^GC'.$d(32).','.$d(2).'^FS';
+        $lines[] = $at(316, 624).'^GE'.$d(12).','.$d(32).','.$d(2).'^FS';
+        $lines[] = $at(306, 639).$box(32, 2, 2).'^FS';
+        $lines[] = $at(352, 624).$font(32).'^FD'.self::PICHA_SITE.'^FS';
 
         $lines[] = '^XZ';
 
@@ -178,13 +157,7 @@ class AttendeeTicketZplService
      */
     private function graphic(string $filename, string $origin): array
     {
-        $bytesPerRow = self::GRAPHICS[$filename] ?? 0;
-        $path = base_path('resources/zpl/'.$filename);
-        if ($bytesPerRow < 1 || ! is_readable($path)) {
-            return [];
-        }
-
-        $hex = strtoupper(preg_replace('/\s+/', '', (string) file_get_contents($path)) ?? '');
+        $hex = $this->graphicHex($filename);
         if ($hex === '') {
             return [];
         }
@@ -192,13 +165,63 @@ class AttendeeTicketZplService
         $total = intdiv(strlen($hex), 2);
 
         return [
-            $origin.'^GFA,'.$total.','.$total.','.$bytesPerRow.','.$hex.'^FS',
+            $origin.'^GFA,'.$total.','.$total.','.self::GRAPHICS[$filename].','.$hex.'^FS',
         ];
     }
 
-    private function formatPublicIdLabel(string $id): string
+    /**
+     * @return array{0: int, 1: int}
+     */
+    private function graphicSize(string $filename): array
     {
-        return str_replace('-', ' - ', strtoupper($id));
+        $bytesPerRow = self::GRAPHICS[$filename] ?? 0;
+        $hex = $this->graphicHex($filename);
+        if ($bytesPerRow < 1 || $hex === '') {
+            return [0, 0];
+        }
+
+        return [$bytesPerRow * 8, intdiv(strlen($hex), 2 * $bytesPerRow)];
+    }
+
+    private function graphicHex(string $filename): string
+    {
+        $path = base_path('resources/zpl/'.$filename);
+        if (! isset(self::GRAPHICS[$filename]) || ! is_readable($path)) {
+            return '';
+        }
+
+        return strtoupper(preg_replace('/\s+/', '', (string) file_get_contents($path)) ?? '');
+    }
+
+    private function displayId(string $id): string
+    {
+        $parts = explode('-', strtoupper($id), 2);
+
+        return $parts[1] ?? $parts[0];
+    }
+
+    private function spaced(string $text): string
+    {
+        return implode('   ', array_map(
+            fn (string $word): string => implode(' ', mb_str_split($word)),
+            explode(' ', $text),
+        ));
+    }
+
+    private function words(string $value, int $maxLength): string
+    {
+        $clean = $this->field($value, PHP_INT_MAX);
+        if (mb_strlen($clean) <= $maxLength) {
+            return $clean;
+        }
+
+        $cut = mb_substr($clean, 0, $maxLength);
+        $lastSpace = mb_strrpos($cut, ' ');
+        if ($lastSpace !== false && $lastSpace >= intdiv($maxLength, 2)) {
+            $cut = mb_substr($cut, 0, $lastSpace);
+        }
+
+        return rtrim($cut, ' ,-');
     }
 
     private function field(string $value, int $maxLength): string
