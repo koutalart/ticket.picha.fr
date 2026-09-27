@@ -15,8 +15,6 @@ use HiEvents\Jobs\Order\SendOrderDetailsEmailJob;
 use HiEvents\Models\EventSetting;
 use HiEvents\Models\Order;
 use HiEvents\Models\ProductPrice;
-use HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler;
-use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\CreateBoxOfficeSaleHandler;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleDTO;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -481,7 +479,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
 
         try {
             // product_price_id belongs to a different product than product_id —
-            // CreateAttendeeHandler::getProductPriceId() rejects this internally,
+            // BoxOfficeCartOrderService rejects this internally,
             // after CreateBoxOfficeSaleHandler has already inserted its own
             // box_office_sales(PENDING) row.
             $handler->handle($this->makeDto(
@@ -588,33 +586,18 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
     }
 
     /**
-     * Defense in depth (S1): the server-read price is forwarded to
-     * CreateAttendeeHandler as amount_paid, not the raw client amount —
+     * Defense in depth (S1): the server-read price is what the order records,
+     * not the raw client amount —
      * even in the edge case where number_format() rounds the client value
      * to the same 2-decimal string as the server price, letting it past
      * validatePrice()'s equality check.
      */
-    public function test_server_price_not_client_amount_is_forwarded_to_create_attendee_handler(): void
+    public function test_server_price_not_client_amount_is_recorded_on_the_order(): void
     {
         [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
         $this->attachCheckInList($event, $product);
 
-        $realHandler = app(CreateAttendeeHandler::class);
-        $capturedAmountPaid = null;
-
-        $this->mock(CreateAttendeeHandler::class, function ($mock) use (&$capturedAmountPaid, $realHandler) {
-            $mock->shouldReceive('handle')
-                ->once()
-                ->andReturnUsing(function (CreateAttendeeDTO $dto) use (&$capturedAmountPaid, $realHandler) {
-                    $capturedAmountPaid = $dto->amount_paid;
-
-                    return $realHandler->handle($dto);
-                });
-        });
-
-        $handler = app(CreateBoxOfficeSaleHandler::class);
-
-        $handler->handle($this->makeDto(
+        $result = app(CreateBoxOfficeSaleHandler::class)->handle($this->makeDto(
             eventId: $event->id,
             agentUserId: $user->id,
             productId: $product->id,
@@ -625,7 +608,9 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
             amountCollected: 25.004,
         ));
 
-        self::assertSame(25.0, $capturedAmountPaid);
+        $orderItem = DB::table('order_items')->where('order_id', $result->order->getId())->first();
+        self::assertSame(25.0, (float) $orderItem->price);
+        self::assertSame(25.0, (float) DB::table('orders')->where('id', $result->order->getId())->value('total_gross'));
     }
 
     public function test_cart_items_create_one_sale_and_n_attendees(): void
