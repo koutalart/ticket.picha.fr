@@ -4,7 +4,7 @@ import {Breadcrumbs, Burger} from '@mantine/core';
 import classes from './Topbar.module.scss';
 import {BreadcrumbItem} from "../types";
 import {GlobalMenu} from "../../../common/GlobalMenu";
-import { getConfig } from "../../../../utilites/config";
+import {getAppName, getLogoForDarkBackground} from "../../../../utilites/branding.ts";
 
 interface TopbarProps {
     sidebarOpen: boolean;
@@ -38,7 +38,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                 </div>
                 <div className={classes.logo}>
                     <NavLink to={ `/manage/events` }>
-                        <img src={getConfig("VITE_APP_LOGO_LIGHT", "/logos/hi-events-text-dark.svg")} alt={`${getConfig("VITE_APP_NAME", "Hi.Events")} logo`} className={classes.logo}/>
+                        <img src={getLogoForDarkBackground()} alt={`${getAppName()} logo`} className={classes.logo}/>
                     </NavLink>
                 </div>
 

@@ -31,7 +31,6 @@ import {
     isAddressSet
 } from "../../../utilites/addressUtilities.ts";
 import {StatusToggle} from "../../common/StatusToggle";
-import {getConfig} from "../../../utilites/config.ts";
 import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
@@ -42,6 +41,7 @@ import {ShareComponent} from "../../common/ShareIcon";
 import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isDateInPast} from "../../../utilites/dates.ts";
+import {getPrivacyPolicyUrl, getTermsOfUseUrl} from "../../../utilites/branding.ts";
 
 interface EventHomepageProps {
     event?: Event;
@@ -617,13 +617,13 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         <div className={classes.footerSection}>
                             <div className={classes.footerLinks}>
                                 <Anchor
-                                    href={getConfig('VITE_PRIVACY_URL', 'https://hi.events/privacy-policy?utm_source=app-event-footer')}
+                                    href={getPrivacyPolicyUrl()}
                                     className={classes.footerLink}
                                 >
                                     {t`Privacy Policy`}
                                 </Anchor>
                                 <Anchor
-                                    href={getConfig('VITE_TOS_URL', 'https://hi.events/terms-of-service?utm_source=app-event-footer')}
+                                    href={getTermsOfUseUrl()}
                                     className={classes.footerLink}
                                 >
                                     {t`Terms of Service`}

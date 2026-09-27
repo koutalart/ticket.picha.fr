@@ -7,7 +7,7 @@ import {NavItem} from "../types";
 import {NavLink} from "react-router";
 import classNames from "classnames";
 import {useMediaQuery} from "@mantine/hooks";
-import {getConfig} from "../../../../utilites/config.ts";
+import {getAppName, getLogoForDarkBackground} from "../../../../utilites/branding.ts";
 
 interface SidebarProps {
     sidebarOpen: boolean;
@@ -77,8 +77,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <NavLink to={`/manage/events`}>
                     <img
                         style={{maxWidth: '160px', margin: "10px auto"}}
-                        src={getConfig("VITE_APP_LOGO_LIGHT", "/logos/hi-events-text-dark.svg")}
-                        alt={t`${getConfig("VITE_APP_NAME", "Hi.Events")} logo`}
+                        src={getLogoForDarkBackground()}
+                        alt={t`${getAppName()} logo`}
                     />
                 </NavLink>
             </div>

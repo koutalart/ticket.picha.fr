@@ -21,9 +21,9 @@ import {useFormErrorResponseHandler} from "../../../hooks/useFormErrorResponseHa
 import {DateTimePicker} from "@mantine/dates";
 import dayjs from "dayjs";
 import {EventCategories} from "../../../constants/eventCategories.ts";
-import {getConfig} from "../../../utilites/config.ts";
 import {trackEvent, AnalyticsEvents} from "../../../utilites/analytics.ts";
 import {getDateTimePickerFormat} from "../../../utilites/dates.ts";
+import {getAppName, getLogoForDarkBackground} from "../../../utilites/branding.ts";
 
 export const CreateOrganizer = ({progressInfo}: {
     progressInfo?: { currentStep: number, totalSteps: number, progressPercentage: number }
@@ -471,11 +471,11 @@ const Welcome = () => {
             <Container size="sm" className={classes.welcomeContent}>
                 <div className={classes.welcomeHeader}>
                     <div className={classes.logo}>
-                        <img src={getConfig("VITE_APP_LOGO_LIGHT", "/logos/hi-events-text-dark.svg")} alt={`${getConfig("VITE_APP_NAME", "Hi.Events")} logo`} className={classes.logo}/>
+                        <img src={getLogoForDarkBackground()} alt={`${getAppName()} logo`} className={classes.logo}/>
                     </div>
                     <h1 className={classes.welcomeTitle}>
                         <Trans>
-                            Welcome to {getConfig("VITE_APP_NAME", "Hi.Events")}, {userData?.first_name} 👋
+                            Welcome to {getAppName()}, {userData?.first_name} 👋
                         </Trans>
                     </h1>
                 </div>

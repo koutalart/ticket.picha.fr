@@ -19,6 +19,7 @@ import {showError} from "../../../../utilites/notifications.tsx";
 import {getConfig} from "../../../../utilites/config.ts";
 import classes from "./Payment.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
+import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 
 const Payment = () => {
     const navigate = useNavigate();
@@ -152,11 +153,11 @@ const Payment = () => {
                             <Trans>
                                 By continuing, you agree to the{' '}
                                 <a
-                                    href={getConfig('VITE_TOS_URL', 'https://hi.events/terms-of-service') as string}
+                                    href={getTermsOfSaleUrl() as string}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    {getConfig('VITE_APP_NAME', 'Hi.Events')} Terms of Service
+                                    {getAppName()} Terms of Service
                                 </a>
                             </Trans>
                         </p>

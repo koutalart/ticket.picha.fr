@@ -9,8 +9,8 @@ import classes from "./Register.module.scss";
 import {getClientLocale} from "../../../../locales.ts";
 import {useEffect} from "react";
 import {getUserCurrency} from "../../../../utilites/currency.ts";
-import {getConfig} from "../../../../utilites/config.ts";
 import {captureUtmData, getStoredUtmData, clearStoredUtmData} from "../../../../utilites/utm.ts";
+import {getAppName, getPrivacyPolicyUrl, getTermsOfUseUrl} from "../../../../utilites/branding.ts";
 
 export const Register = () => {
     const navigate = useNavigate();
@@ -130,7 +130,7 @@ export const Register = () => {
                     <Checkbox
                         mb="md"
                         {...form.getInputProps('marketing_opt_in', {type: 'checkbox'})}
-                        label={<Trans>Receive product updates from {getConfig("VITE_APP_NAME", "Hi.Events")}.</Trans>}
+                        label={<Trans>Receive product updates from {getAppName()}.</Trans>}
                     />
 
                     <Button color="secondary.5" type="submit" fullWidth disabled={mutate.isPending}>
@@ -140,10 +140,10 @@ export const Register = () => {
                 <footer>
                     <Trans>
                         By registering you agree to our <NavLink target={'_blank'}
-                                                                 to={getConfig("VITE_TOS_URL", "https://hi.events/terms-of-service?utm_source=app-register-footer") as string}>Terms
+                                                                 to={getTermsOfUseUrl() as string}>Terms
                         of Service</NavLink> and <NavLink
                         target={'_blank'}
-                        to={getConfig("VITE_PRIVACY_URL", 'https://hi.events/privacy-policy?utm_source=app-register-footer') as string}>Privacy Policy</NavLink>.
+                        to={getPrivacyPolicyUrl() as string}>Privacy Policy</NavLink>.
                     </Trans>
                 </footer>
             </div>

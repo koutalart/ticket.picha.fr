@@ -16,9 +16,9 @@ import {
     IconUsers,
 } from '@tabler/icons-react';
 import {useCallback, useMemo, useRef} from "react";
-import {getConfig} from "../../../utilites/config.ts";
 import {isHiEvents} from "../../../utilites/helpers.ts";
 import {showInfo} from "../../../utilites/notifications.tsx";
+import {getAppName, getLogoForLightBackground} from "../../../utilites/branding.ts";
 
 const allFeatures = [
     {
@@ -118,7 +118,7 @@ const AuthLayout = () => {
 
         if (clickCountRef.current >= 5) {
             clickCountRef.current = 0;
-            showInfo(`HiEvents v${__APP_VERSION__}`);
+            showInfo(`${getAppName()} v${__APP_VERSION__}`);
         }
     }, []);
 
@@ -133,26 +133,13 @@ const AuthLayout = () => {
                     <main className={classes.container}>
                         <div className={classes.logo} onClick={handleLogoClick} style={{cursor: 'pointer'}}>
                             <img
-                                src={getConfig("VITE_APP_LOGO_DARK", "/logos/hi-events-stacked-light.svg")}
-                                alt={t`${getConfig("VITE_APP_NAME", "Hi.Events")} logo`}
+                                src={getLogoForLightBackground()}
+                                alt={t`${getAppName()} logo`}
                             />
                         </div>
                         <div className={classes.wrapper}>
                             <Outlet />
-                            {/*
-                             * (c) Hi.Events Ltd 2025
-                             *
-                             * PLEASE NOTE:
-                             *
-                             * Hi.Events is licensed under the GNU Affero General Public License (AGPL) version 3.
-                             *
-                             * You can find the full license text at: https://github.com/HiEventsDev/hi.events/blob/main/LICENCE
-                             *
-                             * In accordance with Section 7(b) of the AGPL, we ask that you retain the "Powered by Hi.Events" notice.
-                             *
-                             * If you wish to remove this notice, a commercial license is available at: https://hi.events/licensing
-                             */}
-                            {!isHiEvents() && <PoweredByFooter />}
+                            <PoweredByFooter />
                             <div className={classes.languageSwitcher}>
                                 <LanguageSwitcher />
                             </div>
