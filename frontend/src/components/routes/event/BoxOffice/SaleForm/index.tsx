@@ -915,9 +915,6 @@ export const SaleForm = ({
                                 </div>
                             ))}
                             <div className={kiosk.cartActions}>
-                                <button type="button" className={kiosk.cartSecondary} onClick={clearBasket}>
-                                    {t`Clear basket`}
-                                </button>
                                 <button
                                     type="button"
                                     className={kiosk.cartPrimary}
@@ -951,30 +948,32 @@ export const SaleForm = ({
                         </div>
                     </button>
                     {basketCount > 0 && (
-                        <button
-                            type="button"
-                            className={kiosk.clearBasketButton}
-                            onClick={clearBasket}
-                            disabled={isCheckingOut}
-                            aria-label={t`Empty basket`}
-                        >
-                            <IconTrash size={20}/>
-                            {t`Empty`}
-                        </button>
-                    )}
-                    {basketCount > 0 && (
                         <div className={kiosk.footerTotal}>
                             {formatCurrency(basketTotal, currency)}
                         </div>
                     )}
-                    <button
-                        type="button"
-                        className={`${kiosk.continueButton} ${footerReady ? kiosk.continueButtonReady : ''}`}
-                        disabled={!footerReady || isCheckingOut}
-                        onClick={handleKioskContinue}
-                    >
-                        {continueLabel}
-                    </button>
+                    <div className={kiosk.footerActions}>
+                        {basketCount > 0 && (
+                            <button
+                                type="button"
+                                className={kiosk.clearBasketButton}
+                                onClick={clearBasket}
+                                disabled={isCheckingOut}
+                                aria-label={t`Empty basket`}
+                                title={t`Empty basket`}
+                            >
+                                <IconTrash size={24}/>
+                            </button>
+                        )}
+                        <button
+                            type="button"
+                            className={`${kiosk.continueButton} ${footerReady ? kiosk.continueButtonReady : ''}`}
+                            disabled={!footerReady || isCheckingOut}
+                            onClick={handleKioskContinue}
+                        >
+                            {continueLabel}
+                        </button>
+                    </div>
                 </footer>
             </div>
         );
