@@ -318,10 +318,13 @@ export const SaleForm = ({
         if (printMode === 'zebra') {
             try {
                 await printOnZebra(attendeePublicId);
-            } catch {
+            } catch (error: any) {
+                const printerMessage = error?.response?.data?.message;
                 showError(isReprint
-                    ? t`The Zebra printer did not respond.`
-                    : t`The ticket was created but the Zebra printer did not respond.`);
+                    ? (printerMessage || t`The Zebra printer did not respond.`)
+                    : (printerMessage
+                        ? t`The ticket was created but was not printed: ${printerMessage}`
+                        : t`The ticket was created but the Zebra printer did not respond.`));
             }
             return;
         }

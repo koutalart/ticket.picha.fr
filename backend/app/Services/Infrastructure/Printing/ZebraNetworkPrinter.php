@@ -21,18 +21,26 @@ class ZebraNetworkPrinter implements ZebraPrinterClientInterface
 
         if ($socket === false) {
             throw new ZebraPrinterUnreachableException(
-                __('Could not reach the Zebra printer at :host.', ['host' => $host])
+                __('Printer unreachable — check the IP address (:host).', ['host' => $host])
             );
         }
 
         stream_set_timeout($socket, 3);
 
-        $written = fwrite($socket, $payload);
+        $length = strlen($payload);
+        $sent = 0;
+        while ($sent < $length) {
+            $written = @fwrite($socket, substr($payload, $sent));
+            if ($written === false || $written === 0) {
+                break;
+            }
+            $sent += $written;
+        }
         fclose($socket);
 
-        if ($written === false) {
+        if ($sent < $length) {
             throw new ZebraPrinterUnreachableException(
-                __('Could not send the ticket to the Zebra printer at :host.', ['host' => $host])
+                __('The ticket could not be fully sent to the printer at :host. Check the printer and try again.', ['host' => $host])
             );
         }
     }

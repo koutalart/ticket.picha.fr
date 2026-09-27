@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\BoxOffice;
 
+use HiEvents\Exceptions\ZebraPrinterUnreachableException;
 use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Mockery;
 use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
@@ -84,6 +86,32 @@ class BoxOfficeZplPrintTest extends TestCase
             ['printer_host' => '192.168.10.20', 'printer_dpi' => 250],
             ['Authorization' => 'Bearer '.$token],
         )->assertUnprocessable()->assertJsonValidationErrors('printer_dpi');
+    }
+
+    public function test_unreachable_printer_returns_message_for_agent(): void
+    {
+        [$event, $product, $productPrice, $admin] = $this->createEventWithProduct(
+            price: 25.00,
+            userPassword: self::PASSWORD,
+        );
+        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
+        $token = $this->loginAndGetToken($admin, self::PASSWORD);
+
+        $printer = Mockery::mock(ZebraPrinterClientInterface::class);
+        $printer->shouldReceive('send')->once()->andThrow(
+            new ZebraPrinterUnreachableException("Imprimante injoignable — vérifiez l'adresse IP (192.168.10.20).")
+        );
+        $this->app->instance(ZebraPrinterClientInterface::class, $printer);
+
+        $this->postJson(
+            "/events/{$event->id}/attendees/{$attendee->public_id}/print-zpl",
+            ['printer_host' => '192.168.10.20'],
+            ['Authorization' => 'Bearer '.$token],
+        )
+            ->assertStatus(502)
+            ->assertJsonPath('message', "Imprimante injoignable — vérifiez l'adresse IP (192.168.10.20).");
+
+        self::assertSame(0, DB::table('print_jobs')->where('attendee_id', $attendee->id)->count());
     }
 
     public function test_public_printer_host_is_rejected(): void

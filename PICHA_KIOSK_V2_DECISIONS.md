@@ -600,7 +600,11 @@ fiche d'achat.
    `PrintBoxOfficeZplHandler` et transmise à `generate(sponsorName:)`. **Reste à faire** : saisie
    côté organisateur (API `PATCH /events/{id}/settings` + écran). En attendant, la valeur se pose en
    base.
-4. Erreur claire à l'agent si l'imprimante est injoignable.
+4. Erreur claire à l'agent si l'imprimante est injoignable. **Fait** : le backend levait déjà
+   une exception (connexion TCP 3 s → 502), mais le front **ignorait** le message et affichait un
+   texte générique. Message désormais « Imprimante injoignable — vérifiez l'adresse IP (…) »,
+   affiché tel quel à l'agent. L'écriture vérifie aussi que tout le ZPL est parti (envoi partiel =
+   erreur explicite, pas d'enregistrement `print_jobs`).
 5. `^MNN` (média continu) : à confirmer contre le média réel. Si les étiquettes PICHA sont
    prédécoupées (espace entre étiquettes), `^MNN` désactive la détection d'espace et peut causer un
    **décalage progressif** au fil des impressions, indépendamment du DPI.
