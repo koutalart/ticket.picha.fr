@@ -560,6 +560,37 @@ suffisent. Si oui → B.
 réseau/IP (USB fallback), impression PDF + `window.print()`, abstraction `TicketRenderer` sans ZPL.
 Les captures rouvrent deux sujets **connexes mais distincts**, **à ne pas re-trancher ici** :
 
+### D19c — Mécanisme d'impression du Kiosk : ZPL / Zebra — **TRANCHÉE (Jo, 27 sept. 2026)**
+
+**Décision : le ZPL envoyé directement à la Zebra ZD621 est le mécanisme d'impression principal du
+Kiosk pour cette itération.** Il remplace « PDF + `window.print()` (dialogue navigateur) » retenu au
+slice 1. Le ZPL n'est plus reporté.
+
+- Chemin retenu : `POST /events/{event_id}/attendees/{attendee_public_id}/print-zpl` → `PrintBoxOfficeZplHandler` →
+  `AttendeeTicketZplService` (génération) → `ZebraNetworkPrinter` (socket TCP brut, IP privée du
+  poste, port 9100). Aucun dialogue d'impression côté navigateur.
+- L'IP de l'imprimante est un réglage **par poste** (D29, `localStorage` `picha_kiosk_settings`).
+- Le PDF navigateur reste disponible en **repli** (panne réseau imprimante, poste sans Zebra), il
+  n'est plus le mécanisme principal.
+- L'abstraction `TicketRenderer` « sans ZPL » du slice 1 est caduque pour le Kiosk.
+
+**Préalable bloquant avant tout correctif de mise en page : le DPI réel des ZD621 de PICHA.** Le
+générateur suppose aujourd'hui 203 dpi (8 pts/mm) sans l'avoir vérifié : `^PW639` / `^LL808` codés
+en dur, soit environ 80 × 101 mm à 203 dpi. Sur une ZD621 **300 dpi** (11,8 pts/mm), le même ZPL
+sortirait à environ 54 × 68 mm. À vérifier par Jo sur l'étiquette de configuration de l'imprimante
+(rapport de configuration imprimé depuis le panneau de l'imprimante, ou `~HS` / `^HH`) ou sur la
+fiche d'achat.
+
+**Points ouverts rattachés (traités en commits séparés, TDD) :**
+
+1. Dimensions d'étiquette en **mm** + DPI réglables par poste (D29), défaut = DPI réel constaté.
+2. Nom du participant reçu par le générateur mais jamais imprimé.
+3. Sponsor jamais transmis par le handler.
+4. Erreur claire à l'agent si l'imprimante est injoignable.
+5. `^MNN` (média continu) : à confirmer contre le média réel. Si les étiquettes PICHA sont
+   prédécoupées (espace entre étiquettes), `^MNN` désactive la détection d'espace et peut causer un
+   **décalage progressif** au fil des impressions, indépendamment du DPI.
+
 ### D19a — Réglages matériels par poste (capture 5)
 
 Weezevent : écran de réglages **explicitement local à l'appareil** (imprimante, options d'envoi
@@ -888,6 +919,7 @@ Cas : `location_details` absent / `country` vide / ISO2 inconnu de la table ITU,
 | **D22** | Sous-domaine `kiosk.picha.fr` | **A** : même bundle, shell `/kiosk` allégé, garde par host dans `server.js` (+ B pour généraliser `CUSTOM_DOMAINS`) | Infra + Code | Valeurs `SESSION_DOMAIN`, `CORS_ALLOWED_ORIGINS` en place ; topologie proxy/API |
 | **D23** | Compte opérateur de guichet | **✅ VALIDÉE** — Option 1 : rôle `BOX_OFFICE_OPERATOR` (compte `users` réel) + table `event_box_office_operators` (multi-événements, `unique(event_id, user_id)`) + garde négative `validateUserRole` + `validateBoxOfficeEventScope`. Création **réservée ADMIN**. Sélecteur d'événement si ≥2. 1 table neuve, 0 migration sur `box_office_sales`/`print_jobs`. | Schéma (1 table) + Code moyen | **Aucune** — décidé. Prêt à implémenter. |
 | **D15** | Session de caisse | ✅ **BACKLOG confirmé (Jo, 6 sept.)** — ne pas traiter en v2.1 | — | — |
+| **D19c** | Impression Kiosk | **✅ TRANCHÉE (27 sept.)** — ZPL direct Zebra ZD621 (TCP 9100) = mécanisme principal ; PDF navigateur = repli | Code | **DPI réel des ZD621** (203 ou 300) ; type de média (continu ou prédécoupé) |
 | **D19b** | Paiement TPE intégré (réouvert) | Garder **A** (déclaratif) pour la v2.1 ; **B** (TPE API) = chantier dédié | Code élevé (B) | Prestataire monétique / parc TPE PICHA ? |
 | **D25** | Panier multi-billets (D4 rouverte) | **B** : nouveau handler multi-items au-dessus de `CreateAttendeeHandler`, 1 clé d'idempotence, N Orders assumés | Schéma + Code | Besoin d'une **facture unique** par lot ? (→ C sinon) |
 | **D26** | Navigation par onglets | **A** + recadrage 6 sept. : layout `Kiosk` dédié + `/kiosk/select-event` si ≥2 ; v2.1 = **Vente + Réglages pour tout le monde** (Commandes/Stats = backlog, y compris ORGANIZER) | Code moyen | — |
