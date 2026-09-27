@@ -95,6 +95,9 @@ const generateIdempotencyKey = (): string => {
     return window.crypto.randomUUID();
 };
 
+const hasBadgeName = (values: Pick<SaleFormValues, 'first_name' | 'last_name'>): boolean =>
+    values.first_name.trim().length > 0 && values.last_name.trim().length > 0;
+
 const hasSaleIdentifier = (values: Pick<SaleFormValues, 'first_name' | 'email' | 'phone'>): boolean => {
     const digits = values.phone.replace(/\D/g, '');
     return values.first_name.trim().length > 0
@@ -273,6 +276,7 @@ export const SaleForm = ({
 
     const basketCount = basket.reduce((sum, line) => sum + line.qty, 0);
     const basketTotal = basket.reduce((sum, line) => sum + line.unitPrice * line.qty, 0);
+    const isFreeCart = variant === 'kiosk' && basketCount > 0 && basketTotal === 0;
     const lineQty = (productId?: number, productPriceId?: number) => {
         if (!productId || !productPriceId) {
             return 0;
@@ -286,8 +290,8 @@ export const SaleForm = ({
         if (variant !== 'kiosk') {
             return;
         }
-        form.setFieldValue('amount_collected', basketTotal > 0 ? Number(basketTotal.toFixed(2)) : '');
-    }, [basketTotal, variant]);
+        form.setFieldValue('amount_collected', basketCount > 0 ? Number(basketTotal.toFixed(2)) : '');
+    }, [basketTotal, basketCount, variant]);
 
     const resetForNextSale = () => {
         setSelectedProductId(null);
@@ -305,7 +309,7 @@ export const SaleForm = ({
     };
 
     const checkoutBasket = async (values: SaleFormValues) => {
-        if (basketCount === 0 || values.amount_collected === '') {
+        if (basketCount === 0 || (values.amount_collected === '' && !isFreeCart)) {
             return;
         }
 
@@ -332,8 +336,8 @@ export const SaleForm = ({
                     email: values.email || undefined,
                     locale: values.locale,
                     amount: Number(basketTotal.toFixed(2)),
-                    payment_method: values.payment_method,
-                    amount_collected: Number(values.amount_collected),
+                    payment_method: isFreeCart ? BoxOfficePaymentMethod.Free : values.payment_method,
+                    amount_collected: isFreeCart ? 0 : Number(values.amount_collected),
                     idempotency_key: saleIdempotencyKey,
                     send_confirmation_email: sendConfirmationEmail && values.email.trim().length > 0,
                 },
@@ -428,7 +432,7 @@ export const SaleForm = ({
     };
 
     const isSubmitDisabled = variant === 'kiosk'
-        ? (isCheckingOut || basketCount === 0 || !hasSaleIdentifier(form.values))
+        ? (isCheckingOut || basketCount === 0 || (isFreeCart ? !hasBadgeName(form.values) : !hasSaleIdentifier(form.values)))
         : (createSale.isPending
             || !selectedProduct
             || !selectedPrice
@@ -453,6 +457,21 @@ export const SaleForm = ({
             if (phone.hasError || email.hasError) {
                 return;
             }
+            if (isFreeCart) {
+                if (!form.values.first_name.trim()) {
+                    form.setFieldError('first_name', t`First and last name are required to print the badge.`);
+                }
+                if (!form.values.last_name.trim()) {
+                    form.setFieldError('last_name', t`First and last name are required to print the badge.`);
+                }
+                if (!hasBadgeName(form.values)) {
+                    return;
+                }
+                if (!isSubmitDisabled) {
+                    form.onSubmit(handleSubmit)();
+                }
+                return;
+            }
             if (!hasSaleIdentifier(form.values)) {
                 form.setFieldError('email', t`Enter at least a first name, an email, or a phone number.`);
                 return;
@@ -475,7 +494,7 @@ export const SaleForm = ({
     };
 
     if (variant === 'kiosk') {
-        const continueLabel = step === 'paiement'
+        const continueLabel = (step === 'paiement' || (step === 'formulaire' && isFreeCart))
             ? (isCheckingOut ? t`Processing…` : t`Finish`)
             : t`Continue`;
 
@@ -494,7 +513,9 @@ export const SaleForm = ({
                     <div className={kiosk.steps}>
                         <div className={`${kiosk.step} ${step === 'tarifs' ? kiosk.stepActive : ''}`}>{t`Rates`}</div>
                         <div className={`${kiosk.step} ${step === 'formulaire' ? kiosk.stepActive : ''}`}>{t`Form`}</div>
-                        <div className={`${kiosk.step} ${step === 'paiement' ? kiosk.stepActive : ''}`}>{t`Payment`}</div>
+                        {!isFreeCart && (
+                            <div className={`${kiosk.step} ${step === 'paiement' ? kiosk.stepActive : ''}`}>{t`Payment`}</div>
+                        )}
                     </div>
                 </header>
 
