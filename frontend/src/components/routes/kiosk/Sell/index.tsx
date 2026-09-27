@@ -32,6 +32,11 @@ const KioskSell = () => {
             skipPrint={settings.printOutput === 'none'}
             printMode={settings.printOutput as KioskPrintOutput}
             zebraPrinterHost={settings.zebraPrinterHost}
+            zebraLabelFormat={{
+                printerDpi: settings.printerDpi,
+                labelWidthMm: settings.labelWidthMm,
+                labelLengthMm: settings.labelLengthMm,
+            }}
             defaultLocale={settings.defaultTicketLocale}
             sendConfirmationEmail={settings.sendConfirmationEmail}
             phoneCallingCode={settings.phoneCallingCode || currentEvent?.calling_code || ''}

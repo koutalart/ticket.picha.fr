@@ -1,5 +1,6 @@
 import {api} from "./client";
 import {Attendee, GenericDataResponse, GenericPaginatedResponse, IdParam, Order} from "../types";
+import {ZebraLabelFormat} from "../hooks/useKioskSettings.ts";
 
 export enum BoxOfficePaymentMethod {
     Cash = 'CASH',
@@ -174,10 +175,15 @@ export const boxOfficeClient = {
         return response.data;
     },
 
-    printZpl: async (eventId: IdParam, attendeePublicId: string, printerHost: string) => {
+    printZpl: async (eventId: IdParam, attendeePublicId: string, printerHost: string, labelFormat: ZebraLabelFormat) => {
         await api.post(
             `events/${eventId}/attendees/${attendeePublicId}/print-zpl`,
-            {printer_host: printerHost},
+            {
+                printer_host: printerHost,
+                printer_dpi: labelFormat.printerDpi,
+                label_width_mm: labelFormat.labelWidthMm,
+                label_length_mm: labelFormat.labelLengthMm,
+            },
         );
     },
 

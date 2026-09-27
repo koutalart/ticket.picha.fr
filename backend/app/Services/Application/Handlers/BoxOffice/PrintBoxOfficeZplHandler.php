@@ -107,6 +107,7 @@ class PrintBoxOfficeZplHandler
                 eventHours: $hours,
                 venueName: $venueName,
                 venueCity: $venueCity,
+                labelFormat: $dto->label_format,
             );
         } finally {
             app()->setLocale($previousLocale);

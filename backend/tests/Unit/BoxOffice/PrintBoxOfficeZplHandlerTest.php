@@ -8,6 +8,7 @@ use HiEvents\Exceptions\InvalidZebraPrinterHostException;
 use HiEvents\Exceptions\ZebraPrinterUnreachableException;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\PrintBoxOfficeZplDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\PrintBoxOfficeZplHandler;
+use HiEvents\Services\Domain\Ticket\DTO\ZplLabelFormatDTO;
 use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +41,28 @@ class PrintBoxOfficeZplHandlerTest extends TestCase
         ));
 
         self::assertSame(1, DB::table('print_jobs')->where('attendee_id', $attendee->id)->count());
+    }
+
+    public function test_uses_station_label_format(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
+
+        $printer = Mockery::mock(ZebraPrinterClientInterface::class);
+        $printer->shouldReceive('send')
+            ->once()
+            ->with('192.168.1.50', 9100, Mockery::on(
+                fn (string $zpl) => str_contains($zpl, "^PW945\n") && str_contains($zpl, "^LL1193\n")
+            ));
+        $this->app->instance(ZebraPrinterClientInterface::class, $printer);
+
+        app(PrintBoxOfficeZplHandler::class)->handle(new PrintBoxOfficeZplDTO(
+            event_id: $event->id,
+            attendee_public_id: $attendee->public_id,
+            agent_user_id: $user->id,
+            printer_host: '192.168.1.50',
+            label_format: new ZplLabelFormatDTO(dpi: 300, width_mm: 80.0, length_mm: 101.0),
+        ));
     }
 
     public function test_rejects_public_ip_without_contacting_printer(): void

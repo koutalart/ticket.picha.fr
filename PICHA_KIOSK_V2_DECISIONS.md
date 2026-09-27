@@ -584,6 +584,12 @@ fiche d'achat.
 **Points ouverts rattachés (traités en commits séparés, TDD) :**
 
 1. Dimensions d'étiquette en **mm** + DPI réglables par poste (D29), défaut = DPI réel constaté.
+   **Fait** : DPI confirmé par Jo = **203**. Clés `printerDpi` (203/300/600), `labelWidthMm`,
+   `labelLengthMm` dans `picha_kiosk_settings` (défauts 203 / 80 / 101), envoyées à `print-zpl`
+   (`printer_dpi`, `label_width_mm`, `label_length_mm`). `^PW`/`^LL` = mm × dpi / 25,4. La mise en
+   page est dessinée à 203 dpi et mise à l'échelle `dpi / 203` (positions, polices, cadres). Limites
+   connues hors 203 dpi : les pictos `^GFA` sont repositionnés mais pas redimensionnés, et le QR est
+   plafonné au grossissement ZPL max (10).
 2. Nom du participant reçu par le générateur mais jamais imprimé.
 3. Sponsor jamais transmis par le handler.
 4. Erreur claire à l'agent si l'imprimante est injoignable.
