@@ -248,8 +248,7 @@ const FeePlanDisplay = ({configuration, stripeCountry}: FeePlanDisplayProps) => 
             <Title mb={10} order={3}>{t`Platform Fees`}</Title>
 
             <Text size="sm" c="dimmed" mb="lg">
-                {getAppName()} charges platform fees to maintain and improve our services.
-                These fees are automatically deducted from each transaction.
+                {t`${getAppName()} charges platform fees to maintain and improve its services. These fees are automatically deducted from each transaction.`}
             </Text>
 
             <VatNotice stripeCountry={stripeCountry} />
