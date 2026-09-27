@@ -16,7 +16,6 @@ import {
     IconUsers,
 } from '@tabler/icons-react';
 import {useCallback, useMemo, useRef} from "react";
-import {isHiEvents} from "../../../utilites/helpers.ts";
 import {showInfo} from "../../../utilites/notifications.tsx";
 import {getAppName, getLogoForLightBackground} from "../../../utilites/branding.ts";
 
