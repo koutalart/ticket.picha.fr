@@ -538,6 +538,14 @@ export const router: RouteObject[] = [
         },
     },
     {
+        path: "/legal/:slug",
+        async lazy() {
+            const LegalPage = await import("./components/routes/legal");
+            return { Component: LegalPage.default };
+        },
+        errorElement: <ErrorPage />,
+    },
+    {
         path: "/event/:eventId/:eventSlug",
         loader: publicEventRouteLoader,
         async lazy() {

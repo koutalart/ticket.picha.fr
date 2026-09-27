@@ -7,8 +7,23 @@
     border-radius: 5px;
     margin-top: 30px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
     color: var(--checkout-text-secondary, #6B7280);
+
+    .legalLinks {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px 12px;
+        font-size: 0.75rem;
+
+        a {
+            font-weight: 400;
+            color: inherit;
+        }
+    }
 
     .logo {
         width: 20px;
