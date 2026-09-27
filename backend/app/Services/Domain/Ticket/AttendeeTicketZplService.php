@@ -31,6 +31,7 @@ class AttendeeTicketZplService
 
     public function __construct(
         private readonly ZplQrCodeRenderer $qrCodeRenderer = new ZplQrCodeRenderer,
+        private readonly ZplImageConverter $imageConverter = new ZplImageConverter,
     ) {}
 
     public function generate(
@@ -45,6 +46,7 @@ class AttendeeTicketZplService
         string $venueName = '',
         string $venueCity = '',
         ?ZplLabelFormatDTO $labelFormat = null,
+        ?string $eventLogoImage = null,
     ): string {
         $format = $labelFormat ?? new ZplLabelFormatDTO;
         $d = fn (int $dots): int => $format->layout($dots);
@@ -69,7 +71,12 @@ class AttendeeTicketZplService
         ];
 
         $organizer = $this->words($organizerName, 44);
-        if ($organizer !== '' && mb_strlen($organizer) <= self::SHORT_ORGANIZER_MAX_LENGTH) {
+        $eventLogo = $eventLogoImage !== null
+            ? $this->imageConverter->convert($eventLogoImage, $d(300), $d(86))
+            : null;
+        if ($eventLogo !== null) {
+            $lines[] = '^FO'.$d(40).','.($d(44) + intdiv($d(86) - $eventLogo->height, 2)).$eventLogo->zpl.'^FS';
+        } elseif ($organizer !== '' && mb_strlen($organizer) <= self::SHORT_ORGANIZER_MAX_LENGTH) {
             $lines[] = $at(40, 64).$font(40).'^FD'.$organizer.'^FS';
         } elseif ($organizer !== '') {
             $lines[] = $at(40, 56).$font(30).$block(310, 2, 2, 'L').'^FD'.$organizer.'\&^FS';

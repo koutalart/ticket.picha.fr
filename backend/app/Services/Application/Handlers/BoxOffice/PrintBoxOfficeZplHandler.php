@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace HiEvents\Services\Application\Handlers\BoxOffice;
 
 use Carbon\Carbon;
+use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\ImageDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\PrintJobDomainObjectAbstract;
 use HiEvents\Exceptions\InvalidZebraPrinterHostException;
 use HiEvents\Exceptions\ResourceNotFoundException;
@@ -15,12 +17,14 @@ use HiEvents\Exceptions\ZebraPrinterUnreachableException;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
+use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\PrintJobRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\PrintBoxOfficeZplDTO;
 use HiEvents\Services\Domain\Ticket\AttendeeTicketZplService;
 use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
+use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Str;
 
 class PrintBoxOfficeZplHandler
@@ -36,6 +40,8 @@ class PrintBoxOfficeZplHandler
         private readonly PrintJobRepositoryInterface $printJobRepository,
         private readonly AttendeeTicketZplService $attendeeTicketZplService,
         private readonly ZebraPrinterClientInterface $zebraPrinterClient,
+        private readonly ImageRepositoryInterface $imageRepository,
+        private readonly FilesystemManager $filesystemManager,
     ) {}
 
     /**
@@ -98,6 +104,7 @@ class PrintBoxOfficeZplHandler
                 venueName: $venueName,
                 venueCity: $venueCity,
                 labelFormat: $dto->label_format,
+                eventLogoImage: $this->eventImage($event->getId(), ImageType::TICKET_LOGO),
             );
         } finally {
             app()->setLocale($previousLocale);
@@ -110,6 +117,20 @@ class PrintBoxOfficeZplHandler
             PrintJobDomainObjectAbstract::AGENT_USER_ID => $dto->agent_user_id,
             PrintJobDomainObjectAbstract::PRINTED_AT => now()->toDateTimeString(),
         ]);
+    }
+
+    private function eventImage(int $eventId, ImageType $type): ?string
+    {
+        $image = $this->imageRepository->findFirstWhere([
+            ImageDomainObjectAbstract::ENTITY_ID => $eventId,
+            ImageDomainObjectAbstract::ENTITY_TYPE => EventDomainObject::class,
+            ImageDomainObjectAbstract::TYPE => $type->name,
+        ]);
+        if ($image === null) {
+            return null;
+        }
+
+        return $this->filesystemManager->disk($image->getDisk())->get($image->getPath());
     }
 
     private function formatTicketDate(Carbon $start): string

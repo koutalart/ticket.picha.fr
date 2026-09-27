@@ -650,8 +650,12 @@ fiche d'achat.
    l'ID complet) et nom ; pied « Billetterie & gestion » + logo PICHA Ticket | globe +
    ticket.picha.fr. Le canevas de référence devient 631 × 695 pts. Retirés à la demande de Jo : prix,
    téléphone organisateur, bloc « Votre prochain événement ? ». Gris du mockup → contours noirs
-   (imprimante 1 bit). Logos événement et sponsor : texte de secours en attendant les commits
-   suivants. Aperçu vérifié avec un moteur de rendu ZPL local (zebrash), qui ne gère pas `^GE`
+   (imprimante 1 bit). **Logo événement** : image `TICKET_LOGO` (déjà téléversable dans le Ticket
+   Designer), lue sur son disque par le handler et convertie par `ZplImageConverter` (GD : fond
+   transparent → blanc, marges blanches recadrées, ajustée dans 300 × 86 pts, seuil de luminance
+   140 → noir). Sans logo : nom de l'organisateur en texte. Un logo en couleurs claires (jaune,
+   gris pâle) peut disparaître au seuillage : prévoir une version noire du logo. Logo sponsor :
+   texte de secours en attendant le commit suivant. Aperçu vérifié avec un moteur de rendu ZPL local (zebrash), qui ne gère pas `^GE`
    (ellipse du globe) : la ZD621 l'imprime.
    Historique —  (≈ 20+ caractères) peut encore toucher le QR,
    comme dans la maquette d'origine.
