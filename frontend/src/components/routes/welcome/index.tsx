@@ -17,6 +17,7 @@ import {useConfirmEmailWithCode} from "../../../mutations/useConfirmEmailWithCod
 import {useResendEmailConfirmation} from "../../../mutations/useResendEmailConfirmation.ts";
 import {IconClock, IconMailCheck, IconSparkles} from "@tabler/icons-react";
 import {showError, showSuccess} from "../../../utilites/notifications.tsx";
+import {useFormErrorResponseHandler} from "../../../hooks/useFormErrorResponseHandler.tsx";
 import {DateTimePicker} from "@mantine/dates";
 import dayjs from "dayjs";
 import {EventCategories} from "../../../constants/eventCategories.ts";
@@ -240,6 +241,7 @@ export const CreateEvent = ({progressInfo}: {
         }
     });
     const eventMutation = useCreateEvent();
+    const errorHandler = useFormErrorResponseHandler();
     const navigate = useNavigate();
     const {data: organizers, isFetched: organizersFetched} = useGetOrganizers();
     const {data: events, isFetched: eventsFetched} = useGetEvents({
@@ -259,7 +261,8 @@ export const CreateEvent = ({progressInfo}: {
             onSuccess: (values) => {
                 trackEvent(AnalyticsEvents.FIRST_EVENT_CREATED);
                 navigate(`/manage/event/${values.data.id}/getting-started?new_event=true`)
-            }
+            },
+            onError: (error) => errorHandler(form, error),
         });
     }
 
