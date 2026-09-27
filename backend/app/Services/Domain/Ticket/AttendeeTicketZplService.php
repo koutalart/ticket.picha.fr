@@ -12,6 +12,8 @@ class AttendeeTicketZplService
 
     private const QR_MAX_MAGNIFICATION = 10;
 
+    private const VENUE_MAX_LENGTH_BESIDE_NAME = 14;
+
     private const PICHA_PHONE = '06 39 78 07 73';
 
     /** @var array<string, int> */
@@ -54,7 +56,8 @@ class AttendeeTicketZplService
         $product = $this->field($productTitle, 28);
         $when = $this->field($eventWhen, 24);
         $hours = $this->field($eventHours, 24);
-        $venue = $this->field($venueName, 28);
+        $name = $this->field($attendeeName, 40);
+        $venue = $this->field($venueName, $name !== '' ? self::VENUE_MAX_LENGTH_BESIDE_NAME : 28);
         $city = $this->field($venueCity, 24);
         $price = $this->field($priceLabel, 16);
 
@@ -131,6 +134,10 @@ class AttendeeTicketZplService
         $lines[] = '^FB0';
         $lines[] = sprintf('%s^BQN,2,%d^FDQA,%s^FS', $at(365, 280), $this->qrMagnification($format), $safeId);
         $lines[] = sprintf('%s%s%s^FD%s\\&^FS', $at(370, 535), $font(20), $block(190, 1, 0, 'C'), $idLabel);
+
+        if ($name !== '') {
+            $lines[] = sprintf('%s%s%s^FD%s\\&^FS', $at(345, 570), $font(26), $block(240, 2, 4, 'C'), $name);
+        }
 
         $lines[] = $at(34, 692).$box(570, 2, 2).'^FS';
         $lines = array_merge($lines, $this->graphic('icon-megaphone.gfa', $at(42, 718)));

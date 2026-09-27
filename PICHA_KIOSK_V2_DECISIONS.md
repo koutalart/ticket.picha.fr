@@ -590,7 +590,11 @@ fiche d'achat.
    page est dessinée à 203 dpi et mise à l'échelle `dpi / 203` (positions, polices, cadres). Limites
    connues hors 203 dpi : les pictos `^GFA` sont repositionnés mais pas redimensionnés, et le QR est
    plafonné au grossissement ZPL max (10).
-2. Nom du participant reçu par le générateur mais jamais imprimé.
+2. Nom du participant reçu par le générateur mais jamais imprimé. **Fait** : l'omission était
+   volontaire (maquette FINALE du 7 sept.) ; Jo la renverse. Nom imprimé sous l'ID du QR
+   (`^FO345,570`, police 26, `^FB240,2`, centré, 40 caractères max). Quand un nom est imprimé, le
+   lieu est rogné à 14 caractères pour ne pas déborder sous le nom (estimation de largeur police 0,
+   non vérifiée sur un rendu réel).
 3. Sponsor jamais transmis par le handler.
 4. Erreur claire à l'agent si l'imprimante est injoignable.
 5. `^MNN` (média continu) : à confirmer contre le média réel. Si les étiquettes PICHA sont

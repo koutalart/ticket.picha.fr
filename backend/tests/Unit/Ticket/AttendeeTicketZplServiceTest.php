@@ -51,8 +51,7 @@ class AttendeeTicketZplServiceTest extends TestCase
         self::assertStringContainsString('^GFA,2328,2328,24,', $zpl);
         self::assertStringContainsString('^FO38,16^GFA,', $zpl);
         self::assertStringContainsString('^FO320,18^GB2,100,2', $zpl);
-        self::assertStringNotContainsString('NOM', $zpl);
-        self::assertStringNotContainsString('Jane Doe', $zpl);
+        self::assertStringContainsString('^FO345,570^A0N,26,26^FB240,2,4,C^FDJane Doe\\&^FS', $zpl);
         self::assertStringNotContainsString('Billet certifié', $zpl);
         self::assertStringNotContainsString('XXXXX', $zpl);
     }
@@ -68,8 +67,8 @@ class AttendeeTicketZplServiceTest extends TestCase
             attendeeName: '',
         );
 
-        self::assertStringNotContainsString('NOM', $zpl);
         self::assertStringNotContainsString('HEURE', $zpl);
+        self::assertStringNotContainsString('^FO345,570', $zpl);
         self::assertStringContainsString('QA,a_SAFE', $zpl);
     }
 
@@ -83,6 +82,7 @@ class AttendeeTicketZplServiceTest extends TestCase
         );
 
         self::assertStringNotContainsString('Night^Out', $zpl);
+        self::assertStringContainsString('^FDAnn e\\&^FS', $zpl);
         self::assertStringContainsString('Night Out', $zpl);
         self::assertStringContainsString('VIP Pass', $zpl);
         self::assertStringContainsString('QA,a_SAFE', $zpl);
@@ -114,5 +114,39 @@ class AttendeeTicketZplServiceTest extends TestCase
 
         self::assertStringNotContainsString('XXXXX', $zpl);
         self::assertStringNotContainsString('SPONSORISÉ PAR', $zpl);
+    }
+
+    public function test_attendee_name_is_truncated_to_two_lines(): void
+    {
+        $zpl = (new AttendeeTicketZplService)->generate(
+            publicId: 'a_SAFE',
+            eventTitle: 'Mayotte',
+            productTitle: 'PASS',
+            attendeeName: str_repeat('A', 60),
+        );
+
+        self::assertStringContainsString('^FD'.str_repeat('A', 40).'\\&^FS', $zpl);
+        self::assertStringNotContainsString(str_repeat('A', 41), $zpl);
+    }
+
+    public function test_venue_is_shortened_to_left_column_when_name_is_printed(): void
+    {
+        $withName = (new AttendeeTicketZplService)->generate(
+            publicId: 'a_SAFE',
+            eventTitle: 'Mayotte',
+            productTitle: 'PASS',
+            attendeeName: 'Jane',
+            venueName: 'Salle polyvalente de Cavani',
+        );
+        $withoutName = (new AttendeeTicketZplService)->generate(
+            publicId: 'a_SAFE',
+            eventTitle: 'Mayotte',
+            productTitle: 'PASS',
+            attendeeName: '',
+            venueName: 'Salle polyvalente de Cavani',
+        );
+
+        self::assertStringContainsString('^FO104,566^A0N,34,34^FDSalle polyvale^FS', $withName);
+        self::assertStringContainsString('^FDSalle polyvalente de Cavani^FS', $withoutName);
     }
 }
