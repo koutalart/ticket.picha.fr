@@ -1,57 +1,104 @@
-# PICHA Ticket — production (VPS OVH, nginx de l'hôte en proxy HTTPS)
-#
-# L'application n'écoute que sur 127.0.0.1:8123 : seul le nginx du VPS
-# (certificat Let's Encrypt) est exposé sur Internet.
+# PICHA Ticket — production (https://ticket.picha.fr) sur le VPS 51.210.5.75.
+# Même architecture que docker-compose.staging.yml, projet et ports distincts.
+# Lancer depuis la racine du dépôt :
+#   docker compose -p picha-ticket-prod -f docker/production/docker-compose.prod.yml up -d --build
 services:
-  app:
-    build:
-      context: ./../../
-      dockerfile: Dockerfile.all-in-one
+  postgres:
+    image: postgres:17-alpine
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:8123:80"
-    env_file: .env
+    mem_limit: 768m
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - REDIS_HOST=redis
-      - REDIS_PASSWORD=
-      - REDIS_PORT=6379
-      - WEBHOOK_QUEUE_NAME=webhook-queue
+      POSTGRES_DB: picha_ticket
+      POSTGRES_USER: picha_ticket
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U picha_ticket -d picha_ticket"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
-      - app-storage:/app/backend/storage/app
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - pgdata:/var/lib/postgresql/data
+    networks: [picha-prod-net]
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    mem_limit: 128m
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
     volumes:
       - redisdata:/data
+    networks: [picha-prod-net]
 
-  postgres:
-    image: postgres:17-alpine
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
     restart: unless-stopped
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    mem_limit: 512m
+    env_file: ../../backend/.env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "127.0.0.1:8081:8080"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - backend_storage:/var/www/html/storage
+    networks: [picha-prod-net]
+
+  queue-worker:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    mem_limit: 256m
+    env_file: ../../backend/.env.production
+    command: ["php", "artisan", "queue:work", "--queue=default,webhook-queue", "--tries=3", "--backoff=5"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - backend_storage:/var/www/html/storage
+    networks: [picha-prod-net]
+
+  scheduler:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    mem_limit: 128m
+    env_file: ../../backend/.env.production
+    command: ["sh", "-c", "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - backend_storage:/var/www/html/storage
+    networks: [picha-prod-net]
+
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile.ssr
+    restart: unless-stopped
+    mem_limit: 512m
+    env_file: ../../frontend/.env.production
+    ports:
+      - "127.0.0.1:3001:5678"
+    depends_on: [backend]
+    networks: [picha-prod-net]
+
+networks:
+  picha-prod-net:
 
 volumes:
   pgdata:
   redisdata:
-  app-storage:
+  backend_storage:

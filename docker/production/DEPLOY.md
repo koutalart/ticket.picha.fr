@@ -1,61 +1,78 @@
-# Déploiement PICHA Ticket sur le VPS OVH (51.255.40.188)
+# Déploiement PICHA Ticket — https://ticket.picha.fr
 
-Architecture : `nginx` du VPS (HTTPS Let's Encrypt) → `127.0.0.1:8123` → conteneur `app`
-(frontend + backend + file d'attente + tâches planifiées) + `postgres` + `redis`.
+VPS OVH `vps-2570be55.vps.ovh.net` (51.210.5.75), alias SSH `cathy-vps`.
+Le serveur héberge aussi Cathy, innocent976 et le staging PICHA : **ne toucher qu'aux éléments `picha-ticket-prod`**.
 
-## 1. DNS (espace client OVH)
-Zone DNS de `picha.fr` → ajouter un enregistrement **A** : sous-domaine `ticket` → `51.255.40.188`.
-Vérifier : `dig +short ticket.picha.fr` doit renvoyer `51.255.40.188`.
+Architecture : nginx du VPS (HTTPS) → `/api/` → backend `127.0.0.1:8081`, `/` → frontend `127.0.0.1:3001`.
+Conteneurs du projet Docker `picha-ticket-prod` : postgres, redis, backend, queue-worker, scheduler, frontend.
 
-## 2. Resend (e-mails)
-1. Resend → Domains → ajouter `picha.fr`.
-2. Copier les enregistrements DNS proposés (SPF/DKIM, MX de retour) dans la zone OVH.
-3. Attendre « Verified », puis créer une clé API → `MAIL_PASSWORD` du `.env`.
+## 1. DNS (OVH, zone picha.fr)
+Enregistrement **A** : `ticket` → `51.210.5.75`. Vérifier : `dig +short ticket.picha.fr`.
 
-## 3. Préparer le VPS (une seule fois)
+## 2. Resend
+Domaine `picha.fr` vérifié (enregistrements SPF/DKIM ajoutés chez OVH), clé API → `MAIL_PASSWORD`.
+
+## 3. Code
 ```bash
-sudo apt update && sudo apt install -y docker.io docker-compose-v2 certbot python3-certbot-nginx git
-sudo usermod -aG docker $USER   # puis se reconnecter
-sudo mkdir -p /opt/picha-ticket && sudo chown $USER /opt/picha-ticket
-git clone git@github.com:koutalart/ticket.picha.fr.git /opt/picha-ticket
+sudo mkdir -p /opt/picha-ticket && sudo chown ubuntu /opt/picha-ticket
+git clone git@github-digit-ticket:koutalart/ticket.picha.fr.git /opt/picha-ticket
+cd /opt/picha-ticket && git checkout <branche à publier>
 ```
 
-## 4. Configurer
+## 4. Secrets (jamais commités)
 ```bash
-cd /opt/picha-ticket/docker/production
-cp .env.production.example .env
-nano .env   # remplir toutes les valeurs CHANGEZ-MOI
+cp docker/production/backend.env.production.example backend/.env.production
+cp docker/production/frontend.env.production.example frontend/.env.production
+nano backend/.env.production frontend/.env.production        # remplir CHANGEZ-MOI
+echo "POSTGRES_PASSWORD=<même mot de passe que DATABASE_URL>" > docker/production/.env
 ```
 
-## 5. Lancer l'application
+## 5. Lancement
 ```bash
-docker compose -f docker-compose.prod.yml up -d --build
-docker compose -f docker-compose.prod.yml logs -f app   # migrations puis démarrage
-curl -I http://127.0.0.1:8123                             # doit répondre 200
+cd /opt/picha-ticket
+docker compose -p picha-ticket-prod --env-file docker/production/.env \
+  -f docker/production/docker-compose.prod.yml up -d --build
+docker compose -p picha-ticket-prod -f docker/production/docker-compose.prod.yml exec backend php artisan migrate --force
+curl -I http://127.0.0.1:3001 && curl -I http://127.0.0.1:8081/public/events/1
 ```
 
-## 6. nginx + HTTPS
+## 6. Frais de plateforme (une fois, après la 1re migration)
+La configuration par défaut est créée à 0 USD : la régler à 0,99 EUR fixe par billet payant.
 ```bash
-sudo cp nginx/ticket.picha.fr.conf /etc/nginx/sites-available/ticket.picha.fr
-sudo ln -s /etc/nginx/sites-available/ticket.picha.fr /etc/nginx/sites-enabled/
+docker compose -p picha-ticket-prod -f docker/production/docker-compose.prod.yml exec -T backend php artisan tinker --execute \
+  "DB::table('account_configuration')->where('is_system_default', true)->update(['application_fees' => json_encode(['percentage' => 0, 'fixed' => 0.99, 'currency' => 'EUR'])]);"
+```
+Prélevés automatiquement uniquement sur les paiements carte Stripe Connect ; ventes guichet, hors ligne
+et préventes physiques : à facturer aux organisateurs à partir des rapports.
+
+## 7. nginx + HTTPS
+```bash
+sudo cp docker/production/nginx/ticket.picha.fr.conf /etc/nginx/sites-available/ticket.picha.fr.conf
+sudo ln -s /etc/nginx/sites-available/ticket.picha.fr.conf /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 sudo certbot --nginx -d ticket.picha.fr
 ```
 
-## 7. Sauvegardes
+## 8. Sauvegardes
 ```bash
 sudo crontab -e
-# ajouter :
 0 3 * * * /opt/picha-ticket/docker/production/backup.sh >> /var/log/picha-backup.log 2>&1
 ```
 
 ## Mise à jour
 ```bash
 cd /opt/picha-ticket && git pull
-cd docker/production && docker compose -f docker-compose.prod.yml up -d --build
+docker compose -p picha-ticket-prod --env-file docker/production/.env \
+  -f docker/production/docker-compose.prod.yml up -d --build
+docker compose -p picha-ticket-prod -f docker/production/docker-compose.prod.yml exec backend php artisan migrate --force
+docker builder prune -f   # cache de build uniquement, pour préserver le disque
 ```
 
-## Limite connue : impression Zebra
-L'impression ZPL est envoyée **par le serveur** vers l'IP de l'imprimante. Depuis le VPS,
-une imprimante sur le réseau privé d'un lieu (192.168.x.x) est injoignable : le guichet
-bascule alors sur le PDF. Une solution d'impression locale reste à mettre en place.
+## Mémoire (VPS 4 Go)
+Production (~2,3 Go de limites) + staging (~2,3 Go) + Cathy dépassent la RAM : arrêter le staging
+(`docker compose -f docker-compose.staging.yml stop` dans /opt/digit-ticket, données conservées)
+une fois la production validée, ou passer en VPS-2 dès que le stock SBG6 revient.
+
+## Impression Zebra
+Depuis le VPS, l'impression ZPL envoyée par le serveur n'atteint pas l'imprimante du lieu : le guichet
+propose alors le PDF. Solution cible pour les tablettes Android : Zebra Browser Print (impression locale).
