@@ -46,6 +46,29 @@ class AttendeeTicketZplServiceTest extends TestCase
         self::assertStringNotContainsString('Mayotte la 1ère', $zpl);
     }
 
+    public function test_sponsor_logo_is_right_aligned_under_sponsor_label(): void
+    {
+        $image = imagecreatetruecolor(200, 100);
+        imagefill($image, 0, 0, imagecolorallocate($image, 0, 0, 0));
+        ob_start();
+        imagepng($image);
+        $png = (string) ob_get_clean();
+
+        $zpl = (new AttendeeTicketZplService)->generate(
+            publicId: 'A-C369BTS',
+            eventTitle: 'JPO',
+            productTitle: 'Pass VIP',
+            attendeeName: '',
+            sponsorName: 'Bé digital',
+            sponsorLogoImage: $png,
+        );
+
+        self::assertStringContainsString('^FO366,44^GB2,86,2^FS', $zpl);
+        self::assertStringContainsString('^FDSponsor\&^FS', $zpl);
+        self::assertStringContainsString('^FO471,70^GFA,900,900,15,', $zpl);
+        self::assertStringNotContainsString('Bé digital', $zpl);
+    }
+
     public function test_long_organizer_name_uses_two_smaller_lines(): void
     {
         $zpl = $this->generate(organizerName: 'Association culturelle de Mamoudzou');

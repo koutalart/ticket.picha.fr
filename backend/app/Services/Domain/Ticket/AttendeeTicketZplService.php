@@ -47,6 +47,7 @@ class AttendeeTicketZplService
         string $venueCity = '',
         ?ZplLabelFormatDTO $labelFormat = null,
         ?string $eventLogoImage = null,
+        ?string $sponsorLogoImage = null,
     ): string {
         $format = $labelFormat ?? new ZplLabelFormatDTO;
         $d = fn (int $dots): int => $format->layout($dots);
@@ -83,9 +84,20 @@ class AttendeeTicketZplService
         }
 
         $sponsor = $this->words($sponsorName, 24);
-        if ($sponsor !== '' && strtoupper($sponsor) !== 'XXXXX') {
+        if (strtoupper($sponsor) === 'XXXXX') {
+            $sponsor = '';
+        }
+        $sponsorLogo = $sponsorLogoImage !== null
+            ? $this->imageConverter->convert($sponsorLogoImage, $d(191), $d(60))
+            : null;
+        if ($sponsor !== '' || $sponsorLogo !== null) {
             $lines[] = $at(366, 44).$box(2, 86, 2).'^FS';
             $lines[] = $at(386, 44).$font(18).$block(205, 1, 0, 'R').'^FD'.$this->field(__('Sponsor'), 16).'\&^FS';
+        }
+        if ($sponsorLogo !== null) {
+            $lines[] = '^FO'.($d(591) - $sponsorLogo->width).','.($d(70) + intdiv($d(60) - $sponsorLogo->height, 2))
+                .$sponsorLogo->zpl.'^FS';
+        } elseif ($sponsor !== '') {
             $lines[] = $at(386, 70).$font(32).$block(205, 2, 2, 'R').'^FD'.$sponsor.'\&^FS';
         }
 

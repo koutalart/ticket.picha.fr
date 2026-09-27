@@ -654,8 +654,12 @@ fiche d'achat.
    Designer), lue sur son disque par le handler et convertie par `ZplImageConverter` (GD : fond
    transparent → blanc, marges blanches recadrées, ajustée dans 300 × 86 pts, seuil de luminance
    140 → noir). Sans logo : nom de l'organisateur en texte. Un logo en couleurs claires (jaune,
-   gris pâle) peut disparaître au seuillage : prévoir une version noire du logo. Logo sponsor :
-   texte de secours en attendant le commit suivant. Aperçu vérifié avec un moteur de rendu ZPL local (zebrash), qui ne gère pas `^GE`
+   gris pâle) peut disparaître au seuillage : prévoir une version noire du logo. **Logo sponsor** :
+   nouveau type d'image d'événement `TICKET_SPONSOR_LOGO` (une seule image, min. 100 × 40 px),
+   téléversable dans le Ticket Designer ; imprimé aligné à droite sous « Sponsor » (zone
+   191 × 60 pts). Sans logo, le nom `event_settings.ticket_sponsor_name` s'imprime en texte ; sans
+   les deux, le bloc sponsor et le séparateur disparaissent. Non fait : copie du logo sponsor à la
+   duplication d'événement, saisie du nom sponsor dans l'interface. Aperçu vérifié avec un moteur de rendu ZPL local (zebrash), qui ne gère pas `^GE`
    (ellipse du globe) : la ZD621 l'imprime.
    Historique —  (≈ 20+ caractères) peut encore toucher le QR,
    comme dans la maquette d'origine.

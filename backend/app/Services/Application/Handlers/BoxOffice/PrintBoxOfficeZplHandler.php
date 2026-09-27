@@ -105,6 +105,7 @@ class PrintBoxOfficeZplHandler
                 venueCity: $venueCity,
                 labelFormat: $dto->label_format,
                 eventLogoImage: $this->eventImage($event->getId(), ImageType::TICKET_LOGO),
+                sponsorLogoImage: $this->eventImage($event->getId(), ImageType::TICKET_SPONSOR_LOGO),
             );
         } finally {
             app()->setLocale($previousLocale);

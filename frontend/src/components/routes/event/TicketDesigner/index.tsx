@@ -34,6 +34,7 @@ const TicketDesigner = () => {
     const [accordionValue, setAccordionValue] = useState<string[]>(['design']);
 
     const existingLogo = eventImagesQuery.data?.find((image) => image.type === 'TICKET_LOGO');
+    const existingSponsorLogo = eventImagesQuery.data?.find((image) => image.type === 'TICKET_SPONSOR_LOGO');
 
     const form = useForm<TicketDesignSettings>({
         initialValues: {
@@ -155,6 +156,28 @@ const TicketDesigner = () => {
                                                         id: existingLogo?.id,
                                                     }}
                                                     helpText={t`Logo will be displayed on the ticket`}
+                                                    displayMode="compact"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <Group justify={'space-between'} mb="xs">
+                                                    <Text fw={500} size="sm">{t`Sponsor logo`}</Text>
+                                                    <Tooltip
+                                                        label={t`A black logo on a transparent or white background prints best on thermal printers`}>
+                                                        <IconHelp size={16} style={{ color: 'var(--mantine-color-gray-6)' }}/>
+                                                    </Tooltip>
+                                                </Group>
+                                                <ImageUploadDropzone
+                                                    imageType="TICKET_SPONSOR_LOGO"
+                                                    entityId={eventId}
+                                                    onUploadSuccess={handleImageChange}
+                                                    onDeleteSuccess={handleImageChange}
+                                                    existingImageData={{
+                                                        url: existingSponsorLogo?.url,
+                                                        id: existingSponsorLogo?.id,
+                                                    }}
+                                                    helpText={t`Printed under "Sponsor" on box office tickets`}
                                                     displayMode="compact"
                                                 />
                                             </div>
