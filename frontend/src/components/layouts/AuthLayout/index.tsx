@@ -15,7 +15,7 @@ import {
     IconTicket,
     IconUsers,
 } from '@tabler/icons-react';
-import {useCallback, useMemo, useRef} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {showInfo} from "../../../utilites/notifications.tsx";
 import {getAppName, getLogoForLightBackground} from "../../../utilites/branding.ts";
 
@@ -63,9 +63,10 @@ const allFeatures = [
 ];
 
 const FeaturePanel = () => {
-    const selectedFeatures = useMemo(() => {
-        const shuffled = [...allFeatures].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, 4);
+    const [selectedFeatures, setSelectedFeatures] = useState(() => allFeatures.slice(0, 4));
+
+    useEffect(() => {
+        setSelectedFeatures([...allFeatures].sort(() => 0.5 - Math.random()).slice(0, 4));
     }, []);
 
     return (

@@ -73,7 +73,7 @@ export const getClientLocale = () => {
         return getSupportedLocale(window.navigator.language);
     }
 
-    return "en";
+    return getSupportedLocale(i18n.locale || "en");
 };
 
 export async function dynamicActivateLocale(locale: string) {

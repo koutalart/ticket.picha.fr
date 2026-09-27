@@ -1,5 +1,5 @@
 import {useLocation, useNavigate} from "react-router";
-import {ActionIcon, Anchor} from '@mantine/core';
+import {ActionIcon} from '@mantine/core';
 import {EventCard} from './EventCard';
 import classes from './OrganizerHomepage.module.scss';
 import React, {useEffect, useState} from 'react';
@@ -19,7 +19,6 @@ import {computeThemeVariables, validateThemeSettings} from "../../../utilites/th
 import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
-import {getPrivacyPolicyUrl, getTermsOfUseUrl} from "../../../utilites/branding.ts";
 
 interface OrganizerHomepageProps {
     organizer?: Organizer;
@@ -333,21 +332,6 @@ export const OrganizerHomepage = ({
 
                         {/* Footer */}
                         <div className={classes.footerSection}>
-                            <div className={classes.footerLinks}>
-                                <Anchor
-                                    href={getPrivacyPolicyUrl()}
-                                    className={classes.footerLink}
-                                >
-                                    {t`Privacy Policy`}
-                                </Anchor>
-                                <span className={classes.footerSeparator}>•</span>
-                                <Anchor
-                                    href={getTermsOfUseUrl()}
-                                    className={classes.footerLink}
-                                >
-                                    {t`Terms of Service`}
-                                </Anchor>
-                            </div>
                             <PoweredByFooter className={classes.poweredByFooter}/>
                         </div>
                     </div>

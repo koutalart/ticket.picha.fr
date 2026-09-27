@@ -3,7 +3,7 @@ import classes from "./FloatingPoweredBy.module.scss";
 import classNames from "classnames";
 import React from "react";
 import {getConfig} from "../../../utilites/config.ts";
-import {getAppName, getPrivacyPolicyUrl, getTermsOfSaleUrl} from "../../../utilites/branding.ts";
+import {getAppName, getPrivacyPolicyUrl, getTermsOfSaleUrl, getTermsOfUseUrl} from "../../../utilites/branding.ts";
 
 export const PoweredByFooter = (
     props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
@@ -18,6 +18,7 @@ export const PoweredByFooter = (
             </div>
             <div className={classes.legalLinks}>
                 <a href="/legal/mentions-legales">{t`Legal notice`}</a>
+                <a href={getTermsOfUseUrl()}>{t`Terms of use`}</a>
                 <a href={getTermsOfSaleUrl()}>{t`Terms of sale`}</a>
                 <a href={getPrivacyPolicyUrl()}>{t`Privacy`}</a>
                 <a href="/legal/cookies">{t`Cookies`}</a>

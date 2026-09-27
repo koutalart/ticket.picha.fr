@@ -41,7 +41,6 @@ import {ShareComponent} from "../../common/ShareIcon";
 import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isDateInPast} from "../../../utilites/dates.ts";
-import {getPrivacyPolicyUrl, getTermsOfUseUrl} from "../../../utilites/branding.ts";
 
 interface EventHomepageProps {
     event?: Event;
@@ -615,20 +614,6 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                         {/* Footer */}
                         <div className={classes.footerSection}>
-                            <div className={classes.footerLinks}>
-                                <Anchor
-                                    href={getPrivacyPolicyUrl()}
-                                    className={classes.footerLink}
-                                >
-                                    {t`Privacy Policy`}
-                                </Anchor>
-                                <Anchor
-                                    href={getTermsOfUseUrl()}
-                                    className={classes.footerLink}
-                                >
-                                    {t`Terms of Service`}
-                                </Anchor>
-                            </div>
                             <PoweredByFooter className={classes.poweredByFooter}/>
                         </div>
                     </div>
