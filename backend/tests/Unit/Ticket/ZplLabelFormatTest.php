@@ -44,6 +44,28 @@ class ZplLabelFormatTest extends TestCase
         self::assertSame(1, (new ZplLabelFormatDTO(dpi: 300))->scale(1));
     }
 
+    public function test_layout_shrinks_to_fit_label_length(): void
+    {
+        self::assertEqualsWithDelta(0.869, (new ZplLabelFormatDTO)->fitRatio(), 0.001);
+        self::assertSame(1.0, (new ZplLabelFormatDTO(width_mm: 80.0, length_mm: 101.0))->fitRatio());
+        self::assertSame(36, (new ZplLabelFormatDTO)->layout(42));
+        self::assertSame(42, (new ZplLabelFormatDTO(width_mm: 80.0, length_mm: 101.0))->layout(42));
+    }
+
+    public function test_generator_fits_whole_layout_on_87_mm_label(): void
+    {
+        $zpl = $this->generate(null);
+
+        self::assertStringContainsString('^FO36,146^A0N,40,40^FB447,2,2,L^FDMayotte', $zpl);
+        self::assertStringContainsString('^FO30,601^GB495,2,2^FS', $zpl);
+        self::assertStringContainsString('^FO104,667^A0N,18,18^FDpicha.fr', $zpl);
+
+        self::assertStringContainsString("^LH38,0\n", $zpl);
+
+        preg_match_all('/\^FO\d+,(\d+)/', $zpl, $matches);
+        self::assertLessThan(695, max(array_map('intval', $matches[1])));
+    }
+
     public function test_generator_uses_label_size_from_format(): void
     {
         $zpl = $this->generate(new ZplLabelFormatDTO(dpi: 203, width_mm: 104.0, length_mm: 150.0));
@@ -68,6 +90,7 @@ class ZplLabelFormatTest extends TestCase
         $zpl = $this->generate(new ZplLabelFormatDTO(dpi: 203, width_mm: 80.0, length_mm: 101.0));
 
         self::assertStringContainsString("^PW639\n", $zpl);
+        self::assertStringContainsString("^LH0,0\n", $zpl);
         self::assertStringContainsString('^FO42,168^A0N,46,46^FB515,2,2,L^FDMayotte', $zpl);
         self::assertStringContainsString('^FO365,280^BQN,2,10^FDQA,a_SAFE', $zpl);
     }

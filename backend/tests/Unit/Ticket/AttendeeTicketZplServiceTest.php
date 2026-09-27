@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Ticket;
 
 use HiEvents\Services\Domain\Ticket\AttendeeTicketZplService;
+use HiEvents\Services\Domain\Ticket\DTO\ZplLabelFormatDTO;
 use Tests\TestCase;
 
 class AttendeeTicketZplServiceTest extends TestCase
@@ -25,11 +26,12 @@ class AttendeeTicketZplServiceTest extends TestCase
             eventHours: '16h00 - 02h30',
             venueName: 'Le 5/5',
             venueCity: 'Mamoudzou',
+            labelFormat: new ZplLabelFormatDTO(width_mm: 80.0, length_mm: 101.0),
         );
 
         self::assertStringStartsWith('^XA', $zpl);
         self::assertStringEndsWith('^XZ', trim($zpl));
-        self::assertStringContainsString('^PW631', $zpl);
+        self::assertStringContainsString('^PW639', $zpl);
         self::assertStringContainsString('^FO365,280^BQN,2,10', $zpl);
         self::assertStringContainsString('QA,A-SFMVW8P', $zpl);
         self::assertStringContainsString('A - SFMVW8P', $zpl);
@@ -137,6 +139,7 @@ class AttendeeTicketZplServiceTest extends TestCase
             productTitle: 'PASS',
             attendeeName: 'Jane',
             venueName: 'Salle polyvalente de Cavani',
+            labelFormat: new ZplLabelFormatDTO(width_mm: 80.0, length_mm: 101.0),
         );
         $withoutName = (new AttendeeTicketZplService)->generate(
             publicId: 'a_SAFE',

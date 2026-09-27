@@ -43,12 +43,12 @@ class AttendeeTicketZplService
         ?ZplLabelFormatDTO $labelFormat = null,
     ): string {
         $format = $labelFormat ?? new ZplLabelFormatDTO;
-        $at = fn (int $x, int $y): string => '^FO'.$format->scale($x).','.$format->scale($y);
-        $font = fn (int $height): string => '^A0N,'.$format->scale($height).','.$format->scale($height);
-        $box = fn (int $width, int $height, int $thickness): string => '^GB'.$format->scale($width).','
-            .$format->scale($height).','.$format->scale($thickness);
-        $block = fn (int $width, int $lines, int $spacing, string $align): string => '^FB'.$format->scale($width)
-            .','.$lines.','.$format->scale($spacing).','.$align;
+        $at = fn (int $x, int $y): string => '^FO'.$format->layout($x).','.$format->layout($y);
+        $font = fn (int $height): string => '^A0N,'.$format->layout($height).','.$format->layout($height);
+        $box = fn (int $width, int $height, int $thickness): string => '^GB'.$format->layout($width).','
+            .$format->layout($height).','.$format->layout($thickness);
+        $block = fn (int $width, int $lines, int $spacing, string $align): string => '^FB'.$format->layout($width)
+            .','.$lines.','.$format->layout($spacing).','.$align;
 
         $safeId = $this->field($publicId, 48);
         $idLabel = $this->formatPublicIdLabel($safeId);
@@ -66,7 +66,7 @@ class AttendeeTicketZplService
             '^CI28',
             '^PW'.$format->widthDots(),
             '^LL'.$format->lengthDots(),
-            '^LH0,0',
+            '^LH'.$format->horizontalOffset().',0',
             '^LT0',
             '^MNM',
             '^FWN',

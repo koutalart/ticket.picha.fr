@@ -629,6 +629,13 @@ fiche d'achat.
 
    **Codé** : `^MNM` remplace `^MNN` ; défauts poste 79 × 87 mm (631 × 695 pts à 203 dpi).
 
+   **Mise en page 87 mm (choix Jo)** : la maquette est dessinée pour ~101 mm. Elle est **réduite
+   uniformément** pour tenir dans la longueur réglée sur le poste : ratio = min(1, longueur / 800 pts,
+   largeur / 620 pts) à 203 dpi, soit **×0,869 en 79 × 87** (−13 %). Elle est centrée
+   horizontalement via `^LH` (38 pts). Positions, polices, cadres et blocs de texte suivent le ratio ;
+   les pictos `^GFA` sont repositionnés mais gardent leur taille. **Le QR n'est pas réduit** (voir
+   ci-dessous).
+
    Correctif initialement recommandé :
    - `^MNM` à la place de `^MNN`, pour synchroniser chaque billet sur la marque noire. Le
      2ᵉ paramètre de `^MN` (décalage de la marque) sert si la marque n'est pas en tête
