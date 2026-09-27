@@ -605,9 +605,33 @@ fiche d'achat.
    texte générique. Message désormais « Imprimante injoignable — vérifiez l'adresse IP (…) »,
    affiché tel quel à l'agent. L'écriture vérifie aussi que tout le ZPL est parti (envoi partiel =
    erreur explicite, pas d'enregistrement `print_jobs`).
-5. `^MNN` (média continu) : à confirmer contre le média réel. Si les étiquettes PICHA sont
-   prédécoupées (espace entre étiquettes), `^MNN` désactive la détection d'espace et peut causer un
-   **décalage progressif** au fil des impressions, indépendamment du DPI.
+5. `^MNN` (média continu) : **aucune justification trouvée**. Introduit par `7dc1f1f`
+   (7 sept.) avec les maquettes `.zpl` générées pour Labelary, sans commentaire ni décision
+   associée. Le choix vient très probablement de l'aperçu Labelary, qui n'a pas de notion de
+   média, et non d'un constat sur l'imprimante.
+
+   **Média réel confirmé par Jo (27 sept.) : étiquettes à marque noire au dos.** `^MNN` est donc
+   **la mauvaise valeur** :
+   - avec `^MNN`, la ZD621 ne cherche pas la marque. Elle avance de `^LL` points par billet et
+     considère que le billet suivant commence là ;
+   - le moindre écart entre `^LL` (aujourd'hui 807 points, soit 101 mm, une valeur **supposée**)
+     et le pas réel des marques **s'additionne à chaque billet**. C'est un décalage **progressif**
+     au fil du rouleau, cohérent avec un désalignement qui empire à l'usage et **indépendant du
+     DPI** (le DPI, lui, donnerait une erreur d'échelle constante dès le premier billet) ;
+   - le glissement mécanique et le rembobinage après décollage ne sont jamais rattrapés, puisque
+     rien ne resynchronise l'impression.
+
+   **Correctif recommandé (non codé, à valider par Jo)** :
+   - `^MNM` à la place de `^MNN`, pour synchroniser chaque billet sur la marque noire. Le
+     2ᵉ paramètre de `^MN` (décalage de la marque) sert si la marque n'est pas en tête
+     d'étiquette ;
+   - `^LL` = pas réel entre deux marques, à mesurer sur le rouleau et à saisir dans
+     `labelLengthMm` (D29) ;
+   - une calibration du média (`~JC`, ou appui long sur le bouton d'alimentation) à chaque
+     changement de rouleau. Aucune commande de calibration n'existe dans le code aujourd'hui.
+
+   Le type de média pourrait lui aussi devenir un réglage par poste (continu, espace, marque
+   noire → `^MNN` / `^MNY` / `^MNM`) si PICHA utilise plusieurs rouleaux.
 
 ### D19a — Réglages matériels par poste (capture 5)
 
