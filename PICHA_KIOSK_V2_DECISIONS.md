@@ -585,7 +585,8 @@ fiche d'achat.
 
 1. Dimensions d'étiquette en **mm** + DPI réglables par poste (D29), défaut = DPI réel constaté.
    **Fait** : DPI confirmé par Jo = **203**. Clés `printerDpi` (203/300/600), `labelWidthMm`,
-   `labelLengthMm` dans `picha_kiosk_settings` (défauts 203 / 80 / 101), envoyées à `print-zpl`
+   `labelLengthMm` dans `picha_kiosk_settings` (défauts 203 / 80 / 101, puis 79 / 87 après mesure du
+   rouleau, cf. point 5), envoyées à `print-zpl`
    (`printer_dpi`, `label_width_mm`, `label_length_mm`). `^PW`/`^LL` = mm × dpi / 25,4. La mise en
    page est dessinée à 203 dpi et mise à l'échelle `dpi / 203` (positions, polices, cadres). Limites
    connues hors 203 dpi : les pictos `^GFA` sont repositionnés mais pas redimensionnés, et le QR est
@@ -621,7 +622,14 @@ fiche d'achat.
    - le glissement mécanique et le rembobinage après décollage ne sont jamais rattrapés, puisque
      rien ne resynchronise l'impression.
 
-   **Correctif recommandé (non codé, à valider par Jo)** :
+   **Constaté sur la ZD621 « DIGIT » (192.168.1.21), 27 sept.** : `MEDIA TYPE = CONTINUOUS`,
+   `SENSOR SELECT = REFLECTIVE`, `PRINT MODE = CUTTER`, `LABEL LENGTH = 808` (posé par notre ZPL).
+   Rouleau mesuré par Jo : **79 × 87 mm**. Le massicot coupait donc tous les 101 mm sur des
+   étiquettes de 87 mm (**14 mm de dérive par billet**).
+
+   **Codé** : `^MNM` remplace `^MNN` ; défauts poste 79 × 87 mm (631 × 695 pts à 203 dpi).
+
+   Correctif initialement recommandé :
    - `^MNM` à la place de `^MNN`, pour synchroniser chaque billet sur la marque noire. Le
      2ᵉ paramètre de `^MN` (décalage de la marque) sert si la marque n'est pas en tête
      d'étiquette ;

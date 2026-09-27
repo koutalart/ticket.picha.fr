@@ -29,7 +29,7 @@ class AttendeeTicketZplServiceTest extends TestCase
 
         self::assertStringStartsWith('^XA', $zpl);
         self::assertStringEndsWith('^XZ', trim($zpl));
-        self::assertStringContainsString('^PW639', $zpl);
+        self::assertStringContainsString('^PW631', $zpl);
         self::assertStringContainsString('^FO365,280^BQN,2,10', $zpl);
         self::assertStringContainsString('QA,A-SFMVW8P', $zpl);
         self::assertStringContainsString('A - SFMVW8P', $zpl);

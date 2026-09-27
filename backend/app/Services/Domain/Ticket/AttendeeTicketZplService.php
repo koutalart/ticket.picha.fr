@@ -68,7 +68,7 @@ class AttendeeTicketZplService
             '^LL'.$format->lengthDots(),
             '^LH0,0',
             '^LT0',
-            '^MNN',
+            '^MNM',
             '^FWN',
         ];
 

@@ -10,15 +10,23 @@ use Tests\TestCase;
 
 class ZplLabelFormatTest extends TestCase
 {
-    public function test_default_format_is_203_dpi_80_by_101_mm(): void
+    public function test_default_format_is_picha_roll_203_dpi_79_by_87_mm(): void
     {
         $format = new ZplLabelFormatDTO;
 
         self::assertSame(203, $format->dpi);
-        self::assertSame(80.0, $format->width_mm);
-        self::assertSame(101.0, $format->length_mm);
-        self::assertSame(639, $format->widthDots());
-        self::assertSame(807, $format->lengthDots());
+        self::assertSame(79.0, $format->width_mm);
+        self::assertSame(87.0, $format->length_mm);
+        self::assertSame(631, $format->widthDots());
+        self::assertSame(695, $format->lengthDots());
+    }
+
+    public function test_generator_tracks_black_mark_media(): void
+    {
+        $zpl = $this->generate(null);
+
+        self::assertStringContainsString("^MNM\n", $zpl);
+        self::assertStringNotContainsString('^MNN', $zpl);
     }
 
     public function test_dots_are_derived_from_millimetres_and_dpi(): void
@@ -46,7 +54,7 @@ class ZplLabelFormatTest extends TestCase
 
     public function test_generator_scales_layout_for_300_dpi(): void
     {
-        $zpl = $this->generate(new ZplLabelFormatDTO(dpi: 300));
+        $zpl = $this->generate(new ZplLabelFormatDTO(dpi: 300, width_mm: 80.0, length_mm: 101.0));
 
         self::assertStringContainsString("^PW945\n", $zpl);
         self::assertStringContainsString("^LL1193\n", $zpl);
@@ -55,9 +63,9 @@ class ZplLabelFormatTest extends TestCase
         self::assertStringNotContainsString('^FO365,280', $zpl);
     }
 
-    public function test_generator_defaults_to_203_dpi_layout(): void
+    public function test_generator_keeps_reference_layout_on_80_by_101_mm_label(): void
     {
-        $zpl = $this->generate(null);
+        $zpl = $this->generate(new ZplLabelFormatDTO(dpi: 203, width_mm: 80.0, length_mm: 101.0));
 
         self::assertStringContainsString("^PW639\n", $zpl);
         self::assertStringContainsString('^FO42,168^A0N,46,46^FB515,2,2,L^FDMayotte', $zpl);
