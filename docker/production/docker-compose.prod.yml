@@ -1,0 +1,57 @@
+# PICHA Ticket — production (VPS OVH, nginx de l'hôte en proxy HTTPS)
+#
+# L'application n'écoute que sur 127.0.0.1:8123 : seul le nginx du VPS
+# (certificat Let's Encrypt) est exposé sur Internet.
+services:
+  app:
+    build:
+      context: ./../../
+      dockerfile: Dockerfile.all-in-one
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8123:80"
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=
+      - REDIS_PORT=6379
+      - WEBHOOK_QUEUE_NAME=webhook-queue
+    volumes:
+      - app-storage:/app/backend/storage/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redisdata:/data
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+  redisdata:
+  app-storage:
