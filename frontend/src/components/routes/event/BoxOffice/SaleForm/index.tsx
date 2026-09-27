@@ -12,6 +12,7 @@ import {
     IconPlus,
     IconPrinter,
     IconReceipt2,
+    IconTrash,
 } from "@tabler/icons-react";
 import {PageBody} from "../../../../common/PageBody";
 import {PageTitle} from "../../../../common/PageTitle";
@@ -22,6 +23,7 @@ import {BoxOfficePaymentMethod, boxOfficeClient, BoxOfficeSale} from "../../../.
 import {IdParam} from "../../../../../types.ts";
 import {KioskPrintOutput} from "../../../../../hooks/useKioskSettings.ts";
 import {showError, showSuccess} from "../../../../../utilites/notifications.tsx";
+import {confirmationDialog} from "../../../../../utilites/confirmationDialog.tsx";
 import {useFormErrorResponseHandler} from "../../../../../hooks/useFormErrorResponseHandler.tsx";
 import {useIsCurrentUserAdmin} from "../../../../../hooks/useIsCurrentUserAdmin.ts";
 import {formatCurrency} from "../../../../../utilites/currency.ts";
@@ -258,8 +260,11 @@ export const SaleForm = ({
     };
 
     const clearBasket = () => {
-        setBasket([]);
-        setCartOpen(false);
+        confirmationDialog(
+            t`Empty the basket? All selected tickets and the customer details will be removed.`,
+            () => resetForNextSale(),
+            {confirm: t`Empty basket`, cancel: t`Keep`},
+        );
     };
 
     const handleTicketTap = (product: SaleFormProduct) => {
@@ -941,6 +946,18 @@ export const SaleForm = ({
                             )}
                         </div>
                     </button>
+                    {basketCount > 0 && (
+                        <button
+                            type="button"
+                            className={kiosk.clearBasketButton}
+                            onClick={clearBasket}
+                            disabled={isCheckingOut}
+                            aria-label={t`Empty basket`}
+                        >
+                            <IconTrash size={20}/>
+                            {t`Empty`}
+                        </button>
+                    )}
                     {basketCount > 0 && (
                         <div className={kiosk.footerTotal}>
                             {formatCurrency(basketTotal, currency)}
