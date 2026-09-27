@@ -6,6 +6,7 @@ namespace HiEvents\Services\Application\Handlers\BoxOffice;
 
 use Carbon\Carbon;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\PrintJobDomainObjectAbstract;
 use HiEvents\Exceptions\InvalidZebraPrinterHostException;
@@ -73,7 +74,8 @@ class PrintBoxOfficeZplHandler
             $hours = $this->formatTicketHours($start, $end);
         }
 
-        [$venueName, $venueCity] = $this->eventVenue($event);
+        $eventSettings = $this->eventSettingsRepository->findFirstWhere(['event_id' => $event->getId()]);
+        [$venueName, $venueCity] = $this->eventVenue($event, $eventSettings);
 
         $priceLabel = '';
         $productPrice = $this->productPriceRepository->findById($attendee->getProductPriceId());
@@ -102,6 +104,7 @@ class PrintBoxOfficeZplHandler
                 attendeeName: $name,
                 eventWhen: $when,
                 priceLabel: $priceLabel,
+                sponsorName: (string) $eventSettings?->getTicketSponsorName(),
                 organizerName: $organizerName,
                 organizerPhone: $organizerPhone,
                 eventHours: $hours,
@@ -187,7 +190,7 @@ class PrintBoxOfficeZplHandler
     /**
      * @return array{0: string, 1: string}
      */
-    private function eventVenue(EventDomainObject $event): array
+    private function eventVenue(EventDomainObject $event, ?EventSettingDomainObject $settings): array
     {
         $details = $event->getLocationDetails();
         if (is_string($details)) {
@@ -201,7 +204,6 @@ class PrintBoxOfficeZplHandler
         $city = trim((string) ($details['city'] ?? ''));
 
         if ($venue === '' && $city === '') {
-            $settings = $this->eventSettingsRepository->findFirstWhere(['event_id' => $event->getId()]);
             $settingsDetails = $settings?->getLocationDetails();
             if (is_string($settingsDetails)) {
                 $settingsDetails = json_decode($settingsDetails, true) ?: [];

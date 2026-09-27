@@ -595,7 +595,11 @@ fiche d'achat.
    (`^FO345,570`, police 26, `^FB240,2`, centré, 40 caractères max). Quand un nom est imprimé, le
    lieu est rogné à 14 caractères pour ne pas déborder sous le nom (estimation de largeur police 0,
    non vérifiée sur un rendu réel).
-3. Sponsor jamais transmis par le handler.
+3. Sponsor jamais transmis par le handler. **Fait** : aucune source n'existait. Jo retient un
+   réglage **d'événement** : colonne `event_settings.ticket_sponsor_name` (nullable), lue par
+   `PrintBoxOfficeZplHandler` et transmise à `generate(sponsorName:)`. **Reste à faire** : saisie
+   côté organisateur (API `PATCH /events/{id}/settings` + écran). En attendant, la valeur se pose en
+   base.
 4. Erreur claire à l'agent si l'imprimante est injoignable.
 5. `^MNN` (média continu) : à confirmer contre le média réel. Si les étiquettes PICHA sont
    prédécoupées (espace entre étiquettes), `^MNN` désactive la détection d'espace et peut causer un
