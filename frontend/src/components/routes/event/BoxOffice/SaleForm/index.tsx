@@ -25,7 +25,8 @@ import {showError, showSuccess} from "../../../../../utilites/notifications.tsx"
 import {useFormErrorResponseHandler} from "../../../../../hooks/useFormErrorResponseHandler.tsx";
 import {useIsCurrentUserAdmin} from "../../../../../hooks/useIsCurrentUserAdmin.ts";
 import {formatCurrency} from "../../../../../utilites/currency.ts";
-import {availableLocales, getClientLocale, getLocaleName, SupportedLocales} from "../../../../../locales.ts";
+import {availableLocales, getClientLocale, SupportedLocales} from "../../../../../locales.ts";
+import {getLocaleName} from "../../../../../utilites/localeNames.ts";
 import classes from "../BoxOffice.module.scss";
 import kiosk from "../../../../layouts/Kiosk/Kiosk.module.scss";
 

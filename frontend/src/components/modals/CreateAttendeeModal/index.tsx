@@ -14,11 +14,11 @@ import {useEffect} from "react";
 import {InputGroup} from "../../common/InputGroup";
 import {
     getClientLocale,
-    getLocaleName,
     localeToFlagEmojiMap,
     localeToNameMap,
     SupportedLocales
 } from "../../../locales.ts";
+import {getLocaleName} from "../../../utilites/localeNames.ts";
 import {ProductSelector} from "../../common/ProductSelector";
 import {getProductsFromEvent} from "../../../utilites/helpers.ts";
 

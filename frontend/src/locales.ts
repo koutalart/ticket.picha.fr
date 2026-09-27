@@ -58,10 +58,6 @@ export const localeToNameMap: Record<SupportedLocales, string> = {
     el: `Greek`,
 };
 
-export const getLocaleName = (locale: SupportedLocales) => {
-    return localeToNameMap[locale];
-}
-
 export const getClientLocale = () => {
     if (typeof window !== "undefined") {
         const storedLocale = document

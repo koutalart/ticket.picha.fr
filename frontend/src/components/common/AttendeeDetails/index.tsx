@@ -4,7 +4,8 @@ import classes from "./AttendeeDetails.module.scss";
 import {displayAttendeeEmail} from "../../../utilites/isKioskSentinelEmail.ts";
 import {t} from "@lingui/macro";
 import {getAttendeeProductTitle} from "../../../utilites/products.ts";
-import {getLocaleName, SupportedLocales} from "../../../locales.ts";
+import {SupportedLocales} from "../../../locales.ts";
+import {getLocaleName} from "../../../utilites/localeNames.ts";
 import {relativeDate} from "../../../utilites/dates.ts";
 
 export const AttendeeDetails = ({attendee}: { attendee: Attendee }) => {

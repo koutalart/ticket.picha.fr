@@ -22,10 +22,9 @@ import {useParams} from "react-router";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
 import {useGetEventCheckInLists} from "../../../queries/useGetCheckInLists.ts";
 import Truncate from "../Truncate";
-import {notifications} from "@mantine/notifications";
 import {useModifyAttendee} from "../../../mutations/useModifyAttendee.ts";
 import {showError, showSuccess} from "../../../utilites/notifications.tsx";
-import {t, Trans} from "@lingui/macro";
+import {t} from "@lingui/macro";
 import {confirmationDialog} from "../../../utilites/confirmationDialog.tsx";
 import {useResendAttendeeTicket} from "../../../mutations/useResendAttendeeTicket.ts";
 import {ManageAttendeeModal} from "../../modals/ManageAttendeeModal";
@@ -92,14 +91,9 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                 }
             }, {
                 onSuccess: () => {
-                    notifications.show({
-                        message: (
-                            <Trans>
-                                Successfully {attendee.status === 'CANCELLED' ? 'activated' : 'cancelled'} attendee
-                            </Trans>
-                        ),
-                        color: 'green',
-                    });
+                    showSuccess(attendee.status === 'CANCELLED'
+                        ? t`Attendee activated successfully`
+                        : t`Attendee cancelled successfully`);
                 },
                 onError: () => showError(t`Failed to cancel attendee`),
             });
