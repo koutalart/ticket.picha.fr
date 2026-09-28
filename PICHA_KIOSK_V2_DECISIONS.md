@@ -661,6 +661,10 @@ fiche d'achat.
    les deux, le bloc sponsor et le séparateur disparaissent. Non fait : copie du logo sponsor à la
    duplication d'événement, saisie du nom sponsor dans l'interface. Aperçu vérifié avec un moteur de rendu ZPL local (zebrash), qui ne gère pas `^GE`
    (ellipse du globe) : la ZD621 l'imprime.
+   **Rouleau temporaire (28 sept.)** : rouleaux Weezevent pré-imprimés, pas plus court que 87 mm
+   (≈ 75 mm, mesure `~JC` en attente) ; un billet de 87 mm débordait sur 2 étiquettes. Le QR suit
+   désormais la réduction de la mise en page pour rester dans son cadre sur un rouleau plus court.
+   Changer de rouleau = changer la longueur dans les réglages du poste.
    Historique —  (≈ 20+ caractères) peut encore toucher le QR,
    comme dans la maquette d'origine.
 

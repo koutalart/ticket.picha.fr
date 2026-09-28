@@ -88,6 +88,15 @@ class ZplLabelFormatTest extends TestCase
         self::assertStringContainsString('^FO26,138^A0N,38,38^FDMayotte^FS', $zpl);
     }
 
+    public function test_qr_code_shrinks_with_layout_to_stay_in_its_frame_on_shorter_roll(): void
+    {
+        $zpl = $this->generate(new ZplLabelFormatDTO(width_mm: 79.0, length_mm: 75.0));
+
+        self::assertStringContainsString("^LL599\n", $zpl);
+        self::assertStringContainsString('^FO298,231^GB222,253,3,B,1^FS', $zpl);
+        self::assertStringContainsString('^FO314,238^GFA,4536,4536,24,', $zpl);
+    }
+
     private function generate(?ZplLabelFormatDTO $format): string
     {
         return (new AttendeeTicketZplService)->generate(
