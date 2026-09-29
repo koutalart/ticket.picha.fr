@@ -58,10 +58,6 @@ export const localeToNameMap: Record<SupportedLocales, string> = {
     el: `Greek`,
 };
 
-export const getLocaleName = (locale: SupportedLocales) => {
-    return localeToNameMap[locale];
-}
-
 export const getClientLocale = () => {
     if (typeof window !== "undefined") {
         const storedLocale = document
@@ -77,7 +73,7 @@ export const getClientLocale = () => {
         return getSupportedLocale(window.navigator.language);
     }
 
-    return "en";
+    return getSupportedLocale(i18n.locale || "en");
 };
 
 export async function dynamicActivateLocale(locale: string) {

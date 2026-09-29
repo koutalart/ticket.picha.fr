@@ -1,4 +1,4 @@
-import {ActionIcon, Anchor, Avatar, Button, Group, Popover, Tooltip} from '@mantine/core';
+import {ActionIcon, Anchor, Avatar, Badge, Button, Group, Popover, Tooltip} from '@mantine/core';
 import {Attendee, IdParam, MessageType} from "../../../types.ts";
 import {
     IconCheck,
@@ -22,10 +22,9 @@ import {useParams} from "react-router";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
 import {useGetEventCheckInLists} from "../../../queries/useGetCheckInLists.ts";
 import Truncate from "../Truncate";
-import {notifications} from "@mantine/notifications";
 import {useModifyAttendee} from "../../../mutations/useModifyAttendee.ts";
 import {showError, showSuccess} from "../../../utilites/notifications.tsx";
-import {t, Trans} from "@lingui/macro";
+import {t} from "@lingui/macro";
 import {confirmationDialog} from "../../../utilites/confirmationDialog.tsx";
 import {useResendAttendeeTicket} from "../../../mutations/useResendAttendeeTicket.ts";
 import {ManageAttendeeModal} from "../../modals/ManageAttendeeModal";
@@ -33,6 +32,7 @@ import {ManageOrderModal} from "../../modals/ManageOrderModal";
 import {ActionMenu} from '../ActionMenu';
 import {CheckInStatusModal} from "../CheckInStatusModal";
 import {prettyDate} from "../../../utilites/dates.ts";
+import {displayAttendeeEmail} from "../../../utilites/isKioskSentinelEmail.ts";
 import {TanStackTable, TanStackTableColumn} from "../TanStackTable";
 import {ColumnVisibilityToggle} from "../ColumnVisibilityToggle";
 import {CellContext} from "@tanstack/react-table";
@@ -91,14 +91,9 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                 }
             }, {
                 onSuccess: () => {
-                    notifications.show({
-                        message: (
-                            <Trans>
-                                Successfully {attendee.status === 'CANCELLED' ? 'activated' : 'cancelled'} attendee
-                            </Trans>
-                        ),
-                        color: 'green',
-                    });
+                    showSuccess(attendee.status === 'CANCELLED'
+                        ? t`Attendee activated successfully`
+                        : t`Attendee cancelled successfully`);
                 },
                 onError: () => showError(t`Failed to cancel attendee`),
             });
@@ -174,7 +169,7 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                                                 className={classes.attendeeEmail}
                                                 style={{cursor: 'pointer'}}
                                             >
-                                                {info.row.original.email}
+                                                {displayAttendeeEmail(info.row.original.email) ?? t`—`}
                                             </Anchor>
                                         </Popover.Target>
                                         <Popover.Dropdown>
@@ -184,6 +179,7 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                                                     variant="light"
                                                     leftSection={<IconSend size={16}/>}
                                                     onClick={() => handleMessageFromEmail(info.row.original)}
+                                                    disabled={!displayAttendeeEmail(info.row.original.email)}
                                                 >
                                                     {t`Message`}
                                                 </Button>
@@ -192,13 +188,22 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                                                     variant="light"
                                                     color="gray"
                                                     leftSection={<IconCopy size={16}/>}
-                                                    onClick={() => handleCopyEmail(info.row.original.email)}
+                                                    onClick={() => {
+                                                        const visible = displayAttendeeEmail(info.row.original.email);
+                                                        visible && handleCopyEmail(visible);
+                                                    }}
+                                                    disabled={!displayAttendeeEmail(info.row.original.email)}
                                                 >
                                                     {t`Copy Email`}
                                                 </Button>
                                             </Group>
                                         </Popover.Dropdown>
                                     </Popover>
+                                    {!displayAttendeeEmail(info.row.original.email) && (
+                                        <Badge size="xs" variant="light" color="orange" ml={6}>
+                                            {t`To complete`}
+                                        </Badge>
+                                    )}
                                     <div className={classes.emailActions}>
                                         {info.row.original.notes && (
                                             <Tooltip
@@ -359,7 +364,7 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                                             label: t`Resend ticket email`,
                                             icon: <IconMailForward size={14}/>,
                                             onClick: () => handleResendTicket(info.row.original),
-                                            visible: info.row.original.status === 'ACTIVE',
+                                            visible: info.row.original.status === 'ACTIVE' && Boolean(displayAttendeeEmail(info.row.original.email)),
                                         },
                                     ],
                                 },

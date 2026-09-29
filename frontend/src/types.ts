@@ -17,6 +17,8 @@ export type ConfigKeys =
     | 'VITE_CHATWOOT_WEBSITE_TOKEN'
     | 'VITE_HIDE_ABOUT_LINK'
     | 'VITE_TOS_URL'
+    | 'VITE_TOS_SALE_URL'
+    | 'VITE_BRAND_URL'
     | 'VITE_PRIVACY_URL'
     | 'VITE_PLATFORM_SUPPORT_EMAIL'
     | 'VITE_STRIPE_PUBLISHABLE_KEY'
@@ -103,7 +105,7 @@ export interface User {
     pending_email?: string;
     last_login_at?: string;
     status?: 'ACTIVE' | 'INACTIVE' | 'INVITED';
-    role?: 'ADMIN' | 'ORGANIZER' | 'SUPERADMIN';
+    role?: 'ADMIN' | 'ORGANIZER' | 'SUPERADMIN' | 'BOX_OFFICE_OPERATOR';
     is_account_owner?: boolean;
     locale?: SupportedLocales;
     marketing_opted_in_at?: string | null;
@@ -582,7 +584,7 @@ export interface Attendee {
     status: 'ACTIVE' | 'CANCELLED' | 'AWAITING_PAYMENT';
     first_name: string;
     last_name: string;
-    email: string;
+    email: string | null;
     notes?: string;
     order?: Order;
     public_id: string;

@@ -207,3 +207,598 @@ ou en pré-déploiement, pas dans le Dockerfile.
 
 **Effort :** ~30–45 min (déplacement du contrôle vers l'entrypoint runtime ou le pipeline de
 déploiement).
+
+---
+
+## T8 — `generate-domain-objects` produit des DO pour des tables hors domaine métier
+
+**Contexte :** `backend/app/Services/Infrastructure/DomainObjectGenerator/ClassGenerator.php:42-46`
+n'ignore que 3 tables :
+
+```php
+private array $ignoredTables = [
+    'migrations',
+    'job_batches',
+    'failed_jobs',
+];
+```
+
+`run()` (ligne 68) boucle sur **toutes** les tables retournées par `$schemaManager->listTables()`
+et génère un DomainObject pour chacune, sauf ces 3.
+
+**Preuve :** comparaison entre les fichiers `backend/app/DomainObjects/*.php` trackés dans ce repo
+et ceux présents dans un conteneur où le générateur a déjà tourné (staging) — 10 fichiers générés
+qui n'existent **pas** dans le dépôt :
+
+- `CacheDomainObject.php`, `CacheLockDomainObject.php`, `JobDomainObject.php` — tables techniques
+  Laravel (`cache`, `cache_locks`, `jobs`), pas des concepts métier.
+- `DigitBraceletDomainObject.php`, `DigitEventSecurityKeyDomainObject.php`,
+  `DigitScanDeviceDomainObject.php`, `DigitScanDeviceActivationCodeDomainObject.php`,
+  `DigitScanDeviceAuditLogDomainObject.php`, `DigitScanDeviceCheckInListDomainObject.php` — tables
+  du module `modules/digit` (créées par les migrations `2026_07_05_*` à `2026_07_11_*`).
+- `ScanLogDomainObject.php` — table `scan_logs` (migration `2026_07_18_000000`).
+
+**Impact réel :** aucun aujourd'hui (ces fichiers ne sont pas commités, donc pas utilisés). Le
+risque est pour la prochaine personne qui lance `generate-domain-objects` après une migration :
+elle se retrouvera avec ces 10 fichiers en `git status`, sans savoir s'ils doivent être commités
+ou non — pollution du diff, confusion sur ce qui est « domaine ».
+
+**Constat annexe :** reproduire la génération dans le conteneur `docker/development` fraîchement
+démarré échoue actuellement avec `unlink(): Permission denied` sur les fichiers existants —
+`app/DomainObjects/Generated/*.php` appartiennent à `ubuntu:docker` (bind-mount hôte) alors que le
+process PHP tourne en `www-data` (uid 82), qui n'a pas les droits d'écriture. Distinct de T8 mais
+bloquant pour qui voudrait régénérer localement : à corriger (utilisateur du conteneur aligné sur
+l'hôte, ou permissifs sur `backend/app/DomainObjects/`).
+
+**Correctif proposé :** étendre `$ignoredTables` (ou passer à une liste blanche de tables
+métier) pour exclure `cache`, `cache_locks`, `jobs`, `sessions`, `password_reset_tokens`,
+`personal_access_tokens`, et les tables `digit_*`/`scan_logs` si elles ne doivent pas avoir de
+DomainObject généré (à trancher : le module `digit` a peut-être besoin des siens, auquel cas les
+committer plutôt que les ignorer).
+
+**Effort :** ~20 min pour la liste d'exclusion + décision sur le sort des DO `Digit*`/`ScanLog`.
+
+---
+
+## T9 — Baseline `tsc --noEmit` : 96 erreurs, 94 héritées de l'amont + 2 imports inutilisés
+
+**Mesure (2026-09-04, `docker/development`, conteneur `frontend`, `npx tsc --noEmit`) : 96 erreurs
+au total.**
+
+**2 erreurs `TS6133` (déclaré mais jamais lu) localisées dans `themes/festival`, seul dossier
+PICHA-spécifique touché :**
+- `frontend/src/themes/festival/components/TicketCard/index.tsx:2` — import `classNames` inutilisé.
+- `frontend/src/themes/festival/services/ticketApi.ts:12` — paramètre `day` inutilisé.
+
+**94 erreurs réparties sur 54 fichiers du cœur Hi.Events amont**, aucun sous `themes/festival`,
+`modules/digit` ni tout autre chemin PICHA-spécifique — ex. `src/stores/app.store.ts` (module
+`zustand` introuvable), `src/components/modals/ManageOrderModal/index.tsx` (7 erreurs),
+`src/components/routes/event/GettingStarted/ConfettiAnimaiton/index.tsx` (7 erreurs),
+`src/components/routes/welcome/index.tsx` (6 erreurs), etc. Cohérent avec des erreurs préexistantes
+dans l'amont plutôt qu'introduites par les commits Somaroho/PICHA.
+
+**Impact réel :** `tsc --noEmit` n'est pas vert aujourd'hui et ne l'était probablement pas avant la
+baseline PICHA. À utiliser comme référence : toute PR Kiosk ne doit **pas augmenter** ce nombre
+(objectif : rester à 96, viser 0 en réduisant au fil de l'eau, en commençant par les 2 propres à
+PICHA qui sont triviales à corriger).
+
+**Correctif immédiat possible :** les 2 imports/paramètres inutilisés de `themes/festival`
+(5 min). Les 94 autres : hors périmètre Kiosk, à traiter séparément (montée de version amont ou
+nettoyage dédié).
+
+**Effort :** 5 min (les 2 PICHA) + non chiffré pour les 94 héritées (hors périmètre).
+
+---
+
+## T10 — Extension `gd` manquante dans `Dockerfile.dev` — CORRIGÉ
+
+**Contexte :** `backend/Dockerfile.dev` n'installait que `intl imagick` (`install-php-extensions
+intl imagick`). Le rendu du billet PDF (`AttendeeTicketMail::generateTicketPdf`,
+`attendee-ticket-pdf.blade.php`) dépend de `dompdf`, qui a besoin de `gd` pour le traitement des
+images embarquées (logo, QR).
+
+**Corrigé** par le commit `2809a04b infra(dev): extension gd dans Dockerfile.dev (PDF billet)` :
+
+```diff
+-RUN install-php-extensions intl imagick
++RUN install-php-extensions intl imagick gd
+```
+
+**Vérifié** dans le conteneur `docker/development` reconstruit le 2026-09-04 : `php -m | grep gd`
+→ `gd` présent.
+
+**Lien avec le constat terrain ci-dessous** : ce correctif répond directement au symptôme observé
+par Jo (500 après commit sur génération du PDF billet, faute de `gd`).
+
+---
+
+## T11 — Billet PDF ≈ 1,2 Mo, à optimiser
+
+**Mesure rapportée par Jo (poste de terrain).** Non re-mesurée dans cette session (nécessiterait un
+événement de test avec logo uploadé, hors périmètre « aucun code applicatif » de cette tâche) —
+mais cause probable confirmée par lecture du code :
+
+- `AttendeeTicketMail::generateTicketPdf()` (`backend/app/Mail/Attendee/AttendeeTicketMail.php:142-144`)
+  récupère l'URL du logo événement (`ImageType::TICKET_LOGO`) et le passe tel quel à la vue :
+  `$logoUrl = $logoImage ? Url::getCdnUrl($logoImage->getPath()) : null;` — **aucun
+  redimensionnement**, dompdf télécharge et embarque l'image dans sa résolution d'upload
+  d'origine.
+- `attendee-ticket-pdf.blade.php:66` : `<img src="{{ $logoUrl }}" class="logo" />` — le CSS
+  (`max-width: 120px; max-height: 60px`) ne contraint que l'**affichage**, pas les octets
+  embarqués dans le PDF.
+- Le QR (`qrCodeBase64`, ligne 146-148 du Mail) est généré en interne à taille fixe
+  (`size(300)`), donc pas la source principale du poids.
+
+**Correctif proposé :** contraindre/redimensionner le logo côté serveur avant de le passer à la
+vue (ex. réutiliser un pipeline d'image existant si disponible, ou limiter à une résolution
+raisonnable ~240×120 avant `base64_encode`/embarquement), plutôt que de laisser dompdf télécharger
+l'original.
+
+**Effort :** ~30 min (redimensionnement + test avec un logo réellement volumineux).
+
+---
+
+## T12 — 10 branches dependabot orphelines, jamais mergées
+
+**Constat (2026-09-04) :** 10 branches `origin/dependabot/*`, toutes **1 commit en avance / 23
+commits en retard** sur `origin/staging`, datées du **2026-07-04** (2 mois, avant toute la
+stabilisation Somaroho) — aucune n'a été mergée ni fermée :
+
+Backend (composer) :
+- `dependabot/composer/backend/barryvdh/laravel-dompdf-3.1.2`
+- `dependabot/composer/backend/ezyang/htmlpurifier-4.19.0`
+- `dependabot/composer/backend/league/flysystem-aws-s3-v3-3.35.1`
+- `dependabot/composer/backend/spatie/laravel-data-4.23.0`
+- `dependabot/composer/backend/spatie/laravel-ignition-2.12.0`
+
+Frontend (npm/yarn) :
+- `dependabot/npm_and_yarn/frontend/react-pdf/renderer-4.5.1`
+- `dependabot/npm_and_yarn/frontend/react-qr-code-2.2.0`
+- `dependabot/npm_and_yarn/frontend/remix-run/node-2.17.5`
+- `dependabot/npm_and_yarn/frontend/sass-1.101.0`
+- `dependabot/npm_and_yarn/frontend/tiptap/extension-text-align-2.27.2`
+
+(Le remote `upstream` en a 2 de plus — `laravel/vapor-core`, `nette/php-generator` — hors
+périmètre PICHA, ce sont celles du dépôt Hi.Events amont.)
+
+**Impact réel :** aucune régression de sécurité connue (ce sont des montées de version mineures),
+mais 23 commits de retard = risque de conflit croissant si elles sont mergées tardivement, et bruit
+dans la liste de branches.
+
+**Correctif proposé :** trier par lot — rebase + test rapide pour chaque, merger celles qui passent
+sans conflit (majorité probable pour de simples bumps de patch/minor), fermer/relancer dependabot
+pour les autres. Prioriser `barryvdh/laravel-dompdf` et `react-pdf/renderer` vu leur lien direct
+avec le Kiosk (génération PDF billet).
+
+**Effort :** ~1h30 pour les 10 (rebase + `composer install`/`yarn install` + test unitaire rapide
+par branche), en dehors du développement Kiosk lui-même.
+
+---
+
+## Constats complémentaires
+
+### Correction de l'audit v2 — `attendees.notes` existe bien
+
+`PICHA_BOX_OFFICE_AUDIT_v2.md §4.6` affirme : *« La table `attendees` **n'a pas de colonne
+`notes`** »*, en réfutation d'une affirmation de l'audit v1.
+
+**Ce constat est erroné.** La migration
+`backend/database/migrations/2024_12_09_234323_add_notes_to_attendees_table.php` ajoute bien
+`attendees.notes` (`text`, nullable), de façon idempotente (`if (Schema::hasColumn(...)) return;`).
+**Vérifié** sur la base migrée du conteneur `docker/development` (2026-09-04) :
+`Schema::hasColumn('attendees', 'notes')` → `true`.
+
+Le reste du constat §4.6 (recherche plein texte via `ILIKE` sur `first_name`/`last_name`/
+`public_id`/`email`, `filter_fields` limités à `status`/`product_id`/`product_price_id`) n'est pas
+remis en cause ici — seule l'affirmation sur l'absence de la colonne `notes` est fausse.
+
+### Constat terrain — trois doublons créés en réessayant après un 500 (`gd`) — preuve de S3
+
+Rapporté par Jo : sur `docker/development` (Mac de Jo, `QUEUE_CONNECTION=sync`), avant le correctif
+T10, la génération du billet PDF échouait avec une 500 (extension `gd` manquante). L'agent guichet
+a réessayé l'opération plusieurs fois en pensant que la vente n'avait pas abouti — **trois
+participants en doublon** ont été créés pour la même personne. Fait observé et confirmé : les
+Order/Attendee ont bien été persistés, le mail « commande confirmée » est parti, seul le mail
+billet a échoué (gd), et l'API a renvoyé 500 malgré la persistance réussie.
+
+**Mécanisme reproduit et vérifié (2026-09-05, non supposé)** : la cause n'est **pas** que
+`CreateAttendeeHandler::handle()` committe puis déclenche l'envoi du mail de façon synchrone dans
+le même flux — c'est plus précis que ça. `app/Mail/BaseMail.php:16-19` :
+
+```php
+public function __construct()
+{
+    $this->afterCommit();
+}
+```
+
+`BaseMail` (dont hérite `AttendeeTicketMail`, `OrderSummary`, etc.) est un `Mailable implements
+ShouldQueue`, et son constructeur appelle `$this->afterCommit()` — ce qui positionne la propriété
+`Queueable::$afterCommit = true` sur **chaque instance de mail**, indépendamment de la queue
+utilisée pour le *Job* qui l'envoie. Résultat, avec `QUEUE_CONNECTION=sync` :
+
+- `event(new OrderStatusChangedEvent(...))` (dans la transaction de `CreateAttendeeHandler::handle()`)
+  déclenche `SendOrderDetailsEmailListener` → `dispatch(new SendOrderDetailsEmailJob($order))` — ce
+  *Job* lui-même n'a pas `afterCommit=true`, donc il s'exécute **immédiatement**, toujours dans la
+  transaction ouverte.
+- Mais `SendOrderDetailsEmailJob::handle()` appelle `$this->mailer->send($mail)` où `$mail`
+  (`OrderSummary`, puis `AttendeeTicketMail`) a `afterCommit=true` — Laravel ne rend/envoie donc
+  **rien** à cet instant : il enregistre un callback différé (`db.transactions`-
+  `>addCallback(...)`, `SyncQueue::push()`), qui n'exécutera le rendu réel du mail (et donc la
+  génération PDF) **qu'après le COMMIT** de la transaction englobante.
+- La transaction de `CreateAttendeeHandler::handle()` se termine donc sans exception, **committe**
+  (Order + Attendee + OrderItem + `quantity_sold` incrémenté, tous durablement écrits) — puis,
+  juste après, les callbacks différés s'exécutent : le mail « commande confirmée » (`OrderSummary`,
+  pas de PDF) réussit, puis le rendu du billet (`AttendeeTicketMail::generateTicketPdf()`) plante
+  (gd manquant). L'exception remonte alors jusqu'à l'appelant HTTP — **après** le commit — d'où la
+  500 malgré une vente déjà actée en base.
+
+**Reproduit empiriquement** (script ad hoc, `AttendeeTicketPdfService` remplacé par un double qui
+lève une exception, `CreateAttendeeHandler::handle()` appelé sans transaction englobante
+supplémentaire) : `handle()` lève bien l'exception, mais `attendees=1`, `orders=1`,
+`quantity_sold=1` et `DB::transactionLevel()=0` **après** l'exception — la ligne est là, committée,
+malgré l'échec remonté à l'appelant.
+
+**Preuve concrète de S3** (`PICHA_BOX_OFFICE_SECURITY_FINDINGS.md` — aucune idempotence sur la
+création manuelle) : sans clé d'idempotence, un agent qui réessaie après une erreur perçue comme
+« la vente a échoué » crée autant de nouveaux Orders/Attendees qu'il y a de tentatives, chacun
+avec sa propre place détectée comme vendue (`quantity_sold` incrémenté à chaque fois). Le correctif
+`gd` (T10) supprime le déclencheur immédiat de ce cas précis, mais **ne corrige pas S3** : toute
+autre cause d'échec après commit (timeout réseau, mail indisponible, etc.) reproduirait le même
+doublon.
+
+**Confirme aussi le besoin de découpler vente et rendu PDF** (cf. `FIRST_SLICE` D19/T11) : tant que
+la génération du PDF est synchrone dans le flux de vente (même indirectement, via l'envoi de mail
+déclenché par l'event), une panne de rendu (police manquante, image distante indisponible, etc.)
+reste capable de faire échouer — ou de faire percevoir comme échouée — une vente déjà actée en
+base. Le slice 1 du Kiosk répond en partie à ceci en générant le PDF à la demande
+(`GET .../ticket.pdf`) plutôt que dans le flux de vente, mais le flux natif (mail de confirmation)
+reste exposé.
+
+---
+
+## T13 — Aucun framework de test frontend configuré
+
+**Contexte :** le test 41 de `PICHA_BOX_OFFICE_FIRST_SLICE.md §5.3` (« la page n'affiche pas les
+produits non scannables ; le prix est en lecture seule ; le bouton se désactive pendant la
+mutation ; `idempotency_key` régénéré à chaque ouverture du formulaire ») nécessite un test de
+composant React. **Aucun outillage de test n'existe côté frontend** : pas de Vitest, pas de Jest,
+pas de React Testing Library dans `frontend/package.json`, aucun fichier `*.test.tsx`/`*.test.ts`
+dans le dépôt.
+
+**Impact réel :** le test 41 ne peut pas être écrit sans d'abord choisir et installer un
+framework — un vrai choix d'outillage (config, devDependencies), pas un TDD sur de l'existant.
+Reporté hors du slice 1 côté tests ; la page Box Office elle-même n'est pas bloquée, seule sa
+couverture par un test de composant l'est.
+
+**Correctif proposé :** décider du framework (Vitest + React Testing Library est le choix standard
+pour un projet Vite comme celui-ci) avec Jo, puis écrire le test 41 une fois l'outillage en place.
+
+**Effort :** ~30 min d'installation/config + le temps d'écrire le test 41 lui-même.
+
+---
+
+## T14 — `OrderSummary` plantait si l'événement n'a pas de date de début — CORRIGÉ
+
+**Découvert en reproduisant le constat terrain ci-dessus (2026-09-05).** En appelant
+`CreateAttendeeHandler::handle()` sur un événement sans `start_date` (champ nullable en base), le
+mail `OrderSummary` (« commande confirmée ») levait :
+
+```
+Illuminate\View\ViewException: HiEvents\Helper\DateHelper::convertFromUTC(): Argument #1
+($eventDate) must be of type string, null given ... (View: resources/views/emails/orders/summary.blade.php)
+```
+
+**Correction au premier écrit de cette entrée (2026-09-05) :** attribué à `getEndDate()` — faux.
+Vérifié par lecture du fichier : `summary.blade.php` n'appelle `getEndDate()` **nulle part**. Les
+deux plantages venaient de `$event->getStartDate()` (lignes 17 et 45 après correctif), utilisé
+sans garde par `DateHelper::convertFromUTC(string $eventDate, ...)` — paramètre non nullable.
+`start_date` est nullable en base (`information_schema.columns`, vérifié) mais normalement toujours
+renseigné par le flux de création d'événement standard ; le cas ne se manifeste que si un événement
+est créé par un chemin qui l'omet (comme la fixture de test minimaliste utilisée pour reproduire le
+constat terrain).
+
+Comme `OrderSummary` hérite de `BaseMail` (`ShouldQueue` + `afterCommit()`, voir constat ci-dessus),
+ce plantage se produisait **après le commit** de la vente — même symptôme que le plantage `gd` :
+vente actée, mail cassé, 500 renvoyé à l'appelant.
+
+**Impact réel :** tout événement sans `start_date` renseignée faisait échouer le mail de
+confirmation (et la requête HTTP qui l'a déclenché) pour **toute** création d'attendee (manuelle,
+guichet, achat normal) — pas seulement au guichet.
+
+**Corrigé** (commit séparé, cherry-pickable vers staging) : garde `@if($event->getStartDate())`
+autour des deux blocs de `summary.blade.php` qui en dépendent, avec une phrase de repli sans date
+pour le premier paragraphe (traduite FR). Testé : `tests/Unit/Mail/Order/OrderSummaryTest.php`
+(rendu sans erreur sans `start_date`, et rendu inchangé — date/heure toujours affichées — avec).
+
+**Effort :** ~10 min.
+
+---
+
+## T15 — Suite Feature : fuite de locale entre tests (`es` au lieu de `en`)
+
+**Découvert en lançant `--testsuite=Feature` en entier (2026-09-05), sans lien avec le Kiosk.**
+`EmailTemplateTokenTest::test_can_get_order_confirmation_tokens` échoue **uniquement** en suite
+complète (passe seul) : les descriptions de tokens reviennent en espagnol (« El nombre de la
+persona que realizó el pedido ») au lieu d'anglais. Reproduit sans aucun test Box Office dans la
+sélection — un autre test de la suite positionne la locale app sur `es` (probablement via une
+requête `locale=es`) sans la restaurer, et PHPUnit exécute tous les tests Feature dans le même
+processus PHP.
+
+**Impact réel :** aucun sur le Kiosk. Fragilise la suite Feature (dépendance à l'ordre
+d'exécution) — masque potentiellement d'autres bugs de locale ailleurs.
+
+**Correctif proposé :** identifier le test fautif (`grep -rn "locale.*=.*es\b" backend/tests/Feature`)
+et restaurer `App::setLocale('en')` dans son `tearDown()`, ou passer par `Illuminate\Testing`
+`withLocale`/isoler ces tests en base séparée.
+
+**Effort :** ~20 min (localisation + correctif).
+
+---
+
+## T16 — `GET /events/{id}/products` casse systématiquement (500) — BLOQUANT pour le Kiosk, hérité de Somaroho
+
+**Découvert en préparant la capture d'écran de la page Box Office (2026-09-06).** L'endpoint liste
+des produits (utilisé par la page de gestion « Tickets & Products », **et** par la nouvelle page
+Box Office) renvoie une 500 sur **tout** appel, y compris avec les paramètres de pagination par
+défaut — pas un cas limite :
+
+```
+TypeError: HiEvents\Services\Domain\Product\ProductFilterService::{closure...}():
+Argument #1 ($category) must be of type HiEvents\DomainObjects\ProductCategoryDomainObject,
+HiEvents\DomainObjects\ProductDomainObject given
+```
+
+**Cause identifiée avec précision** (lecture de code, pas supposition) :
+`GetProductsHandler::handle()` (`app/Services/Application/Handlers/Product/GetProductsHandler.php:21-31`)
+appelle `ProductRepository::findByEventId()` qui renvoie une pagination de
+**`ProductDomainObject`** bruts (liste plate, `app/Repository/Eloquent/ProductRepository.php:30-53`
+— c'est correct pour ce que fait cette méthode). Il transmet ensuite directement cette collection
+à `ProductFilterService::filter()`, dont la signature et le corps (`filter():44-59`) exigent
+explicitement une `Collection<ProductCategoryDomainObject>` (des catégories contenant des produits
+imbriqués via `getProducts()`) — pas des produits à plat. Le `flatMap` interne appelle
+`$category->getProducts()` sur ce qui est en réalité déjà un `ProductDomainObject` → plantage.
+
+**Vérifié** : reproduit avec un événement neuf, avec et sans catégorie assignée aux produits — le
+plantage est systématique, pas lié à l'absence de catégorie.
+
+**Confirmé hérité de Somaroho, pas introduit par le Kiosk (2026-09-06)** : reproduit à l'identique
+sur le tag `digit-staging-somaroho-2026`, dans un worktree Git temporaire séparé, avec sa propre
+base Postgres neuve (`baseline_check`, supprimée après coup) et ses propres dépendances composer —
+aucun commit Kiosk présent. Même compte/organisateur/événement/produit minimal créés à la main,
+même appel `GetProductsHandler::handle()` → même `TypeError` exact. Confirmé aussi par diff :
+`git diff digit-staging-somaroho-2026 feat/picha-kiosk -- <les fichiers en cause>` ne montre
+**aucune** différence sur `GetProductsHandler.php`, `ProductFilterService.php`,
+`ProductRepository::findByEventId()` ni les Domain Objects concernés — seule modification de ce
+dernier fichier : l'ajout, à la fin, de la méthode `hasActiveCheckInList()` du Kiosk (sans rapport,
+n'affecte pas `findByEventId()`). Worktree, conteneur et base de test supprimés après vérification.
+
+**Impact réel :** la page de gestion **native** « Tickets & Products » (`/manage/event/:id/products`)
+est cassée pour **tout** événement, y compris sur la baseline Somaroho figée — à vérifier en
+priorité auprès de Jo, car c'est une page cœur de métier, sans rapport avec le Kiosk et présente
+avant le début de ce travail.
+
+**⚠️ Ce n'est PAS qu'un problème de capture d'écran de démo — le slice 1 du Kiosk est
+fonctionnellement bloqué en pratique, pas seulement indisponible pour vérification visuelle**
+(vérifié le 2026-09-06, à la demande de Jo) : la page Box Office frontend
+(`frontend/src/components/routes/event/BoxOffice/index.tsx`) liste les produits vendables via
+`useGetProducts` (`frontend/src/queries/useGetProducts.ts`) → `productClient.all()` → **le même**
+`GET /events/{id}/products` → `GetProductsAction` → `GetProductsHandler` cassé. Tant que T16 n'est
+pas corrigé, la grille de produits de la page Box Office reste indéfiniment sur son état de
+chargement (squelette) — **aucun agent ne peut sélectionner un billet à vendre, sur aucun
+événement.** Le code du slice 1 (backend endpoints, handler, page frontend) est complet et testé
+de bout en bout côté backend (tests HTTP réels), mais **inutilisable en pratique tant que T16
+n'est pas corrigé** — T16 doit être traité avant toute mise en service du Kiosk, pas seulement «
+quand on aura le temps ».
+
+**Correctif proposé (à valider avec Jo avant d'agir, hors périmètre de cette session)** : soit
+`GetProductsHandler` doit appeler une méthode de filtrage adaptée aux listes plates (ou sauter le
+filtrage catégorie), soit `findByEventId` doit être adapté pour renvoyer des catégories — à trancher
+selon l'usage réel attendu de ce endpoint (affiche-t-il les produits groupés par catégorie côté
+front, ou une liste plate ?). Ne pas corriger à l'aveugle : `ProductFilterService::filter()` est
+probablement aussi appelé correctement ailleurs (page publique de l'événement) — un correctif mal
+ciblé pourrait casser l'autre appelant.
+
+**Effort :** ~30 min de correctif une fois l'usage attendu confirmé, + tests de non-régression sur
+les deux appelants de `ProductFilterService::filter()`.
+
+**Suivi 2026-09-06 — CORRIGÉ et mergé.** Branche `fix/products-list-500` (depuis `staging`),
+commit `a942b1a3` : `ProductFilterService::filterProductList()` (contrepartie liste plate de
+`filter()`, extraction commune dans `applyProductFilters()`), `GetProductsHandler` bascule dessus.
+Deux appelants par catégorie (`GetPublicEventHandler`, `GetProductCategoriesHandler`) inchangés.
+Tests : caractérisation HTTP 500→200 + unitaires `ProductFilterService`. Mergé dans `staging`
+(PR #11, `d8f76be2`) puis `feat/picha-kiosk` (`f8753f8d`). Vérifié : `GET /events/{id}/products`
+→ 200. **Mais la page Box Office reste vide** à cause d'un 2ᵉ bug frontend indépendant : voir T17.
+
+---
+
+## T17 — Page Box Office : filtre `product.status === ProductStatus.Active` toujours faux → grille vide
+
+**Découvert le 2026-09-06 en vérifiant la page Box Office après correction de T16.**
+`frontend/src/components/routes/event/BoxOffice/index.tsx:102` filtre les billets vendables sur
+`product.status === ProductStatus.Active`. Or l'API `GET /events/{id}/products` **ne renvoie jamais
+de champ `status`** (`ProductResource` ne l'émet pas, `ProductDomainObject`/son abstract n'ont pas
+cette propriété, pas de colonne `status` sur `products`). `ProductStatus` n'est utilisé nulle part
+ailleurs dans le frontend. Donc `undefined === 'ACTIVE'` → `false` pour tout produit →
+`eligibleProducts` toujours `[]` → la grille affiche en permanence l'état vide
+« No ticket is both active and attached to an active check-in list… », même pour un événement
+correctement configuré.
+
+**Vérifié empiriquement** contre `feat/picha-kiosk` mergé : `GET /events/17/products` → 2 billets
+TICKET non cachés, `GET /events/17/check-in-lists` → liste active avec les 2 produits ;
+`eligibleProducts` calculé = `[]` avec la condition `status`, `['Pass 1 jour','Pass VIP']` sans elle.
+
+**Correctif proposé :** retirer la condition `product.status === ProductStatus.Active` (le
+`ProductResource` expose déjà `is_hidden` et `is_available` — utiliser `!p.is_hidden` seul, ou
+`p.is_available`, selon l'intention), ou ajouter un vrai champ `status` au `ProductResource` si le
+backend doit en exposer un. Introduit par le commit frontend Kiosk `c84374d5`.
+
+**Effort :** ~15 min (frontend uniquement) + capture d'écran + test manuel bout en bout.
+
+---
+
+## T18 — Suite Feature locale destructrice : `migrate:fresh` via des tests hérités de l'amont
+
+La suite Feature locale utilise `migrate:fresh` via des tests hérités de l'amont
+(`tests/Feature/Auth/{Login,Register,ResetPassword}Test`, qui appliquent `RefreshDatabase`) —
+destructeur pour toute base de dev partagée — à isoler dans une base dédiée avant réutilisation.
+
+**Détail :** `backend/phpunit.xml` a `DB_DATABASE` commenté → les tests tournent sur la base
+`backend` de l'app de dev. `RefreshDatabase` = drop de toutes les tables au début du run.
+Constaté le 2026-09-06 : lancer `--testsuite=Feature` (ou `artisan test` complet) a effacé un jeu
+de démo « Ben Attoumani / Mayotte » préexistant. Contraire à `CLAUDE.md` (« DON'T use
+RefreshDatabase - use DatabaseTransactions instead »). `--testsuite=Unit` reste non destructif
+(les tests Unit utilisent `DatabaseTransactions`).
+
+**Correctif proposé :** `.env.testing` avec une base Postgres dédiée, ou décommenter
+`DB_DATABASE` dans `phpunit.xml`, ou convertir les 3 tests Auth en `DatabaseTransactions`.
+
+**Effort :** ~15 min.
+
+---
+
+## T19 — Page Guichet : stock affiché bloqué sur « Illimité » même après une vente
+
+**Découvert le 2026-09-06 pendant le test bout en bout du Guichet (post-T17).**
+Le récap de prix de `frontend/src/components/routes/event/BoxOffice/index.tsx` affiche
+`quantity_remaining` si présent, sinon « Illimité » :
+
+```tsx
+{selectedPrice.quantity_remaining !== undefined
+    ? t`${selectedPrice.quantity_remaining} remaining`
+    : t`Unlimited`}
+```
+
+Or `GET /events/{id}/products` ne renvoie **jamais** `quantity_remaining` : `ProductPriceResource`
+(`backend/app/Resources/Product/ProductPriceResource.php`) n'émet que `quantity_sold` et
+`initial_quantity_available`, pas de champ dérivé. Résultat : la ligne de stock affiche « Illimité »
+en permanence, y compris pour un billet à quantité finie et après des ventes au guichet.
+
+**Vérifié empiriquement** : billet « Pass 1 jour » avec `initial_quantity_available = 100`, une vente
+guichet effectuée → `product_prices.quantity_sold` passe bien de 0 à 1 en base et dans le payload,
+mais l'UI reste sur « Illimité ». La donnée de vente est correcte, seul l'indicateur d'UI est mort.
+
+**Impact réel :** trompeur pour l'opérateur au guichet (aucune visibilité sur le stock restant réel),
+sans risque de survente côté serveur (l'autorité reste `ProductNotScannableException` / les contrôles
+de quantité backend). À corriger avant utilisation opérationnelle réelle du Guichet.
+
+**Correctif proposé :** soit exposer `quantity_remaining` dans `ProductPriceResource` (attention aux
+autres consommateurs de la resource — page publique de l'événement notamment), soit calculer côté
+frontend `initial_quantity_available - quantity_sold` quand `initial_quantity_available` est non nul
+(et garder « Illimité » quand il est nul). Introduit par le commit frontend Kiosk `c84374d5`.
+
+**Effort :** ~15 min + test manuel bout en bout au guichet.
+
+**Suivi 2026-09-06 — CORRIGÉ (frontend seul).** `BoxOffice/index.tsx` : helper `remainingStock(price)`
+qui renvoie `price.quantity_remaining` si présent (contrat préservé si la resource l'expose un jour),
+sinon `max(0, initial_quantity_available - quantity_sold)` quand `initial_quantity_available` est non
+nul, sinon `null` → « Illimité » (comportement inchangé pour les billets sans limite). Aucun fichier
+backend touché. Vérifié bout en bout sur l'événement 2 : « Pass 1 jour » 100 − 1 vendu → « 99 »,
+« Pass 2 jours » 50 → « 50 », « Pass VIP » 20 → « 20 » (au lieu de « Illimité » pour les trois).
+Pas de test auto ajouté : le frontend n'a pas d'outillage de test (ni Vitest ni Jest). Suite Unit
+backend relancée pour non-régression (5 échecs préexistants sans rapport : `PdfParser` absent ×3,
+2 tests de caractérisation de concurrence).
+
+Reste à voir (distinct de T19) : le libellé s'affiche « 99 remaining » et non « 99 restant(s) »
+dans le conteneur de dev — la traduction existe pourtant dans `fr.po` (`{0} restant(s)`, clé
+`2wRqU4`). Cause : l'i18n **client** tourne en anglais alors que le SSR rend en français
+(mismatch `navigator.language` / cookie `locale` non honoré au montage client) — pré-existant, visible
+sur tout texte rendu côté client uniquement (ex. le toast « Ticket created » lors du test T17).
+Candidat T20.
+
+---
+
+## T21 — `IsAuthorizedService::validateUserRole()` : NPE si compte orphelin sur le chemin `minimumAllowedRole()`
+
+**Découvert le 2026-09-06 pendant la revue de la garde opérateur du Kiosk v2 (D23). Bug latent
+pré-existant, hors périmètre Kiosk — à traiter séparément.**
+
+**Trace exacte.** `app/Services/Infrastructure/Authorization/IsAuthorizedService.php`, méthode
+`validateUserRole(Role $minimumRole, UserDomainObject $authUser)` :
+
+```php
+// lignes ~53-61 (numérotation post-Kiosk-v2)
+if ($minimumRole === Role::ADMIN
+    && in_array($authUser->getCurrentAccountUser()->getRole(), [...], true) === false
+) { ... }
+
+if ($minimumRole === Role::SUPERADMIN && $authUser->getCurrentAccountUser()->getRole() !== ...) { ... }
+```
+
+`getCurrentAccountUser()` peut renvoyer **`null`** (`UserDomainObject::$currentAccountUser` non
+positionné — cf. `AuthUserService::getUser()` qui ne l'alimente que `if ($accountId = $this->getAuthenticatedAccountId())`).
+Ces deux lignes appellent `->getRole()` **sans `?->`** → `Error: Call to a member function getRole()
+on null` → **HTTP 500** au lieu du **403** attendu.
+
+**Pourquoi ce n'est pas déjà arrivé en pratique.** Le chemin `isActionAuthorized()` appelle
+`validateUserStatus()` **avant** `validateUserRole()` (`IsAuthorizedService.php` ~122-123), et
+`validateUserStatus()` lève proprement (`getCurrentAccountUser()?->getStatus() !== ACTIVE` →
+`UnauthorizedException` + `Auth::logout()`) quand le compte est orphelin. Le trou est le chemin
+**`BaseAction::minimumAllowedRole()`** (`app/Http/Actions/BaseAction.php` ~228-234) qui appelle
+`$authService->validateUserRole($minimumRole, $this->getAuthenticatedUser())` **directement, sans
+`validateUserStatus()` préalable**. Appelants concernés : toute action faisant
+`$this->minimumAllowedRole(Role::ADMIN)` ou `Role::SUPERADMIN` — ex. `CreateUserAction:35`,
+`GetUsersAction:26`, `GetEventsAction` (ORGANIZER, non touché car pas ADMIN/SUPERADMIN).
+
+**Cas déclencheur.** Un JWT valide dont le compte `account_users` a été supprimé/désactivé pendant
+la session (le claim `account_id` pointe alors sur une ligne absente → `currentAccountUser` reste
+`null`), sur un endpoint gâté `minimumAllowedRole(ADMIN)`.
+
+**Correctif proposé (hors session Kiosk).** Soit ajouter `?->` + court-circuit `null → throw
+UnauthorizedException` sur les deux lignes, soit faire appeler `validateUserStatus()` par
+`validateUserRole()` (ou par `minimumAllowedRole()`) comme le fait déjà `isActionAuthorized()`.
+Préférer la seconde (cohérence avec l'autre chemin). Ajouter un test :
+`minimumAllowedRole(ADMIN)` avec un `UserDomainObject` sans `currentAccountUser` → 403, pas 500.
+
+**Note Kiosk v2 :** la garde `BOX_OFFICE_OPERATOR` ajoutée en tête de `validateUserRole()` utilise
+`?->` et n'aggrave pas ce trou ; `validateBoxOfficeEventScope()` (nouveau) appelle
+`validateUserStatus()` en premier et n'est donc pas concerné.
+
+**Effort :** ~20 min (correctif + 1 test).
+
+---
+
+## T22 — Sentinelle kiosk : ne pas envoyer de mail vers `.invalid` (garde unique)
+
+**Statut (26 sept.) :** livré avec D6-S (`KioskSentinelEmail` / `isKioskSentinelEmail`).
+
+**Découvert / cadré le 2026-09-26** avec D6-S. **Pas de dette « mail fantôme accepté ».**
+
+Après rollback de `attendees.email` NOT NULL, une vente guichet sans e-mail réel stockera une
+sentinelle (`kiosk.{public_id}@no-mail.picha.invalid`). Les 4 actions orga suivantes appellent
+`Mail::to($order->getEmail())` / `sendMessage($order->getEmail())` **sans garde** :
+
+1. `ResendOrderConfirmationAction.php:65`
+2. `OrderCancelService.php:61`
+3. `RefundOrderHandler.php:92` (`notifyBuyer`)
+4. `SendEventEmailMessagesService.php:128` (`sendOrderMessages`) — plus L234 `sendProductMessages`
+
+Sans garde : plus de 500 (l'adresse est une string), mais l'orga croit avoir notifié le client.
+
+**Correctif (à livrer avec D6-S, pas 4 patches métier) :**
+
+- Un helper unique, ex. `HiEvents\Helper\KioskSentinelEmail::matches(string $email): bool`
+  (suffixe stable `@no-mail.picha.invalid`).
+- Aux 4+1 call sites : `if (KioskSentinelEmail::matches(...)) { skip send + message agent }`.
+- Tests : sentinelle → rien n'est queued ; e-mail réel → comportement inchangé.
+
+**Effort :** ~1 h (helper + 5 branches + tests). Bloquant pour coder D6-S.
+
+---
+
+## Note — `CreateAttendeeHandler` : résolution du générateur par service locator
+
+`app/Services/Application/Handlers/Attendee/CreateAttendeeHandler.php:233` résout
+`AttendeePublicIdGenerator` via `app(AttendeePublicIdGenerator::class)` **au point d'usage**,
+plutôt que par injection dans le constructeur du handler.
+
+**Choix délibéré**, pas un oubli : la consigne de la session Kiosk imposait « une seule ligne
+modifiée » dans ce fichier (préserver au maximum le chemin natif, non retouché depuis Somaroho).
+Ajouter une dépendance au constructeur aurait nécessité une deuxième ligne (le paramètre) plus la
+mise à jour de tout appelant construisant `CreateAttendeeHandler` explicitement — hors du budget de
+la modification autorisée. Le service locator garde le diff à un import + une ligne.
+
+**Dette assumée :** ce pattern s'écarte de l'injection de dépendances classique utilisée partout
+ailleurs dans le handler (tous les autres collaborateurs sont injectés au constructeur). À corriger
+si `CreateAttendeeHandler` est un jour retouché plus largement — remplacer par une injection
+normale à cette occasion plutôt que d'ajouter un deuxième service locator à côté.

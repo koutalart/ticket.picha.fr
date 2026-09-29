@@ -19,7 +19,7 @@ import {
 import { t } from "@lingui/macro";
 import { BreadcrumbItem, NavItem } from "../AppLayout/types.ts";
 import AppLayout from "../AppLayout";
-import { NavLink, useLocation, useParams } from "react-router";
+import { NavLink, Navigate, useLocation, useParams } from "react-router";
 import { Button, Modal, Stack, Text } from "@mantine/core";
 import { useGetOrganizer } from "../../../queries/useGetOrganizer.ts";
 import { useState } from "react";
@@ -41,6 +41,7 @@ import { confirmationDialog } from "../../../utilites/confirmationDialog.tsx";
 import { showError, showSuccess } from "../../../utilites/notifications.tsx";
 import { useResendEmailConfirmation } from "../../../mutations/useResendEmailConfirmation.ts";
 import { useGetMe } from "../../../queries/useGetMe.ts";
+import { isBoxOfficeOperator } from "../../../utilites/kioskAuth.ts";
 
 const OrganizerLayout = () => {
     const { organizerId } = useParams();
@@ -60,9 +61,13 @@ const OrganizerLayout = () => {
     const { data: account } = useGetAccount();
     const resendEmailConfirmationMutation = useResendEmailConfirmation();
     const [emailConfirmationResent, setEmailConfirmationResent] = useState(false);
-    const { data: me } = useGetMe();
+    const { data: me, isSuccess: isMeSuccess } = useGetMe();
     const isUserEmailVerfied = me?.is_email_verified;
     const isMobile = useMediaQuery('(max-width: 768px)');
+
+    if (isMeSuccess && isBoxOfficeOperator(me)) {
+        return <Navigate to="/kiosk" replace />;
+    }
 
     const statusToggleMutation = useUpdateOrganizerStatus();
 

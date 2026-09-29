@@ -14,12 +14,12 @@ Légende impact : **[Baseline]** conditionne la création de branche · **[Code]
 | D1 | **Faite** — baseline figée, tag `digit-staging-somaroho-2026` (création du tag hors session de stabilisation, sur le poste de Jo, après exécution des tests). |
 | D2 | **A** — encaissement **avant** validation, Order `COMPLETED`. |
 | D3 | **A** — table `box_office_sales` avec `payment_method` ∈ {`CASH`,`CARD`,`FREE`}, `amount_collected` stocké séparément du prix. |
-| D6 | **B** — email **obligatoire** au guichet, **aucune** adresse fictive. |
+| D6 | **D (7 sept. 2026)** — e-mail **optionnel** au guichet, `attendees.email = NULL` (jamais fictif), complété a posteriori. **B (obligatoire) annulée.** |
 | D9 | **A** — `box_office_sales.idempotency_key` **UNIQUE**, insérée en premier dans la transaction. |
 | D11 | **B** — **bloquer** la vente d'un produit non rattaché à une check-in list active. |
 | D13 / D14 | **A** — `ORGANIZER` pour vendre **et** réimprimer ; réimpression tracée dans `print_jobs`. |
 | D18 | **A** — réutiliser la maquette `attendee-ticket-pdf.blade.php`. |
-| D19 | **Ouverte** — poste agent = **[macOS / Windows — à préciser]**, connexion ZD621 = **[USB / réseau — à préciser]**. Slice 1 : PDF + dialogue navigateur, abstraction `TicketRenderer` (aucun ZPL). |
+| D19 | **Tranchée (2026-09-05)** — poste agent = **macOS** pour le développement et le pilote initial (architecture cible compatible Windows ensuite) ; liaison ZD621 = **réseau (IP)** en mode principal, **USB en fallback/secours**. Slice 1 inchangé : PDF + dialogue navigateur, abstraction `TicketRenderer` (aucun ZPL). |
 | S4 | **Retenu** — index unique `attendees.public_id` **inclus dans les migrations du slice 1**. |
 | S9 | **Clos** — licence commerciale Hi.Events détenue par PICHA. |
 | **Tolérance de prix** | **STRICTE** — le prix est celui du palier (`product_prices.price`), **aucun écart accepté** (AC-2 = égalité stricte, pas d'intervalle). |
@@ -88,15 +88,16 @@ Les sections détaillées ci-dessous restent la référence pour le raisonnement
 
 ---
 
-## D6 — Email non fourni
+## D6 — Email non fourni — **ROUVERTE (7 sept. 2026), option D**
 
 | Option | Détail | Impact |
 |---|---|---|
-| A | Rendre `email` nullable | **[Schéma]** `attendees.email` est **`NOT NULL`** en base → migration + revue de tous les Mailables/exports/webhooks qui supposent un email. **Risqué**, large surface. |
-| **B (recommandée MVP)** | `email` **obligatoire au guichet** (comme le contrat natif). L'agent demande une adresse ; sinon la vente se fait avec l'email de l'organisateur/guichet **explicitement choisi par l'agent** (pas généré automatiquement) | **[Code]** nul. Conforme au contrat natif. Aucune adresse fictive. |
-| C | Adresse générée `guichet+<id>@<domaine>` | **explicitement écarté** par la mission (« Ne recommande pas d'adresse email fictive »). |
+| A | Rendre `email` nullable | **[Schéma]** `attendees.email` nullable. |
+| B | `email` **obligatoire au guichet** | **Annulée (7 sept. 2026).** |
+| C | Adresse générée `guichet+<id>@<domaine>` | **écarté** (jamais d'adresse fictive). |
+| **D (retenue)** | E-mail **optionnel**. Sans e-mail : `attendees.email = NULL`. Complété a posteriori par ADMIN/ORGANIZER (`PATCH .../attendees/{id}`). Aucun mail tant que l'e-mail est absent. Au moins un identifiant (nom, e-mail ou téléphone). | **[Schéma]** + **[Code]** ciblé. |
 
-**Recommandation : B.** Décision : PICHA confirme-t-il « email obligatoire au guichet » ? Si un cas terrain « client sans email » est fréquent → rouvrir A avec un vrai budget de revue.
+**Décision : D.** D6 = B (obligatoire) n'est plus en vigueur.
 
 ---
 
@@ -238,19 +239,38 @@ Les sections détaillées ci-dessous restent la référence pour le raisonnement
 
 ---
 
-## D19 — Matériel et connectivité Zebra ZD621
+## D19 — Matériel et connectivité Zebra ZD621 — TRANCHÉE (2026-09-05)
 
-**DÉCISION REQUISE — aucune option techniquement tranchée.** Éléments à décider avec PICHA :
+**Décidé par Jo :**
 
-| Sous-décision | Options | Conséquence technique |
+| Sous-décision | Décision | Conséquence technique |
 |---|---|---|
-| Support | étiquette adhésive 4×6" / billet carton / bracelet | dimensions de la maquette (D18), marge, DPI |
-| Résolution | ZD621 = 203 ou 300 dpi | taille min. du module QR (≥ 10 mil recommandé) pour scan fiable |
-| Langage | ZPL (natif Zebra) / rendu image (PNG) / PDF via pilote | ZPL = rendu net, code à générer ; PDF = simple mais dépend du pilote OS |
-| Connexion | USB au poste agent / Ethernet (IP) / Bluetooth | USB = impression via dialogue navigateur/OS ; IP = le backend peut POSTer du ZPL directement à l'imprimante |
-| Déclenchement | dialogue d'impression navigateur / service d'impression local / envoi backend→imprimante | détermine s'il faut un agent d'impression local |
+| Poste agent | **macOS** pour le développement et le pilote initial. **Architecture cible compatible Windows** ensuite (à ne pas fermer par des choix macOS-spécifiques). | Le chemin slice 1 (navigateur + `window.print()`) est déjà cross-OS — aucun impact. Pour le futur agent d'impression local (si Bluetooth/USB direct est un jour nécessaire), éviter les API strictement macOS (ex. bindings natifs) ; privilégier Node/Python/Go portables. |
+| Connexion ZD621 | **Réseau (IP)** en mode principal, **USB en fallback/secours**. | Confirme la voie « le backend peut POSTer du ZPL directement à l'imprimante » (port raw 9100 typique Zebra) comme cible pour le futur driver ZPL de `TicketRenderer` — pas de dépendance à un pilote d'impression OS côté poste agent en fonctionnement normal. L'USB reste le repli si le réseau imprimante tombe (pas de code spécifique au slice 1, prévoir au minimum que le dialogue navigateur reste disponible en secours). |
+| Support, résolution, langage, déclenchement | **Non tranchés dans cet échange** — restent ouverts pour le driver ZPL (hors slice 1). | Sans impact sur le slice 1 (PDF + dialogue navigateur, pas de ZPL). |
 
-**Recommandation de méthode** : pour le **premier slice**, viser le chemin le plus simple à tester — **PDF via `AttendeeTicketPdfService` + dialogue d'impression navigateur** (D10 de la mission), et **ne pas** coder de pilote ZPL tant que D19 n'est pas figée. Prévoir l'abstraction `TicketRenderer` (PDF | ZPL) pour n'avoir qu'un driver à ajouter ensuite.
+**Conséquence sur le slice 1 : aucune.** Le slice 1 reste PDF via `AttendeeTicketPdfService` + dialogue d'impression navigateur, sans pilote ZPL — cette décision ne fait que fixer la direction du futur driver réseau de `TicketRenderer`, à construire après le slice 1.
+
+---
+
+## D21 — Invitation (billet offert) sur un produit normalement payant — TRANCHÉE (2026-09-05)
+
+**Contexte :** `CreateBoxOfficeSaleHandler` valide `AC-2` par égalité stricte serveur (`amount ===
+product_prices.price`). `payment_method = FREE` (D3) permet de tracer qu'un billet a été remis sans
+encaissement — mais ne dispense **pas** de cette égalité : un agent ne peut pas choisir `FREE` pour
+vendre à 0 € un billet dont `product_prices.price` est, par exemple, 25,00 €.
+
+**Décidé par Jo :** `FREE` n'est accepté que si le prix serveur du palier est **déjà** 0,00 €
+(produit gratuit). Offrir un billet normalement payant (invitation VIP, presse, staff comp) est
+**hors périmètre du slice 1** — aucun mécanisme de dérogation de prix n'est introduit ici.
+
+**Conséquence technique :** `CreateBoxOfficeSaleHandler::validatePrice()` rejette
+(`BoxOfficePriceMismatchException`) toute combinaison `payment_method = FREE` avec un prix serveur
+non nul, au même titre qu'un écart de prix classique — pas de branche de code séparée.
+
+**Reporté en backlog** (post-slice 1, si le besoin terrain se confirme) : un mécanisme explicite
+d'invitation/comp sur produit payant, avec sa propre autorisation et sa propre traçabilité
+(distincte de `payment_method`), à spécifier séparément.
 
 ---
 
@@ -277,7 +297,7 @@ Voir D1. Sous-décisions :
 | D3 | Table `box_office_sales` avec `payment_method` (`CASH/CARD/FREE/OTHER`) | Schéma |
 | D4 | Boucle N × `CreateAttendeeHandler` en transaction, 1 Order/billet assumé | Code |
 | D5 | Pas d'acheteur distinct | Métier |
-| D6 | Email **obligatoire** au guichet, pas d'adresse fictive | Métier |
+| D6 | Email **optionnel** au guichet, `NULL` si absent, pas d'adresse fictive (option D, 7 sept. 2026) | Métier |
 | D7 | Téléphone/orga via questions + nouveau service (si besoin), sinon hors MVP | Métier/Code |
 | D8 | Respecter les questions `required` (si D7 actif) | Métier |
 | D9 | `idempotency_key` UNIQUE sur `box_office_sales`, insérée en premier | Schéma |
@@ -290,5 +310,5 @@ Voir D1. Sous-décisions :
 | D16 | Rapport de fin de service (agrégat SQL) | Code |
 | D17 | Online-only, réessai sûr grâce à l'idempotence | Code |
 | D18 | Réutiliser la maquette PDF Somaroho | Code |
-| D19 | **DÉCISION MATÉRIELLE OUVERTE** — MVP via PDF + dialogue navigateur, abstraction `TicketRenderer` | PICHA |
+| D19 | **Tranchée** — poste agent macOS (cible Windows ensuite), ZD621 en réseau (USB en fallback). MVP slice 1 inchangé : PDF + dialogue navigateur, abstraction `TicketRenderer` | Baseline |
 | D20 | Tag + `.gitignore` + sortir les dumps + trancher AGPL | Baseline/Juridique |

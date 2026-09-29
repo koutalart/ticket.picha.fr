@@ -50,26 +50,26 @@ export const WidgetEditor = () => {
     useEffect(() => {
         setHtmlEmbedCode(
             '<div ' +
-            'data-hievents-id="' + eventId + '" ' +
-            'data-hievents-primary-color="' + form.values.primary_color + '" ' +
-            'data-hievents-primary-text-color="' + form.values.primary_text_color + '" ' +
-            'data-hievents-secondary-color="' + form.values.secondary_color + '" ' +
-            'data-hievents-secondary-text-color="' + form.values.secondary_text_color + '" ' +
-            'data-hievents-background-color="' + form.values.background_color + '" ' +
-            'data-hievents-widget-type="widget" ' +
-            'data-hievents-widget-version="1.0" ' +
-            'data-hievents-locale="en" ' +
-            'data-hievents-padding="' + form.values.padding + 'px" ' +
-            'data-hievents-autoresize="' + form.values.autoResize + '" ' +
-            'data-hievents-continue-button-text="' + form.values.continue_button_text + '" ' +
-            'class="hievents-widget">' +
+            'data-picha-id="' + eventId + '" ' +
+            'data-picha-primary-color="' + form.values.primary_color + '" ' +
+            'data-picha-primary-text-color="' + form.values.primary_text_color + '" ' +
+            'data-picha-secondary-color="' + form.values.secondary_color + '" ' +
+            'data-picha-secondary-text-color="' + form.values.secondary_text_color + '" ' +
+            'data-picha-background-color="' + form.values.background_color + '" ' +
+            'data-picha-widget-type="widget" ' +
+            'data-picha-widget-version="1.0" ' +
+            'data-picha-locale="en" ' +
+            'data-picha-padding="' + form.values.padding + 'px" ' +
+            'data-picha-autoresize="' + form.values.autoResize + '" ' +
+            'data-picha-continue-button-text="' + form.values.continue_button_text + '" ' +
+            'class="picha-widget">' +
             '</div>'
         );
 
         setReactComponentCode(`
 import React, { useEffect } from 'react';
 
-const HiEventsWidget = ({
+const PichaWidget = ({
   eventId,
   primaryColor = "${form.values.primary_color}",
   primaryTextColor = "${form.values.primary_text_color}",
@@ -93,32 +93,32 @@ const HiEventsWidget = ({
 
   return (
     <div
-      data-hievents-id={eventId}
-      data-hievents-primary-color={primaryColor}
-      data-hievents-primary-text-color={primaryTextColor}
-      data-hievents-secondary-color={secondaryColor}
-      data-hievents-secondary-text-color={secondaryTextColor}
-      data-hievents-background-color={backgroundColor}
-      data-hievents-widget-type={widgetType}
-      data-hievents-widget-version={widgetVersion}
-      data-hievents-locale={locale}
-      className="hievents-widget"
+      data-picha-id={eventId}
+      data-picha-primary-color={primaryColor}
+      data-picha-primary-text-color={primaryTextColor}
+      data-picha-secondary-color={secondaryColor}
+      data-picha-secondary-text-color={secondaryTextColor}
+      data-picha-background-color={backgroundColor}
+      data-picha-widget-type={widgetType}
+      data-picha-widget-version={widgetVersion}
+      data-picha-locale={locale}
+      className="picha-widget"
     />
   );
 };
 
-export default HiEventsWidget;
+export default PichaWidget;
         `);
 
         setReactUsageCode(`
 import React from 'react';
-import HiEventsWidget from './HiEventsWidget';
+import PichaWidget from './PichaWidget';
 
 const App = () => {
   return (
     <div>
       <h1>My Website</h1>
-      <HiEventsWidget 
+      <PichaWidget 
         eventId="${eventId}"
         primaryColor="${form.values.primary_color}"
         primaryTextColor="${form.values.primary_text_color}"

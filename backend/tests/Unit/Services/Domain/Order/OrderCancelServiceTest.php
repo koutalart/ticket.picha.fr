@@ -9,16 +9,17 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\Events\CapacityChangedEvent;
+use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Mail\Order\OrderCancelled;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
+use HiEvents\Services\Domain\EventStatistics\EventStatisticsCancellationService;
 use HiEvents\Services\Domain\Order\OrderCancelService;
 use HiEvents\Services\Domain\Product\ProductQuantityUpdateService;
 use HiEvents\Services\Infrastructure\DomainEvents\DomainEventDispatcherService;
 use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
 use HiEvents\Services\Infrastructure\DomainEvents\Events\OrderEvent;
-use HiEvents\Services\Domain\EventStatistics\EventStatisticsCancellationService;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
@@ -30,13 +31,21 @@ use Throwable;
 class OrderCancelServiceTest extends TestCase
 {
     private Mailer $mailer;
+
     private AttendeeRepositoryInterface $attendeeRepository;
+
     private EventRepositoryInterface $eventRepository;
+
     private OrderRepositoryInterface $orderRepository;
+
     private DatabaseManager $databaseManager;
+
     private ProductQuantityUpdateService $productQuantityService;
+
     private OrderCancelService $service;
+
     private DomainEventDispatcherService $domainEventDispatcherService;
+
     private EventStatisticsCancellationService $eventStatisticsCancellationService;
 
     protected function setUp(): void
@@ -64,7 +73,7 @@ class OrderCancelServiceTest extends TestCase
         );
     }
 
-    public function testCancelOrder(): void
+    public function test_cancel_order(): void
     {
         Event::fake();
 
@@ -104,9 +113,9 @@ class OrderCancelServiceTest extends TestCase
             ->once()
             ->with($order);
 
-        $event = new EventDomainObject();
-        $event->setEventSettings(new EventSettingDomainObject());
-        $event->setOrganizer(new OrganizerDomainObject());
+        $event = new EventDomainObject;
+        $event->setEventSettings(new EventSettingDomainObject);
+        $event->setOrganizer(new OrganizerDomainObject);
         $this->eventRepository
             ->shouldReceive('loadRelation')
             ->twice()
@@ -144,7 +153,7 @@ class OrderCancelServiceTest extends TestCase
         try {
             $this->service->cancelOrder($order);
         } catch (Throwable $e) {
-            $this->fail("Failed to cancel order: " . $e->getMessage());
+            $this->fail('Failed to cancel order: '.$e->getMessage());
         }
 
         Event::assertDispatched(CapacityChangedEvent::class, 2);
@@ -156,7 +165,63 @@ class OrderCancelServiceTest extends TestCase
         });
     }
 
-    public function testCancelOrderAwaitingOfflinePayment(): void
+    public function test_cancel_order_skips_mail_for_kiosk_sentinel_email(): void
+    {
+        Event::fake();
+
+        $order = m::mock(OrderDomainObject::class);
+        $order->shouldReceive('getEventId')->andReturn(1);
+        $order->shouldReceive('getId')->andReturn(1);
+        $order->shouldReceive('getEmail')->andReturn(KioskSentinelEmail::forBoxOfficeSale(1));
+        $order->shouldReceive('isOrderAwaitingOfflinePayment')->andReturn(false);
+        $order->shouldReceive('getLocale')->andReturn('en');
+
+        $attendee1 = m::mock(AttendeeDomainObject::class);
+        $attendee1->shouldReceive('getproductPriceId')->andReturn(1);
+        $attendee1->shouldReceive('getProductId')->andReturn(10);
+
+        $attendees = new Collection([$attendee1]);
+
+        $this->attendeeRepository
+            ->shouldReceive('findWhere')
+            ->twice()
+            ->with([
+                'order_id' => $order->getId(),
+            ])
+            ->andReturn($attendees);
+
+        $this->attendeeRepository->shouldReceive('updateWhere')->once();
+        $this->productQuantityService->shouldReceive('decreaseQuantitySold')->once();
+        $this->orderRepository->shouldReceive('updateWhere')->once();
+        $this->eventStatisticsCancellationService->shouldReceive('decrementForCancelledOrder')
+            ->once()
+            ->with($order);
+
+        $event = new EventDomainObject;
+        $event->setEventSettings(new EventSettingDomainObject);
+        $event->setOrganizer(new OrganizerDomainObject);
+        $this->eventRepository
+            ->shouldReceive('loadRelation')
+            ->twice()
+            ->andReturnSelf()
+            ->getMock()
+            ->shouldReceive('findById')->once()->andReturn($event);
+
+        $this->mailer->shouldNotReceive('to');
+
+        $this->domainEventDispatcherService->shouldReceive('dispatch')->once();
+        $this->databaseManager->shouldReceive('transaction')->once()->andReturnUsing(function ($callback) {
+            $callback();
+        });
+
+        $attendees->each(function ($attendee) {
+            $attendee->shouldReceive('getStatus')->andReturn(AttendeeStatus::ACTIVE->name);
+        });
+
+        $this->service->cancelOrder($order);
+    }
+
+    public function test_cancel_order_awaiting_offline_payment(): void
     {
         Event::fake();
 
@@ -195,9 +260,9 @@ class OrderCancelServiceTest extends TestCase
             ->once()
             ->with($order);
 
-        $event = new EventDomainObject();
-        $event->setEventSettings(new EventSettingDomainObject());
-        $event->setOrganizer(new OrganizerDomainObject());
+        $event = new EventDomainObject;
+        $event->setEventSettings(new EventSettingDomainObject);
+        $event->setOrganizer(new OrganizerDomainObject);
         $this->eventRepository
             ->shouldReceive('loadRelation')
             ->twice()
@@ -235,9 +300,9 @@ class OrderCancelServiceTest extends TestCase
         try {
             $this->service->cancelOrder($order);
         } catch (Throwable $e) {
-            $this->fail("Failed to cancel order: " . $e->getMessage());
+            $this->fail('Failed to cancel order: '.$e->getMessage());
         }
 
-        $this->assertTrue(true, "Order cancellation proceeded without throwing an exception.");
+        $this->assertTrue(true, 'Order cancellation proceeded without throwing an exception.');
     }
 }

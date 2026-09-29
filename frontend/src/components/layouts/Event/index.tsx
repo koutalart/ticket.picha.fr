@@ -1,5 +1,6 @@
 import {
     IconArrowLeft,
+    IconCashRegister,
     IconChartPie,
     IconChevronRight,
     IconDashboard,
@@ -32,7 +33,7 @@ import {useGetEventStats} from "../../../queries/useGetEventStats";
 import Truncate from "../../common/Truncate";
 import {BreadcrumbItem, NavItem} from "../AppLayout/types.ts";
 import AppLayout from "../AppLayout";
-import {NavLink, useLocation, useParams} from "react-router";
+import {NavLink, Navigate, useLocation, useParams} from "react-router";
 import classes from './Event.module.scss';
 import {Button} from "@mantine/core";
 import {confirmationDialog} from "../../../utilites/confirmationDialog.tsx";
@@ -48,6 +49,8 @@ import {useGetMe} from "../../../queries/useGetMe.ts";
 import {useResendEmailConfirmation} from "../../../mutations/useResendEmailConfirmation.ts";
 import {useState} from "react";
 import {eventHomepageUrl} from "../../../utilites/urlHelper.ts";
+import {isBoxOfficeOperator} from "../../../utilites/kioskAuth.ts";
+import {useIsCurrentUserAdmin} from "../../../hooks/useIsCurrentUserAdmin.ts";
 
 const EventLayout = () => {
     const location = useLocation();
@@ -61,7 +64,12 @@ const EventLayout = () => {
     const {data: event, isFetched: isEventFetched} = useGetEvent(eventId);
     const {data: eventSettings, isFetched: isEventSettingsFetched} = useGetEventSettings(eventId);
     const {data: eventStats} = useGetEventStats(eventId);
-    const {data: me} = useGetMe();
+    const {data: me, isSuccess: isMeSuccess} = useGetMe();
+    const isAdmin = useIsCurrentUserAdmin();
+
+    if (isMeSuccess && isBoxOfficeOperator(me)) {
+        return <Navigate to="/kiosk" replace/>;
+    }
 
     const resendEmailConfirmationMutation = useResendEmailConfirmation();
     const [emailConfirmationResent, setEmailConfirmationResent] = useState(false);
@@ -112,6 +120,18 @@ const EventLayout = () => {
         {link: 'orders', label: t`Orders`, icon: IconReceipt, badge: eventStats?.total_orders},
         {link: 'promo-codes', label: t`Promo Codes`, icon: IconDiscount2},
         {link: 'affiliates', label: t`Affiliates`, icon: IconTrendingUp},
+        {
+            link: 'box-office',
+            label: t`Box Office`,
+            icon: IconCashRegister,
+            isActive: (isActive) => isActive && !location.pathname.includes('/box-office/operators'),
+        },
+        {
+            link: 'box-office/operators',
+            label: t`Kiosk operators`,
+            icon: IconUsers,
+            showWhen: () => isAdmin,
+        },
 
         // 4. GUESTS
         {label: t`Guest Management`},

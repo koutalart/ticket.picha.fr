@@ -5,7 +5,7 @@ import {useGetOrder} from "../../../queries/useGetOrder.ts";
 import {useUpdateAttendee} from "../../../mutations/useUpdateAttendee.ts";
 import {useFormErrorResponseHandler} from "../../../hooks/useFormErrorResponseHandler.tsx";
 import {useForm} from "@mantine/form";
-import {Accordion} from "../../common/Accordion";
+import {Accordion, AccordionItem} from "../../common/Accordion";
 import {Button} from "../../common/Button";
 import {Avatar, Box, Group, Stack, Tabs, Text, Textarea, TextInput} from "@mantine/core";
 import {IconEdit, IconNotebook, IconQuestionMark, IconReceipt, IconTicket, IconUser} from "@tabler/icons-react";
@@ -15,6 +15,7 @@ import {OrderDetails} from "../../common/OrderDetails";
 import {QuestionList} from "../../common/QuestionAndAnswerList";
 import {AttendeeTicket} from "../../common/AttendeeTicket";
 import {getInitials} from "../../../utilites/helpers.ts";
+import {displayAttendeeEmail} from "../../../utilites/isKioskSentinelEmail.ts";
 import {t} from "@lingui/macro";
 import classes from './ManageAttendeeModal.module.scss';
 import {useEffect, useState} from "react";
@@ -58,7 +59,7 @@ export const ManageAttendeeModal = ({onClose, attendeeId}: ManageAttendeeModalPr
             form.initialize({
                 first_name: attendee.first_name,
                 last_name: attendee.last_name,
-                email: attendee.email,
+                email: displayAttendeeEmail(attendee.email) ?? "",
                 notes: attendee.notes || "",
                 product_id: String(attendee.product_id),
                 product_price_id: attendee.product_price_id ? String(attendee.product_price_id) : "",
@@ -138,63 +139,65 @@ export const ManageAttendeeModal = ({onClose, attendeeId}: ManageAttendeeModalPr
         </div>
     );
 
+    const accordionItems: AccordionItem[] = [
+        {
+            value: "details",
+            icon: IconUser,
+            title: t`Attendee Details`,
+            content: <AttendeeDetails attendee={attendee}/>,
+        },
+        {
+            value: "notes",
+            icon: IconNotebook,
+            title: t`Attendee Notes`,
+            hidden: !attendee.notes,
+            content: (
+                <Box p="md">
+                    <Text style={{whiteSpace: 'pre-line'}}>
+                        {attendee.notes}
+                    </Text>
+                </Box>
+            ),
+        },
+        {
+            value: "order",
+            icon: IconReceipt,
+            title: t`Order Details`,
+            content: <OrderDetails order={order} event={event} cardVariant="noStyle"/>,
+        },
+        {
+            value: "ticket",
+            icon: IconTicket,
+            title: t`Attendee Ticket`,
+            content: attendee.product ? (
+                <AttendeeTicket event={event} attendee={attendee} product={attendee.product}/>
+            ) : (
+                <Text c="dimmed" ta="center" py="xl">
+                    {t`No product associated with this attendee.`}
+                </Text>
+            ),
+        },
+        {
+            value: "questions",
+            icon: IconQuestionMark,
+            title: t`Questions & Answers`,
+            count: hasQuestions ? attendee?.question_answers?.length : undefined,
+            content: hasQuestions ? (
+                <QuestionList
+                    onEditAnswer={refetchAttendee}
+                    questions={attendee.question_answers as QuestionAnswer[]}
+                />
+            ) : (
+                <Text c="dimmed" ta="center" py="xl">
+                    {t`No questions answered by this attendee.`}
+                </Text>
+            ),
+        },
+    ];
+
     const viewContent = (
         <Accordion
-            items={[
-                {
-                    value: "details",
-                    icon: IconUser,
-                    title: t`Attendee Details`,
-                    content: <AttendeeDetails attendee={attendee}/>,
-                },
-                {
-                    value: "notes",
-                    icon: IconNotebook,
-                    title: t`Attendee Notes`,
-                    hidden: !attendee.notes,
-                    content: (
-                        <Box p="md">
-                            <Text style={{whiteSpace: 'pre-line'}}>
-                                {attendee.notes}
-                            </Text>
-                        </Box>
-                    ),
-                },
-                {
-                    value: "order",
-                    icon: IconReceipt,
-                    title: t`Order Details`,
-                    content: <OrderDetails order={order} event={event} cardVariant="noStyle"/>,
-                },
-                {
-                    value: "ticket",
-                    icon: IconTicket,
-                    title: t`Attendee Ticket`,
-                    content: attendee.product ? (
-                        <AttendeeTicket event={event} attendee={attendee} product={attendee.product}/>
-                    ) : (
-                        <Text c="dimmed" ta="center" py="xl">
-                            {t`No product associated with this attendee.`}
-                        </Text>
-                    ),
-                },
-                {
-                    value: "questions",
-                    icon: IconQuestionMark,
-                    title: t`Questions & Answers`,
-                    count: hasQuestions ? attendee?.question_answers?.length : undefined,
-                    content: hasQuestions ? (
-                        <QuestionList
-                            onEditAnswer={refetchAttendee}
-                            questions={attendee.question_answers as QuestionAnswer[]}
-                        />
-                    ) : (
-                        <Text c="dimmed" ta="center" py="xl">
-                            {t`No questions answered by this attendee.`}
-                        </Text>
-                    ),
-                },
-            ].filter(item => !item.hidden)}
+            items={accordionItems}
             defaultValue="details"
         />
     );

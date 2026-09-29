@@ -9,6 +9,7 @@ import {t} from "@lingui/macro";
 import {formatAddress} from "../../../utilites/addressUtilities.ts";
 import React from "react";
 import {capitalize} from "../../../utilites/stringHelper.ts";
+import {displayAttendeeEmail} from "../../../utilites/isKioskSentinelEmail.ts";
 
 export const OrderDetails = ({order, event, cardVariant = 'lightGray', style = {}}: {
     order: Order,
@@ -31,7 +32,9 @@ export const OrderDetails = ({order, event, cardVariant = 'lightGray', style = {
                     {t`Email`}
                 </div>
                 <div className={classes.value}>
-                    <Anchor href={'mailto:' + order.email} target={'_blank'}>{order.email}</Anchor>
+                    {displayAttendeeEmail(order.email)
+                        ? <Anchor href={'mailto:' + order.email} target={'_blank'}>{order.email}</Anchor>
+                        : t`—`}
                 </div>
             </div>
             <div className={classes.block}>

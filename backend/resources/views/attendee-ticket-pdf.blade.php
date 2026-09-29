@@ -30,7 +30,7 @@
                 @if($dateDisplayMode !== 'HIDDEN')
                 <div class="row">
                     <div class="label">{{ __('Date & Time') }}</div>
-                    <div class="value">{{ \Carbon\Carbon::parse($event->getStartDate(), $event->getTimezone())->format('d/m/Y H:i') }}</div>
+                    <div class="value">{{ \Carbon\Carbon::parse($event->getStartDate(), 'UTC')->setTimezone($event->getTimezone() ?: 'UTC')->format('d/m/Y H:i') }}</div>
                 </div>
                 @endif
 
@@ -41,7 +41,7 @@
                 </div>
                 @endif
 
-                @if($eventSettings->getLocationDetails())
+                @if($eventSettings->getLocationDetails() && trim($eventSettings->getAddressString()) !== '')
                 <div class="row">
                     <div class="label">{{ __('Location') }}</div>
                     <div class="value">{{ $eventSettings->getAddressString() }}</div>
@@ -58,7 +58,9 @@
                 <div class="row">
                     <div class="label">{{ __('Attendee') }}</div>
                     <div class="attendee-name">{{ $attendee->getFirstName() }} {{ $attendee->getLastName() }}</div>
+                    @if($attendee->getEmail() && ! \HiEvents\Helper\KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail()))
                     <div class="value">{{ $attendee->getEmail() }}</div>
+                    @endif
                 </div>
             </td>
             <td class="qr">

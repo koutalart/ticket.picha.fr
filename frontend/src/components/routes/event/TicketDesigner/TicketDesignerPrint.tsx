@@ -6,6 +6,7 @@ import {useGetEventImages} from '../../../../queries/useGetEventImages.ts';
 import {AttendeeTicket} from '../../../common/AttendeeTicket';
 import {PoweredByFooter} from '../../../common/PoweredByFooter';
 import {t} from '@lingui/macro';
+import {Attendee} from '../../../../types.ts';
 import {useEffect} from "react";
 import classes from '../../../routes/product-widget/PrintOrder/PrintOrder.module.scss';
 
@@ -89,7 +90,7 @@ const TicketDesignerPrint = () => {
             <h2 className={classes.title}>{t`Ticket Preview for`} {event.title}</h2>
             <div className={classes.ticketPage}>
                 <AttendeeTicket
-                    attendee={mockAttendee}
+                    attendee={mockAttendee as unknown as Attendee}
                     product={mockProduct}
                     event={eventWithDesignSettings}
                     hideButtons

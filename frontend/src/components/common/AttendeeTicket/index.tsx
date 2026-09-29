@@ -1,6 +1,7 @@
 import {getAttendeeProductPrice, getAttendeeProductTitle} from "../../../utilites/products.ts";
 import {Button, CopyButton} from "@mantine/core";
 import {formatCurrency} from "../../../utilites/currency.ts";
+import {displayAttendeeEmail} from "../../../utilites/isKioskSentinelEmail.ts";
 import {t} from "@lingui/macro";
 import {prettyDate} from "../../../utilites/dates.ts";
 import {EventDateRange} from "../EventDateRange";
@@ -115,7 +116,7 @@ export const AttendeeTicket = ({
                         <div className={classes.attendeeName}>
                             {attendee.first_name} {attendee.last_name}
                         </div>
-                        <div className={classes.attendeeEmail}>{attendee.email}</div>
+                        <div className={classes.attendeeEmail}>{displayAttendeeEmail(attendee.email) ?? t`—`}</div>
                     </div>
 
                 </div>

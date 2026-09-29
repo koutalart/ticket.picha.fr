@@ -7,7 +7,9 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
+use HiEvents\Exceptions\AttendeeEmailMissingException;
 use HiEvents\Exceptions\ResourceConflictException;
+use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -19,16 +21,15 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 readonly class ResendAttendeeTicketHandler
 {
     public function __construct(
-        private SendAttendeeTicketService   $sendAttendeeProductService,
+        private SendAttendeeTicketService $sendAttendeeProductService,
         private AttendeeRepositoryInterface $attendeeRepository,
-        private EventRepositoryInterface    $eventRepository,
-        private LoggerInterface             $logger,
-    )
-    {
-    }
+        private EventRepositoryInterface $eventRepository,
+        private LoggerInterface $logger,
+    ) {}
 
     /**
      * @throws ResourceConflictException
+     * @throws AttendeeEmailMissingException
      */
     public function handle(ResendAttendeeTicketDTO $resendAttendeeProductDTO): void
     {
@@ -41,8 +42,14 @@ readonly class ResendAttendeeTicketHandler
                 'event_id' => $resendAttendeeProductDTO->eventId,
             ]);
 
-        if (!$attendee) {
-            throw new ResourceNotFoundException();
+        if (! $attendee) {
+            throw new ResourceNotFoundException;
+        }
+
+        if (KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail())) {
+            throw new AttendeeEmailMissingException(
+                __('Ce participant n\'a pas encore d\'e-mail. Renseignez-le d\'abord.')
+            );
         }
 
         if ($attendee->getStatus() !== AttendeeStatus::ACTIVE->name) {
@@ -64,7 +71,7 @@ readonly class ResendAttendeeTicketHandler
 
         $this->logger->info('Attendee ticket resent', [
             'attendeeId' => $resendAttendeeProductDTO->attendeeId,
-            'eventId' => $resendAttendeeProductDTO->eventId
+            'eventId' => $resendAttendeeProductDTO->eventId,
         ]);
     }
 }
