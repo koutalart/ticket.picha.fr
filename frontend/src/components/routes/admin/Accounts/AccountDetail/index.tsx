@@ -12,6 +12,8 @@ import {EditAccountVatSettingsModal} from "../../../../modals/EditAccountVatSett
 import {EditOrganizerCustomDomainModal} from "../../../../modals/EditOrganizerCustomDomainModal";
 import {useGetAdminAccountOrganizers} from "../../../../../queries/useGetAdminAccountOrganizers";
 import {AdminOrganizer} from "../../../../../api/admin.client";
+import {useUpdateAdminOrganizerHomepageTemplate} from "../../../../../mutations/useUpdateAdminOrganizerHomepageTemplate";
+import {DEFAULT_ORGANIZER_TEMPLATE, ORGANIZER_TEMPLATES} from "../../../../organizerTemplates";
 import {showSuccess, showError} from "../../../../../utilites/notifications";
 import {getCurrencySymbol} from "../../../../../utilites/currency";
 import classes from "./AccountDetail.module.scss";
@@ -27,6 +29,7 @@ const AccountDetail = () => {
     const [showVatModal, setShowVatModal] = useState(false);
     const {data: organizersData} = useGetAdminAccountOrganizers(accountId!);
     const [domainOrganizer, setDomainOrganizer] = useState<AdminOrganizer | null>(null);
+    const updateTemplateMutation = useUpdateAdminOrganizerHomepageTemplate(accountId!);
 
     const account = accountData?.data;
     const configurations = configurationsData?.data || [];
@@ -49,6 +52,15 @@ const AccountDetail = () => {
                 onError: () => showError(t`Failed to assign configuration`),
             }
         );
+    };
+
+    const handleTemplateChange = (organizerId: AdminOrganizer['id'], value: string | null) => {
+        if (!value) return;
+
+        updateTemplateMutation.mutate({organizerId, homepageTemplate: value}, {
+            onSuccess: () => showSuccess(t`Homepage template applied`),
+            onError: () => showError(t`Failed to apply homepage template`),
+        });
     };
 
     const handleMessagingTierChange = (value: string | null) => {
@@ -98,6 +110,11 @@ const AccountDetail = () => {
     const configOptions = configurations.map((config) => ({
         value: String(config.id),
         label: config.is_system_default ? `${config.name} (${t`Default`})` : config.name,
+    }));
+
+    const templateOptions = Object.entries(ORGANIZER_TEMPLATES).map(([value, template]) => ({
+        value,
+        label: template.label(),
     }));
 
     const tierOptions = messagingTiers.map((tier) => ({
@@ -179,7 +196,7 @@ const AccountDetail = () => {
 
                     <Card className={classes.accountCard}>
                         <Stack gap="md">
-                            <Text size="lg" fw={600}>{t`Organizers & Custom Domains`}</Text>
+                            <Text size="lg" fw={600}>{t`Organizers, Domains & Templates`}</Text>
 
                             {organizers.length === 0 ? (
                                 <Text size="sm" c="dimmed">{t`No organizers`}</Text>
@@ -207,14 +224,26 @@ const AccountDetail = () => {
                                                     <Text size="xs" c="dimmed">{t`No custom domain`}</Text>
                                                 )}
                                             </div>
-                                            <Button
-                                                variant="light"
-                                                size="xs"
-                                                leftSection={<IconEdit size={14}/>}
-                                                onClick={() => setDomainOrganizer(organizer)}
-                                            >
-                                                {t`Domain`}
-                                            </Button>
+                                            <Group gap="xs">
+                                                <Select
+                                                    size="xs"
+                                                    w={160}
+                                                    aria-label={t`Homepage template`}
+                                                    data={templateOptions}
+                                                    value={organizer.homepage_template || DEFAULT_ORGANIZER_TEMPLATE}
+                                                    onChange={(value) => handleTemplateChange(organizer.id, value)}
+                                                    disabled={updateTemplateMutation.isPending}
+                                                    allowDeselect={false}
+                                                />
+                                                <Button
+                                                    variant="light"
+                                                    size="xs"
+                                                    leftSection={<IconEdit size={14}/>}
+                                                    onClick={() => setDomainOrganizer(organizer)}
+                                                >
+                                                    {t`Domain`}
+                                                </Button>
+                                            </Group>
                                         </div>
                                     ))}
                                 </div>

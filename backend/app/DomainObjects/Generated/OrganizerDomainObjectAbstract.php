@@ -24,6 +24,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     final public const TIMEZONE = 'timezone';
     final public const STATUS = 'status';
     final public const CUSTOM_DOMAIN = 'custom_domain';
+    final public const HOMEPAGE_TEMPLATE = 'homepage_template';
 
     protected int $id;
     protected int $account_id;
@@ -39,6 +40,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     protected string $timezone;
     protected string $status = 'DRAFT';
     protected ?string $custom_domain = null;
+    protected string $homepage_template = 'DEFAULT';
 
     public function toArray(): array
     {
@@ -57,6 +59,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
                     'timezone' => $this->timezone ?? null,
                     'status' => $this->status ?? null,
                     'custom_domain' => $this->custom_domain ?? null,
+                    'homepage_template' => $this->homepage_template ?? null,
                 ];
     }
 
@@ -212,5 +215,16 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     public function getCustomDomain(): ?string
     {
         return $this->custom_domain;
+    }
+
+    public function setHomepageTemplate(string $homepage_template): self
+    {
+        $this->homepage_template = $homepage_template;
+        return $this;
+    }
+
+    public function getHomepageTemplate(): string
+    {
+        return $this->homepage_template;
     }
 }

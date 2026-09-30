@@ -1,4 +1,4 @@
-import OrganizerHomepage from "../OrganizerHomepage";
+import {getOrganizerTemplate} from "../../organizerTemplates";
 import {useLoaderData} from "react-router";
 import {Organizer} from "../../../types.ts";
 import {OrganizerNotFound} from "./OrganizerNotFound";
@@ -14,8 +14,10 @@ export const PublicOrganizer = () => {
         return <OrganizerNotFound />;
     }
 
+    const Template = getOrganizerTemplate(loaderData.organizer.homepage_template);
+
     return (
-        <OrganizerHomepage
+        <Template
             organizer={loaderData.organizer}
             eventsData={loaderData.eventsData}
             isPastEvents={loaderData.isPastEvents}

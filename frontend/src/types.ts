@@ -402,6 +402,7 @@ export interface Organizer {
     currency?: string;
     slug?: string;
     phone?: string;
+    homepage_template?: string;
     images?: Image[];
     events?: Event[];
     settings?: OrganizerSettings;

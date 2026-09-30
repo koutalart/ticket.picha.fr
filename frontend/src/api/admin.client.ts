@@ -12,6 +12,7 @@ export interface AdminOrganizer {
     slug: string;
     status: string;
     custom_domain: string | null;
+    homepage_template: string;
 }
 
 export interface AccountWithRole {
@@ -472,6 +473,14 @@ export const adminClient = {
         const response = await api.put<GenericDataResponse<AdminOrganizer>>(
             `admin/accounts/${accountId}/organizers/${organizerId}/custom-domain`,
             {custom_domain: customDomain}
+        );
+        return response.data;
+    },
+
+    updateOrganizerHomepageTemplate: async (accountId: IdParam, organizerId: IdParam, homepageTemplate: string) => {
+        const response = await api.put<GenericDataResponse<AdminOrganizer>>(
+            `admin/accounts/${accountId}/organizers/${organizerId}/homepage-template`,
+            {homepage_template: homepageTemplate}
         );
         return response.data;
     },

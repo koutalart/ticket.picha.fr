@@ -209,6 +209,7 @@ use HiEvents\Http\Actions\Admin\GetMessagingTiersAction;
 use HiEvents\Http\Actions\Admin\Accounts\UpdateAccountMessagingTierAction;
 use HiEvents\Http\Actions\Admin\Organizers\GetAccountOrganizersAction as GetAdminAccountOrganizersAction;
 use HiEvents\Http\Actions\Admin\Organizers\UpdateOrganizerCustomDomainAction as UpdateAdminOrganizerCustomDomainAction;
+use HiEvents\Http\Actions\Admin\Organizers\UpdateOrganizerHomepageTemplateAction as UpdateAdminOrganizerHomepageTemplateAction;
 use HiEvents\Http\Actions\Admin\Orders\GetAllOrdersAction;
 use HiEvents\Http\Actions\Admin\Attribution\GetUtmAttributionStatsAction;
 use HiEvents\Http\Actions\Admin\GetSystemInfoAction;
@@ -491,6 +492,7 @@ $router->prefix('/admin')->middleware(['auth:api'])->group(
         $router->put('/accounts/{account_id}/configuration', AssignConfigurationAction::class);
         $router->get('/accounts/{account_id}/organizers', GetAdminAccountOrganizersAction::class);
         $router->put('/accounts/{account_id}/organizers/{organizer_id}/custom-domain', UpdateAdminOrganizerCustomDomainAction::class);
+        $router->put('/accounts/{account_id}/organizers/{organizer_id}/homepage-template', UpdateAdminOrganizerHomepageTemplateAction::class);
         $router->get('/configurations', GetAllConfigurationsAction::class);
         $router->post('/configurations', CreateConfigurationAction::class);
         $router->put('/configurations/{configuration_id}', UpdateConfigurationAction::class);
