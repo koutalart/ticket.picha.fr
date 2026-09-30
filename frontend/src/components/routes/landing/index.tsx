@@ -7,11 +7,16 @@ import {
     IconCheck,
     IconClipboardCheck,
     IconId,
+    IconClockHour4,
+    IconFileCertificate,
     IconLock,
+    IconServer,
+    IconShieldCheck,
+    IconUserCheck,
     IconUsersGroup,
 } from "@tabler/icons-react";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
-import {getAppName, getLogoForLightBackground} from "../../../utilites/branding.ts";
+import {getAppName, getLogoForLightBackground, getPrivacyPolicyUrl} from "../../../utilites/branding.ts";
 import classes from "./Landing.module.scss";
 
 const CONTACT_EMAIL = "ticket@picha.fr";
@@ -21,29 +26,18 @@ const Landing = () => {
         {
             icon: IconBuildingSkyscraper,
             title: t`Companies`,
-            description: t`Seminars, client evenings, partner days, internal events.`,
+            description: t`Open days, seminars, internal events.`,
         },
         {
             icon: IconBuildingBank,
             title: t`Institutions and local authorities`,
-            description: t`Conferences, public meetings, general assemblies, forums.`,
+            description: t`Conferences, sporting events, general assemblies.`,
         },
         {
             icon: IconUsersGroup,
             title: t`Associations and professional networks`,
-            description: t`Networking events, workshops, trade fairs, award ceremonies.`,
+            description: t`Festivals, workshops, award ceremonies.`,
         },
-    ];
-
-    const eventTypes = [
-        t`Conferences`,
-        t`Seminars`,
-        t`General assemblies`,
-        t`Forums and trade fairs`,
-        t`Workshops and training`,
-        t`Award ceremonies`,
-        t`Client evenings`,
-        t`Open days`,
     ];
 
     const pillars = [
@@ -51,10 +45,9 @@ const Landing = () => {
             icon: IconClipboardCheck,
             title: t`Registration and ticketing`,
             items: [
-                t`Event page with online registration`,
+                t`Event page with custom questions during online registration`,
                 t`Free or paid tickets`,
-                t`Custom registration questions`,
-                t`Capacity limits and waiting list`,
+                t`Physical pre-sales and personalized wristbands`,
             ],
         },
         {
@@ -64,7 +57,7 @@ const Landing = () => {
                 t`Unique QR code for each attendee`,
                 t`Badges printed on arrival`,
                 t`On-site registration from a tablet`,
-                t`Entry check with a smartphone or scanner`,
+                t`Entry check with a scanner`,
             ],
         },
         {
@@ -73,9 +66,42 @@ const Landing = () => {
             items: [
                 t`Real-time attendee list`,
                 t`Attendance sheet and check-in report`,
-                t`Messages to attendees`,
-                t`Exports for your follow-up`,
+                t`Messages to attendees (e-mail and/or SMS)`,
+                t`Payout every Monday`,
             ],
+        },
+    ];
+
+    const gdprPoints = [
+        {
+            icon: IconServer,
+            title: t`Hosted in France`,
+            description: t`Data is stored on servers located in France (OVHcloud) and is never resold.`,
+        },
+        {
+            icon: IconLock,
+            title: t`Secured access`,
+            description: t`Encrypted connections (HTTPS), access restricted by role, daily backups.`,
+        },
+        {
+            icon: IconShieldCheck,
+            title: t`Clear roles`,
+            description: t`The organizer is the data controller for its attendees; ${getAppName()} acts as processor under article 28 of the GDPR.`,
+        },
+        {
+            icon: IconUserCheck,
+            title: t`Attendees' rights`,
+            description: t`Access, rectification, erasure and objection: requests are handled at ${CONTACT_EMAIL}.`,
+        },
+        {
+            icon: IconClockHour4,
+            title: t`Limited retention`,
+            description: t`Data is kept only as long as needed for the event and legal obligations, then deleted.`,
+        },
+        {
+            icon: IconFileCertificate,
+            title: t`Consent`,
+            description: t`Marketing opt-in and non-essential cookies are only activated with the person's consent.`,
         },
     ];
 
@@ -112,10 +138,12 @@ const Landing = () => {
 
             <main>
                 <section className={classes.hero}>
-                    <p className={classes.kicker}>{t`Professional and institutional events`}</p>
-                    <h1 className={classes.heroTitle}>{t`Registration, badges and access control for your events`}</h1>
+                    <h1 className={classes.heroTitle}>{t`Professional and institutional events`}</h1>
                     <p className={classes.heroText}>
-                        {t`${getAppName()} manages your registrations, your welcome desk and your attendance sheets, from invitation to the final report.`}
+                        {t`${getAppName()} handles sending your invitations, digital check-in with connected staff, on-site badge printing and post-event reporting.`}
+                    </p>
+                    <p className={classes.heroText}>
+                        {t`Prefer to stay independent? Simply rent the equipment.`}
                     </p>
                     <div className={classes.heroActions}>
                         <a href={`mailto:${CONTACT_EMAIL}`} className={classes.primaryButton}>{t`Request a demo`}</a>
@@ -124,7 +152,7 @@ const Landing = () => {
                 </section>
 
                 <section className={classes.section}>
-                    <h2 className={classes.sectionTitle}>{t`For all organizations`}</h2>
+                    <h2 className={classes.sectionTitle}>{t`For organized people`}</h2>
                     <div className={classes.cards}>
                         {audiences.map((audience) => (
                             <article key={audience.title} className={classes.card}>
@@ -134,9 +162,6 @@ const Landing = () => {
                             </article>
                         ))}
                     </div>
-                    <ul className={classes.chips}>
-                        {eventTypes.map((eventType) => <li key={eventType}>{eventType}</li>)}
-                    </ul>
                 </section>
 
                 <section className={`${classes.section} ${classes.sectionTinted}`}>
@@ -155,15 +180,19 @@ const Landing = () => {
                 </section>
 
                 <section className={classes.section}>
-                    <div className={classes.trust}>
-                        <IconLock size={32} className={classes.cardIcon}/>
-                        <div>
-                            <h2 className={classes.trustTitle}>{t`Your data, protected`}</h2>
-                            <p className={classes.cardText}>
-                                {t`Hosting in France, encrypted connections, access restricted by role and GDPR compliance. Simple pricing: 0.99 € per paid ticket sold.`}
-                            </p>
-                        </div>
+                    <h2 className={classes.sectionTitle}>{t`Your data and the GDPR`}</h2>
+                    <div className={classes.cards}>
+                        {gdprPoints.map((point) => (
+                            <article key={point.title} className={classes.card}>
+                                <point.icon size={28} className={classes.cardIcon}/>
+                                <h3 className={classes.cardTitle}>{point.title}</h3>
+                                <p className={classes.cardText}>{point.description}</p>
+                            </article>
+                        ))}
                     </div>
+                    <p className={classes.gdprLink}>
+                        <a href={getPrivacyPolicyUrl()}>{t`Read our privacy policy`}</a>
+                    </p>
                 </section>
 
                 <section className={classes.section}>

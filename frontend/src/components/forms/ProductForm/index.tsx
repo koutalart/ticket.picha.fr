@@ -48,6 +48,7 @@ import {showError} from "../../../utilites/notifications.tsx";
 import classNames from "classnames";
 import {InputLabelWithHelp} from "../../common/InputLabelWithHelp";
 import {CreateTaxOrFeeModal} from "../../modals/CreateTaxOrFeeModal";
+import {DateTimeInput} from "../../common/DateTimeInput";
 
 interface ProductFormProps {
     form: UseFormReturnType<Product>,
@@ -93,13 +94,11 @@ const ProductPriceTierForm = ({form, product, event}: ProductFormProps) => {
                     label={t`Quantity Available`}
                 />
                 <InputGroup>
-                    <TextInput
-                        type={'datetime-local'}
+                    <DateTimeInput
                         {...form.getInputProps(`prices.${index}.sale_start_date`)}
                         label={t`Sale Start Date`}
                     />
-                    <TextInput
-                        type={'datetime-local'}
+                    <DateTimeInput
                         {...form.getInputProps(`prices.${index}.sale_end_date`)}
                         label={t`Sale End Date`}
                     />
@@ -451,9 +450,9 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                         </span>
                     }>
                         <InputGroup>
-                            <TextInput type={'datetime-local'} {...form.getInputProps('sale_start_date')}
+                            <DateTimeInput {...form.getInputProps('sale_start_date')}
                                        label={t`Sale Start Date`}/>
-                            <TextInput type={'datetime-local'} {...form.getInputProps('sale_end_date')}
+                            <DateTimeInput {...form.getInputProps('sale_end_date')}
                                        label={t`Sale End Date`}/>
                         </InputGroup>
                     </Fieldset>

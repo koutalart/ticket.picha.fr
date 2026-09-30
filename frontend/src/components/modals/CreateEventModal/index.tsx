@@ -217,7 +217,7 @@ export const CreateEventModal = ({onClose, organizerId}: CreateEventModalProps) 
                                     clearable
                                     dropdownType="modal"
                                     timePickerProps={{
-                                        format: '12h',
+                                        format: '24h',
                                         withDropdown: true,
                                     }}
                                     onChange={(value) => {
@@ -238,7 +238,7 @@ export const CreateEventModal = ({onClose, organizerId}: CreateEventModalProps) 
                                     clearable
                                     dropdownType="modal"
                                     timePickerProps={{
-                                        format: '12h',
+                                        format: '24h',
                                         withDropdown: true,
                                     }}
                                     minDate={form.values.start_date ?? undefined}
