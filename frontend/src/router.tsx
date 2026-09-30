@@ -1,5 +1,6 @@
 import { Navigate, RouteObject } from "react-router";
 import ErrorPage from "./error-page.tsx";
+import Landing from "./components/routes/landing";
 import { useEffect, useState } from "react";
 import { useGetMe } from "./queries/useGetMe.ts";
 import { publicEventRouteLoader } from "./routeLoaders/publicEventRouteLoader.ts";
@@ -11,19 +12,18 @@ const Root = () => {
     const me = useGetMe();
 
     useEffect(() => {
-        if (me.isFetched) {
+        if (me.isSuccess) {
             const searchParams = typeof window !== 'undefined' ? window.location.search : '';
-            const isOperator = me.isSuccess && me.data?.role === 'BOX_OFFICE_OPERATOR';
-            const basePath = me.isSuccess
-                ? (isOperator ? "/kiosk" : "/manage/events")
-                : "/auth/login";
-            setRedirectPath(basePath + searchParams);
+            const isOperator = me.data?.role === 'BOX_OFFICE_OPERATOR';
+            setRedirectPath((isOperator ? "/kiosk" : "/manage/events") + searchParams);
         }
-    }, [me.isFetched, me.isSuccess, me.data?.role]);
+    }, [me.isSuccess, me.data?.role]);
 
     if (redirectPath) {
         return <Navigate to={redirectPath} replace={true} />;
     }
+
+    return <Landing/>;
 };
 
 export const router: RouteObject[] = [
@@ -40,6 +40,10 @@ export const router: RouteObject[] = [
         },
         errorElement: <ErrorPage />,
         children: [
+            {
+                index: true,
+                element: <Navigate to="/auth/login" replace={true} />,
+            },
             {
                 path: "login",
                 async lazy() {
