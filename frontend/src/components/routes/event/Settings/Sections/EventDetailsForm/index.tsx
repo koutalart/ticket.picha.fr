@@ -16,6 +16,7 @@ import {currenciesMap} from "../../../../../../../data/currencies.ts";
 import {timezones} from "../../../../../../../data/timezones.ts";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
 import {EventCategories} from "../../../../../../constants/eventCategories.ts";
+import {DateTimeInput} from "../../../../../common/DateTimeInput";
 
 export const EventDetailsForm = () => {
     const {eventId} = useParams();
@@ -97,12 +98,12 @@ export const EventDetailsForm = () => {
                     />
 
                     <InputGroup>
-                        <TextInput type={'datetime-local'}
+                        <DateTimeInput
                                    {...form.getInputProps('start_date')}
                                    label={t`Start Date`}
                                    required
                         />
-                        <TextInput type={'datetime-local'}
+                        <DateTimeInput
                                    {...form.getInputProps('end_date')}
                                    label={t`End Date`}
                         />

@@ -14,6 +14,7 @@ import {showSuccess} from "../../../utilites/notifications.tsx";
 import {useFormErrorResponseHandler} from "../../../hooks/useFormErrorResponseHandler.tsx";
 import {Card} from "../../common/Card";
 import {IconCheckbox, IconSquare} from "@tabler/icons-react";
+import {DateTimeInput} from "../../common/DateTimeInput";
 
 interface DuplicateEventModalProps extends GenericModalProps {
     eventId: IdParam;
@@ -119,12 +120,12 @@ export const DuplicateEventModal = ({onClose, eventId}: DuplicateEventModalProps
                     />
 
                     <InputGroup>
-                        <TextInput type={'datetime-local'}
+                        <DateTimeInput
                                    {...form.getInputProps('start_date')}
                                    label={t`Start Date`}
                                    required
                         />
-                        <TextInput type={'datetime-local'}
+                        <DateTimeInput
                                    {...form.getInputProps('end_date')}
                                    label={t`End Date`}
                         />
