@@ -37,6 +37,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     final public const IS_HIGHLIGHTED = 'is_highlighted';
     final public const HIGHLIGHT_MESSAGE = 'highlight_message';
     final public const WAITLIST_ENABLED = 'waitlist_enabled';
+    final public const IS_VISIBLE_AT_BOX_OFFICE = 'is_visible_at_box_office';
 
     protected int $id;
     protected int $event_id;
@@ -65,6 +66,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     protected bool $is_highlighted = false;
     protected ?string $highlight_message = null;
     protected ?bool $waitlist_enabled = null;
+    protected bool $is_visible_at_box_office = true;
 
     public function toArray(): array
     {
@@ -96,6 +98,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
                     'is_highlighted' => $this->is_highlighted ?? null,
                     'highlight_message' => $this->highlight_message ?? null,
                     'waitlist_enabled' => $this->waitlist_enabled ?? null,
+                    'is_visible_at_box_office' => $this->is_visible_at_box_office ?? null,
                 ];
     }
 
@@ -394,5 +397,16 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     public function getWaitlistEnabled(): ?bool
     {
         return $this->waitlist_enabled;
+    }
+
+    public function setIsVisibleAtBoxOffice(bool $is_visible_at_box_office): self
+    {
+        $this->is_visible_at_box_office = $is_visible_at_box_office;
+        return $this;
+    }
+
+    public function getIsVisibleAtBoxOffice(): bool
+    {
+        return $this->is_visible_at_box_office;
     }
 }

@@ -7,6 +7,7 @@ use HiEvents\Exceptions\BoxOfficeEventNotActiveException;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\MissingPhoneCallingCodeException;
 use HiEvents\Exceptions\ProductNotScannableException;
+use HiEvents\Exceptions\ProductNotSoldAtBoxOfficeException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\Request\BoxOffice\CreateBoxOfficeSaleRequest;
@@ -75,7 +76,7 @@ class CreateBoxOfficeSaleAction extends BaseAction
             throw ValidationException::withMessages(['event_id' => $exception->getMessage()]);
         } catch (MissingPhoneCallingCodeException $exception) {
             throw ValidationException::withMessages(['phone_calling_code' => $exception->getMessage()]);
-        } catch (ProductNotScannableException|ResourceConflictException $exception) {
+        } catch (ProductNotScannableException|ProductNotSoldAtBoxOfficeException|ResourceConflictException $exception) {
             return $this->errorResponse($exception->getMessage(), ResponseCodes::HTTP_CONFLICT);
         }
 

@@ -487,6 +487,11 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                                 label={t`Hide this product from customers`}
                             />
                             <Switch
+                                description={t`Show this ticket on the box office tablet. A ticket hidden from customers can still be sold at the box office.`}
+                                {...form.getInputProps(`is_visible_at_box_office`, {type: 'checkbox'})}
+                                label={t`Visible at the box office`}
+                            />
+                            <Switch
                                 description={t`Allow customers to join a waitlist when this product is sold out`}
                                 {...form.getInputProps(`waitlist_enabled`, {type: 'checkbox'})}
                                 label={t`Enable Waitlist`}

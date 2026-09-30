@@ -8,6 +8,7 @@ use HiEvents\Constants;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
 use HiEvents\DomainObjects\Generated\BoxOfficeSaleDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\Status\BoxOfficeSaleStatus;
 use HiEvents\DomainObjects\UserDomainObject;
@@ -15,6 +16,7 @@ use HiEvents\Exceptions\BoxOfficeEventNotActiveException;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\MissingPhoneCallingCodeException;
 use HiEvents\Exceptions\ProductNotScannableException;
+use HiEvents\Exceptions\ProductNotSoldAtBoxOfficeException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Exceptions\UnauthorizedException;
 use HiEvents\Helper\KioskSentinelEmail;
@@ -125,6 +127,7 @@ class CreateBoxOfficeSaleHandler
             $lockedPrices = $this->lockPrices($items);
 
             $this->validateCartTotals($dto, $items, $lockedPrices);
+            $this->validateBoxOfficeVisibility($items);
             $this->validateScannableItems($items);
             $this->validateStock($items);
 
@@ -279,6 +282,30 @@ class CreateBoxOfficeSaleHandler
         if ($dto->payment_method === BoxOfficePaymentMethod::FREE && ! $allZero) {
             throw new BoxOfficePriceMismatchException(
                 __('FREE can only be used for a product whose price is 0 — inviting a normally-paid ticket is not supported.')
+            );
+        }
+    }
+
+    /**
+     * @param  CreateBoxOfficeSaleItemDTO[]  $items
+     *
+     * @throws ProductNotSoldAtBoxOfficeException
+     */
+    private function validateBoxOfficeVisibility(array $items): void
+    {
+        $productIds = array_values(array_unique(array_map(
+            static fn (CreateBoxOfficeSaleItemDTO $item) => $item->product_id,
+            $items,
+        )));
+
+        $hiddenCount = $this->productRepository->countWhere([
+            [ProductDomainObjectAbstract::ID, 'in', $productIds],
+            ProductDomainObjectAbstract::IS_VISIBLE_AT_BOX_OFFICE => false,
+        ]);
+
+        if ($hiddenCount > 0) {
+            throw new ProductNotSoldAtBoxOfficeException(
+                __('This ticket is not sold at the box office.')
             );
         }
     }

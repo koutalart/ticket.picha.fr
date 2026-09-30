@@ -39,6 +39,7 @@ class GetBoxOfficeProductsHandler
             ->findWhere([
                 ProductDomainObjectAbstract::EVENT_ID => $eventId,
                 ProductDomainObjectAbstract::PRODUCT_TYPE => ProductType::TICKET->name,
+                ProductDomainObjectAbstract::IS_VISIBLE_AT_BOX_OFFICE => true,
             ]);
 
         return $products->map(function (ProductDomainObject $product) {

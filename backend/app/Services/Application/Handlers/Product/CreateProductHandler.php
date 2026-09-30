@@ -59,6 +59,7 @@ class CreateProductHandler
                 ->setHideWhenSoldOut($productsData->hide_when_sold_out)
                 ->setShowQuantityRemaining($productsData->show_quantity_remaining)
                 ->setIsHiddenWithoutPromoCode($productsData->is_hidden_without_promo_code)
+                ->setIsVisibleAtBoxOffice($productsData->is_visible_at_box_office ?? true)
                 ->setIsHighlighted($productsData->is_highlighted ?? false)
                 ->setHighlightMessage($productsData->highlight_message)
                 ->setWaitlistEnabled($productsData->waitlist_enabled)
