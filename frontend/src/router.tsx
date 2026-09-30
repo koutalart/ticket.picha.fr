@@ -1,4 +1,4 @@
-import { Navigate, RouteObject } from "react-router";
+import { LoaderFunctionArgs, Navigate, RouteObject, useLoaderData } from "react-router";
 import ErrorPage from "./error-page.tsx";
 import Landing from "./components/routes/landing";
 import { useEffect, useState } from "react";
@@ -6,8 +6,28 @@ import { useGetMe } from "./queries/useGetMe.ts";
 import { publicEventRouteLoader } from "./routeLoaders/publicEventRouteLoader.ts";
 import { publicOrganizerRouteLoader } from "./routeLoaders/publicOrganizerRouteLoader.ts";
 import { organizerPreviewRouteLoader } from "./routeLoaders/organizerPreviewRouteLoader.ts";
+import PublicOrganizer from "./components/layouts/PublicOrganizer";
+import { getCustomDomainOrganizer } from "./utilites/customDomain.ts";
+
+const rootRouteLoader = async (args: LoaderFunctionArgs) => {
+    const organizer = getCustomDomainOrganizer(args.request);
+    if (!organizer) {
+        return null;
+    }
+
+    return publicOrganizerRouteLoader({
+        ...args,
+        params: {organizerId: String(organizer.id), organizerSlug: organizer.slug},
+    });
+};
 
 const Root = () => {
+    const customDomainData = useLoaderData();
+
+    return customDomainData ? <PublicOrganizer /> : <PlatformRoot />;
+};
+
+const PlatformRoot = () => {
     const [redirectPath, setRedirectPath] = useState<string | null>(null);
     const me = useGetMe();
 
@@ -29,6 +49,7 @@ const Root = () => {
 export const router: RouteObject[] = [
     {
         path: "",
+        loader: rootRouteLoader,
         element: <Root />,
         errorElement: <ErrorPage />
     },

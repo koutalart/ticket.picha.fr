@@ -59,6 +59,19 @@ sudo crontab -e
 0 3 * * * /opt/picha-ticket/docker/production/backup.sh >> /var/log/picha-backup.log 2>&1
 ```
 
+## Domaines personnalisés d'organisateurs
+Un organisateur peut avoir son propre domaine (ex. `innocent976.yt`) : sa page d'accueil y est servie sur `/`,
+ainsi que ses pages d'événement et de commande. `/manage`, `/auth`, `/admin`… renvoient vers ticket.picha.fr.
+
+1. **Admin › Comptes › (compte) › Organisateurs et domaines** : saisir le domaine de l'organisateur.
+2. **DNS** chez le registrar : enregistrements **A** du domaine et de `www` → `51.210.5.75`.
+3. **HTTPS** sur le VPS :
+```bash
+sudo /opt/picha-ticket/docker/production/add-custom-domain.sh innocent976.yt
+```
+Le frontend résout le domaine via l'API (cache de 60 s) : aucun redéploiement n'est nécessaire.
+Pour retirer un domaine : le vider dans l'admin, puis supprimer `/etc/nginx/sites-enabled/custom-<domaine>.conf`.
+
 ## Mise à jour
 ```bash
 cd /opt/picha-ticket && git pull

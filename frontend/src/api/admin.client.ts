@@ -6,6 +6,14 @@ export interface AdminUser extends User {
     created_at?: string;
 }
 
+export interface AdminOrganizer {
+    id: IdParam;
+    name: string;
+    slug: string;
+    status: string;
+    custom_domain: string | null;
+}
+
 export interface AccountWithRole {
     id: IdParam;
     name: string;
@@ -449,6 +457,21 @@ export const adminClient = {
     getAccount: async (accountId: IdParam) => {
         const response = await api.get<GenericDataResponse<AdminAccountDetail>>(
             `admin/accounts/${accountId}`
+        );
+        return response.data;
+    },
+
+    getAccountOrganizers: async (accountId: IdParam) => {
+        const response = await api.get<GenericDataResponse<AdminOrganizer[]>>(
+            `admin/accounts/${accountId}/organizers`
+        );
+        return response.data;
+    },
+
+    updateOrganizerCustomDomain: async (accountId: IdParam, organizerId: IdParam, customDomain: string | null) => {
+        const response = await api.put<GenericDataResponse<AdminOrganizer>>(
+            `admin/accounts/${accountId}/organizers/${organizerId}/custom-domain`,
+            {custom_domain: customDomain}
         );
         return response.data;
     },

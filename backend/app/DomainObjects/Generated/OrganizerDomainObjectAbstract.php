@@ -23,6 +23,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     final public const CURRENCY = 'currency';
     final public const TIMEZONE = 'timezone';
     final public const STATUS = 'status';
+    final public const CUSTOM_DOMAIN = 'custom_domain';
 
     protected int $id;
     protected int $account_id;
@@ -37,6 +38,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     protected string $currency = 'USD';
     protected string $timezone;
     protected string $status = 'DRAFT';
+    protected ?string $custom_domain = null;
 
     public function toArray(): array
     {
@@ -54,6 +56,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
                     'currency' => $this->currency ?? null,
                     'timezone' => $this->timezone ?? null,
                     'status' => $this->status ?? null,
+                    'custom_domain' => $this->custom_domain ?? null,
                 ];
     }
 
@@ -198,5 +201,16 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    public function setCustomDomain(?string $custom_domain): self
+    {
+        $this->custom_domain = $custom_domain;
+        return $this;
+    }
+
+    public function getCustomDomain(): ?string
+    {
+        return $this->custom_domain;
     }
 }

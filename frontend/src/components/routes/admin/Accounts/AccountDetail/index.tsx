@@ -6,9 +6,12 @@ import {useGetAllConfigurations} from "../../../../../queries/useGetAllConfigura
 import {useGetMessagingTiers} from "../../../../../queries/useGetMessagingTiers";
 import {useAssignConfiguration} from "../../../../../mutations/useAssignConfiguration";
 import {useUpdateAccountMessagingTier} from "../../../../../mutations/useUpdateAccountMessagingTier";
-import {IconArrowLeft, IconCalendar, IconWorld, IconEdit, IconBuildingBank, IconUsers} from "@tabler/icons-react";
+import {IconArrowLeft, IconCalendar, IconWorld, IconEdit, IconBuildingBank, IconUsers, IconExternalLink} from "@tabler/icons-react";
 import {useState} from "react";
 import {EditAccountVatSettingsModal} from "../../../../modals/EditAccountVatSettingsModal";
+import {EditOrganizerCustomDomainModal} from "../../../../modals/EditOrganizerCustomDomainModal";
+import {useGetAdminAccountOrganizers} from "../../../../../queries/useGetAdminAccountOrganizers";
+import {AdminOrganizer} from "../../../../../api/admin.client";
 import {showSuccess, showError} from "../../../../../utilites/notifications";
 import {getCurrencySymbol} from "../../../../../utilites/currency";
 import classes from "./AccountDetail.module.scss";
@@ -22,10 +25,13 @@ const AccountDetail = () => {
     const assignConfigMutation = useAssignConfiguration(accountId!);
     const updateTierMutation = useUpdateAccountMessagingTier(accountId!);
     const [showVatModal, setShowVatModal] = useState(false);
+    const {data: organizersData} = useGetAdminAccountOrganizers(accountId!);
+    const [domainOrganizer, setDomainOrganizer] = useState<AdminOrganizer | null>(null);
 
     const account = accountData?.data;
     const configurations = configurationsData?.data || [];
     const messagingTiers = messagingTiersData?.data || [];
+    const organizers = organizersData?.data || [];
 
     const formatDate = (dateString?: string) => {
         if (!dateString) return '-';
@@ -168,6 +174,51 @@ const AccountDetail = () => {
                                     </Stack>
                                 </div>
                             </div>
+                        </Stack>
+                    </Card>
+
+                    <Card className={classes.accountCard}>
+                        <Stack gap="md">
+                            <Text size="lg" fw={600}>{t`Organizers & Custom Domains`}</Text>
+
+                            {organizers.length === 0 ? (
+                                <Text size="sm" c="dimmed">{t`No organizers`}</Text>
+                            ) : (
+                                <div className={classes.usersList}>
+                                    {organizers.map((organizer) => (
+                                        <div key={organizer.id} className={classes.userItem}>
+                                            <div>
+                                                <Group gap="xs">
+                                                    <Text size="sm" fw={500}>{organizer.name}</Text>
+                                                    <Badge size="xs" variant="light">{organizer.status}</Badge>
+                                                </Group>
+                                                {organizer.custom_domain ? (
+                                                    <Text
+                                                        size="xs"
+                                                        component="a"
+                                                        href={`https://${organizer.custom_domain}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        c="blue"
+                                                    >
+                                                        {organizer.custom_domain} <IconExternalLink size={10}/>
+                                                    </Text>
+                                                ) : (
+                                                    <Text size="xs" c="dimmed">{t`No custom domain`}</Text>
+                                                )}
+                                            </div>
+                                            <Button
+                                                variant="light"
+                                                size="xs"
+                                                leftSection={<IconEdit size={14}/>}
+                                                onClick={() => setDomainOrganizer(organizer)}
+                                            >
+                                                {t`Domain`}
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </Stack>
                     </Card>
 
@@ -338,6 +389,14 @@ const AccountDetail = () => {
                     accountId={accountId!}
                     vatSetting={account.vat_setting}
                     onClose={() => setShowVatModal(false)}
+                />
+            )}
+
+            {domainOrganizer && (
+                <EditOrganizerCustomDomainModal
+                    accountId={accountId!}
+                    organizer={domainOrganizer}
+                    onClose={() => setDomainOrganizer(null)}
                 />
             )}
         </>

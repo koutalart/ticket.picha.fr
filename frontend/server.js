@@ -52,10 +52,41 @@ async function main() {
         app.use(base, sirv(path.join(__dirname, "./dist/client"), { extensions: [] }));
     }
 
-    // DIGIT: mapping des domaines personnalises - organisateurs avec leur propre domaine.
-    // Ajouter une entree ici pour chaque nouveau domaine personnalise configure.
-    const CUSTOM_DOMAINS = {
-        'innocent976.yt': {organizerPath: '/events/6/innocent-event'},
+    const CUSTOM_DOMAIN_HEADER = 'x-picha-custom-domain-organizer';
+    const CUSTOM_DOMAIN_CACHE_TTL_MS = 60 * 1000;
+    const PLATFORM_ONLY_PATHS = /^\/(manage|admin|auth|account|welcome|kiosk|profile)(\/|$|\?)/;
+    const customDomainCache = new Map();
+
+    const normalizeHost = (host) => (host || '').toLowerCase().replace(/:\d+$/, '').replace(/^www\./, '');
+    const platformUrl = (process.env.VITE_FRONTEND_URL || '').replace(/\/$/, '');
+    const platformHost = platformUrl ? normalizeHost(new URL(platformUrl).host) : null;
+
+    const resolveCustomDomain = async (host) => {
+        if (!host || host === platformHost || host === 'localhost' || /^[\d.]+$/.test(host) || !host.includes('.')) {
+            return null;
+        }
+
+        const cached = customDomainCache.get(host);
+        if (cached && cached.expiresAt > Date.now()) {
+            return cached.organizer;
+        }
+
+        try {
+            const response = await fetch(
+                `${process.env.VITE_API_URL_SERVER}/public/custom-domains/${encodeURIComponent(host)}`,
+                {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(3000)}
+            );
+
+            if (response.ok || response.status === 404) {
+                const organizer = response.ok ? (await response.json()).data : null;
+                customDomainCache.set(host, {organizer, expiresAt: Date.now() + CUSTOM_DOMAIN_CACHE_TTL_MS});
+                return organizer;
+            }
+        } catch (error) {
+            console.error(`Custom domain lookup failed for ${host}`, error);
+        }
+
+        return cached?.organizer ?? null;
     };
 
     const getViteEnvironmentVariables = (overrides = {}) => {
@@ -87,11 +118,23 @@ Sitemap: ${frontendUrl}/sitemap.xml
     app.use("*", async (req, res) => {
         let url = req.originalUrl.replace(base, "");
 
-        const requestHost = (req.get('host') || '').replace(/^www\./, '');
-        const customDomain = CUSTOM_DOMAINS[requestHost];
-        if (customDomain && (url === '/' || url === '')) {
-            res.redirect(302, customDomain.organizerPath);
-            return;
+        delete req.headers[CUSTOM_DOMAIN_HEADER];
+        const requestHost = normalizeHost(req.get('host'));
+        const customDomain = await resolveCustomDomain(requestHost);
+
+        if (customDomain) {
+            if (PLATFORM_ONLY_PATHS.test(req.originalUrl) && platformUrl) {
+                res.redirect(302, `${platformUrl}${req.originalUrl}`);
+                return;
+            }
+
+            const [pathname, search] = req.originalUrl.split('?');
+            if (new RegExp(`^/events/${customDomain.id}/[^/]+/?$`).test(pathname)) {
+                res.redirect(302, `/${search ? `?${search}` : ''}`);
+                return;
+            }
+
+            req.headers[CUSTOM_DOMAIN_HEADER] = JSON.stringify(customDomain);
         }
 
         try {
@@ -118,8 +161,8 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 .join(" ");
 
             const envVariablesHtml = `<script>window.hievents = ${getViteEnvironmentVariables(
-                customDomain ? {VITE_FRONTEND_URL: `${req.protocol}://${requestHost}`} : {}
-            )};</script>`;
+                customDomain ? {VITE_FRONTEND_URL: `https://${requestHost}`} : {}
+            )};window.__CUSTOM_DOMAIN_ORGANIZER__ = ${JSON.stringify(customDomain).replace(/</g, '\\u003c')};</script>`;
 
             const headSnippets = [];
             if (process.env.VITE_FATHOM_SITE_ID) {
