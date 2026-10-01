@@ -29,6 +29,11 @@ export const eventHomepageUrl = (event: Event) => {
     return getConfig('VITE_FRONTEND_URL') + eventHomepagePath(event);
 }
 
+export const eventShareImageUrl = (event: Event) => {
+    return event?.images?.find((image) => image.type === 'EVENT_SHARE_IMAGE')?.url
+        ?? event?.images?.find((image) => image.type === 'EVENT_COVER')?.url;
+}
+
 export const eventCoverImageUrl = (event: Event) => {
     return event?.images?.find((image) => image.type === 'EVENT_COVER')?.url;
 }
