@@ -647,7 +647,7 @@ fiche d'achat.
    (1 ligne en 50 pts, 2 lignes en 36 pts au-delà de 22 caractères) + trait arrondi ; lignes
    Type d'entrée / Date (« Sam. 5 sept. 2026 ») / Heure / Lieu avec pictos (sans cercles depuis le 1er oct., Jo) et
    pointillés ; QR (231 pts, 29 mm), sans cadre depuis le 1er oct. (Jo), avec ID espacé sans préfixe (le QR garde
-   l'ID complet) et nom ; pied logo PICHA Ticket | « Billetterie & gestion » au-dessus du globe +
+   l'ID complet) et nom ; pied logo PICHA AI (logo officiel, jaune imprimé en noir) | « Billetterie & gestion » au-dessus du globe +
    ticket.picha.fr. Le canevas de référence devient 631 × 695 pts. Retirés à la demande de Jo : prix,
    téléphone organisateur, bloc « Votre prochain événement ? ». Gris du mockup → contours noirs
    (imprimante 1 bit). **Logo événement** : image `TICKET_LOGO` (déjà téléversable dans le Ticket

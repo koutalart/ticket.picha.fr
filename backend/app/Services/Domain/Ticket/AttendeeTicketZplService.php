@@ -22,7 +22,7 @@ class AttendeeTicketZplService
 
     /** @var array<string, int> */
     private const GRAPHICS = [
-        'picha-logo-footer.gfa' => 19,
+        'picha-ai-logo-footer.gfa' => 23,
         'icon-ticket.gfa' => 6,
         'icon-date.gfa' => 5,
         'icon-time.gfa' => 5,
@@ -159,7 +159,7 @@ class AttendeeTicketZplService
             $lines[] = $at($x, 574).$box(8, 2, 2).'^FS';
         }
         $lines[] = $at(306, 600).$font(18).'^FD'.$this->field(__('Ticketing & management'), 32).'^FS';
-        $lines = array_merge($lines, $this->graphic('picha-logo-footer.gfa', $at(48, 591)));
+        $lines = array_merge($lines, $this->graphic('picha-ai-logo-footer.gfa', $at(48, 590)));
         $lines[] = $at(268, 584).$box(2, 74, 2).'^FS';
         $lines[] = $at(306, 624).'^GC'.$d(32).','.$d(2).'^FS';
         $lines[] = $at(316, 624).'^GE'.$d(12).','.$d(32).','.$d(2).'^FS';
