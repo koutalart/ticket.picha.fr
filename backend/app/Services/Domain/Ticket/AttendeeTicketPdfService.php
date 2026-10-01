@@ -12,7 +12,6 @@ use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Helper\Url;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 /**
  * D18 (PICHA_BOX_OFFICE_DECISIONS_REQUIRED.md): extraction of
@@ -24,6 +23,7 @@ class AttendeeTicketPdfService
 {
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
+        private readonly QrCodePngRenderer $qrCodePngRenderer,
     )
     {
     }
@@ -52,14 +52,7 @@ class AttendeeTicketPdfService
             ?->first(fn($image) => $image->getType() === ImageType::TICKET_LOGO->name);
         $logoUrl = $logoImage ? Url::getCdnUrl($logoImage->getPath()) : null;
 
-        // simplesoftwareio/simple-qrcode returns an Illuminate\Support\HtmlString,
-        // not a plain string — the original AttendeeTicketMail relied on PHP's
-        // implicit __toString() coercion (that file has no strict_types
-        // declaration); an explicit cast keeps the identical output under
-        // strict_types here.
-        $qrCodeBase64 = base64_encode(
-            (string)QrCode::format('png')->size(300)->margin(1)->generate($attendee->getPublicId())
-        );
+        $qrCodeBase64 = base64_encode($this->qrCodePngRenderer->render($attendee->getPublicId(), 300));
 
         return Pdf::loadView('attendee-ticket-pdf', [
             'attendee' => $attendee,
