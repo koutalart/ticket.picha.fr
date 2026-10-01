@@ -47,7 +47,7 @@ export interface BoxOfficeAttendeeSearchResult {
     checked_in_at: string | null;
 }
 
-export type BoxOfficeOrderChannel = 'ONLINE' | 'BOX_OFFICE';
+export type BoxOfficeOrderChannel = 'ONLINE' | 'BOX_OFFICE' | 'MANUAL';
 
 export interface BoxOfficeOrderListItem {
     public_id: string;

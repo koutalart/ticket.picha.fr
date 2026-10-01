@@ -46,9 +46,11 @@ class GetBoxOfficeOrdersHandler
             last_name: $row->last_name,
             email: KioskSentinelEmail::isKioskSentinelEmail((string) $row->email) ? null : $row->email,
             phone: $row->phone,
-            channel: $row->box_office_sale_id !== null
-                ? BoxOfficeOrderFilterDTO::CHANNEL_BOX_OFFICE
-                : BoxOfficeOrderFilterDTO::CHANNEL_ONLINE,
+            channel: match (true) {
+                $row->box_office_sale_id !== null => BoxOfficeOrderFilterDTO::CHANNEL_BOX_OFFICE,
+                (bool) $row->is_manually_created => BoxOfficeOrderFilterDTO::CHANNEL_MANUAL,
+                default => BoxOfficeOrderFilterDTO::CHANNEL_ONLINE,
+            },
             agent_name: trim(($row->agent_first_name ?? '').' '.($row->agent_last_name ?? '')) ?: null,
             payment_method: $row->payment_method,
             total_gross: (float) $row->total_gross,

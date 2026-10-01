@@ -265,7 +265,9 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         if ($filter->channel === BoxOfficeOrderFilterDTO::CHANNEL_BOX_OFFICE) {
             $query->whereNotNull('box_office_sales.id');
         } elseif ($filter->channel === BoxOfficeOrderFilterDTO::CHANNEL_ONLINE) {
-            $query->whereNull('box_office_sales.id');
+            $query->whereNull('box_office_sales.id')->where('orders.is_manually_created', false);
+        } elseif ($filter->channel === BoxOfficeOrderFilterDTO::CHANNEL_MANUAL) {
+            $query->whereNull('box_office_sales.id')->where('orders.is_manually_created', true);
         }
 
         if ($filter->agent_user_id !== null) {
@@ -362,6 +364,7 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
                 'orders.currency',
                 'orders.status',
                 'orders.payment_status',
+                'orders.is_manually_created',
                 'box_office_sales.id as box_office_sale_id',
                 'box_office_sales.phone',
                 'box_office_sales.payment_method',

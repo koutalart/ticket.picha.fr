@@ -198,9 +198,15 @@ const KioskOrders = () => {
         return <span className={`${classes.pill} ${classes.pillReady}`}>{t`Not entered yet`}</span>;
     };
 
-    const channelLabel = (order: BoxOfficeOrderListItem) => order.channel === 'BOX_OFFICE'
-        ? <span className={`${classes.channel} ${classes.channelBoxOffice}`}>{t`Box office`}</span>
-        : <span className={`${classes.channel} ${classes.channelOnline}`}>{t`Online`}</span>;
+    const channelLabel = (order: BoxOfficeOrderListItem) => {
+        if (order.channel === 'BOX_OFFICE') {
+            return <span className={`${classes.channel} ${classes.channelBoxOffice}`}>{t`Box office`}</span>;
+        }
+        if (order.channel === 'MANUAL') {
+            return <span className={`${classes.channel} ${classes.channelOnline}`}>{t`Added manually`}</span>;
+        }
+        return <span className={`${classes.channel} ${classes.channelOnline}`}>{t`Online`}</span>;
+    };
 
     const pendingCount = (detail?.tickets ?? []).filter((ticket) => isOpenTicket(ticket) && !ticket.checked_in_at).length;
 

@@ -22,7 +22,7 @@ class GetBoxOfficeOrdersAction extends BaseAction
 
         $page = $this->handler->handle($eventId, new BoxOfficeOrderFilterDTO(
             query: (string) $request->query('query', ''),
-            channel: in_array($channel, [BoxOfficeOrderFilterDTO::CHANNEL_ONLINE, BoxOfficeOrderFilterDTO::CHANNEL_BOX_OFFICE], true) ? $channel : null,
+            channel: in_array($channel, [BoxOfficeOrderFilterDTO::CHANNEL_ONLINE, BoxOfficeOrderFilterDTO::CHANNEL_BOX_OFFICE, BoxOfficeOrderFilterDTO::CHANNEL_MANUAL], true) ? $channel : null,
             agent_user_id: $request->boolean('mine') ? $this->getAuthenticatedUser()->getId() : null,
             not_checked_in: $request->boolean('not_checked_in'),
             cancelled: $request->boolean('cancelled'),

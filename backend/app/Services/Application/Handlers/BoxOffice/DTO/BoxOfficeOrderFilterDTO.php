@@ -12,6 +12,8 @@ class BoxOfficeOrderFilterDTO extends BaseDataObject
 
     public const CHANNEL_BOX_OFFICE = 'BOX_OFFICE';
 
+    public const CHANNEL_MANUAL = 'MANUAL';
+
     public function __construct(
         public readonly ?string $query = null,
         public readonly ?string $channel = null,

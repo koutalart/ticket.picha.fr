@@ -43,7 +43,7 @@ class BoxOfficeOrdersTest extends TestCase
     private function onlineOrder(Event $event, Product $product, ProductPrice $productPrice, string $firstName = 'Jane', string $email = 'jane@example.test'): Order
     {
         $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
-        Order::whereKey($attendee->order_id)->update(['first_name' => $firstName, 'last_name' => 'Online', 'email' => $email]);
+        Order::whereKey($attendee->order_id)->update(['first_name' => $firstName, 'last_name' => 'Online', 'email' => $email, 'is_manually_created' => false]);
         DB::table('attendees')->where('id', $attendee->id)->update(['first_name' => $firstName]);
 
         return Order::find($attendee->order_id);
@@ -127,6 +127,18 @@ class BoxOfficeOrdersTest extends TestCase
         self::assertSame([$online->public_id], $this->publicIds($this->list($event->id, new BoxOfficeOrderFilterDTO(channel: 'ONLINE'))));
         self::assertSame([$theirs->public_id, $mine->public_id], $this->publicIds($this->list($event->id, new BoxOfficeOrderFilterDTO(channel: 'BOX_OFFICE'))));
         self::assertSame([$mine->public_id], $this->publicIds($this->list($event->id, new BoxOfficeOrderFilterDTO(agent_user_id: $agentId))));
+    }
+
+    public function test_orders_added_by_hand_in_the_admin_are_neither_online_nor_box_office(): void
+    {
+        [$event, $product, $productPrice] = $this->eventFixture();
+        $online = $this->onlineOrder($event, $product, $productPrice);
+        $manual = $this->onlineOrder($event, $product, $productPrice);
+        Order::whereKey($manual->id)->update(['is_manually_created' => true]);
+
+        self::assertSame('MANUAL', $this->list($event->id)[0]->channel);
+        self::assertSame([$online->public_id], $this->publicIds($this->list($event->id, new BoxOfficeOrderFilterDTO(channel: 'ONLINE'))));
+        self::assertSame([$manual->public_id], $this->publicIds($this->list($event->id, new BoxOfficeOrderFilterDTO(channel: 'MANUAL'))));
     }
 
     public function test_search_by_buyer_order_number_ticket_number_and_phone(): void
