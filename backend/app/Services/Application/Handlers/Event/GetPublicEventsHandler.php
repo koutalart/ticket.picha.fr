@@ -2,6 +2,7 @@
 
 namespace HiEvents\Services\Application\Handlers\Event;
 
+use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\ProductCategoryDomainObject;
@@ -55,12 +56,42 @@ class GetPublicEventsHandler
             );
         }
 
-        return $query->findEvents(
+        $events = $query->findEvents(
             where: [
                 'organizer_id' => $dto->organizerId,
                 'status' => EventStatus::LIVE->name,
             ],
             params: $dto->queryParams
+        );
+
+        $events->getCollection()->each(fn(EventDomainObject $event) => $this->removeHiddenProducts($event));
+
+        return $events;
+    }
+
+    private function removeHiddenProducts(EventDomainObject $event): void
+    {
+        if ($event->getProductCategories() === null) {
+            return;
+        }
+
+        $event->setProductCategories(
+            $event->getProductCategories()
+                ->reject(fn(ProductCategoryDomainObject $category) => $category->getIsHidden())
+                ->each(function (ProductCategoryDomainObject $category) {
+                    $category->setProducts(
+                        ($category->getProducts() ?? collect())
+                            ->reject(fn(ProductDomainObject $product) => $product->getIsHidden()
+                                || $product->getIsHiddenWithoutPromoCode())
+                            ->each(fn(ProductDomainObject $product) => $product->setProductPrices(
+                                ($product->getProductPrices() ?? collect())
+                                    ->reject(fn(ProductPriceDomainObject $price) => $price->getIsHidden())
+                                    ->values()
+                            ))
+                            ->values()
+                    );
+                })
+                ->values()
         );
     }
 }
