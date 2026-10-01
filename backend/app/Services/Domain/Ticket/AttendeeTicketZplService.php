@@ -158,7 +158,7 @@ class AttendeeTicketZplService
         for ($x = 30; $x <= 594; $x += 14) {
             $lines[] = $at($x, 574).$box(8, 2, 2).'^FS';
         }
-        $lines[] = $at(306, 586).$font(18).'^FD'.$this->field(__('Ticketing & management'), 32).'^FS';
+        $lines[] = $at(306, 600).$font(18).'^FD'.$this->field(__('Ticketing & management'), 32).'^FS';
         $lines = array_merge($lines, $this->graphic('picha-logo-footer.gfa', $at(48, 591)));
         $lines[] = $at(268, 584).$box(2, 74, 2).'^FS';
         $lines[] = $at(306, 624).'^GC'.$d(32).','.$d(2).'^FS';
