@@ -645,7 +645,7 @@ fiche d'achat.
    **Design PICHA 79 × 87 (Jo, 27 sept.)** — remplace la maquette « Triangle des Bermudes » :
    en-tête logo événement | séparateur | « Sponsor » + logo sponsor ; « É V É N E M E N T » + titre
    (1 ligne en 50 pts, 2 lignes en 36 pts au-delà de 22 caractères) + trait arrondi ; lignes
-   Type d'entrée / Date (« Sam. 5 sept. 2026 ») / Heure / Lieu avec pictos dans des cercles et
+   Type d'entrée / Date (« Sam. 5 sept. 2026 ») / Heure / Lieu avec pictos (sans cercles depuis le 1er oct., Jo) et
    pointillés ; QR (231 pts, 29 mm), sans cadre depuis le 1er oct. (Jo), avec ID espacé sans préfixe (le QR garde
    l'ID complet) et nom ; pied « Billetterie & gestion » + logo PICHA Ticket | globe +
    ticket.picha.fr. Le canevas de référence devient 631 × 695 pts. Retirés à la demande de Jo : prix,

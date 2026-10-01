@@ -16,7 +16,7 @@ class AttendeeTicketZplService
 
     private const ROW_TOP = 282;
 
-    private const ROW_CIRCLE = 62;
+    private const ROW_ICON_SLOT = 62;
 
     private const PICHA_SITE = 'ticket.picha.fr';
 
@@ -124,10 +124,9 @@ class AttendeeTicketZplService
 
         foreach ($rows as $index => [$icon, $label, $value]) {
             $top = self::ROW_TOP + $index * $pitch;
-            $lines[] = $at(30, $top).'^GC'.$d(self::ROW_CIRCLE).','.$d(2).'^FS';
             [$inkLeft, $inkTop, $inkWidth, $inkHeight] = $this->graphicInkBox($icon);
-            $centreX = $d(30) + intdiv($d(self::ROW_CIRCLE), 2);
-            $centreY = $d($top) + intdiv($d(self::ROW_CIRCLE), 2);
+            $centreX = $d(30) + intdiv($d(self::ROW_ICON_SLOT), 2);
+            $centreY = $d($top) + intdiv($d(self::ROW_ICON_SLOT), 2);
             $lines = array_merge($lines, $this->graphic(
                 $icon,
                 '^FO'.($centreX - $inkLeft - intdiv($inkWidth, 2)).','.($centreY - $inkTop - intdiv($inkHeight, 2)),
@@ -136,7 +135,7 @@ class AttendeeTicketZplService
             $lines[] = $at(108, $top + 26).$font(30, 27).'^FD'.$this->words($value, 19).'^FS';
 
             if ($index < count($rows) - 1) {
-                $separatorY = $top + self::ROW_CIRCLE + intdiv($pitch - self::ROW_CIRCLE, 2);
+                $separatorY = $top + self::ROW_ICON_SLOT + intdiv($pitch - self::ROW_ICON_SLOT, 2);
                 for ($x = 30; $x <= 330; $x += 6) {
                     $lines[] = $at($x, $separatorY).$box(2, 1, 1).'^FS';
                 }

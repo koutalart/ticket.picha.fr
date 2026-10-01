@@ -117,14 +117,12 @@ class AttendeeTicketZplServiceTest extends TestCase
     {
         $zpl = $this->generate(venueName: 'Le 5/5', venueCity: 'Mamoudzou');
 
-        self::assertStringContainsString('^FO30,282^GC62,2^FS', $zpl);
         self::assertStringContainsString('^FO43,291^GFA,', $zpl);
         self::assertStringContainsString("^FO108,288^A0N,15,15^FDT Y P E   D ' E N T R É E^FS", $zpl);
         self::assertStringContainsString('^FO108,308^A0N,30,27^FDPass VIP^FS', $zpl);
         self::assertStringContainsString('^FO30,348^GB2,1,1^FS', $zpl);
         self::assertStringContainsString('^FO108,378^A0N,30,27^FDSam. 5 sept. 2026^FS', $zpl);
         self::assertStringContainsString('^FO108,448^A0N,30,27^FD21h00^FS', $zpl);
-        self::assertStringContainsString('^FO30,492^GC62,2^FS', $zpl);
         self::assertStringContainsString('^FO108,498^A0N,15,15^FDL I E U^FS', $zpl);
         self::assertStringContainsString('^FO108,518^A0N,30,27^FDLe 5/5, Mamoudzou^FS', $zpl);
     }
@@ -133,17 +131,22 @@ class AttendeeTicketZplServiceTest extends TestCase
     {
         $zpl = $this->generate();
 
-        self::assertStringContainsString('^FO30,374^GC62,2^FS', $zpl);
-        self::assertStringContainsString('^FO30,466^GC62,2^FS', $zpl);
         self::assertStringContainsString('^FO30,359^GB2,1,1^FS', $zpl);
         self::assertStringNotContainsString('L I E U', $zpl);
     }
 
-    public function test_icon_drawing_is_centred_in_its_circle(): void
+    public function test_icons_are_drawn_without_circles(): void
+    {
+        $zpl = $this->generate(venueName: 'Le 5/5');
+
+        self::assertStringNotContainsString('^GC62', $zpl);
+        self::assertStringContainsString('^FO43,291^GFA,', $zpl);
+    }
+
+    public function test_icon_drawing_is_centred_on_former_circle_centre(): void
     {
         $zpl = $this->generate();
 
-        self::assertStringContainsString('^FO30,374^GC62,2^FS', $zpl);
         self::assertStringContainsString('^FO45,385^GFA,', $zpl);
     }
 
