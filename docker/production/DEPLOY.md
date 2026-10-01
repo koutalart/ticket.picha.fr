@@ -71,6 +71,12 @@ sudo /opt/picha-ticket/docker/production/add-custom-domain.sh innocent976.yt
 ```
 Le frontend résout le domaine via l'API (cache de 60 s) : aucun redéploiement n'est nécessaire.
 Pour retirer un domaine : le vider dans l'admin, puis supprimer `/etc/nginx/sites-enabled/custom-<domaine>.conf`.
+Sans cookie ni langue de navigateur (robots d'indexation), les domaines personnalisés sont servis en français.
+
+Domaines en service :
+- `innocent976.yt` → organisateur n°4 « Innocent Event » (compte 1), template Affiche, depuis le 01/10/2026.
+  L'ancienne config pointant vers le staging (supprimé) est conservée dans
+  `/etc/nginx/sites-available/innocent976.yt.conf.staging-backup-20261001`.
 
 ## Mise à jour
 ```bash

@@ -210,6 +210,10 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 return;
             }
 
+            if (!req.cookies?.locale && !req.headers['accept-language']) {
+                req.headers['accept-language'] = 'fr';
+            }
+
             req.headers[CUSTOM_DOMAIN_HEADER] = JSON.stringify(customDomain);
         }
 

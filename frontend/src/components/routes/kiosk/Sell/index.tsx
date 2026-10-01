@@ -17,7 +17,6 @@ const KioskSell = () => {
         return (productsQuery.data?.data ?? []).filter((product) =>
             product.is_scannable
             && product.is_available
-            && !product.is_hidden
         );
     }, [productsQuery.data]);
 
