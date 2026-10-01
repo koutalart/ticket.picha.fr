@@ -646,7 +646,7 @@ fiche d'achat.
    en-tête logo événement | séparateur | « Sponsor » + logo sponsor ; « É V É N E M E N T » + titre
    (1 ligne en 50 pts, 2 lignes en 36 pts au-delà de 22 caractères) + trait arrondi ; lignes
    Type d'entrée / Date (« Sam. 5 sept. 2026 ») / Heure / Lieu avec pictos dans des cercles et
-   pointillés ; QR (231 pts, 29 mm) dans un cadre arrondi avec ID espacé sans préfixe (le QR garde
+   pointillés ; QR (231 pts, 29 mm), sans cadre depuis le 1er oct. (Jo), avec ID espacé sans préfixe (le QR garde
    l'ID complet) et nom ; pied « Billetterie & gestion » + logo PICHA Ticket | globe +
    ticket.picha.fr. Le canevas de référence devient 631 × 695 pts. Retirés à la demande de Jo : prix,
    téléphone organisateur, bloc « Votre prochain événement ? ». Gris du mockup → contours noirs

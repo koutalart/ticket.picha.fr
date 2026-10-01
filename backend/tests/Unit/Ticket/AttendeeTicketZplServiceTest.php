@@ -147,11 +147,11 @@ class AttendeeTicketZplServiceTest extends TestCase
         self::assertStringContainsString('^FO45,385^GFA,', $zpl);
     }
 
-    public function test_qr_code_sits_in_frame_with_spaced_id_and_name(): void
+    public function test_qr_code_has_no_frame_and_shows_spaced_id_and_name(): void
     {
         $zpl = $this->generate();
 
-        self::assertStringContainsString('^FO346,268^GB258,294,3,B,1^FS', $zpl);
+        self::assertStringNotContainsString('^GB258,294', $zpl);
         self::assertStringContainsString('^FXQR:A-C369BTS^FS', $zpl);
         self::assertStringContainsString('^FO359,276^GFA,', $zpl);
         self::assertStringContainsString('^FO346,515^A0N,20,20^FB258,1,0,C^FDC 3 6 9 B T S\&^FS', $zpl);

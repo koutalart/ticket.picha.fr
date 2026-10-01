@@ -143,7 +143,6 @@ class AttendeeTicketZplService
             }
         }
 
-        $lines[] = $at(346, 268).$box(258, 294, 3, 1).'^FS';
         $qr = $this->qrCodeRenderer->renderToFit($safeId, $d(self::QR_BOX));
         $qrX = $d(346) + intdiv($d(258) - $qr->size, 2);
         $qrY = $d(276);
