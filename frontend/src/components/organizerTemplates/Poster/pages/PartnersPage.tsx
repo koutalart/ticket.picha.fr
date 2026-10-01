@@ -21,12 +21,19 @@ export const PartnersPage = ({organizer, openContact}: PosterPageProps) => {
                 lead={content.partners_intro || t`Brands, institutions and media that support ${organizer.name}.`}
             />
 
-            {Object.entries(groups).map(([category, list], index) => (
-                <section key={category || 'all'} className={classes.section} aria-labelledby={`partners-${index}`}>
-                    <SectionHead id={`partners-${index}`} eyebrow={t`Partners`} title={category || t`Our partners.`}/>
-                    <PartnerLogos partners={list}/>
+            {partners.length > 0 && (
+                <section className={classes.section} aria-labelledby="partners-title">
+                    <SectionHead id="partners-title" eyebrow={t`Partners`} title={t`Our partners.`}/>
+                    <div className={classes.partnerGroups}>
+                        {Object.entries(groups).map(([category, list]) => (
+                            <div key={category || 'all'}>
+                                {category && <h3 className={classes.partnerCategory}>{category}</h3>}
+                                <PartnerLogos partners={list}/>
+                            </div>
+                        ))}
+                    </div>
                 </section>
-            ))}
+            )}
 
             <section className={classes.section} aria-labelledby="become-partner-title">
                 <div className={classes.visionBlock}>

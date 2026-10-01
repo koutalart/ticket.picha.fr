@@ -1,5 +1,5 @@
 import {t} from "@lingui/macro";
-import {IconArrowRight, IconDownload, IconMail, IconMapPin, IconPhone} from "@tabler/icons-react";
+import {IconArrowRight, IconDownload, IconMail, IconMapPin, IconNews, IconPhone} from "@tabler/icons-react";
 import {socialMediaConfig} from "../../../../constants/socialMediaConfig";
 import {formatAddress} from "../../../../utilites/addressUtilities.ts";
 import {areaSuffix, PageIntro, PosterPageProps} from "../shared.tsx";
@@ -8,6 +8,7 @@ import classes from "../Poster.module.scss";
 export const ContactPage = ({organizer, openContact}: PosterPageProps) => {
     const content = organizer.site_content || {};
     const location = organizer.settings?.location_details;
+    const address = location && (location.address_line_1 || location.city) ? formatAddress(location) : content.area;
     const hasPress = Boolean(content.press_text || content.press_email || content.press_phone || content.press_kit_url);
 
     const socialLinks = Object.entries(organizer.settings?.social_media_handles || {})
@@ -38,7 +39,7 @@ export const ContactPage = ({organizer, openContact}: PosterPageProps) => {
 
                     {hasPress && (
                         <article className={classes.contactCard}>
-                            <IconDownload size={28}/>
+                            <IconNews size={28}/>
                             <h2>{t`Press & media`}</h2>
                             {content.press_text && <p>{content.press_text}</p>}
                             <ul className={classes.contactList}>
@@ -57,11 +58,11 @@ export const ContactPage = ({organizer, openContact}: PosterPageProps) => {
                         </article>
                     )}
 
-                    {(location || socialLinks.length > 0) && (
+                    {(address || socialLinks.length > 0) && (
                         <article className={classes.contactCard}>
                             <IconMapPin size={28}/>
                             <h2>{t`Find us`}</h2>
-                            {location && <p>{formatAddress(location)}</p>}
+                            {address && <p>{address}</p>}
                             {socialLinks.length > 0 && (
                                 <ul className={classes.contactList}>
                                     {socialLinks.map(({platform, handle, url, Icon}) => (

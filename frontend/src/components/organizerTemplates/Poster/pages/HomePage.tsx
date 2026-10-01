@@ -40,15 +40,14 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
                 {featured ? (
                     <div className={classes.heroInner}>
                         <div className={classes.heroText}>
-                            <h1 id="hero-title">
+                            <h1 id="hero-title" className={classes.heroHeading}>
                                 <span className={classes.eyebrow}>{t`${organizer.name} presents`}</span>
                                 <span className={classes.heroTitle}>{featured.title}</span>
                             </h1>
                             <p className={classes.heroMeta}>
                                 <span className={classes.capitalize}>{longDate(featured)}</span>
-                                <span aria-hidden="true">·</span>
                                 <span>{time(featured.start_date, featured)}</span>
-                                {venue?.city && <><span aria-hidden="true">·</span><span>{venue.city}</span></>}
+                                {venue?.city && <span>{venue.city}</span>}
                             </p>
 
                             <Countdown startDate={featured.start_date}/>
@@ -80,7 +79,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
                 ) : (
                     <div className={classes.heroInner}>
                         <div className={classes.heroText}>
-                            <h1 id="hero-title">
+                            <h1 id="hero-title" className={classes.heroHeading}>
                                 <span className={classes.eyebrow}>{t`Official website`}</span>
                                 <span className={classes.heroTitle}>{organizer.name}</span>
                             </h1>
@@ -194,7 +193,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
                             {t`Discover our services`} <IconArrowRight size={14}/>
                         </Link>
                     </div>
-                    <ol className={classes.values}>
+                    <ol className={`${classes.values} ${classes.compactValues}`}>
                         {content.services.slice(0, 4).map((service, index) => (
                             <li key={service.title} className={classes.value}>
                                 <span className={classes.valueIndex}>{String(index + 1).padStart(2, '0')}</span>

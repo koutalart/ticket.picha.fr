@@ -195,7 +195,10 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 .navCta {
   margin-left: auto;
-  padding: 8px 18px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 18px;
   border: 0;
   border-radius: 999px;
   background: var(--poster-accent);
@@ -219,7 +222,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
   display: flex;
   align-items: center;
-  min-height: calc(100svh - 60px);
+  min-height: min(calc(100svh - 60px), 900px);
   padding: 48px 0 64px;
   overflow: hidden;
   isolation: isolate;
@@ -285,8 +288,12 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   letter-spacing: 0.02em;
 }
 
-#hero-title > span {
-  display: block;
+.heroHeading {
+  margin: 0;
+
+  > span {
+    display: block;
+  }
 }
 
 .heroTitle {
@@ -308,7 +315,9 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   font-size: clamp(18px, 2.2vw, 22px);
   font-weight: 500;
 
-  > span[aria-hidden] {
+  > span + span::before {
+    content: '·';
+    margin-right: 12px;
     color: $muted;
   }
 }
@@ -380,8 +389,10 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   @media (max-width: 599px) {
     justify-content: center;
     width: 100%;
-    padding: 0 20px;
+    padding: 12px 20px;
     font-size: 16px !important;
+    text-align: center;
+    white-space: normal;
   }
   transition: background 0.2s ease, box-shadow 0.2s ease;
 
@@ -402,6 +413,10 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
   color: $text;
   font-weight: 500;
   text-decoration: none;
@@ -512,13 +527,6 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
     padding-top: 128px;
   }
 
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      animation: rise linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 30%;
-    }
-  }
 }
 
 .sectionHead {
@@ -552,7 +560,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 .tiers {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .tier {
@@ -657,7 +665,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   padding: 28px 24px;
   background: $surface;
 
-  svg {
+  > svg {
     color: var(--poster-accent);
     margin-bottom: 10px;
   }
@@ -687,6 +695,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  min-height: 44px;
   margin-top: 10px;
   padding: 0;
   border: 0;
@@ -984,9 +993,12 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 .footerNav {
   display: grid;
-  gap: 12px;
+  gap: 4px;
 
   a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
     color: $muted;
     text-decoration: none;
     transition: color 0.2s ease;
@@ -1143,7 +1155,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   margin: 0;
   font-family: $display;
   font-weight: 900;
-  font-size: clamp(48px, 10vw, 120px);
+  font-size: clamp(38px, 10.5vw, 120px);
   line-height: 0.95;
   letter-spacing: -0.04em;
   text-wrap: balance;
@@ -1169,6 +1181,10 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   @media (min-width: 900px) {
     grid-template-columns: 1fr 1fr;
+  }
+
+  &:has(> :only-child) {
+    grid-template-columns: minmax(0, 760px);
   }
 }
 
@@ -1218,6 +1234,9 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   @media (min-width: 900px) {
     grid-template-columns: 1.1fr 0.9fr;
     gap: 72px;
+  }
+  &:has(> :only-child) {
+    grid-template-columns: minmax(0, 760px);
   }
 }
 
@@ -1308,7 +1327,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   margin: 0;
   padding: 0;
   list-style: none;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 }
 
 .member {
@@ -1392,15 +1411,11 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 .partnerGrid {
   display: grid;
-  gap: 1px;
+  gap: 12px;
   margin: 0;
   padding: 0;
   list-style: none;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  border: 1px solid $line;
-  border-radius: 22px;
-  overflow: hidden;
-  background: $line;
 }
 
 .partner {
@@ -1409,6 +1424,8 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   justify-content: center;
   min-height: 120px;
   padding: 24px;
+  border: 1px solid $line;
+  border-radius: 18px;
   background: $surface;
   color: $muted;
   font-weight: 600;
@@ -1530,5 +1547,89 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
     &:hover {
       color: var(--poster-accent);
     }
+  }
+}
+
+.partnerGroups {
+  display: grid;
+  gap: 40px;
+}
+
+.partnerCategory {
+  margin: 0 0 14px;
+  color: $muted;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Mobile compaction */
+@media (max-width: 599px) {
+  .section {
+    padding-top: 64px;
+  }
+
+  .sectionHead,
+  .sectionHeadRow {
+    margin-bottom: 28px;
+  }
+
+  .tier {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "name cta" "price cta";
+    align-items: center;
+    gap: 2px 16px;
+    padding: 18px 18px 18px 20px;
+  }
+
+  .tierHighlighted {
+    padding-top: 26px;
+  }
+
+  .tierName {
+    grid-area: name;
+    font-size: 15px;
+  }
+
+  .tierPrice {
+    grid-area: price;
+    margin: 0;
+    font-size: 26px;
+  }
+
+  .tierCta,
+  .tierStatus {
+    grid-area: cta;
+    margin: 0;
+    padding: 0 18px;
+  }
+
+  .infoItem {
+    padding: 20px;
+
+    > svg {
+      margin-bottom: 4px;
+    }
+  }
+
+  .compactValues {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+
+    .value {
+      padding: 18px 16px;
+
+      h3 {
+        font-size: 17px;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .partner {
+    min-height: 88px;
+    padding: 16px;
   }
 }
