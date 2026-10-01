@@ -25,6 +25,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     final public const STATUS = 'status';
     final public const CUSTOM_DOMAIN = 'custom_domain';
     final public const HOMEPAGE_TEMPLATE = 'homepage_template';
+    final public const SITE_CONTENT = 'site_content';
 
     protected int $id;
     protected int $account_id;
@@ -41,6 +42,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     protected string $status = 'DRAFT';
     protected ?string $custom_domain = null;
     protected string $homepage_template = 'DEFAULT';
+    protected array|string|null $site_content = null;
 
     public function toArray(): array
     {
@@ -60,6 +62,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
                     'status' => $this->status ?? null,
                     'custom_domain' => $this->custom_domain ?? null,
                     'homepage_template' => $this->homepage_template ?? null,
+                    'site_content' => $this->site_content ?? null,
                 ];
     }
 
@@ -226,5 +229,16 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     public function getHomepageTemplate(): string
     {
         return $this->homepage_template;
+    }
+
+    public function setSiteContent(array|string|null $site_content): self
+    {
+        $this->site_content = $site_content;
+        return $this;
+    }
+
+    public function getSiteContent(): array|string|null
+    {
+        return $this->site_content;
     }
 }

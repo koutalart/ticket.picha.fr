@@ -1,5 +1,7 @@
+import {getClientLocale} from "../locales.ts";
+
 export const formatCurrency = (value: number | string, currency = 'USD') => {
-    const locale = typeof window !== 'undefined' ? navigator.language : 'en-US';
+    const locale = getClientLocale();
     const formatter = new Intl.NumberFormat(locale, {
         style: 'currency',
         currency: currency,

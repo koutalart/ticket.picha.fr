@@ -74,7 +74,7 @@ async function main() {
         try {
             const response = await fetch(
                 `${process.env.VITE_API_URL_SERVER}/public/custom-domains/${encodeURIComponent(host)}`,
-                {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(3000)}
+                {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(5000)}
             );
 
             if (response.ok || response.status === 404) {
@@ -99,10 +99,44 @@ async function main() {
         return JSON.stringify({...envVars, ...overrides});
     };
 
-    app.get('/robots.txt', (req, res) => {
-        const frontendUrl = process.env.VITE_FRONTEND_URL || `${req.protocol}://${req.get('host')}`;
+    const xmlEscape = (value) => String(value).replace(/[<>&'"]/g, (char) => (
+        {'<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;'}[char]
+    ));
+
+    const customDomainSitemap = async (organizer, res) => {
+        const apiUrl = process.env.VITE_API_URL_SERVER;
+        const origin = `https://${organizer.domain}`;
+        const [organizerResponse, eventsResponse] = await Promise.all([
+            fetch(`${apiUrl}/public/organizers/${organizer.id}`, {headers: {Accept: 'application/json'}}),
+            fetch(`${apiUrl}/public/organizers/${organizer.id}/events?per_page=100&eventsStatus=upcoming`, {headers: {Accept: 'application/json'}}),
+        ]);
+        const organizerData = organizerResponse.ok ? (await organizerResponse.json()).data : null;
+        const events = eventsResponse.ok ? (await eventsResponse.json()).data : [];
+        const hasServices = (organizerData?.site_content?.services || []).length > 0;
+
+        const pages = ['', 'evenements', 'a-propos', ...(hasServices ? ['services'] : []), 'partenaires', 'contact'];
+        const urls = [
+            ...pages.map((page) => ({loc: `${origin}/${page}`, priority: page === '' ? '1.0' : '0.7', changefreq: 'weekly'})),
+            ...events.map((event) => ({loc: `${origin}/event/${event.id}/${event.slug}`, priority: '0.9', changefreq: 'daily'})),
+        ];
+
+        const body = urls.map(({loc, priority, changefreq}) =>
+            `  <url><loc>${xmlEscape(loc)}</loc><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`
+        ).join('\n');
+
+        res.setHeader('Content-Type', 'application/xml');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`);
+    };
+
+    app.get('/robots.txt', async (req, res) => {
+        const customDomain = await resolveCustomDomain(normalizeHost(req.get('host')));
+        const frontendUrl = customDomain
+            ? `https://${customDomain.domain}`
+            : process.env.VITE_FRONTEND_URL || `${req.protocol}://${req.get('host')}`;
+        const disallow = customDomain ? '\nDisallow: /checkout/\nDisallow: /order/' : '';
         const robotsTxt = `User-agent: *
-Allow: /
+Allow: /${disallow}
 
 Sitemap: ${frontendUrl}/sitemap.xml
 `;
@@ -111,7 +145,18 @@ Sitemap: ${frontendUrl}/sitemap.xml
         res.status(200).send(robotsTxt);
     });
 
-    app.get('/sitemap.xml', sitemapIndexHandler);
+    app.get('/sitemap.xml', async (req, res, next) => {
+        const customDomain = await resolveCustomDomain(normalizeHost(req.get('host')));
+        if (!customDomain) {
+            return sitemapIndexHandler(req, res, next);
+        }
+        try {
+            await customDomainSitemap(customDomain, res);
+        } catch (error) {
+            console.error(`Custom domain sitemap failed for ${customDomain.domain}`, error);
+            res.status(500).send('Internal server error');
+        }
+    });
     app.get('/sitemap-events-:page.xml', sitemapEventsHandler);
     app.get('/sitemap-organizers-:page.xml', sitemapOrganizersHandler);
 
@@ -131,6 +176,12 @@ Sitemap: ${frontendUrl}/sitemap.xml
             const [pathname, search] = req.originalUrl.split('?');
             if (new RegExp(`^/events/${customDomain.id}/[^/]+/?$`).test(pathname)) {
                 res.redirect(302, `/${search ? `?${search}` : ''}`);
+                return;
+            }
+
+            const sitePageMatch = pathname.match(new RegExp(`^/events/${customDomain.id}/[^/]+/(a-propos|evenements|services|partenaires|contact)/?$`));
+            if (sitePageMatch) {
+                res.redirect(302, `/${sitePageMatch[1]}${search ? `?${search}` : ''}`);
                 return;
             }
 

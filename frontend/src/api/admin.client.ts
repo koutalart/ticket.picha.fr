@@ -1,5 +1,5 @@
 import {api} from "./client";
-import {GenericDataResponse, GenericPaginatedResponse, IdParam, User} from "../types";
+import {GenericDataResponse, GenericPaginatedResponse, IdParam, OrganizerSiteContent, User} from "../types";
 
 export interface AdminUser extends User {
     accounts?: AccountWithRole[];
@@ -13,6 +13,7 @@ export interface AdminOrganizer {
     status: string;
     custom_domain: string | null;
     homepage_template: string;
+    site_content: OrganizerSiteContent | null;
 }
 
 export interface AccountWithRole {
@@ -481,6 +482,14 @@ export const adminClient = {
         const response = await api.put<GenericDataResponse<AdminOrganizer>>(
             `admin/accounts/${accountId}/organizers/${organizerId}/homepage-template`,
             {homepage_template: homepageTemplate}
+        );
+        return response.data;
+    },
+
+    updateOrganizerSiteContent: async (accountId: IdParam, organizerId: IdParam, siteContent: OrganizerSiteContent) => {
+        const response = await api.put<GenericDataResponse<AdminOrganizer>>(
+            `admin/accounts/${accountId}/organizers/${organizerId}/site-content`,
+            siteContent
         );
         return response.data;
     },
