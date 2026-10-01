@@ -20,6 +20,7 @@ class BoxOfficeContextResource extends JsonResource
             'timezone' => $this->timezone,
             'country' => $this->country,
             'calling_code' => $this->calling_code,
+            'last_printer_host' => $this->last_printer_host,
         ];
     }
 }

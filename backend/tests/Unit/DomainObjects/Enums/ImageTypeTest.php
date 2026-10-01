@@ -16,4 +16,15 @@ class ImageTypeTest extends TestCase
         self::assertSame(EventDomainObject::class, ImageType::TICKET_SPONSOR_LOGO->getEntityType());
         self::assertSame([100, 40], ImageType::getMinimumDimensionsMap(ImageType::TICKET_SPONSOR_LOGO));
     }
+
+    public function testEventShareImageBelongsToEvent(): void
+    {
+        $this->assertSame(EventDomainObject::class, ImageType::EVENT_SHARE_IMAGE->getEntityType());
+        $this->assertContains(ImageType::EVENT_SHARE_IMAGE, ImageType::eventImageTypes());
+    }
+
+    public function testEventShareImageMinimumDimensions(): void
+    {
+        $this->assertSame([600, 315], ImageType::getMinimumDimensionsMap(ImageType::EVENT_SHARE_IMAGE));
+    }
 }

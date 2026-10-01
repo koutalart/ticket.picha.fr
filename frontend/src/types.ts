@@ -17,6 +17,8 @@ export type ConfigKeys =
     | 'VITE_CHATWOOT_WEBSITE_TOKEN'
     | 'VITE_HIDE_ABOUT_LINK'
     | 'VITE_TOS_URL'
+    | 'VITE_TOS_SALE_URL'
+    | 'VITE_BRAND_URL'
     | 'VITE_PRIVACY_URL'
     | 'VITE_PLATFORM_SUPPORT_EMAIL'
     | 'VITE_STRIPE_PUBLISHABLE_KEY'
@@ -182,7 +184,7 @@ export interface Image {
     lqip_base64?: string | null;
 }
 
-export type ImageType = 'EVENT_COVER' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_IMAGE' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
+export type ImageType = 'EVENT_COVER' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_IMAGE' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
 
 export type PaymentProvider = 'STRIPE' | 'OFFLINE';
 
@@ -390,6 +392,27 @@ export interface OrganizerStats {
     all_organizers_currencies: string[];
 }
 
+export interface OrganizerSiteContent {
+    tagline?: string | null;
+    area?: string | null;
+    about_headline?: string | null;
+    story?: string | null;
+    vision?: string | null;
+    about_image_url?: string | null;
+    values?: { title: string; text?: string | null }[] | null;
+    stats?: { value: string; label: string }[] | null;
+    team?: { name: string; role?: string | null; photo_url?: string | null }[] | null;
+    gallery?: { url: string; caption?: string | null }[] | null;
+    services_intro?: string | null;
+    services?: { title: string; text?: string | null }[] | null;
+    partners_intro?: string | null;
+    partners?: { name: string; logo_url?: string | null; url?: string | null; category?: string | null }[] | null;
+    press_text?: string | null;
+    press_email?: string | null;
+    press_phone?: string | null;
+    press_kit_url?: string | null;
+}
+
 export interface Organizer {
     id?: IdParam;
     name: string;
@@ -400,6 +423,9 @@ export interface Organizer {
     currency?: string;
     slug?: string;
     phone?: string;
+    homepage_template?: string;
+    site_content?: OrganizerSiteContent | null;
+    custom_domain?: string | null;
     images?: Image[];
     events?: Event[];
     settings?: OrganizerSettings;
@@ -546,6 +572,7 @@ export interface Product {
     is_sold_out?: boolean;
     is_available?: boolean;
     is_hidden_without_promo_code?: boolean;
+    is_visible_at_box_office?: boolean;
     is_before_sale_start_date?: boolean;
     is_after_sale_end_date?: boolean;
     taxes?: TaxAndFee[];

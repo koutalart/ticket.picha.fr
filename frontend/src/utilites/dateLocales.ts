@@ -45,7 +45,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd, MMMM D',
         timeOnly: 'h:mm A',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'MMM DD, YYYY HH:mm'
     },
     'de': {
         fullDateTime: 'ddd, D. MMM YYYY HH:mm',
@@ -57,7 +57,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd, D. MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD. MMM YYYY, HH:mm'
     },
     'fr': {
         fullDateTime: 'ddd D MMM YYYY HH:mm',
@@ -69,7 +69,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd D MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD MMM YYYY [à] HH:mm'
     },
     'it': {
         fullDateTime: 'ddd D MMM YYYY HH:mm',
@@ -81,7 +81,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd D MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD MMM YYYY, HH:mm'
     },
     'nl': {
         fullDateTime: 'ddd D MMM YYYY HH:mm',
@@ -93,7 +93,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd D MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD MMM YYYY, HH:mm'
     },
     'pt': {
         fullDateTime: 'ddd, D [de] MMM [de] YYYY HH:mm',
@@ -105,7 +105,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd, D [de] MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD [de] MMM [de] YYYY, HH:mm'
     },
     'es': {
         fullDateTime: 'ddd, D [de] MMM [de] YYYY HH:mm',
@@ -129,7 +129,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'M月D日 dddd',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'YYYY年M月D日 HH:mm'
     },
     'pt-br': {
         fullDateTime: 'ddd, D [de] MMM [de] YYYY HH:mm',
@@ -141,7 +141,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd, D [de] MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD [de] MMM [de] YYYY, HH:mm'
     },
     'vi': {
         fullDateTime: 'ddd, [ngày] D [tháng] M [năm] YYYY HH:mm',
@@ -153,7 +153,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: '[ngày] D [tháng] M',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD/MM/YYYY HH:mm'
     },
     'zh-hk': {
         fullDateTime: 'YYYY年M月D日 ddd HH:mm',
@@ -165,7 +165,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'M月D日 dddd',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'YYYY年M月D日 HH:mm'
     },
     'tr': {
         fullDateTime: 'ddd, D MMM YYYY HH:mm',
@@ -177,7 +177,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd, D MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD MMM YYYY HH:mm'
     },
     'hu': {
         fullDateTime: 'YYYY. MMM D., ddd HH:mm',
@@ -189,7 +189,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd, MMMM D.',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'YYYY. MMM DD. HH:mm'
     },
     'pl': {
         fullDateTime: 'ddd, D MMM YYYY HH:mm',
@@ -201,7 +201,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd, D MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD MMM YYYY, HH:mm'
     },
     'se': {
         fullDateTime: 'ddd D MMM YYYY HH:mm',
@@ -213,7 +213,7 @@ export const localeFormats: Record<SupportedLocales, {
         dayName: 'dddd D MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z',
-        dateTimePicker: 'MMM DD, YYYY [at] h:mm A'
+        dateTimePicker: 'DD MMM YYYY HH:mm'
     },
     'el': {
         fullDateTime: 'ddd, D MMM YYYY HH:mm',

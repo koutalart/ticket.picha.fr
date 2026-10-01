@@ -17,6 +17,7 @@ enum ImageType
     case EVENT_COVER;
     case TICKET_LOGO;
     case TICKET_SPONSOR_LOGO;
+    case EVENT_SHARE_IMAGE;
 
     // Organizer images
     case ORGANIZER_LOGO;
@@ -28,6 +29,7 @@ enum ImageType
             self::EVENT_COVER,
             self::TICKET_LOGO,
             self::TICKET_SPONSOR_LOGO,
+            self::EVENT_SHARE_IMAGE,
         ];
     }
 
@@ -53,6 +55,7 @@ enum ImageType
             self::EVENT_COVER->name => [600, 50],
             self::TICKET_LOGO->name => [100, 100],
             self::TICKET_SPONSOR_LOGO->name => [100, 40],
+            self::EVENT_SHARE_IMAGE->name => [600, 315],
             self::ORGANIZER_LOGO->name => [100, 100],
             self::ORGANIZER_COVER->name => [600, 50],
         ];

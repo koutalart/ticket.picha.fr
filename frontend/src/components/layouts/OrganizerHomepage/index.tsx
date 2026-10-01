@@ -1,5 +1,5 @@
 import {useLocation, useNavigate} from "react-router";
-import {ActionIcon, Anchor} from '@mantine/core';
+import {ActionIcon} from '@mantine/core';
 import {EventCard} from './EventCard';
 import classes from './OrganizerHomepage.module.scss';
 import React, {useEffect, useState} from 'react';
@@ -14,7 +14,6 @@ import {formatAddress, getShortLocationDisplay} from "../../../utilites/addressU
 import {organizerHomepagePath} from "../../../utilites/urlHelper.ts";
 import {removeTransparency} from "../../../utilites/colorHelper.ts";
 import {StatusToggle} from "../../common/StatusToggle";
-import {getConfig} from "../../../utilites/config.ts";
 import {Pagination} from "../../common/Pagination";
 import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
 import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
@@ -333,21 +332,6 @@ export const OrganizerHomepage = ({
 
                         {/* Footer */}
                         <div className={classes.footerSection}>
-                            <div className={classes.footerLinks}>
-                                <Anchor
-                                    href={getConfig('VITE_PRIVACY_URL', 'https://hi.events/privacy-policy?utm_source=app-organizer-footer')}
-                                    className={classes.footerLink}
-                                >
-                                    {t`Privacy Policy`}
-                                </Anchor>
-                                <span className={classes.footerSeparator}>•</span>
-                                <Anchor
-                                    href={getConfig('VITE_TOS_URL', 'https://hi.events/terms-of-service?utm_source=app-organizer-footer')}
-                                    className={classes.footerLink}
-                                >
-                                    {t`Terms of Service`}
-                                </Anchor>
-                            </div>
                             <PoweredByFooter className={classes.poweredByFooter}/>
                         </div>
                     </div>

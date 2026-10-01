@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace HiEvents\Services\Application\Handlers\BoxOffice;
 
 use HiEvents\Constants;
+use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\Enums\BoxOfficePaymentMethod;
 use HiEvents\DomainObjects\Generated\BoxOfficeSaleDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\Status\BoxOfficeSaleStatus;
 use HiEvents\DomainObjects\UserDomainObject;
+use HiEvents\Exceptions\BoxOfficeEventNotActiveException;
 use HiEvents\Exceptions\BoxOfficePriceMismatchException;
 use HiEvents\Exceptions\MissingPhoneCallingCodeException;
 use HiEvents\Exceptions\ProductNotScannableException;
+use HiEvents\Exceptions\ProductNotSoldAtBoxOfficeException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Exceptions\UnauthorizedException;
 use HiEvents\Helper\KioskSentinelEmail;
@@ -20,26 +24,26 @@ use HiEvents\Helper\PhoneCallingCode;
 use HiEvents\Helper\PhoneNormalizer;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\BoxOfficeSaleRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
-use HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler;
-use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeSaleResultDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleItemDTO;
+use HiEvents\Services\Domain\BoxOffice\BoxOfficeCartOrderService;
+use HiEvents\Services\Domain\BoxOffice\BoxOfficeEventAvailabilityService;
 use HiEvents\Services\Infrastructure\Authorization\IsAuthorizedService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\QueryException;
 use Throwable;
 
 /**
- * Option A (PICHA_BOX_OFFICE_DESIGN_OPTIONS.md): a thin handler around the
- * unmodified CreateAttendeeHandler, carrying the guard rails the manual-sale
- * path is missing — server-side price (S1), a stock row lock (S2), and
- * idempotency (S3/D9). Cart checkouts (D4 option B) wrap N CreateAttendeeHandler
- * calls in the same transaction under one idempotency_key.
+ * Box office sale with the guard rails the native manual-sale path is missing —
+ * server-side price (S1), a stock row lock (S2), and idempotency (S3/D9). A
+ * cart checkout creates one order for all its tickets (BoxOfficeCartOrderService)
+ * in the same transaction under one idempotency_key.
  */
 class CreateBoxOfficeSaleHandler
 {
@@ -49,10 +53,12 @@ class CreateBoxOfficeSaleHandler
         private readonly ProductRepositoryInterface $productRepository,
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly AttendeeRepositoryInterface $attendeeRepository,
-        private readonly CreateAttendeeHandler $createAttendeeHandler,
+        private readonly BoxOfficeCartOrderService $boxOfficeCartOrderService,
         private readonly IsAuthorizedService $isAuthorizedService,
         private readonly DatabaseManager $databaseManager,
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
+        private readonly EventRepositoryInterface $eventRepository,
+        private readonly BoxOfficeEventAvailabilityService $eventAvailabilityService,
     ) {}
 
     /**
@@ -63,6 +69,7 @@ class CreateBoxOfficeSaleHandler
      *                                        action's guard and here (TOCTOU). Null for direct callers/tests
      *                                        that are not exercising operator scope.
      *
+     * @throws BoxOfficeEventNotActiveException
      * @throws BoxOfficePriceMismatchException
      * @throws ProductNotScannableException
      * @throws ResourceConflictException
@@ -78,6 +85,8 @@ class CreateBoxOfficeSaleHandler
             if ($existing = $this->findCompletedSale($dto->idempotency_key)) {
                 return $existing;
             }
+
+            $this->assertEventIsActive($dto->event_id);
 
             $items = $this->normalizedItems($dto);
 
@@ -118,6 +127,7 @@ class CreateBoxOfficeSaleHandler
             $lockedPrices = $this->lockPrices($items);
 
             $this->validateCartTotals($dto, $items, $lockedPrices);
+            $this->validateBoxOfficeVisibility($items);
             $this->validateScannableItems($items);
             $this->validateStock($items);
 
@@ -130,57 +140,58 @@ class CreateBoxOfficeSaleHandler
                 $this->isAuthorizedService->validateBoxOfficeEventScope($dto->event_id, $agent);
             }
 
-            $attendees = [];
-            $itemRows = [];
             $attendeeEmail = $this->resolveAttendeeEmail($dto->email, $sale->getId());
             $sendConfirmation = (bool) $dto->send_confirmation_email
                 && ! KioskSentinelEmail::isKioskSentinelEmail($attendeeEmail);
 
-            foreach ($items as $item) {
-                $unitPrice = $lockedPrices[$item->product_price_id]->getPrice();
+            $cartOrder = $this->boxOfficeCartOrderService->createOrder(
+                eventId: $dto->event_id,
+                items: $items,
+                pricesById: $lockedPrices,
+                firstName: $dto->first_name,
+                lastName: $dto->last_name,
+                email: $attendeeEmail,
+                locale: $dto->locale,
+                sendConfirmationEmail: $sendConfirmation,
+            );
+            $order = $cartOrder->order;
+            $attendees = $cartOrder->attendees;
 
-                for ($i = 0; $i < $item->quantity; $i++) {
-                    // CreateAttendeeHandler is reused unchanged (Option A) — it
-                    // opens its own nested transaction (savepoint). If it throws,
-                    // the whole transaction above (including the PENDING insert)
-                    // rolls back too, satisfying AC-26.
-                    $attendee = $this->createAttendeeHandler->handle(new CreateAttendeeDTO(
-                        first_name: $dto->first_name,
-                        last_name: $dto->last_name,
-                        email: $attendeeEmail,
-                        product_id: $item->product_id,
-                        event_id: $dto->event_id,
-                        send_confirmation_email: $sendConfirmation,
-                        amount_paid: $unitPrice,
-                        locale: $dto->locale,
-                        product_price_id: $item->product_price_id,
-                    ));
-
-                    $order = $this->orderRepository->findById($attendee->getOrderId());
-                    $attendees[] = $attendee;
-                    $itemRows[] = [
-                        'product_id' => $item->product_id,
-                        'product_price_id' => $item->product_price_id,
-                        'unit_amount' => $unitPrice,
-                        'attendee_id' => $attendee->getId(),
-                        'order_id' => $order->getId(),
-                    ];
-                }
-            }
-
-            $this->boxOfficeSaleRepository->createItems($sale->getId(), $itemRows);
+            $this->boxOfficeSaleRepository->createItems($sale->getId(), array_map(
+                static fn (AttendeeDomainObject $attendee) => [
+                    'product_id' => $attendee->getProductId(),
+                    'product_price_id' => $attendee->getProductPriceId(),
+                    'unit_amount' => $lockedPrices[$attendee->getProductPriceId()]->getPrice(),
+                    'attendee_id' => $attendee->getId(),
+                    'order_id' => $order->getId(),
+                ],
+                $attendees,
+            ));
 
             $firstAttendee = $attendees[0];
-            $firstOrder = $this->orderRepository->findById($firstAttendee->getOrderId());
 
             $this->boxOfficeSaleRepository->updateFromArray($sale->getId(), [
-                BoxOfficeSaleDomainObjectAbstract::ORDER_ID => $firstOrder->getId(),
+                BoxOfficeSaleDomainObjectAbstract::ORDER_ID => $order->getId(),
                 BoxOfficeSaleDomainObjectAbstract::ATTENDEE_ID => $firstAttendee->getId(),
                 BoxOfficeSaleDomainObjectAbstract::STATUS => BoxOfficeSaleStatus::COMPLETED->name,
             ]);
 
-            return new BoxOfficeSaleResultDTO($sale->getId(), $firstAttendee, $firstOrder, $attendees);
+            return new BoxOfficeSaleResultDTO($sale->getId(), $firstAttendee, $order, $attendees);
         });
+    }
+
+    /**
+     * @throws BoxOfficeEventNotActiveException
+     */
+    private function assertEventIsActive(int $eventId): void
+    {
+        $event = $this->eventRepository->findById($eventId);
+
+        if (! $this->eventAvailabilityService->isSellable($event)) {
+            throw new BoxOfficeEventNotActiveException(
+                __('Sales are only possible for published events that have not ended.')
+            );
+        }
     }
 
     private function findCompletedSale(string $idempotencyKey): ?BoxOfficeSaleResultDTO
@@ -271,6 +282,30 @@ class CreateBoxOfficeSaleHandler
         if ($dto->payment_method === BoxOfficePaymentMethod::FREE && ! $allZero) {
             throw new BoxOfficePriceMismatchException(
                 __('FREE can only be used for a product whose price is 0 — inviting a normally-paid ticket is not supported.')
+            );
+        }
+    }
+
+    /**
+     * @param  CreateBoxOfficeSaleItemDTO[]  $items
+     *
+     * @throws ProductNotSoldAtBoxOfficeException
+     */
+    private function validateBoxOfficeVisibility(array $items): void
+    {
+        $productIds = array_values(array_unique(array_map(
+            static fn (CreateBoxOfficeSaleItemDTO $item) => $item->product_id,
+            $items,
+        )));
+
+        $hiddenCount = $this->productRepository->countWhere([
+            [ProductDomainObjectAbstract::ID, 'in', $productIds],
+            ProductDomainObjectAbstract::IS_VISIBLE_AT_BOX_OFFICE => false,
+        ]);
+
+        if ($hiddenCount > 0) {
+            throw new ProductNotSoldAtBoxOfficeException(
+                __('This ticket is not sold at the box office.')
             );
         }
     }

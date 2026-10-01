@@ -40,6 +40,7 @@ import {getConfig} from "../../../utilites/config";
 import {utcToTz} from "../../../utilites/dates.ts";
 import dayjs from "dayjs";
 import classes from "./SendMessageModal.module.scss";
+import {DateTimeInput} from "../../common/DateTimeInput";
 
 interface EventMessageModalProps extends GenericModalProps {
     orderId?: IdParam,
@@ -406,11 +407,10 @@ export const SendMessageModal = (props: EventMessageModalProps) => {
                                             </button>
                                         </div>
                                         {selectedPreset === CUSTOM_PRESET && (
-                                            <TextInput
-                                                type="datetime-local"
+                                            <DateTimeInput
                                                 label={t`Scheduled time`}
                                                 description={event.timezone}
-                                                min={utcToTz(dayjs.utc().toISOString(), event.timezone)}
+                                                minDate={utcToTz(dayjs.utc().toISOString(), event.timezone)}
                                                 {...form.getInputProps('scheduled_at')}
                                             />
                                         )}

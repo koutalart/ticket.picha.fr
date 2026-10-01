@@ -15,5 +15,6 @@ class BoxOfficeContextEventDTO extends BaseDataObject
         public readonly ?string $timezone,
         public readonly ?string $country,
         public readonly ?string $calling_code,
+        public readonly ?string $last_printer_host = null,
     ) {}
 }

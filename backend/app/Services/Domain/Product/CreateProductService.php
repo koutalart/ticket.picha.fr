@@ -89,6 +89,7 @@ class CreateProductService
             'hide_when_sold_out' => $productsData->getHideWhenSoldOut(),
             'show_quantity_remaining' => $productsData->getShowQuantityRemaining(),
             'is_hidden_without_promo_code' => $productsData->getIsHiddenWithoutPromoCode(),
+            'is_visible_at_box_office' => $productsData->getIsVisibleAtBoxOffice(),
             'event_id' => $productsData->getEventId(),
             'product_category_id' => $productsData->getProductCategoryId(),
             'is_highlighted' => $productsData->getIsHighlighted(),

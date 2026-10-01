@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Application\Handlers\BoxOffice;
 
+use HiEvents\DomainObjects\BoxOfficePrinterPreferenceDomainObject;
 use HiEvents\DomainObjects\Enums\Role;
 use HiEvents\DomainObjects\EventBoxOfficeOperatorDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
+use HiEvents\DomainObjects\Generated\BoxOfficePrinterPreferenceDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\EventBoxOfficeOperatorDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
 use HiEvents\DomainObjects\Status\BoxOfficeOperatorStatus;
 use HiEvents\Helper\PhoneCallingCode;
+use HiEvents\Repository\Interfaces\BoxOfficePrinterPreferenceRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventBoxOfficeOperatorRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeContextEventDTO;
+use HiEvents\Services\Domain\BoxOffice\BoxOfficeEventAvailabilityService;
 use Illuminate\Support\Collection;
 
 /**
@@ -31,6 +35,8 @@ class GetBoxOfficeContextHandler
         private readonly EventBoxOfficeOperatorRepositoryInterface $operatorRepository,
         private readonly EventRepositoryInterface $eventRepository,
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
+        private readonly BoxOfficePrinterPreferenceRepositoryInterface $printerPreferenceRepository,
+        private readonly BoxOfficeEventAvailabilityService $eventAvailabilityService,
     ) {}
 
     public function handle(int $userId, string $role, int $accountId): Collection
@@ -49,21 +55,26 @@ class GetBoxOfficeContextHandler
             }
 
             return $this->mapEvents(
-                $this->eventRepository->findWhereIn(EventDomainObjectAbstract::ID, $eventIds)
+                $this->eventRepository->findWhereIn(EventDomainObjectAbstract::ID, $eventIds),
+                $userId,
             );
         }
 
         return $this->mapEvents($this->eventRepository->findWhere([
             EventDomainObjectAbstract::ACCOUNT_ID => $accountId,
-        ]));
+        ]), $userId);
     }
 
     /**
      * @param  Collection<int, EventDomainObject>  $events
      * @return Collection<int, BoxOfficeContextEventDTO>
      */
-    private function mapEvents(Collection $events): Collection
+    private function mapEvents(Collection $events, int $userId): Collection
     {
+        $events = $events
+            ->filter(fn (EventDomainObject $event) => $this->eventAvailabilityService->isSellable($event))
+            ->values();
+
         if ($events->isEmpty()) {
             return collect();
         }
@@ -72,7 +83,17 @@ class GetBoxOfficeContextHandler
             ->findWhereIn('event_id', $events->map(fn (EventDomainObject $event) => $event->getId())->all())
             ->keyBy(fn (EventSettingDomainObject $settings) => $settings->getEventId());
 
-        return $events->map(function (EventDomainObject $event) use ($settingsByEventId) {
+        $printerHostByEventId = $this->printerPreferenceRepository
+            ->findWhereIn(
+                BoxOfficePrinterPreferenceDomainObjectAbstract::EVENT_ID,
+                $events->map(fn (EventDomainObject $event) => $event->getId())->all(),
+                [BoxOfficePrinterPreferenceDomainObjectAbstract::USER_ID => $userId],
+            )
+            ->mapWithKeys(fn (BoxOfficePrinterPreferenceDomainObject $preference) => [
+                $preference->getEventId() => $preference->getPrinterHost(),
+            ]);
+
+        return $events->map(function (EventDomainObject $event) use ($settingsByEventId, $printerHostByEventId) {
             $country = PhoneCallingCode::iso2FromLocationDetails(
                 $settingsByEventId->get($event->getId())?->getLocationDetails()
             );
@@ -84,6 +105,7 @@ class GetBoxOfficeContextHandler
                 timezone: $event->getTimezone(),
                 country: $country,
                 calling_code: PhoneCallingCode::fromIso2($country),
+                last_printer_host: $printerHostByEventId->get($event->getId()),
             );
         });
     }

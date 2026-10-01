@@ -4,7 +4,7 @@ import {IconHome} from '@tabler/icons-react';
 import classes from './GenericErrorPage.module.scss';
 import {PoweredByFooter} from "../PoweredByFooter";
 import {Helmet} from "react-helmet-async";
-import {getConfig} from "../../../utilites/config.ts";
+import {getAppName, getLogoForLightBackground} from "../../../utilites/branding.ts";
 
 interface GenericErrorPageProps {
     title: string;
@@ -47,8 +47,8 @@ export const GenericErrorPage: React.FC<GenericErrorPageProps> = ({
                     <Stack gap="xl" align="center">
 
                         <Image
-                            src={getConfig("VITE_APP_LOGO_DARK", "/logos/hi-events-stacked-light.svg")}
-                            alt={getConfig("VITE_APP_NAME", "Hi.Events") + " Logo"}
+                            src={getLogoForLightBackground()}
+                            alt={getAppName() + " Logo"}
                             w={rem(140)}
                             h="auto"
                             fit="contain"

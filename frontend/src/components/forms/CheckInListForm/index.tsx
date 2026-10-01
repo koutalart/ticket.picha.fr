@@ -6,6 +6,7 @@ import {InputGroup} from "../../common/InputGroup";
 import {ProductSelector} from "../../common/ProductSelector";
 import {useEffect, useMemo} from "react";
 import {IconInfoCircle} from "@tabler/icons-react";
+import {DateTimeInput} from "../../common/DateTimeInput";
 
 interface CheckInListFormProps {
     form: UseFormReturnType<CheckInListRequest>;
@@ -56,15 +57,13 @@ export const CheckInListForm = ({form, productCategories}: CheckInListFormProps)
             />
 
             <InputGroup>
-                <TextInput
+                <DateTimeInput
                     {...form.getInputProps('activates_at')}
-                    type="datetime-local"
                     label={t`Activation date`}
                     description={t`When check-in opens`}
                 />
-                <TextInput
+                <DateTimeInput
                     {...form.getInputProps('expires_at')}
-                    type="datetime-local"
                     label={t`Expiration date`}
                     description={t`When check-in closes`}
                 />

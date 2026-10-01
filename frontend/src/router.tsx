@@ -1,34 +1,48 @@
-import { Navigate, RouteObject } from "react-router";
+import { Navigate, RouteObject, useLoaderData } from "react-router";
 import ErrorPage from "./error-page.tsx";
+import Landing from "./components/routes/landing";
 import { useEffect, useState } from "react";
 import { useGetMe } from "./queries/useGetMe.ts";
 import { publicEventRouteLoader } from "./routeLoaders/publicEventRouteLoader.ts";
 import { publicOrganizerRouteLoader } from "./routeLoaders/publicOrganizerRouteLoader.ts";
 import { organizerPreviewRouteLoader } from "./routeLoaders/organizerPreviewRouteLoader.ts";
+import PublicOrganizer from "./components/layouts/PublicOrganizer";
+import {
+    customDomainHomeLoader,
+    customDomainSitePageLoader,
+    ORGANIZER_SITE_PAGES,
+    platformSitePageLoader,
+} from "./routeLoaders/organizerSitePageLoader.ts";
 
 const Root = () => {
+    const customDomainData = useLoaderData();
+
+    return customDomainData ? <PublicOrganizer /> : <PlatformRoot />;
+};
+
+const PlatformRoot = () => {
     const [redirectPath, setRedirectPath] = useState<string | null>(null);
     const me = useGetMe();
 
     useEffect(() => {
-        if (me.isFetched) {
+        if (me.isSuccess) {
             const searchParams = typeof window !== 'undefined' ? window.location.search : '';
-            const isOperator = me.isSuccess && me.data?.role === 'BOX_OFFICE_OPERATOR';
-            const basePath = me.isSuccess
-                ? (isOperator ? "/kiosk" : "/manage/events")
-                : "/auth/login";
-            setRedirectPath(basePath + searchParams);
+            const isOperator = me.data?.role === 'BOX_OFFICE_OPERATOR';
+            setRedirectPath((isOperator ? "/kiosk" : "/manage/events") + searchParams);
         }
-    }, [me.isFetched, me.isSuccess, me.data?.role]);
+    }, [me.isSuccess, me.data?.role]);
 
     if (redirectPath) {
         return <Navigate to={redirectPath} replace={true} />;
     }
+
+    return <Landing/>;
 };
 
 export const router: RouteObject[] = [
     {
         path: "",
+        loader: customDomainHomeLoader,
         element: <Root />,
         errorElement: <ErrorPage />
     },
@@ -40,6 +54,10 @@ export const router: RouteObject[] = [
         },
         errorElement: <ErrorPage />,
         children: [
+            {
+                index: true,
+                element: <Navigate to="/auth/login" replace={true} />,
+            },
             {
                 path: "login",
                 async lazy() {
@@ -515,6 +533,18 @@ export const router: RouteObject[] = [
         errorElement: <ErrorPage />,
     },
     {
+        path: "/events/:organizerId/:organizerSlug/:sitePage",
+        loader: platformSitePageLoader,
+        element: <PublicOrganizer />,
+        errorElement: <ErrorPage />,
+    },
+    ...ORGANIZER_SITE_PAGES.map((sitePage): RouteObject => ({
+        path: `/${sitePage}`,
+        loader: customDomainSitePageLoader(sitePage),
+        element: <PublicOrganizer />,
+        errorElement: <ErrorPage />,
+    })),
+    {
         path: "/e/:eventId/:eventSlug",
         async lazy() {
             const EventHomepage = await import("./components/layouts/EventHomepage");
@@ -536,6 +566,14 @@ export const router: RouteObject[] = [
             const OrganizerHomepagePreview = await import("./components/layouts/OrganizerHomepagePreview");
             return { Component: OrganizerHomepagePreview.default };
         },
+    },
+    {
+        path: "/legal/:slug",
+        async lazy() {
+            const LegalPage = await import("./components/routes/legal");
+            return { Component: LegalPage.default };
+        },
+        errorElement: <ErrorPage />,
     },
     {
         path: "/event/:eventId/:eventSlug",
@@ -700,6 +738,13 @@ export const router: RouteObject[] = [
                         async lazy() {
                             const KioskSell = await import("./components/routes/kiosk/Sell");
                             return { Component: KioskSell.default };
+                        }
+                    },
+                    {
+                        path: "welcome",
+                        async lazy() {
+                            const KioskWelcome = await import("./components/routes/kiosk/Welcome");
+                            return { Component: KioskWelcome.default };
                         }
                     },
                     {

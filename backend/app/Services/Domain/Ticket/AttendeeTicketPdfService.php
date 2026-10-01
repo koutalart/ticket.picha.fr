@@ -35,8 +35,21 @@ class AttendeeTicketPdfService
         EventSettingDomainObject $eventSettings,
         OrganizerDomainObject $organizer,
     ): string {
+        File::ensureDirectoryExists(storage_path('fonts'));
+
+        return Pdf::setOption(['isFontSubsettingEnabled' => true])
+            ->loadHTML($this->html($attendee, $event, $eventSettings, $organizer))
+            ->output();
+    }
+
+    public function html(
+        AttendeeDomainObject $attendee,
+        EventDomainObject $event,
+        EventSettingDomainObject $eventSettings,
+        OrganizerDomainObject $organizer,
+    ): string {
         $product = $attendee->getProduct()
-            ?? $this->productRepository->findById($attendee->getProductId());
+            ?? ($attendee->getProductId() ? $this->productRepository->findById($attendee->getProductId()) : null);
 
         $designSettings = $eventSettings->getTicketDesignSettings();
         if (is_string($designSettings)) {
@@ -45,12 +58,15 @@ class AttendeeTicketPdfService
         $designSettings ??= [];
         $showDate = ($designSettings['date_display_mode'] ?? 'START_DATE_TIME') !== 'HIDDEN';
 
-        $content = $this->ticketContentService->build($attendee, $event, $eventSettings, $organizer, $product);
+        $previousLocale = app()->getLocale();
+        if ($attendee->getLocale()) {
+            app()->setLocale($attendee->getLocale());
+        }
 
-        File::ensureDirectoryExists(storage_path('fonts'));
+        try {
+            $content = $this->ticketContentService->build($attendee, $event, $eventSettings, $organizer, $product);
 
-        return Pdf::setOption(['isFontSubsettingEnabled' => true])
-            ->loadView('attendee-ticket-pdf', [
+            return view('attendee-ticket-pdf', [
                 'content' => $content,
                 'rows' => $this->rows($content, $showDate),
                 'displayId' => TicketText::displayId($content->public_id),
@@ -65,8 +81,10 @@ class AttendeeTicketPdfService
                     'bold' => resource_path('ticket/fonts/RobotoCondensed-Bold.ttf'),
                 ],
                 'footerText' => $designSettings['footer_text'] ?? null,
-            ])
-            ->output();
+            ])->render();
+        } finally {
+            app()->setLocale($previousLocale);
+        }
     }
 
     /**

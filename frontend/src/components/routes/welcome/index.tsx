@@ -17,12 +17,13 @@ import {useConfirmEmailWithCode} from "../../../mutations/useConfirmEmailWithCod
 import {useResendEmailConfirmation} from "../../../mutations/useResendEmailConfirmation.ts";
 import {IconClock, IconMailCheck, IconSparkles} from "@tabler/icons-react";
 import {showError, showSuccess} from "../../../utilites/notifications.tsx";
+import {useFormErrorResponseHandler} from "../../../hooks/useFormErrorResponseHandler.tsx";
 import {DateTimePicker} from "@mantine/dates";
 import dayjs from "dayjs";
 import {EventCategories} from "../../../constants/eventCategories.ts";
-import {getConfig} from "../../../utilites/config.ts";
 import {trackEvent, AnalyticsEvents} from "../../../utilites/analytics.ts";
 import {getDateTimePickerFormat} from "../../../utilites/dates.ts";
+import {getAppName, getLogoForDarkBackground} from "../../../utilites/branding.ts";
 
 export const CreateOrganizer = ({progressInfo}: {
     progressInfo?: { currentStep: number, totalSteps: number, progressPercentage: number }
@@ -240,6 +241,7 @@ export const CreateEvent = ({progressInfo}: {
         }
     });
     const eventMutation = useCreateEvent();
+    const errorHandler = useFormErrorResponseHandler();
     const navigate = useNavigate();
     const {data: organizers, isFetched: organizersFetched} = useGetOrganizers();
     const {data: events, isFetched: eventsFetched} = useGetEvents({
@@ -259,7 +261,8 @@ export const CreateEvent = ({progressInfo}: {
             onSuccess: (values) => {
                 trackEvent(AnalyticsEvents.FIRST_EVENT_CREATED);
                 navigate(`/manage/event/${values.data.id}/getting-started?new_event=true`)
-            }
+            },
+            onError: (error) => errorHandler(form, error),
         });
     }
 
@@ -369,7 +372,7 @@ export const CreateEvent = ({progressInfo}: {
                                     required
                                     dropdownType="modal"
                                     timePickerProps={{
-                                        format: '12h',
+                                        format: '24h',
                                         withDropdown: true,
                                     }}
                                     onChange={(value) => {
@@ -389,7 +392,7 @@ export const CreateEvent = ({progressInfo}: {
                                     size="lg"
                                     dropdownType="modal"
                                     timePickerProps={{
-                                        format: '12h',
+                                        format: '24h',
                                         withDropdown: true,
                                     }}
                                     minDate={form.values.start_date ?? undefined}
@@ -468,11 +471,11 @@ const Welcome = () => {
             <Container size="sm" className={classes.welcomeContent}>
                 <div className={classes.welcomeHeader}>
                     <div className={classes.logo}>
-                        <img src={getConfig("VITE_APP_LOGO_LIGHT", "/logos/hi-events-text-dark.svg")} alt={`${getConfig("VITE_APP_NAME", "Hi.Events")} logo`} className={classes.logo}/>
+                        <img src={getLogoForDarkBackground()} alt={`${getAppName()} logo`} className={classes.logo}/>
                     </div>
                     <h1 className={classes.welcomeTitle}>
                         <Trans>
-                            Welcome to {getConfig("VITE_APP_NAME", "Hi.Events")}, {userData?.first_name} 👋
+                            Welcome to {getAppName()}, {userData?.first_name} 👋
                         </Trans>
                     </h1>
                 </div>

@@ -12,20 +12,23 @@ import {
     IconPlus,
     IconPrinter,
     IconReceipt2,
+    IconTrash,
 } from "@tabler/icons-react";
 import {PageBody} from "../../../../common/PageBody";
 import {PageTitle} from "../../../../common/PageTitle";
 import {TableSkeleton} from "../../../../common/TableSkeleton";
 import {useCreateBoxOfficeSale} from "../../../../../mutations/useCreateBoxOfficeSale.ts";
-import {useReprintBoxOfficeTicket} from "../../../../../mutations/useReprintBoxOfficeTicket.ts";
-import {BoxOfficePaymentMethod, boxOfficeClient, BoxOfficeSale} from "../../../../../api/box-office.client.ts";
+import {useKioskTicketPrinter} from "../../../../../hooks/useKioskTicketPrinter.tsx";
+import {BoxOfficePaymentMethod, BoxOfficeSale} from "../../../../../api/box-office.client.ts";
 import {IdParam} from "../../../../../types.ts";
-import {DEFAULT_ZEBRA_LABEL_FORMAT, KioskPrintOutput, ZebraLabelFormat} from "../../../../../hooks/useKioskSettings.ts";
+import {KioskPrintOutput, ZebraLabelFormat} from "../../../../../hooks/useKioskSettings.ts";
 import {showError, showSuccess} from "../../../../../utilites/notifications.tsx";
+import {confirmationDialog} from "../../../../../utilites/confirmationDialog.tsx";
 import {useFormErrorResponseHandler} from "../../../../../hooks/useFormErrorResponseHandler.tsx";
 import {useIsCurrentUserAdmin} from "../../../../../hooks/useIsCurrentUserAdmin.ts";
 import {formatCurrency} from "../../../../../utilites/currency.ts";
-import {availableLocales, getClientLocale, getLocaleName, SupportedLocales} from "../../../../../locales.ts";
+import {availableLocales, getClientLocale, SupportedLocales} from "../../../../../locales.ts";
+import {getLocaleName} from "../../../../../utilites/localeNames.ts";
 import classes from "../BoxOffice.module.scss";
 import kiosk from "../../../../layouts/Kiosk/Kiosk.module.scss";
 
@@ -82,7 +85,9 @@ interface SaleFormProps {
     defaultLocale?: SupportedLocales | '';
     sendConfirmationEmail?: boolean;
     phoneCallingCode?: string;
+    onZebraPrinterHostChange?: (host: string) => void;
 }
+
 
 const generateIdempotencyKey = (): string => {
     if (typeof window === 'undefined' || !window.crypto?.randomUUID) {
@@ -91,6 +96,9 @@ const generateIdempotencyKey = (): string => {
     return window.crypto.randomUUID();
 };
 
+const hasBadgeName = (values: Pick<SaleFormValues, 'first_name' | 'last_name'>): boolean =>
+    values.first_name.trim().length > 0 && values.last_name.trim().length > 0;
+
 const hasSaleIdentifier = (values: Pick<SaleFormValues, 'first_name' | 'email' | 'phone'>): boolean => {
     const digits = values.phone.replace(/\D/g, '');
     return values.first_name.trim().length > 0
@@ -98,11 +106,6 @@ const hasSaleIdentifier = (values: Pick<SaleFormValues, 'first_name' | 'email' |
         || digits.length >= 8;
 };
 
-const openPdfBlobInNewTab = (blob: Blob) => {
-    const blobUrl = URL.createObjectURL(blob);
-    const printWindow = window.open(blobUrl, '_blank');
-    printWindow?.print();
-};
 
 const remainingStock = (price: SaleFormPrice): number | null => {
     if (price.quantity_remaining !== undefined) {
@@ -124,16 +127,24 @@ export const SaleForm = ({
     skipPrint = false,
     printMode = 'a4',
     zebraPrinterHost = '',
-    zebraLabelFormat = DEFAULT_ZEBRA_LABEL_FORMAT,
+    zebraLabelFormat,
     defaultLocale = '',
     sendConfirmationEmail = false,
     phoneCallingCode = '',
+    onZebraPrinterHostChange,
 }: SaleFormProps) => {
     const errorHandler = useFormErrorResponseHandler();
     const isAdmin = useIsCurrentUserAdmin();
     const createSale = useCreateBoxOfficeSale();
-    const reprintTicket = useReprintBoxOfficeTicket();
     const callingCodeDigits = phoneCallingCode.replace(/\D/g, '');
+    const {printTickets, printerPromptModal, isReprinting} = useKioskTicketPrinter({
+        eventId,
+        printMode,
+        skipPrint,
+        zebraPrinterHost,
+        zebraLabelFormat,
+        onZebraPrinterHostChange,
+    });
 
     const [idempotencyKey, setIdempotencyKey] = useState('');
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
@@ -143,6 +154,7 @@ export const SaleForm = ({
     const [basket, setBasket] = useState<BasketLine[]>([]);
     const [cartOpen, setCartOpen] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const [lastSaleAttendeeIds, setLastSaleAttendeeIds] = useState<string[]>([]);
 
     useEffect(() => {
         setIdempotencyKey(generateIdempotencyKey());
@@ -248,8 +260,11 @@ export const SaleForm = ({
     };
 
     const clearBasket = () => {
-        setBasket([]);
-        setCartOpen(false);
+        confirmationDialog(
+            t`Empty the basket? All selected tickets and the customer details will be removed.`,
+            () => resetForNextSale(),
+            {confirm: t`Empty basket`, cancel: t`Keep`},
+        );
     };
 
     const handleTicketTap = (product: SaleFormProduct) => {
@@ -264,6 +279,7 @@ export const SaleForm = ({
 
     const basketCount = basket.reduce((sum, line) => sum + line.qty, 0);
     const basketTotal = basket.reduce((sum, line) => sum + line.unitPrice * line.qty, 0);
+    const isFreeCart = variant === 'kiosk' && basketCount > 0 && basketTotal === 0;
     const lineQty = (productId?: number, productPriceId?: number) => {
         if (!productId || !productPriceId) {
             return 0;
@@ -277,8 +293,8 @@ export const SaleForm = ({
         if (variant !== 'kiosk') {
             return;
         }
-        form.setFieldValue('amount_collected', basketTotal > 0 ? Number(basketTotal.toFixed(2)) : '');
-    }, [basketTotal, variant]);
+        form.setFieldValue('amount_collected', basketCount > 0 ? Number(basketTotal.toFixed(2)) : '');
+    }, [basketTotal, basketCount, variant]);
 
     const resetForNextSale = () => {
         setSelectedProductId(null);
@@ -291,65 +307,21 @@ export const SaleForm = ({
         setIdempotencyKey(generateIdempotencyKey());
     };
 
-    const printOnZebra = async (attendeePublicId: string) => {
-        const host = zebraPrinterHost.trim();
-        if (!host) {
-            showError(t`Set the Zebra printer IP in Settings before printing.`);
-            return;
-        }
-
-        await boxOfficeClient.printZpl(eventId, attendeePublicId, host, zebraLabelFormat);
-    };
-
-    const openTicketPdf = async (attendeePublicId: string) => {
-        try {
-            const pdf = await boxOfficeClient.getTicketPdf(eventId, attendeePublicId);
-            openPdfBlobInNewTab(pdf);
-        } catch {
-            showError(t`Could not open the ticket PDF. Use the reprint button to try again.`);
-        }
-    };
-
-    const printTicket = async (attendeePublicId: string, isReprint = false) => {
-        if (printMode === 'none' || skipPrint) {
-            return;
-        }
-
-        if (printMode === 'zebra') {
-            try {
-                await printOnZebra(attendeePublicId);
-            } catch (error: any) {
-                const printerMessage = error?.response?.data?.message;
-                showError(isReprint
-                    ? (printerMessage || t`The Zebra printer did not respond.`)
-                    : (printerMessage
-                        ? t`The ticket was created but was not printed: ${printerMessage}`
-                        : t`The ticket was created but the Zebra printer did not respond.`));
-            }
-            return;
-        }
-
-        if (isReprint) {
-            reprintTicket.mutate({eventId, attendeePublicId}, {
-                onSuccess: (pdf) => openPdfBlobInNewTab(pdf),
-                onError: () => showError(t`Could not reprint the ticket. Please try again.`),
-            });
-            return;
-        }
-
-        await openTicketPdf(attendeePublicId);
-    };
-
-    const handleReprint = (attendeePublicId: string) => {
-        void printTicket(attendeePublicId, true);
+    const handleReprint = (attendeePublicIds: string[]) => {
+        void printTickets(attendeePublicIds, true);
     };
 
     const checkoutBasket = async (values: SaleFormValues) => {
-        if (basketCount === 0 || values.amount_collected === '') {
+        if (basketCount === 0 || (values.amount_collected === '' && !isFreeCart)) {
             return;
         }
 
         setIsCheckingOut(true);
+
+        const saleIdempotencyKey = idempotencyKey || generateIdempotencyKey();
+        if (!idempotencyKey) {
+            setIdempotencyKey(saleIdempotencyKey);
+        }
 
         try {
             const response = await createSale.mutateAsync({
@@ -367,34 +339,34 @@ export const SaleForm = ({
                     email: values.email || undefined,
                     locale: values.locale,
                     amount: Number(basketTotal.toFixed(2)),
-                    payment_method: values.payment_method,
-                    amount_collected: Number(values.amount_collected),
-                    idempotency_key: generateIdempotencyKey() || idempotencyKey,
+                    payment_method: isFreeCart ? BoxOfficePaymentMethod.Free : values.payment_method,
+                    amount_collected: isFreeCart ? 0 : Number(values.amount_collected),
+                    idempotency_key: saleIdempotencyKey,
                     send_confirmation_email: sendConfirmationEmail && values.email.trim().length > 0,
                 },
             });
 
             const sale = response.data;
             const soldAttendees = sale.attendees?.length ? sale.attendees : [sale.attendee];
+            const soldAttendeeIds = soldAttendees.map((attendee) => attendee.public_id);
             setLastSale(sale);
-
-            if (!skipPrint) {
-                for (const attendee of soldAttendees) {
-                    await printTicket(attendee.public_id);
-                }
-            }
+            setLastSaleAttendeeIds(soldAttendeeIds);
 
             showSuccess(soldAttendees.length === 1
                 ? t`Ticket created — ${sale.attendee.public_id}`
                 : t`${soldAttendees.length} tickets created`);
             resetForNextSale();
+
+            await printTickets(soldAttendeeIds);
         } catch (error: any) {
             const status = error?.response?.status;
             if (status === 422) {
                 const priceError = error.response?.data?.errors?.amount;
                 const callingError = error.response?.data?.errors?.phone_calling_code;
                 const callingMessage = Array.isArray(callingError) ? callingError[0] : callingError;
-                showError(callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
+                const eventError = error.response?.data?.errors?.event_id;
+                const eventMessage = Array.isArray(eventError) ? eventError[0] : eventError;
+                showError(eventMessage || callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
             } else if (status === 409) {
                 showError(error.response?.data?.message || t`This sale could not be completed. Please try again.`);
             } else {
@@ -434,11 +406,10 @@ export const SaleForm = ({
         }, {
             onSuccess: (response) => {
                 setLastSale(response.data);
+                setLastSaleAttendeeIds([response.data.attendee.public_id]);
                 showSuccess(t`Ticket created — ${response.data.attendee.public_id}`);
-                if (!skipPrint) {
-                    void printTicket(response.data.attendee.public_id);
-                }
                 resetForNextSale();
+                void printTickets([response.data.attendee.public_id]);
             },
             onError: (error: any) => {
                 const status = error?.response?.status;
@@ -447,7 +418,9 @@ export const SaleForm = ({
                     const priceError = error.response?.data?.errors?.amount;
                     const callingError = error.response?.data?.errors?.phone_calling_code;
                     const callingMessage = Array.isArray(callingError) ? callingError[0] : callingError;
-                    showError(callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
+                    const eventError = error.response?.data?.errors?.event_id;
+                    const eventMessage = Array.isArray(eventError) ? eventError[0] : eventError;
+                    showError(eventMessage || callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
                     return;
                 }
 
@@ -462,7 +435,7 @@ export const SaleForm = ({
     };
 
     const isSubmitDisabled = variant === 'kiosk'
-        ? (isCheckingOut || basketCount === 0 || !hasSaleIdentifier(form.values))
+        ? (isCheckingOut || basketCount === 0 || (isFreeCart ? !hasBadgeName(form.values) : !hasSaleIdentifier(form.values)))
         : (createSale.isPending
             || !selectedProduct
             || !selectedPrice
@@ -487,6 +460,21 @@ export const SaleForm = ({
             if (phone.hasError || email.hasError) {
                 return;
             }
+            if (isFreeCart) {
+                if (!form.values.first_name.trim()) {
+                    form.setFieldError('first_name', t`First and last name are required to print the badge.`);
+                }
+                if (!form.values.last_name.trim()) {
+                    form.setFieldError('last_name', t`First and last name are required to print the badge.`);
+                }
+                if (!hasBadgeName(form.values)) {
+                    return;
+                }
+                if (!isSubmitDisabled) {
+                    form.onSubmit(handleSubmit)();
+                }
+                return;
+            }
             if (!hasSaleIdentifier(form.values)) {
                 form.setFieldError('email', t`Enter at least a first name, an email, or a phone number.`);
                 return;
@@ -509,12 +497,13 @@ export const SaleForm = ({
     };
 
     if (variant === 'kiosk') {
-        const continueLabel = step === 'paiement'
+        const continueLabel = (step === 'paiement' || (step === 'formulaire' && isFreeCart))
             ? (isCheckingOut ? t`Processing…` : t`Finish`)
             : t`Continue`;
 
         return (
             <div className={kiosk.saleShell}>
+                {printerPromptModal}
                 <header className={kiosk.saleHeader}>
                     <h1 className={kiosk.saleEvent}>
                         {step !== 'tarifs' && (
@@ -527,7 +516,9 @@ export const SaleForm = ({
                     <div className={kiosk.steps}>
                         <div className={`${kiosk.step} ${step === 'tarifs' ? kiosk.stepActive : ''}`}>{t`Rates`}</div>
                         <div className={`${kiosk.step} ${step === 'formulaire' ? kiosk.stepActive : ''}`}>{t`Form`}</div>
-                        <div className={`${kiosk.step} ${step === 'paiement' ? kiosk.stepActive : ''}`}>{t`Payment`}</div>
+                        {!isFreeCart && (
+                            <div className={`${kiosk.step} ${step === 'paiement' ? kiosk.stepActive : ''}`}>{t`Payment`}</div>
+                        )}
                     </div>
                 </header>
 
@@ -536,6 +527,23 @@ export const SaleForm = ({
 
                     {!isLoading && step === 'tarifs' && (
                         <>
+                            {lastSale && lastSaleAttendeeIds.length > 0 && (
+                                <div className={kiosk.lastSale}>
+                                    <p>
+                                        {lastSaleAttendeeIds.length === 1
+                                            ? <Trans>Last ticket: <strong>{lastSaleAttendeeIds[0]}</strong></Trans>
+                                            : <Trans>Last sale: <strong>{lastSaleAttendeeIds.length} tickets</strong></Trans>}
+                                    </p>
+                                    <Button
+                                        variant="light"
+                                        leftSection={<IconPrinter/>}
+                                        loading={isReprinting}
+                                        onClick={() => handleReprint(lastSaleAttendeeIds)}
+                                    >
+                                        {t`Reprint`}
+                                    </Button>
+                                </div>
+                            )}
                             <p className={kiosk.categoryLabel}>{t`Tickets`}</p>
                             {products.length === 0 && (
                                 <p className={kiosk.emptyState}>
@@ -743,21 +751,6 @@ export const SaleForm = ({
                                     size="md"
                                 />
                             </div>
-                            {lastSale && (
-                                <div className={kiosk.lastSale}>
-                                    <p>
-                                        <Trans>Last ticket: <strong>{lastSale.attendee.public_id}</strong></Trans>
-                                    </p>
-                                    <Button
-                                        variant="light"
-                                        leftSection={<IconPrinter/>}
-                                        loading={reprintTicket.isPending}
-                                        onClick={() => handleReprint(lastSale.attendee.public_id)}
-                                    >
-                                        {t`Reprint`}
-                                    </Button>
-                                </div>
-                            )}
                         </>
                     )}
                 </div>
@@ -807,9 +800,6 @@ export const SaleForm = ({
                                 </div>
                             ))}
                             <div className={kiosk.cartActions}>
-                                <button type="button" className={kiosk.cartSecondary} onClick={clearBasket}>
-                                    {t`Clear basket`}
-                                </button>
                                 <button
                                     type="button"
                                     className={kiosk.cartPrimary}
@@ -847,14 +837,28 @@ export const SaleForm = ({
                             {formatCurrency(basketTotal, currency)}
                         </div>
                     )}
-                    <button
-                        type="button"
-                        className={`${kiosk.continueButton} ${footerReady ? kiosk.continueButtonReady : ''}`}
-                        disabled={!footerReady || isCheckingOut}
-                        onClick={handleKioskContinue}
-                    >
-                        {continueLabel}
-                    </button>
+                    <div className={kiosk.footerActions}>
+                        {basketCount > 0 && (
+                            <button
+                                type="button"
+                                className={kiosk.clearBasketButton}
+                                onClick={clearBasket}
+                                disabled={isCheckingOut}
+                                aria-label={t`Empty basket`}
+                                title={t`Empty basket`}
+                            >
+                                <IconTrash size={24}/>
+                            </button>
+                        )}
+                        <button
+                            type="button"
+                            className={`${kiosk.continueButton} ${footerReady ? kiosk.continueButtonReady : ''}`}
+                            disabled={!footerReady || isCheckingOut}
+                            onClick={handleKioskContinue}
+                        >
+                            {continueLabel}
+                        </button>
+                    </div>
                 </footer>
             </div>
         );
@@ -862,6 +866,7 @@ export const SaleForm = ({
 
     return (
         <PageBody>
+            {printerPromptModal}
             <PageTitle subheading={t`Sell a ticket at the door and print it immediately.`}>
                 {t`Box Office`}
             </PageTitle>
@@ -1046,8 +1051,8 @@ export const SaleForm = ({
                                 <Button
                                     variant="light"
                                     leftSection={<IconPrinter/>}
-                                    loading={reprintTicket.isPending}
-                                    onClick={() => handleReprint(lastSale.attendee.public_id)}
+                                    loading={isReprinting}
+                                    onClick={() => handleReprint(lastSaleAttendeeIds)}
                                 >
                                     {t`Reprint`}
                                 </Button>

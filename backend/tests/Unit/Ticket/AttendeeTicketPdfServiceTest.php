@@ -126,6 +126,7 @@ class AttendeeTicketPdfServiceTest extends TestCase
     {
         app()->setLocale('fr');
         [$attendee, $event, $eventSettings, $organizer] = $this->buildDomainObjects('Anli', 'Madi');
+        $attendee->setLocale('fr');
         $eventSettings->setTicketSponsorName('Bé digital');
 
         $pdf = app(AttendeeTicketPdfService::class)->generate($attendee, $event, $eventSettings, $organizer);
@@ -156,6 +157,21 @@ class AttendeeTicketPdfServiceTest extends TestCase
         }
 
         return false;
+    }
+
+    public function test_pdf_is_rendered_in_attendee_locale_and_restores_app_locale(): void
+    {
+        [$attendee, $event, $eventSettings, $organizer] = $this->buildDomainObjects('Amina', 'Test');
+        $attendee->setLocale('fr');
+        app()->setLocale('en');
+
+        $pdf = app(AttendeeTicketPdfService::class)->generate($attendee, $event, $eventSettings, $organizer);
+
+        $text = $this->extractText($pdf);
+        self::assertStringContainsString("T Y P E   D ' E N T R É E", $text);
+        self::assertStringContainsString('Billetterie & gestion', $text);
+        self::assertStringNotContainsString('T I C K E T   T Y P E', $text);
+        self::assertSame('en', app()->getLocale());
     }
 
     /** AC-19 */

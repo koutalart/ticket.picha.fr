@@ -96,4 +96,9 @@ interface ProductRepositoryInterface extends RepositoryInterface
      * (not expired, already activated).
      */
     public function hasActiveCheckInList(int $productId): bool;
+
+    /**
+     * Short id of the first currently active check-in list the product is attached to.
+     */
+    public function findActiveCheckInListShortId(int $productId): ?string;
 }

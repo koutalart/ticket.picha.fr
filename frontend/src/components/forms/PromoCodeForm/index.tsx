@@ -10,6 +10,7 @@ import {InputGroup} from "../../common/InputGroup";
 import {getCurrencySymbol} from "../../../utilites/currency.ts";
 import {ProductSelector} from "../../common/ProductSelector";
 import {ShowForDesktop, ShowForMobile} from "../../common/Responsive/ShowHideComponents.tsx";
+import {DateTimeInput} from "../../common/DateTimeInput";
 
 interface PromoCodeFormProps {
     form: UseFormReturnType<PromoCode>,
@@ -104,7 +105,7 @@ export const PromoCodeForm = ({form}: PromoCodeFormProps) => {
             />
 
             <InputGroup>
-                <TextInput type={'datetime-local'}
+                <DateTimeInput
                            {...form.getInputProps('expiry_date')}
                            label={t`Expiry Date`}
                 />

@@ -33,6 +33,7 @@ import countries from "../../../../../data/countries.json";
 import classes from "./CollectInformation.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
+import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 
 const LoadingSkeleton = () =>
     (
@@ -717,11 +718,11 @@ export const CollectInformation = () => {
                             <Trans>
                                 By continuing, you agree to the{' '}
                                 <a
-                                    href={getConfig('VITE_TOS_URL', 'https://hi.events/terms-of-service') as string}
+                                    href={getTermsOfSaleUrl() as string}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    {getConfig('VITE_APP_NAME', 'Hi.Events')} Terms of Service
+                                    {getAppName()} Terms of Service
                                 </a>
                             </Trans>
                         </p>

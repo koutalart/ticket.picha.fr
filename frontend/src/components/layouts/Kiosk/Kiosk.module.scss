@@ -680,6 +680,34 @@ $muted: #6b7280;
   font-weight: 800;
 }
 
+.footerActions {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.clearBasketButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  min-height: 52px;
+  border: 0;
+  border-radius: 4px;
+  background: #dc2626;
+  color: #fff;
+  cursor: pointer;
+
+  &:hover {
+    background: #b91c1c;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
 .continueButton {
   min-width: 180px;
   min-height: 52px;

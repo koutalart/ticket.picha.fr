@@ -1,7 +1,7 @@
 /* eslint-disable lingui/no-unlocalized-strings */
 import {Helmet} from "react-helmet-async";
 import {Event} from "../../../types";
-import {eventCoverImageUrl, eventHomepageUrl} from "../../../utilites/urlHelper.ts";
+import {eventHomepageUrl, eventShareImageUrl} from "../../../utilites/urlHelper.ts";
 import {utcToTz} from "../../../utilites/dates.ts";
 
 interface EventDocumentHeadProps {
@@ -14,7 +14,7 @@ export const EventDocumentHead = ({event}: EventDocumentHeadProps) => {
     const title = (eventSettings?.seo_title ?? event.title) + ' | ' + event.organizer?.name;
     const description = eventSettings?.seo_description ?? event.description_preview;
     const keywords = eventSettings?.seo_keywords;
-    const image = eventCoverImageUrl(event);
+    const image = eventShareImageUrl(event);
     const url = eventHomepageUrl(event);
     const startDate = utcToTz(new Date(event.start_date), event.timezone);
     const endDate = event.end_date ? utcToTz(new Date(event.end_date), event.timezone) : undefined;

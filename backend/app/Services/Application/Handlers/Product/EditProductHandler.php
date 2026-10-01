@@ -121,6 +121,7 @@ class EditProductHandler
                 'hide_when_sold_out' => $productsData->hide_when_sold_out,
                 'show_quantity_remaining' => $productsData->show_quantity_remaining,
                 'is_hidden_without_promo_code' => $productsData->is_hidden_without_promo_code,
+                'is_visible_at_box_office' => $productsData->is_visible_at_box_office ?? true,
                 'product_type' => $productsData->product_type->name,
                 'product_category_id' => $productCategory->getId(),
                 'is_highlighted' => $productsData->is_highlighted ?? false,

@@ -270,6 +270,11 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
     public function hasActiveCheckInList(int $productId): bool
     {
+        return $this->findActiveCheckInListShortId($productId) !== null;
+    }
+
+    public function findActiveCheckInListShortId(int $productId): ?string
+    {
         return $this->db->table('product_check_in_lists')
             ->join('check_in_lists', 'check_in_lists.id', '=', 'product_check_in_lists.check_in_list_id')
             ->where('product_check_in_lists.product_id', $productId)
@@ -283,7 +288,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 $query->whereNull('check_in_lists.activates_at')
                     ->orWhere('check_in_lists.activates_at', '<=', now());
             })
-            ->exists();
+            ->orderBy('check_in_lists.id')
+            ->value('check_in_lists.short_id');
     }
 
     public function getModel(): string

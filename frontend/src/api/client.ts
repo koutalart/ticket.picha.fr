@@ -28,6 +28,7 @@ const ALLOWED_UNAUTHENTICATED_PATHS = [
     '/events/',
     'my-tickets',
     'kiosk/login',
+    '/legal/',
 ];
 
 export const api = axios.create({
@@ -43,7 +44,8 @@ api.interceptors.response.use(
     (error) => {
         const { status } = error.response;
         const currentPath = window?.location.pathname;
-        const isAllowedUnauthenticatedPath = ALLOWED_UNAUTHENTICATED_PATHS.some(path => currentPath.includes(path));
+        const isAllowedUnauthenticatedPath = currentPath === '/'
+            || ALLOWED_UNAUTHENTICATED_PATHS.some(path => currentPath.includes(path));
         const isManageEventPath = currentPath.startsWith('/manage/event/');
         const isKioskPath = currentPath.startsWith('/kiosk');
         const isAuthError = status === 401 || status === 403;

@@ -48,6 +48,7 @@ import {showError} from "../../../utilites/notifications.tsx";
 import classNames from "classnames";
 import {InputLabelWithHelp} from "../../common/InputLabelWithHelp";
 import {CreateTaxOrFeeModal} from "../../modals/CreateTaxOrFeeModal";
+import {DateTimeInput} from "../../common/DateTimeInput";
 
 interface ProductFormProps {
     form: UseFormReturnType<Product>,
@@ -93,13 +94,11 @@ const ProductPriceTierForm = ({form, product, event}: ProductFormProps) => {
                     label={t`Quantity Available`}
                 />
                 <InputGroup>
-                    <TextInput
-                        type={'datetime-local'}
+                    <DateTimeInput
                         {...form.getInputProps(`prices.${index}.sale_start_date`)}
                         label={t`Sale Start Date`}
                     />
-                    <TextInput
-                        type={'datetime-local'}
+                    <DateTimeInput
                         {...form.getInputProps(`prices.${index}.sale_end_date`)}
                         label={t`Sale End Date`}
                     />
@@ -451,9 +450,9 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                         </span>
                     }>
                         <InputGroup>
-                            <TextInput type={'datetime-local'} {...form.getInputProps('sale_start_date')}
+                            <DateTimeInput {...form.getInputProps('sale_start_date')}
                                        label={t`Sale Start Date`}/>
-                            <TextInput type={'datetime-local'} {...form.getInputProps('sale_end_date')}
+                            <DateTimeInput {...form.getInputProps('sale_end_date')}
                                        label={t`Sale End Date`}/>
                         </InputGroup>
                     </Fieldset>
@@ -486,6 +485,11 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                                 description={t`This overrides all visibility settings and will hide the product from all customers.`}
                                 {...form.getInputProps(`is_hidden`, {type: 'checkbox'})}
                                 label={t`Hide this product from customers`}
+                            />
+                            <Switch
+                                description={t`Show this ticket on the box office tablet. A ticket hidden from customers can still be sold at the box office.`}
+                                {...form.getInputProps(`is_visible_at_box_office`, {type: 'checkbox'})}
+                                label={t`Visible at the box office`}
                             />
                             <Switch
                                 description={t`Allow customers to join a waitlist when this product is sold out`}
