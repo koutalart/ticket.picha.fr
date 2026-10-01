@@ -1,11 +1,11 @@
 import {hydrateRoot} from "react-dom/client";
-import {createBrowserRouter, matchRoutes, Outlet, RouterProvider} from "react-router-dom";
-import {ScrollToTop} from "./components/common/ScrollToTop";
+import {createBrowserRouter, matchRoutes, RouterProvider} from "react-router-dom";
 
 import {router} from "./router";
 import {App} from "./App";
 import {queryClient} from "./utilites/queryClient";
 import {dynamicActivateLocale, getClientLocale, getSupportedLocale,} from "./locales.ts";
+import {setupScrollManagement} from "./utilites/scrollManagement.ts";
 
 declare global {
     interface Window {
@@ -31,15 +31,8 @@ async function initClientApp() {
         );
     }
 
-    const browserRouter = createBrowserRouter([{
-        element: (
-            <>
-                <ScrollToTop/>
-                <Outlet/>
-            </>
-        ),
-        children: router,
-    }]);
+    const browserRouter = createBrowserRouter(router);
+    setupScrollManagement(browserRouter);
 
     hydrateRoot(
         document.getElementById("app") as HTMLElement,
