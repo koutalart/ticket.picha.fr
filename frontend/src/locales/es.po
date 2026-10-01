@@ -25,7 +25,6 @@ msgstr "- Haz clic para despublicar"
 
 #: src/components/common/AttendeeDetails/index.tsx:29
 #: src/components/common/AttendeeTable/index.tsx:172
-#: src/components/common/AttendeeTicket/index.tsx:119
 #: src/components/common/OrderDetails/index.tsx:37
 #: src/components/common/OrdersTable/index.tsx:229
 msgid "—"
@@ -1260,7 +1259,6 @@ msgstr "Asistencia y tasas de registro en todos los eventos"
 msgid "Attendance sheet and check-in report"
 msgstr "Lista de asistencia e informe de accesos"
 
-#: src/components/common/AttendeeTicket/index.tsx:115
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:54
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:55
 #: src/components/common/QuestionsTable/index.tsx:461
@@ -1736,7 +1734,7 @@ msgstr ""
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:28
 #: src/components/common/AttendeeTable/index.tsx:300
-#: src/components/common/AttendeeTicket/index.tsx:156
+#: src/components/common/AttendeeTicket/index.tsx:146
 #: src/components/common/OrdersTable/index.tsx:435
 #: src/components/common/OrderStatusBadge/index.tsx:9
 #: src/components/common/WaitlistTable/index.tsx:27
@@ -2523,7 +2521,7 @@ msgstr "Controle cómo se manejan las comisiones de la plataforma para este even
 msgid "Cookies"
 msgstr "Cookies"
 
-#: src/components/common/AttendeeTicket/index.tsx:215
+#: src/components/common/AttendeeTicket/index.tsx:202
 #: src/components/common/CopyButton/index.tsx:13
 #: src/components/modals/CheckInListSuccessModal/index.tsx:42
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:75
@@ -2584,7 +2582,7 @@ msgstr "Copiar Correo"
 msgid "Copy link"
 msgstr "Copiar enlace"
 
-#: src/components/common/AttendeeTicket/index.tsx:215
+#: src/components/common/AttendeeTicket/index.tsx:202
 #: src/components/modals/ShareModal/index.tsx:171
 msgid "Copy Link"
 msgstr "Copiar link"
@@ -3051,6 +3049,7 @@ msgid "Data Ownership"
 msgstr "Propiedad de datos"
 
 #: src/components/common/AdminOrdersTable/index.tsx:94
+#: src/components/common/AttendeeTicket/index.tsx:66
 #: src/components/common/OrderDetails/index.tsx:42
 #: src/components/forms/QuestionForm/index.tsx:143
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:135
@@ -3060,8 +3059,8 @@ msgid "Date"
 msgstr "Fecha"
 
 #: src/components/common/AttendeeTicket/index.tsx:79
-msgid "Date & Time"
-msgstr "Fecha y hora"
+#~ msgid "Date & Time"
+#~ msgstr "Fecha y hora"
 
 #: src/components/routes/kiosk/Settings/index.tsx:230
 msgid "Date and time"
@@ -3891,6 +3890,7 @@ msgid "EUR"
 msgstr "EUR"
 
 #: src/components/common/AdminOrdersTable/index.tsx:72
+#: src/components/common/AttendeeTicket/index.tsx:108
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:34
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:35
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:36
@@ -4706,7 +4706,6 @@ msgstr "¿Has olvidado tu contraseña?"
 msgid "Form"
 msgstr "Formulario"
 
-#: src/components/common/AttendeeTicket/index.tsx:67
 #: src/components/common/Currency/index.tsx:90
 #: src/components/common/OrderSummary/index.tsx:46
 #: src/components/common/OrderSummary/index.tsx:99
@@ -5744,7 +5743,6 @@ msgstr "Cargando..."
 msgid "Local number without the leading 0."
 msgstr "Número local sin el 0 inicial."
 
-#: src/components/common/AttendeeTicket/index.tsx:98
 #: src/components/layouts/EventHomepage/index.tsx:425
 #: src/components/routes/event/Settings/index.tsx:46
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:84
@@ -7084,7 +7082,6 @@ msgid "Organization Name"
 msgstr "Nombre de la organización"
 
 #: src/components/common/AdminEventsTable/index.tsx:87
-#: src/components/common/AttendeeTicket/index.tsx:89
 #: src/components/layouts/EventHomepage/index.tsx:518
 #: src/components/modals/EditUserModal/index.tsx:55
 #: src/components/modals/InviteUserModal/index.tsx:47
@@ -7372,7 +7369,7 @@ msgstr "Pausado"
 msgid "Pay"
 msgstr "Pagar"
 
-#: src/components/common/AttendeeTicket/index.tsx:156
+#: src/components/common/AttendeeTicket/index.tsx:146
 msgid "Pay to unlock"
 msgstr "Pagar para desbloquear"
 
@@ -7868,7 +7865,7 @@ msgstr "Imprimir Entrada"
 msgid "Print Tickets"
 msgstr "Imprimir entradas"
 
-#: src/components/common/AttendeeTicket/index.tsx:203
+#: src/components/common/AttendeeTicket/index.tsx:190
 msgid "Print to PDF"
 msgstr "Imprimir a PDF"
 
@@ -9420,6 +9417,11 @@ msgstr "Fuente"
 msgid "Spanish"
 msgstr "Español"
 
+#: src/components/common/AttendeeTicket/index.tsx:99
+#: src/components/common/AttendeeTicket/index.tsx:101
+msgid "Sponsor"
+msgstr "Patrocinador"
+
 #: src/components/routes/event/TicketDesigner/index.tsx:165
 msgid "Sponsor logo"
 msgstr "Logo del patrocinador"
@@ -10413,8 +10415,8 @@ msgid "Ticket Holders"
 msgstr "Titulares de entradas"
 
 #: src/components/common/AttendeeTicket/index.tsx:175
-msgid "Ticket ID"
-msgstr "ID de la entrada"
+#~ msgid "Ticket ID"
+#~ msgstr "ID de la entrada"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:694
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:990
@@ -10453,7 +10455,10 @@ msgstr "Precio de la entrada"
 msgid "Ticket resent successfully"
 msgstr "Entrada reenviada correctamente"
 
-#: src/components/common/AttendeeTicket/index.tsx:106
+#: src/components/common/AttendeeTicket/index.tsx:63
+msgid "Ticket type"
+msgstr "Tipo de entrada"
+
 #: src/components/routes/event/attendees.tsx:66
 msgid "Ticket Type"
 msgstr "Tipo de Ticket"
@@ -10461,6 +10466,10 @@ msgstr "Tipo de Ticket"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:60
 msgid "Ticket URL"
 msgstr "URL de la entrada"
+
+#: src/components/common/AttendeeTicket/index.tsx:172
+msgid "Ticketing & management"
+msgstr "Venta de entradas y gestión"
 
 #: src/components/layouts/Event/index.tsx:118
 msgid "Ticketing & Sales"
@@ -10517,6 +10526,11 @@ msgstr "Los productos escalonados le permiten ofrecer múltiples opciones de pre
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:70
 msgid "TikTok"
 msgstr "TikTok"
+
+#: src/components/common/AttendeeTicket/index.tsx:71
+msgctxt "ticket"
+msgid "Time"
+msgstr "Hora"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:140
 msgid "Time"
@@ -11131,6 +11145,7 @@ msgstr "Tratamiento del IVA para tarifas de la plataforma: Las empresas registra
 msgid "VAT validation service temporarily unavailable"
 msgstr "Servicio de validación de IVA temporalmente no disponible"
 
+#: src/components/common/AttendeeTicket/index.tsx:74
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:149
 msgid "Venue"
 msgstr ""

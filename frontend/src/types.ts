@@ -245,6 +245,7 @@ export interface EventSettings {
         date_display_mode?: 'START_DATE_TIME' | 'DATE_RANGE' | 'HIDDEN';
         enabled?: boolean;
     };
+    ticket_sponsor_name?: string | null;
 
     // Marketing settings
     show_marketing_opt_in?: boolean;

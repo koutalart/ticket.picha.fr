@@ -1,16 +1,21 @@
-import {getAttendeeProductPrice, getAttendeeProductTitle} from "../../../utilites/products.ts";
+import {getAttendeeProductTitle} from "../../../utilites/products.ts";
 import {Button, CopyButton} from "@mantine/core";
-import {formatCurrency} from "../../../utilites/currency.ts";
-import {displayAttendeeEmail} from "../../../utilites/isKioskSentinelEmail.ts";
 import {t} from "@lingui/macro";
-import {prettyDate} from "../../../utilites/dates.ts";
-import {EventDateRange} from "../EventDateRange";
+import {formatTicketDate, formatTicketHours} from "../../../utilites/dates.ts";
 import QRCode from "react-qr-code";
-import {IconCopy, IconPrinter, IconLock, IconX} from "@tabler/icons-react";
-import {Address, Attendee, Event, Product} from "../../../types.ts";
+import {
+    IconCalendar,
+    IconClock,
+    IconCopy,
+    IconLock,
+    IconMapPin,
+    IconPrinter,
+    IconTicket,
+    IconWorld,
+    IconX,
+} from "@tabler/icons-react";
+import {Attendee, Event, Product} from "../../../types.ts";
 import classes from './AttendeeTicket.module.scss';
-import {imageUrl} from "../../../utilites/urlHelper.ts";
-import {formatAddress} from "../../../utilites/addressUtilities.ts";
 import {PoweredByFooter} from "../PoweredByFooter";
 
 interface AttendeeTicketProps {
@@ -21,6 +26,18 @@ interface AttendeeTicketProps {
     showPoweredBy?: boolean;
 }
 
+const PICHA_SITE = 'ticket.picha.fr';
+
+const spaced = (text: string): string => text
+    .split(' ')
+    .map((word) => Array.from(word).join(' '))
+    .join('   ');
+
+const displayId = (publicId: string): string => {
+    const [prefix, rest] = String(publicId).toUpperCase().split(/-(.*)/s);
+    return rest || prefix;
+};
+
 export const AttendeeTicket = ({
                                    attendee,
                                    product,
@@ -28,23 +45,35 @@ export const AttendeeTicket = ({
                                    hideButtons = false,
                                    showPoweredBy = false,
                                }: AttendeeTicketProps) => {
-    const productPrice = getAttendeeProductPrice(attendee, product);
-    const hasVenue = event?.settings?.location_details?.venue_name || event?.settings?.location_details?.address_line_1;
-
     const ticketDesignSettings = event?.settings?.ticket_design_settings;
-    const accentColor = ticketDesignSettings?.accent_color || '#6B46C1';
     const footerText = ticketDesignSettings?.footer_text;
-    const dateDisplayMode = ticketDesignSettings?.date_display_mode || 'START_DATE_TIME';
-    const logoUrl = imageUrl('TICKET_LOGO', event?.images);
-
-    const ticketStyle = {
-        '--accent': accentColor,
-    } as React.CSSProperties;
+    const showDate = (ticketDesignSettings?.date_display_mode || 'START_DATE_TIME') !== 'HIDDEN';
+    const logoUrl = event?.images?.find((image) => image.type === 'TICKET_LOGO')?.url;
+    const sponsorLogoUrl = event?.images?.find((image) => image.type === 'TICKET_SPONSOR_LOGO')?.url;
+    const sponsorName = event?.settings?.ticket_sponsor_name;
+    const timezone = event?.timezone || 'UTC';
+    const location = event?.settings?.location_details;
+    const venue = [location?.venue_name, location?.city].filter(Boolean).join(', ');
+    const attendeeName = [attendee.first_name, attendee.last_name].filter(Boolean).join(' ');
 
     const isCancelled = attendee.status === 'CANCELLED';
     const isAwaitingPayment = attendee.status === 'AWAITING_PAYMENT';
 
-    // Generate a deterministic pattern based on attendee ID for consistency
+    const rows = [
+        {icon: IconTicket, label: t`Ticket type`, value: getAttendeeProductTitle(attendee, product)},
+        {
+            icon: IconCalendar,
+            label: t`Date`,
+            value: showDate && event?.start_date ? formatTicketDate(event.start_date, timezone) : '',
+        },
+        {
+            icon: IconClock,
+            label: t({message: 'Time', context: 'ticket'}),
+            value: showDate && event?.start_date ? formatTicketHours(event.start_date, event.end_date, timezone) : '',
+        },
+        {icon: IconMapPin, label: t`Venue`, value: venue},
+    ].filter((row) => row.value);
+
     const generateQrPattern = () => {
         const seed = attendee.public_id || 'default';
         const pattern = [];
@@ -55,174 +84,128 @@ export const AttendeeTicket = ({
         return pattern;
     };
 
-    const qrPattern = generateQrPattern();
-
     return (
-        <div className={classes.ticket} style={ticketStyle}>
-            {/* Header */}
+        <div className={classes.ticket}>
             <div className={classes.header}>
-                <div className={classes.headerContent}>
-                    <h1 className={classes.eventTitle}>{event?.title}</h1>
-                    <div className={classes.priceDisplay}>
-                        {productPrice > 0 ? formatCurrency(productPrice, event?.currency) : t`Free`}
+                <div className={classes.headerBrand}>
+                    {logoUrl
+                        ? <img src={logoUrl} alt={event?.organizer?.name || event?.title} className={classes.eventLogo}/>
+                        : <div className={classes.organizerName}>{event?.organizer?.name}</div>}
+                </div>
+                {(sponsorLogoUrl || sponsorName) && (
+                    <>
+                        <div className={classes.headerDivider}/>
+                        <div className={classes.sponsor}>
+                            <div className={classes.sponsorLabel}>{t`Sponsor`}</div>
+                            {sponsorLogoUrl
+                                ? <img src={sponsorLogoUrl} alt={sponsorName || t`Sponsor`} className={classes.sponsorLogo}/>
+                                : <div className={classes.sponsorName}>{sponsorName}</div>}
+                        </div>
+                    </>
+                )}
+            </div>
+
+            <div className={classes.eventLabel}>{spaced(t`Event`.toUpperCase())}</div>
+            <h1 className={classes.eventTitle}>{event?.title}</h1>
+            <div className={classes.titleBar}/>
+
+            <div className={classes.body}>
+                <div className={classes.rows}>
+                    {rows.map(({icon: Icon, label, value}) => (
+                        <div className={classes.row} key={label}>
+                            <Icon className={classes.rowIcon} size={26} stroke={1.8}/>
+                            <div>
+                                <div className={classes.rowLabel}>{spaced(label.toUpperCase())}</div>
+                                <div className={classes.rowValue}>{value}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className={classes.qrColumn}>
+                    {(isCancelled || isAwaitingPayment) ? (
+                        <div
+                            className={`${classes.qrPlaceholder} ${isCancelled ? classes.qrPlaceholderCancelled : classes.qrPlaceholderPending}`}>
+                            <div className={classes.qrPatternBackground}>
+                                {generateQrPattern().map((filled, i) => (
+                                    <div
+                                        key={i}
+                                        className={`${classes.qrPatternCell} ${filled ? classes.qrPatternCellFilled : ''}`}
+                                    />
+                                ))}
+                            </div>
+                            <div className={classes.qrPlaceholderContent}>
+                                <div
+                                    className={`${classes.statusIconCircle} ${isCancelled ? classes.statusIconCancelled : classes.statusIconPending}`}>
+                                    {isCancelled
+                                        ? <IconX size={20} stroke={2} color="white"/>
+                                        : <IconLock size={20} stroke={2} color="white"/>}
+                                </div>
+                                <span
+                                    className={`${classes.statusText} ${isCancelled ? classes.statusTextCancelled : classes.statusTextPending}`}>
+                                    {isCancelled ? t`Cancelled` : t`Pay to unlock`}
+                                </span>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className={classes.qrContainer}>
+                            <QRCode
+                                value={String(attendee.public_id)}
+                                size={180}
+                                level="Q"
+                                style={{height: "auto", maxWidth: "100%", width: "100%"}}
+                            />
+                        </div>
+                    )}
+                    <div className={classes.ticketId}>{spaced(displayId(String(attendee.public_id)))}</div>
+                    {attendeeName && <div className={classes.attendeeName}>{attendeeName}</div>}
+                </div>
+            </div>
+
+            <div className={classes.footer}>
+                <div className={classes.pichaBrand}>
+                    <img src="/images/picha-ai-logo.png" alt="PICHA AI" className={classes.pichaLogo}/>
+                    <span className={classes.pichaProduct}>Ticket</span>
+                </div>
+                <div className={classes.footerDivider}/>
+                <div className={classes.footerSite}>
+                    <div className={classes.footerLabel}>{t`Ticketing & management`}</div>
+                    <div className={classes.siteUrl}>
+                        <IconWorld size={22} stroke={1.8}/>
+                        {PICHA_SITE}
                     </div>
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className={classes.content}>
-                <div className={classes.contentLeft}>
-                    {/* Event Details */}
-                    <div className={classes.eventDetails}>
-                        {dateDisplayMode !== 'HIDDEN' && (
-                            <div className={classes.detailRow}>
-                                <div className={classes.detailLabel}>{t`Date & Time`}</div>
-                                <div className={classes.detailValue}>
-                                    {dateDisplayMode === 'DATE_RANGE'
-                                        ? <EventDateRange event={event}/>
-                                        : prettyDate(event.start_date, event.timezone, true)}
-                                </div>
-                            </div>
-                        )}
-                        {event?.organizer?.name && (
-                            <div className={classes.detailRow}>
-                                <div className={classes.detailLabel}>{t`Organizer`}</div>
-                                <div className={classes.detailValue}>
-                                    {event?.organizer?.name}
-                                </div>
-                            </div>
-                        )}
+            {footerText && <div className={classes.organizerFooter}>{footerText}</div>}
 
-                        {hasVenue && (
-                            <div className={classes.detailRow}>
-                                <div className={classes.detailLabel}>{t`Location`}</div>
-                                <div className={classes.detailValue}>
-                                    {formatAddress(event?.settings?.location_details as Address)}
-                                </div>
-                            </div>
-                        )}
+            {!hideButtons && (
+                <div className={classes.actions}>
+                    <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => window?.open(`/product/${event.id}/${attendee.short_id}/print`, '_blank')}
+                        leftSection={<IconPrinter size={16}/>}
+                    >
+                        {t`Print to PDF`}
+                    </Button>
 
-                        <div className={classes.detailRow}>
-                            <div className={classes.detailLabel}>{t`Ticket Type`}</div>
-                            <div className={classes.detailValue}>
-                                {getAttendeeProductTitle(attendee, product)}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Attendee Information */}
-                    <div className={classes.attendeeSection}>
-                        <div className={classes.detailLabel}>{t`Attendee`}</div>
-                        <div className={classes.attendeeName}>
-                            {attendee.first_name} {attendee.last_name}
-                        </div>
-                        <div className={classes.attendeeEmail}>{displayAttendeeEmail(attendee.email) ?? t`—`}</div>
-                    </div>
-
-                </div>
-
-                {/* Right Section - Logo & QR Code */}
-                <div className={classes.contentRight}>
-                    <div className={classes.qrSection}>
-                        {logoUrl && (
-                            <div className={classes.logoContainer}>
-                                <img src={logoUrl} alt="Event Logo" className={classes.logo}/>
-                            </div>
-                        )}
-
-                        {/* QR Code or Status Placeholder */}
-                        {(isCancelled || isAwaitingPayment) ? (
-                            <div className={`${classes.qrPlaceholder} ${isCancelled ? classes.qrPlaceholderCancelled : classes.qrPlaceholderPending}`}>
-                                {/* Faded QR Pattern Background */}
-                                <div className={classes.qrPatternBackground}>
-                                    {qrPattern.map((filled, i) => (
-                                        <div
-                                            key={i}
-                                            className={`${classes.qrPatternCell} ${filled ? classes.qrPatternCellFilled : ''}`}
-                                        />
-                                    ))}
-                                </div>
-
-                                {/* Status Content Overlay */}
-                                <div className={classes.qrPlaceholderContent}>
-                                    <div className={`${classes.statusIconCircle} ${isCancelled ? classes.statusIconCancelled : classes.statusIconPending}`}>
-                                        {isCancelled ? (
-                                            <IconX size={20} stroke={2} color="white" />
-                                        ) : (
-                                            <IconLock size={20} stroke={2} color="white" />
-                                        )}
-                                    </div>
-                                    <span className={`${classes.statusText} ${isCancelled ? classes.statusTextCancelled : classes.statusTextPending}`}>
-                                        {isCancelled ? t`Cancelled` : t`Pay to unlock`}
-                                    </span>
-                                </div>
-                            </div>
-                        ) : (
-                            <div
-                                className={classes.qrContainer}
-                                style={{borderColor: accentColor}}
+                    <CopyButton
+                        value={`${window?.location.origin}/product/${event.id}/${attendee.short_id}`}>
+                        {({copied, copy}) => (
+                            <Button
+                                variant="default"
+                                size="sm"
+                                onClick={copy}
+                                leftSection={<IconCopy size={16}/>}
                             >
-                                <QRCode
-                                    value={String(attendee.public_id)}
-                                    size={180}
-                                    level="M"
-                                    style={{height: "auto", maxWidth: "100%", width: "100%"}}
-                                />
-                            </div>
+                                {copied ? t`Copied` : t`Copy Link`}
+                            </Button>
                         )}
-
-                        <div className={classes.ticketId}>
-                            <div className={classes.detailLabel}>{t`Ticket ID`}</div>
-                            <div
-                                className={classes.ticketIdValue}
-                                style={{color: accentColor}}
-                            >{attendee.public_id}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Footer - Only show if there's footer text or buttons */}
-            {(footerText || !hideButtons) && (
-                <div className={classes.footer}>
-                    <div className={classes.footerContent}>
-                        {footerText && (
-                            <div className={classes.footerText}>
-                                {footerText}
-                            </div>
-                        )}
-
-                        {!hideButtons && (
-                            <div className={classes.actions}>
-                                <Button
-                                    variant="default"
-                                    size="sm"
-                                    onClick={() => window?.open(`/product/${event.id}/${attendee.short_id}/print`, '_blank')}
-                                    leftSection={<IconPrinter size={16}/>}
-                                >
-                                    {t`Print to PDF`}
-                                </Button>
-
-                                <CopyButton
-                                    value={`${window?.location.origin}/product/${event.id}/${attendee.short_id}`}>
-                                    {({copied, copy}) => (
-                                        <Button
-                                            variant="default"
-                                            size="sm"
-                                            onClick={copy}
-                                            leftSection={<IconCopy size={16}/>}
-                                        >
-                                            {copied ? t`Copied` : t`Copy Link`}
-                                        </Button>
-                                    )}
-                                </CopyButton>
-                            </div>
-                        )}
-                    </div>
+                    </CopyButton>
                 </div>
             )}
 
-            {/* Powered By - Only shown in print mode */}
             {showPoweredBy && (
                 <div className={classes.poweredByInTicket}>
                     <PoweredByFooter/>

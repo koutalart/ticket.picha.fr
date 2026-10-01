@@ -25,7 +25,6 @@ msgstr "- Kattintson a visszavonáshoz"
 
 #: src/components/common/AttendeeDetails/index.tsx:29
 #: src/components/common/AttendeeTable/index.tsx:172
-#: src/components/common/AttendeeTicket/index.tsx:119
 #: src/components/common/OrderDetails/index.tsx:37
 #: src/components/common/OrdersTable/index.tsx:229
 msgid "—"
@@ -1260,7 +1259,6 @@ msgstr "Részvétel és bejelentkezési arányok minden eseményen"
 msgid "Attendance sheet and check-in report"
 msgstr "Jelenléti ív és belépési jelentés"
 
-#: src/components/common/AttendeeTicket/index.tsx:115
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:54
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:55
 #: src/components/common/QuestionsTable/index.tsx:461
@@ -1736,7 +1734,7 @@ msgstr ""
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:28
 #: src/components/common/AttendeeTable/index.tsx:300
-#: src/components/common/AttendeeTicket/index.tsx:156
+#: src/components/common/AttendeeTicket/index.tsx:146
 #: src/components/common/OrdersTable/index.tsx:435
 #: src/components/common/OrderStatusBadge/index.tsx:9
 #: src/components/common/WaitlistTable/index.tsx:27
@@ -2523,7 +2521,7 @@ msgstr "Szabályozza, hogyan kezelje a platformdíjakat ezen eseménynél"
 msgid "Cookies"
 msgstr "Sütik"
 
-#: src/components/common/AttendeeTicket/index.tsx:215
+#: src/components/common/AttendeeTicket/index.tsx:202
 #: src/components/common/CopyButton/index.tsx:13
 #: src/components/modals/CheckInListSuccessModal/index.tsx:42
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:75
@@ -2584,7 +2582,7 @@ msgstr "E-mail másolása"
 msgid "Copy link"
 msgstr "Link másolása"
 
-#: src/components/common/AttendeeTicket/index.tsx:215
+#: src/components/common/AttendeeTicket/index.tsx:202
 #: src/components/modals/ShareModal/index.tsx:171
 msgid "Copy Link"
 msgstr "Link másolása"
@@ -3051,6 +3049,7 @@ msgid "Data Ownership"
 msgstr "Adattulajdonlás"
 
 #: src/components/common/AdminOrdersTable/index.tsx:94
+#: src/components/common/AttendeeTicket/index.tsx:66
 #: src/components/common/OrderDetails/index.tsx:42
 #: src/components/forms/QuestionForm/index.tsx:143
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:135
@@ -3060,8 +3059,8 @@ msgid "Date"
 msgstr "Dátum"
 
 #: src/components/common/AttendeeTicket/index.tsx:79
-msgid "Date & Time"
-msgstr "Dátum és idő"
+#~ msgid "Date & Time"
+#~ msgstr "Dátum és idő"
 
 #: src/components/routes/kiosk/Settings/index.tsx:230
 msgid "Date and time"
@@ -3889,6 +3888,7 @@ msgid "EUR"
 msgstr "EUR"
 
 #: src/components/common/AdminOrdersTable/index.tsx:72
+#: src/components/common/AttendeeTicket/index.tsx:108
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:34
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:35
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:36
@@ -4704,7 +4704,6 @@ msgstr "Elfelejtette jelszavát?"
 msgid "Form"
 msgstr "Űrlap"
 
-#: src/components/common/AttendeeTicket/index.tsx:67
 #: src/components/common/Currency/index.tsx:90
 #: src/components/common/OrderSummary/index.tsx:46
 #: src/components/common/OrderSummary/index.tsx:99
@@ -5742,7 +5741,6 @@ msgstr "Betöltés..."
 msgid "Local number without the leading 0."
 msgstr "Helyi szám a kezdő 0 nélkül."
 
-#: src/components/common/AttendeeTicket/index.tsx:98
 #: src/components/layouts/EventHomepage/index.tsx:425
 #: src/components/routes/event/Settings/index.tsx:46
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:84
@@ -7082,7 +7080,6 @@ msgid "Organization Name"
 msgstr "Szervezet neve"
 
 #: src/components/common/AdminEventsTable/index.tsx:87
-#: src/components/common/AttendeeTicket/index.tsx:89
 #: src/components/layouts/EventHomepage/index.tsx:518
 #: src/components/modals/EditUserModal/index.tsx:55
 #: src/components/modals/InviteUserModal/index.tsx:47
@@ -7370,7 +7367,7 @@ msgstr "Szüneteltetve"
 msgid "Pay"
 msgstr "Fizetés"
 
-#: src/components/common/AttendeeTicket/index.tsx:156
+#: src/components/common/AttendeeTicket/index.tsx:146
 msgid "Pay to unlock"
 msgstr "Fizessen a feloldáshoz"
 
@@ -7866,7 +7863,7 @@ msgstr "Jegy nyomtatása"
 msgid "Print Tickets"
 msgstr "Jegyek nyomtatása"
 
-#: src/components/common/AttendeeTicket/index.tsx:203
+#: src/components/common/AttendeeTicket/index.tsx:190
 msgid "Print to PDF"
 msgstr "Nyomtatás PDF-be"
 
@@ -9416,6 +9413,11 @@ msgstr "Forrás"
 msgid "Spanish"
 msgstr "Spanyol"
 
+#: src/components/common/AttendeeTicket/index.tsx:99
+#: src/components/common/AttendeeTicket/index.tsx:101
+msgid "Sponsor"
+msgstr "Szponzor"
+
 #: src/components/routes/event/TicketDesigner/index.tsx:165
 msgid "Sponsor logo"
 msgstr "Szponzor logója"
@@ -10409,8 +10411,8 @@ msgid "Ticket Holders"
 msgstr "Jegytulajdonosok"
 
 #: src/components/common/AttendeeTicket/index.tsx:175
-msgid "Ticket ID"
-msgstr "Jegy azonosító"
+#~ msgid "Ticket ID"
+#~ msgstr "Jegy azonosító"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:694
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:990
@@ -10449,7 +10451,10 @@ msgstr "Jegy ára"
 msgid "Ticket resent successfully"
 msgstr "Jegy sikeresen újraküldve"
 
-#: src/components/common/AttendeeTicket/index.tsx:106
+#: src/components/common/AttendeeTicket/index.tsx:63
+msgid "Ticket type"
+msgstr "Jegytípus"
+
 #: src/components/routes/event/attendees.tsx:66
 msgid "Ticket Type"
 msgstr "Jegy típusa"
@@ -10457,6 +10462,10 @@ msgstr "Jegy típusa"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:60
 msgid "Ticket URL"
 msgstr "Jegy URL"
+
+#: src/components/common/AttendeeTicket/index.tsx:172
+msgid "Ticketing & management"
+msgstr "Jegyértékesítés és kezelés"
 
 #: src/components/layouts/Event/index.tsx:118
 msgid "Ticketing & Sales"
@@ -10513,6 +10522,11 @@ msgstr "A többszintű termékek lehetővé teszik, hogy ugyanahhoz a termékhez
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:70
 msgid "TikTok"
 msgstr "TikTok"
+
+#: src/components/common/AttendeeTicket/index.tsx:71
+msgctxt "ticket"
+msgid "Time"
+msgstr "Időpont"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:140
 msgid "Time"
@@ -11127,6 +11141,7 @@ msgstr "ÁFA kezelés a platform díjaknál: EU ÁFA-s vállalkozások használh
 msgid "VAT validation service temporarily unavailable"
 msgstr "ÁFA érvényesítési szolgáltatás átmenetileg nem elérhető"
 
+#: src/components/common/AttendeeTicket/index.tsx:74
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:149
 msgid "Venue"
 msgstr ""
