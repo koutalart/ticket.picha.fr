@@ -1,6 +1,7 @@
 import axios from "axios";
 import {isSsr} from "../utilites/helpers.ts";
 import {getConfig} from "../utilites/config.ts";
+import {SOLUTION_SLUGS} from "../components/routes/solutions/slugs.ts";
 
 const BASE_URL = isSsr()
     ? getConfig('VITE_API_URL_SERVER')
@@ -29,6 +30,8 @@ const ALLOWED_UNAUTHENTICATED_PATHS = [
     'my-tickets',
     'kiosk/login',
     '/legal/',
+    '/cas-clients',
+    ...SOLUTION_SLUGS.map((slug) => `/${slug}`),
 ];
 
 export const api = axios.create({

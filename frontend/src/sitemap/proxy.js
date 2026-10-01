@@ -8,7 +8,7 @@ const getBackendUrl = () => {
     return backendUrl;
 };
 
-const fetchSitemap = async (path, res, errorContext) => {
+const fetchSitemap = async (path, res, errorContext, transform = (xml) => xml) => {
     try {
         const backendUrl = getBackendUrl();
         const response = await axios.get(`${backendUrl}/public${path}`, {
@@ -20,7 +20,7 @@ const fetchSitemap = async (path, res, errorContext) => {
         if (response.headers['cache-control']) {
             res.setHeader('Cache-Control', response.headers['cache-control']);
         }
-        res.status(200).send(response.data);
+        res.status(200).send(transform(response.data));
     } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 404) {
             res.status(404).send('Sitemap not found');
@@ -39,8 +39,11 @@ const validatePageParam = (page, res) => {
     return true;
 };
 
-export const sitemapIndexHandler = async (_req, res) => {
-    await fetchSitemap('/sitemap.xml', res, 'sitemap index');
+export const sitemapIndexHandler = async (_req, res, extraSitemaps = []) => {
+    const entries = extraSitemaps.map((url) => `  <sitemap><loc>${url}</loc></sitemap>`).join('\n');
+    await fetchSitemap('/sitemap.xml', res, 'sitemap index', (xml) =>
+        entries ? xml.replace('</sitemapindex>', `${entries}\n</sitemapindex>`) : xml
+    );
 };
 
 export const sitemapEventsHandler = async (req, res) => {

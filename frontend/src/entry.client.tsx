@@ -1,5 +1,6 @@
 import {hydrateRoot} from "react-dom/client";
-import {createBrowserRouter, matchRoutes, RouterProvider} from "react-router-dom";
+import {createBrowserRouter, matchRoutes, Outlet, RouterProvider} from "react-router-dom";
+import {ScrollToTop} from "./components/common/ScrollToTop";
 
 import {router} from "./router";
 import {App} from "./App";
@@ -30,7 +31,15 @@ async function initClientApp() {
         );
     }
 
-    const browserRouter = createBrowserRouter(router);
+    const browserRouter = createBrowserRouter([{
+        element: (
+            <>
+                <ScrollToTop/>
+                <Outlet/>
+            </>
+        ),
+        children: router,
+    }]);
 
     hydrateRoot(
         document.getElementById("app") as HTMLElement,

@@ -20,6 +20,7 @@ export const AnalyticsEvents = {
     PURCHASE_COMPLETED_PAID: 'purchase_completed_paid',
     PURCHASE_COMPLETED_OFFLINE: 'purchase_completed_offline',
     PURCHASE_COMPLETED_FREE: 'purchase_completed_free',
+    DEMO_REQUESTED: 'demo_requested',
 } as const;
 
 export type AnalyticsEventName = typeof AnalyticsEvents[keyof typeof AnalyticsEvents];
