@@ -111,15 +111,51 @@ class AttendeeTicketPdfServiceTest extends TestCase
 
         self::assertNotEmpty($pdf);
         self::assertStringContainsString(
-            $attendee->getPublicId(),
+            implode(' ', str_split(explode('-', $attendee->getPublicId(), 2)[1])),
             $this->extractText($pdf),
-            'AC-17: the public_id must appear in clear text on the ticket',
+            'AC-17: the public_id (without its A- prefix, letter-spaced as on the design) must appear in clear text',
         );
 
-        $images = $this->extractImages($pdf);
-        self::assertCount(1, $images, 'AC-15: exactly one embedded image — the QR — is expected on the ticket');
-        self::assertSame('300', (string)$images[0]['Width']);
-        self::assertSame('300', (string)$images[0]['Height']);
+        self::assertTrue(
+            $this->hasQrImage($this->extractImages($pdf)),
+            'AC-15: the 300×300 QR image must be embedded on the ticket',
+        );
+    }
+
+    public function test_pdf_follows_picha_ticket_design(): void
+    {
+        app()->setLocale('fr');
+        [$attendee, $event, $eventSettings, $organizer] = $this->buildDomainObjects('Anli', 'Madi');
+        $eventSettings->setTicketSponsorName('Bé digital');
+
+        $pdf = app(AttendeeTicketPdfService::class)->generate($attendee, $event, $eventSettings, $organizer);
+        $text = $this->extractText($pdf);
+
+        self::assertStringContainsString('É V É N E M E N T', $text);
+        self::assertStringContainsString('Test Event', $text);
+        self::assertStringContainsString("T Y P E   D ' E N T R É E", $text);
+        self::assertStringContainsString('Anli Madi', $text);
+        self::assertStringContainsString(implode(' ', str_split(explode('-', $attendee->getPublicId(), 2)[1])), $text);
+        self::assertStringContainsString('Sponsor', $text);
+        self::assertStringContainsString('Bé digital', $text);
+        self::assertStringContainsString('Billetterie & gestion', $text);
+        self::assertStringContainsString('ticket.picha.fr', $text);
+        self::assertStringContainsString('Ticket', $text);
+        self::assertGreaterThanOrEqual(2, count($this->extractImages($pdf)), 'QR + PICHA AI logo');
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $images
+     */
+    private function hasQrImage(array $images): bool
+    {
+        foreach ($images as $image) {
+            if ((string) $image['Width'] === '300' && (string) $image['Height'] === '300') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** AC-19 */
@@ -160,9 +196,8 @@ class AttendeeTicketPdfServiceTest extends TestCase
 
         $mailImages = $this->extractImages($mailPdf);
         $serviceImages = $this->extractImages($servicePdf);
-        self::assertCount(1, $mailImages);
-        self::assertCount(1, $serviceImages);
-        self::assertSame($mailImages[0]['Width'], $serviceImages[0]['Width']);
-        self::assertSame($mailImages[0]['Height'], $serviceImages[0]['Height']);
+        self::assertCount(count($mailImages), $serviceImages);
+        self::assertTrue($this->hasQrImage($mailImages));
+        self::assertTrue($this->hasQrImage($serviceImages));
     }
 }

@@ -671,6 +671,14 @@ fiche d'achat.
    d'impression validé par Jo. Pour un nouveau rouleau : `~JC`, lire LABEL LENGTH, la saisir en mm
    dans les réglages du poste. Pictos : centrage sur le dessin réel (les bitmaps ont des marges
    internes inégales).
+   **Modèle général (Jo, 1er oct.)** : ce design devient aussi celui du **billet PDF** (pièce jointe
+   de l'e-mail de confirmation et PDF du guichet), aux **couleurs PICHA** (violet #422A6A, jaune
+   #FDB900) : gabarit `attendee-ticket-pdf.blade.php`, police Roboto Condensed embarquée (OFL,
+   `resources/ticket/fonts`), pictos PNG rendus depuis les SVG de `resources/ticket/icons`, logo
+   PICHA AI couleur. Contenu commun ZPL/PDF via `TicketContentService`. Le QR du PDF est dessiné
+   avec GD (plus de dépendance à imagick). La couleur d'accent du Ticket Designer n'est plus
+   utilisée par le PDF ; le texte de pied de page de l'organisateur reste affiché sous le billet.
+   Hors périmètre pour l'instant : billet affiché en ligne et aperçu du Ticket Designer.
    Historique —  (≈ 20+ caractères) peut encore toucher le QR,
    comme dans la maquette d'origine.
 

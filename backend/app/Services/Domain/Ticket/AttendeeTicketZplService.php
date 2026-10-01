@@ -103,7 +103,7 @@ class AttendeeTicketZplService
             $lines[] = $at(386, 70).$font(32).$block(205, 2, 2, 'R').'^FD'.$sponsor.'\&^FS';
         }
 
-        $lines[] = $at(34, 160).$font(16).'^FD'.$this->spaced(mb_strtoupper($this->field(__('Event'), 16))).'^FS';
+        $lines[] = $at(34, 160).$font(16).'^FD'.TicketText::spaced(mb_strtoupper($this->field(__('Event'), 16))).'^FS';
 
         $title = $this->field($eventTitle, 40);
         if (mb_strlen($title) <= self::SHORT_TITLE_MAX_LENGTH) {
@@ -133,7 +133,7 @@ class AttendeeTicketZplService
                 $icon,
                 '^FO'.($centreX - $inkLeft - intdiv($inkWidth, 2)).','.($centreY - $inkTop - intdiv($inkHeight, 2)),
             ));
-            $lines[] = $at(108, $top + 6).$font(15).'^FD'.$this->spaced(mb_strtoupper($this->field($label, 20))).'^FS';
+            $lines[] = $at(108, $top + 6).$font(15).'^FD'.TicketText::spaced(mb_strtoupper($this->field($label, 20))).'^FS';
             $lines[] = $at(108, $top + 26).$font(30, 27).'^FD'.$this->words($value, 19).'^FS';
 
             if ($index < count($rows) - 1) {
@@ -150,7 +150,7 @@ class AttendeeTicketZplService
         $lines[] = '^FXQR:'.$safeId.'^FS';
         $lines[] = '^FO'.$qrX.','.$qrY.$qr->zpl.'^FS';
         $idY = $qrY + $qr->size + $d(8);
-        $lines[] = '^FO'.$d(346).','.$idY.$font(20).$block(258, 1, 0, 'C').'^FD'.$this->spaced($this->displayId($safeId)).'\&^FS';
+        $lines[] = '^FO'.$d(346).','.$idY.$font(20).$block(258, 1, 0, 'C').'^FD'.TicketText::spaced(TicketText::displayId($safeId)).'\&^FS';
 
         $name = $this->words($attendeeName, 28);
         if ($name !== '') {
@@ -236,21 +236,6 @@ class AttendeeTicketZplService
         }
 
         return strtoupper(preg_replace('/\s+/', '', (string) file_get_contents($path)) ?? '');
-    }
-
-    private function displayId(string $id): string
-    {
-        $parts = explode('-', strtoupper($id), 2);
-
-        return $parts[1] ?? $parts[0];
-    }
-
-    private function spaced(string $text): string
-    {
-        return implode('   ', array_map(
-            fn (string $word): string => implode(' ', mb_str_split($word)),
-            explode(' ', $text),
-        ));
     }
 
     private function words(string $value, int $maxLength): string
