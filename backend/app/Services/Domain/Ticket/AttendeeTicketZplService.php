@@ -125,10 +125,12 @@ class AttendeeTicketZplService
         foreach ($rows as $index => [$icon, $label, $value]) {
             $top = self::ROW_TOP + $index * $pitch;
             $lines[] = $at(30, $top).'^GC'.$d(self::ROW_CIRCLE).','.$d(2).'^FS';
-            [$iconWidth, $iconHeight] = $this->graphicSize($icon);
+            [$inkLeft, $inkTop, $inkWidth, $inkHeight] = $this->graphicInkBox($icon);
+            $centreX = $d(30) + intdiv($d(self::ROW_CIRCLE), 2);
+            $centreY = $d($top) + intdiv($d(self::ROW_CIRCLE), 2);
             $lines = array_merge($lines, $this->graphic(
                 $icon,
-                $at(30 + intdiv(self::ROW_CIRCLE - $iconWidth, 2), $top + intdiv(self::ROW_CIRCLE - $iconHeight, 2)),
+                '^FO'.($centreX - $inkLeft - intdiv($inkWidth, 2)).','.($centreY - $inkTop - intdiv($inkHeight, 2)),
             ));
             $lines[] = $at(108, $top + 6).$font(15).'^FD'.$this->spaced(mb_strtoupper($this->field($label, 20))).'^FS';
             $lines[] = $at(108, $top + 26).$font(30, 27).'^FD'.$this->words($value, 19).'^FS';
@@ -189,17 +191,40 @@ class AttendeeTicketZplService
     }
 
     /**
-     * @return array{0: int, 1: int}
+     * @return array{0: int, 1: int, 2: int, 3: int}
      */
-    private function graphicSize(string $filename): array
+    private function graphicInkBox(string $filename): array
     {
         $bytesPerRow = self::GRAPHICS[$filename] ?? 0;
         $hex = $this->graphicHex($filename);
         if ($bytesPerRow < 1 || $hex === '') {
-            return [0, 0];
+            return [0, 0, 0, 0];
         }
 
-        return [$bytesPerRow * 8, intdiv(strlen($hex), 2 * $bytesPerRow)];
+        $left = PHP_INT_MAX;
+        $right = -1;
+        $top = PHP_INT_MAX;
+        $bottom = -1;
+        foreach (str_split($hex, $bytesPerRow * 2) as $y => $row) {
+            $bits = '';
+            foreach (str_split($row, 2) as $byte) {
+                $bits .= str_pad(decbin((int) hexdec($byte)), 8, '0', STR_PAD_LEFT);
+            }
+            $first = strpos($bits, '1');
+            if ($first === false) {
+                continue;
+            }
+            $left = min($left, $first);
+            $right = max($right, (int) strrpos($bits, '1'));
+            $top = min($top, $y);
+            $bottom = $y;
+        }
+
+        if ($right < 0) {
+            return [0, 0, 0, 0];
+        }
+
+        return [$left, $top, $right - $left + 1, $bottom - $top + 1];
     }
 
     private function graphicHex(string $filename): string

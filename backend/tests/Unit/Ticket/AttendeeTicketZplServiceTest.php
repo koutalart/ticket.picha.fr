@@ -115,7 +115,7 @@ class AttendeeTicketZplServiceTest extends TestCase
         $zpl = $this->generate(venueName: 'Le 5/5', venueCity: 'Mamoudzou');
 
         self::assertStringContainsString('^FO30,282^GC62,2^FS', $zpl);
-        self::assertStringContainsString('^FO37,290^GFA,', $zpl);
+        self::assertStringContainsString('^FO43,291^GFA,', $zpl);
         self::assertStringContainsString("^FO108,288^A0N,15,15^FDT Y P E   D ' E N T R É E^FS", $zpl);
         self::assertStringContainsString('^FO108,308^A0N,30,27^FDPass VIP^FS', $zpl);
         self::assertStringContainsString('^FO30,348^GB2,1,1^FS', $zpl);
@@ -134,6 +134,14 @@ class AttendeeTicketZplServiceTest extends TestCase
         self::assertStringContainsString('^FO30,466^GC62,2^FS', $zpl);
         self::assertStringContainsString('^FO30,359^GB2,1,1^FS', $zpl);
         self::assertStringNotContainsString('L I E U', $zpl);
+    }
+
+    public function test_icon_drawing_is_centred_in_its_circle(): void
+    {
+        $zpl = $this->generate();
+
+        self::assertStringContainsString('^FO30,374^GC62,2^FS', $zpl);
+        self::assertStringContainsString('^FO45,385^GFA,', $zpl);
     }
 
     public function test_qr_code_sits_in_frame_with_spaced_id_and_name(): void
