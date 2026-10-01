@@ -6,9 +6,15 @@ import {useGetAllConfigurations} from "../../../../../queries/useGetAllConfigura
 import {useGetMessagingTiers} from "../../../../../queries/useGetMessagingTiers";
 import {useAssignConfiguration} from "../../../../../mutations/useAssignConfiguration";
 import {useUpdateAccountMessagingTier} from "../../../../../mutations/useUpdateAccountMessagingTier";
-import {IconArrowLeft, IconCalendar, IconWorld, IconEdit, IconBuildingBank, IconUsers} from "@tabler/icons-react";
+import {IconArrowLeft, IconCalendar, IconWorld, IconEdit, IconBuildingBank, IconUsers, IconExternalLink, IconLayout} from "@tabler/icons-react";
 import {useState} from "react";
 import {EditAccountVatSettingsModal} from "../../../../modals/EditAccountVatSettingsModal";
+import {EditOrganizerCustomDomainModal} from "../../../../modals/EditOrganizerCustomDomainModal";
+import {EditOrganizerSiteContentModal} from "../../../../modals/EditOrganizerSiteContentModal";
+import {useGetAdminAccountOrganizers} from "../../../../../queries/useGetAdminAccountOrganizers";
+import {AdminOrganizer} from "../../../../../api/admin.client";
+import {useUpdateAdminOrganizerHomepageTemplate} from "../../../../../mutations/useUpdateAdminOrganizerHomepageTemplate";
+import {DEFAULT_ORGANIZER_TEMPLATE, ORGANIZER_TEMPLATES} from "../../../../organizerTemplates";
 import {showSuccess, showError} from "../../../../../utilites/notifications";
 import {getCurrencySymbol} from "../../../../../utilites/currency";
 import classes from "./AccountDetail.module.scss";
@@ -22,10 +28,15 @@ const AccountDetail = () => {
     const assignConfigMutation = useAssignConfiguration(accountId!);
     const updateTierMutation = useUpdateAccountMessagingTier(accountId!);
     const [showVatModal, setShowVatModal] = useState(false);
+    const {data: organizersData} = useGetAdminAccountOrganizers(accountId!);
+    const [domainOrganizer, setDomainOrganizer] = useState<AdminOrganizer | null>(null);
+    const [siteContentOrganizer, setSiteContentOrganizer] = useState<AdminOrganizer | null>(null);
+    const updateTemplateMutation = useUpdateAdminOrganizerHomepageTemplate(accountId!);
 
     const account = accountData?.data;
     const configurations = configurationsData?.data || [];
     const messagingTiers = messagingTiersData?.data || [];
+    const organizers = organizersData?.data || [];
 
     const formatDate = (dateString?: string) => {
         if (!dateString) return '-';
@@ -43,6 +54,15 @@ const AccountDetail = () => {
                 onError: () => showError(t`Failed to assign configuration`),
             }
         );
+    };
+
+    const handleTemplateChange = (organizerId: AdminOrganizer['id'], value: string | null) => {
+        if (!value) return;
+
+        updateTemplateMutation.mutate({organizerId, homepageTemplate: value}, {
+            onSuccess: () => showSuccess(t`Homepage template applied`),
+            onError: () => showError(t`Failed to apply homepage template`),
+        });
     };
 
     const handleMessagingTierChange = (value: string | null) => {
@@ -92,6 +112,11 @@ const AccountDetail = () => {
     const configOptions = configurations.map((config) => ({
         value: String(config.id),
         label: config.is_system_default ? `${config.name} (${t`Default`})` : config.name,
+    }));
+
+    const templateOptions = Object.entries(ORGANIZER_TEMPLATES).map(([value, template]) => ({
+        value,
+        label: template.label(),
     }));
 
     const tierOptions = messagingTiers.map((tier) => ({
@@ -168,6 +193,71 @@ const AccountDetail = () => {
                                     </Stack>
                                 </div>
                             </div>
+                        </Stack>
+                    </Card>
+
+                    <Card className={classes.accountCard}>
+                        <Stack gap="md">
+                            <Text size="lg" fw={600}>{t`Organizers, Domains & Templates`}</Text>
+
+                            {organizers.length === 0 ? (
+                                <Text size="sm" c="dimmed">{t`No organizers`}</Text>
+                            ) : (
+                                <div className={classes.usersList}>
+                                    {organizers.map((organizer) => (
+                                        <div key={organizer.id} className={classes.userItem}>
+                                            <div>
+                                                <Group gap="xs">
+                                                    <Text size="sm" fw={500}>{organizer.name}</Text>
+                                                    <Badge size="xs" variant="light">{organizer.status}</Badge>
+                                                </Group>
+                                                {organizer.custom_domain ? (
+                                                    <Text
+                                                        size="xs"
+                                                        component="a"
+                                                        href={`https://${organizer.custom_domain}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        c="blue"
+                                                    >
+                                                        {organizer.custom_domain} <IconExternalLink size={10}/>
+                                                    </Text>
+                                                ) : (
+                                                    <Text size="xs" c="dimmed">{t`No custom domain`}</Text>
+                                                )}
+                                            </div>
+                                            <Group gap="xs">
+                                                <Select
+                                                    size="xs"
+                                                    w={160}
+                                                    aria-label={t`Homepage template`}
+                                                    data={templateOptions}
+                                                    value={organizer.homepage_template || DEFAULT_ORGANIZER_TEMPLATE}
+                                                    onChange={(value) => handleTemplateChange(organizer.id, value)}
+                                                    disabled={updateTemplateMutation.isPending}
+                                                    allowDeselect={false}
+                                                />
+                                                <Button
+                                                    variant="light"
+                                                    size="xs"
+                                                    leftSection={<IconLayout size={14}/>}
+                                                    onClick={() => setSiteContentOrganizer(organizer)}
+                                                >
+                                                    {t`Site content`}
+                                                </Button>
+                                                <Button
+                                                    variant="light"
+                                                    size="xs"
+                                                    leftSection={<IconEdit size={14}/>}
+                                                    onClick={() => setDomainOrganizer(organizer)}
+                                                >
+                                                    {t`Domain`}
+                                                </Button>
+                                            </Group>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </Stack>
                     </Card>
 
@@ -338,6 +428,22 @@ const AccountDetail = () => {
                     accountId={accountId!}
                     vatSetting={account.vat_setting}
                     onClose={() => setShowVatModal(false)}
+                />
+            )}
+
+            {siteContentOrganizer && (
+                <EditOrganizerSiteContentModal
+                    accountId={accountId!}
+                    organizer={siteContentOrganizer}
+                    onClose={() => setSiteContentOrganizer(null)}
+                />
+            )}
+
+            {domainOrganizer && (
+                <EditOrganizerCustomDomainModal
+                    accountId={accountId!}
+                    organizer={domainOrganizer}
+                    onClose={() => setDomainOrganizer(null)}
                 />
             )}
         </>

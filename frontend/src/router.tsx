@@ -1,4 +1,4 @@
-import { Navigate, RouteObject } from "react-router";
+import { Navigate, RouteObject, useLoaderData } from "react-router";
 import ErrorPage from "./error-page.tsx";
 import Landing from "./components/routes/landing";
 import { useEffect, useState } from "react";
@@ -6,8 +6,21 @@ import { useGetMe } from "./queries/useGetMe.ts";
 import { publicEventRouteLoader } from "./routeLoaders/publicEventRouteLoader.ts";
 import { publicOrganizerRouteLoader } from "./routeLoaders/publicOrganizerRouteLoader.ts";
 import { organizerPreviewRouteLoader } from "./routeLoaders/organizerPreviewRouteLoader.ts";
+import PublicOrganizer from "./components/layouts/PublicOrganizer";
+import {
+    customDomainHomeLoader,
+    customDomainSitePageLoader,
+    ORGANIZER_SITE_PAGES,
+    platformSitePageLoader,
+} from "./routeLoaders/organizerSitePageLoader.ts";
 
 const Root = () => {
+    const customDomainData = useLoaderData();
+
+    return customDomainData ? <PublicOrganizer /> : <PlatformRoot />;
+};
+
+const PlatformRoot = () => {
     const [redirectPath, setRedirectPath] = useState<string | null>(null);
     const me = useGetMe();
 
@@ -29,6 +42,7 @@ const Root = () => {
 export const router: RouteObject[] = [
     {
         path: "",
+        loader: customDomainHomeLoader,
         element: <Root />,
         errorElement: <ErrorPage />
     },
@@ -518,6 +532,18 @@ export const router: RouteObject[] = [
         },
         errorElement: <ErrorPage />,
     },
+    {
+        path: "/events/:organizerId/:organizerSlug/:sitePage",
+        loader: platformSitePageLoader,
+        element: <PublicOrganizer />,
+        errorElement: <ErrorPage />,
+    },
+    ...ORGANIZER_SITE_PAGES.map((sitePage): RouteObject => ({
+        path: `/${sitePage}`,
+        loader: customDomainSitePageLoader(sitePage),
+        element: <PublicOrganizer />,
+        errorElement: <ErrorPage />,
+    })),
     {
         path: "/e/:eventId/:eventSlug",
         async lazy() {

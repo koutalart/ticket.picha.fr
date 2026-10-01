@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useLoaderData, useParams} from "react-router";
 import {useGetOrganizerSettings} from "../../../queries/useGetOrganizerSettings.ts";
 import {LoadingMask} from "../../common/LoadingMask";
-import OrganizerHomepage from "../OrganizerHomepage";
+import {getOrganizerTemplate} from "../../organizerTemplates";
 import {Organizer} from "../../../types.ts";
 
 const OrganizerHomepagePreview = () => {
@@ -54,7 +54,9 @@ const OrganizerHomepagePreview = () => {
         }
     };
 
-    return <OrganizerHomepage
+    const Template = getOrganizerTemplate(organizer.homepage_template);
+
+    return <Template
         organizer={previewOrganizer}
         eventsData={eventsData}
         isPastEvents={false}

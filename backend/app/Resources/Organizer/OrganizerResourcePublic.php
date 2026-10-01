@@ -21,6 +21,9 @@ class OrganizerResourcePublic extends JsonResource
             'description' => $this->getDescription(),
             'slug' => $this->getSlug(),
             'status' => $this->getStatus(),
+            'homepage_template' => $this->getHomepageTemplate(),
+            'site_content' => $this->getSiteContent(),
+            'custom_domain' => $this->getCustomDomain(),
             'images' => $this->when(
                 (bool)$this->getImages(),
                 fn() => ImageResource::collection($this->getImages())

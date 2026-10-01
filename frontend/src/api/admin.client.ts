@@ -1,9 +1,19 @@
 import {api} from "./client";
-import {GenericDataResponse, GenericPaginatedResponse, IdParam, User} from "../types";
+import {GenericDataResponse, GenericPaginatedResponse, IdParam, OrganizerSiteContent, User} from "../types";
 
 export interface AdminUser extends User {
     accounts?: AccountWithRole[];
     created_at?: string;
+}
+
+export interface AdminOrganizer {
+    id: IdParam;
+    name: string;
+    slug: string;
+    status: string;
+    custom_domain: string | null;
+    homepage_template: string;
+    site_content: OrganizerSiteContent | null;
 }
 
 export interface AccountWithRole {
@@ -449,6 +459,37 @@ export const adminClient = {
     getAccount: async (accountId: IdParam) => {
         const response = await api.get<GenericDataResponse<AdminAccountDetail>>(
             `admin/accounts/${accountId}`
+        );
+        return response.data;
+    },
+
+    getAccountOrganizers: async (accountId: IdParam) => {
+        const response = await api.get<GenericDataResponse<AdminOrganizer[]>>(
+            `admin/accounts/${accountId}/organizers`
+        );
+        return response.data;
+    },
+
+    updateOrganizerCustomDomain: async (accountId: IdParam, organizerId: IdParam, customDomain: string | null) => {
+        const response = await api.put<GenericDataResponse<AdminOrganizer>>(
+            `admin/accounts/${accountId}/organizers/${organizerId}/custom-domain`,
+            {custom_domain: customDomain}
+        );
+        return response.data;
+    },
+
+    updateOrganizerHomepageTemplate: async (accountId: IdParam, organizerId: IdParam, homepageTemplate: string) => {
+        const response = await api.put<GenericDataResponse<AdminOrganizer>>(
+            `admin/accounts/${accountId}/organizers/${organizerId}/homepage-template`,
+            {homepage_template: homepageTemplate}
+        );
+        return response.data;
+    },
+
+    updateOrganizerSiteContent: async (accountId: IdParam, organizerId: IdParam, siteContent: OrganizerSiteContent) => {
+        const response = await api.put<GenericDataResponse<AdminOrganizer>>(
+            `admin/accounts/${accountId}/organizers/${organizerId}/site-content`,
+            siteContent
         );
         return response.data;
     },

@@ -124,6 +124,7 @@ use HiEvents\Http\Actions\Organizers\GetOrganizerAction;
 use HiEvents\Http\Actions\Organizers\GetOrganizerEventsAction;
 use HiEvents\Http\Actions\Organizers\GetOrganizersAction;
 use HiEvents\Http\Actions\Organizers\GetPublicOrganizerAction;
+use HiEvents\Http\Actions\Organizers\GetOrganizerByCustomDomainPublicAction;
 use HiEvents\Http\Actions\Organizers\Orders\GetOrganizerOrdersAction;
 use HiEvents\Http\Actions\Organizers\Public\SendOrganizerContactMessagePublicAction;
 use HiEvents\Http\Actions\Organizers\Settings\GetOrganizerSettingsAction;
@@ -206,6 +207,10 @@ use HiEvents\Http\Actions\Admin\Messages\ApproveMessageAction;
 use HiEvents\Http\Actions\Admin\Messages\GetAllMessagesAction as GetAllAdminMessagesAction;
 use HiEvents\Http\Actions\Admin\GetMessagingTiersAction;
 use HiEvents\Http\Actions\Admin\Accounts\UpdateAccountMessagingTierAction;
+use HiEvents\Http\Actions\Admin\Organizers\GetAccountOrganizersAction as GetAdminAccountOrganizersAction;
+use HiEvents\Http\Actions\Admin\Organizers\UpdateOrganizerCustomDomainAction as UpdateAdminOrganizerCustomDomainAction;
+use HiEvents\Http\Actions\Admin\Organizers\UpdateOrganizerHomepageTemplateAction as UpdateAdminOrganizerHomepageTemplateAction;
+use HiEvents\Http\Actions\Admin\Organizers\UpdateOrganizerSiteContentAction as UpdateAdminOrganizerSiteContentAction;
 use HiEvents\Http\Actions\Admin\Orders\GetAllOrdersAction;
 use HiEvents\Http\Actions\Admin\Attribution\GetUtmAttributionStatsAction;
 use HiEvents\Http\Actions\Admin\GetSystemInfoAction;
@@ -486,6 +491,10 @@ $router->prefix('/admin')->middleware(['auth:api'])->group(
         $router->get('/accounts/{account_id}', GetAdminAccountAction::class);
         $router->put('/accounts/{account_id}/vat-settings', UpdateAdminAccountVatSettingAction::class);
         $router->put('/accounts/{account_id}/configuration', AssignConfigurationAction::class);
+        $router->get('/accounts/{account_id}/organizers', GetAdminAccountOrganizersAction::class);
+        $router->put('/accounts/{account_id}/organizers/{organizer_id}/custom-domain', UpdateAdminOrganizerCustomDomainAction::class);
+        $router->put('/accounts/{account_id}/organizers/{organizer_id}/homepage-template', UpdateAdminOrganizerHomepageTemplateAction::class);
+        $router->put('/accounts/{account_id}/organizers/{organizer_id}/site-content', UpdateAdminOrganizerSiteContentAction::class);
         $router->get('/configurations', GetAllConfigurationsAction::class);
         $router->post('/configurations', CreateConfigurationAction::class);
         $router->put('/configurations/{configuration_id}', UpdateConfigurationAction::class);
@@ -529,6 +538,7 @@ $router->prefix('/public')->group(
         $router->get('/organizers/{organizer_id}', GetPublicOrganizerAction::class);
         $router->get('/organizers/{organizer_id}/events', GetOrganizerEventsPublicAction::class);
         $router->post('/organizers/{organizer_id}/contact', SendOrganizerContactMessagePublicAction::class);
+        $router->get('/custom-domains/{domain}', GetOrganizerByCustomDomainPublicAction::class);
 
         // Products
         $router->get('/events/{event_id}/products', GetEventPublicAction::class);
