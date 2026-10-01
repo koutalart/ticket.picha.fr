@@ -32,6 +32,7 @@ export const CreateProductModal = ({onClose, selectedCategoryId = undefined}: Cr
             show_quantity_remaining: false,
             hide_when_sold_out: false,
             is_hidden_without_promo_code: false,
+            is_visible_at_box_office: true,
             is_highlighted: false,
             highlight_message: undefined,
             waitlist_enabled: null,
