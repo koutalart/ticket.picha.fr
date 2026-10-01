@@ -7,6 +7,7 @@ namespace HiEvents\Repository\Interfaces;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\Http\DTO\QueryParamsDTO;
+use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeOrderFilterDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -41,4 +42,12 @@ interface OrderRepositoryInterface extends RepositoryInterface
     ): LengthAwarePaginator;
 
     public function hasCompletedPaidOrderForAccount(int $accountId): bool;
+
+    /**
+     * Completed, awaiting-offline-payment and cancelled orders of one event,
+     * online and box office alike, as flat rows for the kiosk.
+     */
+    public function paginateForBoxOffice(int $eventId, BoxOfficeOrderFilterDTO $filter): LengthAwarePaginator;
+
+    public function findForBoxOffice(int $eventId, string $orderPublicId): ?object;
 }

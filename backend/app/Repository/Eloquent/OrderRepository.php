@@ -15,6 +15,7 @@ use HiEvents\Models\Order;
 use HiEvents\Models\OrderItem;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
+use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeOrderFilterDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -255,5 +256,120 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         $this->resetModel();
 
         return $exists;
+    }
+
+    public function paginateForBoxOffice(int $eventId, BoxOfficeOrderFilterDTO $filter): LengthAwarePaginator
+    {
+        $query = $this->boxOfficeOrdersQuery($eventId);
+
+        if ($filter->channel === BoxOfficeOrderFilterDTO::CHANNEL_BOX_OFFICE) {
+            $query->whereNotNull('box_office_sales.id');
+        } elseif ($filter->channel === BoxOfficeOrderFilterDTO::CHANNEL_ONLINE) {
+            $query->whereNull('box_office_sales.id');
+        }
+
+        if ($filter->agent_user_id !== null) {
+            $query->where('box_office_sales.agent_user_id', $filter->agent_user_id);
+        }
+
+        if ($filter->cancelled) {
+            $query->where('orders.status', OrderStatus::CANCELLED->name);
+        }
+
+        if ($filter->not_checked_in) {
+            $query->where('orders.status', '!=', OrderStatus::CANCELLED->name)
+                ->whereExists(function ($sub) {
+                    $sub->selectRaw('1')
+                        ->from('attendees as pending_attendees')
+                        ->whereColumn('pending_attendees.order_id', 'orders.id')
+                        ->whereNull('pending_attendees.deleted_at')
+                        ->where('pending_attendees.status', '!=', 'CANCELLED')
+                        ->whereNotExists(function ($checkIns) {
+                            $checkIns->selectRaw('1')
+                                ->from('attendee_check_ins')
+                                ->whereColumn('attendee_check_ins.attendee_id', 'pending_attendees.id')
+                                ->whereNull('attendee_check_ins.deleted_at');
+                        });
+                });
+        }
+
+        $search = trim((string) $filter->query);
+        if ($search !== '') {
+            $like = '%'.addcslashes($search, '%_\\').'%';
+            $query->where(function ($nested) use ($like) {
+                $nested
+                    ->where('orders.first_name', 'ilike', $like)
+                    ->orWhere('orders.last_name', 'ilike', $like)
+                    ->orWhereRaw("(COALESCE(orders.first_name, '') || ' ' || COALESCE(orders.last_name, '')) ilike ?", [$like])
+                    ->orWhere('orders.email', 'ilike', $like)
+                    ->orWhere('orders.public_id', 'ilike', $like)
+                    ->orWhere('box_office_sales.phone', 'ilike', $like)
+                    ->orWhereExists(function ($sub) use ($like) {
+                        $sub->selectRaw('1')
+                            ->from('attendees as search_attendees')
+                            ->whereColumn('search_attendees.order_id', 'orders.id')
+                            ->whereNull('search_attendees.deleted_at')
+                            ->where(function ($names) use ($like) {
+                                $names
+                                    ->where('search_attendees.first_name', 'ilike', $like)
+                                    ->orWhere('search_attendees.last_name', 'ilike', $like)
+                                    ->orWhereRaw("(COALESCE(search_attendees.first_name, '') || ' ' || COALESCE(search_attendees.last_name, '')) ilike ?", [$like])
+                                    ->orWhere('search_attendees.email', 'ilike', $like)
+                                    ->orWhere('search_attendees.public_id', 'ilike', $like);
+                            });
+                    });
+            });
+        }
+
+        return $query
+            ->orderByDesc('orders.id')
+            ->paginate(
+                perPage: $filter->per_page,
+                columns: ['*'],
+                pageName: 'page',
+                page: max(1, $filter->page),
+            );
+    }
+
+    public function findForBoxOffice(int $eventId, string $orderPublicId): ?object
+    {
+        return $this->boxOfficeOrdersQuery($eventId)
+            ->where('orders.public_id', $orderPublicId)
+            ->first();
+    }
+
+    private function boxOfficeOrdersQuery(int $eventId): \Illuminate\Database\Query\Builder
+    {
+        return Order::query()
+            ->where('orders.event_id', $eventId)
+            ->whereIn('orders.status', [
+                OrderStatus::COMPLETED->name,
+                OrderStatus::AWAITING_OFFLINE_PAYMENT->name,
+                OrderStatus::CANCELLED->name,
+            ])
+            ->leftJoin('box_office_sales', function ($join) {
+                $join->on('box_office_sales.order_id', '=', 'orders.id')
+                    ->where('box_office_sales.status', 'COMPLETED');
+            })
+            ->leftJoin('users as agents', 'agents.id', '=', 'box_office_sales.agent_user_id')
+            ->select([
+                'orders.public_id',
+                'orders.created_at',
+                'orders.first_name',
+                'orders.last_name',
+                'orders.email',
+                'orders.total_gross',
+                'orders.currency',
+                'orders.status',
+                'orders.payment_status',
+                'box_office_sales.id as box_office_sale_id',
+                'box_office_sales.phone',
+                'box_office_sales.payment_method',
+                'agents.first_name as agent_first_name',
+                'agents.last_name as agent_last_name',
+            ])
+            ->selectRaw('(select count(*) from attendees where attendees.order_id = orders.id and attendees.deleted_at is null) as ticket_count')
+            ->selectRaw('(select count(distinct attendee_check_ins.attendee_id) from attendee_check_ins where attendee_check_ins.order_id = orders.id and attendee_check_ins.deleted_at is null) as checked_in_count')
+            ->toBase();
     }
 }
