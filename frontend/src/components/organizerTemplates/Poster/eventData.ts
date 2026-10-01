@@ -14,17 +14,19 @@ export interface TicketTier {
     highlight?: string;
 }
 
-const isVisible = (product: Product) => !product.is_hidden && !product.is_hidden_without_promo_code;
+const isVisibleTicket = (product: Product) => !product.is_hidden
+    && !product.is_hidden_without_promo_code
+    && (!product.product_type || product.product_type === 'TICKET');
 
 export const getTicketTiers = (event: Event): TicketTier[] => {
-    return (getProductsFromEvent(event) || []).filter(isVisible).flatMap(product => {
+    return (getProductsFromEvent(event) || []).filter(isVisibleTicket).flatMap(product => {
         const prices = product.prices && product.prices.length > 0 ? product.prices : [{price: product.price || 0}];
 
         return prices
             .filter(price => !('is_hidden' in price && price.is_hidden))
             .map((price, index) => ({
                 id: `${product.id}-${'id' in price && price.id ? price.id : index}`,
-                name: prices.length > 1 && 'label' in price && price.label ? `${product.title} · ${price.label}` : product.title,
+                name: 'label' in price && price.label ? `${product.title} · ${price.label}` : product.title,
                 price: price.price || 0,
                 currency: event.currency || 'EUR',
                 soldOut: Boolean(product.is_sold_out || ('is_sold_out' in price && price.is_sold_out)),
