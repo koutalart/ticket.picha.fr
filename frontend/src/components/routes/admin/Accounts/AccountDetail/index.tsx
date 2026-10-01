@@ -6,10 +6,11 @@ import {useGetAllConfigurations} from "../../../../../queries/useGetAllConfigura
 import {useGetMessagingTiers} from "../../../../../queries/useGetMessagingTiers";
 import {useAssignConfiguration} from "../../../../../mutations/useAssignConfiguration";
 import {useUpdateAccountMessagingTier} from "../../../../../mutations/useUpdateAccountMessagingTier";
-import {IconArrowLeft, IconCalendar, IconWorld, IconEdit, IconBuildingBank, IconUsers, IconExternalLink} from "@tabler/icons-react";
+import {IconArrowLeft, IconCalendar, IconWorld, IconEdit, IconBuildingBank, IconUsers, IconExternalLink, IconLayout} from "@tabler/icons-react";
 import {useState} from "react";
 import {EditAccountVatSettingsModal} from "../../../../modals/EditAccountVatSettingsModal";
 import {EditOrganizerCustomDomainModal} from "../../../../modals/EditOrganizerCustomDomainModal";
+import {EditOrganizerSiteContentModal} from "../../../../modals/EditOrganizerSiteContentModal";
 import {useGetAdminAccountOrganizers} from "../../../../../queries/useGetAdminAccountOrganizers";
 import {AdminOrganizer} from "../../../../../api/admin.client";
 import {useUpdateAdminOrganizerHomepageTemplate} from "../../../../../mutations/useUpdateAdminOrganizerHomepageTemplate";
@@ -29,6 +30,7 @@ const AccountDetail = () => {
     const [showVatModal, setShowVatModal] = useState(false);
     const {data: organizersData} = useGetAdminAccountOrganizers(accountId!);
     const [domainOrganizer, setDomainOrganizer] = useState<AdminOrganizer | null>(null);
+    const [siteContentOrganizer, setSiteContentOrganizer] = useState<AdminOrganizer | null>(null);
     const updateTemplateMutation = useUpdateAdminOrganizerHomepageTemplate(accountId!);
 
     const account = accountData?.data;
@@ -238,6 +240,14 @@ const AccountDetail = () => {
                                                 <Button
                                                     variant="light"
                                                     size="xs"
+                                                    leftSection={<IconLayout size={14}/>}
+                                                    onClick={() => setSiteContentOrganizer(organizer)}
+                                                >
+                                                    {t`Site content`}
+                                                </Button>
+                                                <Button
+                                                    variant="light"
+                                                    size="xs"
                                                     leftSection={<IconEdit size={14}/>}
                                                     onClick={() => setDomainOrganizer(organizer)}
                                                 >
@@ -418,6 +428,14 @@ const AccountDetail = () => {
                     accountId={accountId!}
                     vatSetting={account.vat_setting}
                     onClose={() => setShowVatModal(false)}
+                />
+            )}
+
+            {siteContentOrganizer && (
+                <EditOrganizerSiteContentModal
+                    accountId={accountId!}
+                    organizer={siteContentOrganizer}
+                    onClose={() => setSiteContentOrganizer(null)}
                 />
             )}
 

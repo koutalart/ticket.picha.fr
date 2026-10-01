@@ -392,6 +392,27 @@ export interface OrganizerStats {
     all_organizers_currencies: string[];
 }
 
+export interface OrganizerSiteContent {
+    tagline?: string | null;
+    area?: string | null;
+    about_headline?: string | null;
+    story?: string | null;
+    vision?: string | null;
+    about_image_url?: string | null;
+    values?: { title: string; text?: string | null }[] | null;
+    stats?: { value: string; label: string }[] | null;
+    team?: { name: string; role?: string | null; photo_url?: string | null }[] | null;
+    gallery?: { url: string; caption?: string | null }[] | null;
+    services_intro?: string | null;
+    services?: { title: string; text?: string | null }[] | null;
+    partners_intro?: string | null;
+    partners?: { name: string; logo_url?: string | null; url?: string | null; category?: string | null }[] | null;
+    press_text?: string | null;
+    press_email?: string | null;
+    press_phone?: string | null;
+    press_kit_url?: string | null;
+}
+
 export interface Organizer {
     id?: IdParam;
     name: string;
@@ -403,6 +424,8 @@ export interface Organizer {
     slug?: string;
     phone?: string;
     homepage_template?: string;
+    site_content?: OrganizerSiteContent | null;
+    custom_domain?: string | null;
     images?: Image[];
     events?: Event[];
     settings?: OrganizerSettings;

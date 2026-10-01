@@ -12,6 +12,13 @@ class Organizer extends BaseModel
     use SoftDeletes;
     use HasImages;
 
+    public function getCastMap(): array
+    {
+        return [
+            'site_content' => 'array',
+        ];
+    }
+
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);

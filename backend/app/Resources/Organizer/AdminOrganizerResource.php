@@ -20,6 +20,7 @@ class AdminOrganizerResource extends BaseResource
             'status' => $this->getStatus(),
             'custom_domain' => $this->getCustomDomain(),
             'homepage_template' => $this->getHomepageTemplate(),
+            'site_content' => $this->getSiteContent(),
         ];
     }
 }
