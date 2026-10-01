@@ -21,7 +21,7 @@ class ZplLabelFormatDTO extends BaseDataObject
     public function __construct(
         public readonly int $dpi = 203,
         public readonly float $width_mm = 79.0,
-        public readonly float $length_mm = 87.0,
+        public readonly float $length_mm = 84.0,
     ) {}
 
     public function widthDots(): int

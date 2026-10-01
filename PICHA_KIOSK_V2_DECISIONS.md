@@ -665,6 +665,12 @@ fiche d'achat.
    (≈ 75 mm, mesure `~JC` en attente) ; un billet de 87 mm débordait sur 2 étiquettes. Le QR suit
    désormais la réduction de la mise en page pour rester dans son cadre sur un rouleau plus court.
    Changer de rouleau = changer la longueur dans les réglages du poste.
+   **Pas réel mesuré par la Zebra (1er oct.)** : après `~JC`, `LABEL LENGTH = 674` pts = **84,3 mm**
+   entre deux marques (et non 87 mm, mesure à la règle). Le billet de 87 mm débordait de 2,6 mm sur
+   la marque suivante → 2 étiquettes par billet. Défaut poste passé à **79 × 84 mm** (671 pts), test
+   d'impression validé par Jo. Pour un nouveau rouleau : `~JC`, lire LABEL LENGTH, la saisir en mm
+   dans les réglages du poste. Pictos : centrage sur le dessin réel (les bitmaps ont des marges
+   internes inégales).
    Historique —  (≈ 20+ caractères) peut encore toucher le QR,
    comme dans la maquette d'origine.
 

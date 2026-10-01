@@ -19,7 +19,7 @@ export interface ZebraLabelFormat {
 export const DEFAULT_ZEBRA_LABEL_FORMAT: ZebraLabelFormat = {
     printerDpi: 203,
     labelWidthMm: 79,
-    labelLengthMm: 87,
+    labelLengthMm: 84,
 };
 
 const readMillimetres = (value: unknown, fallback: number, min: number, max: number): number => {

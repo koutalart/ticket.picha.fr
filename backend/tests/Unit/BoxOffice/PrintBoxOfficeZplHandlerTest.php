@@ -130,6 +130,7 @@ class PrintBoxOfficeZplHandlerTest extends TestCase
             attendee_public_id: $attendee->public_id,
             agent_user_id: $user->id,
             printer_host: '192.168.1.50',
+            label_format: new ZplLabelFormatDTO(length_mm: 87.0),
         ));
     }
 
@@ -150,6 +151,7 @@ class PrintBoxOfficeZplHandlerTest extends TestCase
             attendee_public_id: $attendee->public_id,
             agent_user_id: $user->id,
             printer_host: '192.168.1.50',
+            label_format: new ZplLabelFormatDTO(length_mm: 87.0),
         ));
     }
 

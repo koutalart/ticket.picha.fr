@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Ticket;
 
 use HiEvents\Services\Domain\Ticket\AttendeeTicketZplService;
+use HiEvents\Services\Domain\Ticket\DTO\ZplLabelFormatDTO;
 use Tests\TestCase;
 
 class AttendeeTicketZplServiceTest extends TestCase
@@ -39,6 +40,7 @@ class AttendeeTicketZplServiceTest extends TestCase
             productTitle: 'Pass VIP',
             attendeeName: '',
             organizerName: 'Mayotte la 1ère',
+            labelFormat: new ZplLabelFormatDTO(length_mm: 87.0),
             eventLogoImage: $png,
         );
 
@@ -60,6 +62,7 @@ class AttendeeTicketZplServiceTest extends TestCase
             productTitle: 'Pass VIP',
             attendeeName: '',
             sponsorName: 'Bé digital',
+            labelFormat: new ZplLabelFormatDTO(length_mm: 87.0),
             sponsorLogoImage: $png,
         );
 
@@ -181,6 +184,20 @@ class AttendeeTicketZplServiceTest extends TestCase
         self::assertLessThan(680, max(array_map('intval', $matches[2])));
     }
 
+    public function test_default_label_is_the_measured_84_mm_roll(): void
+    {
+        $zpl = (new AttendeeTicketZplService)->generate(
+            publicId: 'A-C369BTS',
+            eventTitle: 'JPO',
+            productTitle: 'Pass VIP',
+            attendeeName: '',
+        );
+
+        self::assertStringContainsString("^LL671\n", $zpl);
+        preg_match_all('/\^FO\d+,(\d+)/', $zpl, $matches);
+        self::assertLessThan(660, max(array_map('intval', $matches[1])));
+    }
+
     public function test_escapes_control_characters_in_user_text(): void
     {
         $zpl = $this->generate(eventTitle: 'Night^Out', productTitle: 'VIP~Pass', attendeeName: 'Ann\\e');
@@ -218,6 +235,7 @@ class AttendeeTicketZplServiceTest extends TestCase
             eventHours: '21h00',
             venueName: $venueName,
             venueCity: $venueCity,
+            labelFormat: new ZplLabelFormatDTO(length_mm: 87.0),
         );
     }
 }
