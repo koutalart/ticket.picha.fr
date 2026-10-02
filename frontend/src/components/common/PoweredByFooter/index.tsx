@@ -2,7 +2,8 @@ import {t} from "@lingui/macro";
 import classes from "./FloatingPoweredBy.module.scss";
 import classNames from "classnames";
 import React from "react";
-import {getAppName, getPlatformUrl, getPrivacyPolicyUrl, getTermsOfSaleUrl, getTermsOfUseUrl} from "../../../utilites/branding.ts";
+import {getConfig} from "../../../utilites/config.ts";
+import {getAppName, getPrivacyPolicyUrl, getTermsOfSaleUrl, getTermsOfUseUrl} from "../../../utilites/branding.ts";
 
 export const PoweredByFooter = (
     props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
@@ -11,7 +12,7 @@ export const PoweredByFooter = (
         <div {...props} className={classNames(classes.poweredBy, props.className)}>
             <div className={classes.poweredByText}>
                 {t`Powered by`}{" "}
-                <a href={getPlatformUrl()} target="_blank" rel="noreferrer">
+                <a href={getConfig("VITE_BRAND_URL", "https://ticket.picha.fr") as string} target="_blank" rel="noreferrer">
                     {getAppName()}
                 </a>
             </div>

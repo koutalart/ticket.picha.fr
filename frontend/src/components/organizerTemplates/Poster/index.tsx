@@ -12,8 +12,8 @@ import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {getConfig} from "../../../utilites/config.ts";
-import {eventHomepagePath, eventHomepageUrl, organizerHomepagePath} from "../../../utilites/urlHelper.ts";
-import {buildEventJsonLd, formatFromPrice, getCoverUrl, getTicketTiers, getVenue} from "./eventData.ts";
+import {eventHomepagePath, eventHomepageUrl, eventShareImageUrl, organizerHomepagePath} from "../../../utilites/urlHelper.ts";
+import {buildEventJsonLd, formatFromPrice, getTicketTiers, getVenue} from "./eventData.ts";
 import {getFaq} from "./faq.ts";
 import {areaSuffix, longDate, PosterPageProps, stripHtml} from "./shared.tsx";
 import {HomePage} from "./pages/HomePage.tsx";
@@ -189,7 +189,7 @@ export const PosterTemplate = ({
         openContact,
     };
 
-    const shareImage = (featured && getCoverUrl(featured)) || content.about_image_url || logo?.url;
+    const shareImage = (featured && eventShareImageUrl(featured)) || content.about_image_url || logo?.url;
 
     return (
         <>

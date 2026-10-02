@@ -21,16 +21,16 @@ class CreateImageHandler
         ImageType::ORGANIZER_COVER,
         ImageType::EVENT_COVER,
         ImageType::TICKET_LOGO,
+        ImageType::EVENT_SHARE_IMAGE,
+        ImageType::TICKET_SPONSOR_LOGO,
     ];
 
     public function __construct(
-        private readonly ImageUploadService           $imageUploadService,
+        private readonly ImageUploadService $imageUploadService,
         private readonly OrganizerRepositoryInterface $organizerRepository,
-        private readonly EventRepositoryInterface     $eventRepository,
-        private readonly ImageRepositoryInterface     $imageRepository,
-    )
-    {
-    }
+        private readonly EventRepositoryInterface $eventRepository,
+        private readonly ImageRepositoryInterface $imageRepository,
+    ) {}
 
     /**
      * @throws CouldNotUploadImageException

@@ -10,11 +10,17 @@ import {useFormErrorResponseHandler} from "../../../../../../hooks/useFormErrorR
 import {useUpdateEventSettings} from "../../../../../../mutations/useUpdateEventSettings.ts";
 import {useGetEventSettings} from "../../../../../../queries/useGetEventSettings.ts";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
+import {ImageUploadDropzone} from "../../../../../common/ImageUploadDropzone";
+import {GET_EVENT_IMAGES_QUERY_KEY, useGetEventImages} from "../../../../../../queries/useGetEventImages.ts";
+import {queryClient} from "../../../../../../utilites/queryClient.ts";
 
 export const SeoSettings = () => {
     const {eventId} = useParams();
     const eventSettingsQuery = useGetEventSettings(eventId);
     const updateMutation = useUpdateEventSettings();
+    const eventImagesQuery = useGetEventImages(eventId);
+    const shareImage = eventImagesQuery.data?.find((image) => image.type === 'EVENT_SHARE_IMAGE');
+    const refreshImages = () => queryClient.invalidateQueries({queryKey: [GET_EVENT_IMAGES_QUERY_KEY, eventId]});
     const form = useForm({
         initialValues: {
             allow_search_engine_indexing: true,
@@ -76,6 +82,17 @@ export const SeoSettings = () => {
                         label={t`SEO Keywords`}
                         placeholder={t`Amazing, Event, Keywords...`}
                     />
+                    {eventImagesQuery.isFetched && (
+                        <ImageUploadDropzone
+                            imageType="EVENT_SHARE_IMAGE"
+                            entityId={eventId!}
+                            onUploadSuccess={refreshImages}
+                            onDeleteSuccess={refreshImages}
+                            existingImageData={{url: shareImage?.url, id: shareImage?.id}}
+                            helpText={t`Social sharing image (WhatsApp, Facebook…). Recommended: landscape 1200 × 630. By default, the event cover is used.`}
+                            displayMode="compact"
+                        />
+                    )}
                     <Switch
                         {...form.getInputProps('allow_search_engine_indexing', {type: 'checkbox'})}
                         description={t`Allow search engines to index this event`}

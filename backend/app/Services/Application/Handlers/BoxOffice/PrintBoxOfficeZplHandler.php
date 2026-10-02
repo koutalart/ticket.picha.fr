@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace HiEvents\Services\Application\Handlers\BoxOffice;
 
 use Carbon\Carbon;
+use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\PrintJobDomainObjectAbstract;
+use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\Exceptions\InvalidZebraPrinterHostException;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Exceptions\ZebraPrinterUnreachableException;
@@ -17,11 +19,15 @@ use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\PrintJobRepositoryInterface;
-use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\PrintBoxOfficeZplDTO;
 use HiEvents\Services\Domain\Ticket\AttendeeTicketZplService;
+use HiEvents\Services\Domain\Ticket\DTO\ZplTicketDataDTO;
 use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
+use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Support\Collection;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 class PrintBoxOfficeZplHandler
 {
@@ -33,11 +39,12 @@ class PrintBoxOfficeZplHandler
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
         private readonly OrganizerRepositoryInterface $organizerRepository,
         private readonly ProductRepositoryInterface $productRepository,
-        private readonly ProductPriceRepositoryInterface $productPriceRepository,
         private readonly PrintJobRepositoryInterface $printJobRepository,
         private readonly BoxOfficePrinterPreferenceRepositoryInterface $printerPreferenceRepository,
         private readonly AttendeeTicketZplService $attendeeTicketZplService,
         private readonly ZebraPrinterClientInterface $zebraPrinterClient,
+        private readonly FilesystemManager $filesystemManager,
+        private readonly LoggerInterface $logger,
     ) {}
 
     /**
@@ -58,58 +65,46 @@ class PrintBoxOfficeZplHandler
             throw new ResourceNotFoundException(__('Attendee not found.'));
         }
 
-        $event = $this->eventRepository->findById($dto->event_id);
+        $event = $this->eventRepository
+            ->loadRelation(ImageDomainObject::class)
+            ->findById($dto->event_id);
         $product = $attendee->getProduct()
             ?? $this->productRepository->findById($attendee->getProductId());
 
-        $name = trim($attendee->getFirstName().' '.$attendee->getLastName());
-        $when = '';
-        $hours = '';
-        $timezone = $event->getTimezone() ?: 'UTC';
+        $organizer = $event->getOrganizerId()
+            ? $this->organizerRepository
+                ->loadRelation(ImageDomainObject::class)
+                ->findById($event->getOrganizerId())
+            : null;
+
+        $date = '';
+        $time = '';
         if ($event->getStartDate()) {
-            $start = Carbon::parse($event->getStartDate())->timezone($timezone)->locale('fr');
-            $when = $this->formatTicketDate($start);
-            $end = $event->getEndDate()
-                ? Carbon::parse($event->getEndDate())->timezone($timezone)
-                : null;
-            $hours = $this->formatTicketHours($start, $end);
+            $start = Carbon::parse($event->getStartDate())
+                ->timezone($event->getTimezone() ?: 'UTC')
+                ->locale('fr');
+            $date = $this->formatTicketDate($start);
+            $time = $start->format('H\\hi');
         }
 
-        [$venueName, $venueCity] = $this->eventVenue($event);
-
-        $priceLabel = '';
-        $productPrice = $this->productPriceRepository->findById($attendee->getProductPriceId());
-        if ($productPrice !== null) {
-            $priceLabel = $this->formatTicketPrice($productPrice->getPrice(), $event->getCurrency());
-        }
-
-        $organizerName = '';
-        $organizerPhone = '';
-        if ($event->getOrganizerId()) {
-            $organizer = $event->getOrganizer()
-                ?? $this->organizerRepository->findById($event->getOrganizerId());
-            if ($organizer !== null) {
-                $organizerName = $organizer->getName();
-                $organizerPhone = $this->formatOrganizerPhone($organizer->getPhone());
-            }
-        }
+        $organizerLogo = $this->readImage($event->getImages(), ImageType::TICKET_LOGO)
+            ?? $this->readImage($organizer?->getImages(), ImageType::ORGANIZER_LOGO);
 
         $previousLocale = app()->getLocale();
         app()->setLocale('fr');
         try {
-            $zpl = $this->attendeeTicketZplService->generate(
+            $zpl = $this->attendeeTicketZplService->generate(new ZplTicketDataDTO(
                 publicId: $attendee->getPublicId(),
                 eventTitle: $event->getTitle(),
-                productTitle: $product->getTitle(),
-                attendeeName: $name,
-                eventWhen: $when,
-                priceLabel: $priceLabel,
-                organizerName: $organizerName,
-                organizerPhone: $organizerPhone,
-                eventHours: $hours,
-                venueName: $venueName,
-                venueCity: $venueCity,
-            );
+                productTitle: $this->stripEmoji($product->getTitle()),
+                attendeeName: trim($attendee->getFirstName().' '.$attendee->getLastName()),
+                eventDate: $date,
+                eventTime: $time,
+                venue: $this->eventVenue($event),
+                sellerName: $organizer?->getName() ?? '',
+                organizerLogo: $organizerLogo,
+                sponsorLogo: $this->readImage($event->getImages(), ImageType::TICKET_SPONSOR_LOGO),
+            ));
         } finally {
             app()->setLocale($previousLocale);
         }
@@ -125,72 +120,41 @@ class PrintBoxOfficeZplHandler
         $this->printerPreferenceRepository->rememberHost($dto->agent_user_id, $dto->event_id, $dto->printer_host);
     }
 
-    private function formatTicketPrice(float $amount, string $currency): string
+    /**
+     * @param  Collection<int, ImageDomainObject>|null  $images
+     */
+    private function readImage(?Collection $images, ImageType $type): ?string
     {
-        $currency = strtoupper($currency);
-        if ($currency === 'EUR') {
-            $formatted = fmod($amount, 1.0) < 0.001
-                ? (string) (int) round($amount)
-                : number_format($amount, 2, ',', ' ');
-
-            return $formatted.' €';
+        $image = $images?->first(fn (ImageDomainObject $image) => $image->getType() === $type->name);
+        if ($image === null) {
+            return null;
         }
 
-        return number_format($amount, 2, '.', ' ').' '.$currency;
+        try {
+            return $this->filesystemManager->disk($image->getDisk())->get($image->getPath());
+        } catch (Throwable $exception) {
+            $this->logger->warning('Could not read ticket image for ZPL printing', [
+                'image_id' => $image->getId(),
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 
-    private function formatOrganizerPhone(?string $phone): string
+    private function stripEmoji(string $text): string
     {
-        if ($phone === null || trim($phone) === '') {
-            return '';
-        }
+        $clean = preg_replace('/[\x{1F000}-\x{1FAFF}\x{2600}-\x{27BF}\x{FE0F}\x{200D}]/u', '', $text) ?? $text;
 
-        $digits = preg_replace('/\D+/', '', $phone) ?? '';
-        if (str_starts_with($digits, '262') && strlen($digits) >= 12) {
-            $digits = '0'.substr($digits, -9);
-        } elseif (str_starts_with($digits, '33') && strlen($digits) >= 11) {
-            $digits = '0'.substr($digits, -9);
-        } elseif (strlen($digits) === 9) {
-            $digits = '0'.$digits;
-        }
-
-        if (strlen($digits) < 10) {
-            return trim($phone);
-        }
-
-        return implode(' ', str_split(substr($digits, -10), 2));
+        return trim(preg_replace('/\s+/', ' ', $clean) ?? $clean);
     }
 
     private function formatTicketDate(Carbon $start): string
     {
-        $days = [
-            'dimanche' => 'DIM',
-            'lundi' => 'LUN',
-            'mardi' => 'MAR',
-            'mercredi' => 'MER',
-            'jeudi' => 'JEU',
-            'vendredi' => 'VEN',
-            'samedi' => 'SAM',
-        ];
-        $weekday = $days[$start->isoFormat('dddd')] ?? mb_strtoupper(mb_substr($start->isoFormat('ddd'), 0, 3));
-
-        return $weekday.' '.$start->format('d/m/y');
+        return ucfirst($start->isoFormat('ddd D MMM YYYY'));
     }
 
-    private function formatTicketHours(Carbon $start, ?Carbon $end): string
-    {
-        $from = $start->format('H\hi');
-        if ($end === null) {
-            return $from;
-        }
-
-        return $from.' - '.$end->format('H\hi');
-    }
-
-    /**
-     * @return array{0: string, 1: string}
-     */
-    private function eventVenue(EventDomainObject $event): array
+    private function eventVenue(EventDomainObject $event): string
     {
         $details = $event->getLocationDetails();
         if (is_string($details)) {
@@ -215,7 +179,7 @@ class PrintBoxOfficeZplHandler
             }
         }
 
-        return [$venue, $city];
+        return implode(', ', array_filter([$venue, $city], fn (string $part) => $part !== ''));
     }
 
     /**

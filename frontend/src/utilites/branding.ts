@@ -12,8 +12,6 @@ export const getLogoForLightBackground = (): string =>
 export const getLogoForDarkBackground = (): string =>
     getConfig("VITE_APP_LOGO_LIGHT", "/logos/picha-ai-on-dark.png") as string;
 
-export const getPlatformUrl = (): string => getConfig("VITE_PLATFORM_URL", "https://ticket.picha.fr") as string;
-
 export const getTermsOfUseUrl = (): string => getConfig("VITE_TOS_URL", "/legal/cgu") as string;
 
 export const getTermsOfSaleUrl = (): string => getConfig("VITE_TOS_SALE_URL", "/legal/cgv") as string;

@@ -236,9 +236,15 @@ Sitemap: ${frontendUrl}/sitemap.xml
             );
             const stringifiedState = JSON.stringify(dehydratedState);
 
-            const helmetHtml = Object.values(helmetContext.helmet || {})
+            let helmetHtml = Object.values(helmetContext.helmet || {})
                 .map((value) => value.toString() || "")
                 .join(" ");
+
+            if (customDomain && platformUrl) {
+                for (const path of ['/event/', '/events/']) {
+                    helmetHtml = helmetHtml.split(`${platformUrl}${path}`).join(`https://${requestHost}${path}`);
+                }
+            }
 
             const envVariablesHtml = `<script>window.hievents = ${getViteEnvironmentVariables(
                 customDomain ? {VITE_FRONTEND_URL: `https://${requestHost}`} : {}

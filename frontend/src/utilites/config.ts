@@ -27,7 +27,6 @@ export const clientBuildEnv: { [K in ConfigKeys]: string } = {
     'VITE_COOKIE_CONSENT_ENABLED': import.meta.env.VITE_COOKIE_CONSENT_ENABLED,
     'VITE_COOKIE_CONSENT_TEXT': import.meta.env.VITE_COOKIE_CONSENT_TEXT,
     'VITE_SHOP_URL': import.meta.env.VITE_SHOP_URL,
-    'VITE_PLATFORM_URL': import.meta.env.VITE_PLATFORM_URL,
     'VITE_LANDING_VIDEO_URL': import.meta.env.VITE_LANDING_VIDEO_URL,
     'VITE_LANDING_VIDEO_POSTER': import.meta.env.VITE_LANDING_VIDEO_POSTER,
 }

@@ -34,6 +34,17 @@ async function initClientApp() {
     const browserRouter = createBrowserRouter(router);
     setupScrollManagement(browserRouter);
 
+    let lastPathname = window.location.pathname;
+    browserRouter.subscribe((state) => {
+        if (state.navigation.state !== "idle" || state.location.pathname === lastPathname) {
+            return;
+        }
+        lastPathname = state.location.pathname;
+        if (state.historyAction === "PUSH" && !state.location.hash) {
+            window.scrollTo(0, 0);
+        }
+    });
+
     hydrateRoot(
         document.getElementById("app") as HTMLElement,
         <App queryClient={queryClient} locale={rawLocale} dehydratedState={dehydratedState}>

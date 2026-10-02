@@ -16,6 +16,8 @@ enum ImageType
     // Event images
     case EVENT_COVER;
     case TICKET_LOGO;
+    case EVENT_SHARE_IMAGE;
+    case TICKET_SPONSOR_LOGO;
 
     // Organizer images
     case ORGANIZER_LOGO;
@@ -26,6 +28,8 @@ enum ImageType
         return [
             self::EVENT_COVER,
             self::TICKET_LOGO,
+            self::EVENT_SHARE_IMAGE,
+            self::TICKET_SPONSOR_LOGO,
         ];
     }
 
@@ -50,6 +54,8 @@ enum ImageType
             self::GENERIC->name => [50, 50],
             self::EVENT_COVER->name => [600, 50],
             self::TICKET_LOGO->name => [100, 100],
+            self::TICKET_SPONSOR_LOGO->name => [100, 50],
+            self::EVENT_SHARE_IMAGE->name => [600, 315],
             self::ORGANIZER_LOGO->name => [100, 100],
             self::ORGANIZER_COVER->name => [600, 50],
         ];
@@ -71,6 +77,6 @@ enum ImageType
             return UserDomainObject::class;
         }
 
-        throw new InvalidArgumentException('Invalid image type: ' . $this->name);
+        throw new InvalidArgumentException('Invalid image type: '.$this->name);
     }
 }
