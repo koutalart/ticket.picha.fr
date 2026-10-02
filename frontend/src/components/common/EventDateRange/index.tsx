@@ -7,7 +7,6 @@ interface EventDateRangeProps {
 
 export const EventDateRange = ({ event }: EventDateRangeProps) => {
     const isSameDay = event.end_date && event.start_date.substring(0, 10) === event.end_date.substring(0, 10);
-    const timezone = formatDateWithLocale(event.start_date, "timezone", event.timezone);
 
     if (isSameDay) {
         const dayFormatted = formatDateWithLocale(event.start_date, "dayName", event.timezone);
@@ -16,7 +15,7 @@ export const EventDateRange = ({ event }: EventDateRangeProps) => {
 
         return (
             <span>
-                {dayFormatted} · {startTime} - {endTime} {timezone}
+                {dayFormatted} · {startTime} - {endTime}
             </span>
         );
     }
@@ -29,7 +28,7 @@ export const EventDateRange = ({ event }: EventDateRangeProps) => {
     return (
         <span>
             {startDateFormatted}
-            {endDateFormatted && ` - ${endDateFormatted}`} {timezone}
+            {endDateFormatted && ` - ${endDateFormatted}`}
         </span>
     );
 }

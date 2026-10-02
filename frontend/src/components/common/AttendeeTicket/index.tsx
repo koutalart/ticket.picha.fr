@@ -80,7 +80,7 @@ export const AttendeeTicket = ({
                                 <div className={classes.detailValue}>
                                     {dateDisplayMode === 'DATE_RANGE'
                                         ? <EventDateRange event={event}/>
-                                        : prettyDate(event.start_date, event.timezone, true)}
+                                        : prettyDate(event.start_date, event.timezone)}
                                 </div>
                             </div>
                         )}
