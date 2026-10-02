@@ -5,6 +5,7 @@ import {router} from "./router";
 import {App} from "./App";
 import {queryClient} from "./utilites/queryClient";
 import {dynamicActivateLocale, getClientLocale, getSupportedLocale,} from "./locales.ts";
+import {setupScrollManagement} from "./utilites/scrollManagement.ts";
 
 declare global {
     interface Window {
@@ -31,6 +32,7 @@ async function initClientApp() {
     }
 
     const browserRouter = createBrowserRouter(router);
+    setupScrollManagement(browserRouter);
 
     let lastPathname = window.location.pathname;
     browserRouter.subscribe((state) => {

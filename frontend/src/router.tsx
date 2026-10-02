@@ -7,6 +7,7 @@ import { publicEventRouteLoader } from "./routeLoaders/publicEventRouteLoader.ts
 import { publicOrganizerRouteLoader } from "./routeLoaders/publicOrganizerRouteLoader.ts";
 import { organizerPreviewRouteLoader } from "./routeLoaders/organizerPreviewRouteLoader.ts";
 import PublicOrganizer from "./components/layouts/PublicOrganizer";
+import { SOLUTION_SLUGS } from "./components/routes/solutions/slugs.ts";
 import {
     customDomainHomeLoader,
     customDomainSitePageLoader,
@@ -566,6 +567,30 @@ export const router: RouteObject[] = [
             const OrganizerHomepagePreview = await import("./components/layouts/OrganizerHomepagePreview");
             return { Component: OrganizerHomepagePreview.default };
         },
+    },
+    ...SOLUTION_SLUGS.map((slug): RouteObject => ({
+        path: `/${slug}`,
+        async lazy() {
+            const SolutionPage = await import("./components/routes/solutions");
+            return { Component: SolutionPage.default };
+        },
+        errorElement: <ErrorPage />,
+    })),
+    {
+        path: "/cas-clients",
+        async lazy() {
+            const CaseStudiesPage = await import("./components/routes/case-studies");
+            return { Component: CaseStudiesPage.default };
+        },
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/cas-clients/:slug",
+        async lazy() {
+            const CaseStudyPage = await import("./components/routes/case-studies/CaseStudyPage");
+            return { Component: CaseStudyPage.default };
+        },
+        errorElement: <ErrorPage />,
     },
     {
         path: "/legal/:slug",

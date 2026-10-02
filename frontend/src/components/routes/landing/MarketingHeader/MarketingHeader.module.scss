@@ -1,0 +1,204 @@
+$purple: #40296c;
+$yellow: #fbb405;
+$ink: #1d1d1f;
+$muted: #6e6e73;
+$container: 1120px;
+$gutter: 16px;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  :focus-visible {
+    outline: 3px solid $purple;
+    outline-offset: 3px;
+  }
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: $container + 2 * $gutter;
+  height: 64px;
+  margin: 0 auto;
+  padding: 0 $gutter;
+}
+
+.logoLink {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+}
+
+.nav {
+  display: flex;
+  gap: 28px;
+  margin: 0 auto;
+
+  a {
+    font-size: 0.9375rem;
+    color: $ink;
+    text-decoration: none;
+    white-space: nowrap;
+    opacity: 0.8;
+
+    &:hover,
+    &[aria-current="page"] {
+      opacity: 1;
+    }
+
+    &[aria-current="page"] {
+      font-weight: 600;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-left: auto;
+}
+
+.shopLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $purple;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+.loginLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.9375rem;
+  color: $muted;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    color: $purple;
+  }
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: $yellow;
+  color: $ink;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+}
+
+.menuButton,
+.menuCta {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 8px $gutter 20px;
+    background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 24px 40px -24px rgba(29, 29, 31, 0.25);
+
+    a {
+      display: flex;
+      align-items: center;
+      min-height: 48px;
+      font-size: 1.0625rem;
+      opacity: 1;
+      border-bottom: 1px solid #f0f0f3;
+    }
+  }
+
+  .navOpen {
+    display: flex;
+  }
+
+  .menuCta {
+    display: flex !important;
+    justify-content: center;
+    margin-top: 16px;
+    border-bottom: 0 !important;
+    border-radius: 999px;
+    font-weight: 700;
+    background: $yellow;
+  }
+
+  .menuButton {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    color: $ink;
+    background: transparent;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 767px) {
+  .cta {
+    display: none;
+  }
+}
+
+@media (max-width: 479px) {
+  .actions {
+    gap: 12px;
+  }
+
+  .shopLink span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .loginLink {
+    font-size: 0.875rem;
+  }
+}

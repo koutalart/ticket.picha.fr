@@ -1,0 +1,115 @@
+$purple: #40296c;
+$yellow: #fbb405;
+$ink: #1d1d1f;
+$muted: #6e6e73;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  :global(.mantine-InputWrapper-label) {
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: $ink;
+  }
+
+  :global(.mantine-Input-input) {
+    border-radius: 12px;
+    border-color: #d2d2d7;
+
+    &:focus {
+      border-color: $purple;
+    }
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.submit {
+  margin-top: 8px;
+  min-height: 56px;
+  border: 0;
+  border-radius: 999px;
+  background: $yellow;
+  color: $ink;
+  font: inherit;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $purple;
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    cursor: progress;
+    opacity: 0.7;
+  }
+}
+
+.legal {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: $muted;
+  text-align: center;
+
+  a {
+    color: $purple;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+.confirmation {
+  padding: 32px 8px;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.confirmationIcon {
+  color: $purple;
+}
+
+.confirmationTitle {
+  margin: 16px 0 8px;
+  font-size: 1.375rem;
+  line-height: 1.3;
+  color: $ink;
+}
+
+.confirmationText {
+  margin: 0;
+  color: $muted;
+  line-height: 1.6;
+}
