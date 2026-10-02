@@ -33,7 +33,23 @@ async function main() {
         : undefined;
 
     const app = express();
+    app.disable('x-powered-by');
     app.use(cookieParser());
+
+    const EMBEDDABLE_PATHS = /^\/widget(\/|$|\?)/;
+    app.use((req, res, next) => {
+        const embeddable = EMBEDDABLE_PATHS.test(req.path);
+        res.setHeader(
+            'Content-Security-Policy',
+            `base-uri 'self'; object-src 'none'; frame-ancestors ${embeddable ? '*' : "'self'"}`
+        );
+        if (!embeddable) {
+            res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        }
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        next();
+    });
 
     app.use('/.well-known', express.static(path.join(__dirname, 'public/.well-known')));
 
@@ -89,10 +105,12 @@ async function main() {
         return cached?.organizer ?? null;
     };
 
+    const SERVER_ONLY_ENV_KEYS = new Set(['VITE_API_URL_SERVER']);
+
     const getViteEnvironmentVariables = (overrides = {}) => {
         const envVars = {};
         for (const key in process.env) {
-            if (key.startsWith('VITE_')) {
+            if (key.startsWith('VITE_') && !SERVER_ONLY_ENV_KEYS.has(key)) {
                 envVars[key] = process.env[key];
             }
         }
