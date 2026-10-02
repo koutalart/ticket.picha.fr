@@ -7,7 +7,7 @@ import {ModalsProvider} from "@mantine/modals";
 import {DatesProvider} from "@mantine/dates";
 import {HydrationBoundary, QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {Helmet, HelmetProvider} from "react-helmet-async";
-import {generateColors} from '@mantine/colors-generator';
+import {generatePalette} from './utilites/colorPalette.ts';
 
 import "@mantine/core/styles/global.css";
 import "@mantine/core/styles.css";
@@ -76,8 +76,8 @@ export const App: FC<
             <MantineProvider
                 theme={{
                     colors: {
-                        primary: generateColors(getConfig("VITE_APP_PRIMARY_COLOR", "#40296C") as string),
-                        secondary: generateColors(getConfig("VITE_APP_SECONDARY_COLOR", "#6B4BAF") as string),
+                        primary: generatePalette(getConfig("VITE_APP_PRIMARY_COLOR", "#40296C") as string),
+                        secondary: generatePalette(getConfig("VITE_APP_SECONDARY_COLOR", "#6B4BAF") as string),
                     },
                     primaryColor: "primary",
                     fontFamily: "Outfit, sans-serif",
