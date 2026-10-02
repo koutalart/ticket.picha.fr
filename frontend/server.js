@@ -189,6 +189,11 @@ Sitemap: ${frontendUrl}/sitemap.xml
         let url = req.originalUrl.replace(base, "");
 
         delete req.headers[CUSTOM_DOMAIN_HEADER];
+
+        if (process.env.VITE_DEFAULT_LOCALE && !req.cookies?.locale && !req.headers['accept-language']) {
+            req.headers['accept-language'] = process.env.VITE_DEFAULT_LOCALE;
+        }
+
         const requestHost = normalizeHost(req.get('host'));
         const customDomain = await resolveCustomDomain(requestHost);
 

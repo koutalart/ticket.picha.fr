@@ -18,7 +18,7 @@ const getLocale = (req: express.Request): string => {
     }
 
     const acceptLanguage = req.headers['accept-language'];
-    return acceptLanguage ? acceptLanguage.split(',')[0].split('-')[0] : (process.env.VITE_DEFAULT_LOCALE || 'en');
+    return acceptLanguage ? acceptLanguage.split(',')[0].split('-')[0] : 'en';
 }
 
 export async function render(params: {
