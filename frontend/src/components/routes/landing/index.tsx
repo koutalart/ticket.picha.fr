@@ -125,7 +125,7 @@ const Landing = () => {
             icon: IconMailForward,
             moment: t`Before the event`,
             title: t`Registrations that run themselves`,
-            text: t`Invitations, a registration page with your own questions, free or paid tickets: every attendee receives a QR code ticket by e-mail.`,
+            text: t`Personalized invitations, a registration page with your own questions, free or paid tickets: every attendee receives their QR code badge or ticket by e-mail.`,
         },
         {
             icon: IconScan,
@@ -317,7 +317,7 @@ const Landing = () => {
 
             <main id="main">
                 <section className={classes.hero} aria-labelledby="hero-title">
-                    <p className={classes.heroBadge}>{t`The event welcome platform for demanding organizations`}</p>
+                    <p className={classes.heroBadge}>{appName}</p>
                     <h1 id="hero-title" className={classes.heroTitle}>
                         <Trans>A <mark>flawless</mark> event welcome, from the first registrant to the last badge.</Trans>
                     </h1>
