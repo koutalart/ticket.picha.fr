@@ -2,7 +2,6 @@ import {useParams} from "react-router";
 import {useCreateStripePaymentIntent} from "../../../../../../queries/useCreateStripePaymentIntent.ts";
 import {useEffect, useState} from "react";
 import {loadStripe, Stripe} from "@stripe/stripe-js";
-import {useGetEventPublic} from "../../../../../../queries/useGetEventPublic.ts";
 import {CheckoutContent} from "../../../../../layouts/Checkout/CheckoutContent";
 import {HomepageInfoMessage} from "../../../../../common/HomepageInfoMessage";
 import {t} from "@lingui/macro";
@@ -10,15 +9,17 @@ import {eventHomepagePath} from "../../../../../../utilites/urlHelper.ts";
 import {LoadingMask} from "../../../../../common/LoadingMask";
 import {Elements} from "@stripe/react-stripe-js";
 import StripeCheckoutForm from "../../../../../forms/StripeCheckoutForm";
-import {Event} from "../../../../../../types.ts";
+import {Event, Order} from "../../../../../../types.ts";
 import {validateThemeSettings} from "../../../../../../utilites/themeUtils.ts";
 
 interface StripePaymentMethodProps {
     enabled: boolean;
+    event?: Event;
+    order?: Order;
     setSubmitHandler: (submitHandler: () => () => Promise<void>) => void;
 }
 
-export const StripePaymentMethod = ({enabled, setSubmitHandler}: StripePaymentMethodProps) => {
+export const StripePaymentMethod = ({enabled, event, order, setSubmitHandler}: StripePaymentMethodProps) => {
     const {eventId, orderShortId} = useParams();
     const {
         data: stripeData,
@@ -26,7 +27,6 @@ export const StripePaymentMethod = ({enabled, setSubmitHandler}: StripePaymentMe
         error: stripePaymentIntentError
     } = useCreateStripePaymentIntent(eventId, orderShortId);
     const [stripePromise, setStripePromise] = useState<Promise<Stripe | null>>();
-    const {data: event} = useGetEventPublic(eventId);
 
     useEffect(() => {
         if (!stripeData?.client_secret || !stripeData?.public_key) {
@@ -92,7 +92,7 @@ export const StripePaymentMethod = ({enabled, setSubmitHandler}: StripePaymentMe
                         },
                     },
                 }} stripe={stripePromise}>
-                    <StripeCheckoutForm setSubmitHandler={setSubmitHandler} />
+                    <StripeCheckoutForm event={event} order={order} setSubmitHandler={setSubmitHandler}/>
                 </Elements>
             )}
         </>
