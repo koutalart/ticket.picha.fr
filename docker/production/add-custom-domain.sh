@@ -27,6 +27,7 @@ server {
     server_name ${DOMAIN} www.${DOMAIN};
 
     client_max_body_size 20M;
+    server_tokens off;
 
     location /api/ {
         proxy_pass http://127.0.0.1:8081/;

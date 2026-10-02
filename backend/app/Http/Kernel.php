@@ -2,6 +2,7 @@
 
 namespace HiEvents\Http;
 
+use HiEvents\Http\Middleware\AllowCustomDomainCorsOrigin;
 use HiEvents\Http\Middleware\Authenticate;
 use HiEvents\Http\Middleware\EncryptCookies;
 use HiEvents\Http\Middleware\HandleDeprecatedTimezones;
@@ -43,6 +44,7 @@ class Kernel extends HttpKernel
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         TrustProxies::class,
+        AllowCustomDomainCorsOrigin::class,
         HandleCors::class,
         PreventRequestsDuringMaintenance::class,
         ValidatePostSize::class,
