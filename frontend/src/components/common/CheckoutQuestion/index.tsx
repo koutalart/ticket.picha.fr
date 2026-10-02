@@ -101,7 +101,7 @@ const PhoneInput = ({question, name, form}: QuestionInputProps) => {
                 }}
                 {...form.getInputProps(`${name}.answer`)}
                 type="tel"
-                pattern="[0-9+\-\s()]{8,20}"
+                pattern="[0-9+\-\s\(\)]{8,20}"
                 title={t`Please enter a valid phone number (digits, spaces, +, -, ( ) only, minimum 8 characters)`}
                 withAsterisk={question.required}
                 label={question.title}

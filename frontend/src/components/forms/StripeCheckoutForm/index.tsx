@@ -6,21 +6,20 @@ import {Alert, Skeleton} from "@mantine/core";
 import {t} from "@lingui/macro";
 import classes from './StripeCheckoutForm.module.scss';
 import {LoadingMask} from "../../common/LoadingMask";
-import {useGetOrderPublic} from "../../../queries/useGetOrderPublic.ts";
 import {CheckoutContent} from "../../layouts/Checkout/CheckoutContent";
 import {HomepageInfoMessage} from "../../common/HomepageInfoMessage";
 import {eventCheckoutPath, eventHomepagePath} from "../../../utilites/urlHelper.ts";
-import {Event} from "../../../types.ts";
+import {Event, Order} from "../../../types.ts";
 
-export default function StripeCheckoutForm({setSubmitHandler}: {
+export default function StripeCheckoutForm({event, order, setSubmitHandler}: {
+    event?: Event,
+    order?: Order,
     setSubmitHandler: (submitHandler: () => () => Promise<void>) => void
 }) {
     const {eventId, orderShortId} = useParams();
     const stripe = useStripe();
     const elements = useElements();
     const [message, setMessage] = useState<string | undefined>('');
-    const {data: order, isFetched: isOrderFetched} = useGetOrderPublic(eventId, orderShortId, ['event']);
-    const event = order?.event;
 
     const handleSubmit = async () => {
         if (!stripe || !elements) {
@@ -79,7 +78,7 @@ export default function StripeCheckoutForm({setSubmitHandler}: {
 
     }, [setSubmitHandler, stripe, elements]);
 
-    if (!isOrderFetched || !order?.payment_status) {
+    if (!order?.payment_status) {
         return (
             <CheckoutContent>
                 <Skeleton height={300} mb={20}/>

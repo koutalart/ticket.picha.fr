@@ -99,7 +99,7 @@ const Payment = () => {
                 )}
                 {isStripeEnabled && (
                     <div style={{display: activePaymentMethod === 'STRIPE' ? 'block' : 'none'}}>
-                        <StripePaymentMethod enabled={true} setSubmitHandler={setSubmitHandler}/>
+                        <StripePaymentMethod enabled={true} event={event} order={order} setSubmitHandler={setSubmitHandler}/>
                     </div>
                 )}
 
