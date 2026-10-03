@@ -1,5 +1,5 @@
 import {NavLink, Navigate, Outlet, useNavigate, useParams} from "react-router";
-import {IconCashRegister, IconLogout, IconSettings, IconSwitchHorizontal, IconUserCheck} from "@tabler/icons-react";
+import {IconCashRegister, IconLogout, IconSettings, IconReceipt, IconSwitchHorizontal} from "@tabler/icons-react";
 import {t} from "@lingui/macro";
 import {useGetMe} from "../../../queries/useGetMe.ts";
 import {useGetBoxOfficeContext} from "../../../queries/useGetBoxOfficeContext.ts";
@@ -51,11 +51,11 @@ const KioskLayout = () => {
                         {t`Sales`}
                     </NavLink>
                     <NavLink
-                        to={`/kiosk/event/${eventId}/welcome`}
+                        to={`/kiosk/event/${eventId}/orders`}
                         className={({isActive}) => `${classes.tab} ${isActive ? classes.tabActive : ''}`}
                     >
-                        <IconUserCheck size={22}/>
-                        {t`Welcome`}
+                        <IconReceipt size={22}/>
+                        {t`Orders`}
                     </NavLink>
                     <NavLink
                         to={`/kiosk/event/${eventId}/settings`}

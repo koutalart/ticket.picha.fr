@@ -746,11 +746,15 @@ export const router: RouteObject[] = [
                         }
                     },
                     {
-                        path: "welcome",
+                        path: "orders",
                         async lazy() {
-                            const KioskWelcome = await import("./components/routes/kiosk/Welcome");
-                            return { Component: KioskWelcome.default };
+                            const KioskOrders = await import("./components/routes/kiosk/Orders");
+                            return { Component: KioskOrders.default };
                         }
+                    },
+                    {
+                        path: "welcome",
+                        element: <Navigate to="../orders" replace/>,
                     },
                     {
                         path: "settings",
