@@ -6,7 +6,7 @@ import {MarketingHeader} from "../../landing/MarketingHeader";
 import {MarketingFooter} from "../../landing/MarketingFooter";
 import {MarketingDemoSection} from "../../landing/MarketingDemoSection";
 import {getSolution, solutionPath} from "../../solutions/solutions.ts";
-import {getAppName} from "../../../../utilites/branding.ts";
+import {getAppName, SHARE_IMAGE_PATH} from "../../../../utilites/branding.ts";
 import {getConfig} from "../../../../utilites/config.ts";
 import {CaseStudyCard} from "../CaseStudyCard";
 import {caseStudies, getCaseStudyTitle, getVisibleCaseStudies, isCaseStudyVisible, serviceLabels} from "../caseStudies.ts";
@@ -106,7 +106,8 @@ const CaseStudyPage = () => {
                 <meta property="og:title" content={`${title} | Cas client ${getAppName()}`}/>
                 <meta property="og:description" content={description}/>
                 <meta property="og:url" content={pageUrl}/>
-                {caseStudy.coverImage && <meta property="og:image" content={caseStudy.coverImage}/>}
+                <meta property="og:image" content={caseStudy.coverImage ?? `${frontendUrl}${SHARE_IMAGE_PATH}`}/>
+                <meta name="twitter:card" content="summary_large_image"/>
                 <script type="application/ld+json">{JSON.stringify(structuredData).replace(/</g, "\\u003c")}</script>
             </Helmet>
 

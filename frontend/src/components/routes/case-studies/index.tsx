@@ -3,7 +3,7 @@ import {Helmet} from "react-helmet-async";
 import {MarketingHeader} from "../landing/MarketingHeader";
 import {MarketingFooter} from "../landing/MarketingFooter";
 import {MarketingDemoSection} from "../landing/MarketingDemoSection";
-import {getAppName} from "../../../utilites/branding.ts";
+import {getAppName, SHARE_IMAGE_PATH} from "../../../utilites/branding.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {CaseStudyCard} from "./CaseStudyCard";
 import {getVisibleCaseStudies} from "./caseStudies.ts";
@@ -24,6 +24,8 @@ const CaseStudiesPage = () => {
                 <meta property="og:title" content={title}/>
                 <meta property="og:description" content={description}/>
                 <meta property="og:url" content={`${frontendUrl}/cas-clients`}/>
+                <meta property="og:image" content={`${frontendUrl}${SHARE_IMAGE_PATH}`}/>
+                <meta name="twitter:card" content="summary_large_image"/>
             </Helmet>
 
             <MarketingHeader/>

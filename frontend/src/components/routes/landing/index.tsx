@@ -21,7 +21,7 @@ import {
     IconShoppingBag,
     IconUsersGroup,
 } from "@tabler/icons-react";
-import {getAppName, getLogoForLightBackground, getPrivacyPolicyUrl} from "../../../utilites/branding.ts";
+import {getAppName, getLogoForLightBackground, getPrivacyPolicyUrl, SHARE_IMAGE_PATH} from "../../../utilites/branding.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {MarketingDemoSection} from "./MarketingDemoSection";
 import {HeroVideo} from "./HeroVideo";
@@ -300,12 +300,14 @@ const Landing = () => {
                 <meta property="og:title" content={pageTitle}/>
                 <meta property="og:description" content={pageDescription}/>
                 <meta property="og:url" content={canonicalUrl}/>
-                <meta property="og:image" content={absoluteLogoUrl}/>
-                <meta property="og:image:alt" content={appName}/>
+                <meta property="og:image" content={`${frontendUrl}${SHARE_IMAGE_PATH}`}/>
+                <meta property="og:image:width" content="1200"/>
+                <meta property="og:image:height" content="630"/>
+                <meta property="og:image:alt" content={pageTitle}/>
                 <meta name="twitter:card" content="summary_large_image"/>
                 <meta name="twitter:title" content={pageTitle}/>
                 <meta name="twitter:description" content={pageDescription}/>
-                <meta name="twitter:image" content={absoluteLogoUrl}/>
+                <meta name="twitter:image" content={`${frontendUrl}${SHARE_IMAGE_PATH}`}/>
                 <script type="application/ld+json">
                     {JSON.stringify(structuredData).replace(/</g, "\\u003c")}
                 </script>
