@@ -10,66 +10,62 @@ use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\OrderItemDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
-use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
+use HiEvents\DomainObjects\TaxAndFeesDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderPaymentStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Events\OrderStatusChangedEvent;
 use HiEvents\Exceptions\InvalidProductPriceId;
 use HiEvents\Exceptions\NoTicketsAvailableException;
+use HiEvents\Helper\Currency;
 use HiEvents\Helper\IdHelper;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
-use HiEvents\Repository\Interfaces\TaxAndFeeRepositoryInterface;
+use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
-use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeTaxAndFeeDTO;
 use HiEvents\Services\Domain\Attendee\AttendeePublicIdGenerator;
 use HiEvents\Services\Domain\Order\OrderManagementService;
 use HiEvents\Services\Domain\Product\ProductQuantityUpdateService;
-use HiEvents\Services\Domain\Tax\TaxAndFeeRollupService;
+use HiEvents\Services\Domain\Tax\TaxAndFeeCalculationService;
 use HiEvents\Services\Infrastructure\DomainEvents\DomainEventDispatcherService;
 use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
 use HiEvents\Services\Infrastructure\DomainEvents\Events\OrderEvent;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Support\Collection;
-use RuntimeException;
 use Throwable;
 
 class CreateAttendeeHandler
 {
     public function __construct(
-        private readonly AttendeeRepositoryInterface  $attendeeRepository,
-        private readonly OrderRepositoryInterface     $orderRepository,
-        private readonly ProductRepositoryInterface   $productRepository,
-        private readonly EventRepositoryInterface     $eventRepository,
-        private readonly ProductQuantityUpdateService $productQuantityAdjustmentService,
-        private readonly DatabaseManager              $databaseManager,
-        private readonly TaxAndFeeRepositoryInterface $taxAndFeeRepository,
-        private readonly TaxAndFeeRollupService       $taxAndFeeRollupService,
-        private readonly OrderManagementService       $orderManagementService,
-        private readonly DomainEventDispatcherService $domainEventDispatcherService,
+        private readonly AttendeeRepositoryInterface     $attendeeRepository,
+        private readonly OrderRepositoryInterface        $orderRepository,
+        private readonly ProductRepositoryInterface      $productRepository,
+        private readonly ProductPriceRepositoryInterface $productPriceRepository,
+        private readonly EventRepositoryInterface        $eventRepository,
+        private readonly ProductQuantityUpdateService    $productQuantityAdjustmentService,
+        private readonly DatabaseManager                 $databaseManager,
+        private readonly TaxAndFeeCalculationService     $taxAndFeeCalculationService,
+        private readonly OrderManagementService          $orderManagementService,
+        private readonly DomainEventDispatcherService    $domainEventDispatcherService,
     )
     {
     }
 
     /**
      * @throws NoTicketsAvailableException
+     * @throws InvalidProductPriceId
      * @throws Throwable
      */
     public function handle(CreateAttendeeDTO $attendeeDTO): AttendeeDomainObject
     {
         return $this->databaseManager->transaction(function () use ($attendeeDTO) {
-            $this->calculateTaxesAndFees($attendeeDTO);
-
-            $order = $this->createOrder($attendeeDTO->event_id, $attendeeDTO);
-
-            /** @var ProductDomainObject $product */
+            /** @var ProductDomainObject|null $product */
             $product = $this->productRepository
                 ->loadRelation(ProductPriceDomainObject::class)
+                ->loadRelation(TaxAndFeesDomainObject::class)
                 ->findFirstWhere([
                     ProductDomainObjectAbstract::ID => $attendeeDTO->product_id,
                     ProductDomainObjectAbstract::EVENT_ID => $attendeeDTO->event_id,
@@ -82,6 +78,11 @@ class CreateAttendeeHandler
 
             $productPriceId = $this->getProductPriceId($attendeeDTO, $product);
 
+            $productPrice = $this->productPriceRepository->lockForUpdateById($productPriceId);
+            if (!$productPrice) {
+                throw new InvalidProductPriceId(__('The product price ID is invalid.'));
+            }
+
             $availableQuantity = $this->productRepository->getQuantityRemainingForProductPrice(
                 $attendeeDTO->product_id,
                 $productPriceId,
@@ -93,47 +94,67 @@ class CreateAttendeeHandler
                     ' please adjust the product\'s available quantity.'));
             }
 
-            $productPriceId = $this->getProductPriceId($attendeeDTO, $product);
+            $price = $attendeeDTO->is_free ? 0.0 : $productPrice->getPrice();
+            $taxesAndFees = $this->taxAndFeeCalculationService->calculateTaxAndFeesForProduct($product, $price);
+            $totalGross = Currency::round($price + $taxesAndFees->taxTotal + $taxesAndFees->feeTotal);
 
-            $this->processTaxesAndFees($attendeeDTO);
+            $order = $this->createOrder($attendeeDTO, $totalGross);
 
-            $orderItem = $this->createOrderItem($attendeeDTO, $order, $product, $productPriceId);
+            $orderItem = $this->orderRepository->addOrderItem([
+                OrderItemDomainObjectAbstract::PRODUCT_ID => $attendeeDTO->product_id,
+                OrderItemDomainObjectAbstract::QUANTITY => 1,
+                OrderItemDomainObjectAbstract::PRICE => $price,
+                OrderItemDomainObjectAbstract::PRICE_BEFORE_DISCOUNT => $price,
+                OrderItemDomainObjectAbstract::TOTAL_BEFORE_ADDITIONS => $price,
+                OrderItemDomainObjectAbstract::TOTAL_TAX => $taxesAndFees->taxTotal,
+                OrderItemDomainObjectAbstract::TOTAL_SERVICE_FEE => $taxesAndFees->feeTotal,
+                OrderItemDomainObjectAbstract::TOTAL_GROSS => $totalGross,
+                OrderItemDomainObjectAbstract::ORDER_ID => $order->getId(),
+                OrderItemDomainObjectAbstract::ITEM_NAME => $product->getTitle(),
+                OrderItemDomainObjectAbstract::PRODUCT_PRICE_ID => $productPriceId,
+                OrderItemDomainObjectAbstract::TAXES_AND_FEES_ROLLUP => $taxesAndFees->rollUp,
+            ]);
 
-            $attendee = $this->createAttendee($order, $attendeeDTO);
+            $attendee = $this->createAttendee($order, $attendeeDTO, $productPriceId);
 
             $this->orderManagementService->updateOrderTotals($order, collect([$orderItem]));
 
-            $this->fireEventsAndUpdateQuantities($attendeeDTO, $order);
+            $this->productQuantityAdjustmentService->increaseQuantitySold(priceId: $productPriceId);
 
-            $this->queueWebhooks($order);
+            event(new OrderStatusChangedEvent(
+                order: $order,
+                sendEmails: $attendeeDTO->send_confirmation_email,
+            ));
+
+            $this->domainEventDispatcherService->dispatch(
+                new OrderEvent(DomainEventType::ORDER_CREATED, $order->getId())
+            );
 
             return $attendee;
         });
     }
 
-    private function createOrder(int $eventId, CreateAttendeeDTO $attendeeDTO): OrderDomainObject
+    private function createOrder(CreateAttendeeDTO $attendeeDTO, float $totalGross): OrderDomainObject
     {
-        $event = $this->eventRepository->findById($eventId);
-        $total = Money::of($attendeeDTO->amount_paid, $event->getCurrency());
+        $event = $this->eventRepository->findById($attendeeDTO->event_id);
+        $total = Money::of($totalGross, $event->getCurrency());
 
-        return $this->orderRepository->create(
-            [
-                OrderDomainObjectAbstract::TOTAL_GROSS => $total->getAmount()->toFloat(),
-                OrderDomainObjectAbstract::FIRST_NAME => $attendeeDTO->first_name,
-                OrderDomainObjectAbstract::LAST_NAME => $attendeeDTO->last_name,
-                OrderDomainObjectAbstract::EMAIL => $attendeeDTO->email,
-                OrderDomainObjectAbstract::EVENT_ID => $eventId,
-                OrderDomainObjectAbstract::SHORT_ID => IdHelper::shortId(IdHelper::ORDER_PREFIX),
-                OrderDomainObjectAbstract::STATUS => OrderStatus::COMPLETED->name,
-                OrderDomainObjectAbstract::PAYMENT_STATUS => $total->isZero()
-                    ? OrderPaymentStatus::NO_PAYMENT_REQUIRED->name
-                    : OrderPaymentStatus::PAYMENT_RECEIVED->name,
-                OrderDomainObjectAbstract::CURRENCY => $event->getCurrency(),
-                OrderDomainObjectAbstract::PUBLIC_ID => IdHelper::publicId(IdHelper::ORDER_PREFIX),
-                OrderDomainObjectAbstract::IS_MANUALLY_CREATED => true,
-                OrderDomainObjectAbstract::LOCALE => $attendeeDTO->locale,
-            ]
-        );
+        return $this->orderRepository->create([
+            OrderDomainObjectAbstract::TOTAL_GROSS => $total->getAmount()->toFloat(),
+            OrderDomainObjectAbstract::FIRST_NAME => $attendeeDTO->first_name,
+            OrderDomainObjectAbstract::LAST_NAME => $attendeeDTO->last_name,
+            OrderDomainObjectAbstract::EMAIL => $attendeeDTO->email,
+            OrderDomainObjectAbstract::EVENT_ID => $attendeeDTO->event_id,
+            OrderDomainObjectAbstract::SHORT_ID => IdHelper::shortId(IdHelper::ORDER_PREFIX),
+            OrderDomainObjectAbstract::STATUS => OrderStatus::COMPLETED->name,
+            OrderDomainObjectAbstract::PAYMENT_STATUS => $total->isZero()
+                ? OrderPaymentStatus::NO_PAYMENT_REQUIRED->name
+                : OrderPaymentStatus::PAYMENT_RECEIVED->name,
+            OrderDomainObjectAbstract::CURRENCY => $event->getCurrency(),
+            OrderDomainObjectAbstract::PUBLIC_ID => IdHelper::publicId(IdHelper::ORDER_PREFIX),
+            OrderDomainObjectAbstract::IS_MANUALLY_CREATED => true,
+            OrderDomainObjectAbstract::LOCALE => $attendeeDTO->locale,
+        ]);
     }
 
     /**
@@ -160,72 +181,12 @@ class CreateAttendeeHandler
         throw new InvalidProductPriceId(__('The product price ID is invalid.'));
     }
 
-    private function calculateTaxesAndFees(CreateAttendeeDTO $attendeeDTO): ?Collection
-    {
-        if (!$attendeeDTO->taxes_and_fees) {
-            return null;
-        }
-
-        $taxesAndFees = $this->taxAndFeeRepository->findWhereIn(
-            'id',
-            $attendeeDTO
-                ->taxes_and_fees
-                ->map(fn(CreateAttendeeTaxAndFeeDTO $taxAndFee) => $taxAndFee->tax_or_fee_id)
-                ->toArray()
-        );
-
-        $validatedTaxesAndFees = collect();
-        $attendeeDTO->taxes_and_fees->each(function (CreateAttendeeTaxAndFeeDTO $taxAndFee) use ($validatedTaxesAndFees, $taxesAndFees) {
-            $taxOrFee = $taxesAndFees->first(fn($taxOrFee) => $taxOrFee->getId() === $taxAndFee->tax_or_fee_id);
-
-            if (!$taxOrFee) {
-                throw new RuntimeException('Tax or fee not found.');
-            }
-
-            $validatedTaxesAndFees->push($taxOrFee);
-        });
-
-        return $validatedTaxesAndFees;
-    }
-
-    private function processTaxesAndFees(CreateAttendeeDTO $attendeeDTO): void
-    {
-        $this->calculateTaxesAndFees($attendeeDTO)
-            ?->each(fn($taxOrFee) => $this->taxAndFeeRollupService
-                ->addToRollUp(
-                    $taxOrFee,
-                    $attendeeDTO
-                        ->taxes_and_fees
-                        ->first(fn($taxOrFeeDTO) => $taxOrFeeDTO->tax_or_fee_id === $taxOrFee->getId())
-                        ->amount)
-            );
-    }
-
-    private function createOrderItem(CreateAttendeeDTO $attendeeDTO, OrderDomainObject $order, ProductDomainObject $product, int $productPriceId): OrderItemDomainObject
-    {
-        return $this->orderRepository->addOrderItem(
-            [
-                OrderItemDomainObjectAbstract::PRODUCT_ID => $attendeeDTO->product_id,
-                OrderItemDomainObjectAbstract::QUANTITY => 1,
-                OrderItemDomainObjectAbstract::TOTAL_BEFORE_ADDITIONS => $attendeeDTO->amount_paid,
-                OrderItemDomainObjectAbstract::TOTAL_GROSS => $attendeeDTO->amount_paid + $this->taxAndFeeRollupService->getTotalTaxesAndFees(),
-                OrderItemDomainObjectAbstract::TOTAL_TAX => $this->taxAndFeeRollupService->getTotalTaxes(),
-                OrderItemDomainObjectAbstract::TOTAL_SERVICE_FEE => $this->taxAndFeeRollupService->getTotalFees(),
-                OrderItemDomainObjectAbstract::PRICE => $attendeeDTO->amount_paid,
-                OrderItemDomainObjectAbstract::ORDER_ID => $order->getId(),
-                OrderItemDomainObjectAbstract::ITEM_NAME => $product->getTitle(),
-                OrderItemDomainObjectAbstract::PRODUCT_PRICE_ID => $productPriceId,
-                OrderItemDomainObjectAbstract::TAXES_AND_FEES_ROLLUP => $this->taxAndFeeRollupService->getRollUp(),
-            ]
-        );
-    }
-
-    private function createAttendee(OrderDomainObject $order, CreateAttendeeDTO $attendeeDTO): AttendeeDomainObject
+    private function createAttendee(OrderDomainObject $order, CreateAttendeeDTO $attendeeDTO, int $productPriceId): AttendeeDomainObject
     {
         return $this->attendeeRepository->create([
             AttendeeDomainObjectAbstract::EVENT_ID => $order->getEventId(),
             AttendeeDomainObjectAbstract::PRODUCT_ID => $attendeeDTO->product_id,
-            AttendeeDomainObjectAbstract::PRODUCT_PRICE_ID => $attendeeDTO->product_price_id,
+            AttendeeDomainObjectAbstract::PRODUCT_PRICE_ID => $productPriceId,
             AttendeeDomainObjectAbstract::STATUS => AttendeeStatus::ACTIVE->name,
             AttendeeDomainObjectAbstract::EMAIL => $attendeeDTO->email,
             AttendeeDomainObjectAbstract::FIRST_NAME => $attendeeDTO->first_name,
@@ -235,24 +196,5 @@ class CreateAttendeeHandler
             AttendeeDomainObjectAbstract::SHORT_ID => IdHelper::shortId(IdHelper::ATTENDEE_PREFIX),
             AttendeeDomainObjectAbstract::LOCALE => $attendeeDTO->locale,
         ]);
-    }
-
-    private function fireEventsAndUpdateQuantities(CreateAttendeeDTO $attendeeDTO, OrderDomainObject $order): void
-    {
-        $this->productQuantityAdjustmentService->increaseQuantitySold(
-            priceId: $attendeeDTO->product_price_id,
-        );
-
-        event(new OrderStatusChangedEvent(
-            order: $order,
-            sendEmails: $attendeeDTO->send_confirmation_email,
-        ));
-    }
-
-    private function queueWebhooks(OrderDomainObject $order): void
-    {
-        $this->domainEventDispatcherService->dispatch(
-            new OrderEvent(DomainEventType::ORDER_CREATED, $order->getId())
-        );
     }
 }
