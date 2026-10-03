@@ -6,8 +6,14 @@ namespace HiEvents\Services\Domain\Ticket\DTO;
 
 use HiEvents\DataTransferObjects\BaseDataObject;
 
-class ZplTicketDataDTO extends BaseDataObject
+class TicketDataDTO extends BaseDataObject
 {
+    public const STATUS_VALID = 'VALID';
+
+    public const STATUS_CANCELLED = 'CANCELLED';
+
+    public const STATUS_AWAITING_PAYMENT = 'AWAITING_PAYMENT';
+
     public function __construct(
         public readonly string $publicId,
         public readonly string $eventTitle,
@@ -19,5 +25,6 @@ class ZplTicketDataDTO extends BaseDataObject
         public readonly string $sellerName = '',
         public readonly ?string $organizerLogo = null,
         public readonly ?string $sponsorLogo = null,
+        public readonly string $status = self::STATUS_VALID,
     ) {}
 }

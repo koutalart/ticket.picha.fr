@@ -4,6 +4,7 @@ import {useGetMe} from '../../../../queries/useGetMe.ts';
 import {useGetEventSettings} from '../../../../queries/useGetEventSettings.ts';
 import {useGetEventImages} from '../../../../queries/useGetEventImages.ts';
 import {AttendeeTicket} from '../../../common/AttendeeTicket';
+import {ticketPreviewImageUrl} from '../../../../utilites/urlHelper.ts';
 import {PoweredByFooter} from '../../../common/PoweredByFooter';
 import {t} from '@lingui/macro';
 import {Attendee} from '../../../../types.ts';
@@ -94,6 +95,7 @@ const TicketDesignerPrint = () => {
                     product={mockProduct}
                     event={eventWithDesignSettings}
                     hideButtons
+                    imageSrc={ticketPreviewImageUrl(event.id, (event.images || []).map(image => image.id).join('-'))}
                 />
                 <div className={classes.poweredBy}>
                     <PoweredByFooter/>

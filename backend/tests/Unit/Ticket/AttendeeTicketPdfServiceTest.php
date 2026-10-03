@@ -117,9 +117,9 @@ class AttendeeTicketPdfServiceTest extends TestCase
         );
 
         $images = $this->extractImages($pdf);
-        self::assertCount(1, $images, 'AC-15: exactly one embedded image — the QR — is expected on the ticket');
-        self::assertSame('300', (string)$images[0]['Width']);
-        self::assertSame('300', (string)$images[0]['Height']);
+        self::assertCount(1, $images, 'the ticket is one picture, identical to the Zebra label');
+        self::assertSame('1278', (string)$images[0]['Width']);
+        self::assertSame('1278', (string)$images[0]['Height']);
     }
 
     public function test_pdf_is_rendered_in_attendee_locale_and_restores_app_locale(): void
@@ -132,6 +132,7 @@ class AttendeeTicketPdfServiceTest extends TestCase
 
         $text = mb_strtolower($this->extractText($pdf));
         self::assertStringContainsString('date et heure', $text);
+        self::assertStringContainsString('n° de billet', $text);
         self::assertStringNotContainsString('date & time', $text);
         self::assertSame('en', app()->getLocale());
     }

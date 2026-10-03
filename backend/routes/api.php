@@ -19,6 +19,8 @@ use HiEvents\Http\Actions\Attendees\EditAttendeeAction;
 use HiEvents\Http\Actions\Attendees\ExportAttendeesAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeActionPublic;
+use HiEvents\Http\Actions\Tickets\GetAttendeeTicketImageActionPublic;
+use HiEvents\Http\Actions\Tickets\GetEventTicketPreviewImageAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeesAction;
 use HiEvents\Http\Actions\Attendees\PartialEditAttendeeAction;
 use HiEvents\Http\Actions\Attendees\ResendAttendeeTicketAction;
@@ -379,6 +381,7 @@ $router->middleware(['auth:api'])->group(
         $router->get('/events/{event_id}/box-office-sales', GetBoxOfficeSalesAction::class);
         $router->get('/events/{event_id}/box-office-stats', GetBoxOfficeStatsAction::class);
         $router->get('/events/{event_id}/attendees/{attendee_public_id}/ticket.pdf', GetBoxOfficeTicketPdfAction::class);
+        $router->get('/events/{event_id}/ticket-preview.png', GetEventTicketPreviewImageAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/reprint', ReprintBoxOfficeTicketAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/print-zpl', PrintBoxOfficeZplAction::class);
 
@@ -558,6 +561,8 @@ $router->prefix('/public')->group(
 
         // Attendees
         $router->get('/events/{event_id}/attendees/{attendee_short_id}', GetAttendeeActionPublic::class);
+        $router->get('/events/{event_id}/attendees/{attendee_short_id}/ticket.png', GetAttendeeTicketImageActionPublic::class)
+            ->middleware('throttle:60,1');
 
         // Waitlist
         $router->post('/events/{event_id}/waitlist', CreateWaitlistEntryActionPublic::class)
