@@ -694,6 +694,45 @@ fiche d'achat.
    Le type de média pourrait lui aussi devenir un réglage par poste (continu, espace, marque
    noire → `^MNN` / `^MNY` / `^MNM`) si PICHA utilise plusieurs rouleaux.
 
+### D19d — Application iPad « PICHA Kiosk » (App Store) — **lancée (Jo, 3 oct. 2026)**
+
+**Constat.**
+- En production, l'impression Zebra est faite **par le serveur** :
+  `ZebraNetworkPrinter` ouvre un TCP vers `printer_host:9100`.
+- Le VPS de ticket.picha.fr ne peut pas joindre une imprimante sur le Wi-Fi
+  d'un lieu. L'impression silencieuse D19c retombait donc sur la modale
+  « Imprimante injoignable » puis sur le PDF.
+
+**Décision (Jo).** Le Kiosk devient une app iPad publiée sur l'App Store
+public. Le Kiosk est **embarqué** dans l'app (bundle CSR), il n'est pas
+chargé depuis le site.
+
+**Mise en œuvre.**
+- Capacitor 8, projet Xcode dans `frontend/ios`, iPad uniquement.
+- `POST /events/{id}/attendees/{publicId}/zpl` renvoie le ZPL au format
+  d'étiquette du poste (D29).
+  - Le `print_job` est tracé dès la génération, comme pour la réimpression
+    PDF (D14).
+  - La construction du ZPL est partagée avec `print-zpl` via
+    `BoxOfficeTicketZplService`.
+- Le plugin natif `PichaPrinter` envoie le ZPL en TCP 9100 depuis l'iPad
+  (Network.framework) et imprime les PDF en AirPrint.
+- iOS demande l'autorisation « réseau local » à la première impression.
+- L'origine de l'app est `capacitor://localhost` : le cookie d'auth
+  cross-site y est bloqué. Le JWT est donc gardé sur l'appareil et envoyé
+  en `Bearer`.
+- `print-zpl` (impression par le serveur) reste en place pour un backend
+  installé sur le même réseau que l'imprimante.
+- Pas de Mac : le build passe par GitHub Actions (macOS).
+  - À chaque push : compilation sans signature.
+  - TestFlight : à la demande, avec une clé API App Store Connect.
+  - Procédure complète : `frontend/ios/README.md`.
+
+**Prérequis côté Jo.**
+- Compte Apple Developer « Organisation », avec un numéro D-U-N-S.
+- Clé API App Store Connect, à enregistrer dans les secrets GitHub.
+- Compte opérateur de démo pour l'App Review.
+
 ### D19a — Réglages matériels par poste (capture 5)
 
 Weezevent : écran de réglages **explicitement local à l'appareil** (imprimante, options d'envoi
