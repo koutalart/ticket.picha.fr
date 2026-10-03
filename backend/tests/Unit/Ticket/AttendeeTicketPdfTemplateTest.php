@@ -5,96 +5,111 @@ declare(strict_types=1);
 namespace Tests\Unit\Ticket;
 
 use HiEvents\DomainObjects\AttendeeDomainObject;
-use HiEvents\DomainObjects\EventDomainObject;
-use HiEvents\DomainObjects\EventSettingDomainObject;
-use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Helper\IdHelper;
+use HiEvents\Models\Attendee;
+use HiEvents\Models\Event;
+use HiEvents\Models\EventSetting;
+use HiEvents\Models\Order;
+use HiEvents\Services\Domain\Ticket\DTO\TicketDataDTO;
+use HiEvents\Services\Domain\Ticket\TicketDataFactory;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
 
 class AttendeeTicketPdfTemplateTest extends TestCase
 {
-    private function render(?array $locationDetails = null, string $locale = 'fr', string $email = 'amina@example.invalid'): string
+    use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
+
+    private function ticket(?array $locationDetails = null, string $email = 'amina@example.invalid', string $status = 'ACTIVE'): TicketDataDTO
     {
-        $event = (new EventDomainObject)
-            ->setId(1)
-            ->setTitle('Concert Mamoudzou')
-            ->setStartDate('2026-09-28 16:00:00')
-            ->setTimezone('Indian/Mayotte');
+        [$event, $product, $productPrice] = $this->createEventWithProduct();
+        Event::whereKey($event->id)->update([
+            'title' => 'Concert Mamoudzou',
+            'start_date' => '2026-09-28 16:00:00',
+            'timezone' => 'Indian/Mayotte',
+            'location_details' => null,
+        ]);
+        EventSetting::where('event_id', $event->id)->update(['location_details' => $locationDetails]);
+        $product->update(['title' => '🎟️ Entrée simple']);
 
-        $settings = (new EventSettingDomainObject)->setLocationDetails($locationDetails);
+        $order = Order::create([
+            'event_id' => $event->id,
+            'total_gross' => 25.00,
+            'currency' => 'USD',
+            'status' => 'COMPLETED',
+            'short_id' => IdHelper::shortId(IdHelper::ORDER_PREFIX),
+            'public_id' => IdHelper::publicId(IdHelper::ORDER_PREFIX),
+        ]);
 
-        $organizer = (new OrganizerDomainObject)->setName('Organisateur');
+        $attendee = Attendee::create([
+            'event_id' => $event->id,
+            'order_id' => $order->id,
+            'product_id' => $product->id,
+            'product_price_id' => $productPrice->id,
+            'status' => $status,
+            'email' => $email,
+            'first_name' => 'Amina',
+            'last_name' => 'Test',
+            'short_id' => IdHelper::shortId(IdHelper::ATTENDEE_PREFIX),
+            'public_id' => IdHelper::publicId(IdHelper::ATTENDEE_PREFIX),
+        ]);
 
-        $attendee = (new AttendeeDomainObject)
-            ->setFirstName('Amina')
-            ->setLastName('Test')
-            ->setEmail($email)
-            ->setPublicId('A-TEST123')
-            ->setLocale($locale);
+        app()->setLocale('fr');
 
-        $previousLocale = app()->getLocale();
-        app()->setLocale($locale);
+        return app(TicketDataFactory::class)->forAttendee(AttendeeDomainObject::hydrateFromModel($attendee));
+    }
 
-        try {
-            return view('attendee-ticket-pdf', [
-                'attendee' => $attendee,
-                'event' => $event,
-                'eventSettings' => $settings,
-                'organizer' => $organizer,
-                'product' => null,
-                'qrCodeBase64' => '',
-                'accentColor' => '#6B46C1',
-                'footerText' => null,
-                'dateDisplayMode' => 'START_DATE_TIME',
-                'logoUrl' => null,
-            ])->render();
-        } finally {
-            app()->setLocale($previousLocale);
-        }
+    private function render(TicketDataDTO $ticket): string
+    {
+        return view('attendee-ticket-pdf', ['ticket' => $ticket, 'ticketImageBase64' => ''])->render();
     }
 
     public function test_start_date_is_shown_in_event_timezone_not_utc(): void
     {
-        $html = $this->render();
+        $ticket = $this->ticket();
 
-        self::assertStringContainsString('28/09/2026 19:00', $html);
-        self::assertStringNotContainsString('28/09/2026 16:00', $html);
+        self::assertSame('Lun. 28 sept. 2026', $ticket->eventDate);
+        self::assertSame('19h00', $ticket->eventTime);
     }
 
     public function test_labels_are_translated_in_french(): void
     {
-        $html = $this->render();
+        $html = $this->render($this->ticket());
 
         self::assertStringContainsString('Date et heure', $html);
-        self::assertStringContainsString('Organisateur', $html);
-        self::assertStringContainsString('Participant', $html);
+        self::assertStringContainsString('N° de billet', $html);
         self::assertStringNotContainsString('Date &amp; Time', $html);
     }
 
-    public function test_location_row_is_hidden_when_address_is_empty(): void
+    public function test_product_title_has_no_emoji(): void
     {
-        $html = $this->render(locationDetails: ['venue_name' => null, 'city' => null, 'country' => null]);
-
-        self::assertStringNotContainsString('Lieu', $html);
-        self::assertStringNotContainsString('Location', $html);
+        self::assertSame('Entrée simple', $this->ticket()->productTitle);
     }
 
-    public function test_location_row_is_shown_when_address_is_set(): void
+    public function test_venue_is_empty_when_address_is_empty(): void
     {
-        $html = $this->render(locationDetails: ['venue_name' => 'Stade de Cavani', 'city' => 'Mamoudzou', 'country' => 'YT']);
+        $ticket = $this->ticket(locationDetails: ['venue_name' => null, 'city' => null, 'country' => null]);
 
-        self::assertStringContainsString('Lieu', $html);
-        self::assertStringContainsString('Stade de Cavani', $html);
+        self::assertSame('', $ticket->venue);
     }
 
-    public function test_kiosk_sentinel_email_is_never_printed(): void
+    public function test_venue_is_shown_when_address_is_set(): void
     {
-        $html = $this->render(email: 'kiosk.s1620@no-mail.picha.invalid');
+        $ticket = $this->ticket(locationDetails: ['venue_name' => 'Stade de Cavani', 'city' => 'Mamoudzou', 'country' => 'YT']);
 
-        self::assertStringNotContainsString('no-mail.picha.invalid', $html);
+        self::assertSame('Stade de Cavani, Mamoudzou', $ticket->venue);
+        self::assertStringContainsString('Stade de Cavani', $this->render($ticket));
     }
 
-    public function test_real_email_is_still_printed(): void
+    public function test_email_is_never_printed(): void
     {
-        self::assertStringContainsString('amina@example.invalid', $this->render());
+        self::assertStringNotContainsString('no-mail.picha.invalid', $this->render($this->ticket(email: 'kiosk.s1620@no-mail.picha.invalid')));
+        self::assertStringNotContainsString('amina@example.invalid', $this->render($this->ticket()));
+    }
+
+    public function test_cancelled_attendee_gets_a_cancelled_ticket(): void
+    {
+        self::assertSame(TicketDataDTO::STATUS_CANCELLED, $this->ticket(status: 'CANCELLED')->status);
     }
 }
