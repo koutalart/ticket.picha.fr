@@ -222,6 +222,18 @@ export const boxOfficeClient = {
         );
     },
 
+    getTicketZpl: async (eventId: IdParam, attendeePublicId: string, labelFormat: ZebraLabelFormat) => {
+        const response = await api.post<GenericDataResponse<{ zpl: string }>>(
+            `events/${eventId}/attendees/${attendeePublicId}/zpl`,
+            {
+                printer_dpi: labelFormat.printerDpi,
+                label_width_mm: labelFormat.labelWidthMm,
+                label_length_mm: labelFormat.labelLengthMm,
+            },
+        );
+        return response.data.data.zpl;
+    },
+
     getOperators: async (eventId: IdParam) => {
         const response = await api.get<GenericDataResponse<BoxOfficeOperator[]>>(
             `events/${eventId}/box-office/operators`,
