@@ -7,7 +7,7 @@ import {MarketingFooter} from "../landing/MarketingFooter";
 import {MarketingDemoSection} from "../landing/MarketingDemoSection";
 import {CaseStudyCard} from "../case-studies/CaseStudyCard";
 import {getCaseStudiesForSolution} from "../case-studies/caseStudies.ts";
-import {getAppName} from "../../../utilites/branding.ts";
+import {getAppName, SHARE_IMAGE_PATH} from "../../../utilites/branding.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {getSolution, SolutionCta, solutionPath, solutions} from "./solutions.ts";
 import classes from "./Solutions.module.scss";
@@ -80,7 +80,11 @@ const SolutionPage = () => {
                 <meta property="og:title" content={solution.metaTitle}/>
                 <meta property="og:description" content={solution.metaDescription}/>
                 <meta property="og:url" content={pageUrl}/>
+                <meta property="og:image" content={`${frontendUrl}${SHARE_IMAGE_PATH}`}/>
+                <meta property="og:image:width" content="1200"/>
+                <meta property="og:image:height" content="630"/>
                 <meta name="twitter:card" content="summary_large_image"/>
+                <meta name="twitter:image" content={`${frontendUrl}${SHARE_IMAGE_PATH}`}/>
                 <script type="application/ld+json">{JSON.stringify(structuredData).replace(/</g, "\\u003c")}</script>
             </Helmet>
 
