@@ -3,7 +3,7 @@ import { isSsr } from "./helpers.ts";
 import process from "process";
 
 
-export const clientBuildEnv: { [K in ConfigKeys]: string } = {
+export const clientBuildEnv: Partial<Record<ConfigKeys, string>> = {
     'VITE_APP_PRIMARY_COLOR': import.meta.env.VITE_APP_PRIMARY_COLOR,
     'VITE_APP_SECONDARY_COLOR': import.meta.env.VITE_APP_SECONDARY_COLOR,
     'VITE_APP_NAME': import.meta.env.VITE_APP_NAME,
@@ -22,10 +22,12 @@ export const clientBuildEnv: { [K in ConfigKeys]: string } = {
     'VITE_I_HAVE_PURCHASED_A_LICENCE': import.meta.env.VITE_I_HAVE_PURCHASED_A_LICENCE,
     'VITE_FRONTEND_URL': import.meta.env.VITE_FRONTEND_URL,
     'VITE_DEFAULT_IMAGE_URL': import.meta.env.VITE_DEFAULT_IMAGE_URL,
-    'VITE_API_URL_SERVER': import.meta.env.VITE_API_URL_SERVER,
     'VITE_API_URL_CLIENT': import.meta.env.VITE_API_URL_CLIENT,
     'VITE_COOKIE_CONSENT_ENABLED': import.meta.env.VITE_COOKIE_CONSENT_ENABLED,
     'VITE_COOKIE_CONSENT_TEXT': import.meta.env.VITE_COOKIE_CONSENT_TEXT,
+    'VITE_SHOP_URL': import.meta.env.VITE_SHOP_URL,
+    'VITE_LANDING_VIDEO_URL': import.meta.env.VITE_LANDING_VIDEO_URL,
+    'VITE_LANDING_VIDEO_POSTER': import.meta.env.VITE_LANDING_VIDEO_POSTER,
 }
 
 export const getConfig = (key: ConfigKeys, fallback?: string): string | undefined => {

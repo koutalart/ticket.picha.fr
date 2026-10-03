@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace Tests\Unit\Ticket;
 
 use HiEvents\Services\Domain\Ticket\AttendeeTicketZplService;
-use HiEvents\Services\Domain\Ticket\DTO\ZplTicketDataDTO;
+use HiEvents\Services\Domain\Ticket\DTO\TicketDataDTO;
+use HiEvents\Services\Domain\Ticket\TicketLayoutBuilder;
 use HiEvents\Services\Domain\Ticket\ZplImageConverter;
+use HiEvents\Services\Domain\Ticket\ZplTicketRenderer;
 use Tests\TestCase;
 
 class AttendeeTicketZplServiceTest extends TestCase
 {
     private function service(): AttendeeTicketZplService
     {
-        return new AttendeeTicketZplService(new ZplImageConverter);
+        return new AttendeeTicketZplService(new TicketLayoutBuilder(new ZplImageConverter), new ZplTicketRenderer);
     }
 
     private function logo(int $width, int $height): string
@@ -31,7 +33,7 @@ class AttendeeTicketZplServiceTest extends TestCase
     {
         app()->setLocale('fr');
 
-        $zpl = $this->service()->generate(new ZplTicketDataDTO(
+        $zpl = $this->service()->generate(new TicketDataDTO(
             publicId: 'A-SFMVW8P',
             eventTitle: 'Triangle des Bermudes',
             productTitle: 'Entrée simple',
@@ -68,7 +70,7 @@ class AttendeeTicketZplServiceTest extends TestCase
     {
         app()->setLocale('fr');
 
-        $zpl = $this->service()->generate(new ZplTicketDataDTO(
+        $zpl = $this->service()->generate(new TicketDataDTO(
             publicId: 'A-SAFE',
             eventTitle: 'Mayotte',
             productTitle: 'PASS',
@@ -83,7 +85,7 @@ class AttendeeTicketZplServiceTest extends TestCase
 
     public function test_header_centres_logo_without_sponsor(): void
     {
-        $zpl = $this->service()->generate(new ZplTicketDataDTO(
+        $zpl = $this->service()->generate(new TicketDataDTO(
             publicId: 'A-SAFE',
             eventTitle: 'Mayotte',
             productTitle: 'PASS',
@@ -96,7 +98,7 @@ class AttendeeTicketZplServiceTest extends TestCase
 
     public function test_header_falls_back_to_seller_name_without_logo(): void
     {
-        $zpl = $this->service()->generate(new ZplTicketDataDTO(
+        $zpl = $this->service()->generate(new TicketDataDTO(
             publicId: 'A-SAFE',
             eventTitle: 'Mayotte',
             productTitle: 'PASS',
@@ -108,7 +110,7 @@ class AttendeeTicketZplServiceTest extends TestCase
 
     public function test_long_titles_use_smaller_font(): void
     {
-        $zpl = $this->service()->generate(new ZplTicketDataDTO(
+        $zpl = $this->service()->generate(new TicketDataDTO(
             publicId: 'A-SAFE',
             eventTitle: 'Festival international des musiques de Mayotte',
             productTitle: 'PASS',
@@ -119,7 +121,7 @@ class AttendeeTicketZplServiceTest extends TestCase
 
     public function test_omits_empty_rows_and_name(): void
     {
-        $zpl = $this->service()->generate(new ZplTicketDataDTO(
+        $zpl = $this->service()->generate(new TicketDataDTO(
             publicId: 'a_SAFE',
             eventTitle: 'Mayotte',
             productTitle: 'PASS',
@@ -133,7 +135,7 @@ class AttendeeTicketZplServiceTest extends TestCase
 
     public function test_escapes_control_characters_in_user_text(): void
     {
-        $zpl = $this->service()->generate(new ZplTicketDataDTO(
+        $zpl = $this->service()->generate(new TicketDataDTO(
             publicId: 'a_SAFE',
             eventTitle: 'Night^Out',
             productTitle: 'VIP~Pass',

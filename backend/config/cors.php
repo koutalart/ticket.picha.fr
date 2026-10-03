@@ -19,7 +19,14 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => explode(',', env('CORS_ALLOWED_ORIGINS', '*')),
+    'allowed_origins' => (static function (): array {
+        $parse = static fn(?string $value): array => array_values(array_filter(
+            array_map(static fn(string $origin) => rtrim(trim($origin), '/'), explode(',', (string)$value)),
+            static fn(string $origin) => $origin !== '' && $origin !== '*'
+        ));
+
+        return $parse(env('CORS_ALLOWED_ORIGINS')) ?: $parse(env('APP_FRONTEND_URL'));
+    })(),
 
     'allowed_origins_patterns' => [],
 

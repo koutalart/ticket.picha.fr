@@ -1,4 +1,4 @@
-import {useMutation} from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {FinaliseOrderPayload, orderClientPublic} from "../../../../api/order.client.ts";
 import {useNavigate, useParams, useSearchParams} from "react-router";
 import {
@@ -34,6 +34,8 @@ import classes from "./CollectInformation.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
 import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
+import {preloadPaymentStep} from "../../../../utilites/checkoutPreload.ts";
+import {getStripePaymentIntentQuery} from "../../../../queries/useCreateStripePaymentIntent.ts";
 
 const LoadingSkeleton = () =>
     (
@@ -47,6 +49,7 @@ const LoadingSkeleton = () =>
 export const CollectInformation = () => {
     const {eventId, orderShortId} = useParams();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [searchParams] = useSearchParams();
     const isFromWaitlist = searchParams.get('waitlist') === 'true';
     const {
@@ -211,11 +214,22 @@ export const CollectInformation = () => {
         }
     }, [form.values.order.first_name, form.values.order.last_name, form.values.order.email]);
 
+    const isStripeEnabled = !!event?.settings?.payment_providers?.includes('STRIPE');
+
+    useEffect(() => {
+        if (order?.is_payment_required && isStripeEnabled) {
+            preloadPaymentStep();
+        }
+    }, [order?.is_payment_required, isStripeEnabled]);
+
     const mutation = useMutation({
         mutationFn: (orderData: FinaliseOrderPayload) => orderClientPublic.finaliseOrder(Number(eventId), String(orderShortId), orderData),
 
         onSuccess: (data) => {
             const nextPage = order?.is_payment_required ? 'payment' : 'summary';
+            if (nextPage === 'payment' && isStripeEnabled) {
+                queryClient.prefetchQuery(getStripePaymentIntentQuery(eventId, data.data.short_id));
+            }
             if (nextPage === 'summary') {
                 trackEvent(AnalyticsEvents.PURCHASE_COMPLETED_FREE);
             }

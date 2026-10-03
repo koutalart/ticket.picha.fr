@@ -58,6 +58,15 @@ export const localeToNameMap: Record<SupportedLocales, string> = {
     el: `Greek`,
 };
 
+const htmlLangOverrides: Record<string, string> = {
+    se: "sv",
+    "zh-cn": "zh-CN",
+    "zh-hk": "zh-HK",
+    "pt-br": "pt-BR",
+};
+
+export const toHtmlLang = (locale: string): string => htmlLangOverrides[locale] || locale;
+
 export const getClientLocale = () => {
     if (typeof window !== "undefined") {
         const storedLocale = document
@@ -68,6 +77,11 @@ export const getClientLocale = () => {
 
         if (storedLocale) {
             return getSupportedLocale(storedLocale);
+        }
+
+        const serverLocale = document.documentElement.dataset.locale;
+        if (serverLocale) {
+            return getSupportedLocale(serverLocale);
         }
 
         return getSupportedLocale(window.navigator.language);

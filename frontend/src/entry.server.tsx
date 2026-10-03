@@ -6,8 +6,11 @@ import {router} from "./router";
 import {App} from "./App";
 import {setAuthToken} from "./utilites/apiClient.ts";
 import {createStaticHandler, createStaticRouter, StaticRouterProvider} from "react-router";
-import {dynamicActivateLocale} from "./locales.ts";
+import {i18n} from "@lingui/core";
+import {dynamicActivateLocale, toHtmlLang} from "./locales.ts";
 import {setSsrQueryClient} from "./utilites/ssrQueryClient.ts";
+
+export {renderLlmsTxt, renderMarketingSitemap} from "./marketing/pages.ts";
 
 const getLocale = (req: express.Request): string => {
     if (req.cookies.locale) {
@@ -76,6 +79,8 @@ export async function render(params: {
         appHtml: appHtml,
         dehydratedState,
         helmetContext,
+        locale: i18n.locale,
+        htmlLang: toHtmlLang(i18n.locale),
     };
 }
 

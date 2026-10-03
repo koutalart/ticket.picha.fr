@@ -9,11 +9,13 @@ use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Helper\CustomDomainHelper;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Admin\DTO\UpdateOrganizerCustomDomainDTO;
+use HiEvents\Services\Infrastructure\Cors\CustomDomainCorsOriginResolver;
 
 class UpdateOrganizerCustomDomainHandler
 {
     public function __construct(
-        private readonly OrganizerRepositoryInterface $organizerRepository,
+        private readonly OrganizerRepositoryInterface   $organizerRepository,
+        private readonly CustomDomainCorsOriginResolver $corsOriginResolver,
     )
     {
     }
@@ -40,9 +42,14 @@ class UpdateOrganizerCustomDomainHandler
             $this->assertDomainIsUsable($domain, $organizer->getId());
         }
 
-        return $this->organizerRepository->updateFromArray($organizer->getId(), [
+        $updated = $this->organizerRepository->updateFromArray($organizer->getId(), [
             'custom_domain' => $domain,
         ]);
+
+        $this->corsOriginResolver->forget($organizer->getCustomDomain());
+        $this->corsOriginResolver->forget($domain);
+
+        return $updated;
     }
 
     /**

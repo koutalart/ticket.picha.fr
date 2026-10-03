@@ -9,6 +9,7 @@ use HiEvents\Services\Infrastructure\Image\DTO\ImageMetadataDTO;
 use HiEvents\Services\Infrastructure\Image\DTO\ImageStorageResponseDTO;
 use HiEvents\Services\Infrastructure\Image\Exception\CouldNotUploadImageException;
 use HiEvents\Services\Infrastructure\Image\ImageMetadataService;
+use HiEvents\Services\Infrastructure\Image\ImageOptimizationService;
 use HiEvents\Services\Infrastructure\Image\ImageStorageService;
 use Illuminate\Http\UploadedFile;
 use Mockery as m;
@@ -19,6 +20,7 @@ class ImageUploadServiceTest extends TestCase
     private ImageStorageService $imageStorageService;
     private ImageRepositoryInterface $imageRepository;
     private ImageMetadataService $imageMetadataService;
+    private ImageOptimizationService $imageOptimizationService;
     private ImageUploadService $service;
 
     protected function setUp(): void
@@ -28,17 +30,20 @@ class ImageUploadServiceTest extends TestCase
         $this->imageStorageService = m::mock(ImageStorageService::class);
         $this->imageRepository = m::mock(ImageRepositoryInterface::class);
         $this->imageMetadataService = m::mock(ImageMetadataService::class);
+        $this->imageOptimizationService = m::mock(ImageOptimizationService::class);
+        $this->imageOptimizationService->shouldReceive('optimize')->andReturnNull()->byDefault();
 
         $this->service = new ImageUploadService(
             $this->imageStorageService,
             $this->imageRepository,
-            $this->imageMetadataService
+            $this->imageMetadataService,
+            $this->imageOptimizationService,
         );
     }
 
     public function testUploadSuccessfullyCreatesImageRecordWithMetadata(): void
     {
-        $uploadedFile = m::mock(UploadedFile::class);
+        $uploadedFile = $this->uploadedFileMock();
         $storedImage = new ImageStorageResponseDTO(
             filename: 'foo.jpg',
             disk: 'public',
@@ -94,7 +99,7 @@ class ImageUploadServiceTest extends TestCase
 
     public function testUploadSuccessfullyCreatesImageRecordWithoutMetadata(): void
     {
-        $uploadedFile = m::mock(UploadedFile::class);
+        $uploadedFile = $this->uploadedFileMock();
         $storedImage = new ImageStorageResponseDTO(
             filename: 'foo.jpg',
             disk: 'public',
@@ -142,7 +147,7 @@ class ImageUploadServiceTest extends TestCase
     {
         $this->expectException(CouldNotUploadImageException::class);
 
-        $uploadedFile = m::mock(UploadedFile::class);
+        $uploadedFile = $this->uploadedFileMock();
         $accountId = 123;
 
         $this->imageStorageService
@@ -158,5 +163,14 @@ class ImageUploadServiceTest extends TestCase
     {
         m::close();
         parent::tearDown();
+    }
+
+    private function uploadedFileMock(): UploadedFile
+    {
+        $uploadedFile = m::mock(UploadedFile::class);
+        $uploadedFile->shouldReceive('getRealPath')->andReturn(__FILE__)->byDefault();
+        $uploadedFile->shouldReceive('getMimeType')->andReturn('image/jpeg')->byDefault();
+
+        return $uploadedFile;
     }
 }
