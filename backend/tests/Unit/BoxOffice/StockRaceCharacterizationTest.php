@@ -8,6 +8,7 @@ use HiEvents\Exceptions\NoTicketsAvailableException;
 use HiEvents\Models\ProductPrice;
 use HiEvents\Services\Application\Handlers\Attendee\CreateAttendeeHandler;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\CreateAttendeeDTO;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use PDO;
@@ -15,11 +16,10 @@ use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
 
 /**
- * Characterizes the stock-checking behavior of CreateAttendeeHandler under
- * sequential vs. concurrent access, on a product price with exactly 1 ticket
- * left. Documents S2 (PICHA_BOX_OFFICE_SECURITY_FINDINGS.md): no row lock
- * (`FOR UPDATE`) on the stock read, so two concurrent sales can both read
- * "1 available" before either writes back — oversell.
+ * Stock checking of CreateAttendeeHandler under sequential vs. concurrent
+ * access, on a product price with exactly 1 ticket left. Fixes S2: the price
+ * row is locked (`FOR UPDATE`) before the stock is read, so a concurrent sale
+ * cannot read a stale "1 available" and oversell.
  */
 class StockRaceCharacterizationTest extends TestCase
 {
@@ -43,7 +43,6 @@ class StockRaceCharacterizationTest extends TestCase
             product_id: $product->id,
             event_id: $event->id,
             send_confirmation_email: false,
-            amount_paid: 25.00,
             locale: 'en',
             product_price_id: $productPrice->id,
         );
@@ -62,20 +61,16 @@ class StockRaceCharacterizationTest extends TestCase
     }
 
     /**
-     * Uses two independent database sessions (not just two sequential calls
-     * on the same connection) to reproduce the actual race window in
-     * ProductRepository::getQuantityRemainingForProductPrice() — a plain
-     * SELECT with no FOR UPDATE. This test documents that the bug exists
-     * TODAY: both "sales" read the stock as available before either writes
-     * back, so both succeed and the stock ends up oversold.
+     * Uses a second, genuinely independent database session that holds the
+     * price row lock — as a concurrent sale in progress would. The handler
+     * must wait for that lock instead of reading the stock right away; with a
+     * short lock_timeout, waiting surfaces as a lock-timeout error (55P03).
      *
      * DatabaseTransactions wraps the whole test in one outer transaction, so
-     * a second, genuinely independent PDO session would not see the setup
-     * data (Event/Product/ProductPrice) until that transaction commits. We
-     * commit it explicitly for this test, then clean up manually in
-     * `finally` — see the comment above the commit call.
+     * the second session would not see the setup data until it commits. We
+     * commit it explicitly, then clean up manually in `finally`.
      */
-    public function test_two_concurrent_sales_on_last_ticket_currently_oversell(): void
+    public function test_concurrent_sale_waits_for_the_stock_lock(): void
     {
         [$event, $product, $productPrice] = $this->createEventWithProduct(
             price: 25.00,
@@ -83,62 +78,54 @@ class StockRaceCharacterizationTest extends TestCase
             quantitySold: 0,
         );
 
-        // Commit the outer DatabaseTransactions transaction so a second,
-        // independent PDO connection can actually see this data. Laravel's
-        // Connection::commit() decrements its own transaction-level counter
-        // to 0; the trait's teardown rollBack() then computes toLevel = -1
-        // and no-ops (see Illuminate\Database\Connection::rollBack()), so
-        // this does not error at teardown. We are, however, now responsible
-        // for cleaning up everything ourselves — see the `finally` block.
+        // Laravel's Connection::commit() takes its transaction counter to 0;
+        // the trait's teardown rollBack() then no-ops. Cleanup is ours.
         DB::commit();
 
+        $config = config('database.connections.pgsql');
+        $dsn = sprintf('pgsql:host=%s;port=%s;dbname=%s', $config['host'], $config['port'], $config['database']);
+        $connB = new PDO($dsn, $config['username'], $config['password']);
+        $connB->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
         try {
-            $config = config('database.connections.pgsql');
-            $dsn = sprintf('pgsql:host=%s;port=%s;dbname=%s', $config['host'], $config['port'], $config['database']);
-            $connB = new PDO($dsn, $config['username'], $config['password']);
+            // Sale B is in progress: it holds the row lock on the last ticket.
+            $connB->beginTransaction();
+            $connB->prepare('SELECT id FROM product_prices WHERE id = ? FOR UPDATE')->execute([$productPrice->id]);
 
-            $remainingSql = <<<'SQL'
-                SELECT COALESCE(initial_quantity_available, 0) - quantity_sold AS remaining
-                FROM product_prices
-                WHERE id = ?
-            SQL;
+            DB::statement("SET lock_timeout = '500ms'");
 
-            // "Sale A" (Laravel's default connection, now autocommitting)
-            // and "Sale B" (a fresh, independent session) both check stock
-            // BEFORE either one has written anything back.
-            $remainingA = (int) DB::selectOne($remainingSql, [$productPrice->id])->remaining;
+            $blockedStatement = null;
+            try {
+                app(CreateAttendeeHandler::class)->handle(new CreateAttendeeDTO(
+                    first_name: 'Jane',
+                    last_name: 'Doe',
+                    email: 'jane@example.test',
+                    product_id: $product->id,
+                    event_id: $event->id,
+                    send_confirmation_email: false,
+                    locale: 'en',
+                    product_price_id: $productPrice->id,
+                ));
+            } catch (QueryException $exception) {
+                if ($exception->getCode() === '55P03') {
+                    $blockedStatement = strtolower($exception->getSql());
+                }
+            }
 
-            $stmtB = $connB->prepare($remainingSql);
-            $stmtB->execute([$productPrice->id]);
-            $remainingB = (int) $stmtB->fetchColumn();
-
-            self::assertSame(1, $remainingA, 'sale A sees 1 ticket available');
-            self::assertSame(1, $remainingB, 'sale B ALSO sees 1 ticket available — the race window that causes S2');
-
-            // Both proceed, because both saw stock available. This mirrors
-            // ProductQuantityUpdateService::increaseQuantitySold(): an
-            // unconditional `UPDATE ... SET quantity_sold = quantity_sold + 1`
-            // with no check against the value that was read a moment earlier.
-            DB::update('UPDATE product_prices SET quantity_sold = quantity_sold + 1 WHERE id = ?', [$productPrice->id]);
-            $connB->prepare('UPDATE product_prices SET quantity_sold = quantity_sold + 1 WHERE id = ?')
-                ->execute([$productPrice->id]);
-
-            $finalSold = (int) DB::selectOne(
-                'SELECT quantity_sold FROM product_prices WHERE id = ?',
-                [$productPrice->id]
-            )->quantity_sold;
-
-            // This asserts the DESIRED behavior — stock must never exceed
-            // what was available — and is expected to be RED today: no row
-            // lock (FOR UPDATE) guards the read, so both concurrent "sales"
-            // succeed and the stock ends up oversold (2 sold on a stock of
-            // 1). The failure itself is the proof of S2.
-            self::assertLessThanOrEqual(
-                (int) ProductPrice::find($productPrice->id)->initial_quantity_available,
-                $finalSold,
-                'S2: stock must not be oversold, but no row lock exists today on the stock read',
+            self::assertNotNull($blockedStatement, 'S2: sale A must wait for the lock held by sale B');
+            self::assertStringContainsString(
+                'for update',
+                $blockedStatement,
+                'S2: sale A must wait on the locked stock read, before reading a possibly stale stock',
             );
+            self::assertSame(0, (int) DB::table('product_prices')->where('id', $productPrice->id)->value('quantity_sold'));
+            self::assertSame(0, DB::table('orders')->where('event_id', $event->id)->count(), 'nothing is written while waiting');
         } finally {
+            if ($connB->inTransaction()) {
+                $connB->rollBack();
+            }
+            DB::statement('SET lock_timeout = 0');
+
             $userIds = DB::table('account_users')->where('account_id', $event->account_id)->pluck('user_id');
 
             DB::table('event_settings')->where('event_id', $event->id)->delete();
