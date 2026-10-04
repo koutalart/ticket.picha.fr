@@ -116,13 +116,15 @@ class SendOrderDetailsService
 
     private function sendOrderSummaryEmails(OrderDomainObject $order, EventDomainObject $event): void
     {
-        $this->sendCustomerOrderSummary(
-            order: $order,
-            event: $event,
-            organizer: $event->getOrganizer(),
-            eventSettings: $event->getEventSettings(),
-            invoice: $order->getLatestInvoice(),
-        );
+        if (!$this->isFreeOrder($order)) {
+            $this->sendCustomerOrderSummary(
+                order: $order,
+                event: $event,
+                organizer: $event->getOrganizer(),
+                eventSettings: $event->getEventSettings(),
+                invoice: $order->getLatestInvoice(),
+            );
+        }
 
         if ($order->getIsManuallyCreated() || ! $event->getEventSettings()->getNotifyOrganizerOfNewOrders()) {
             return;
@@ -131,5 +133,13 @@ class SendOrderDetailsService
         $this->mailer
             ->to($event->getOrganizer()->getEmail())
             ->send(new OrderSummaryForOrganizer($order, $event));
+    }
+
+    private function isFreeOrder(OrderDomainObject $order): bool
+    {
+        $ticketItems = $order->getTicketOrderItems();
+
+        return $ticketItems->isNotEmpty()
+            && $ticketItems->every(static fn ($item) => (float) $item->getPrice() <= 0);
     }
 }
