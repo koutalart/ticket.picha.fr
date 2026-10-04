@@ -453,7 +453,7 @@ export const CollectInformation = () => {
                     </div>
                 )}
 
-                {(event && order) && (
+                {!isFreeEvent && event && order && (
                     <InlineOrderSummary event={event} order={order} defaultExpanded={true}/>
                 )}
 
