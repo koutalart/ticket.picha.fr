@@ -63,7 +63,8 @@ class AttendeeTicketMail extends BaseMail
                     'renderedCta' => $this->renderedTemplate->cta,
                     'eventSettings' => $this->eventSettings,
                     'organizer' => $this->organizer,
-                    'organizerLogoUrl' => $this->getOrganizerLogoUrl(),
+                    'organizerLogoUrl' => $this->isFreeEvent() ? $this->getOrganizerLogoUrl() : null,
+                    'isFreeEvent' => $this->isFreeEvent(),
                 ]
             );
         }
@@ -76,7 +77,8 @@ class AttendeeTicketMail extends BaseMail
                 'attendee' => $this->attendee,
                 'eventSettings' => $this->eventSettings,
                 'organizer' => $this->organizer,
-                'organizerLogoUrl' => $this->getOrganizerLogoUrl(),
+                'organizerLogoUrl' => $this->isFreeEvent() ? $this->getOrganizerLogoUrl() : null,
+                'isFreeEvent' => $this->isFreeEvent(),
                 'order' => $this->order,
                 'ticketUrl' => sprintf(
                     Url::getFrontEndUrlFromConfig(Url::ATTENDEE_TICKET),
@@ -123,6 +125,14 @@ class AttendeeTicketMail extends BaseMail
                 'ticket-' . $this->attendee->getShortId() . '.pdf',
             )->withMime('application/pdf'),
         ];
+    }
+
+    private function isFreeEvent(): bool
+    {
+        $ticketItems = $this->order->getTicketOrderItems();
+
+        return $ticketItems->isNotEmpty()
+            && $ticketItems->every(static fn ($item) => (float) $item->getPrice() <= 0);
     }
 
     private function getOrganizerLogoUrl(): ?string
