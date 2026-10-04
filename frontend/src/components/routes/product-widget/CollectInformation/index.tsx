@@ -76,6 +76,10 @@ export const CollectInformation = () => {
     const requireBillingAddress = event?.settings?.require_billing_address;
     const isPerOrderCollection = event?.settings?.attendee_details_collection_method === 'PER_ORDER';
     const allowCopyToAllAttendees = event?.settings?.allow_copy_details_to_all_attendees ?? true;
+    const isFreeEvent = !!order
+        && !order.is_payment_required
+        && (orderItems?.length ?? 0) > 0
+        && orderItems?.every(orderItem => Number(orderItem.price) <= 0);
     const [copyOption, setCopyOption] = useState<'none' | 'first' | 'all'>('none');
 
     const isEmailValid = (email: string) => {
@@ -307,6 +311,23 @@ export const CollectInformation = () => {
     }
 
     const handleSubmit = (values: any) => {
+        if (isFreeEvent) {
+            const firstTicketIndex = getFirstTicketAttendeeIndex();
+            const firstParticipant = firstTicketIndex >= 0 ? values.products?.[firstTicketIndex] : null;
+            if (firstParticipant) {
+                mutation.mutate({
+                    ...values,
+                    order: {
+                        ...values.order,
+                        first_name: firstParticipant.first_name,
+                        last_name: firstParticipant.last_name,
+                        email: firstParticipant.email,
+                        email_confirmation: firstParticipant.email_confirmation,
+                    },
+                });
+                return;
+            }
+        }
         mutation.mutate(values);
     };
 
@@ -436,6 +457,8 @@ export const CollectInformation = () => {
                     <InlineOrderSummary event={event} order={order} defaultExpanded={true}/>
                 )}
 
+                {!isFreeEvent && (
+                    <>
                 <h2 className={classes.sectionHeading}>
                     {t`Your Details`}
                 </h2>
@@ -586,6 +609,9 @@ export const CollectInformation = () => {
                     )}
                 </Card>
 
+                    </>
+                )}
+
                 {orderItems?.map(orderItem => {
                     const product = products?.find(product => product!.id === orderItem.product_id);
                     const productRequiresDetails = product?.product_type === 'TICKET' && !isPerOrderCollection;
@@ -606,17 +632,20 @@ export const CollectInformation = () => {
                         <div key={orderItem.product_id + orderItem.id} className={classes.ticketSection}>
                             <div className={classes.ticketTypeHeader}>
                                 <h3>{orderItem?.item_name}</h3>
-                                <span className={classes.ticketCountBadge}>
-                                    {orderItem.quantity === 1
-                                        ? t`1 ticket`
-                                        : t`${orderItem.quantity} tickets`}
-                                </span>
+                                {!isFreeEvent && (
+                                    <span className={classes.ticketCountBadge}>
+                                        {orderItem.quantity === 1
+                                            ? t`1 ticket`
+                                            : t`${orderItem.quantity} tickets`}
+                                    </span>
+                                )}
                             </div>
                             {Array.from(Array(orderItem?.quantity)).map((_, index) => {
                                 const currentProductIndex = productIndex;
                                 const ticketIndices = getTicketAttendeeIndices();
                                 const isTicketAttendee = ticketIndices.includes(currentProductIndex);
                                 const isFirstTicketAttendee = currentProductIndex === getFirstTicketAttendeeIndex();
+                                const isFirstFreeParticipant = isFreeEvent && isFirstTicketAttendee;
                                 const isCopied = isTicketAttendee && (
                                     copyOption === 'all' || (copyOption === 'first' && isFirstTicketAttendee)
                                 );
@@ -640,11 +669,15 @@ export const CollectInformation = () => {
                                                 </div>
                                                 <div className={classes.attendeeInfo}>
                                                     <h4>
-                                                        {product.product_type === 'TICKET' ? t`Attendee` : t`Item`} {index + 1}
+                                                        {isFreeEvent
+                                                            ? t`Participant ${index + 1}`
+                                                            : (product.product_type === 'TICKET' ? t`Attendee` : t`Item`) + ` ${index + 1}`}
                                                     </h4>
-                                                    <span className={classes.attendeeTicketType}>
-                                                        {orderItem?.item_name}
-                                                    </span>
+                                                    {!isFreeEvent && (
+                                                        <span className={classes.attendeeTicketType}>
+                                                            {orderItem?.item_name}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                             {showCopiedBadge && (
@@ -700,6 +733,35 @@ export const CollectInformation = () => {
                                                 product={product}
                                                 form={form}
                                                 questions={productQuestions}/>}
+                                        {isFirstFreeParticipant && requireBillingAddress && (
+                                            <>
+                                                <h3 style={{marginBottom: 5}}>`Billing Address`</h3>
+                                                <InputGroup>
+                                                    <TextInput withAsterisk label={`Address Line 1`} placeholder={`Address Line 1`} {...form.getInputProps("order.address.address_line_1")} />
+                                                    <TextInput label={`Address Line 2`} placeholder={`Address Line 2`} {...form.getInputProps("order.address.address_line_2")} />
+                                                </InputGroup>
+                                                <InputGroup>
+                                                    <TextInput withAsterisk label={`City`} placeholder={`City`} {...form.getInputProps("order.address.city")} />
+                                                    <TextInput withAsterisk label={`State or Region`} placeholder={`State or Region`} {...form.getInputProps("order.address.state_or_region")} />
+                                                </InputGroup>
+                                                <InputGroup>
+                                                    <TextInput label={`ZIP / Postal Code`} placeholder={`ZIP or Postal Code`} {...form.getInputProps("order.address.zip_or_postal_code")} />
+                                                    <NativeSelect withAsterisk label={`Country`} data={countries} {...form.getInputProps("order.address.country")} />
+                                                </InputGroup>
+                                            </>
+                                        )}
+
+                                        {isFirstFreeParticipant && orderQuestions && (
+                                            <CheckoutOrderQuestions form={form} questions={orderQuestions}/>
+                                        )}
+
+                                        {isFirstFreeParticipant && event?.settings?.show_marketing_opt_in && (
+                                            <Checkbox
+                                                mt="md"
+                                                label={`Keep me updated on news and events from ` + (event?.organizer?.name || t`this organizer`)}
+                                                {...form.getInputProps('order.opted_into_marketing', {type: 'checkbox'})}
+                                            />
+                                        )}
                                     </Card>
                                 );
 
