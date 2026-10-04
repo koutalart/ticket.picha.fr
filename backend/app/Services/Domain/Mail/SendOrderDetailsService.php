@@ -6,6 +6,7 @@ use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\InvoiceDomainObject;
+use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
@@ -38,7 +39,11 @@ class SendOrderDetailsService
             ->findById($order->getId());
 
         $event = $this->eventRepository
-            ->loadRelation(new Relationship(OrganizerDomainObject::class, name: 'organizer'))
+            ->loadRelation(new Relationship(
+                OrganizerDomainObject::class,
+                nested: [new Relationship(ImageDomainObject::class, name: 'images')],
+                name: 'organizer'
+            ))
             ->loadRelation(new Relationship(EventSettingDomainObject::class))
             ->findById($order->getEventId());
 

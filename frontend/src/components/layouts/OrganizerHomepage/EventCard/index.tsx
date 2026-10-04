@@ -30,7 +30,6 @@ export const EventCard: React.FC<EventCardProps> = ({event, primaryColor = '#8b5
     const startDay = formatDateWithLocale(event.start_date, "dayOfMonth", event.timezone);
     const startTime = formatDateWithLocale(event.start_date, "timeOnly", event.timezone);
     const endTime = event.end_date ? formatDateWithLocale(event.end_date, "timeOnly", event.timezone) : null;
-    const prettyTimezone = formatDateWithLocale(event.start_date, "timezone", event.timezone);
 
     const isSameDay = event.end_date && event.start_date.substring(0, 10) === event.end_date.substring(0, 10);
     const endMonth = event.end_date ? formatDateWithLocale(event.end_date, "monthShort", event.timezone) : null;
@@ -145,9 +144,6 @@ export const EventCard: React.FC<EventCardProps> = ({event, primaryColor = '#8b5
                                             : ` - ${endTime}`
                                         }
                                     </>
-                                )}
-                                {prettyTimezone && (
-                                    <span title={event.timezone} className={classes.timezone}> ({prettyTimezone})</span>
                                 )}
                             </span>
                         </div>
