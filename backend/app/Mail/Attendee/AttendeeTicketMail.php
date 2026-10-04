@@ -58,7 +58,9 @@ class AttendeeTicketMail extends BaseMail
             return new Content(
                 markdown: 'emails.custom-template',
                 with: [
-                    'renderedBody' => $this->renderedTemplate->body,
+                    'renderedBody' => $this->isTargetFreeEvent()
+                        ? preg_replace('/^Vous allez\\s+/u', '', $this->renderedTemplate->body, 1)
+                        : $this->renderedTemplate->body,
                     'renderedCta' => $this->renderedTemplate->cta,
                     'eventSettings' => $this->eventSettings,
                     'organizer' => $this->organizer,
@@ -76,7 +78,7 @@ class AttendeeTicketMail extends BaseMail
                 'attendee' => $this->attendee,
                 'eventSettings' => $this->eventSettings,
                 'organizer' => $this->organizer,
-                'organizerLogoUrl' => $this->isFreeEvent() ? $this->getOrganizerLogoUrl() : null,
+                'organizerLogoUrl' => $this->isTargetFreeEvent() ? $this->getOrganizerLogoUrl() : null,
                 'isFreeEvent' => $this->isFreeEvent(),
                 'order' => $this->order,
                 'ticketUrl' => sprintf(
@@ -149,7 +151,7 @@ class AttendeeTicketMail extends BaseMail
 
         // Organizer 7 (Mayotte la 1ère) uses its local brand asset as a fallback.
         if ((int) $this->organizer->getId() === 7) {
-            return 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Mayotte_La_1%C3%A8re_-_Logo_2018.svg';
+            return rtrim(config('app.frontend_url'), '/') . '/logos/mayotte-la-1ere-organizer.svg';
         }
 
         return null;
