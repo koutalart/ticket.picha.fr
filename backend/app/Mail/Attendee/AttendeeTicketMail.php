@@ -62,6 +62,8 @@ class AttendeeTicketMail extends BaseMail
                     'renderedBody' => $this->renderedTemplate->body,
                     'renderedCta' => $this->renderedTemplate->cta,
                     'eventSettings' => $this->eventSettings,
+                    'organizer' => $this->organizer,
+                    'organizerLogoUrl' => $this->getOrganizerLogoUrl(),
                 ]
             );
         }
