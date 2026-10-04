@@ -138,7 +138,16 @@ class AttendeeTicketMail extends BaseMail
     {
         $logo = $this->organizer->getImages()?->firstWhere('type', 'ORGANIZER_LOGO');
 
-        return $logo?->getPath() ? Url::getCdnUrl($logo->getPath()) : null;
+        if ($logo?->getPath()) {
+            return Url::getCdnUrl($logo->getPath());
+        }
+
+        // Organizer 7 (Mayotte la 1ère) uses its local brand asset as a fallback.
+        if ((int) $this->organizer->getId() === 7) {
+            return rtrim(config('app.frontend_url'), '/') . '/logos/mayotte-la-1ere-organizer.png';
+        }
+
+        return null;
     }
 
     private function generateTicketPdf(): string
