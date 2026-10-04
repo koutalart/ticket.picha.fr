@@ -62,7 +62,7 @@ class AttendeeTicketMail extends BaseMail
                     'renderedCta' => $this->renderedTemplate->cta,
                     'eventSettings' => $this->eventSettings,
                     'organizer' => $this->organizer,
-                    'organizerLogoUrl' => $this->isFreeEvent() ? $this->getOrganizerLogoUrl() : null,
+                    'organizerLogoUrl' => $this->isTargetFreeEvent() ? $this->getOrganizerLogoUrl() : null,
                     'isFreeEvent' => $this->isFreeEvent(),
                 ]
             );
@@ -134,11 +134,25 @@ class AttendeeTicketMail extends BaseMail
             && $ticketItems->every(static fn ($item) => (float) $item->getPrice() <= 0);
     }
 
+    private function isTargetFreeEvent(): bool
+    {
+        return $this->isFreeEvent() && (int) $this->event->getId() === 6;
+    }
+
     private function getOrganizerLogoUrl(): ?string
     {
         $logo = $this->organizer->getImages()?->firstWhere('type', 'ORGANIZER_LOGO');
 
-        return $logo?->getPath() ? Url::getCdnUrl($logo->getPath()) : null;
+        if ($logo?->getPath()) {
+            return Url::getCdnUrl($logo->getPath());
+        }
+
+        // Organizer 7 (Mayotte la 1ère) uses its local brand asset as a fallback.
+        if ((int) $this->organizer->getId() === 7) {
+            return 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Mayotte_La_1%C3%A8re_-_Logo_2018.svg';
+        }
+
+        return null;
     }
 
     private function generateTicketPdf(): string

@@ -10,7 +10,7 @@
 @php /** @see \HiEvents\Mail\Attendee\AttendeeTicketMail */ @endphp
 
 <x-mail::message>
-# {{ __('You\'re going to') }} {{ $event->getTitle() }}! 🎉
+# {{ $event->getTitle() }} 🎉
 <br>
 <br>
 @if($order->isOrderAwaitingOfflinePayment())
