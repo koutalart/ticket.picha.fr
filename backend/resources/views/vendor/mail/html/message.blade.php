@@ -33,7 +33,7 @@
             @if($appEmailFooter = config('app.email_footer_text'))
                 {{ $appEmailFooter }}
             @else
-                © {{ date('Y') }} {{ config('app.name') }} | {{ (isset($isFreeEvent) && $isFreeEvent) ? 'Propulsé par PICHA AI' : 'Powered by PICHA AI' }}
+                © {{ date('Y') }} {{ config('app.name') }} | Powered by PICHA AI
             @endif
         </x-mail::footer>
     </x-slot:footer>
