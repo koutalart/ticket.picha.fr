@@ -11,11 +11,7 @@ export const imageClient = {
         if (entityId) {
             formData.append('entity_id', entityId as string);
         }
-        const response = await api.post<GenericDataResponse<Image>>('images', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        });
+        const response = await api.post<GenericDataResponse<Image>>('images', formData);
         return response.data;
     },
     delete: async (imageId: IdParam) => {
