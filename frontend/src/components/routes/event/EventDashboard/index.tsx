@@ -56,6 +56,13 @@ export const EventDashboard = () => {
     const [isChecklistVisible, setIsChecklistVisible] = useState(true);
     const [isMounted, setIsMounted] = useState(false);
 
+    const isFreeEvent = event?.products?.length > 0 && event.products.every((product) => {
+        if (product.prices?.length) {
+            return product.prices.every((price) => Number(price.price ?? 0) <= 0);
+        }
+        return Number(product.price ?? 0) <= 0;
+    });
+
     const showStripeUpgradeNotice = account?.stripe_platform === StripePlatform.Canada.valueOf()
         && account?.stripe_connect_setup_complete
         && isHiEvents();
@@ -308,7 +315,7 @@ export const EventDashboard = () => {
 
                 <Card className={classes.chartCard}>
                     <div className={classes.chartCardTitle}>
-                        <h2>{t`Product Sales`}</h2>
+                        <h2>{isFreeEvent ? t`Inscriptions` : t`Product Sales`}</h2>
                         <div className={classes.dateRange}>
                         <span>
                             {dateRangeLabel}
@@ -327,7 +334,9 @@ export const EventDashboard = () => {
                         withLegend
                         legendProps={{verticalAlign: 'bottom', height: 50}}
 
-                        series={[
+                        series={isFreeEvent ? [
+                            {name: 'attendees_registered', color: 'blue.4', label: t`Inscrits`},
+                        ] : [
                             {name: 'orders_created', color: 'blue.6', label: t`Completed Orders`},
                             {name: 'products_sold', color: 'blue.2', label: t`Products Sold`},
                             {name: 'attendees_registered', color: 'blue.4', label: t`Attendees Registered`},
@@ -338,7 +347,7 @@ export const EventDashboard = () => {
                     />
                 </Card>
 
-                <Card className={classes.chartCard}>
+                {!isFreeEvent && (<Card className={classes.chartCard}>
                     <div className={classes.chartCardTitle}>
                         <h2>{t`Revenue`}</h2>
                         <div className={classes.dateRange}>
@@ -376,6 +385,7 @@ export const EventDashboard = () => {
                         areaChartProps={{syncId: 'events'}}
                     />
                 </Card>
+                )}
             </>)}
         </PageBody>
     )
