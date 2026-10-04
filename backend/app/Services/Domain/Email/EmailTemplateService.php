@@ -191,7 +191,7 @@ Congratulations! Your order for <strong>{{ event.title }}</strong> on <strong>{{
 
 If you have any questions or need assistance, please contact <a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>.<br>
 
-Best regards,<br>
+We look forward to welcoming you soon!<br>
 {{ organizer.name }}
 LIQUID
             ],
