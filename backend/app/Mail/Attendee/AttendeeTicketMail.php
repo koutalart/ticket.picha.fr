@@ -10,6 +10,7 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Helper\StringHelper;
 use HiEvents\Helper\Url;
+use HiEvents\Helper\Url;
 use HiEvents\Mail\BaseMail;
 use HiEvents\Services\Domain\Email\DTO\RenderedEmailTemplateDTO;
 use HiEvents\Services\Domain\Ticket\AttendeeTicketPdfService;
@@ -73,6 +74,7 @@ class AttendeeTicketMail extends BaseMail
                 'attendee' => $this->attendee,
                 'eventSettings' => $this->eventSettings,
                 'organizer' => $this->organizer,
+                'organizerLogoUrl' => $this->getOrganizerLogoUrl(),
                 'order' => $this->order,
                 'ticketUrl' => sprintf(
                     Url::getFrontEndUrlFromConfig(Url::ATTENDEE_TICKET),
@@ -119,6 +121,13 @@ class AttendeeTicketMail extends BaseMail
                 'ticket-' . $this->attendee->getShortId() . '.pdf',
             )->withMime('application/pdf'),
         ];
+    }
+
+    private function getOrganizerLogoUrl(): ?string
+    {
+        $logo = $this->organizer->getImages()?->firstWhere('type', 'ORGANIZER_LOGO');
+
+        return $logo?->getPath() ? Url::getCdnUrl($logo->getPath()) : null;
     }
 
     private function generateTicketPdf(): string
