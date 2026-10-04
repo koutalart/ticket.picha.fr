@@ -57,6 +57,7 @@ export const EventDashboard = () => {
     const [isMounted, setIsMounted] = useState(false);
 
     const isFreeEvent = event?.products?.length > 0 && event.products.every((product) => {
+        if (product.type === 'FREE') return true;
         if (product.prices?.length) {
             return product.prices.every((price) => Number(price.price ?? 0) <= 0);
         }

@@ -2,7 +2,6 @@ import classes from "./StatBoxes.module.scss";
 import {IconCash, IconCreditCardRefund, IconEye, IconReceipt, IconShoppingCart, IconUsers, IconUserCheck, IconTicket} from "@tabler/icons-react";
 import {Card} from "../Card";
 import {useGetEventStats} from "../../../queries/useGetEventStats.ts";
-import {useGetEventCheckInStats} from "../../../queries/useGetEventCheckInStats.ts";
 import {useParams} from "react-router";
 import {t} from "@lingui/macro";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
@@ -34,6 +33,7 @@ export const StatBox = ({number, description, icon, backgroundColor}: StatBoxPro
 const isFreeEvent = (event: any): boolean => {
     const products = event?.products ?? [];
     return products.length > 0 && products.every((product: any) => {
+        if (product.type === 'FREE') return true;
         if (product.prices?.length) {
             return product.prices.every((price: any) => Number(price.price ?? 0) <= 0);
         }
@@ -44,16 +44,14 @@ const isFreeEvent = (event: any): boolean => {
 export const StatBoxes = () => {
     const {eventId} = useParams();
     const eventStatsQuery = useGetEventStats(eventId);
-    const checkInStatsQuery = useGetEventCheckInStats(eventId);
     const eventQuery = useGetEvent(eventId);
     const event = eventQuery?.data;
     const {data: eventStats} = eventStatsQuery;
-    const {data: checkInStats} = checkInStatsQuery;
 
     if (isFreeEvent(event)) {
         const invitations = (event.products ?? []).reduce((total, product) => total + Number(product.initial_quantity_available ?? 0), 0);
         const registered = Number(eventStats?.total_attendees_registered ?? 0);
-        const participants = Number(checkInStats?.total_checked_in_attendees ?? 0);
+        const participants = Number(eventStats?.check_in_stats?.total_checked_in_attendees ?? 0);
         const attendanceRate = registered > 0 ? `${Math.round((participants / registered) * 1000) / 10}%` : "0%";
 
         const freeData = [
