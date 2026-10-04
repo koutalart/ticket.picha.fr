@@ -5,6 +5,7 @@ import {useGetEventStats} from "../../../queries/useGetEventStats.ts";
 import {useParams} from "react-router";
 import {t} from "@lingui/macro";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
+import {useGetPublicEvent} from "../../../queries/useGetPublicEvent.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {formatNumber} from "../../../utilites/helpers.ts";
 import {ReactNode} from "react";
@@ -30,26 +31,43 @@ export const StatBox = ({number, description, icon, backgroundColor}: StatBoxPro
     );
 };
 
-const isFreeEvent = (event: any): boolean => {
-    const products = event?.products ?? [];
-    return products.length > 0 && products.every((product: any) => {
-        if (product.type === 'FREE') return true;
-        if (product.prices?.length) {
-            return product.prices.every((price: any) => Number(price.price ?? 0) <= 0);
-        }
-        return Number(product.price ?? 0) <= 0;
-    });
+const getProducts = (event: any, publicEvent: any) => {
+    if (event?.products?.length) return event.products;
+    return publicEvent?.products ?? [];
+};
+
+const isFreeEvent = (event: any, publicEvent: any): boolean => {
+    const products = getProducts(event, publicEvent);
+
+    if (products.length > 0) {
+        return products.every((product: any) => {
+            if (product.type === 'FREE') return true;
+            if (product.prices?.length) {
+                return product.prices.every((price: any) => Number(price.price ?? 0) <= 0);
+            }
+            return Number(product.price ?? 0) <= 0;
+        });
+    }
+
+    // Open House is a free-by-default category and is used as a safe fallback
+    // when the organizer event payload does not expose products.
+    return event?.category === 'OPEN_HOUSE' || publicEvent?.category === 'OPEN_HOUSE';
 };
 
 export const StatBoxes = () => {
     const {eventId} = useParams();
     const eventStatsQuery = useGetEventStats(eventId);
     const eventQuery = useGetEvent(eventId);
+    const publicEventQuery = useGetPublicEvent(eventId);
     const event = eventQuery?.data;
+    const publicEvent = publicEventQuery?.data;
     const {data: eventStats} = eventStatsQuery;
+    const products = getProducts(event, publicEvent);
 
-    if (isFreeEvent(event)) {
-        const invitations = (event.products ?? []).reduce((total, product) => total + Number(product.initial_quantity_available ?? 0), 0);
+    if (isFreeEvent(event, publicEvent)) {
+        const invitations = products.reduce((total: number, product: any) =>
+            total + Number(product.initial_quantity_available ?? product.quantity_available ?? 0), 0
+        );
         const registered = Number(eventStats?.total_attendees_registered ?? 0);
         const participants = Number(eventStats?.check_in_stats?.total_checked_in_attendees ?? 0);
         const attendanceRate = registered > 0 ? `${Math.round((participants / registered) * 1000) / 10}%` : "0%";
