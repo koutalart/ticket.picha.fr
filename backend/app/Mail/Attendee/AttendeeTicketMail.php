@@ -144,7 +144,7 @@ class AttendeeTicketMail extends BaseMail
 
         // Organizer 7 (Mayotte la 1ère) uses its local brand asset as a fallback.
         if ((int) $this->organizer->getId() === 7) {
-            return rtrim(config('app.frontend_url'), '/') . '/logos/mayotte-la-1ere-organizer.png';
+            return 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Mayotte_La_1%C3%A8re_-_Logo_2018.svg';
         }
 
         return null;
