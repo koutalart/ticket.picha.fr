@@ -385,7 +385,8 @@ export const EventDashboard = () => {
                         areaChartProps={{syncId: 'events'}}
                     />
                 </Card>
-            </>)})
+                )}
+            </>)}
         </PageBody>
     )
 };
