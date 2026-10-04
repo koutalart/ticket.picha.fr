@@ -266,7 +266,7 @@ const OrderDetails = ({
             <DetailItem
                 icon={IconCalendar}
                 label={t`Order Date`}
-                value={dateToBrowserTz(order.created_at, event.timezone)}
+                value={dateToBrowserTz(order.created_at, event.timezone, undefined, false)}
             />
             {!!order.refund_status && (
                 <DetailItem
