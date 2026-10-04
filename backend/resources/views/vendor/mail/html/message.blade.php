@@ -2,7 +2,7 @@
     {{-- Header --}}
     <x-slot:header>
         <x-mail::header :url="config('app.email_logo_link_url')">
-            @if(isset($organizerLogoUrl) && $organizerLogoUrl)
+            @if(isset($isFreeEvent) && $isFreeEvent && isset($organizerLogoUrl) && $organizerLogoUrl)
                 <img src="{{ $organizerLogoUrl }}" class="logo" alt="{{ $organizer->getName() ?? config('app.name') }}"
                      style="max-width: 300px;">
             @elseif($appLogo = config('app.email_logo_url'))
@@ -33,7 +33,7 @@
             @if($appEmailFooter = config('app.email_footer_text'))
                 {{ $appEmailFooter }}
             @else
-                © {{ date('Y') }} {{ config('app.name') }} | Powered by PICHA AI
+                © {{ date('Y') }} {{ config('app.name') }} | {{ (isset($isFreeEvent) && $isFreeEvent) ? 'Propulsé par PICHA AI' : 'Powered by PICHA AI' }}
             @endif
         </x-mail::footer>
     </x-slot:footer>
