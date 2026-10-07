@@ -9,9 +9,15 @@ BACKUP_DIR=/var/backups/picha-ticket
 RETENTION_DAYS=14
 mkdir -p "$BACKUP_DIR"
 
-FILE="$BACKUP_DIR/picha-ticket-$(date +%Y%m%d-%H%M%S).sql.gz"
-docker compose -p picha-ticket-prod -f docker/production/docker-compose.prod.yml exec -T postgres \
-    pg_dump -U picha_ticket -d picha_ticket --no-owner | gzip > "$FILE"
+STAMP=$(date +%Y%m%d-%H%M%S)
+COMPOSE="docker compose -p picha-ticket-prod -f docker/production/docker-compose.prod.yml"
 
-find "$BACKUP_DIR" -name 'picha-ticket-*.sql.gz' -mtime +"$RETENTION_DAYS" -delete
-echo "$(date -Iseconds) sauvegarde OK : $FILE"
+FILE="$BACKUP_DIR/picha-ticket-$STAMP.sql.gz"
+$COMPOSE exec -T postgres pg_dump -U picha_ticket -d picha_ticket --no-owner | gzip > "$FILE"
+
+# Fichiers téléversés (logos, couvertures, sponsors) : volume backend_storage.
+FILES="$BACKUP_DIR/picha-ticket-files-$STAMP.tar.gz"
+$COMPOSE exec -T backend tar -czf - -C /var/www/html/storage app > "$FILES"
+
+find "$BACKUP_DIR" -name 'picha-ticket-*.gz' -mtime +"$RETENTION_DAYS" -delete
+echo "$(date -Iseconds) sauvegarde OK : $FILE $FILES"
