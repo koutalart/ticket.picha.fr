@@ -735,18 +735,18 @@ export const CollectInformation = () => {
                                                 questions={productQuestions}/>}
                                         {isFirstFreeParticipant && requireBillingAddress && (
                                             <>
-                                                <h3 style={{marginBottom: 5}}>`Billing Address`</h3>
+                                                <h3 style={{marginBottom: 5}}>{t`Billing Address`}</h3>
                                                 <InputGroup>
-                                                    <TextInput withAsterisk label={`Address Line 1`} placeholder={`Address Line 1`} {...form.getInputProps("order.address.address_line_1")} />
-                                                    <TextInput label={`Address Line 2`} placeholder={`Address Line 2`} {...form.getInputProps("order.address.address_line_2")} />
+                                                    <TextInput withAsterisk label={t`Address Line 1`} placeholder={t`Address Line 1`} {...form.getInputProps("order.address.address_line_1")} />
+                                                    <TextInput label={t`Address Line 2`} placeholder={t`Address Line 2`} {...form.getInputProps("order.address.address_line_2")} />
                                                 </InputGroup>
                                                 <InputGroup>
-                                                    <TextInput withAsterisk label={`City`} placeholder={`City`} {...form.getInputProps("order.address.city")} />
-                                                    <TextInput withAsterisk label={`State or Region`} placeholder={`State or Region`} {...form.getInputProps("order.address.state_or_region")} />
+                                                    <TextInput withAsterisk label={t`City`} placeholder={t`City`} {...form.getInputProps("order.address.city")} />
+                                                    <TextInput withAsterisk label={t`State or Region`} placeholder={t`State or Region`} {...form.getInputProps("order.address.state_or_region")} />
                                                 </InputGroup>
                                                 <InputGroup>
-                                                    <TextInput label={`ZIP / Postal Code`} placeholder={`ZIP or Postal Code`} {...form.getInputProps("order.address.zip_or_postal_code")} />
-                                                    <NativeSelect withAsterisk label={`Country`} data={countries} {...form.getInputProps("order.address.country")} />
+                                                    <TextInput label={t`ZIP / Postal Code`} placeholder={t`ZIP or Postal Code`} {...form.getInputProps("order.address.zip_or_postal_code")} />
+                                                    <NativeSelect withAsterisk label={t`Country`} data={countries} {...form.getInputProps("order.address.country")} />
                                                 </InputGroup>
                                             </>
                                         )}
@@ -758,7 +758,7 @@ export const CollectInformation = () => {
                                         {isFirstFreeParticipant && event?.settings?.show_marketing_opt_in && (
                                             <Checkbox
                                                 mt="md"
-                                                label={`Keep me updated on news and events from ` + (event?.organizer?.name || t`this organizer`)}
+                                                label={t`Keep me updated on news and events from ${event?.organizer?.name || t`this organizer`}`}
                                                 {...form.getInputProps('order.opted_into_marketing', {type: 'checkbox'})}
                                             />
                                         )}

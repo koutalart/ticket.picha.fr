@@ -4,8 +4,10 @@ namespace HiEvents\Mail\Attendee;
 
 use Carbon\Carbon;
 use HiEvents\DomainObjects\AttendeeDomainObject;
+use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
+use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Helper\StringHelper;
@@ -28,14 +30,13 @@ class AttendeeTicketMail extends BaseMail
     private readonly ?RenderedEmailTemplateDTO $renderedTemplate;
 
     public function __construct(
-        private readonly OrderDomainObject        $order,
-        private readonly AttendeeDomainObject     $attendee,
-        private readonly EventDomainObject        $event,
+        private readonly OrderDomainObject $order,
+        private readonly AttendeeDomainObject $attendee,
+        private readonly EventDomainObject $event,
         private readonly EventSettingDomainObject $eventSettings,
-        private readonly OrganizerDomainObject    $organizer,
-        ?RenderedEmailTemplateDTO                 $renderedTemplate = null,
-    )
-    {
+        private readonly OrganizerDomainObject $organizer,
+        ?RenderedEmailTemplateDTO $renderedTemplate = null,
+    ) {
         parent::__construct();
         $this->renderedTemplate = $renderedTemplate;
     }
@@ -43,7 +44,7 @@ class AttendeeTicketMail extends BaseMail
     public function envelope(): Envelope
     {
         $subject = $this->renderedTemplate?->subject ?? __('🎟️ Your Ticket for :event', [
-            'event' => Str::limit($this->event->getTitle(), 50)
+            'event' => Str::limit($this->event->getTitle(), 50),
         ]);
 
         return new Envelope(
@@ -83,7 +84,7 @@ class AttendeeTicketMail extends BaseMail
                     Url::getFrontEndUrlFromConfig(Url::ATTENDEE_TICKET),
                     $this->event->getId(),
                     $this->attendee->getShortId(),
-                )
+                ),
             ]
         );
     }
@@ -95,7 +96,7 @@ class AttendeeTicketMail extends BaseMail
 
         $event = Event::create()
             ->name($this->event->getTitle())
-            ->uniqueIdentifier('event-' . $this->attendee->getId())
+            ->uniqueIdentifier('event-'.$this->attendee->getId())
             ->startsAt($startDateTime)
             ->url($this->event->getEventUrl())
             ->organizer($this->organizer->getEmail(), $this->organizer->getName());
@@ -117,11 +118,11 @@ class AttendeeTicketMail extends BaseMail
             ->get();
 
         return [
-            Attachment::fromData(static fn() => $calendar, 'event.ics')
+            Attachment::fromData(static fn () => $calendar, 'event.ics')
                 ->withMime('text/calendar'),
             Attachment::fromData(
-                fn() => $this->generateTicketPdf(),
-                'ticket-' . $this->attendee->getShortId() . '.pdf',
+                fn () => $this->generateTicketPdf(),
+                'ticket-'.$this->attendee->getShortId().'.pdf',
             )->withMime('application/pdf'),
         ];
     }
@@ -141,18 +142,10 @@ class AttendeeTicketMail extends BaseMail
 
     private function getOrganizerLogoUrl(): ?string
     {
-        $logo = $this->organizer->getImages()?->firstWhere('type', 'ORGANIZER_LOGO');
+        $logo = $this->organizer->getImages()
+            ?->first(static fn (ImageDomainObject $image) => $image->getType() === ImageType::ORGANIZER_LOGO->name);
 
-        if ($logo?->getPath()) {
-            return Url::getCdnUrl($logo->getPath());
-        }
-
-        // Organizer 7 (Mayotte la 1ère) uses its local brand asset as a fallback.
-        if ((int) $this->organizer->getId() === 7) {
-            return 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Mayotte_La_1%C3%A8re_-_Logo_2018.svg';
-        }
-
-        return null;
+        return $logo?->getPath() ? Url::getCdnUrl($logo->getPath()) : null;
     }
 
     private function generateTicketPdf(): string

@@ -1,5 +1,9 @@
 {{-- Custom Liquid Template Wrapper --}}
-<x-mail::message\n    :isFreeEvent="$isFreeEvent ?? false"\n    :organizerLogoUrl="$organizerLogoUrl ?? null"\n    :organizer="$organizer ?? null"\n>
+<x-mail::message
+    :isFreeEvent="$isFreeEvent ?? false"
+    :organizerLogoUrl="$organizerLogoUrl ?? null"
+    :organizer="$organizer ?? null"
+>
 {!! $renderedBody !!}
 
 @if(isset($renderedCta))

@@ -9,7 +9,11 @@
 @php /** @var string $ticketUrl */ @endphp
 @php /** @see \HiEvents\Mail\Attendee\AttendeeTicketMail */ @endphp
 
-<x-mail::message\n    :isFreeEvent="$isFreeEvent ?? false"\n    :organizerLogoUrl="$organizerLogoUrl ?? null"\n    :organizer="$organizer ?? null"\n>
+<x-mail::message
+    :isFreeEvent="$isFreeEvent ?? false"
+    :organizerLogoUrl="$organizerLogoUrl ?? null"
+    :organizer="$organizer ?? null"
+>
 # {{ $event->getTitle() }} 🎉
 <br>
 <br>
