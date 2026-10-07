@@ -48,6 +48,39 @@ export interface BoxOfficeAttendeeSearchResult {
     checked_in_at: string | null;
 }
 
+export type BoxOfficeOrderChannel = 'ONLINE' | 'BOX_OFFICE' | 'MANUAL';
+
+export interface BoxOfficeOrderListItem {
+    public_id: string;
+    created_at: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    phone: string | null;
+    channel: BoxOfficeOrderChannel;
+    agent_name: string | null;
+    payment_method: string | null;
+    total_gross: number;
+    currency: string;
+    status: 'COMPLETED' | 'AWAITING_OFFLINE_PAYMENT' | 'CANCELLED' | string;
+    payment_status: string | null;
+    ticket_count: number;
+    checked_in_count: number;
+}
+
+export interface BoxOfficeOrderDetail {
+    order: BoxOfficeOrderListItem;
+    tickets: BoxOfficeAttendeeSearchResult[];
+}
+
+export interface BoxOfficeOrderFilters {
+    query?: string;
+    channel?: BoxOfficeOrderChannel | null;
+    mine?: boolean;
+    not_checked_in?: boolean;
+    cancelled?: boolean;
+}
+
 export type BoxOfficeCheckInStatus = 'CHECKED_IN' | 'ALREADY_CHECKED_IN' | 'REFUSED';
 
 export interface BoxOfficeCheckInResult {
@@ -179,10 +212,33 @@ export const boxOfficeClient = {
         return response.data;
     },
 
-    searchAttendees: async (eventId: IdParam, query: string) => {
-        const response = await api.get<GenericDataResponse<BoxOfficeAttendeeSearchResult[]>>(
-            `events/${eventId}/box-office/attendees`,
-            {params: {query}},
+    getOrders: async (eventId: IdParam, filters: BoxOfficeOrderFilters, page = 1) => {
+        const params: Record<string, string> = {page: String(page)};
+        if (filters.query?.trim()) {
+            params.query = filters.query.trim();
+        }
+        if (filters.channel) {
+            params.channel = filters.channel;
+        }
+        if (filters.mine) {
+            params.mine = '1';
+        }
+        if (filters.not_checked_in) {
+            params.not_checked_in = '1';
+        }
+        if (filters.cancelled) {
+            params.cancelled = '1';
+        }
+        const response = await api.get<GenericPaginatedResponse<BoxOfficeOrderListItem>>(
+            `events/${eventId}/box-office/orders`,
+            {params},
+        );
+        return response.data;
+    },
+
+    getOrder: async (eventId: IdParam, orderPublicId: string) => {
+        const response = await api.get<GenericDataResponse<BoxOfficeOrderDetail>>(
+            `events/${eventId}/box-office/orders/${orderPublicId}`,
         );
         return response.data;
     },

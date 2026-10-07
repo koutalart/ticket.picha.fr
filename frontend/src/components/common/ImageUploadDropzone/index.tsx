@@ -9,7 +9,7 @@ import {t} from "@lingui/macro";
 import {IdParam, ImageType} from "../../../types.ts";
 import classes from "./ImageUploadDropzone.module.scss";
 
-const MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_UPLOAD_SIZE = 8 * 1024 * 1024; // 8MB, same as the server
 
 interface ImageUploadDropzoneProps {
     disabled?: boolean;
@@ -39,23 +39,21 @@ export const ImageUploadDropzone = ({
     const [previewImage, setPreviewImage] = useState(existingImageData?.url || null);
     const [imageId, setImageId] = useState(existingImageData?.id || null);
     const [errors, setErrors] = useState<string[]>([]);
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const openRef = useRef<() => void>(null);
 
     const uploadImage = useUploadImage();
     const deleteImage = useDeleteImage();
 
     useEffect(() => {
-        if (existingImageData?.url) {
-            setPreviewImage(existingImageData.url);
-            setImageId(existingImageData.id || null);
-        }
-    }, [existingImageData]);
+        setPreviewImage(existingImageData?.url || null);
+        setImageId(existingImageData?.id || null);
+    }, [existingImageData?.url, existingImageData?.id]);
 
     const handleReject = (fileRejections: FileRejection[]) => {
         const errorMessages = fileRejections.flatMap((rejection) =>
             rejection.errors.map((error) => {
                 if (error.code === 'file-too-large') {
-                    return t`File is too large. Maximum size is 5MB.`;
+                    return t`File is too large. Maximum size is 8MB.`;
                 }
                 if (error.code === 'file-invalid-type') {
                     return t`Invalid file type. Please upload an image.`;
@@ -93,7 +91,6 @@ export const ImageUploadDropzone = ({
                     console.error(error);
                     setLoading(false);
 
-                    // Extract error messages from the response
                     let errorMessages: string[];
                     if (error?.response?.data?.errors?.image) {
                         errorMessages = error.response.data.errors.image;
@@ -133,8 +130,9 @@ export const ImageUploadDropzone = ({
         );
     };
 
-    const handleReplace = () => {
-        fileInputRef.current?.click();
+    const handleReplace = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        openRef.current?.();
     };
 
     const renderDropzoneContent = () => {
@@ -156,6 +154,7 @@ export const ImageUploadDropzone = ({
                 <div className={classes.previewContainer}>
                     <img src={previewImage} alt="Uploaded preview" className={classes.previewImage}/>
                     <Button
+                        type="button"
                         variant="light"
                         color="blue"
                         size="xs"
@@ -203,7 +202,7 @@ export const ImageUploadDropzone = ({
                     </Text>
                 )}
                 <Text ta="center" c="dimmed" size="xs" mt="xs">
-                    Images only · Max 5MB
+                    {t`Images only · JPG, PNG, WebP, HEIC · Max 8MB`}
                 </Text>
             </div>
         );
@@ -213,6 +212,7 @@ export const ImageUploadDropzone = ({
         <div className={`${classes.outerContainer} ${displayMode === 'compact' ? classes.compact : ''}`}>
             <div className={classes.container}>
                 <Dropzone
+                    openRef={openRef}
                     onDrop={handleDrop}
                     onReject={handleReject}
                     accept={IMAGE_MIME_TYPE}
@@ -225,15 +225,6 @@ export const ImageUploadDropzone = ({
                     }}
                 >
                     {renderDropzoneContent()}
-                    <input
-                        type="file"
-                        accept={IMAGE_MIME_TYPE.join(",")}
-                        style={{display: "none"}}
-                        ref={fileInputRef}
-                        onChange={(e) => {
-                            if (e.target.files?.length) handleDrop(Array.from(e.target.files));
-                        }}
-                    />
                 </Dropzone>
             </div>
 

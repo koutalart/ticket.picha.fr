@@ -1,7 +1,8 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {IdParam} from "../types.ts";
 import {boxOfficeClient} from "../api/box-office.client.ts";
-import {SEARCH_BOX_OFFICE_ATTENDEES_QUERY_KEY} from "../queries/useSearchBoxOfficeAttendees.ts";
+import {GET_BOX_OFFICE_ORDERS_QUERY_KEY} from "../queries/useGetBoxOfficeOrders.ts";
+import {GET_BOX_OFFICE_ORDER_QUERY_KEY} from "../queries/useGetBoxOfficeOrder.ts";
 
 export const useCheckInBoxOfficeAttendee = () => {
     const queryClient = useQueryClient();
@@ -11,6 +12,9 @@ export const useCheckInBoxOfficeAttendee = () => {
             eventId: IdParam,
             attendeePublicId: string,
         }) => boxOfficeClient.checkInAttendee(eventId, attendeePublicId),
-        onSuccess: () => queryClient.invalidateQueries({queryKey: [SEARCH_BOX_OFFICE_ATTENDEES_QUERY_KEY]}),
+        onSuccess: () => Promise.all([
+            queryClient.invalidateQueries({queryKey: [GET_BOX_OFFICE_ORDERS_QUERY_KEY]}),
+            queryClient.invalidateQueries({queryKey: [GET_BOX_OFFICE_ORDER_QUERY_KEY]}),
+        ]),
     });
 }

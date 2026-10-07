@@ -11,6 +11,7 @@ export const imageClient = {
         if (entityId) {
             formData.append('entity_id', entityId as string);
         }
+        // The api client defaults to JSON, which would turn the file into "{}": keep multipart here.
         const response = await api.post<GenericDataResponse<Image>>('images', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'

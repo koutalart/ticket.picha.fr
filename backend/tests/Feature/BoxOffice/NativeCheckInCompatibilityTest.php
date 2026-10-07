@@ -43,7 +43,6 @@ class NativeCheckInCompatibilityTest extends TestCase
             product_id: $productId,
             event_id: $eventId,
             send_confirmation_email: false,
-            amount_paid: 25.00,
             locale: 'en',
             product_price_id: $productPriceId,
         ));

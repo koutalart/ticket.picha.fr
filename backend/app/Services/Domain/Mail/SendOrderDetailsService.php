@@ -5,6 +5,7 @@ namespace HiEvents\Services\Domain\Mail;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
+use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\InvoiceDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
@@ -21,6 +22,8 @@ use Illuminate\Mail\Mailer;
 
 class SendOrderDetailsService
 {
+    private const MAX_TICKETS_IN_SUMMARY = 10;
+
     public function __construct(
         private readonly EventRepositoryInterface $eventRepository,
         private readonly OrderRepositoryInterface $orderRepository,
@@ -38,13 +41,18 @@ class SendOrderDetailsService
             ->findById($order->getId());
 
         $event = $this->eventRepository
-            ->loadRelation(new Relationship(OrganizerDomainObject::class, name: 'organizer'))
+            ->loadRelation(new Relationship(
+                OrganizerDomainObject::class,
+                nested: [new Relationship(ImageDomainObject::class, name: 'images')],
+                name: 'organizer'
+            ))
             ->loadRelation(new Relationship(EventSettingDomainObject::class))
             ->findById($order->getEventId());
 
         if ($order->isOrderCompleted() || $order->isOrderAwaitingOfflinePayment()) {
-            $this->sendOrderSummaryEmails($order, $event);
-            $this->sendAttendeeTicketEmails($order, $event);
+            $bundledTickets = $this->ticketsBundledWithSummary($order);
+            $this->sendOrderSummaryEmails($order, $event, $bundledTickets);
+            $this->sendAttendeeTicketEmails($order, $event, $bundledTickets);
         }
 
         if ($order->isOrderFailed() && $order->getEmail()) {
@@ -65,14 +73,16 @@ class SendOrderDetailsService
         EventDomainObject $event,
         OrganizerDomainObject $organizer,
         EventSettingDomainObject $eventSettings,
-        ?InvoiceDomainObject $invoice = null
+        ?InvoiceDomainObject $invoice = null,
+        array $ticketAttendees = [],
     ): void {
         $mail = $this->mailBuilderService->buildOrderSummaryMail(
             $order,
             $event,
             $eventSettings,
             $organizer,
-            $invoice
+            $invoice,
+            $ticketAttendees,
         );
 
         if (KioskSentinelEmail::isKioskSentinelEmail($order->getEmail())) {
@@ -85,9 +95,12 @@ class SendOrderDetailsService
             ->send($mail);
     }
 
-    private function sendAttendeeTicketEmails(OrderDomainObject $order, EventDomainObject $event): void
+    /**
+     * @param  AttendeeDomainObject[]  $bundledTickets
+     */
+    private function sendAttendeeTicketEmails(OrderDomainObject $order, EventDomainObject $event, array $bundledTickets): void
     {
-        $sentEmails = [];
+        $sentEmails = array_map(static fn (AttendeeDomainObject $attendee) => $attendee->getEmail(), $bundledTickets);
         foreach ($order->getAttendees() as $attendee) {
             if (KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail())) {
                 continue;
@@ -109,15 +122,21 @@ class SendOrderDetailsService
         }
     }
 
-    private function sendOrderSummaryEmails(OrderDomainObject $order, EventDomainObject $event): void
+    /**
+     * @param  AttendeeDomainObject[]  $bundledTickets
+     */
+    private function sendOrderSummaryEmails(OrderDomainObject $order, EventDomainObject $event, array $bundledTickets): void
     {
-        $this->sendCustomerOrderSummary(
-            order: $order,
-            event: $event,
-            organizer: $event->getOrganizer(),
-            eventSettings: $event->getEventSettings(),
-            invoice: $order->getLatestInvoice(),
-        );
+        if (! $this->isFreeOrder($order)) {
+            $this->sendCustomerOrderSummary(
+                order: $order,
+                event: $event,
+                organizer: $event->getOrganizer(),
+                eventSettings: $event->getEventSettings(),
+                invoice: $order->getLatestInvoice(),
+                ticketAttendees: $bundledTickets,
+            );
+        }
 
         if ($order->getIsManuallyCreated() || ! $event->getEventSettings()->getNotifyOrganizerOfNewOrders()) {
             return;
@@ -126,5 +145,35 @@ class SendOrderDetailsService
         $this->mailer
             ->to($event->getOrganizer()->getEmail())
             ->send(new OrderSummaryForOrganizer($order, $event));
+    }
+
+    private function isFreeOrder(OrderDomainObject $order): bool
+    {
+        $ticketItems = $order->getTicketOrderItems();
+
+        return $ticketItems->isNotEmpty()
+            && $ticketItems->every(static fn ($item) => (float) $item->getPrice() <= 0);
+    }
+
+    /**
+     * Tickets of attendees sharing the buyer's e-mail travel with the order summary, so the buyer
+     * gets a single e-mail. Free orders already send one e-mail per attendee, and very large orders
+     * keep separate e-mails to avoid a heavy message.
+     *
+     * @return AttendeeDomainObject[]
+     */
+    private function ticketsBundledWithSummary(OrderDomainObject $order): array
+    {
+        $buyerEmail = mb_strtolower(trim((string) $order->getEmail()));
+        if ($buyerEmail === '' || $this->isFreeOrder($order) || KioskSentinelEmail::isKioskSentinelEmail($order->getEmail())) {
+            return [];
+        }
+
+        $tickets = ($order->getAttendees() ?? collect())
+            ->filter(static fn (AttendeeDomainObject $attendee) => mb_strtolower(trim((string) $attendee->getEmail())) === $buyerEmail)
+            ->values()
+            ->all();
+
+        return count($tickets) <= self::MAX_TICKETS_IN_SUMMARY ? $tickets : [];
     }
 }

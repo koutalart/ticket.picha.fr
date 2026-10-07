@@ -17,3 +17,5 @@ export const getTermsOfUseUrl = (): string => getConfig("VITE_TOS_URL", "/legal/
 export const getTermsOfSaleUrl = (): string => getConfig("VITE_TOS_SALE_URL", "/legal/cgv") as string;
 
 export const getPrivacyPolicyUrl = (): string => getConfig("VITE_PRIVACY_URL", "/legal/confidentialite") as string;
+
+export const SHARE_IMAGE_PATH = "/images/og-picha-ticket.png";

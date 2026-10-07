@@ -43,6 +43,8 @@ use HiEvents\Http\Actions\BoxOffice\Operators\UpdateBoxOfficeOperatorAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeTicketZplAction;
 use HiEvents\Http\Actions\BoxOffice\PrintBoxOfficeZplAction;
 use HiEvents\Http\Actions\BoxOffice\ReprintBoxOfficeTicketAction;
+use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeOrderAction;
+use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeOrdersAction;
 use HiEvents\Http\Actions\BoxOffice\SearchBoxOfficeAttendeesAction;
 use HiEvents\Http\Actions\CapacityAssignments\CreateCapacityAssignmentAction;
 use HiEvents\Http\Actions\CapacityAssignments\DeleteCapacityAssignmentAction;
@@ -128,6 +130,7 @@ use HiEvents\Http\Actions\Organizers\GetPublicOrganizerAction;
 use HiEvents\Http\Actions\Organizers\GetOrganizerByCustomDomainPublicAction;
 use HiEvents\Http\Actions\Organizers\Orders\GetOrganizerOrdersAction;
 use HiEvents\Http\Actions\Organizers\Public\SendOrganizerContactMessagePublicAction;
+use HiEvents\Http\Actions\DemoRequests\SendDemoRequestPublicAction;
 use HiEvents\Http\Actions\Organizers\Settings\GetOrganizerSettingsAction;
 use HiEvents\Http\Actions\Organizers\Settings\PartialUpdateOrganizerSettingsAction;
 use HiEvents\Http\Actions\Organizers\Stats\GetOrganizerStatsAction;
@@ -388,6 +391,8 @@ $router->middleware(['auth:api'])->group(
         $router->get('/events/{event_id}/box-office/products', GetBoxOfficeProductsAction::class);
         $router->get('/events/{event_id}/box-office/attendees', SearchBoxOfficeAttendeesAction::class);
         $router->post('/events/{event_id}/box-office/attendees/{attendee_public_id}/check-in', CheckInBoxOfficeAttendeeAction::class);
+        $router->get('/events/{event_id}/box-office/orders', GetBoxOfficeOrdersAction::class);
+        $router->get('/events/{event_id}/box-office/orders/{order_public_id}', GetBoxOfficeOrderAction::class);
         $router->get('/events/{event_id}/box-office/operators', GetBoxOfficeOperatorsAction::class);
         $router->post('/events/{event_id}/box-office/operators', CreateBoxOfficeOperatorAction::class);
         $router->patch('/events/{event_id}/box-office/operators/{user_id}', UpdateBoxOfficeOperatorAction::class);
@@ -541,6 +546,10 @@ $router->prefix('/public')->group(
         $router->get('/organizers/{organizer_id}/events', GetOrganizerEventsPublicAction::class);
         $router->post('/organizers/{organizer_id}/contact', SendOrganizerContactMessagePublicAction::class);
         $router->get('/custom-domains/{domain}', GetOrganizerByCustomDomainPublicAction::class);
+
+        // Demo requests
+        $router->post('/demo-requests', SendDemoRequestPublicAction::class)
+            ->middleware('throttle:5,1');
 
         // Products
         $router->get('/events/{event_id}/products', GetEventPublicAction::class);

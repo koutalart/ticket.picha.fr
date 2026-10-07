@@ -9,12 +9,14 @@ use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Admin\DTO\UpdateOrganizerCustomDomainDTO;
 use HiEvents\Services\Application\Handlers\Admin\UpdateOrganizerCustomDomainHandler;
+use HiEvents\Services\Infrastructure\Cors\CustomDomainCorsOriginResolver;
 use Mockery;
 use Tests\TestCase;
 
 class UpdateOrganizerCustomDomainHandlerTest extends TestCase
 {
     private OrganizerRepositoryInterface $repository;
+    private CustomDomainCorsOriginResolver $corsOriginResolver;
     private UpdateOrganizerCustomDomainHandler $handler;
 
     protected function setUp(): void
@@ -22,7 +24,9 @@ class UpdateOrganizerCustomDomainHandlerTest extends TestCase
         parent::setUp();
         config(['app.frontend_url' => 'https://ticket.picha.fr']);
         $this->repository = Mockery::mock(OrganizerRepositoryInterface::class);
-        $this->handler = new UpdateOrganizerCustomDomainHandler($this->repository);
+        $this->corsOriginResolver = Mockery::mock(CustomDomainCorsOriginResolver::class);
+        $this->corsOriginResolver->shouldReceive('forget')->byDefault();
+        $this->handler = new UpdateOrganizerCustomDomainHandler($this->repository, $this->corsOriginResolver);
     }
 
     public function testAssignsNormalizedDomain(): void
@@ -42,6 +46,23 @@ class UpdateOrganizerCustomDomainHandlerTest extends TestCase
         $result = $this->handler->handle($this->dto('  https://WWW.Innocent976.yt/events?x=1 '));
 
         $this->assertSame($updated, $result);
+    }
+
+    public function testForgetsCachedCorsOriginsForPreviousAndNewDomain(): void
+    {
+        $this->repository->shouldReceive('findFirstWhere')
+            ->with(['id' => 6, 'account_id' => 1])
+            ->once()
+            ->andReturn((new OrganizerDomainObject())->setId(6)->setCustomDomain('old-domain.fr'));
+        $this->repository->shouldReceive('findFirstWhere')
+            ->with(['custom_domain' => 'innocent976.yt'])
+            ->andReturn(null);
+        $this->repository->shouldReceive('updateFromArray')->once()->andReturn(new OrganizerDomainObject());
+
+        $this->corsOriginResolver->shouldReceive('forget')->with('old-domain.fr')->once();
+        $this->corsOriginResolver->shouldReceive('forget')->with('innocent976.yt')->once();
+
+        $this->handler->handle($this->dto('innocent976.yt'));
     }
 
     public function testClearsDomainWhenEmpty(): void

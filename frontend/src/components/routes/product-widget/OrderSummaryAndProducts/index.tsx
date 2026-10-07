@@ -266,7 +266,7 @@ const OrderDetails = ({
             <DetailItem
                 icon={IconCalendar}
                 label={t`Order Date`}
-                value={dateToBrowserTz(order.created_at, event.timezone)}
+                value={dateToBrowserTz(order.created_at, event.timezone, undefined, false)}
             />
             {!!order.refund_status && (
                 <DetailItem
@@ -422,6 +422,10 @@ export const OrderSummaryAndProducts = () => {
     const resendOrderConfirmationMutation = useResendOrderConfirmationPublic();
 
     const allowSelfEdit = event?.settings?.allow_attendee_self_edit ?? false;
+    // Keep the financial summary collapsed for free events; paid orders keep the existing behavior.
+    const isFreeOrder = !order?.is_payment_required
+        && (order?.order_items?.length ?? 0) > 0
+        && order?.order_items?.every(item => Number(item.price) <= 0);
 
     const handleEditAttendee = (attendee: Attendee, data: any) => {
         editAttendeeMutation.mutate(
@@ -584,7 +588,7 @@ export const OrderSummaryAndProducts = () => {
                     event={event}
                     order={order}
                     showBuyerProtection={false}
-                    defaultExpanded={false}
+                    defaultExpanded={!isFreeOrder}
                 />
 
                 {order?.status === 'AWAITING_OFFLINE_PAYMENT' && <OfflinePaymentInstructions event={event}/>}

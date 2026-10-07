@@ -33,7 +33,23 @@ async function main() {
         : undefined;
 
     const app = express();
+    app.disable('x-powered-by');
     app.use(cookieParser());
+
+    const EMBEDDABLE_PATHS = /^\/widget(\/|$|\?)/;
+    app.use((req, res, next) => {
+        const embeddable = EMBEDDABLE_PATHS.test(req.path);
+        res.setHeader(
+            'Content-Security-Policy',
+            `base-uri 'self'; object-src 'none'; frame-ancestors ${embeddable ? '*' : "'self'"}`
+        );
+        if (!embeddable) {
+            res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        }
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        next();
+    });
 
     app.use('/.well-known', express.static(path.join(__dirname, 'public/.well-known')));
 
@@ -89,10 +105,12 @@ async function main() {
         return cached?.organizer ?? null;
     };
 
+    const SERVER_ONLY_ENV_KEYS = new Set(['VITE_API_URL_SERVER']);
+
     const getViteEnvironmentVariables = (overrides = {}) => {
         const envVars = {};
         for (const key in process.env) {
-            if (key.startsWith('VITE_')) {
+            if (key.startsWith('VITE_') && !SERVER_ONLY_ENV_KEYS.has(key)) {
                 envVars[key] = process.env[key];
             }
         }
@@ -145,10 +163,35 @@ Sitemap: ${frontendUrl}/sitemap.xml
         res.status(200).send(robotsTxt);
     });
 
-    app.get('/sitemap.xml', async (req, res, next) => {
+    const loadServerEntry = async () => isProduction
+        ? dynamicImport(path.join(__dirname, "./dist/server/entry.server.js"))
+        : vite.ssrLoadModule("/src/entry.server.tsx");
+    const platformBaseUrl = (req) => (process.env.VITE_FRONTEND_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
+
+    app.get('/sitemap-pages.xml', async (req, res, next) => {
+        if (await resolveCustomDomain(normalizeHost(req.get('host')))) {
+            return next();
+        }
+        const {renderMarketingSitemap} = await loadServerEntry();
+        res.setHeader('Content-Type', 'application/xml');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.status(200).send(renderMarketingSitemap(platformBaseUrl(req)));
+    });
+
+    app.get('/llms.txt', async (req, res, next) => {
+        if (await resolveCustomDomain(normalizeHost(req.get('host')))) {
+            return next();
+        }
+        const {renderLlmsTxt} = await loadServerEntry();
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.status(200).send(renderLlmsTxt(platformBaseUrl(req)));
+    });
+
+    app.get('/sitemap.xml', async (req, res) => {
         const customDomain = await resolveCustomDomain(normalizeHost(req.get('host')));
         if (!customDomain) {
-            return sitemapIndexHandler(req, res, next);
+            return sitemapIndexHandler(req, res, [`${platformBaseUrl(req)}/sitemap-pages.xml`]);
         }
         try {
             await customDomainSitemap(customDomain, res);
@@ -164,6 +207,11 @@ Sitemap: ${frontendUrl}/sitemap.xml
         let url = req.originalUrl.replace(base, "");
 
         delete req.headers[CUSTOM_DOMAIN_HEADER];
+
+        if (process.env.VITE_DEFAULT_LOCALE && !req.cookies?.locale && !req.headers['accept-language']) {
+            req.headers['accept-language'] = process.env.VITE_DEFAULT_LOCALE;
+        }
+
         const requestHost = normalizeHost(req.get('host'));
         const customDomain = await resolveCustomDomain(requestHost);
 
@@ -205,7 +253,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 render = (await dynamicImport(path.join(__dirname, "./dist/server/entry.server.js"))).render;
             }
 
-            const { appHtml, dehydratedState, helmetContext } = await render(
+            const { appHtml, dehydratedState, helmetContext, locale, htmlLang } = await render(
                 { req, res },
                 ssrManifest
             );
@@ -233,6 +281,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
             }
 
             const html = template
+                .replace('<html lang="en">', `<html lang="${htmlLang}" data-locale="${locale}">`)
                 .replace("<!--head-snippets-->", headSnippets.join("\n"))
                 .replace("<!--app-html-->", appHtml)
                 .replace("<!--dehydrated-state-->", `<script>window.__REHYDRATED_STATE__ = ${stringifiedState}</script>`)

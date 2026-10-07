@@ -20,6 +20,7 @@ import {getConfig} from "../../../../utilites/config.ts";
 import classes from "./Payment.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
 import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
+import {LoadingMask} from "../../../common/LoadingMask";
 
 const Payment = () => {
     const navigate = useNavigate();
@@ -45,6 +46,13 @@ const Payment = () => {
             setActivePaymentMethod(null); // No methods available
         }
     }, [isStripeEnabled, isOfflineEnabled]);
+
+    React.useEffect(() => {
+        // Free orders never need to enter the payment step.
+        if (isOrderFetched && order && !order.is_payment_required) {
+            navigate(`/checkout/${eventId}/${orderShortId}/summary`, {replace: true});
+        }
+    }, [isOrderFetched, order?.is_payment_required, eventId, orderShortId, navigate]);
 
     React.useEffect(() => {
         // Scroll to top when payment page loads
@@ -81,6 +89,10 @@ const Payment = () => {
         }
     };
 
+    if (isOrderFetched && order && !order.is_payment_required) {
+        return <LoadingMask />;
+    }
+
     if (!isStripeEnabled && !isOfflineEnabled && isOrderFetched && isEventFetched) {
         return (
             <CheckoutContent>
@@ -99,7 +111,7 @@ const Payment = () => {
                 )}
                 {isStripeEnabled && (
                     <div style={{display: activePaymentMethod === 'STRIPE' ? 'block' : 'none'}}>
-                        <StripePaymentMethod enabled={true} setSubmitHandler={setSubmitHandler}/>
+                        <StripePaymentMethod enabled={true} event={event} order={order} setSubmitHandler={setSubmitHandler}/>
                     </div>
                 )}
 

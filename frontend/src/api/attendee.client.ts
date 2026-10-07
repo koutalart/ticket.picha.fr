@@ -1,5 +1,5 @@
 import {api} from "./client";
-import {Attendee, GenericDataResponse, GenericPaginatedResponse, IdParam, QueryFilters, TaxAndFee} from "../types";
+import {Attendee, GenericDataResponse, GenericPaginatedResponse, IdParam, QueryFilters} from "../types";
 import {queryParamsHelper} from "../utilites/queryParamsHelper.ts";
 import {publicApi} from "./public-client.ts";
 import {SupportedLocales} from "../locales.ts";
@@ -15,9 +15,8 @@ export interface EditAttendeeRequest {
 }
 
 export interface CreateAttendeeRequest extends EditAttendeeRequest {
-    amount_paid: number,
+    is_free: boolean,
     send_confirmation_email: boolean,
-    taxes_and_fees: TaxAndFee[],
     locale: SupportedLocales,
 }
 

@@ -191,14 +191,14 @@ Congratulations! Your order for <strong>{{ event.title }}</strong> on <strong>{{
 
 If you have any questions or need assistance, please contact <a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>.<br>
 
-Best regards,<br>
+We look forward to welcoming you soon!<br>
 {{ organizer.name }}
 LIQUID
             ],
             EmailTemplateType::ATTENDEE_TICKET->value => [
                 'subject' => '🎟️ Your Ticket for {{ event.title }}',
                 'body' => <<<'LIQUID'
-<strong>You're going to {{ event.title }}! 🎉</strong><br>
+<strong>{{ event.title }}! 🎉</strong><br>
 
 {% if order.is_awaiting_offline_payment %}
 <strong>ℹ️ Payment Pending:</strong> Your order is pending payment. Tickets have been issued but will not be valid until payment is received.<br>

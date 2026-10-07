@@ -40,6 +40,7 @@ export const InlineOrderSummary = ({
         }
         return sum;
     }, 0) || 0;
+    const isFreeOrder = !order.is_payment_required && totalAmount <= 0;
 
     return (
         <div className={classes.inlineOrderSummary}>
@@ -51,10 +52,10 @@ export const InlineOrderSummary = ({
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && setExpanded(!expanded)}
             >
-                <span className={classes.headerTitle}>{t`Order Summary`}</span>
+                <span className={classes.headerTitle}>{isFreeOrder ? t`Your registration` : t`Order Summary`}</span>
                 <div className={classes.headerRight}>
                     <span className={classes.headerTotal}>
-                        {formatCurrency(totalAmount, order.currency)} {order.currency}
+                        {isFreeOrder ? t`Free` : <>{formatCurrency(totalAmount, order.currency)} {order.currency}</>}
                     </span>
                     <IconChevronDown
                         size={20}
@@ -106,7 +107,7 @@ export const InlineOrderSummary = ({
                                         </span>
                                     )}
                                     <span className={classes.lineItemPrice}>
-                                        {formatCurrency(item.price * item.quantity, order.currency)}
+                                        {isFreeOrder ? t`Free` : formatCurrency(item.price * item.quantity, order.currency)}
                                     </span>
                                 </div>
                             </div>
@@ -125,88 +126,92 @@ export const InlineOrderSummary = ({
                         </div>
                     )}
 
-                    <div className={classes.divider}/>
+                    {!isFreeOrder && (
+                        <>
+                            <div className={classes.divider}/>
 
-                    <div className={classes.totals}>
-                        <div className={classes.totalsRow}>
-                            <span className={classes.totalsLabel}>{t`Subtotal`}</span>
-                            <span className={classes.totalsValue}>
-                                {formatCurrency(order.total_before_additions, order.currency)}
-                            </span>
-                        </div>
+                            <div className={classes.totals}>
+                                <div className={classes.totalsRow}>
+                                    <span className={classes.totalsLabel}>{t`Subtotal`}</span>
+                                    <span className={classes.totalsValue}>
+                                        {formatCurrency(order.total_before_additions, order.currency)}
+                                    </span>
+                                </div>
 
-                        <div className={classes.totalsRow}>
-                            <span className={classes.totalsLabelWithInfo}>
-                                <span>{t`Fees`}</span>
-                                {order.taxes_and_fees_rollup?.fees && order.taxes_and_fees_rollup.fees.length > 0 && (
-                                    <Popover position="top" withArrow shadow="sm" width={220}>
-                                        <Popover.Target>
-                                            <span className={classes.infoIcon}>
-                                                <IconInfoCircle size={14} />
-                                            </span>
-                                        </Popover.Target>
-                                        <Popover.Dropdown>
-                                            <div className={classes.breakdownList}>
-                                                {order.taxes_and_fees_rollup.fees.map((fee, index) => (
-                                                    <div key={index} className={classes.breakdownItem}>
-                                                        <span className={classes.breakdownName}>{fee.name}</span>
-                                                        <span className={classes.breakdownValue}>
-                                                            {formatCurrency(fee.value, order.currency)}
-                                                        </span>
+                                <div className={classes.totalsRow}>
+                                    <span className={classes.totalsLabelWithInfo}>
+                                        <span>{t`Fees`}</span>
+                                        {order.taxes_and_fees_rollup?.fees && order.taxes_and_fees_rollup.fees.length > 0 && (
+                                            <Popover position="top" withArrow shadow="sm" width={220}>
+                                                <Popover.Target>
+                                                    <span className={classes.infoIcon}>
+                                                        <IconInfoCircle size={14} />
+                                                    </span>
+                                                </Popover.Target>
+                                                <Popover.Dropdown>
+                                                    <div className={classes.breakdownList}>
+                                                        {order.taxes_and_fees_rollup.fees.map((fee, index) => (
+                                                            <div key={index} className={classes.breakdownItem}>
+                                                                <span className={classes.breakdownName}>{fee.name}</span>
+                                                                <span className={classes.breakdownValue}>
+                                                                    {formatCurrency(fee.value, order.currency)}
+                                                                </span>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                ))}
-                                            </div>
-                                        </Popover.Dropdown>
-                                    </Popover>
-                                )}
-                            </span>
-                            <span className={classNames(classes.totalsValue, {
-                                [classes.totalsValueFree]: totalFee === 0
-                            })}>
-                                {formatCurrency(totalFee, order.currency)}
-                            </span>
-                        </div>
+                                                </Popover.Dropdown>
+                                            </Popover>
+                                        )}
+                                    </span>
+                                    <span className={classNames(classes.totalsValue, {
+                                        [classes.totalsValueFree]: totalFee === 0
+                                    })}>
+                                        {formatCurrency(totalFee, order.currency)}
+                                    </span>
+                                </div>
 
-                        {totalTax > 0 && (
-                            <div className={classes.totalsRow}>
-                                <span className={classes.totalsLabelWithInfo}>
-                                    <span>{t`Taxes`}</span>
-                                    {order.taxes_and_fees_rollup?.taxes && order.taxes_and_fees_rollup.taxes.length > 0 && (
-                                        <Popover position="top" withArrow shadow="sm" width={220}>
-                                            <Popover.Target>
-                                                <span className={classes.infoIcon}>
-                                                    <IconInfoCircle size={14} />
-                                                </span>
-                                            </Popover.Target>
-                                            <Popover.Dropdown>
-                                                <div className={classes.breakdownList}>
-                                                    {order.taxes_and_fees_rollup.taxes.map((tax, index) => (
-                                                        <div key={index} className={classes.breakdownItem}>
-                                                            <span className={classes.breakdownName}>{tax.name}</span>
-                                                            <span className={classes.breakdownValue}>
-                                                                {formatCurrency(tax.value, order.currency)}
-                                                            </span>
+                                {totalTax > 0 && (
+                                    <div className={classes.totalsRow}>
+                                        <span className={classes.totalsLabelWithInfo}>
+                                            <span>{t`Taxes`}</span>
+                                            {order.taxes_and_fees_rollup?.taxes && order.taxes_and_fees_rollup.taxes.length > 0 && (
+                                                <Popover position="top" withArrow shadow="sm" width={220}>
+                                                    <Popover.Target>
+                                                        <span className={classes.infoIcon}>
+                                                            <IconInfoCircle size={14} />
+                                                        </span>
+                                                    </Popover.Target>
+                                                    <Popover.Dropdown>
+                                                        <div className={classes.breakdownList}>
+                                                            {order.taxes_and_fees_rollup.taxes.map((tax, index) => (
+                                                                <div key={index} className={classes.breakdownItem}>
+                                                                    <span className={classes.breakdownName}>{tax.name}</span>
+                                                                    <span className={classes.breakdownValue}>
+                                                                        {formatCurrency(tax.value, order.currency)}
+                                                                    </span>
+                                                                </div>
+                                                            ))}
                                                         </div>
-                                                    ))}
-                                                </div>
-                                            </Popover.Dropdown>
-                                        </Popover>
-                                    )}
-                                </span>
-                                <span className={classes.totalsValue}>
-                                    {formatCurrency(totalTax, order.currency)}
-                                </span>
-                            </div>
-                        )}
+                                                    </Popover.Dropdown>
+                                                </Popover>
+                                            )}
+                                        </span>
+                                        <span className={classes.totalsValue}>
+                                            {formatCurrency(totalTax, order.currency)}
+                                        </span>
+                                    </div>
+                                )}
 
-                        <div className={classNames(classes.totalsRow, classes.totalsRowFinal)}>
-                            <span className={classes.totalsFinalLabel}>{t`Total`}</span>
-                            <span className={classes.totalsFinalValue}>
-                                {formatCurrency(totalAmount, order.currency)}
-                                <span className={classes.totalsCurrency}>{order.currency}</span>
-                            </span>
-                        </div>
-                    </div>
+                                <div className={classNames(classes.totalsRow, classes.totalsRowFinal)}>
+                                    <span className={classes.totalsFinalLabel}>{t`Total`}</span>
+                                    <span className={classes.totalsFinalValue}>
+                                        {formatCurrency(totalAmount, order.currency)}
+                                        <span className={classes.totalsCurrency}>{order.currency}</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </>
+                    )}
 
                     {showBuyerProtection && order.is_payment_required && (
                         <div className={classes.buyerProtection}>

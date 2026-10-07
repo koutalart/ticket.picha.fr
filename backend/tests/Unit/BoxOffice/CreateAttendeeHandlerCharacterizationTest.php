@@ -21,18 +21,16 @@ use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
 
 /**
- * Characterizes the CURRENT behavior of CreateAttendeeHandler — the handler
- * the Box Office slice 1 (Option A) intends to reuse as-is. These tests
- * document what the handler does today, including its known gaps (S1: no
- * server-side price validation). They are not testing desired Kiosk
- * behavior — that lives in CreateBoxOfficeSaleHandler (not yet written).
+ * Behavior of CreateAttendeeHandler (manual "Add attendee" from the organizer
+ * dashboard). The price always comes from product_prices — never from the
+ * client (fixes S1); the only client choice is the "free" checkbox.
  */
 class CreateAttendeeHandlerCharacterizationTest extends TestCase
 {
     use BoxOfficeTestFixtures;
     use DatabaseTransactions;
 
-    public function test_manual_sale_zero_amount_creates_no_payment_required_order(): void
+    public function test_manual_sale_marked_free_creates_no_payment_required_order(): void
     {
         [$event, $product, $productPrice] = $this->createEventWithProduct(price: 25.00);
 
@@ -45,9 +43,9 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
             product_id: $product->id,
             event_id: $event->id,
             send_confirmation_email: false,
-            amount_paid: 0.0,
             locale: 'en',
             product_price_id: $productPrice->id,
+            is_free: true,
         ));
 
         $order = Order::find($attendee->getOrderId());
@@ -69,7 +67,6 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
             product_id: $product->id,
             event_id: $event->id,
             send_confirmation_email: false,
-            amount_paid: 25.00,
             locale: 'en',
             product_price_id: $productPrice->id,
         ));
@@ -80,18 +77,7 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
         self::assertSame(25.0, (float) $order->total_gross);
     }
 
-    /**
-     * Documents S1 (PICHA_BOX_OFFICE_SECURITY_FINDINGS.md): the handler never
-     * compares amount_paid against product_prices.price. Whatever the caller
-     * sends is written verbatim to Order.total_gross / OrderItem.price, even
-     * though the product's real price (25.00) is completely different.
-     *
-     * This assertion documents the DESIRED behavior (server charges its own
-     * known price, ignoring/validating the client-sent amount) and is
-     * expected to be RED today, since no such validation exists yet — the
-     * failure itself is the proof of S1.
-     */
-    public function test_manual_sale_amount_is_taken_verbatim_from_client(): void
+    public function test_manual_sale_is_charged_the_server_price(): void
     {
         [$event, $product, $productPrice] = $this->createEventWithProduct(price: 25.00);
 
@@ -104,23 +90,22 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
             product_id: $product->id,
             event_id: $event->id,
             send_confirmation_email: false,
-            amount_paid: 1.00, // far below the real price of 25.00 — accepted anyway
             locale: 'en',
             product_price_id: $productPrice->id,
         ));
 
         $order = Order::find($attendee->getOrderId());
 
-        self::assertSame(
-            25.0,
-            (float) $order->total_gross,
-            'S1: amount_paid must be validated against product_prices.price, not trusted verbatim from the client',
-        );
+        self::assertSame(25.0, (float) $order->total_gross, 'S1: the price comes from product_prices, not from the client');
+        self::assertSame(25.0, (float) $order->order_items()->first()->price);
     }
 
-    public function test_manual_sale_negative_amount_is_rejected_by_validation(): void
+    public function test_client_cannot_send_an_amount(): void
     {
         $rules = (new CreateAttendeeRequest)->rules();
+
+        self::assertArrayNotHasKey('amount_paid', $rules, 'S1: no client-entered amount is accepted');
+        self::assertArrayNotHasKey('taxes_and_fees', $rules, 'taxes and fees are computed server-side');
 
         $validator = Validator::make([
             'product_id' => 1,
@@ -128,13 +113,13 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
             'email' => 'jane@example.test',
             'first_name' => 'Jane',
             'last_name' => 'Doe',
-            'amount_paid' => -5.00,
+            'is_free' => 'not-a-boolean',
             'send_confirmation_email' => false,
             'locale' => 'en',
         ], $rules);
 
         self::assertTrue($validator->fails());
-        self::assertTrue($validator->errors()->has('amount_paid'));
+        self::assertTrue($validator->errors()->has('is_free'));
     }
 
     public function test_manual_sale_product_price_id_from_other_product_is_rejected(): void
@@ -168,7 +153,6 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
             product_id: $productA->id,
             event_id: $event->id,
             send_confirmation_email: false,
-            amount_paid: 50.00,
             locale: 'en',
             product_price_id: $productPriceB->id, // belongs to productB, not productA
         ));
@@ -193,7 +177,6 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
             product_id: $product->id,
             event_id: $event->id,
             send_confirmation_email: false,
-            amount_paid: 25.00,
             locale: 'en',
             product_price_id: $productPrice->id,
         ));
@@ -216,7 +199,6 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
             product_id: $product->id,
             event_id: $event->id,
             send_confirmation_email: false,
-            amount_paid: 25.00,
             locale: 'en',
             product_price_id: $productPrice->id,
         ));
@@ -248,7 +230,6 @@ class CreateAttendeeHandlerCharacterizationTest extends TestCase
             product_id: $product->id,
             event_id: $event->id,
             send_confirmation_email: false,
-            amount_paid: 25.00,
             locale: 'en',
             product_price_id: $productPrice->id,
         ));

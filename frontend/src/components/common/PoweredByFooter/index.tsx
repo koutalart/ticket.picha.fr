@@ -12,7 +12,7 @@ export const PoweredByFooter = (
         <div {...props} className={classNames(classes.poweredBy, props.className)}>
             <div className={classes.poweredByText}>
                 {t`Powered by`}{" "}
-                <a href={getConfig("VITE_BRAND_URL", "https://picha.fr") as string} target="_blank" rel="noreferrer">
+                <a href={getConfig("VITE_BRAND_URL", "https://ticket.picha.fr") as string} target="_blank" rel="noreferrer">
                     {getAppName()}
                 </a>
             </div>

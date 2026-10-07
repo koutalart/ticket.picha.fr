@@ -1,0 +1,100 @@
+$purple: #40296c;
+$purple-deep: #2c1c4b;
+$yellow: #fbb405;
+$ink: #1d1d1f;
+$gutter: 16px;
+$container: 1120px;
+
+.demo {
+  scroll-margin-top: 72px;
+  padding: 112px $gutter;
+  background: radial-gradient(120% 90% at 0% 0%, #5b3d94 0%, $purple 45%, $purple-deep 100%);
+  color: #fff;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items: start;
+  gap: 64px;
+  max-width: $container;
+  margin: 0 auto;
+}
+
+.title {
+  margin: 0 0 20px;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.text {
+  margin: 0 0 32px;
+  font-size: 1.1875rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.promises {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 0 32px;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+
+  svg {
+    flex-shrink: 0;
+    color: $yellow;
+  }
+}
+
+.contact {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+
+  a {
+    color: #fff;
+    font-weight: 600;
+  }
+}
+
+.card {
+  padding: 36px;
+  border-radius: 28px;
+  background: #fff;
+  color: $ink;
+  box-shadow: 0 32px 64px -24px rgba(0, 0, 0, 0.45);
+
+  :focus-visible {
+    outline-color: $purple;
+  }
+}
+
+@media (max-width: 899px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 767px) {
+  .demo {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+
+  .card {
+    padding: 24px 20px;
+    border-radius: 24px;
+  }
+}

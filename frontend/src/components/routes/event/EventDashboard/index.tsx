@@ -1,4 +1,5 @@
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
+import {useGetPublicEvent} from "../../../../queries/useGetPublicEvent.ts";
 import {useParams} from "react-router";
 import {PageTitle} from "../../../common/PageTitle";
 import {PageBody} from "../../../common/PageBody";
@@ -39,6 +40,8 @@ export const EventDashboard = () => {
     const eventQuery = useGetEvent(eventId);
     const {data: me} = useGetMe();
     const event = eventQuery?.data;
+    const publicEventQuery = useGetPublicEvent(eventId);
+    const publicEvent = publicEventQuery?.data;
     const defaultDateRangeRef = useRef<string | null>(null);
     if (event && !defaultDateRangeRef.current) {
         defaultDateRangeRef.current = (event.lifecycle_status === EventLifecycleStatus.ENDED
@@ -55,6 +58,17 @@ export const EventDashboard = () => {
 
     const [isChecklistVisible, setIsChecklistVisible] = useState(true);
     const [isMounted, setIsMounted] = useState(false);
+
+    const products = event?.products?.length ? event.products : (publicEvent?.products ?? []);
+    const isFreeEvent = products.length > 0
+        ? products.every((product) => {
+            if (product.type === 'FREE') return true;
+            if (product.prices?.length) {
+                return product.prices.every((price) => Number(price.price ?? 0) <= 0);
+            }
+            return Number(product.price ?? 0) <= 0;
+        })
+        : event?.category === 'OPEN_HOUSE' || publicEvent?.category === 'OPEN_HOUSE';
 
     const showStripeUpgradeNotice = account?.stripe_platform === StripePlatform.Canada.valueOf()
         && account?.stripe_connect_setup_complete
@@ -103,7 +117,7 @@ export const EventDashboard = () => {
         ? `${formatDateWithLocale(eventStats.start_date, 'chartDate', event?.timezone)} - ${formatDateWithLocale(eventStats.end_date, 'chartDate', event?.timezone)}`
         : '';
 
-    const shouldShowChecklist = (isChecklistVisible && event && accountIsFetched && account?.is_saas_mode_enabled) && (
+    const shouldShowChecklist = !isFreeEvent && (isChecklistVisible && event && accountIsFetched && account?.is_saas_mode_enabled) && (
         !account?.stripe_connect_setup_complete ||
         event?.status !== 'LIVE'
     );
@@ -308,7 +322,7 @@ export const EventDashboard = () => {
 
                 <Card className={classes.chartCard}>
                     <div className={classes.chartCardTitle}>
-                        <h2>{t`Product Sales`}</h2>
+                        <h2>{isFreeEvent ? t`Inscriptions` : t`Product Sales`}</h2>
                         <div className={classes.dateRange}>
                         <span>
                             {dateRangeLabel}
@@ -327,7 +341,9 @@ export const EventDashboard = () => {
                         withLegend
                         legendProps={{verticalAlign: 'bottom', height: 50}}
 
-                        series={[
+                        series={isFreeEvent ? [
+                            {name: 'attendees_registered', color: 'blue.4', label: t`Inscrits`},
+                        ] : [
                             {name: 'orders_created', color: 'blue.6', label: t`Completed Orders`},
                             {name: 'products_sold', color: 'blue.2', label: t`Products Sold`},
                             {name: 'attendees_registered', color: 'blue.4', label: t`Attendees Registered`},
@@ -338,7 +354,7 @@ export const EventDashboard = () => {
                     />
                 </Card>
 
-                <Card className={classes.chartCard}>
+                {!isFreeEvent && (<Card className={classes.chartCard}>
                     <div className={classes.chartCardTitle}>
                         <h2>{t`Revenue`}</h2>
                         <div className={classes.dateRange}>
@@ -376,6 +392,7 @@ export const EventDashboard = () => {
                         areaChartProps={{syncId: 'events'}}
                     />
                 </Card>
+                )}
             </>)}
         </PageBody>
     )

@@ -3,11 +3,14 @@
 namespace HiEvents\Http\Request\Image;
 
 use HiEvents\DomainObjects\Enums\ImageType;
+use HiEvents\Http\Request\Concerns\NormalizesUploadedImage;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class CreateImageRequest extends FormRequest
 {
+    use NormalizesUploadedImage;
+
     public function rules(): array
     {
         $imageType = $this->input('image_type')
@@ -41,6 +44,7 @@ class CreateImageRequest extends FormRequest
         [$minWidth, $minHeight] = ImageType::getMinimumDimensionsMap($imageType);
 
         return [
+            ...$this->imageFormatMessages(),
             'image.dimensions' => __('The image must be at least :minWidth x :minHeight pixels.', [
                 'minWidth' => $minWidth,
                 'minHeight' => $minHeight,

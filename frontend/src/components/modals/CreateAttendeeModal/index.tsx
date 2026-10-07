@@ -1,15 +1,15 @@
 import {Modal} from "../../common/Modal";
-import {GenericModalProps, IdParam, ProductCategory, ProductType} from "../../../types.ts";
+import {GenericModalProps, ProductCategory, ProductType} from "../../../types.ts";
 import {Button} from "../../common/Button";
 import {useNavigate, useParams} from "react-router";
 import {useFormErrorResponseHandler} from "../../../hooks/useFormErrorResponseHandler.tsx";
 import {useForm} from "@mantine/form";
-import {LoadingOverlay, NumberInput, Select, Switch, TextInput} from "@mantine/core";
+import {LoadingOverlay, Select, Switch, Text, TextInput} from "@mantine/core";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
 import {CreateAttendeeRequest} from "../../../api/attendee.client.ts";
 import {useCreateAttendee} from "../../../mutations/useCreateAttendee.ts";
 import {showSuccess} from "../../../utilites/notifications.tsx";
-import {t, Trans} from "@lingui/macro";
+import {t} from "@lingui/macro";
 import {useEffect} from "react";
 import {InputGroup} from "../../common/InputGroup";
 import {
@@ -21,6 +21,7 @@ import {
 import {getLocaleName} from "../../../utilites/localeNames.ts";
 import {ProductSelector} from "../../common/ProductSelector";
 import {getProductsFromEvent} from "../../../utilites/helpers.ts";
+import {formatCurrency} from "../../../utilites/currency.ts";
 
 export const CreateAttendeeModal = ({onClose}: GenericModalProps) => {
     const {eventId} = useParams();
@@ -37,52 +38,21 @@ export const CreateAttendeeModal = ({onClose}: GenericModalProps) => {
             email: '',
             first_name: '',
             last_name: '',
-            amount_paid: 0.00,
+            is_free: false,
             send_confirmation_email: true,
-            taxes_and_fees: [],
             locale: getClientLocale() as SupportedLocales,
         },
     });
 
+    const selectedProduct = eventProducts?.find(product => product.id == form.values.product_id);
+    const selectedPrice = selectedProduct?.prices?.find(price => String(price.id) === String(form.values.product_price_id))
+        ?? selectedProduct?.prices?.[0];
+
     useEffect(() => {
         if (event?.product_categories) {
-            form.setFieldValue(
-                'product_price_id',
-                String(eventProducts?.find(product => product.id == form.values.product_id)?.prices?.[0]?.id)
-            );
-
-            const taxesAndFees = eventProducts
-                ?.find(product => product.id == form.values.product_id)
-                ?.taxes_and_fees;
-
-            if (taxesAndFees?.length === 0) {
-                form.setFieldValue('taxes_and_fees', []);
-            }
-
-            taxesAndFees?.forEach((tax, index) => {
-                    form.setFieldValue(
-                        `taxes_and_fees.${index}`,
-                        {
-                            tax_or_fee_id: tax.id,
-                            amount: 0.00,
-                            name: tax.name,
-                        },
-                    );
-                }
-            );
+            form.setFieldValue('product_price_id', String(selectedProduct?.prices?.[0]?.id));
         }
     }, [form.values.product_id]);
-
-    useEffect(() => {
-        if (form.values.product_price_id && !form.values.amount_paid) {
-            form.setFieldValue(
-                'amount_paid',
-                Number(eventProducts
-                    ?.find(product => product.id == form.values.product_id)?.prices
-                    ?.find(productPrice => (productPrice.id as IdParam) = form.values.product_price_id)?.price)
-            );
-        }
-    }, [form.values.product_price_id]);
 
     const handleSubmit = (values: CreateAttendeeRequest) => {
         mutation.mutate({
@@ -168,35 +138,20 @@ export const CreateAttendeeModal = ({onClose}: GenericModalProps) => {
                     includedProductTypes={[ProductType.Ticket]}
                 />
 
-                <NumberInput
-                    required
-                    mt={20}
-                    fixedDecimalScale
-                    {...form.getInputProps('amount_paid')}
-                    label={<Trans>Amount paid ({event?.currency})</Trans>}
-                    placeholder="0.00"
-                    decimalScale={2}
-                    step={1}
-                    min={0}
-                    description={t`Enter an amount excluding taxes and fees.`}
-                />
-
-                {form.values.taxes_and_fees?.map((tax, index) => {
-                        return (
-                            <NumberInput
-                                required
-                                mt={20}
-                                fixedDecimalScale
-                                {...form.getInputProps(`taxes_and_fees.${index}.amount`)}
-                                label={tax.name + ' ' + t`paid` + ' (' + event?.currency + ')'}
-                                placeholder="0.00"
-                                decimalScale={2}
-                                step={1}
-                                min={0}
-                            />
-                        )
-                    }
+                {selectedPrice && (
+                    <Text mt={20} size="sm">
+                        {t`Ticket price`}: <strong>{form.values.is_free
+                            ? t`Free`
+                            : formatCurrency(Number(selectedPrice.price), event?.currency)}</strong>
+                    </Text>
                 )}
+
+                <Switch
+                    mt={12}
+                    label={t`Free (no payment)`}
+                    description={t`The price of the ticket is applied automatically. Tick to add this attendee free of charge.`}
+                    {...form.getInputProps('is_free', {type: 'checkbox'})}
+                />
 
                 <Switch
                     mt={20}

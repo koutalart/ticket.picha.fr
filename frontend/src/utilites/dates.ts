@@ -109,14 +109,23 @@ export const utcToTz = (date: undefined | string | Date, tz: string): string | u
  * Converts a datetime to the user's browser timezone with locale-aware formatting.
  * Falls back to provided timezone for SSR.
  */
-export const dateToBrowserTz = (date: string, fallbackTz: string, locale?: string): string => {
+export const dateToBrowserTz = (
+    date: string,
+    fallbackTz: string,
+    locale?: string,
+    showTimezone: boolean = true
+): string => {
     const userTimezone = !isSsr()
         ? Intl.DateTimeFormat().resolvedOptions().timeZone
         : fallbackTz;
 
     const formatted = formatDateWithLocale(date, 'shortDateTime', userTimezone, locale);
-    const tzAbbr = formatDateWithLocale(date, 'timezone', userTimezone, locale);
 
+    if (!showTimezone) {
+        return formatted;
+    }
+
+    const tzAbbr = formatDateWithLocale(date, 'timezone', userTimezone, locale);
     return `${formatted} ${tzAbbr}`;
 };
 
