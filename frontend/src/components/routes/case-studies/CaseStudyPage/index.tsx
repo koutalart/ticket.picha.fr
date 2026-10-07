@@ -87,6 +87,7 @@ const CaseStudyPage = () => {
                 inLanguage: "fr",
                 mainEntityOfPage: pageUrl,
                 datePublished: caseStudy.publishedAt,
+                dateModified: caseStudy.updatedAt ?? caseStudy.publishedAt,
                 image: caseStudy.coverImage,
                 author: {"@type": "Organization", name: "PICHA", url: getConfig("VITE_BRAND_URL", "https://picha.fr")},
                 publisher: {"@type": "Organization", name: "PICHA", url: getConfig("VITE_BRAND_URL", "https://picha.fr")},

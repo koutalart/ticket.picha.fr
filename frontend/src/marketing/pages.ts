@@ -7,6 +7,7 @@ export interface MarketingPage {
     title: string;
     description: string;
     group: "home" | "solutions" | "case-studies";
+    lastModified?: string;
 }
 
 export const getMarketingPages = (): MarketingPage[] => {
@@ -28,14 +29,20 @@ export const getMarketingPages = (): MarketingPage[] => {
         ...(publishedCaseStudies.length > 0 ? [{
             path: "/cas-clients",
             title: "Cas clients",
-            description: "Les événements accueillis avec PICHA Ticket.",
+            description: "Festival, concert et journée portes ouvertes : billetterie, inscriptions et contrôle d'accès par QR code avec PICHA Ticket.",
             group: "case-studies" as const,
+            lastModified: publishedCaseStudies
+                .map((caseStudy) => caseStudy.updatedAt ?? caseStudy.publishedAt)
+                .filter((date): date is string => !!date)
+                .sort()
+                .pop(),
         }] : []),
         ...publishedCaseStudies.map((caseStudy) => ({
             path: `/cas-clients/${caseStudy.slug}`,
             title: caseStudy.headline ?? getCaseStudyTitle(caseStudy),
             description: caseStudy.summary ?? getCaseStudyTitle(caseStudy),
             group: "case-studies" as const,
+            lastModified: caseStudy.updatedAt ?? caseStudy.publishedAt,
         })),
     ];
 };
@@ -48,7 +55,10 @@ const escapeXml = (value: string) => value
 
 export const renderMarketingSitemap = (baseUrl: string): string => {
     const urls = getMarketingPages()
-        .map((page) => `  <url><loc>${escapeXml(`${baseUrl}${page.path}`)}</loc></url>`)
+        .map((page) => {
+            const lastModified = page.lastModified ? `<lastmod>${page.lastModified}</lastmod>` : "";
+            return `  <url><loc>${escapeXml(`${baseUrl}${page.path}`)}</loc>${lastModified}</url>`;
+        })
         .join("\n");
 
     return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;

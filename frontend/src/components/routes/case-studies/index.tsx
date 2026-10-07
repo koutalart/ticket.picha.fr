@@ -13,12 +13,12 @@ const CaseStudiesPage = () => {
     const caseStudies = getVisibleCaseStudies();
     const frontendUrl = (getConfig("VITE_FRONTEND_URL") || "").replace(/\/$/, "");
     const title = `Cas clients : ils ont confié leur accueil à ${getAppName()}`;
-    const description = `Découvrez comment entreprises, institutions et réseaux gèrent inscriptions, accueil, badges et bracelets QR code avec ${getAppName()}.`;
+    const description = `Festival à Nosy Be, concert et journée portes ouvertes à Mayotte : comment nos clients vendent leurs billets et contrôlent leurs entrées avec ${getAppName()}.`;
 
     return (
         <div className={classes.page}>
             <Helmet>
-                <title>{`Cas clients | ${getAppName()}`}</title>
+                <title>{`Cas clients : billetterie et contrôle d'accès | ${getAppName()}`}</title>
                 <meta name="description" content={description}/>
                 <link rel="canonical" href={`${frontendUrl}/cas-clients`}/>
                 <meta property="og:title" content={title}/>
@@ -35,7 +35,7 @@ const CaseStudiesPage = () => {
                     <p className={classes.eyebrow}>Cas clients</p>
                     <h1 className={classes.title}>Des événements accueillis avec fluidité, par des équipes qui gardent le contrôle</h1>
                     <p className={classes.lead}>
-                        Inaugurations, forums, journées portes ouvertes : découvrez comment chaque organisation a accueilli ses invités avec {getAppName()}.
+                        Festival, concert, journée portes ouvertes : découvrez comment chaque organisateur a vendu ses billets, géré ses inscriptions et contrôlé ses entrées avec {getAppName()}.
                     </p>
                 </section>
 
