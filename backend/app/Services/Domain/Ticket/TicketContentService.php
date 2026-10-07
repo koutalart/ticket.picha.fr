@@ -10,6 +10,7 @@ use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\ImageDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\OrganizerDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
@@ -56,7 +57,8 @@ class TicketContentService
             venue_city: $venueCity,
             organizer_name: (string) $organizer?->getName(),
             sponsor_name: (string) $eventSettings?->getTicketSponsorName(),
-            event_logo_image: $this->eventImage($event->getId(), ImageType::TICKET_LOGO),
+            event_logo_image: $this->eventImage($event->getId(), ImageType::TICKET_LOGO)
+                ?? $this->image($organizer?->toArray()[OrganizerDomainObjectAbstract::ID] ?? null, OrganizerDomainObject::class, ImageType::ORGANIZER_LOGO),
             sponsor_logo_image: $this->eventImage($event->getId(), ImageType::TICKET_SPONSOR_LOGO),
         );
     }
@@ -103,13 +105,18 @@ class TicketContentService
 
     private function eventImage(?int $eventId, ImageType $type): ?string
     {
-        if ($eventId === null) {
+        return $this->image($eventId, EventDomainObject::class, $type);
+    }
+
+    private function image(?int $entityId, string $entityType, ImageType $type): ?string
+    {
+        if ($entityId === null) {
             return null;
         }
 
         $image = $this->imageRepository->findFirstWhere([
-            ImageDomainObjectAbstract::ENTITY_ID => $eventId,
-            ImageDomainObjectAbstract::ENTITY_TYPE => EventDomainObject::class,
+            ImageDomainObjectAbstract::ENTITY_ID => $entityId,
+            ImageDomainObjectAbstract::ENTITY_TYPE => $entityType,
             ImageDomainObjectAbstract::TYPE => $type->name,
         ]);
         if ($image === null) {

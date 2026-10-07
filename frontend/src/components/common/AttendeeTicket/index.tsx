@@ -48,7 +48,8 @@ export const AttendeeTicket = ({
     const ticketDesignSettings = event?.settings?.ticket_design_settings;
     const footerText = ticketDesignSettings?.footer_text;
     const showDate = (ticketDesignSettings?.date_display_mode || 'START_DATE_TIME') !== 'HIDDEN';
-    const logoUrl = event?.images?.find((image) => image.type === 'TICKET_LOGO')?.url;
+    const logoUrl = event?.images?.find((image) => image.type === 'TICKET_LOGO')?.url
+        || event?.organizer?.images?.find((image) => image.type === 'ORGANIZER_LOGO')?.url;
     const sponsorLogoUrl = event?.images?.find((image) => image.type === 'TICKET_SPONSOR_LOGO')?.url;
     const sponsorName = event?.settings?.ticket_sponsor_name;
     const timezone = event?.timezone || 'UTC';

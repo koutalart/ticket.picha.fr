@@ -7,11 +7,13 @@ namespace Tests\Unit\Ticket;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
+use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Services\Domain\Ticket\TicketContentService;
 use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Support\Facades\Storage;
 use Mockery;
 use Tests\TestCase;
 
@@ -59,6 +61,60 @@ class TicketContentServiceTest extends TestCase
         self::assertSame('', $content->event_when);
         self::assertSame('', $content->product_title);
         self::assertSame('', $content->sponsor_name);
+    }
+
+    public function test_header_logo_falls_back_to_organizer_logo(): void
+    {
+        $content = $this->serviceWithImages(['ORGANIZER_LOGO' => 'organizer-logo'])->build(
+            attendee: (new AttendeeDomainObject)->setPublicId('A-X'),
+            event: (new EventDomainObject)->setId(7)->setTitle('JPO'),
+            eventSettings: null,
+            organizer: (new OrganizerDomainObject)->setId(3)->setName('Mayotte la 1ère'),
+            product: null,
+        );
+
+        self::assertSame('organizer-logo', $content->event_logo_image);
+    }
+
+    public function test_event_ticket_logo_wins_over_organizer_logo(): void
+    {
+        $content = $this->serviceWithImages([
+            'TICKET_LOGO' => 'ticket-logo',
+            'ORGANIZER_LOGO' => 'organizer-logo',
+        ])->build(
+            attendee: (new AttendeeDomainObject)->setPublicId('A-X'),
+            event: (new EventDomainObject)->setId(7)->setTitle('JPO'),
+            eventSettings: null,
+            organizer: (new OrganizerDomainObject)->setId(3)->setName('Mayotte la 1ère'),
+            product: null,
+        );
+
+        self::assertSame('ticket-logo', $content->event_logo_image);
+    }
+
+    /**
+     * @param  array<string, string>  $contentsByType
+     */
+    private function serviceWithImages(array $contentsByType): TicketContentService
+    {
+        Storage::fake('ticket-images');
+        $images = Mockery::mock(ImageRepositoryInterface::class);
+        $images->shouldReceive('findFirstWhere')->andReturnUsing(
+            function (array $where) use ($contentsByType): ?ImageDomainObject {
+                $type = $where['type'];
+                $expectedEntity = $type === 'ORGANIZER_LOGO'
+                    ? [3, OrganizerDomainObject::class]
+                    : [7, EventDomainObject::class];
+                if (! isset($contentsByType[$type]) || [$where['entity_id'], $where['entity_type']] !== $expectedEntity) {
+                    return null;
+                }
+                Storage::disk('ticket-images')->put($type, $contentsByType[$type]);
+
+                return (new ImageDomainObject)->setDisk('ticket-images')->setPath($type);
+            }
+        );
+
+        return new TicketContentService($images, app(FilesystemManager::class));
     }
 
     private function service(): TicketContentService
