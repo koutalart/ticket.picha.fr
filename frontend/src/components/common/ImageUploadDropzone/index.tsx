@@ -9,7 +9,7 @@ import {t} from "@lingui/macro";
 import {IdParam, ImageType} from "../../../types.ts";
 import classes from "./ImageUploadDropzone.module.scss";
 
-const MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_UPLOAD_SIZE = 8 * 1024 * 1024; // 8MB, same as the server
 
 interface ImageUploadDropzoneProps {
     disabled?: boolean;
@@ -53,7 +53,7 @@ export const ImageUploadDropzone = ({
         const errorMessages = fileRejections.flatMap((rejection) =>
             rejection.errors.map((error) => {
                 if (error.code === 'file-too-large') {
-                    return t`File is too large. Maximum size is 5MB.`;
+                    return t`File is too large. Maximum size is 8MB.`;
                 }
                 if (error.code === 'file-invalid-type') {
                     return t`Invalid file type. Please upload an image.`;
@@ -202,7 +202,7 @@ export const ImageUploadDropzone = ({
                     </Text>
                 )}
                 <Text ta="center" c="dimmed" size="xs" mt="xs">
-                    Images only · Max 5MB
+                    {t`Images only · JPG, PNG, WebP, HEIC · Max 8MB`}
                 </Text>
             </div>
         );
