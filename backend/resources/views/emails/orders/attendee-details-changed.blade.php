@@ -9,12 +9,12 @@
 
 {{ __('The details on your ticket for **:eventName** have been updated.', ['eventName' => $event->getTitle()]) }}
 
-**{{ __('Ticket') }}**: {{ $ticketTitle }}
+{{ __(':label:', ['label' => '**'.__('Ticket').'**']) }} {{ $ticketTitle }}
 
 ## {{ __('What Changed') }}
 
 @foreach($changedFields as $field => $change)
-- **{{ $field }}**: {{ $change['old'] }} → {{ $change['new'] }}
+- {{ __(':label:', ['label' => '**'.$field.'**']) }} {{ $change['old'] }} → {{ $change['new'] }}
 @endforeach
 
 {{ __('If you did not make this change, please contact the event organizer immediately.') }}

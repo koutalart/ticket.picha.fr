@@ -6,6 +6,7 @@ namespace HiEvents\Services\Application\Handlers\Ticket;
 
 use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
 use HiEvents\Exceptions\ResourceNotFoundException;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Services\Domain\Ticket\TicketDataFactory;
 use HiEvents\Services\Domain\Ticket\TicketImageService;
@@ -33,9 +34,7 @@ class GetAttendeeTicketImageHandler
         }
 
         $previousLocale = app()->getLocale();
-        if ($attendee->getLocale()) {
-            app()->setLocale($attendee->getLocale());
-        }
+        app()->setLocale(CustomerLocale::get());
 
         try {
             return $this->ticketImageService->png($this->ticketDataFactory->forAttendee($attendee));
@@ -46,6 +45,13 @@ class GetAttendeeTicketImageHandler
 
     public function preview(int $eventId): string
     {
-        return $this->ticketImageService->png($this->ticketDataFactory->forPreview($eventId));
+        $previousLocale = app()->getLocale();
+        app()->setLocale(CustomerLocale::get());
+
+        try {
+            return $this->ticketImageService->png($this->ticketDataFactory->forPreview($eventId));
+        } finally {
+            app()->setLocale($previousLocale);
+        }
     }
 }

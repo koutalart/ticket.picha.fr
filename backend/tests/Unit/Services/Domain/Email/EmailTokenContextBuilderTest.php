@@ -46,7 +46,7 @@ class EmailTokenContextBuilderTest extends TestCase
 
         // Test order context
         $this->assertEquals('ORD-123456', $context['order']['number']);
-        $this->assertEquals('$9,999.00', $context['order']['total']); // Updated expected format
+        $this->assertEquals('9 999,00 $US', $this->normalizeSpaces($context['order']['total']));
         $this->assertEquals('John', $context['order']['first_name']);
         $this->assertEquals('Doe', $context['order']['last_name']);
         $this->assertEquals('john@example.com', $context['order']['email']);
@@ -92,7 +92,7 @@ class EmailTokenContextBuilderTest extends TestCase
 
         // Test ticket context
         $this->assertEquals('General Admission', $context['ticket']['name']);
-        $this->assertEquals('$4,999.00', $context['ticket']['price']); // Updated expected format
+        $this->assertEquals('4 999,00 $US', $this->normalizeSpaces($context['ticket']['price']));
 
         // Test event context
         $this->assertEquals('Amazing Event', $context['event']['title']);
@@ -221,5 +221,10 @@ class EmailTokenContextBuilderTest extends TestCase
             'getProductPriceId' => 123,
             'getShortId' => 'ATT123',
         ]);
+    }
+
+    private function normalizeSpaces(string $value): string
+    {
+        return str_replace(["\u{a0}", "\u{202f}"], ' ', $value);
     }
 }

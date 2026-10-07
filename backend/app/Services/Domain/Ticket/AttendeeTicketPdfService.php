@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Helper\CustomerLocale;
 
 /**
  * The PDF is the same picture as the Zebra label and the on-screen ticket, on an 80 × 80 mm page,
@@ -30,9 +31,7 @@ class AttendeeTicketPdfService
         OrganizerDomainObject $organizer,
     ): string {
         $previousLocale = app()->getLocale();
-        if ($attendee->getLocale()) {
-            app()->setLocale($attendee->getLocale());
-        }
+        app()->setLocale(CustomerLocale::get());
 
         try {
             $ticket = $this->ticketDataFactory->forAttendee($attendee);

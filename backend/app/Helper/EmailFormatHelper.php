@@ -20,9 +20,7 @@ class EmailFormatHelper
             return '';
         }
 
-        return self::isFrench()
-            ? $start->isoFormat('dddd D MMMM YYYY')
-            : $start->isoFormat('dddd, MMMM D, YYYY');
+        return self::date($start);
     }
 
     public static function eventTime(EventDomainObject $event): string
@@ -32,7 +30,7 @@ class EmailFormatHelper
             return '';
         }
 
-        return self::isFrench() ? $start->format('H\\hi') : $start->format('g:i A');
+        return self::time($start);
     }
 
     public static function eventDateTime(EventDomainObject $event): string
@@ -42,6 +40,23 @@ class EmailFormatHelper
         }
 
         return __(':date at :time', ['date' => self::eventDate($event), 'time' => self::eventTime($event)]);
+    }
+
+    public static function dateTime(string $utcDateTime, ?string $timezone): string
+    {
+        $date = self::local($utcDateTime, $timezone);
+
+        return __(':date at :time', ['date' => self::date($date), 'time' => self::time($date)]);
+    }
+
+    public static function localDate(string $utcDateTime, ?string $timezone): string
+    {
+        return self::date(self::local($utcDateTime, $timezone));
+    }
+
+    public static function localTime(string $utcDateTime, ?string $timezone): string
+    {
+        return self::time(self::local($utcDateTime, $timezone));
     }
 
     public static function money(float|int $amount, string $currencyCode): string
@@ -55,9 +70,26 @@ class EmailFormatHelper
             return null;
         }
 
-        return Carbon::parse($event->getStartDate(), 'UTC')
-            ->setTimezone($event->getTimezone() ?: 'UTC')
+        return self::local($event->getStartDate(), $event->getTimezone());
+    }
+
+    private static function local(string $utcDateTime, ?string $timezone): Carbon
+    {
+        return Carbon::parse($utcDateTime, 'UTC')
+            ->setTimezone($timezone ?: 'UTC')
             ->locale(app()->getLocale());
+    }
+
+    private static function date(Carbon $date): string
+    {
+        return self::isFrench()
+            ? $date->isoFormat('dddd D MMMM YYYY')
+            : $date->isoFormat('dddd, MMMM D, YYYY');
+    }
+
+    private static function time(Carbon $date): string
+    {
+        return self::isFrench() ? $date->format('H\\hi') : $date->format('g:i A');
     }
 
     private static function isFrench(): bool

@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\InvoiceDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\ResponseCodes;
@@ -70,7 +71,7 @@ class ResendOrderConfirmationAction extends BaseAction
 
             $this->mailer
                 ->to($order->getEmail())
-                ->locale($order->getLocale())
+                ->locale(CustomerLocale::get())
                 ->send($mail);
         }
 

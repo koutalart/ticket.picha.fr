@@ -7,6 +7,7 @@ use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Services\Domain\Email\MailBuilderService;
 use Illuminate\Contracts\Mail\Mailer;
@@ -39,7 +40,7 @@ class SendAttendeeTicketService
 
         $this->mailer
             ->to($attendee->getEmail())
-            ->locale($attendee->getLocale())
+            ->locale(CustomerLocale::get())
             ->send($mail);
     }
 }

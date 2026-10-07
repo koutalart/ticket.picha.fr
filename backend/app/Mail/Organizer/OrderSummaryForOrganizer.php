@@ -4,7 +4,7 @@ namespace HiEvents\Mail\Organizer;
 
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
-use HiEvents\Helper\Currency;
+use HiEvents\Helper\EmailFormatHelper;
 use HiEvents\Helper\Url;
 use HiEvents\Mail\BaseMail;
 use Illuminate\Mail\Mailables\Content;
@@ -32,7 +32,7 @@ class OrderSummaryForOrganizer extends BaseMail
     {
         $subject = $this->order->getTotalGross() > 0
             ? __('New order for :amount for :event 🎉', [
-                    'amount' => Currency::format($this->order->getTotalGross(), $this->event->getCurrency()),
+                    'amount' => EmailFormatHelper::money($this->order->getTotalGross(), $this->event->getCurrency()),
                     'event' => Str::limit($this->event->getTitle(), 75)]
             )
             : __('New order for :event 🎉', ['event' => Str::limit($this->event->getTitle(), 75)]);

@@ -14,6 +14,7 @@ use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\Status\OrderRefundStatus;
 use HiEvents\DomainObjects\StripePaymentDomainObject;
 use HiEvents\Exceptions\RefundNotPossibleException;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Mail\Order\OrderRefunded;
 use HiEvents\Repository\Eloquent\Value\Relationship;
@@ -93,7 +94,7 @@ class RefundOrderHandler
 
         $this->mailer
             ->to($order->getEmail())
-            ->locale($order->getLocale())
+            ->locale(CustomerLocale::get())
             ->send(new OrderRefunded(
                 order: $order,
                 event: $event,

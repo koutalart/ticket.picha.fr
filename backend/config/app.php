@@ -165,6 +165,9 @@ return [
 
     'fallback_locale' => 'en',
 
+    // Language of every e-mail and PDF ticket sent to buyers and attendees, whatever their browser language.
+    'customer_locale' => env('APP_CUSTOMER_LOCALE', 'fr'),
+
     /*
     |--------------------------------------------------------------------------
     | Faker Locale
