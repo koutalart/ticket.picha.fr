@@ -2,6 +2,7 @@
 
 namespace HiEvents\Http\Actions\Events;
 
+use HiEvents\DomainObjects\Enums\Role;
 use HiEvents\Exceptions\OrganizerNotFoundException;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\Request\Event\CreateEventRequest;
@@ -16,15 +17,15 @@ class CreateEventAction extends BaseAction
 {
     public function __construct(
         private readonly CreateEventHandler $createEventHandler
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws ValidationException|Throwable
      */
     public function __invoke(CreateEventRequest $request): JsonResponse
     {
+        $this->minimumAllowedRole(Role::ORGANIZER);
+
         $authorisedUser = $this->getAuthenticatedUser();
 
         $eventData = array_merge(
