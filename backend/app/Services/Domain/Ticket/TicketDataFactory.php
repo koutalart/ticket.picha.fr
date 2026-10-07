@@ -111,8 +111,18 @@ class TicketDataFactory
             organizerLogo: $this->readImage($event->getImages(), ImageType::TICKET_LOGO)
                 ?? $this->readImage($organizer?->getImages(), ImageType::ORGANIZER_LOGO),
             sponsorLogo: $this->readImage($event->getImages(), ImageType::TICKET_SPONSOR_LOGO),
+            sponsorName: $this->sponsorName($settings?->getTicketDesignSettings()),
             status: $status,
         );
+    }
+
+    private function sponsorName(mixed $designSettings): string
+    {
+        if (is_string($designSettings)) {
+            $designSettings = json_decode($designSettings, true);
+        }
+
+        return is_array($designSettings) ? trim((string) ($designSettings['sponsor_name'] ?? '')) : '';
     }
 
     private function dateDisplayMode(mixed $designSettings): string

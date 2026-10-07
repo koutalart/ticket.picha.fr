@@ -8,7 +8,7 @@ import {IdParam} from "../../../../types.ts";
 import {showSuccess} from "../../../../utilites/notifications.tsx";
 import {t} from "@lingui/macro";
 import {useForm} from "@mantine/form";
-import {Button, Accordion, Stack, Text, Group, Select} from "@mantine/core";
+import {Button, Accordion, Stack, Text, Group, Select, TextInput} from "@mantine/core";
 import {IconColorSwatch, IconHelp, IconPrinter} from "@tabler/icons-react";
 import {Tooltip} from "../../../common/Tooltip";
 import {ImageUploadDropzone} from "../../../common/ImageUploadDropzone";
@@ -23,6 +23,7 @@ interface TicketDesignSettings {
     footer_text: string | null;
     date_display_mode: 'START_DATE_TIME' | 'DATE_RANGE' | 'HIDDEN';
     enabled: boolean;
+    sponsor_name: string;
 }
 
 const TicketDesigner = () => {
@@ -42,6 +43,7 @@ const TicketDesigner = () => {
             logo_image_id: undefined,
             footer_text: '',
             date_display_mode: 'START_DATE_TIME',
+            sponsor_name: '',
             enabled: true,
         }
     });
@@ -57,6 +59,7 @@ const TicketDesigner = () => {
                 footer_text: settings.footer_text || '',
                 date_display_mode: settings.date_display_mode || 'START_DATE_TIME',
                 enabled: settings.enabled !== false,
+                sponsor_name: settings.sponsor_name || '',
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -78,7 +81,8 @@ const TicketDesigner = () => {
                         logo_image_id: values.logo_image_id,
                         footer_text: values.footer_text || undefined,
                         date_display_mode: values.date_display_mode,
-                        enabled: values.enabled
+                        enabled: values.enabled,
+                        sponsor_name: values.sponsor_name.trim() || undefined,
                     }
                 },
                 eventId: eventId
@@ -172,6 +176,13 @@ const TicketDesigner = () => {
                                                     displayMode="compact"
                                                 />
                                             </div>
+
+                                            <TextInput
+                                                label={t`Sponsor name`}
+                                                description={t`Printed under the sponsor logo, or in its place if there is no logo`}
+                                                maxLength={60}
+                                                {...form.getInputProps('sponsor_name')}
+                                            />
 
 
                                             <div>

@@ -25,6 +25,7 @@ class TicketDataDTO extends BaseDataObject
         public readonly string $sellerName = '',
         public readonly ?string $organizerLogo = null,
         public readonly ?string $sponsorLogo = null,
+        public readonly string $sponsorName = '',
         public readonly string $status = self::STATUS_VALID,
     ) {}
 }

@@ -63,8 +63,9 @@ class TicketLayoutBuilder
     private function header(TicketDataDTO $ticket): array
     {
         $sponsor = $this->convertImage($ticket->sponsorLogo, 157, 67);
+        $sponsorName = $this->field($ticket->sponsorName, 40);
 
-        if ($sponsor === null) {
+        if ($sponsor === null && $sponsorName === '') {
             $logo = $this->convertImage($ticket->organizerLogo, 220, 100);
             if ($logo !== null) {
                 return [new TicketGraphicElement(intdiv(self::SIZE - $logo->width, 2), 30 + intdiv(100 - $logo->height, 2), $logo)];
@@ -81,7 +82,14 @@ class TicketLayoutBuilder
 
         $elements[] = new TicketBoxElement(318, 63, 3, 62, 3);
         $elements[] = new TicketTextElement(400, 44, 15, 13, $this->field(__('Sponsor'), 16), 122, 'R');
-        $elements[] = new TicketGraphicElement(366 + intdiv(157 - $sponsor->width, 2), 62, $sponsor);
+        if ($sponsor !== null) {
+            $elements[] = new TicketGraphicElement(366 + intdiv(157 - $sponsor->width, 2), 62, $sponsor);
+            if ($sponsorName !== '') {
+                $elements[] = new TicketTextElement(346, 132, 15, 13, $this->field($sponsorName, 26), 197, 'C');
+            }
+        } else {
+            $elements[] = new TicketTextElement(346, mb_strlen($sponsorName) > 14 ? 68 : 80, 26, 22, $this->field($sponsorName, 28), 197, 'C', 2);
+        }
 
         return $elements;
     }
