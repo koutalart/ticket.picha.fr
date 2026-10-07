@@ -124,9 +124,9 @@ Dans App Store Connect, remplir la fiche de l'app :
 
 ## Côté serveur
 
-- CORS : l'app appelle l'API depuis l'origine `capacitor://localhost`.
-  Si `CORS_ALLOWED_ORIGINS` est restreint en production, il faut l'y
-  ajouter (voir `docker/production/backend.env.production.example`).
+- CORS : l'app appelle l'API depuis l'origine `capacitor://localhost`, que
+  le backend autorise toujours (`config/cors.php`), quelle que soit la
+  valeur de `CORS_ALLOWED_ORIGINS`.
 - L'app s'authentifie en `Authorization: Bearer` (JWT valable 7 jours,
   `JWT_TTL`). À l'expiration, l'opérateur est renvoyé sur l'écran de
   connexion du Kiosk.

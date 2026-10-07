@@ -20,12 +20,15 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => (static function (): array {
-        $parse = static fn(?string $value): array => array_values(array_filter(
-            array_map(static fn(string $origin) => rtrim(trim($origin), '/'), explode(',', (string)$value)),
-            static fn(string $origin) => $origin !== '' && $origin !== '*'
+        $parse = static fn (?string $value): array => array_values(array_filter(
+            array_map(static fn (string $origin) => rtrim(trim($origin), '/'), explode(',', (string) $value)),
+            static fn (string $origin) => $origin !== '' && $origin !== '*'
         ));
 
-        return $parse(env('CORS_ALLOWED_ORIGINS')) ?: $parse(env('APP_FRONTEND_URL'));
+        $origins = $parse(env('CORS_ALLOWED_ORIGINS')) ?: $parse(env('APP_FRONTEND_URL'));
+
+        // PICHA Kiosk iPad app (D19d): its embedded web view runs on this origin.
+        return array_values(array_unique([...$origins, 'capacitor://localhost']));
     })(),
 
     'allowed_origins_patterns' => [],
@@ -38,4 +41,3 @@ return [
 
     'supports_credentials' => true,
 ];
-
