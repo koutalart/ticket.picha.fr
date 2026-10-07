@@ -547,7 +547,8 @@ $router->prefix('/public')->group(
         // Organizers
         $router->get('/organizers/{organizer_id}', GetPublicOrganizerAction::class);
         $router->get('/organizers/{organizer_id}/events', GetOrganizerEventsPublicAction::class);
-        $router->post('/organizers/{organizer_id}/contact', SendOrganizerContactMessagePublicAction::class);
+        $router->post('/organizers/{organizer_id}/contact', SendOrganizerContactMessagePublicAction::class)
+            ->middleware('throttle:5,1');
         $router->get('/custom-domains/{domain}', GetOrganizerByCustomDomainPublicAction::class);
 
         // Demo requests
@@ -600,7 +601,8 @@ $router->prefix('/public')->group(
         $router->get('/color-themes', GetColorThemesAction::class);
 
         // Ticket Lookup
-        $router->post('/ticket-lookup', SendTicketLookupEmailAction::class);
+        $router->post('/ticket-lookup', SendTicketLookupEmailAction::class)
+            ->middleware('throttle:5,1');
         $router->get('/ticket-lookup/{token}', GetOrdersByLookupTokenAction::class);
 
         // Self-service order and attendee edits
