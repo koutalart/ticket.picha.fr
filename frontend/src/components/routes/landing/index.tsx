@@ -15,6 +15,7 @@ import {
     IconHeadset,
     IconLock,
     IconMailForward,
+    IconMicrophone2,
     IconScan,
     IconServer,
     IconShieldCheck,
@@ -212,6 +213,11 @@ const Landing = () => {
             title: t`Associations and professional networks`,
             description: t`Festivals, workshops, award ceremonies.`,
         },
+        {
+            icon: IconMicrophone2,
+            title: t`Promoters and cultural venues`,
+            description: t`Concerts, parties, sports and cultural events: online ticketing, physical presales and on-site sales on the day.`,
+        },
     ];
 
     const offers = [
@@ -407,9 +413,9 @@ const Landing = () => {
                     <div className={classes.container}>
                         <p className={classes.eyebrow}>{t`Use cases`}</p>
                         <h2 id="use-cases-title" className={classes.sectionTitle}>
-                            {t`A welcome solution for companies, institutions and networks`}
+                            {t`One platform for every type of event`}
                         </h2>
-                        <div className={classes.cards}>
+                        <div className={`${classes.cards} ${classes.useCaseCards}`}>
                             {useCases.map((useCase) => (
                                 <article key={useCase.title} className={classes.card}>
                                     <useCase.icon size={28} stroke={1.6} className={classes.icon} aria-hidden="true"/>
