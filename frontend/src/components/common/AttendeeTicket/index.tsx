@@ -106,15 +106,17 @@ export const AttendeeTicket = ({
                 )}
             </div>
 
-            <div className={classes.eventLabel}>{spaced(t`Event`.toUpperCase())}</div>
-            <h1 className={classes.eventTitle}>{event?.title}</h1>
-            <div className={classes.titleBar}/>
+            <div className={classes.titleBand}>
+                <div className={classes.eventLabel}>{spaced(t`Event`.toUpperCase())}</div>
+                <h1 className={classes.eventTitle}>{event?.title}</h1>
+                <div className={classes.titleBar}/>
+            </div>
 
             <div className={classes.body}>
                 <div className={classes.rows}>
                     {rows.map(({icon: Icon, label, value}) => (
                         <div className={classes.row} key={label}>
-                            <Icon className={classes.rowIcon} size={26} stroke={1.8}/>
+                            <span className={classes.rowIconDot}><Icon size={22} stroke={1.8}/></span>
                             <div>
                                 <div className={classes.rowLabel}>{spaced(label.toUpperCase())}</div>
                                 <div className={classes.rowValue}>{value}</div>
