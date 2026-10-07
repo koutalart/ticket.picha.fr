@@ -2,21 +2,135 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>{{ $ticket->eventTitle }} — {{ $ticket->publicId }}</title>
 <style>
-    @page { margin: 0; }
-    html, body { margin: 0; padding: 0; font-family: DejaVu Sans, sans-serif; }
-    .text-layer { position: absolute; top: 0; left: 0; width: 80mm; font-size: 4pt; color: #ffffff; line-height: 1.2; }
-    .ticket { position: absolute; top: 0; left: 0; width: 80mm; height: 80mm; }
+    @font-face { font-family: 'Roboto Condensed'; font-weight: normal; src: url('{{ $fonts['regular'] }}') format('truetype'); }
+    @font-face { font-family: 'Roboto Condensed'; font-weight: bold; src: url('{{ $fonts['bold'] }}') format('truetype'); }
+    @page { margin: 16mm 0 12mm 0; }
+    body { font-family: 'Roboto Condensed', 'DejaVu Sans', sans-serif; color: #1E1433; margin: 0; }
+    table { border-collapse: collapse; width: 100%; }
+    td { padding: 0; vertical-align: middle; }
+    .ticket { width: 140mm; margin: 0 auto; border: 0.35mm solid #DDD6EA; border-radius: 4mm; background-color: #FFFFFF; }
+    .header { padding: 6mm 8mm 5mm 8mm; }
+    .header td { height: 20mm; }
+    .event-logo { max-width: 60mm; max-height: 19mm; }
+    .organizer { font-size: 17pt; font-weight: bold; color: #422A6A; line-height: 1.1; }
+    .divider { width: 0.4mm; background-color: #422A6A; }
+    .sponsor { text-align: right; }
+    .sponsor-label { font-size: 8pt; color: #6E6585; margin-bottom: 1.5mm; }
+    .sponsor-logo { max-width: 44mm; max-height: 14mm; }
+    .sponsor-name { font-size: 14pt; font-weight: bold; color: #1E1433; }
+    .title-band { background-color: #422A6A; padding: 5.5mm 8mm 6mm 8mm; }
+    .event-label { white-space: pre; font-size: 7.5pt; font-weight: bold; color: #FDB900; }
+    .event-title { font-size: 25pt; font-weight: bold; color: #FFFFFF; line-height: 1.05; margin-top: 1.2mm; }
+    .event-title.long { font-size: 18pt; }
+    .title-bar { width: 18mm; height: 1.6mm; background-color: #FDB900; border-radius: 0.8mm; margin-top: 3mm; }
+    .body { background-color: #F4F0FA; padding: 6mm 8mm 6mm 8mm; }
+    .rows { width: 74mm; }
+    .row td { padding: 2.4mm 0; border-bottom: 0.3mm dotted #CFC5E2; }
+    .row.last td { border-bottom: none; }
+    .row .icon { width: 12mm; }
+    .icon-dot { width: 8.4mm; height: 8.4mm; border-radius: 4.2mm; background-color: #FDB900; text-align: center; }
+    .icon-dot img { width: 5.2mm; height: 5.2mm; margin-top: 1.6mm; }
+    .row-label { white-space: pre; font-size: 7pt; font-weight: bold; color: #6E6585; }
+    .row-value { font-size: 14pt; font-weight: bold; color: #1E1433; line-height: 1.15; }
+    .qr { text-align: center; vertical-align: top; }
+    .qr-card { background-color: #FFFFFF; border: 0.6mm solid #FDB900; border-radius: 3mm; padding: 3mm 3mm 2.5mm 3mm; margin-left: 6mm; }
+    .qr-card img { width: 38mm; height: 38mm; }
+    .ticket-id { white-space: pre; font-size: 10.5pt; font-weight: bold; color: #422A6A; margin-top: 1mm; }
+    .attendee-name { font-size: 10pt; color: #1E1433; margin-top: 0.8mm; }
+    .footer-wrap { padding: 0 8mm 5mm 8mm; }
+    .footer { border-top: 0.45mm dashed #422A6A; }
+    .footer td { padding-top: 5mm; }
+    .picha-logo { width: 33mm; }
+    .picha-product { font-size: 8.5pt; font-weight: bold; color: #422A6A; margin: 0.3mm 0 0 7mm; }
+    .footer .divider { height: 13mm; }
+    .footer-right { padding-left: 6mm; }
+    .footer-label { font-size: 7pt; color: #6E6585; }
+    .site { font-size: 13pt; font-weight: bold; color: #422A6A; }
+    .site img { width: 4.7mm; height: 4.7mm; vertical-align: middle; margin-right: 1.5mm; }
+    .organizer-footer { width: 140mm; margin: 3mm auto 0 auto; font-size: 8pt; color: #6E6585; text-align: center; }
 </style>
 </head>
 <body>
-<div class="text-layer">
-    {{ $ticket->eventTitle }} · {{ $ticket->productTitle }} · {{ $ticket->attendeeName }}
-    · {{ __('Date & Time') }} : {{ $ticket->eventDate }} {{ $ticket->eventTime }}
-    · {{ __('Location') }} : {{ $ticket->venue }}
-    · {{ __('Ticket ID') }} : {{ $ticket->publicId }}
+<div class="ticket">
+    <div class="header">
+        <table>
+            <tr>
+                <td style="width: 60%;">
+                    @if($eventLogo)
+                        <img src="{{ $eventLogo }}" class="event-logo" />
+                    @elseif($content->organizer_name !== '')
+                        <div class="organizer">{{ $content->organizer_name }}</div>
+                    @endif
+                </td>
+                @if($sponsorLogo || $content->sponsor_name !== '')
+                    <td style="width: 4%;"><div class="divider" style="height: 18mm;"></div></td>
+                    <td class="sponsor">
+                        <div class="sponsor-label">{{ __('Sponsor') }}</div>
+                        @if($sponsorLogo)
+                            <img src="{{ $sponsorLogo }}" class="sponsor-logo" />
+                        @else
+                            <div class="sponsor-name">{{ $content->sponsor_name }}</div>
+                        @endif
+                    </td>
+                @endif
+            </tr>
+        </table>
+    </div>
+
+    <div class="title-band">
+        <div class="event-label">{{ $spaced(mb_strtoupper(__('Event'))) }}</div>
+        <div class="event-title{{ mb_strlen($content->event_title) > 26 ? ' long' : '' }}">{{ $content->event_title }}</div>
+        <div class="title-bar"></div>
+    </div>
+
+    <div class="body">
+        <table>
+            <tr>
+                <td class="rows" style="vertical-align: top;">
+                    <table>
+                        @foreach($rows as $index => $row)
+                            <tr class="row{{ $loop->last ? ' last' : '' }}">
+                                <td class="icon"><div class="icon-dot"><img src="{{ $icons[$row['icon']] }}" /></div></td>
+                                <td>
+                                    <div class="row-label">{{ $spaced(mb_strtoupper($row['label'])) }}</div>
+                                    <div class="row-value">{{ $row['value'] }}</div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </table>
+                </td>
+                <td class="qr">
+                    <div class="qr-card">
+                        <img src="data:image/png;base64,{{ $qrCodeBase64 }}" />
+                        <div class="ticket-id">{{ $spaced($displayId) }}</div>
+                        @if($content->attendee_name !== '')
+                            <div class="attendee-name">{{ $content->attendee_name }}</div>
+                        @endif
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer-wrap">
+        <table class="footer">
+            <tr>
+                <td style="width: 44%;">
+                    <img src="{{ $pichaLogo }}" class="picha-logo" />
+                    <div class="picha-product">Ticket</div>
+                </td>
+                <td style="width: 2%;"><div class="divider"></div></td>
+                <td class="footer-right">
+                    <div class="footer-label">{{ __('Event ticketing & management') }}</div>
+                    <div class="site"><img src="{{ $icons['globe'] }}" />ticket.picha.fr</div>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
-<img class="ticket" src="data:image/png;base64,{{ $ticketImageBase64 }}" alt="{{ $ticket->eventTitle }} — {{ $ticket->publicId }}">
+@if($footerText)
+    <div class="organizer-footer">{{ $footerText }}</div>
+@endif
 </body>
 </html>

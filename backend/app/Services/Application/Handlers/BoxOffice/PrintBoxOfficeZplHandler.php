@@ -4,17 +4,12 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Application\Handlers\BoxOffice;
 
-use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
-use HiEvents\DomainObjects\Generated\PrintJobDomainObjectAbstract;
 use HiEvents\Exceptions\InvalidZebraPrinterHostException;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Exceptions\ZebraPrinterUnreachableException;
-use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\BoxOfficePrinterPreferenceRepositoryInterface;
-use HiEvents\Repository\Interfaces\PrintJobRepositoryInterface;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\PrintBoxOfficeZplDTO;
-use HiEvents\Services\Domain\Ticket\AttendeeTicketZplService;
-use HiEvents\Services\Domain\Ticket\TicketDataFactory;
+use HiEvents\Services\Domain\BoxOffice\BoxOfficeTicketZplService;
 use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
 
 class PrintBoxOfficeZplHandler
@@ -22,11 +17,8 @@ class PrintBoxOfficeZplHandler
     private const PRINTER_PORT = 9100;
 
     public function __construct(
-        private readonly AttendeeRepositoryInterface $attendeeRepository,
-        private readonly PrintJobRepositoryInterface $printJobRepository,
         private readonly BoxOfficePrinterPreferenceRepositoryInterface $printerPreferenceRepository,
-        private readonly AttendeeTicketZplService $attendeeTicketZplService,
-        private readonly TicketDataFactory $ticketDataFactory,
+        private readonly BoxOfficeTicketZplService $boxOfficeTicketZplService,
         private readonly ZebraPrinterClientInterface $zebraPrinterClient,
     ) {}
 
@@ -39,30 +31,11 @@ class PrintBoxOfficeZplHandler
     {
         $this->assertPrivateLanHost($dto->printer_host);
 
-        $attendee = $this->attendeeRepository->findFirstWhere([
-            AttendeeDomainObjectAbstract::PUBLIC_ID => $dto->attendee_public_id,
-            AttendeeDomainObjectAbstract::EVENT_ID => $dto->event_id,
-        ]);
+        $ticket = $this->boxOfficeTicketZplService->build($dto->event_id, $dto->attendee_public_id, $dto->label_format);
 
-        if ($attendee === null) {
-            throw new ResourceNotFoundException(__('Attendee not found.'));
-        }
+        $this->zebraPrinterClient->send($dto->printer_host, self::PRINTER_PORT, $ticket->zpl);
 
-        $previousLocale = app()->getLocale();
-        app()->setLocale('fr');
-        try {
-            $zpl = $this->attendeeTicketZplService->generate($this->ticketDataFactory->forAttendee($attendee));
-        } finally {
-            app()->setLocale($previousLocale);
-        }
-
-        $this->zebraPrinterClient->send($dto->printer_host, self::PRINTER_PORT, $zpl);
-
-        $this->printJobRepository->create([
-            PrintJobDomainObjectAbstract::ATTENDEE_ID => $attendee->getId(),
-            PrintJobDomainObjectAbstract::AGENT_USER_ID => $dto->agent_user_id,
-            PrintJobDomainObjectAbstract::PRINTED_AT => now()->toDateTimeString(),
-        ]);
+        $this->boxOfficeTicketZplService->recordPrintJob($ticket->attendee_id, $dto->agent_user_id);
 
         $this->printerPreferenceRepository->rememberHost($dto->agent_user_id, $dto->event_id, $dto->printer_host);
     }

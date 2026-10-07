@@ -560,6 +560,179 @@ suffisent. Si oui → B.
 réseau/IP (USB fallback), impression PDF + `window.print()`, abstraction `TicketRenderer` sans ZPL.
 Les captures rouvrent deux sujets **connexes mais distincts**, **à ne pas re-trancher ici** :
 
+### D19c — Mécanisme d'impression du Kiosk : ZPL / Zebra — **TRANCHÉE (Jo, 27 sept. 2026)**
+
+**Décision : le ZPL envoyé directement à la Zebra ZD621 est le mécanisme d'impression principal du
+Kiosk pour cette itération.** Il remplace « PDF + `window.print()` (dialogue navigateur) » retenu au
+slice 1. Le ZPL n'est plus reporté.
+
+- Chemin retenu : `POST /events/{event_id}/attendees/{attendee_public_id}/print-zpl` → `PrintBoxOfficeZplHandler` →
+  `AttendeeTicketZplService` (génération) → `ZebraNetworkPrinter` (socket TCP brut, IP privée du
+  poste, port 9100). Aucun dialogue d'impression côté navigateur.
+- L'IP de l'imprimante est un réglage **par poste** (D29, `localStorage` `picha_kiosk_settings`).
+- Le PDF navigateur reste disponible en **repli** (panne réseau imprimante, poste sans Zebra), il
+  n'est plus le mécanisme principal.
+- L'abstraction `TicketRenderer` « sans ZPL » du slice 1 est caduque pour le Kiosk.
+
+**Préalable bloquant avant tout correctif de mise en page : le DPI réel des ZD621 de PICHA.** Le
+générateur suppose aujourd'hui 203 dpi (8 pts/mm) sans l'avoir vérifié : `^PW639` / `^LL808` codés
+en dur, soit environ 80 × 101 mm à 203 dpi. Sur une ZD621 **300 dpi** (11,8 pts/mm), le même ZPL
+sortirait à environ 54 × 68 mm. À vérifier par Jo sur l'étiquette de configuration de l'imprimante
+(rapport de configuration imprimé depuis le panneau de l'imprimante, ou `~HS` / `^HH`) ou sur la
+fiche d'achat.
+
+**Points ouverts rattachés (traités en commits séparés, TDD) :**
+
+1. Dimensions d'étiquette en **mm** + DPI réglables par poste (D29), défaut = DPI réel constaté.
+   **Fait** : DPI confirmé par Jo = **203**. Clés `printerDpi` (203/300/600), `labelWidthMm`,
+   `labelLengthMm` dans `picha_kiosk_settings` (défauts 203 / 80 / 101, puis 79 / 87 après mesure du
+   rouleau, cf. point 5), envoyées à `print-zpl`
+   (`printer_dpi`, `label_width_mm`, `label_length_mm`). `^PW`/`^LL` = mm × dpi / 25,4. La mise en
+   page est dessinée à 203 dpi et mise à l'échelle `dpi / 203` (positions, polices, cadres). Limites
+   connues hors 203 dpi : les pictos `^GFA` sont repositionnés mais pas redimensionnés, et le QR est
+   plafonné au grossissement ZPL max (10).
+2. Nom du participant reçu par le générateur mais jamais imprimé. **Fait** : l'omission était
+   volontaire (maquette FINALE du 7 sept.) ; Jo la renverse. Nom imprimé sous l'ID du QR
+   (`^FO345,570`, police 26, `^FB240,2`, centré, 40 caractères max). Quand un nom est imprimé, le
+   lieu est rogné à 14 caractères pour ne pas déborder sous le nom (estimation de largeur police 0,
+   non vérifiée sur un rendu réel).
+3. Sponsor jamais transmis par le handler. **Fait** : aucune source n'existait. Jo retient un
+   réglage **d'événement** : colonne `event_settings.ticket_sponsor_name` (nullable), lue par
+   `PrintBoxOfficeZplHandler` et transmise à `generate(sponsorName:)`. **Reste à faire** : saisie
+   côté organisateur (API `PATCH /events/{id}/settings` + écran). En attendant, la valeur se pose en
+   base.
+4. Erreur claire à l'agent si l'imprimante est injoignable. **Fait** : le backend levait déjà
+   une exception (connexion TCP 3 s → 502), mais le front **ignorait** le message et affichait un
+   texte générique. Message désormais « Imprimante injoignable — vérifiez l'adresse IP (…) »,
+   affiché tel quel à l'agent. L'écriture vérifie aussi que tout le ZPL est parti (envoi partiel =
+   erreur explicite, pas d'enregistrement `print_jobs`).
+5. `^MNN` (média continu) : **aucune justification trouvée**. Introduit par `7dc1f1f`
+   (7 sept.) avec les maquettes `.zpl` générées pour Labelary, sans commentaire ni décision
+   associée. Le choix vient très probablement de l'aperçu Labelary, qui n'a pas de notion de
+   média, et non d'un constat sur l'imprimante.
+
+   **Média réel confirmé par Jo (27 sept.) : étiquettes à marque noire au dos.** `^MNN` est donc
+   **la mauvaise valeur** :
+   - avec `^MNN`, la ZD621 ne cherche pas la marque. Elle avance de `^LL` points par billet et
+     considère que le billet suivant commence là ;
+   - le moindre écart entre `^LL` (aujourd'hui 807 points, soit 101 mm, une valeur **supposée**)
+     et le pas réel des marques **s'additionne à chaque billet**. C'est un décalage **progressif**
+     au fil du rouleau, cohérent avec un désalignement qui empire à l'usage et **indépendant du
+     DPI** (le DPI, lui, donnerait une erreur d'échelle constante dès le premier billet) ;
+   - le glissement mécanique et le rembobinage après décollage ne sont jamais rattrapés, puisque
+     rien ne resynchronise l'impression.
+
+   **Constaté sur la ZD621 « DIGIT » (192.168.1.21), 27 sept.** : `MEDIA TYPE = CONTINUOUS`,
+   `SENSOR SELECT = REFLECTIVE`, `PRINT MODE = CUTTER`, `LABEL LENGTH = 808` (posé par notre ZPL).
+   Rouleau mesuré par Jo : **79 × 87 mm**. Le massicot coupait donc tous les 101 mm sur des
+   étiquettes de 87 mm (**14 mm de dérive par billet**).
+
+   **Codé** : `^MNM` remplace `^MNN` ; défauts poste 79 × 87 mm (631 × 695 pts à 203 dpi).
+
+   **Mise en page 87 mm (choix Jo)** : la maquette est dessinée pour ~101 mm. Elle est **réduite
+   uniformément** pour tenir dans la longueur réglée sur le poste : ratio = min(1, longueur / 800 pts,
+   largeur / 620 pts) à 203 dpi, soit **×0,869 en 79 × 87** (−13 %). Elle est centrée
+   horizontalement via `^LH` (38 pts). Positions, polices, cadres et blocs de texte suivent le ratio ;
+   les pictos `^GFA` sont repositionnés mais gardent leur taille.
+
+   **QR agrandi (choix Jo)** : `^BQ` plafonne au grossissement 10 (21 × 10 = 210 pts, 26 mm), il ne
+   peut pas grandir. Le QR est donc encodé côté serveur (`bacon-qr-code`, correction Q, comme
+   `QA,`) et imprimé en image `^GFA` via `ZplQrCodeRenderer` : boîte de 252 pts à 203 dpi
+   (modules de 12 pts pour un ID `A-XXXXXXX`, soit **31,5 mm, +20 %**). Il est positionné dans la mise
+   en page réduite mais **garde sa taille** ; l'ID et le nom sont centrés dessous. Le contenu du QR
+   reste lisible dans le ZPL via un commentaire `^FXQR:<public_id>`. Le sponsor est borné à la
+   colonne de gauche (`^FB`, 2 lignes) pour ne plus déborder sous le nom.
+   **Design PICHA 79 × 87 (Jo, 27 sept.)** — remplace la maquette « Triangle des Bermudes » :
+   en-tête logo événement | séparateur | « Sponsor » + logo sponsor ; « É V É N E M E N T » + titre
+   (1 ligne en 50 pts, 2 lignes en 36 pts au-delà de 22 caractères) + trait arrondi ; lignes
+   Type d'entrée / Date (« Sam. 5 sept. 2026 ») / Heure / Lieu avec pictos (sans cercles depuis le 1er oct., Jo) et
+   pointillés ; QR (231 pts, 29 mm), sans cadre depuis le 1er oct. (Jo), avec ID espacé sans préfixe (le QR garde
+   l'ID complet) et nom ; pied logo PICHA AI (logo officiel, jaune imprimé en noir) + « Ticket » sous « picha » | « Billetterie & gestion » au-dessus du globe +
+   ticket.picha.fr. Le canevas de référence devient 631 × 695 pts. Retirés à la demande de Jo : prix,
+   téléphone organisateur, bloc « Votre prochain événement ? ». Gris du mockup → contours noirs
+   (imprimante 1 bit). **Logo événement** : image `TICKET_LOGO` (déjà téléversable dans le Ticket
+   Designer), lue sur son disque par le handler et convertie par `ZplImageConverter` (GD : fond
+   transparent → blanc, marges blanches recadrées, ajustée dans 300 × 86 pts, seuil de luminance
+   140 → noir). Sans logo : nom de l'organisateur en texte. Un logo en couleurs claires (jaune,
+   gris pâle) peut disparaître au seuillage : prévoir une version noire du logo. **Logo sponsor** :
+   nouveau type d'image d'événement `TICKET_SPONSOR_LOGO` (une seule image, min. 100 × 40 px),
+   téléversable dans le Ticket Designer ; imprimé aligné à droite sous « Sponsor » (zone
+   191 × 60 pts). Sans logo, le nom `event_settings.ticket_sponsor_name` s'imprime en texte ; sans
+   les deux, le bloc sponsor et le séparateur disparaissent. Non fait : copie du logo sponsor à la
+   duplication d'événement, saisie du nom sponsor dans l'interface. Aperçu vérifié avec un moteur de rendu ZPL local (zebrash), qui ne gère pas `^GE`
+   (ellipse du globe) : la ZD621 l'imprime.
+   **Rouleau temporaire (28 sept.)** : rouleaux Weezevent pré-imprimés, pas plus court que 87 mm
+   (≈ 75 mm, mesure `~JC` en attente) ; un billet de 87 mm débordait sur 2 étiquettes. Le QR suit
+   désormais la réduction de la mise en page pour rester dans son cadre sur un rouleau plus court.
+   Changer de rouleau = changer la longueur dans les réglages du poste.
+   **Pas réel mesuré par la Zebra (1er oct.)** : après `~JC`, `LABEL LENGTH = 674` pts = **84,3 mm**
+   entre deux marques (et non 87 mm, mesure à la règle). Le billet de 87 mm débordait de 2,6 mm sur
+   la marque suivante → 2 étiquettes par billet. Défaut poste passé à **79 × 84 mm** (671 pts), test
+   d'impression validé par Jo. Pour un nouveau rouleau : `~JC`, lire LABEL LENGTH, la saisir en mm
+   dans les réglages du poste. Pictos : centrage sur le dessin réel (les bitmaps ont des marges
+   internes inégales).
+   **Modèle général (Jo, 1er oct.)** : ce design devient aussi celui du **billet PDF** (pièce jointe
+   de l'e-mail de confirmation et PDF du guichet), aux **couleurs PICHA** (violet #422A6A, jaune
+   #FDB900) : gabarit `attendee-ticket-pdf.blade.php`, police Roboto Condensed embarquée (OFL,
+   `resources/ticket/fonts`), pictos PNG rendus depuis les SVG de `resources/ticket/icons`, logo
+   PICHA AI couleur. Contenu commun ZPL/PDF via `TicketContentService`. Le QR du PDF est dessiné
+   avec GD (plus de dépendance à imagick). La couleur d'accent du Ticket Designer n'est plus
+   utilisée par le PDF ; le texte de pied de page de l'organisateur reste affiché sous le billet.
+   Hors périmètre pour l'instant : billet affiché en ligne et aperçu du Ticket Designer.
+   Historique —  (≈ 20+ caractères) peut encore toucher le QR,
+   comme dans la maquette d'origine.
+
+   Correctif initialement recommandé :
+   - `^MNM` à la place de `^MNN`, pour synchroniser chaque billet sur la marque noire. Le
+     2ᵉ paramètre de `^MN` (décalage de la marque) sert si la marque n'est pas en tête
+     d'étiquette ;
+   - `^LL` = pas réel entre deux marques, à mesurer sur le rouleau et à saisir dans
+     `labelLengthMm` (D29) ;
+   - une calibration du média (`~JC`, ou appui long sur le bouton d'alimentation) à chaque
+     changement de rouleau. Aucune commande de calibration n'existe dans le code aujourd'hui.
+
+   Le type de média pourrait lui aussi devenir un réglage par poste (continu, espace, marque
+   noire → `^MNN` / `^MNY` / `^MNM`) si PICHA utilise plusieurs rouleaux.
+
+### D19d — Application iPad « PICHA Kiosk » (App Store) — **lancée (Jo, 3 oct. 2026)**
+
+**Constat.**
+- En production, l'impression Zebra est faite **par le serveur** :
+  `ZebraNetworkPrinter` ouvre un TCP vers `printer_host:9100`.
+- Le VPS de ticket.picha.fr ne peut pas joindre une imprimante sur le Wi-Fi
+  d'un lieu. L'impression silencieuse D19c retombait donc sur la modale
+  « Imprimante injoignable » puis sur le PDF.
+
+**Décision (Jo).** Le Kiosk devient une app iPad publiée sur l'App Store
+public. Le Kiosk est **embarqué** dans l'app (bundle CSR), il n'est pas
+chargé depuis le site.
+
+**Mise en œuvre.**
+- Capacitor 8, projet Xcode dans `frontend/ios`, iPad uniquement.
+- `POST /events/{id}/attendees/{publicId}/zpl` renvoie le ZPL au format
+  d'étiquette du poste (D29).
+  - Le `print_job` est tracé dès la génération, comme pour la réimpression
+    PDF (D14).
+  - La construction du ZPL est partagée avec `print-zpl` via
+    `BoxOfficeTicketZplService`.
+- Le plugin natif `PichaPrinter` envoie le ZPL en TCP 9100 depuis l'iPad
+  (Network.framework) et imprime les PDF en AirPrint.
+- iOS demande l'autorisation « réseau local » à la première impression.
+- L'origine de l'app est `capacitor://localhost` : le cookie d'auth
+  cross-site y est bloqué. Le JWT est donc gardé sur l'appareil et envoyé
+  en `Bearer`.
+- `print-zpl` (impression par le serveur) reste en place pour un backend
+  installé sur le même réseau que l'imprimante.
+- Pas de Mac : le build passe par GitHub Actions (macOS).
+  - À chaque push : compilation sans signature.
+  - TestFlight : à la demande, avec une clé API App Store Connect.
+  - Procédure complète : `frontend/ios/README.md`.
+
+**Prérequis côté Jo.**
+- Compte Apple Developer « Organisation », avec un numéro D-U-N-S.
+- Clé API App Store Connect, à enregistrer dans les secrets GitHub.
+- Compte opérateur de démo pour l'App Review.
+
 ### D19a — Réglages matériels par poste (capture 5)
 
 Weezevent : écran de réglages **explicitement local à l'appareil** (imprimante, options d'envoi
@@ -888,6 +1061,7 @@ Cas : `location_details` absent / `country` vide / ISO2 inconnu de la table ITU,
 | **D22** | Sous-domaine `kiosk.picha.fr` | **A** : même bundle, shell `/kiosk` allégé, garde par host dans `server.js` (+ B pour généraliser `CUSTOM_DOMAINS`) | Infra + Code | Valeurs `SESSION_DOMAIN`, `CORS_ALLOWED_ORIGINS` en place ; topologie proxy/API |
 | **D23** | Compte opérateur de guichet | **✅ VALIDÉE** — Option 1 : rôle `BOX_OFFICE_OPERATOR` (compte `users` réel) + table `event_box_office_operators` (multi-événements, `unique(event_id, user_id)`) + garde négative `validateUserRole` + `validateBoxOfficeEventScope`. Création **réservée ADMIN**. Sélecteur d'événement si ≥2. 1 table neuve, 0 migration sur `box_office_sales`/`print_jobs`. | Schéma (1 table) + Code moyen | **Aucune** — décidé. Prêt à implémenter. |
 | **D15** | Session de caisse | ✅ **BACKLOG confirmé (Jo, 6 sept.)** — ne pas traiter en v2.1 | — | — |
+| **D19c** | Impression Kiosk | **✅ TRANCHÉE (27 sept.)** — ZPL direct Zebra ZD621 (TCP 9100) = mécanisme principal ; PDF navigateur = repli | Code | **DPI réel des ZD621** (203 ou 300) ; type de média (continu ou prédécoupé) |
 | **D19b** | Paiement TPE intégré (réouvert) | Garder **A** (déclaratif) pour la v2.1 ; **B** (TPE API) = chantier dédié | Code élevé (B) | Prestataire monétique / parc TPE PICHA ? |
 | **D25** | Panier multi-billets (D4 rouverte) | **B** : nouveau handler multi-items au-dessus de `CreateAttendeeHandler`, 1 clé d'idempotence, N Orders assumés | Schéma + Code | Besoin d'une **facture unique** par lot ? (→ C sinon) |
 | **D26** | Navigation par onglets | **A** + recadrage 6 sept. : layout `Kiosk` dédié + `/kiosk/select-event` si ≥2 ; v2.1 = **Vente + Réglages pour tout le monde** (Commandes/Stats = backlog, y compris ORGANIZER) | Code moyen | — |

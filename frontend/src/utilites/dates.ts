@@ -136,3 +136,22 @@ export const isDateInFuture = (date: string): boolean => {
 export const isDateInPast = (date: string): boolean => {
     return dayjs.utc(date).diff(dayjs()) < 0;
 }
+
+/**
+ * Ticket date as printed on PICHA tickets, e.g. « Sam. 5 sept. 2026 ».
+ */
+export const formatTicketDate = (date: string, tz: string, locale?: string): string => {
+    const formatted = dayjs.utc(date).tz(tz).locale(getSafeLocale(locale || getClientLocale())).format('ddd D MMM YYYY');
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
+
+/**
+ * Ticket hours as printed on PICHA tickets, e.g. « 21h00 » or « 16h00 - 02h30 ».
+ */
+export const formatTicketHours = (start: string, end: string | undefined | null, tz: string): string => {
+    // eslint-disable-next-line lingui/no-unlocalized-strings
+    const format = 'HH[h]mm';
+    const from = dayjs.utc(start).tz(tz).format(format);
+    return end ? `${from} - ${dayjs.utc(end).tz(tz).format(format)}` : from;
+};
+

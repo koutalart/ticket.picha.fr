@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
-import {Select, Switch, TextInput} from "@mantine/core";
+import {NumberInput, Select, Switch, TextInput} from "@mantine/core";
 import {IconChevronRight} from "@tabler/icons-react";
 import {t} from "@lingui/macro";
 import {useParams} from "react-router";
-import {useKioskSettings} from "../../../../hooks/useKioskSettings.ts";
+import {PrinterDpi, SUPPORTED_PRINTER_DPI, useKioskSettings} from "../../../../hooks/useKioskSettings.ts";
 import {useGetMe} from "../../../../queries/useGetMe.ts";
 import {useGetBoxOfficeContext} from "../../../../queries/useGetBoxOfficeContext.ts";
 import {availableLocales, SupportedLocales} from "../../../../locales.ts";
@@ -95,17 +95,59 @@ const KioskSettings = () => {
                             </button>
                         </div>
                         {settings.printOutput === 'zebra' && (
-                            <TextInput
-                                label={t`Printer IP address`}
-                                description={t`Private LAN address of the Zebra (port 9100).`}
-                                disabled={!isHydrated}
-                                placeholder="192.168.1.50"
-                                value={isHydrated ? settings.zebraPrinterHost : ''}
-                                onChange={(event) => setSettings({
-                                    ...settings,
-                                    zebraPrinterHost: event.currentTarget.value.trim(),
-                                })}
-                            />
+                            <>
+                                <TextInput
+                                    label={t`Printer IP address`}
+                                    description={t`Private LAN address of the Zebra (port 9100).`}
+                                    disabled={!isHydrated}
+                                    placeholder="192.168.1.50"
+                                    value={isHydrated ? settings.zebraPrinterHost : ''}
+                                    onChange={(event) => setSettings({
+                                        ...settings,
+                                        zebraPrinterHost: event.currentTarget.value.trim(),
+                                    })}
+                                />
+                                <Select
+                                    label={t`Printer resolution`}
+                                    description={t`Shown on the printer configuration label.`}
+                                    disabled={!isHydrated}
+                                    allowDeselect={false}
+                                    data={SUPPORTED_PRINTER_DPI.map((dpi) => ({value: String(dpi), label: `${dpi} dpi`}))}
+                                    value={String(settings.printerDpi)}
+                                    onChange={(value) => value && setSettings({
+                                        ...settings,
+                                        printerDpi: Number(value) as PrinterDpi,
+                                    })}
+                                />
+                                <div className={classes.optionRow}>
+                                    <NumberInput
+                                        style={{flex: 1}}
+                                        label={t`Label width (mm)`}
+                                        disabled={!isHydrated}
+                                        min={20}
+                                        max={108}
+                                        decimalScale={1}
+                                        value={settings.labelWidthMm}
+                                        onChange={(value) => typeof value === 'number' && setSettings({
+                                            ...settings,
+                                            labelWidthMm: value,
+                                        })}
+                                    />
+                                    <NumberInput
+                                        style={{flex: 1}}
+                                        label={t`Label length (mm)`}
+                                        disabled={!isHydrated}
+                                        min={20}
+                                        max={300}
+                                        decimalScale={1}
+                                        value={settings.labelLengthMm}
+                                        onChange={(value) => typeof value === 'number' && setSettings({
+                                            ...settings,
+                                            labelLengthMm: value,
+                                        })}
+                                    />
+                                </div>
+                            </>
                         )}
                     </>
                 )}

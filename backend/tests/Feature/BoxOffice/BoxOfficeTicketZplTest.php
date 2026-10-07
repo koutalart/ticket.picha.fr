@@ -1,0 +1,86 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature\BoxOffice;
+
+use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Mockery;
+use Tests\Support\BoxOfficeTestFixtures;
+use Tests\TestCase;
+
+class BoxOfficeTicketZplTest extends TestCase
+{
+    use BoxOfficeTestFixtures;
+    use DatabaseTransactions;
+
+    private const PASSWORD = 'password123!';
+
+    public function test_device_fetches_ticket_zpl_to_print_on_its_own_lan(): void
+    {
+        [$event, $product, $productPrice, $admin] = $this->createEventWithProduct(
+            price: 25.00,
+            userPassword: self::PASSWORD,
+        );
+        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
+        $token = $this->loginAndGetToken($admin, self::PASSWORD);
+
+        $printer = Mockery::mock(ZebraPrinterClientInterface::class);
+        $printer->shouldReceive('send')->never();
+        $this->app->instance(ZebraPrinterClientInterface::class, $printer);
+
+        $zpl = $this->postJson(
+            "/events/{$event->id}/attendees/{$attendee->public_id}/zpl",
+            ['printer_dpi' => 203, 'label_width_mm' => 104, 'label_length_mm' => 150],
+            ['Authorization' => 'Bearer '.$token],
+        )->assertOk()->json('data.zpl');
+
+        self::assertStringContainsString("^PW831\n", $zpl);
+        self::assertStringContainsString("^LL1199\n", $zpl);
+        self::assertStringContainsString($attendee->public_id, $zpl);
+    }
+
+    public function test_unsupported_printer_dpi_is_rejected(): void
+    {
+        [$event, $product, $productPrice, $admin] = $this->createEventWithProduct(
+            price: 25.00,
+            userPassword: self::PASSWORD,
+        );
+        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
+        $token = $this->loginAndGetToken($admin, self::PASSWORD);
+
+        $this->postJson(
+            "/events/{$event->id}/attendees/{$attendee->public_id}/zpl",
+            ['printer_dpi' => 250],
+            ['Authorization' => 'Bearer '.$token],
+        )->assertUnprocessable()->assertJsonValidationErrors('printer_dpi');
+    }
+
+    public function test_unknown_attendee_returns_not_found(): void
+    {
+        [$event, , , $admin] = $this->createEventWithProduct(price: 25.00, userPassword: self::PASSWORD);
+        $token = $this->loginAndGetToken($admin, self::PASSWORD);
+
+        $this->postJson(
+            "/events/{$event->id}/attendees/A-UNKNOWN/zpl",
+            [],
+            ['Authorization' => 'Bearer '.$token],
+        )->assertNotFound();
+    }
+
+    public function test_other_account_cannot_fetch_ticket_zpl(): void
+    {
+        [$event, $product, $productPrice] = $this->createEventWithProduct(price: 25.00);
+        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
+
+        $other = $this->createUnrelatedOrganizerUser(self::PASSWORD);
+        $token = $this->loginAndGetToken($other, self::PASSWORD);
+
+        $this->postJson(
+            "/events/{$event->id}/attendees/{$attendee->public_id}/zpl",
+            [],
+            ['Authorization' => 'Bearer '.$token],
+        )->assertStatus(403);
+    }
+}

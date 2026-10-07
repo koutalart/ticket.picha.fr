@@ -6,7 +6,9 @@ import {boxOfficeClient} from "../api/box-office.client.ts";
 import {useReprintBoxOfficeTicket} from "../mutations/useReprintBoxOfficeTicket.ts";
 import {showError} from "../utilites/notifications.tsx";
 import {IdParam} from "../types.ts";
-import {KioskPrintOutput} from "./useKioskSettings.ts";
+import {DEFAULT_ZEBRA_LABEL_FORMAT, KioskPrintOutput, ZebraLabelFormat} from "./useKioskSettings.ts";
+import {isNativeApp} from "../native/nativeApp.ts";
+import {printPdfWithAirPrint, sendZplToLanPrinter} from "../native/zebraPrinter.ts";
 
 interface PrinterPrompt {
     attendeePublicIds: string[];
@@ -19,10 +21,15 @@ interface UseKioskTicketPrinterOptions {
     printMode: KioskPrintOutput | 'a4';
     skipPrint?: boolean;
     zebraPrinterHost?: string;
+    zebraLabelFormat?: ZebraLabelFormat;
     onZebraPrinterHostChange?: (host: string) => void;
 }
 
 const openPdfBlobInNewTab = (blob: Blob) => {
+    if (isNativeApp()) {
+        void printPdfWithAirPrint(blob, 'PICHA Ticket');
+        return;
+    }
     const blobUrl = URL.createObjectURL(blob);
     const printWindow = window.open(blobUrl, '_blank');
     printWindow?.print();
@@ -31,12 +38,15 @@ const openPdfBlobInNewTab = (blob: Blob) => {
 /**
  * Prints box office tickets or badges: Zebra (ZPL) with a "printer not
  * reachable" prompt (new IP + retry, or PDF fallback), or PDF directly.
+ * In the iOS app the ZPL goes from the iPad to the Zebra over the venue
+ * Wi-Fi, and PDFs go through AirPrint (D19d).
  */
 export const useKioskTicketPrinter = ({
     eventId,
     printMode,
     skipPrint = false,
     zebraPrinterHost = '',
+    zebraLabelFormat = DEFAULT_ZEBRA_LABEL_FORMAT,
     onZebraPrinterHostChange,
 }: UseKioskTicketPrinterOptions) => {
     const reprintTicket = useReprintBoxOfficeTicket();
@@ -51,7 +61,12 @@ export const useKioskTicketPrinter = ({
                 continue;
             }
             try {
-                await boxOfficeClient.printZpl(eventId, attendeePublicId, host);
+                if (isNativeApp()) {
+                    const zpl = await boxOfficeClient.getTicketZpl(eventId, attendeePublicId, zebraLabelFormat);
+                    await sendZplToLanPrinter(host, zpl);
+                } else {
+                    await boxOfficeClient.printZpl(eventId, attendeePublicId, host, zebraLabelFormat);
+                }
             } catch {
                 failed.push(attendeePublicId);
             }

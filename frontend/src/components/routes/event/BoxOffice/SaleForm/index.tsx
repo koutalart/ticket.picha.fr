@@ -21,7 +21,7 @@ import {useCreateBoxOfficeSale} from "../../../../../mutations/useCreateBoxOffic
 import {useKioskTicketPrinter} from "../../../../../hooks/useKioskTicketPrinter.tsx";
 import {BoxOfficePaymentMethod, BoxOfficeSale} from "../../../../../api/box-office.client.ts";
 import {IdParam} from "../../../../../types.ts";
-import {KioskPrintOutput} from "../../../../../hooks/useKioskSettings.ts";
+import {KioskPrintOutput, ZebraLabelFormat} from "../../../../../hooks/useKioskSettings.ts";
 import {showError, showSuccess} from "../../../../../utilites/notifications.tsx";
 import {confirmationDialog} from "../../../../../utilites/confirmationDialog.tsx";
 import {useFormErrorResponseHandler} from "../../../../../hooks/useFormErrorResponseHandler.tsx";
@@ -81,6 +81,7 @@ interface SaleFormProps {
     skipPrint?: boolean;
     printMode?: KioskPrintOutput | 'a4';
     zebraPrinterHost?: string;
+    zebraLabelFormat?: ZebraLabelFormat;
     defaultLocale?: SupportedLocales | '';
     sendConfirmationEmail?: boolean;
     phoneCallingCode?: string;
@@ -126,6 +127,7 @@ export const SaleForm = ({
     skipPrint = false,
     printMode = 'a4',
     zebraPrinterHost = '',
+    zebraLabelFormat,
     defaultLocale = '',
     sendConfirmationEmail = false,
     phoneCallingCode = '',
@@ -140,6 +142,7 @@ export const SaleForm = ({
         printMode,
         skipPrint,
         zebraPrinterHost,
+        zebraLabelFormat,
         onZebraPrinterHostChange,
     });
 

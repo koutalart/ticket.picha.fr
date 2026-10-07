@@ -7,6 +7,7 @@ import {
     User
 } from "../types.ts";
 import {api} from './client.ts';
+import {storeNativeAuthToken} from "../native/nativeApp.ts";
 
 export const authClient = {
     refreshAccessTokenFn: async () => {
@@ -21,12 +22,19 @@ export const authClient = {
 
     login: async (user: LoginData) => {
         const response = await api.post<LoginResponse>('auth/login', user);
+        if (response.data.token) {
+            storeNativeAuthToken(response.data.token);
+        }
         return response.data;
     },
 
     logout: async () => {
-        const response = await api.post('auth/logout');
-        return response.data;
+        try {
+            const response = await api.post('auth/logout');
+            return response.data;
+        } finally {
+            storeNativeAuthToken(null);
+        }
     },
 
     forgotPassword: async (email: { email: string }) => {

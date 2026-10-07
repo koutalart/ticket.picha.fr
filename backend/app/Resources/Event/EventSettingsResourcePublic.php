@@ -56,6 +56,7 @@ class EventSettingsResourcePublic extends JsonResource
 
             // Ticket design settings
             'ticket_design_settings' => $this->getTicketDesignSettings(),
+            'ticket_sponsor_name' => $this->getTicketSponsorName(),
 
             // SEO settings
             'seo_title' => $this->getSeoTitle(),
