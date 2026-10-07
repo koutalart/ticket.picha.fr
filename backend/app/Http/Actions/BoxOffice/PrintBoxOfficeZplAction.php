@@ -30,6 +30,7 @@ class PrintBoxOfficeZplAction extends BaseAction
                 attendee_public_id: $attendeePublicId,
                 agent_user_id: $this->getAuthenticatedUser()->getId(),
                 printer_host: $request->validated('printer_host'),
+                label_format: $request->labelFormat(),
             ));
         } catch (InvalidZebraPrinterHostException $exception) {
             throw ValidationException::withMessages(['printer_host' => $exception->getMessage()]);

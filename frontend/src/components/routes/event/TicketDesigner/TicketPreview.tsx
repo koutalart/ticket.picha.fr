@@ -4,7 +4,6 @@ import {t} from "@lingui/macro";
 import {Attendee, IdParam} from "../../../../types.ts";
 import {AttendeeTicket} from "../../../common/AttendeeTicket";
 import classes from './TicketPreview.module.scss';
-import {ticketPreviewImageUrl} from "../../../../utilites/urlHelper.ts";
 import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
 
 interface TicketDesignSettings {
@@ -111,11 +110,6 @@ export const TicketPreview = ({settings, eventId, logoUrl}: TicketPreviewProps) 
                 attendee={mockAttendee as unknown as Attendee}
                 product={mockProduct}
                 hideButtons={true}
-                imageSrc={ticketPreviewImageUrl(eventId, [
-                    ...(event.images || []).map(image => image.id),
-                    eventSettings?.ticket_design_settings?.date_display_mode,
-                    logoUrl,
-                ].join('-'))}
             />
         </div>
     );

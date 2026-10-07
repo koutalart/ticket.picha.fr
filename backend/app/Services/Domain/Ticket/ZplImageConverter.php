@@ -9,107 +9,61 @@ use HiEvents\Services\Domain\Ticket\DTO\ZplGraphicDTO;
 
 class ZplImageConverter
 {
-    private const INK_THRESHOLD = 160;
+    private const BLACK_THRESHOLD = 140;
 
-    private const OPAQUE_ALPHA = 64;
-
-    private const LIGHT_LOGO_RATIO = 0.8;
-
-    public function convert(string $imageData, int $maxWidth, int $maxHeight): ?ZplGraphicDTO
+    public function convert(string $imageBytes, int $maxWidth, int $maxHeight): ?ZplGraphicDTO
     {
-        $source = @imagecreatefromstring($imageData);
+        $source = @imagecreatefromstring($imageBytes);
         if (! $source instanceof GdImage) {
             return null;
         }
 
-        $sourceWidth = imagesx($source);
-        $sourceHeight = imagesy($source);
-        if ($sourceWidth < 1 || $sourceHeight < 1) {
-            return null;
-        }
+        $source = $this->trimBlankMargins($this->flattenOnWhite($source));
 
-        $scale = min($maxWidth / $sourceWidth, $maxHeight / $sourceHeight, 1.0);
-        $width = max(1, (int) round($sourceWidth * $scale));
-        $height = max(1, (int) round($sourceHeight * $scale));
+        $ratio = min($maxWidth / imagesx($source), $maxHeight / imagesy($source));
+        $width = max(1, (int) round(imagesx($source) * $ratio));
+        $height = max(1, (int) round(imagesy($source) * $ratio));
 
-        $image = imagecreatetruecolor($width, $height);
-        imagealphablending($image, false);
-        imagesavealpha($image, true);
-        imagefill($image, 0, 0, imagecolorallocatealpha($image, 255, 255, 255, 127));
-        imagecopyresampled($image, $source, 0, 0, 0, 0, $width, $height, $sourceWidth, $sourceHeight);
-
-        [$luminance, $opaque] = $this->readPixels($image, $width, $height);
-        $silhouette = $this->isLightLogoOnTransparency($luminance, $opaque);
+        $canvas = imagecreatetruecolor($width, $height);
+        imagecopyresampled($canvas, $source, 0, 0, 0, 0, $width, $height, imagesx($source), imagesy($source));
 
         $bytesPerRow = intdiv($width + 7, 8);
         $hex = '';
         for ($y = 0; $y < $height; $y++) {
             $bits = '';
             for ($x = 0; $x < $width; $x++) {
-                $index = $y * $width + $x;
-                $ink = $silhouette
-                    ? $opaque[$index]
-                    : $opaque[$index] && $luminance[$index] < self::INK_THRESHOLD;
-                $bits .= $ink ? '1' : '0';
+                $rgb = imagecolorat($canvas, $x, $y);
+                $luminance = 0.299 * (($rgb >> 16) & 0xFF) + 0.587 * (($rgb >> 8) & 0xFF) + 0.114 * ($rgb & 0xFF);
+                $bits .= $luminance < self::BLACK_THRESHOLD ? '1' : '0';
             }
-            $bits = str_pad($bits, $bytesPerRow * 8, '0');
-            foreach (str_split($bits, 8) as $byte) {
+            foreach (str_split(str_pad($bits, $bytesPerRow * 8, '0'), 8) as $byte) {
                 $hex .= sprintf('%02X', bindec($byte));
             }
         }
 
+        $total = $bytesPerRow * $height;
+
         return new ZplGraphicDTO(
+            zpl: '^GFA,'.$total.','.$total.','.$bytesPerRow.','.$hex,
             width: $width,
             height: $height,
-            bytesPerRow: $bytesPerRow,
-            hex: $hex,
         );
     }
 
-    /**
-     * @return array{0: list<int>, 1: list<bool>}
-     */
-    private function readPixels(GdImage $image, int $width, int $height): array
+    private function flattenOnWhite(GdImage $source): GdImage
     {
-        $luminance = [];
-        $opaque = [];
-        for ($y = 0; $y < $height; $y++) {
-            for ($x = 0; $x < $width; $x++) {
-                $rgba = imagecolorat($image, $x, $y);
-                $alpha = ($rgba >> 24) & 0x7F;
-                $red = ($rgba >> 16) & 0xFF;
-                $green = ($rgba >> 8) & 0xFF;
-                $blue = $rgba & 0xFF;
-                $luminance[] = (int) round(0.299 * $red + 0.587 * $green + 0.114 * $blue);
-                $opaque[] = $alpha < self::OPAQUE_ALPHA;
-            }
-        }
+        $flat = imagecreatetruecolor(imagesx($source), imagesy($source));
+        imagefill($flat, 0, 0, imagecolorallocate($flat, 255, 255, 255));
+        imagealphablending($flat, true);
+        imagecopy($flat, $source, 0, 0, 0, 0, imagesx($source), imagesy($source));
 
-        return [$luminance, $opaque];
+        return $flat;
     }
 
-    /**
-     * @param  list<int>  $luminance
-     * @param  list<bool>  $opaque
-     */
-    private function isLightLogoOnTransparency(array $luminance, array $opaque): bool
+    private function trimBlankMargins(GdImage $image): GdImage
     {
-        $opaqueCount = 0;
-        $lightCount = 0;
-        foreach ($opaque as $index => $isOpaque) {
-            if (! $isOpaque) {
-                continue;
-            }
-            $opaqueCount++;
-            if ($luminance[$index] >= self::INK_THRESHOLD) {
-                $lightCount++;
-            }
-        }
+        $trimmed = imagecropauto($image, IMG_CROP_THRESHOLD, 0.1, 0xFFFFFF);
 
-        $hasTransparency = $opaqueCount < count($opaque);
-
-        return $hasTransparency
-            && $opaqueCount > 0
-            && $lightCount / $opaqueCount >= self::LIGHT_LOGO_RATIO;
+        return $trimmed instanceof GdImage ? $trimmed : $image;
     }
 }

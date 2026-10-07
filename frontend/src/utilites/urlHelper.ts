@@ -57,15 +57,3 @@ export const imageUrl = (imageType: ImageType, images?: Image[], fallbackUrl?: s
 export const organizerPreviewPath = (organizerId: IdParam) => {
     return `/organizer/${organizerId}/preview`;
 }
-
-const apiBaseUrl = () => String(getConfig('VITE_API_URL_CLIENT') ?? '').replace(/\/$/, '');
-
-export const attendeeTicketImageUrl = (eventId: IdParam, attendeeShortId: string, version?: string) => {
-    const query = version ? `?v=${encodeURIComponent(version)}` : '';
-    return `${apiBaseUrl()}/public/events/${eventId}/attendees/${attendeeShortId}/ticket.png${query}`;
-};
-
-export const ticketPreviewImageUrl = (eventId: IdParam, version?: string) => {
-    const query = version ? `?v=${encodeURIComponent(version)}` : '';
-    return `${apiBaseUrl()}/events/${eventId}/ticket-preview.png${query}`;
-};

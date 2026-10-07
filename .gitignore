@@ -25,6 +25,7 @@ prompts/
 /.env
 backend/.env.staging
 frontend/.env.staging
+backend/.env.production
 
 # DIGIT — sauvegardes locales, jamais commitées
 *.bak
@@ -36,3 +37,6 @@ frontend/backup-checkout-fix/
 
 # Sauvegardes de fichiers d'environnement de staging
 frontend/.env.staging.*
+
+# Cache de polices dompdf (billet PDF)
+backend/storage/fonts/

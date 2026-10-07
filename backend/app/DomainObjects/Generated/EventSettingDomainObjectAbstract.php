@@ -61,13 +61,14 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const TICKET_DESIGN_SETTINGS = 'ticket_design_settings';
     final public const ATTENDEE_DETAILS_COLLECTION_METHOD = 'attendee_details_collection_method';
     final public const SHOW_MARKETING_OPT_IN = 'show_marketing_opt_in';
-    final public const ALLOW_COPY_DETAILS_TO_ALL_ATTENDEES = 'allow_copy_details_to_all_attendees';
     final public const HOMEPAGE_THEME_SETTINGS = 'homepage_theme_settings';
     final public const PASS_PLATFORM_FEE_TO_BUYER = 'pass_platform_fee_to_buyer';
     final public const ALLOW_ATTENDEE_SELF_EDIT = 'allow_attendee_self_edit';
     final public const WAITLIST_ENABLED = 'waitlist_enabled';
     final public const WAITLIST_AUTO_PROCESS = 'waitlist_auto_process';
     final public const WAITLIST_OFFER_TIMEOUT_MINUTES = 'waitlist_offer_timeout_minutes';
+    final public const ALLOW_COPY_DETAILS_TO_ALL_ATTENDEES = 'allow_copy_details_to_all_attendees';
+    final public const TICKET_SPONSOR_NAME = 'ticket_sponsor_name';
 
     protected int $id;
     protected int $event_id;
@@ -120,13 +121,14 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected array|string|null $ticket_design_settings = null;
     protected string $attendee_details_collection_method = 'PER_TICKET';
     protected bool $show_marketing_opt_in = true;
-    protected bool $allow_copy_details_to_all_attendees = true;
     protected array|string|null $homepage_theme_settings = null;
     protected bool $pass_platform_fee_to_buyer = false;
     protected bool $allow_attendee_self_edit = true;
     protected bool $waitlist_enabled = false;
     protected bool $waitlist_auto_process = false;
     protected ?int $waitlist_offer_timeout_minutes = null;
+    protected bool $allow_copy_details_to_all_attendees = true;
+    protected ?string $ticket_sponsor_name = null;
 
     public function toArray(): array
     {
@@ -182,13 +184,14 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'ticket_design_settings' => $this->ticket_design_settings ?? null,
                     'attendee_details_collection_method' => $this->attendee_details_collection_method ?? null,
                     'show_marketing_opt_in' => $this->show_marketing_opt_in ?? null,
-                    'allow_copy_details_to_all_attendees' => $this->allow_copy_details_to_all_attendees ?? null,
                     'homepage_theme_settings' => $this->homepage_theme_settings ?? null,
                     'pass_platform_fee_to_buyer' => $this->pass_platform_fee_to_buyer ?? null,
                     'allow_attendee_self_edit' => $this->allow_attendee_self_edit ?? null,
                     'waitlist_enabled' => $this->waitlist_enabled ?? null,
                     'waitlist_auto_process' => $this->waitlist_auto_process ?? null,
                     'waitlist_offer_timeout_minutes' => $this->waitlist_offer_timeout_minutes ?? null,
+                    'allow_copy_details_to_all_attendees' => $this->allow_copy_details_to_all_attendees ?? null,
+                    'ticket_sponsor_name' => $this->ticket_sponsor_name ?? null,
                 ];
     }
 
@@ -754,17 +757,6 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
         return $this->show_marketing_opt_in;
     }
 
-    public function setAllowCopyDetailsToAllAttendees(bool $allow_copy_details_to_all_attendees): self
-    {
-        $this->allow_copy_details_to_all_attendees = $allow_copy_details_to_all_attendees;
-        return $this;
-    }
-
-    public function getAllowCopyDetailsToAllAttendees(): bool
-    {
-        return $this->allow_copy_details_to_all_attendees;
-    }
-
     public function setHomepageThemeSettings(array|string|null $homepage_theme_settings): self
     {
         $this->homepage_theme_settings = $homepage_theme_settings;
@@ -829,5 +821,27 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getWaitlistOfferTimeoutMinutes(): ?int
     {
         return $this->waitlist_offer_timeout_minutes;
+    }
+
+    public function setAllowCopyDetailsToAllAttendees(bool $allow_copy_details_to_all_attendees): self
+    {
+        $this->allow_copy_details_to_all_attendees = $allow_copy_details_to_all_attendees;
+        return $this;
+    }
+
+    public function getAllowCopyDetailsToAllAttendees(): bool
+    {
+        return $this->allow_copy_details_to_all_attendees;
+    }
+
+    public function setTicketSponsorName(?string $ticket_sponsor_name): self
+    {
+        $this->ticket_sponsor_name = $ticket_sponsor_name;
+        return $this;
+    }
+
+    public function getTicketSponsorName(): ?string
+    {
+        return $this->ticket_sponsor_name;
     }
 }

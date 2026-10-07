@@ -2,14 +2,13 @@
 
 namespace HiEvents\Http\Request\BoxOffice;
 
-use HiEvents\Http\Request\BaseRequest;
-
-class PrintBoxOfficeZplRequest extends BaseRequest
+class PrintBoxOfficeZplRequest extends BoxOfficeZplLabelFormatRequest
 {
     public function rules(): array
     {
         return [
             'printer_host' => ['required', 'ipv4'],
+            ...parent::rules(),
         ];
     }
 }

@@ -50,6 +50,7 @@ class EventSettingsResource extends JsonResource
 
             // Ticket design settings
             'ticket_design_settings' => $this->getTicketDesignSettings(),
+            'ticket_sponsor_name' => $this->getTicketSponsorName(),
 
             // Payment settings
             'payment_providers' => $this->getPaymentProviders(),
