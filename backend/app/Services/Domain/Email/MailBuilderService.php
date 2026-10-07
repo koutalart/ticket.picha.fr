@@ -18,8 +18,7 @@ class MailBuilderService
     public function __construct(
         private readonly EmailTemplateService $emailTemplateService,
         private readonly EmailTokenContextBuilder $tokenContextBuilder,
-    ) {
-    }
+    ) {}
 
     public function buildAttendeeTicketMail(
         AttendeeDomainObject $attendee,
@@ -51,7 +50,8 @@ class MailBuilderService
         EventDomainObject $event,
         EventSettingDomainObject $eventSettings,
         OrganizerDomainObject $organizer,
-        ?InvoiceDomainObject $invoice = null
+        ?InvoiceDomainObject $invoice = null,
+        array $ticketAttendees = [],
     ): OrderSummary {
         $renderedTemplate = $this->renderOrderSummaryTemplate(
             $order,
@@ -67,6 +67,7 @@ class MailBuilderService
             eventSettings: $eventSettings,
             invoice: $invoice,
             renderedTemplate: $renderedTemplate,
+            ticketAttendees: $ticketAttendees,
         );
     }
 
@@ -84,7 +85,7 @@ class MailBuilderService
             organizerId: $organizer->getId()
         );
 
-        if (!$template) {
+        if (! $template) {
             return null;
         }
 
@@ -112,7 +113,7 @@ class MailBuilderService
             organizerId: $organizer->getId()
         );
 
-        if (!$template) {
+        if (! $template) {
             return null;
         }
 
