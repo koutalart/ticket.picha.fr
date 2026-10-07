@@ -1,9 +1,10 @@
-@php use Carbon\Carbon; use HiEvents\Helper\Currency; use HiEvents\Helper\DateHelper; @endphp
+@php use HiEvents\Helper\EmailFormatHelper; @endphp
 @php /** @var \HiEvents\DomainObjects\OrderDomainObject $order */ @endphp
 @php /** @var \HiEvents\DomainObjects\EventDomainObject $event */ @endphp
 @php /** @var \HiEvents\DomainObjects\OrganizerDomainObject $organizer */ @endphp
 @php /** @var \HiEvents\DomainObjects\EventSettingDomainObject $eventSettings */ @endphp
 @php /** @var string $orderUrl */ @endphp
+@php /** @var \HiEvents\DomainObjects\AttendeeDomainObject[] $ticketAttendees */ @endphp
 
 @php /** @see \HiEvents\Mail\Order\OrderSummary */ @endphp
 
@@ -13,11 +14,7 @@
 @if($order->isOrderAwaitingOfflinePayment() === false)
 
 <p>
-@if($event->getStartDate())
-{{ __('Congratulations! Your order for :eventTitle on :eventDate at :eventTime was successful. Please find your order details below.', ['eventTitle' => $event->getTitle(), 'eventDate' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('F j, Y'), 'eventTime' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('g:i A')]) }}
-@else
-{{ __('Congratulations! Your order for :eventTitle was successful. Please find your order details below.', ['eventTitle' => $event->getTitle()]) }}
-@endif
+{{ __('Thank you! Your order for :eventTitle is confirmed. Here are the details.', ['eventTitle' => $event->getTitle()]) }}
 </p>
 
 @else
@@ -36,16 +33,14 @@
 
 @endif
 
-<p>
-
 # {{ __('Event Details') }}
-**{{ __('Event Name:') }}** {{ $event->getTitle() }}
-    <br>
+**{{ __('Event Name:') }}** {{ $event->getTitle() }}<br>
 @if($event->getStartDate())
-**{{ __('Date & Time:') }}** {{ __(':date at :time', ['date' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('F j, Y'), 'time' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('g:i A')]) }}
+**{{ __('Date & Time:') }}** {{ EmailFormatHelper::eventDateTime($event) }}<br>
 @endif
-
-</p>
+@if(trim($eventSettings->getAddressString()) !== '')
+**{{ __('Location:') }}** {{ $eventSettings->getAddressString() }}<br>
+@endif
 
 @if($eventSettings->getPostCheckoutMessage() && $order->isOrderCompleted())
 <p>
@@ -57,15 +52,24 @@
 </p>
 @endif
 
+@if(!empty($ticketAttendees))
+# {{ trans_choice('Your ticket|Your tickets', count($ticketAttendees)) }}
+{{ trans_choice('Your ticket is attached to this email (PDF). Show its QR code at the entrance, on your phone or printed.|Your tickets are attached to this email (PDF). Show their QR codes at the entrance, on your phone or printed.', count($ticketAttendees)) }}
+
+@foreach($ticketAttendees as $ticketAttendee)
+- **{{ $order->getOrderItems()?->first(fn ($item) => $item->getProductPriceId() === $ticketAttendee->getProductPriceId())?->getItemName() ?? __('Ticket') }}** — {{ trim($ticketAttendee->getFirstName().' '.$ticketAttendee->getLastName()) }}
+@endforeach
+
+@endif
 # {{ __('Order Summary') }}
-- **{{ __('Order Number:') }}** {{ $order->getPublicId() }}
-- **{{ __('Total Amount:') }}** {{ Currency::format($order->getTotalGross(), $event->getCurrency()) }}
+**{{ __('Order Number:') }}** {{ $order->getPublicId() }}<br>
+**{{ __('Total Amount:') }}** {{ EmailFormatHelper::money($order->getTotalGross(), $event->getCurrency()) }}
 
 <x-mail::button :url="$orderUrl">
     {{ __('View Order Summary & Tickets') }}
 </x-mail::button>
 
-{{ __('If you have any questions or need assistance, please contact') }} <a href="mailto:{{ $organizer->getEmail() }}">{{ $organizer->getEmail() }}</a>.
+{!! __('If you have any questions, reply to this email or contact the organizer at :email.', ['email' => '<a href="mailto:'.e($organizer->getEmail()).'">'.e($organizer->getEmail()).'</a>']) !!}
 
 {{ __('Best regards,') }}<br>
 {{ $organizer->getName() ?: config('app.name') }}

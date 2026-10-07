@@ -55,7 +55,7 @@ class AttendeeTicketMailRenderTest extends TestCase
         ]);
 
         $order = OrderDomainObject::hydrateFromModel($orderModel)
-            ->setOrderItems(new Collection([(new OrderItemDomainObject)->setProductType('TICKET')->setPrice($price)]));
+            ->setOrderItems(new Collection([(new OrderItemDomainObject)->setProductType('TICKET')->setPrice($price)->setProductPriceId($productPrice->id)->setItemName('Entrée libre')]));
 
         $event = EventDomainObject::hydrateFromModel($eventModel)
             ->setId($eventId)
