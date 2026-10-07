@@ -9,7 +9,11 @@ export type CaseStudyService =
     | "wristbands"
     | "attendance-sheet"
     | "on-site-staff"
-    | "equipment-rental";
+    | "equipment-rental"
+    | "influencer-campaign"
+    | "online-ticketing"
+    | "physical-presales"
+    | "on-site-sales";
 
 export interface CaseStudyResult {
     value: string;
@@ -65,6 +69,10 @@ export const serviceLabels: Record<CaseStudyService, string> = {
     "attendance-sheet": "Émargement numérique",
     "on-site-staff": "Agents d'accueil le jour J",
     "equipment-rental": "Location de matériel",
+    "influencer-campaign": "Campagne influenceurs",
+    "online-ticketing": "Billetterie en ligne",
+    "physical-presales": "Préventes physiques",
+    "on-site-sales": "Vente sur place le jour J",
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -111,9 +119,36 @@ export const caseStudies: CaseStudy[] = [
     {
         slug: "innocent-event",
         client: "Innocent Event",
-        eventName: "Innocent Event",
-        draft: true,
-        services: [],
+        eventName: "Triangle des Bermudes",
+        sector: "Soirées et concerts",
+        draft: false,
+        date: "11 octobre 2026",
+        location: "Rond-point de la Barge, Mamoudzou (Mayotte)",
+        attendees: "739 billets vendus au 7 octobre",
+        headline: "Comment Innocent Event a vendu 739 billets en moins d'une semaine pour Triangle des Bermudes",
+        summary: "Campagne influenceurs, billetterie en ligne et préventes physiques : en moins d'une semaine, Innocent Event a vendu 739 billets pour Triangle des Bermudes, avant un accueil le jour J par scan des QR codes et une vente sur place.",
+        challenge: "Innocent Event organise des soirées et des concerts à Mayotte. Pour Triangle des Bermudes, le 11 octobre 2026 à Mamoudzou, l'enjeu était double : vendre vite, sur plusieurs canaux à la fois (en ligne et en points de vente physiques) sans jamais vendre deux fois la même place, puis faire entrer le public rapidement le jour de l'événement.",
+        solution: [
+            "Campagne influenceurs pour lancer et relayer la mise en vente",
+            "Billetterie en ligne sur le site de l'organisateur (innocent976.yt), avec paiement par carte",
+            "Préventes physiques : billets émis par lots pour les points de vente",
+            "Une offre « Vente flash » à quantité limitée, coupée automatiquement une fois épuisée",
+            "Contrôle d'accès par QR code et scan à l'entrée le jour J",
+            "Vente sur place le jour J",
+        ],
+        results: [
+            {value: "739", label: "billets vendus en moins d'une semaine"},
+            {value: "339", label: "billets vendus en ligne"},
+            {value: "400", label: "billets en préventes physiques"},
+            {value: "292", label: "places « Vente flash », offre épuisée"},
+        ],
+        services: ["influencer-campaign", "online-ticketing", "physical-presales", "access-control", "on-site-sales"],
+        solutions: ["controle-acces-qr-code"],
+        eventStartDate: "2026-10-11T15:00:00+03:00",
+        eventEndDate: "2026-10-11T21:30:00+03:00",
+        eventLocality: "Mamoudzou",
+        eventCountryCode: "YT",
+        publishedAt: "2026-10-07",
     },
     {
         slug: "mayotte-la-1ere-inauguration",
