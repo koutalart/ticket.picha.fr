@@ -36,8 +36,8 @@ class BoxOfficeTicketZplTest extends TestCase
             ['Authorization' => 'Bearer '.$token],
         )->assertOk()->json('data.zpl');
 
-        self::assertStringContainsString("^PW831\n", $zpl);
-        self::assertStringContainsString("^LL1199\n", $zpl);
+        self::assertStringContainsString("^PW639\n", $zpl);
+        self::assertStringContainsString("^LL639\n", $zpl);
         self::assertStringContainsString($attendee->public_id, $zpl);
     }
 

@@ -6,14 +6,14 @@ namespace HiEvents\Services\Domain\Ticket;
 
 use HiEvents\Services\Domain\Ticket\DTO\TicketDataDTO;
 
-class AttendeeTicketZplService
+class TicketImageService
 {
     public function __construct(
         private readonly TicketLayoutBuilder $layoutBuilder,
-        private readonly ZplTicketRenderer $renderer,
+        private readonly PngTicketRenderer $renderer,
     ) {}
 
-    public function generate(TicketDataDTO $ticket): string
+    public function png(TicketDataDTO $ticket): string
     {
         return $this->renderer->render($this->layoutBuilder->build($ticket));
     }

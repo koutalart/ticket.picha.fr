@@ -8,7 +8,7 @@ import {IdParam} from "../../../../types.ts";
 import {showSuccess} from "../../../../utilites/notifications.tsx";
 import {t} from "@lingui/macro";
 import {useForm} from "@mantine/form";
-import {Button, ColorInput, Textarea, Accordion, Stack, Text, Group, Select} from "@mantine/core";
+import {Button, Accordion, Stack, Text, Group, Select} from "@mantine/core";
 import {IconColorSwatch, IconHelp, IconPrinter} from "@tabler/icons-react";
 import {Tooltip} from "../../../common/Tooltip";
 import {ImageUploadDropzone} from "../../../common/ImageUploadDropzone";
@@ -128,15 +128,6 @@ const TicketDesigner = () => {
                                     </Accordion.Control>
                                     <Accordion.Panel>
                                         <Stack gap="lg">
-                                            <div>
-                                                <ColorInput
-                                                    format="hexa"
-                                                    label={t`Accent Color`}
-                                                    description={t`Used for borders, highlights, and QR code styling`}
-                                                    size="sm"
-                                                    {...form.getInputProps('accent_color')}
-                                                />
-                                            </div>
 
                                             <div>
                                                 <Group justify={'space-between'} mb="xs">
@@ -164,7 +155,7 @@ const TicketDesigner = () => {
                                                 <Group justify={'space-between'} mb="xs">
                                                     <Text fw={500} size="sm">{t`Sponsor logo`}</Text>
                                                     <Tooltip
-                                                        label={t`A black logo on a transparent or white background prints best on thermal printers`}>
+                                                        label={t`Use a dark logo on a white or transparent background for the best thermal print`}>
                                                         <IconHelp size={16} style={{ color: 'var(--mantine-color-gray-6)' }}/>
                                                     </Tooltip>
                                                 </Group>
@@ -177,33 +168,11 @@ const TicketDesigner = () => {
                                                         url: existingSponsorLogo?.url,
                                                         id: existingSponsorLogo?.id,
                                                     }}
-                                                    helpText={t`Printed under "Sponsor" on box office tickets`}
+                                                    helpText={t`Printed at the top right of box office tickets (Zebra printer)`}
                                                     displayMode="compact"
                                                 />
                                             </div>
 
-                                            <div>
-                                                <Textarea
-                                                    label={t`Footer Text`}
-                                                    description={t`Optional text for disclaimers, contact info, or thank you notes (single line only)`}
-                                                    placeholder={t`Thank you for attending!`}
-                                                    rows={2}
-                                                    maxLength={500}
-                                                    {...form.getInputProps('footer_text')}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter') {
-                                                            e.preventDefault();
-                                                        }
-                                                    }}
-                                                    onChange={(e) => {
-                                                        const value = e.currentTarget.value.replace(/\n/g, ' ');
-                                                        form.setFieldValue('footer_text', value);
-                                                    }}
-                                                />
-                                                <Text size="xs" c="dimmed" ta="right" mt={4}>
-                                                    {form.values.footer_text?.length || 0} / 500
-                                                </Text>
-                                            </div>
 
                                             <div>
                                                 <Select

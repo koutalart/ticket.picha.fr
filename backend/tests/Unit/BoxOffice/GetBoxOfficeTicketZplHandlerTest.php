@@ -36,7 +36,7 @@ class GetBoxOfficeTicketZplHandlerTest extends TestCase
         ));
 
         self::assertStringStartsWith('^XA', $zpl);
-        self::assertStringContainsString('^FXQR:'.$attendee->public_id.'^FS', $zpl);
+        self::assertStringContainsString('^FDQA,'.$attendee->public_id.'^FS', $zpl);
         self::assertStringEndsWith('^XZ', $zpl);
     }
 
@@ -57,7 +57,7 @@ class GetBoxOfficeTicketZplHandlerTest extends TestCase
             ->count());
     }
 
-    public function test_uses_station_label_format(): void
+    public function test_prints_the_same_8_by_8_ticket_whatever_the_station_label_format(): void
     {
         [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
         $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
@@ -69,8 +69,8 @@ class GetBoxOfficeTicketZplHandlerTest extends TestCase
             label_format: new ZplLabelFormatDTO(dpi: 300, width_mm: 80.0, length_mm: 101.0),
         ));
 
-        self::assertStringContainsString("^PW945\n", $zpl);
-        self::assertStringContainsString("^LL1193\n", $zpl);
+        self::assertStringContainsString("^PW639\n", $zpl);
+        self::assertStringContainsString("^LL639\n", $zpl);
     }
 
     public function test_attendee_of_another_event_is_not_found(): void
