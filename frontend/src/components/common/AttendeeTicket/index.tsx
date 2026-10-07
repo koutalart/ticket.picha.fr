@@ -172,7 +172,7 @@ export const AttendeeTicket = ({
                 <div className={classes.footerSite}>
                     <div className={classes.footerLabel}>{t`Ticketing & management`}</div>
                     <div className={classes.siteUrl}>
-                        <IconWorld size={22} stroke={1.8}/>
+                        <IconWorld size={19} stroke={1.8}/>
                         {PICHA_SITE}
                     </div>
                 </div>

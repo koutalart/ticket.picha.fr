@@ -160,14 +160,14 @@ class AttendeeTicketZplService
         for ($x = 30; $x <= 594; $x += 14) {
             $lines[] = $at($x, 574).$box(8, 2, 2).'^FS';
         }
-        $lines[] = $at(306, 600).$font(18).'^FD'.$this->field(__('Ticketing & management'), 32).'^FS';
+        $lines[] = $at(306, 603).$font(15).'^FD'.$this->field(__('Ticketing & management'), 32).'^FS';
         $lines = array_merge($lines, $this->graphic('picha-ai-logo-footer.gfa', $at(48, 590)));
         $lines[] = $at(78, 642).$font(16).$block(70, 1, 0, 'C').'^FD'.self::PICHA_PRODUCT.'\&^FS';
         $lines[] = $at(268, 584).$box(2, 74, 2).'^FS';
-        $lines[] = $at(306, 624).'^GC'.$d(32).','.$d(2).'^FS';
-        $lines[] = $at(316, 624).'^GE'.$d(12).','.$d(32).','.$d(2).'^FS';
-        $lines[] = $at(306, 639).$box(32, 2, 2).'^FS';
-        $lines[] = $at(352, 624).$font(32).'^FD'.self::PICHA_SITE.'^FS';
+        $lines[] = $at(306, 624).'^GC'.$d(26).','.$d(2).'^FS';
+        $lines[] = $at(314, 624).'^GE'.$d(10).','.$d(26).','.$d(2).'^FS';
+        $lines[] = $at(306, 636).$box(26, 2, 2).'^FS';
+        $lines[] = $at(342, 624).$font(26).'^FD'.self::PICHA_SITE.'^FS';
 
         $lines[] = '^XZ';
 

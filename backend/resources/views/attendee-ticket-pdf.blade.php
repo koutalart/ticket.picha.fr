@@ -40,9 +40,9 @@
     .picha-product { font-size: 8.5pt; font-weight: bold; color: #422A6A; margin: 0.3mm 0 0 7mm; }
     .footer .divider { height: 13mm; }
     .footer-right { padding-left: 6mm; }
-    .footer-label { font-size: 8pt; color: #6E6585; }
-    .site { font-size: 15pt; font-weight: bold; color: #422A6A; }
-    .site img { width: 5.5mm; height: 5.5mm; vertical-align: middle; margin-right: 1.5mm; }
+    .footer-label { font-size: 7pt; color: #6E6585; }
+    .site { font-size: 13pt; font-weight: bold; color: #422A6A; }
+    .site img { width: 4.7mm; height: 4.7mm; vertical-align: middle; margin-right: 1.5mm; }
     .organizer-footer { width: 124mm; margin: 3mm auto 0 auto; font-size: 8pt; color: #6E6585; text-align: center; }
 </style>
 </head>
