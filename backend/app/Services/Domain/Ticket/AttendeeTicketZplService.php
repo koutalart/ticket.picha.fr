@@ -160,7 +160,7 @@ class AttendeeTicketZplService
         for ($x = 30; $x <= 594; $x += 14) {
             $lines[] = $at($x, 574).$box(8, 2, 2).'^FS';
         }
-        $lines[] = $at(306, 603).$font(15).'^FD'.$this->field(__('Ticketing & management'), 32).'^FS';
+        $lines[] = $at(306, 603).$font(15).'^FD'.$this->field(__('Event ticketing & management'), 40).'^FS';
         $lines = array_merge($lines, $this->graphic('picha-ai-logo-footer.gfa', $at(48, 590)));
         $lines[] = $at(78, 642).$font(16).$block(70, 1, 0, 'C').'^FD'.self::PICHA_PRODUCT.'\&^FS';
         $lines[] = $at(268, 584).$box(2, 74, 2).'^FS';

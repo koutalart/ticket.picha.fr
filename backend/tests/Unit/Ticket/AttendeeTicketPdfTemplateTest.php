@@ -53,7 +53,7 @@ class AttendeeTicketPdfTemplateTest extends TestCase
         self::assertStringContainsString('É V É N E M E N T', $html);
         self::assertStringContainsString('T Y P E   D &#039; E N T R É E', $html);
         self::assertStringContainsString('H E U R E', $html);
-        self::assertStringContainsString('Billetterie &amp; gestion', $html);
+        self::assertStringContainsString('Billetterie et gestion d&#039;événement', $html);
         self::assertStringNotContainsString('T I C K E T   T Y P E', $html);
     }
 

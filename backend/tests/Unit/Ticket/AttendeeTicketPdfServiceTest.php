@@ -139,7 +139,7 @@ class AttendeeTicketPdfServiceTest extends TestCase
         self::assertStringContainsString(implode(' ', str_split(explode('-', $attendee->getPublicId(), 2)[1])), $text);
         self::assertStringContainsString('Sponsor', $text);
         self::assertStringContainsString('Bé digital', $text);
-        self::assertStringContainsString('Billetterie & gestion', $text);
+        self::assertStringContainsString("Billetterie et gestion d'événement", $text);
         self::assertStringContainsString('ticket.picha.fr', $text);
         self::assertStringContainsString('Ticket', $text);
         self::assertGreaterThanOrEqual(2, count($this->extractImages($pdf)), 'QR + PICHA AI logo');
@@ -169,7 +169,7 @@ class AttendeeTicketPdfServiceTest extends TestCase
 
         $text = $this->extractText($pdf);
         self::assertStringContainsString("T Y P E   D ' E N T R É E", $text);
-        self::assertStringContainsString('Billetterie & gestion', $text);
+        self::assertStringContainsString("Billetterie et gestion d'événement", $text);
         self::assertStringNotContainsString('T I C K E T   T Y P E', $text);
         self::assertSame('en', app()->getLocale());
     }

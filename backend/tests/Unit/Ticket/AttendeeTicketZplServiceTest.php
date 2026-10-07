@@ -167,7 +167,7 @@ class AttendeeTicketZplServiceTest extends TestCase
         $zpl = $this->generate();
 
         self::assertStringContainsString('^FO30,574^GB8,2,2^FS', $zpl);
-        self::assertStringContainsString('^FO306,603^A0N,15,15^FDBilletterie & gestion^FS', $zpl);
+        self::assertStringContainsString("^FO306,603^A0N,15,15^FDBilletterie et gestion d'événement^FS", $zpl);
         self::assertStringContainsString('^FO48,590^GFA,1426,1426,23,', $zpl);
         self::assertStringContainsString('^FO78,642^A0N,16,16^FB70,1,0,C^FDTicket\\&^FS', $zpl);
         self::assertStringContainsString('^FO268,584^GB2,74,2^FS', $zpl);

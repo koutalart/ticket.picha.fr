@@ -170,7 +170,7 @@ export const AttendeeTicket = ({
                 </div>
                 <div className={classes.footerDivider}/>
                 <div className={classes.footerSite}>
-                    <div className={classes.footerLabel}>{t`Ticketing & management`}</div>
+                    <div className={classes.footerLabel}>{t`Event ticketing & management`}</div>
                     <div className={classes.siteUrl}>
                         <IconWorld size={19} stroke={1.8}/>
                         {PICHA_SITE}

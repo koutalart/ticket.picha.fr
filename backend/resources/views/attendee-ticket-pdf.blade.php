@@ -108,7 +108,7 @@
             </td>
             <td style="width: 2%;"><div class="divider"></div></td>
             <td class="footer-right">
-                <div class="footer-label">{{ __('Ticketing & management') }}</div>
+                <div class="footer-label">{{ __('Event ticketing & management') }}</div>
                 <div class="site"><img src="{{ $icons['globe'] }}" />ticket.picha.fr</div>
             </td>
         </tr>
