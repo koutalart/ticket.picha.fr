@@ -54,12 +54,18 @@ export const DemoRequestForm = () => {
 
     const eventTypeOptions = [
         {value: "", label: t`Choose…`, disabled: true},
-        {value: "CONFERENCE", label: t`Conference or symposium`},
-        {value: "SEMINAR", label: t`Seminar or convention`},
-        {value: "GENERAL_ASSEMBLY", label: t`General assembly`},
-        {value: "TRADE_SHOW", label: t`Trade show or open day`},
-        {value: "CEREMONY", label: t`Ceremony, gala or award night`},
-        {value: "INTERNAL_EVENT", label: t`Internal event`},
+        {value: "CONFERENCE", label: t`Conference`},
+        {value: "SEMINAR", label: t`Seminar`},
+        {value: "GENERAL_ASSEMBLY", label: t`General Assembly`},
+        {value: "OPEN_HOUSE", label: t`Open House`},
+        {value: "INTERNAL_EVENT", label: t`Internal Event`},
+        {value: "WORKSHOP", label: t`Workshop`},
+        {value: "AWARDS", label: t`Awards`},
+        {value: "FESTIVAL", label: t`Festival`},
+        {value: "MUSIC", label: t`Music`},
+        {value: "SPORTS", label: t`Sports`},
+        {value: "CULTURE", label: t`Culture`},
+        {value: "CHARITY", label: t`Charity`},
         {value: "OTHER", label: t`Other`},
     ];
 

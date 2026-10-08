@@ -6,24 +6,22 @@ enum DemoRequestEventType: string
 {
     use BaseEnum;
 
-    case CONFERENCE = 'CONFERENCE';
+    case OPEN_HOUSE = 'OPEN_HOUSE';
     case SEMINAR = 'SEMINAR';
-    case GENERAL_ASSEMBLY = 'GENERAL_ASSEMBLY';
-    case TRADE_SHOW = 'TRADE_SHOW';
-    case CEREMONY = 'CEREMONY';
     case INTERNAL_EVENT = 'INTERNAL_EVENT';
+    case CONFERENCE = 'CONFERENCE';
+    case GENERAL_ASSEMBLY = 'GENERAL_ASSEMBLY';
+    case FESTIVAL = 'FESTIVAL';
+    case WORKSHOP = 'WORKSHOP';
+    case AWARDS = 'AWARDS';
+    case MUSIC = 'MUSIC';
+    case SPORTS = 'SPORTS';
+    case CULTURE = 'CULTURE';
+    case CHARITY = 'CHARITY';
     case OTHER = 'OTHER';
 
     public function label(): string
     {
-        return match ($this) {
-            self::CONFERENCE => __('Conference or symposium'),
-            self::SEMINAR => __('Seminar or convention'),
-            self::GENERAL_ASSEMBLY => __('General assembly'),
-            self::TRADE_SHOW => __('Trade show or open day'),
-            self::CEREMONY => __('Ceremony, gala or award night'),
-            self::INTERNAL_EVENT => __('Internal event'),
-            self::OTHER => __('Other'),
-        };
+        return EventCategory::from($this->value)->label();
     }
 }

@@ -29,6 +29,8 @@ class SendDemoRequestHandlerTest extends TestCase
 
     public function testSendsDemoRequestToConfiguredAddress(): void
     {
+        app()->setLocale('fr');
+
         $this->config->shouldReceive('get')
             ->with('app.demo_request_email')
             ->andReturn('sales@example.com');
@@ -47,9 +49,9 @@ class SendDemoRequestHandlerTest extends TestCase
                 return $envelope->replyTo[0]->address === 'jane.doe@acme.fr'
                     && $envelope->replyTo[0]->name === 'Jane Doe'
                     && $content->with['organization'] === 'ACME'
-                    && $content->with['eventType'] === DemoRequestEventType::CONFERENCE->label()
-                    && $content->with['eventDate'] === '2026-11'
-                    && $content->with['attendeeCount'] === '150-500';
+                    && $content->with['eventType'] === 'Conférence'
+                    && $content->with['eventDate'] === 'Novembre 2026'
+                    && $content->with['attendeeCount'] === '150 à 500';
             }));
 
         $this->handler->handle(new SendDemoRequestDTO(
