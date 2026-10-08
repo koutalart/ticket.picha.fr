@@ -4,6 +4,7 @@
 @php /** @var \HiEvents\DomainObjects\EventDomainObject $event */ @endphp
 @php /** @var \HiEvents\DomainObjects\OrganizerDomainObject $organizer */ @endphp
 @php /** @var \HiEvents\DomainObjects\EventSettingDomainObject $eventSettings */ @endphp
+@php /** @var \HiEvents\DomainObjects\AttendeeDomainObject[] $tickets */ @endphp
 @php /** @var string $ticketUrl */ @endphp
 @php /** @see \HiEvents\Mail\Attendee\AttendeeTicketMail */ @endphp
 @php
@@ -13,6 +14,12 @@
         ?? $attendee->getProduct()?->getTitle();
     $attendeeName = trim($attendee->getFirstName().' '.$attendee->getLastName());
     $supportEmail = $eventSettings->getSupportEmail() ?: $organizer->getEmail();
+    $tickets = $tickets ?? [$attendee];
+    $ticketCount = count($tickets);
+    $ticketLabel = fn ($ticket) => trim(($order->getOrderItems()
+        ?->first(fn ($item) => $item->getProductPriceId() === $ticket->getProductPriceId())
+        ?->getItemName() ?? $ticket->getProduct()?->getTitle() ?? '')
+        .' — '.trim($ticket->getFirstName().' '.$ticket->getLastName()), ' —');
 @endphp
 
 <x-mail::message
@@ -34,7 +41,7 @@
 {{ __('Hello :name,', ['name' => $attendeeName]) }}
 @endif
 
-{{ __('Your ticket is attached to this email (PDF). Show its QR code at the entrance, on your phone or printed.') }}
+{{ trans_choice('Your ticket is attached to this email (PDF). Show its QR code at the entrance, on your phone or printed.|Your tickets are attached to this email (PDF). Show their QR codes at the entrance, on your phone or printed.', $ticketCount) }}
 
 @if($event->getStartDate())
 **{{ __('Date & Time:') }}** {{ EmailFormatHelper::eventDateTime($event) }}<br>
@@ -42,15 +49,23 @@
 @if(trim($eventSettings->getAddressString()) !== '')
 **{{ __('Location:') }}** {{ $eventSettings->getAddressString() }}<br>
 @endif
+@if($ticketCount === 1)
 @if($ticketName)
 **{{ __('Ticket Type:') }}** {{ $ticketName }}<br>
 @endif
 @if($attendeeName !== '')
 **{{ __('Attendee:') }}** {{ $attendeeName }}
 @endif
+@else
+
+**{{ trans_choice('Your ticket|Your tickets', $ticketCount) }} ({{ $ticketCount }})**<br>
+@foreach($tickets as $ticket)
+🎟️ {{ $ticketLabel($ticket) }}<br>
+@endforeach
+@endif
 
 <x-mail::button :url="$ticketUrl">
-{{ __('View Ticket') }}
+{{ $ticketCount === 1 ? __('View Ticket') : __('View Order & Tickets') }}
 </x-mail::button>
 
 @if($supportEmail)

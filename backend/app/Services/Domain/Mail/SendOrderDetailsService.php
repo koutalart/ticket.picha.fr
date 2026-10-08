@@ -25,6 +25,8 @@ class SendOrderDetailsService
 {
     private const MAX_TICKETS_IN_SUMMARY = 10;
 
+    private const MAX_TICKETS_PER_EMAIL = 10;
+
     public function __construct(
         private readonly EventRepositoryInterface $eventRepository,
         private readonly OrderRepositoryInterface $orderRepository,
@@ -99,27 +101,36 @@ class SendOrderDetailsService
     /**
      * @param  AttendeeDomainObject[]  $bundledTickets
      */
+    /**
+     * Every address receives all of its tickets as PDF attachments, at most MAX_TICKETS_PER_EMAIL per e-mail.
+     *
+     * @param  AttendeeDomainObject[]  $bundledTickets  Already attached to the buyer's order summary
+     */
     private function sendAttendeeTicketEmails(OrderDomainObject $order, EventDomainObject $event, array $bundledTickets): void
     {
-        $sentEmails = array_map(static fn (AttendeeDomainObject $attendee) => $attendee->getEmail(), $bundledTickets);
+        $bundledIds = array_map(static fn (AttendeeDomainObject $attendee) => $attendee->getId(), $bundledTickets);
+
+        $ticketsByEmail = [];
         foreach ($order->getAttendees() as $attendee) {
-            if (KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail())) {
+            if (KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail())
+                || in_array($attendee->getId(), $bundledIds, true)) {
                 continue;
             }
 
-            if (in_array($attendee->getEmail(), $sentEmails, true)) {
-                continue;
+            $ticketsByEmail[mb_strtolower(trim((string) $attendee->getEmail()))][] = $attendee;
+        }
+
+        foreach ($ticketsByEmail as $tickets) {
+            foreach (array_chunk($tickets, self::MAX_TICKETS_PER_EMAIL) as $chunk) {
+                $this->sendAttendeeTicketService->send(
+                    order: $order,
+                    attendee: $chunk[0],
+                    event: $event,
+                    eventSettings: $event->getEventSettings(),
+                    organizer: $event->getOrganizer(),
+                    tickets: $chunk,
+                );
             }
-
-            $this->sendAttendeeTicketService->send(
-                order: $order,
-                attendee: $attendee,
-                event: $event,
-                eventSettings: $event->getEventSettings(),
-                organizer: $event->getOrganizer(),
-            );
-
-            $sentEmails[] = $attendee->getEmail();
         }
     }
 

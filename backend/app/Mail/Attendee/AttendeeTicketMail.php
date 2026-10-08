@@ -26,6 +26,12 @@ class AttendeeTicketMail extends BaseMail
 {
     private readonly ?RenderedEmailTemplateDTO $renderedTemplate;
 
+    /** @var AttendeeDomainObject[] */
+    private readonly array $tickets;
+
+    /**
+     * @param  AttendeeDomainObject[]  $tickets  Every ticket attached to this e-mail; defaults to the attendee's own ticket
+     */
     public function __construct(
         private readonly OrderDomainObject $order,
         private readonly AttendeeDomainObject $attendee,
@@ -33,14 +39,16 @@ class AttendeeTicketMail extends BaseMail
         private readonly EventSettingDomainObject $eventSettings,
         private readonly OrganizerDomainObject $organizer,
         ?RenderedEmailTemplateDTO $renderedTemplate = null,
+        array $tickets = [],
     ) {
         parent::__construct();
         $this->renderedTemplate = $renderedTemplate;
+        $this->tickets = $tickets !== [] ? array_values($tickets) : [$attendee];
     }
 
     public function envelope(): Envelope
     {
-        $subject = $this->renderedTemplate?->subject ?? __('🎟️ Your Ticket for :event', [
+        $subject = $this->renderedTemplate?->subject ?? __(count($this->tickets) > 1 ? '🎟️ Your Tickets for :event' : '🎟️ Your Ticket for :event', [
             'event' => Str::limit($this->event->getTitle(), 50),
         ]);
 
@@ -77,11 +85,10 @@ class AttendeeTicketMail extends BaseMail
                 'organizerLogoUrl' => $this->isFreeEvent() ? $this->getOrganizerLogoUrl() : null,
                 'isFreeEvent' => $this->isFreeEvent(),
                 'order' => $this->order,
-                'ticketUrl' => sprintf(
-                    Url::getFrontEndUrlFromConfig(Url::ATTENDEE_TICKET),
-                    $this->event->getId(),
-                    $this->attendee->getShortId(),
-                ),
+                'tickets' => $this->tickets,
+                'ticketUrl' => count($this->tickets) > 1
+                    ? sprintf(Url::getFrontEndUrlFromConfig(Url::ORDER_SUMMARY), $this->event->getId(), $this->order->getShortId())
+                    : sprintf(Url::getFrontEndUrlFromConfig(Url::ATTENDEE_TICKET), $this->event->getId(), $this->attendee->getShortId()),
             ]
         );
     }
@@ -95,14 +102,19 @@ class AttendeeTicketMail extends BaseMail
             'event-'.$this->attendee->getId(),
         );
 
-        return [
+        $attachments = [
             Attachment::fromData(static fn () => $calendar, 'event.ics')
                 ->withMime('text/calendar'),
-            Attachment::fromData(
-                fn () => $this->generateTicketPdf(),
-                'ticket-'.$this->attendee->getShortId().'.pdf',
-            )->withMime('application/pdf'),
         ];
+
+        foreach ($this->tickets as $ticket) {
+            $attachments[] = Attachment::fromData(
+                fn () => $this->generateTicketPdf($ticket),
+                'ticket-'.$ticket->getShortId().'.pdf',
+            )->withMime('application/pdf');
+        }
+
+        return $attachments;
     }
 
     private function isFreeEvent(): bool
@@ -126,10 +138,10 @@ class AttendeeTicketMail extends BaseMail
         return $logo?->getPath() ? Url::getCdnUrl($logo->getPath()) : null;
     }
 
-    private function generateTicketPdf(): string
+    private function generateTicketPdf(AttendeeDomainObject $ticket): string
     {
         return app(AttendeeTicketPdfService::class)->generate(
-            $this->attendee,
+            $ticket,
             $this->event,
             $this->eventSettings,
             $this->organizer,

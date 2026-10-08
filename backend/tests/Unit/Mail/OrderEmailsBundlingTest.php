@@ -140,6 +140,29 @@ class OrderEmailsBundlingTest extends TestCase
         $summary = array_values(array_filter($messages, fn ($message) => str_contains(mb_strtolower($message['subject']), 'commande')));
         self::assertCount(1, $summary);
         self::assertCount(0, $this->tickets($summary[0]));
+
+        $ticketEmails = array_values(array_filter($messages, fn ($message) => ! str_contains(mb_strtolower($message['subject']), 'commande')));
+        self::assertCount(2, $ticketEmails, '11 tickets: one e-mail of 10 and one of 1');
+        self::assertSame(11, array_sum(array_map(fn ($message) => count($this->tickets($message)), $ticketEmails)));
+    }
+
+    public function test_free_order_sends_every_ticket_of_the_same_address(): void
+    {
+        $messages = $this->send($this->paidOrder(0, ['client@exemple.test', 'client@exemple.test', 'client@exemple.test']));
+
+        self::assertCount(1, $messages);
+        self::assertCount(3, $this->tickets($messages[0]));
+        self::assertContains('event.ics', $messages[0]['attachments']);
+    }
+
+    public function test_free_order_sends_each_address_its_own_tickets(): void
+    {
+        $messages = $this->send($this->paidOrder(0, ['client@exemple.test', 'Client@Exemple.test', 'invite@exemple.test']));
+        $byRecipient = array_column($messages, null, 'to');
+
+        self::assertCount(2, $messages);
+        self::assertCount(2, $this->tickets($byRecipient['client@exemple.test']));
+        self::assertCount(1, $this->tickets($byRecipient['invite@exemple.test']));
     }
 
     public function test_calendar_file_uses_the_event_local_time(): void

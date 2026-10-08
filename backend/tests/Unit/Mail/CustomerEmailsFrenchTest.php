@@ -137,6 +137,7 @@ class CustomerEmailsFrenchTest extends TestCase
         $mails = [
             'summary' => new OrderSummary($order, $event, $organizer, $settings, null, null, [$attendee]),
             'ticket' => new AttendeeTicketMail($order, $attendee, $event, $settings, $organizer),
+            'tickets' => new AttendeeTicketMail($order, $attendee, $event, $settings, $organizer, null, [$attendee, $attendee]),
             'cancelled' => new OrderCancelled($order, $event, $organizer, $settings),
             'failed' => new OrderFailed($order, $event, $organizer, $settings),
             'refunded' => new OrderRefunded($order, $event, $organizer, $settings, MoneyValue::fromFloat(45, 'EUR')),
@@ -168,6 +169,10 @@ class CustomerEmailsFrenchTest extends TestCase
         }
 
         self::assertStringContainsString('45,00 €', $this->visibleText($mails['refunded']));
+        self::assertStringContainsString('Vos billets sont joints à cet e-mail (PDF)', $this->visibleText($mails['tickets']));
+        self::assertStringContainsString('Vos billets (2)', $this->visibleText($mails['tickets']));
+        self::assertStringStartsWith('🎟️ Vos billets pour', $mails['tickets']->withLocale('fr', fn () => $mails['tickets']->envelope()->subject));
+        self::assertStringContainsString('Voir la commande et les billets', $this->visibleText($mails['tickets']));
         self::assertStringContainsString('45,99 €', str_replace(["\u{a0}", "\u{202f}"], ' ', $mails['organizer']->withLocale('fr', fn () => $mails['organizer']->envelope()->subject)));
         self::assertStringContainsString('samedi 10 octobre 2026 à 18h00', $this->visibleText($mails['waitlist-offer']));
     }
