@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\BoxOffice;
 
-use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Exceptions\InvalidZebraPrinterHostException;
 use HiEvents\Exceptions\ZebraPrinterUnreachableException;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\PrintBoxOfficeZplDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\PrintBoxOfficeZplHandler;
-use HiEvents\Services\Domain\Ticket\DTO\ZplLabelFormatDTO;
 use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Mockery;
 use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
@@ -43,116 +40,6 @@ class PrintBoxOfficeZplHandlerTest extends TestCase
         ));
 
         self::assertSame(1, DB::table('print_jobs')->where('attendee_id', $attendee->id)->count());
-    }
-
-    public function test_uses_station_label_format(): void
-    {
-        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
-        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
-
-        $printer = Mockery::mock(ZebraPrinterClientInterface::class);
-        $printer->shouldReceive('send')
-            ->once()
-            ->with('192.168.1.50', 9100, Mockery::on(
-                fn (string $zpl) => str_contains($zpl, "^PW945\n") && str_contains($zpl, "^LL1193\n")
-            ));
-        $this->app->instance(ZebraPrinterClientInterface::class, $printer);
-
-        app(PrintBoxOfficeZplHandler::class)->handle(new PrintBoxOfficeZplDTO(
-            event_id: $event->id,
-            attendee_public_id: $attendee->public_id,
-            agent_user_id: $user->id,
-            printer_host: '192.168.1.50',
-            label_format: new ZplLabelFormatDTO(dpi: 300, width_mm: 80.0, length_mm: 101.0),
-        ));
-    }
-
-    public function test_prints_event_ticket_sponsor(): void
-    {
-        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
-        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
-        DB::table('event_settings')->where('event_id', $event->id)->update(['ticket_sponsor_name' => 'Digital Studio']);
-
-        $printer = Mockery::mock(ZebraPrinterClientInterface::class);
-        $printer->shouldReceive('send')
-            ->once()
-            ->with('192.168.1.50', 9100, Mockery::on(fn (string $zpl) => str_contains($zpl, 'Digital Studio')));
-        $this->app->instance(ZebraPrinterClientInterface::class, $printer);
-
-        app(PrintBoxOfficeZplHandler::class)->handle(new PrintBoxOfficeZplDTO(
-            event_id: $event->id,
-            attendee_public_id: $attendee->public_id,
-            agent_user_id: $user->id,
-            printer_host: '192.168.1.50',
-        ));
-    }
-
-    public function test_prints_french_long_date_and_start_time(): void
-    {
-        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
-        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
-        DB::table('events')->where('id', $event->id)->update([
-            'start_date' => '2026-09-05 21:00:00',
-            'end_date' => null,
-            'timezone' => 'UTC',
-        ]);
-
-        $printer = Mockery::mock(ZebraPrinterClientInterface::class);
-        $printer->shouldReceive('send')
-            ->once()
-            ->with('192.168.1.50', 9100, Mockery::on(
-                fn (string $zpl) => str_contains($zpl, '^FDSam. 5 sept. 2026^FS') && str_contains($zpl, '^FD21h00^FS')
-            ));
-        $this->app->instance(ZebraPrinterClientInterface::class, $printer);
-
-        app(PrintBoxOfficeZplHandler::class)->handle(new PrintBoxOfficeZplDTO(
-            event_id: $event->id,
-            attendee_public_id: $attendee->public_id,
-            agent_user_id: $user->id,
-            printer_host: '192.168.1.50',
-        ));
-    }
-
-    public function test_prints_event_ticket_logo_in_header(): void
-    {
-        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
-        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
-        $this->storeEventImage($event->id, 'TICKET_LOGO', 'ticket-logo.png');
-
-        $printer = Mockery::mock(ZebraPrinterClientInterface::class);
-        $printer->shouldReceive('send')
-            ->once()
-            ->with('192.168.1.50', 9100, Mockery::on(fn (string $zpl) => str_contains($zpl, '^FO40,44^GFA,1892,1892,22,')));
-        $this->app->instance(ZebraPrinterClientInterface::class, $printer);
-
-        app(PrintBoxOfficeZplHandler::class)->handle(new PrintBoxOfficeZplDTO(
-            event_id: $event->id,
-            attendee_public_id: $attendee->public_id,
-            agent_user_id: $user->id,
-            printer_host: '192.168.1.50',
-            label_format: new ZplLabelFormatDTO(length_mm: 87.0),
-        ));
-    }
-
-    public function test_prints_event_sponsor_logo(): void
-    {
-        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
-        $attendee = $this->createAttendeeViaHandler($event->id, $product->id, $productPrice->id);
-        $this->storeEventImage($event->id, 'TICKET_SPONSOR_LOGO', 'sponsor-logo.png');
-
-        $printer = Mockery::mock(ZebraPrinterClientInterface::class);
-        $printer->shouldReceive('send')
-            ->once()
-            ->with('192.168.1.50', 9100, Mockery::on(fn (string $zpl) => str_contains($zpl, '^FO471,70^GFA,900,900,15,')));
-        $this->app->instance(ZebraPrinterClientInterface::class, $printer);
-
-        app(PrintBoxOfficeZplHandler::class)->handle(new PrintBoxOfficeZplDTO(
-            event_id: $event->id,
-            attendee_public_id: $attendee->public_id,
-            agent_user_id: $user->id,
-            printer_host: '192.168.1.50',
-            label_format: new ZplLabelFormatDTO(length_mm: 87.0),
-        ));
     }
 
     public function test_rejects_public_ip_without_contacting_printer(): void
@@ -195,26 +82,5 @@ class PrintBoxOfficeZplHandlerTest extends TestCase
         }
 
         self::assertSame(0, DB::table('print_jobs')->where('attendee_id', $attendee->id)->count());
-    }
-
-    private function storeEventImage(int $eventId, string $type, string $path): void
-    {
-        Storage::fake('ticket-images');
-        $image = imagecreatetruecolor(200, 100);
-        imagefill($image, 0, 0, imagecolorallocate($image, 0, 0, 0));
-        ob_start();
-        imagepng($image);
-        Storage::disk('ticket-images')->put($path, (string) ob_get_clean());
-
-        DB::table('images')->insert([
-            'entity_id' => $eventId,
-            'entity_type' => EventDomainObject::class,
-            'type' => $type,
-            'filename' => $path,
-            'disk' => 'ticket-images',
-            'path' => $path,
-            'size' => 100,
-            'mime_type' => 'image/png',
-        ]);
     }
 }

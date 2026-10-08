@@ -39,7 +39,7 @@ class BoxOfficeZplPrintTest extends TestCase
         )->assertNoContent();
     }
 
-    public function test_station_label_format_is_forwarded_to_printer(): void
+    public function test_station_label_format_keeps_the_8_by_8_ticket(): void
     {
         [$event, $product, $productPrice, $admin] = $this->createEventWithProduct(
             price: 25.00,
@@ -52,7 +52,7 @@ class BoxOfficeZplPrintTest extends TestCase
         $printer->shouldReceive('send')->once()->with(
             '192.168.10.20',
             9100,
-            Mockery::on(fn (string $zpl) => str_contains($zpl, "^PW831\n") && str_contains($zpl, "^LL1199\n")),
+            Mockery::on(fn (string $zpl) => str_contains($zpl, "^PW639\n") && str_contains($zpl, "^LL639\n")),
         );
         $this->app->instance(ZebraPrinterClientInterface::class, $printer);
 

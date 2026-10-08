@@ -8,7 +8,7 @@ import {IdParam} from "../../../../types.ts";
 import {showSuccess} from "../../../../utilites/notifications.tsx";
 import {t} from "@lingui/macro";
 import {useForm} from "@mantine/form";
-import {Button, ColorInput, Textarea, Accordion, Stack, Text, Group, Select} from "@mantine/core";
+import {Button, Accordion, Stack, Text, Group, Select, TextInput} from "@mantine/core";
 import {IconColorSwatch, IconHelp, IconPrinter} from "@tabler/icons-react";
 import {Tooltip} from "../../../common/Tooltip";
 import {ImageUploadDropzone} from "../../../common/ImageUploadDropzone";
@@ -23,6 +23,7 @@ interface TicketDesignSettings {
     footer_text: string | null;
     date_display_mode: 'START_DATE_TIME' | 'DATE_RANGE' | 'HIDDEN';
     enabled: boolean;
+    sponsor_name: string;
 }
 
 const TicketDesigner = () => {
@@ -42,6 +43,7 @@ const TicketDesigner = () => {
             logo_image_id: undefined,
             footer_text: '',
             date_display_mode: 'START_DATE_TIME',
+            sponsor_name: '',
             enabled: true,
         }
     });
@@ -57,6 +59,7 @@ const TicketDesigner = () => {
                 footer_text: settings.footer_text || '',
                 date_display_mode: settings.date_display_mode || 'START_DATE_TIME',
                 enabled: settings.enabled !== false,
+                sponsor_name: settings.sponsor_name || '',
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -78,7 +81,8 @@ const TicketDesigner = () => {
                         logo_image_id: values.logo_image_id,
                         footer_text: values.footer_text || undefined,
                         date_display_mode: values.date_display_mode,
-                        enabled: values.enabled
+                        enabled: values.enabled,
+                        sponsor_name: values.sponsor_name.trim() || undefined,
                     }
                 },
                 eventId: eventId
@@ -128,15 +132,6 @@ const TicketDesigner = () => {
                                     </Accordion.Control>
                                     <Accordion.Panel>
                                         <Stack gap="lg">
-                                            <div>
-                                                <ColorInput
-                                                    format="hexa"
-                                                    label={t`Accent Color`}
-                                                    description={t`Used for borders, highlights, and QR code styling`}
-                                                    size="sm"
-                                                    {...form.getInputProps('accent_color')}
-                                                />
-                                            </div>
 
                                             <div>
                                                 <Group justify={'space-between'} mb="xs">
@@ -164,7 +159,7 @@ const TicketDesigner = () => {
                                                 <Group justify={'space-between'} mb="xs">
                                                     <Text fw={500} size="sm">{t`Sponsor logo`}</Text>
                                                     <Tooltip
-                                                        label={t`A black logo on a transparent or white background prints best on thermal printers`}>
+                                                        label={t`Use a dark logo on a white or transparent background for the best thermal print`}>
                                                         <IconHelp size={16} style={{ color: 'var(--mantine-color-gray-6)' }}/>
                                                     </Tooltip>
                                                 </Group>
@@ -177,33 +172,18 @@ const TicketDesigner = () => {
                                                         url: existingSponsorLogo?.url,
                                                         id: existingSponsorLogo?.id,
                                                     }}
-                                                    helpText={t`Printed under "Sponsor" on box office tickets`}
+                                                    helpText={t`Printed at the top right of box office tickets (Zebra printer)`}
                                                     displayMode="compact"
                                                 />
                                             </div>
 
-                                            <div>
-                                                <Textarea
-                                                    label={t`Footer Text`}
-                                                    description={t`Optional text for disclaimers, contact info, or thank you notes (single line only)`}
-                                                    placeholder={t`Thank you for attending!`}
-                                                    rows={2}
-                                                    maxLength={500}
-                                                    {...form.getInputProps('footer_text')}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter') {
-                                                            e.preventDefault();
-                                                        }
-                                                    }}
-                                                    onChange={(e) => {
-                                                        const value = e.currentTarget.value.replace(/\n/g, ' ');
-                                                        form.setFieldValue('footer_text', value);
-                                                    }}
-                                                />
-                                                <Text size="xs" c="dimmed" ta="right" mt={4}>
-                                                    {form.values.footer_text?.length || 0} / 500
-                                                </Text>
-                                            </div>
+                                            <TextInput
+                                                label={t`Sponsor name`}
+                                                description={t`Printed under the sponsor logo, or in its place if there is no logo`}
+                                                maxLength={60}
+                                                {...form.getInputProps('sponsor_name')}
+                                            />
+
 
                                             <div>
                                                 <Select
