@@ -19,19 +19,24 @@ class SendAttendeeTicketService
         private readonly MailBuilderService $mailBuilderService,
     ) {}
 
+    /**
+     * @param  AttendeeDomainObject[]  $tickets  Tickets attached to the same e-mail, all for the attendee's address; defaults to the attendee's own ticket
+     */
     public function send(
         OrderDomainObject $order,
         AttendeeDomainObject $attendee,
         EventDomainObject $event,
         EventSettingDomainObject $eventSettings,
         OrganizerDomainObject $organizer,
+        array $tickets = [],
     ): void {
         $mail = $this->mailBuilderService->buildAttendeeTicketMail(
             $attendee,
             $order,
             $event,
             $eventSettings,
-            $organizer
+            $organizer,
+            $tickets,
         );
 
         if (KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail())) {

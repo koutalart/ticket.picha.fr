@@ -166,7 +166,7 @@ class AttendeeTicketPdfServiceTest extends TestCase
         $mail = new AttendeeTicketMail($order, $attendee, $event, $eventSettings, $organizer);
         $reflection = new \ReflectionMethod($mail, 'generateTicketPdf');
         $reflection->setAccessible(true);
-        $mailPdf = $reflection->invoke($mail);
+        $mailPdf = $reflection->invoke($mail, $attendee);
 
         $service = app(AttendeeTicketPdfService::class);
         $servicePdf = $service->generate($attendee, $event, $eventSettings, $organizer);
