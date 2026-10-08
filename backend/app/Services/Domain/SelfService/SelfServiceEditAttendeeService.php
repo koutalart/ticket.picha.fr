@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\IdHelper;
 use HiEvents\Mail\Attendee\AttendeeDetailsChangedMail;
 use HiEvents\Repository\Eloquent\Value\Relationship;
@@ -148,8 +149,8 @@ class SelfServiceEditAttendeeService
 
         $changedFields = $this->formatChangedFields($oldValues, $newValues);
 
-        Mail::to($oldEmail)->queue(new AttendeeDetailsChangedMail(
-            ticketTitle: $attendee->getProduct()?->getTitle() ?? __('Ticket'),
+        Mail::to($oldEmail)->locale(CustomerLocale::get())->queue(new AttendeeDetailsChangedMail(
+            ticketTitle: $attendee->getProduct()?->getTitle() ?? __('Ticket', [], CustomerLocale::get()),
             event: $event,
             organizer: $event->getOrganizer(),
             eventSettings: $event->getEventSettings(),
@@ -160,10 +161,10 @@ class SelfServiceEditAttendeeService
     private function formatChangedFields(array $oldValues, array $newValues): array
     {
         $fieldLabels = [
-            'first_name' => __('First Name'),
-            'last_name' => __('Last Name'),
-            'email' => __('Email'),
-            'short_id' => __('Ticket Reference'),
+            'first_name' => __('First Name', [], CustomerLocale::get()),
+            'last_name' => __('Last Name', [], CustomerLocale::get()),
+            'email' => __('Email', [], CustomerLocale::get()),
+            'short_id' => __('Ticket Reference', [], CustomerLocale::get()),
         ];
 
         $changedFields = [];

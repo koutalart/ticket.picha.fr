@@ -4,6 +4,7 @@ namespace HiEvents\Services\Domain\Email;
 
 use HiEvents\DomainObjects\EmailTemplateDomainObject;
 use HiEvents\DomainObjects\Enums\EmailTemplateType;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Repository\Interfaces\EmailTemplateRepositoryInterface;
 use HiEvents\Services\Domain\Email\DTO\RenderedEmailTemplateDTO;
 use HiEvents\Services\Infrastructure\Email\LiquidTemplateRenderer;
@@ -65,7 +66,9 @@ class EmailTemplateService
      */
     public function getDefaultTemplate(EmailTemplateType $type): array
     {
-        $defaults = $this->getDefaultTemplates();
+        $defaults = str_starts_with(CustomerLocale::get(), 'fr')
+            ? $this->getFrenchDefaultTemplates()
+            : $this->getDefaultTemplates();
         $ctaDefaults = $this->getDefaultCTAs();
 
         $template = $defaults[$type->value] ?? throw new ResourceNotFoundException('No default template for type ' . $type->value);
@@ -223,6 +226,81 @@ Please find your ticket details below.<br>
 <strong>💡Remember:</strong> Please have your ticket ready when you arrive at the event.<br>
 
 If you have any questions or need assistance, please reply to this email or contact the event organizer at <a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>.<br>
+
+LIQUID
+            ],
+        ];
+    }
+
+    private function getFrenchDefaultTemplates(): array
+    {
+        return [
+            EmailTemplateType::ORDER_CONFIRMATION->value => [
+                'subject' => 'Votre commande est confirmée ! 🎉',
+                'body' => <<<'LIQUID'
+<strong>Votre commande est confirmée ! 🎉</strong><br>
+
+{% if order.is_awaiting_offline_payment %}
+<strong>ℹ️ Paiement en attente :</strong> votre commande est en attente de paiement. Vos billets sont émis mais ne seront valables qu'à réception du paiement.<br>
+<strong>Instructions de paiement</strong><br>
+Merci de suivre les instructions ci-dessous pour régler votre commande :<br>
+{% if settings.offline_payment_instructions %}
+{{ settings.offline_payment_instructions }}<br>
+{% endif %}
+
+{% else %}
+Merci ! Votre commande pour <strong>{{ event.title }}</strong> le <strong>{{ event.date }}</strong> à <strong>{{ event.time }}</strong> est confirmée. En voici le détail.<br>
+{% endif %}
+
+<strong>Détails de l'événement</strong><br>
+<strong>Événement :</strong> {{ event.title }}<br>
+<strong>Date et heure :</strong> {{ event.date }} à {{ event.time }}<br>
+{% if event.full_address %}<strong>Lieu :</strong> {{ event.full_address }}<br>{% endif %}
+<br>
+
+{% if settings.post_checkout_message %}
+<strong>Informations complémentaires</strong><br>
+{{ settings.post_checkout_message }}<br>
+{% endif %}
+
+<strong>Récapitulatif de la commande</strong><br>
+<strong>Numéro de commande :</strong> {{ order.number }}<br>
+<strong>Montant total :</strong> {{ order.total }}<br>
+
+Une question ? Écrivez à <a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>.<br>
+
+Au plaisir de vous accueillir !<br>
+{{ organizer.name }}
+LIQUID
+            ],
+            EmailTemplateType::ATTENDEE_TICKET->value => [
+                'subject' => '🎟️ Votre billet pour {{ event.title }}',
+                'body' => <<<'LIQUID'
+<strong>{{ event.title }} 🎉</strong><br>
+
+{% if order.is_awaiting_offline_payment %}
+<strong>ℹ️ Paiement en attente :</strong> votre commande est en attente de paiement. Vos billets sont émis mais ne seront valables qu'à réception du paiement.<br>
+{% endif %}
+
+Bonjour {{ attendee.name }},<br>
+
+Voici le détail de votre billet.<br>
+
+<strong>L'événement</strong><br>
+<strong>Événement :</strong> {{ event.title }}<br>
+<strong>Date :</strong> {{ event.date }}<br>
+<strong>Heure :</strong> {{ event.time }}<br>
+{% if event.full_address %}<strong>Lieu :</strong> {{ event.full_address }}<br>{% endif %}
+<br>
+
+<strong>Votre billet</strong><br>
+<strong>Type de billet :</strong> {{ ticket.name }}<br>
+<strong>Prix :</strong> {{ ticket.price }}<br>
+<strong>Participant :</strong> {{ attendee.name }}<br>
+
+<strong>💡 À savoir :</strong> présentez votre billet (sur votre téléphone ou imprimé) à l'entrée.<br>
+
+Une question ? Répondez à cet e-mail ou écrivez à l'organisateur : <a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>.<br>
 
 LIQUID
             ],

@@ -72,7 +72,13 @@ readonly class CreateUserHandler
                 'email' => strtolower($userData->email),
                 'password' => 'invited', // initially, a user is in an invited state, so they don't have a password
                 'timezone' => $authenticatedAccount->getTimezone(),
+                'locale' => $this->inviterLocale($userData->invited_by),
             ]);
+    }
+
+    private function inviterLocale(int $inviterId): string
+    {
+        return $this->userRepository->findFirst($inviterId)?->getLocale() ?? config('app.locale');
     }
 
     /**

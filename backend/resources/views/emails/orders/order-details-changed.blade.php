@@ -11,7 +11,7 @@
 ## {{ __('What Changed') }}
 
 @foreach($changedFields as $field => $change)
-- **{{ $field }}**: {{ $change['old'] }} → {{ $change['new'] }}
+- {{ __(':label:', ['label' => '**'.$field.'**']) }} {{ $change['old'] }} → {{ $change['new'] }}
 @endforeach
 
 {{ __('If you did not make this change, please contact the event organizer immediately.') }}

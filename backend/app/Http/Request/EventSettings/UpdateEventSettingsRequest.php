@@ -85,6 +85,7 @@ class UpdateEventSettingsRequest extends BaseRequest
             'ticket_design_settings.accent_color' => ['nullable', 'string', ...RulesHelper::HEX_COLOR],
             'ticket_design_settings.logo_image_id' => ['nullable', 'integer'],
             'ticket_design_settings.footer_text' => ['nullable', 'string', 'max:500'],
+            'ticket_design_settings.sponsor_name' => ['nullable', 'string', 'max:60'],
             'ticket_design_settings.layout_type' => ['nullable', 'string', Rule::in(['default', 'modern'])],
             'ticket_design_settings.date_display_mode' => ['nullable', 'string', Rule::in(TicketDateDisplayMode::valuesArray())],
             'ticket_design_settings.enabled' => ['boolean'],

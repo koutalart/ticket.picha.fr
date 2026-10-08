@@ -25,7 +25,8 @@ class MailBuilderService
         OrderDomainObject $order,
         EventDomainObject $event,
         EventSettingDomainObject $eventSettings,
-        OrganizerDomainObject $organizer
+        OrganizerDomainObject $organizer,
+        array $tickets = [],
     ): AttendeeTicketMail {
         $renderedTemplate = $this->renderAttendeeTicketTemplate(
             $attendee,
@@ -42,6 +43,7 @@ class MailBuilderService
             eventSettings: $eventSettings,
             organizer: $organizer,
             renderedTemplate: $renderedTemplate,
+            tickets: $tickets,
         );
     }
 
