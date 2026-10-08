@@ -2,13 +2,13 @@
 
 namespace HiEvents\Mail\Waitlist;
 
-use Carbon\Carbon;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\WaitlistEntryDomainObject;
+use HiEvents\Helper\EmailFormatHelper;
 use HiEvents\Helper\Url;
 use HiEvents\Mail\BaseMail;
 use Illuminate\Mail\Mailables\Content;
@@ -69,7 +69,7 @@ class WaitlistOfferMail extends BaseMail
             return null;
         }
 
-        return Carbon::parse($expiresAt)->isoFormat('MMMM D, YYYY [at] h:mm A (z)');
+        return EmailFormatHelper::dateTime($expiresAt, $this->event->getTimezone());
     }
 
     private function buildProductName(): ?string

@@ -5,6 +5,7 @@ namespace HiEvents\Services\Application\Handlers\TicketLookup;
 use Carbon\Carbon;
 use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\Status\OrderStatus;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Mail\TicketLookup\TicketLookupEmail;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\TicketLookupTokenRepositoryInterface;
@@ -87,6 +88,7 @@ class SendTicketLookupEmailHandler
 
         $this->mailer
             ->to($email)
+            ->locale(CustomerLocale::get())
             ->queue(new TicketLookupEmail(
                 email: $email,
                 token: $token,

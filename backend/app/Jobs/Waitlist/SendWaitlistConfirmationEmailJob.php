@@ -5,6 +5,7 @@ namespace HiEvents\Jobs\Waitlist;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\WaitlistEntryDomainObject;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Mail\Waitlist\WaitlistConfirmationMail;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -50,7 +51,7 @@ class SendWaitlistConfirmationEmailJob implements ShouldQueue
 
         $mailer
             ->to($this->entry->getEmail())
-            ->locale($this->entry->getLocale())
+            ->locale(CustomerLocale::get())
             ->send(new WaitlistConfirmationMail(
                 entry: $this->entry,
                 event: $event,

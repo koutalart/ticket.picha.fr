@@ -122,10 +122,10 @@ class AttendeeTicketPdfServiceTest extends TestCase
         self::assertSame('1278', (string)$images[0]['Height']);
     }
 
-    public function test_pdf_is_rendered_in_attendee_locale_and_restores_app_locale(): void
+    public function test_pdf_is_in_french_whatever_the_attendee_locale_and_restores_app_locale(): void
     {
         [$attendee, $event, $eventSettings, $organizer] = $this->buildDomainObjects('Amina', 'Test');
-        $attendee->setLocale('fr');
+        $attendee->setLocale('en');
         app()->setLocale('en');
 
         $pdf = app(AttendeeTicketPdfService::class)->generate($attendee, $event, $eventSettings, $organizer);

@@ -96,6 +96,12 @@ class SendTicketLookupEmailHandlerTest extends TestCase
             ->andReturn($pendingMail);
 
         $pendingMail
+            ->shouldReceive('locale')
+            ->once()
+            ->with('fr')
+            ->andReturnSelf();
+
+        $pendingMail
             ->shouldReceive('queue')
             ->once()
             ->with(m::type(TicketLookupEmail::class));

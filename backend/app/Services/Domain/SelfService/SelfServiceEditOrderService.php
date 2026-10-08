@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\InvoiceDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\IdHelper;
 use HiEvents\Mail\Order\OrderDetailsChangedMail;
 use HiEvents\Repository\Eloquent\Value\Relationship;
@@ -142,7 +143,7 @@ class SelfServiceEditOrderService
     ): void {
         $changedFields = $this->formatChangedFields($oldValues, $newValues);
 
-        Mail::to($oldEmail)->queue(new OrderDetailsChangedMail(
+        Mail::to($oldEmail)->locale(CustomerLocale::get())->queue(new OrderDetailsChangedMail(
             event: $event,
             organizer: $event->getOrganizer(),
             eventSettings: $event->getEventSettings(),
@@ -153,10 +154,10 @@ class SelfServiceEditOrderService
     private function formatChangedFields(array $oldValues, array $newValues): array
     {
         $fieldLabels = [
-            'first_name' => __('First Name'),
-            'last_name' => __('Last Name'),
-            'email' => __('Email'),
-            'short_id' => __('Order Reference'),
+            'first_name' => __('First Name', [], CustomerLocale::get()),
+            'last_name' => __('Last Name', [], CustomerLocale::get()),
+            'email' => __('Email', [], CustomerLocale::get()),
+            'short_id' => __('Order Reference', [], CustomerLocale::get()),
         ];
 
         $changedFields = [];

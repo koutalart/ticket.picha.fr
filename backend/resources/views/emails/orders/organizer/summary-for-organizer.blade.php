@@ -1,4 +1,4 @@
-@php use HiEvents\Helper\Currency @endphp
+@php use HiEvents\Helper\EmailFormatHelper @endphp
 
 @php /** @uses /backend/app/Mail/OrderSummary.php */ @endphp
 @php /** @var \HiEvents\DomainObjects\OrderDomainObject $order */ @endphp
@@ -8,7 +8,7 @@
 # {{ __('You\'ve received a new order!') }} 🎉
 
 <br>
-{{ __('Congratulations! You\'ve received a new order for ') }} <b>{{ $event->getTitle() }}</b>! {{ __('Please find the details below.') }}
+{!! __('Congratulations! You\'ve received a new order for :event!', ['event' => '<b>'.e($event->getTitle()).'</b>']) !!} {{ __('Please find the details below.') }}
 <br>
 <br>
 
@@ -20,9 +20,9 @@
 </div>
 @endif
 
-{{ __('Name') }}: <b>{{ $order->getFullName() }}</b><br>
-{{ __('Email') }}: <b>{{ $order->getEmail() }}</b><br>
-{{ __('Order Amount:') }} <b>{{ Currency::format($order->getTotalGross(), $event->getCurrency()) }}</b><br>
+{{ __('Name:') }} <b>{{ $order->getFullName() }}</b><br>
+{{ __('Email:') }} <b>{{ $order->getEmail() }}</b><br>
+{{ __('Order Amount:') }} <b>{{ EmailFormatHelper::money($order->getTotalGross(), $event->getCurrency()) }}</b><br>
 {{ __('Order ID:') }} <b>{{ $order->getPublicId() }}</b><br>
 {{ __('Order Status:') }} <b>{{ $order->getHumanReadableStatus() }}</b>
 <br>

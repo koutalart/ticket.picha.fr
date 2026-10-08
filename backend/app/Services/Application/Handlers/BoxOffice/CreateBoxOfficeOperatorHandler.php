@@ -110,6 +110,7 @@ class CreateBoxOfficeOperatorHandler
             'email' => strtolower($dto->email),
             'password' => 'invited',
             'timezone' => $account->getTimezone(),
+            'locale' => $this->userRepository->findFirst($dto->created_by_user_id)?->getLocale() ?? config('app.locale'),
         ]);
 
         $user->setCurrentAccountUser($this->accountUserAssociationService->associate(
