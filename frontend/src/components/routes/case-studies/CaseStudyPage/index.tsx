@@ -12,6 +12,8 @@ import {CaseStudyCard} from "../CaseStudyCard";
 import {caseStudies, getCaseStudyTitle, getVisibleCaseStudies, isCaseStudyVisible, serviceLabels} from "../caseStudies.ts";
 import classes from "../CaseStudies.module.scss";
 
+const showBlock = (hasContent: boolean): boolean => hasContent || import.meta.env.DEV;
+
 const ToComplete = ({children}: { children: string }) => (
     import.meta.env.DEV ? <p className={classes.todo}>À compléter : {children}</p> : null
 );
@@ -85,6 +87,7 @@ const CaseStudyPage = () => {
                 inLanguage: "fr",
                 mainEntityOfPage: pageUrl,
                 datePublished: caseStudy.publishedAt,
+                dateModified: caseStudy.updatedAt ?? caseStudy.publishedAt,
                 image: caseStudy.coverImage,
                 author: {"@type": "Organization", name: "PICHA", url: getConfig("VITE_BRAND_URL", "https://picha.fr")},
                 publisher: {"@type": "Organization", name: "PICHA", url: getConfig("VITE_BRAND_URL", "https://picha.fr")},
@@ -149,14 +152,14 @@ const CaseStudyPage = () => {
                 </div>
 
                 <div className={classes.article}>
-                    <section className={classes.block}>
+                    {showBlock(!!caseStudy.challenge) && <section className={classes.block}>
                         <h2>Le contexte</h2>
                         {caseStudy.challenge
                             ? <p>{caseStudy.challenge}</p>
                             : <ToComplete>l'événement, le public attendu et ce qui devait être réussi à l'accueil.</ToComplete>}
-                    </section>
+                    </section>}
 
-                    <section className={classes.block}>
+                    {showBlock(!!caseStudy.solution?.length || caseStudy.services.length > 0) && <section className={classes.block}>
                         <h2>Le dispositif {getAppName()}</h2>
                         {caseStudy.solution && caseStudy.solution.length > 0 ? (
                             <ul className={classes.checkList}>
@@ -181,16 +184,16 @@ const CaseStudyPage = () => {
                                 ))}
                             </p>
                         )}
-                    </section>
+                    </section>}
 
-                    <section className={classes.block}>
+                    {showBlock(!!caseStudy.dayOf) && <section className={classes.block}>
                         <h2>Le déroulé du jour J</h2>
                         {caseStudy.dayOf
                             ? <p>{caseStudy.dayOf}</p>
                             : <ToComplete>comment s'est passé l'accueil : installation, ouverture des portes, pics d'affluence, imprévus gérés.</ToComplete>}
-                    </section>
+                    </section>}
 
-                    <section className={classes.block}>
+                    {showBlock(!!caseStudy.results?.length) && <section className={classes.block}>
                         <h2>Les résultats</h2>
                         {caseStudy.results && caseStudy.results.length > 0 ? (
                             <div className={classes.results}>
@@ -202,7 +205,7 @@ const CaseStudyPage = () => {
                                 ))}
                             </div>
                         ) : <ToComplete>2 à 4 chiffres réels (participants accueillis, temps d'attente, taux de présence…).</ToComplete>}
-                    </section>
+                    </section>}
 
                     {caseStudy.photos && caseStudy.photos.length > 0 ? (
                         <div className={classes.photos}>
