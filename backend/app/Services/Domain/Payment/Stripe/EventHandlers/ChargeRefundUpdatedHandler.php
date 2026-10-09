@@ -11,6 +11,8 @@ use HiEvents\Repository\Interfaces\OrderRefundRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\StripePaymentsRepositoryInterface;
 use HiEvents\Services\Domain\EventStatistics\EventStatisticsRefundService;
+use HiEvents\Services\Domain\Order\OrderCancelService;
+use HiEvents\Services\Domain\Payment\Stripe\StripePaymentIntentRefundService;
 use HiEvents\Services\Infrastructure\DomainEvents\DomainEventDispatcherService;
 use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
 use HiEvents\Services\Infrastructure\DomainEvents\Events\OrderEvent;
@@ -23,16 +25,15 @@ use Throwable;
 class ChargeRefundUpdatedHandler
 {
     public function __construct(
-        private readonly OrderRepositoryInterface          $orderRepository,
+        private readonly OrderRepositoryInterface $orderRepository,
         private readonly StripePaymentsRepositoryInterface $stripePaymentsRepository,
-        private readonly Logger                            $logger,
-        private readonly DatabaseManager                   $databaseManager,
-        private readonly EventStatisticsRefundService      $eventStatisticsRefundService,
-        private readonly OrderRefundRepositoryInterface    $orderRefundRepository,
-        private readonly DomainEventDispatcherService      $domainEventDispatcherService,
-    )
-    {
-    }
+        private readonly Logger $logger,
+        private readonly DatabaseManager $databaseManager,
+        private readonly EventStatisticsRefundService $eventStatisticsRefundService,
+        private readonly OrderRefundRepositoryInterface $orderRefundRepository,
+        private readonly DomainEventDispatcherService $domainEventDispatcherService,
+        private readonly OrderCancelService $orderCancelService,
+    ) {}
 
     /**
      * @throws Throwable
@@ -41,10 +42,10 @@ class ChargeRefundUpdatedHandler
     {
         $this->databaseManager->transaction(function () use ($refund) {
             $stripePayment = $this->stripePaymentsRepository->findFirstWhere([
-                'payment_intent_id' => $refund->payment_intent
+                'payment_intent_id' => $refund->payment_intent,
             ]);
 
-            if (!$stripePayment) {
+            if (! $stripePayment) {
                 return;
             }
 
@@ -66,6 +67,7 @@ class ChargeRefundUpdatedHandler
 
             if ($refund->status !== 'succeeded') {
                 $this->handleFailure($refund, $order);
+
                 return;
             }
 
@@ -75,6 +77,7 @@ class ChargeRefundUpdatedHandler
             $this->updateOrderStatus($order, $refundedAmount);
             $this->updateEventStatistics($order, MoneyValue::fromMinorUnit($refund->amount, $order->getCurrency()));
             $this->createOrderRefund($refund, $order, $refundedAmount);
+            $this->cancelOrderRefundedOutsidePicha($refund, $order);
 
             $this->logger->info(__('Stripe refund successful'), [
                 'order_id' => $order->getId(),
@@ -90,6 +93,22 @@ class ChargeRefundUpdatedHandler
                 ),
             );
         });
+    }
+
+    /**
+     * PICHA: a refunded ticket is invalid. Refunds made from the PICHA
+     * dashboard cancel the tickets the organizer picked (RefundOrderHandler);
+     * a refund made directly in Stripe cannot say which ticket it covers, so
+     * the whole order is cancelled.
+     */
+    private function cancelOrderRefundedOutsidePicha(Refund $refund, OrderDomainObject $order): void
+    {
+        $source = $refund->metadata[StripePaymentIntentRefundService::REFUND_SOURCE_KEY] ?? null;
+        if ($source !== null || $order->isOrderCancelled()) {
+            return;
+        }
+
+        $this->orderCancelService->cancelOrder($order);
     }
 
     private function amountAsFloat(int $amount, string $currency): float

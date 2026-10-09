@@ -717,6 +717,7 @@ export interface OrderItem {
     price_before_discount?: number;
     price: number;
     quantity: number;
+    total_gross?: number;
 }
 
 export interface StripePaymentIntent {
