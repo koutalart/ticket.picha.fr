@@ -2,6 +2,7 @@
 
 namespace HiEvents\Http\Actions\Organizers;
 
+use HiEvents\DomainObjects\Enums\Role;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
@@ -10,12 +11,12 @@ use Illuminate\Http\JsonResponse;
 
 class GetOrganizersAction extends BaseAction
 {
-    public function __construct(private readonly OrganizerRepositoryInterface $organizerRepository)
-    {
-    }
+    public function __construct(private readonly OrganizerRepositoryInterface $organizerRepository) {}
 
     public function __invoke(): JsonResponse
     {
+        $this->minimumAllowedRole(Role::ORGANIZER);
+
         $organizers = $this->organizerRepository
             ->loadRelation(ImageDomainObject::class)
             ->findwhere([

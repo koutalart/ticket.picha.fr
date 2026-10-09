@@ -1,5 +1,5 @@
 import {Alert, Button, Checkbox, Group, LoadingOverlay, NumberInput, Paper, Stack, Text, Title} from "@mantine/core";
-import {GenericModalProps, IdParam, Order} from "../../../types.ts";
+import {Attendee, GenericModalProps, IdParam, Order} from "../../../types.ts";
 import {useForm, UseFormReturnType} from "@mantine/form";
 import {useParams} from "react-router";
 import {useGetOrder} from "../../../queries/useGetOrder.ts";
@@ -23,11 +23,12 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
     const {data: order} = useGetOrder(eventId, orderId);
     const mutation = useRefundOrder();
     const formErrorResponseHandler = useFormErrorResponseHandler();
-    const form = useForm({
+    const form = useForm<RefundOrderPayload>({
         initialValues: {
             amount: 0,
             notify_buyer: false,
             cancel_order: false,
+            attendee_ids: [],
         },
     });
     const isRefundPending = order?.refund_status === 'REFUND_PENDING';
@@ -51,6 +52,7 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
                 amount: values.amount,
                 notify_buyer: values.notify_buyer,
                 cancel_order: values.cancel_order,
+                attendee_ids: values.cancel_order ? [] : values.attendee_ids,
             },
         },
         {
@@ -65,9 +67,32 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
         }
     );
 
+    const ticketPrice = (attendee: Attendee): number => {
+        const item = order.order_items?.find((orderItem) => orderItem.product_price_id === attendee.product_price_id);
+        if (!item || !item.quantity) {
+            return 0;
+        }
+        return (item.total_gross ?? item.price * item.quantity) / item.quantity;
+    };
+
     const modalForm = ({order, form}: { order: Order, form: UseFormReturnType<RefundOrderPayload> }) => {
         const remainingAmount = order.total_gross - order.total_refunded;
         const isPartialRefund = form.values.amount < remainingAmount;
+        const activeTickets = (order.attendees || []).filter((attendee) => attendee.status === 'ACTIVE');
+        const selectedIds = form.values.attendee_ids || [];
+
+        const toggleTicket = (attendee: Attendee) => {
+            const ids = selectedIds.includes(attendee.id)
+                ? selectedIds.filter((id) => id !== attendee.id)
+                : [...selectedIds, attendee.id];
+            form.setFieldValue('attendee_ids', ids);
+            const total = activeTickets
+                .filter((ticket) => ids.includes(ticket.id))
+                .reduce((sum, ticket) => sum + ticketPrice(ticket), 0);
+            if (total > 0) {
+                form.setFieldValue('amount', Math.min(Number(total.toFixed(2)), remainingAmount));
+            }
+        };
 
         return (
             <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -96,6 +121,22 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
                             </Group>
                         </Stack>
                     </Paper>
+
+                    {activeTickets.length > 0 && !form.values.cancel_order && (
+                        <Stack gap={6}>
+                            <Text size="sm" fw={500}>{t`Tickets to refund`}</Text>
+                            <Text size="xs" c="dimmed">{t`Refunded tickets are cancelled and can no longer be used at the entrance.`}</Text>
+                            {activeTickets.map((attendee) => (
+                                <Checkbox
+                                    key={attendee.id}
+                                    checked={selectedIds.includes(attendee.id)}
+                                    onChange={() => toggleTicket(attendee)}
+                                    label={`${attendee.first_name} ${attendee.last_name}`.trim() || attendee.public_id}
+                                    description={<Currency currency={order.currency} price={ticketPrice(attendee)}/>}
+                                />
+                            ))}
+                        </Stack>
+                    )}
 
                     <NumberInput
                         size="md"

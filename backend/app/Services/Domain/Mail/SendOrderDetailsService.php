@@ -111,7 +111,8 @@ class SendOrderDetailsService
         $bundledIds = array_map(static fn (AttendeeDomainObject $attendee) => $attendee->getId(), $bundledTickets);
 
         $ticketsByEmail = [];
-        foreach ($order->getAttendees() as $attendee) {
+        $attendees = ($order->getAttendees() ?? collect())->sortBy(static fn (AttendeeDomainObject $attendee) => $attendee->getId());
+        foreach ($attendees as $attendee) {
             if (KioskSentinelEmail::isKioskSentinelEmail($attendee->getEmail())
                 || in_array($attendee->getId(), $bundledIds, true)) {
                 continue;

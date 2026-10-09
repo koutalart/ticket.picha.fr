@@ -55,6 +55,7 @@ export interface RefundOrderPayload {
     amount: number;
     notify_buyer: boolean;
     cancel_order: boolean;
+    attendee_ids?: IdParam[];
 }
 
 const withSessionIdentifier = (path: string): string => {

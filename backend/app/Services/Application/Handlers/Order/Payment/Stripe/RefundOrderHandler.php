@@ -6,11 +6,13 @@ use Brick\Math\Exception\MathException;
 use Brick\Math\Exception\NumberFormatException;
 use Brick\Math\Exception\RoundingNecessaryException;
 use Brick\Money\Exception\UnknownCurrencyException;
+use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderRefundStatus;
 use HiEvents\DomainObjects\StripePaymentDomainObject;
 use HiEvents\Exceptions\RefundNotPossibleException;
@@ -18,8 +20,11 @@ use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Mail\Order\OrderRefunded;
 use HiEvents\Repository\Eloquent\Value\Relationship;
+use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
+use HiEvents\Services\Application\Handlers\Attendee\DTO\PartialEditAttendeeDTO;
+use HiEvents\Services\Application\Handlers\Attendee\PartialEditAttendeeHandler;
 use HiEvents\Services\Application\Handlers\Order\DTO\RefundOrderDTO;
 use HiEvents\Services\Domain\Order\OrderCancelService;
 use HiEvents\Services\Domain\Payment\Stripe\StripePaymentIntentRefundService;
@@ -41,6 +46,8 @@ class RefundOrderHandler
         private readonly OrderCancelService $orderCancelService,
         private readonly DatabaseManager $databaseManager,
         private readonly StripeClientFactory $stripeClientFactory,
+        private readonly AttendeeRepositoryInterface $attendeeRepository,
+        private readonly PartialEditAttendeeHandler $partialEditAttendeeHandler,
     ) {}
 
     /**
@@ -51,6 +58,30 @@ class RefundOrderHandler
     public function handle(RefundOrderDTO $refundOrderDTO): OrderDomainObject
     {
         return $this->databaseManager->transaction(fn () => $this->refundOrder($refundOrderDTO));
+    }
+
+    /**
+     * @param  int[]  $attendeeIds
+     * @return AttendeeDomainObject[]
+     *
+     * @throws RefundNotPossibleException
+     */
+    private function refundedAttendees(OrderDomainObject $order, array $attendeeIds): array
+    {
+        if ($attendeeIds === []) {
+            return [];
+        }
+
+        $attendees = $this->attendeeRepository->findWhereIn('id', $attendeeIds, [
+            'order_id' => $order->getId(),
+            'status' => AttendeeStatus::ACTIVE->name,
+        ]);
+
+        if ($attendees->count() !== count(array_unique($attendeeIds))) {
+            throw new RefundNotPossibleException(__('Only active tickets of this order can be refunded.'));
+        }
+
+        return $attendees->all();
     }
 
     private function fetchOrder(int $eventId, int $orderId): OrderDomainObject
@@ -134,9 +165,21 @@ class RefundOrderHandler
         $amount = MoneyValue::fromFloat($refundOrderDTO->amount, $order->getCurrency());
 
         $this->validateRefundability($order);
+        $refundedAttendees = $this->refundedAttendees($order, $refundOrderDTO->attendee_ids);
 
         if ($refundOrderDTO->cancel_order) {
             $this->orderCancelService->cancelOrder($order);
+        } else {
+            foreach ($refundedAttendees as $attendee) {
+                $this->partialEditAttendeeHandler->handle(new PartialEditAttendeeDTO(
+                    attendee_id: $attendee->getId(),
+                    event_id: $order->getEventId(),
+                    first_name: null,
+                    last_name: null,
+                    email: null,
+                    status: AttendeeStatus::CANCELLED->name,
+                ));
+            }
         }
 
         // Determine the correct Stripe platform for this refund
@@ -149,7 +192,11 @@ class RefundOrderHandler
         $this->refundService->refundPayment(
             amount: $amount,
             payment: $order->getStripePayment(),
-            stripeClient: $stripeClient
+            stripeClient: $stripeClient,
+            metadata: array_filter([
+                StripePaymentIntentRefundService::REFUND_SOURCE_KEY => StripePaymentIntentRefundService::REFUND_SOURCE_DASHBOARD,
+                'picha_attendee_ids' => implode(',', $refundOrderDTO->attendee_ids),
+            ]),
         );
 
         if ($refundOrderDTO->notify_buyer) {

@@ -2,39 +2,68 @@ name: Run Unit Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, staging]
     paths:
       - 'backend/**'
+      - '.github/workflows/unit-tests.yml'
   pull_request:
     paths:
       - 'backend/**'
+      - '.github/workflows/unit-tests.yml'
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         php-versions: ['8.2', '8.3', '8.4']
 
+    # Unit tests use DatabaseTransactions against a real PostgreSQL (CLAUDE.md).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: testing
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: testing
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      FILESYSTEM_PUBLIC_DISK: public
+      FILESYSTEM_PRIVATE_DISK: local
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, tokenizer
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_pgsql, pgsql, gd, imagick, tokenizer
           ini-values: post_max_size=256M, upload_max_filesize=256M
           coverage: none
 
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -46,6 +75,14 @@ jobs:
 
       - name: Install dependencies
         run: cd backend && composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Generate throwaway application and JWT secrets
+        run: |
+          echo "APP_KEY=base64:$(openssl rand -base64 32)" >> "$GITHUB_ENV"
+          echo "JWT_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+
+      - name: Migrate the test database
+        run: cd backend && php artisan migrate --force --no-interaction
 
       - name: Run PHPUnit Tests
         run: cd backend && ./vendor/bin/phpunit tests/Unit --no-coverage

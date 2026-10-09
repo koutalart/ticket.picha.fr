@@ -3,6 +3,7 @@
 namespace HiEvents\Http\Actions\Images;
 
 use HiEvents\DomainObjects\Enums\ImageType;
+use HiEvents\DomainObjects\Enums\Role;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\Request\Image\CreateImageRequest;
 use HiEvents\Resources\Image\ImageResource;
@@ -15,15 +16,15 @@ class CreateImageAction extends BaseAction
 {
     public function __construct(
         public readonly CreateImageHandler $createImageHandler,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws CouldNotUploadImageException
      */
     public function __invoke(CreateImageRequest $request): JsonResponse
     {
+        $this->minimumAllowedRole(Role::ORGANIZER);
+
         $image = $this->createImageHandler->handle(new CreateImageDTO(
             userId: $this->getAuthenticatedUser()->getId(),
             accountId: $this->getAuthenticatedAccountId(),
