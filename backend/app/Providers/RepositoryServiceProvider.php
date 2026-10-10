@@ -55,6 +55,8 @@ use HiEvents\Repository\Eloquent\UserRepository;
 use HiEvents\Repository\Eloquent\WaitlistEntryRepository;
 use HiEvents\Repository\Eloquent\WebhookLogRepository;
 use HiEvents\Repository\Eloquent\WebhookRepository;
+use HiEvents\Repository\Eloquent\CaseStudyStatsRepository;
+use HiEvents\Repository\Interfaces\CaseStudyStatsRepositoryInterface;
 use HiEvents\Repository\Interfaces\AccountAttributionRepositoryInterface;
 use HiEvents\Repository\Interfaces\AccountConfigurationRepositoryInterface;
 use HiEvents\Repository\Interfaces\AccountMessagingTierRepositoryInterface;
@@ -165,6 +167,7 @@ class RepositoryServiceProvider extends ServiceProvider
         EventBoxOfficeOperatorRepositoryInterface::class => EventBoxOfficeOperatorRepository::class,
         PrintJobRepositoryInterface::class => PrintJobRepository::class,
         BoxOfficePrinterPreferenceRepositoryInterface::class => BoxOfficePrinterPreferenceRepository::class,
+        CaseStudyStatsRepositoryInterface::class => CaseStudyStatsRepository::class,
     ];
 
     public function register(): void

@@ -3,30 +3,33 @@
 Les cas clients (`frontend/src/components/routes/case-studies/caseStudies.ts`) qui ont un
 `ticketingEventId` sont actualisés une fois par jour à partir des données de la billetterie.
 
-## Données
+## Automatisation
 
-```bash
-scripts/case-studies/event-stats.sh <event_id> [...]
-```
+Le workflow GitHub Actions `.github/workflows/case-studies-daily.yml` tourne chaque jour à 7 h (heure de Mayotte) :
 
-Lecture seule sur la base de production, via SSH. Renvoie, par événement :
-dates locales, lieu, organisateur, billets actifs par canal (`STRIPE` = en ligne,
-`HORS_LIGNE` = préventes ou ventes manuelles, `GRATUIT` = inscriptions gratuites)
-et par produit, billets par jour, jauges, nombre de personnes scannées et scans par heure.
-Aucun montant, aucune donnée personnelle.
+1. il lit les `ticketingEventId` de `caseStudies.ts` ;
+2. il récupère les chiffres agrégés sur `GET https://ticket.picha.fr/api/public/case-study-stats?event_ids=4,6`,
+   protégé par un jeton (`Authorization: Bearer <CASE_STUDY_STATS_TOKEN>`, sinon réponse 404) ;
+3. Claude (claude-code-action) réécrit les cas clients selon les règles ci-dessous ;
+4. le workflow vérifie que seul `caseStudies.ts` a changé, que les descriptions font 160 caractères au plus et que TypeScript compile ;
+5. il ouvre ou met à jour la PR `auto/cas-clients` (« Cas clients : chiffres du JJ/MM »). Elle n'est jamais fusionnée automatiquement.
 
-## Procédure
+Secrets GitHub requis : `CASE_STUDY_STATS_TOKEN` (même valeur que dans `backend/.env.production`) et `ANTHROPIC_API_KEY`.
+Lancement manuel : Actions → « Cas clients - mise à jour quotidienne » → Run workflow.
 
-1. Travailler dans un worktree dédié, sur la branche `auto/cas-clients` repartie de `origin/staging`.
-2. Lancer `event-stats.sh` avec tous les `ticketingEventId` des cas clients.
-3. Pour chaque cas client, comparer avec les chiffres publiés. S'ils ont changé :
-   - mettre à jour `attendees`, `results`, `headline`, `summary` et `updatedAt` (date du jour) ;
-   - avant l'événement : ventes ou inscriptions, rythme de vente, offres épuisées ;
-   - après l'événement : personnes scannées à l'entrée, taux de présence, heure de pointe,
-     ventes sur place, puis rédiger `dayOf` à partir des scans par heure ;
-4. `npx tsc --noEmit` ne doit signaler aucune erreur dans `case-studies/` ni `marketing/`.
-5. Commit, push, et une seule PR ouverte à la fois (« Cas clients : chiffres du JJ/MM »).
-   Ne jamais fusionner : la mise en production reste manuelle.
+Données renvoyées, par événement : dates locales, lieu, organisateur, billets actifs par canal (`STRIPE` = en ligne,
+`HORS_LIGNE` = préventes ou ventes manuelles, `GRATUIT` = inscriptions gratuites) et par produit, billets par jour,
+jauges, personnes scannées et scans par heure. Aucun montant encaissé, aucune donnée personnelle.
+
+`scripts/case-studies/event-stats.sh` fait la même lecture directement en base (SSH, lecture seule), pour un contrôle manuel.
+
+## Mise à jour d'un cas client
+
+Pour chaque cas client relié à un événement, comparer avec les chiffres publiés. S'ils ont changé :
+- mettre à jour `attendees`, `results`, `headline`, `summary` et `updatedAt` (date du jour) ;
+- avant l'événement : ventes ou inscriptions, rythme de vente, offres épuisées ;
+- après l'événement : personnes scannées à l'entrée, taux de présence, heure de pointe,
+  ventes sur place, puis rédiger `dayOf` à partir des scans par heure.
 
 ## Règles de rédaction (SEO)
 

@@ -133,6 +133,7 @@ use HiEvents\Http\Actions\Organizers\GetOrganizerByCustomDomainPublicAction;
 use HiEvents\Http\Actions\Organizers\Orders\GetOrganizerOrdersAction;
 use HiEvents\Http\Actions\Organizers\Public\SendOrganizerContactMessagePublicAction;
 use HiEvents\Http\Actions\DemoRequests\SendDemoRequestPublicAction;
+use HiEvents\Http\Actions\CaseStudies\GetCaseStudyStatsAction;
 use HiEvents\Http\Actions\Organizers\Settings\GetOrganizerSettingsAction;
 use HiEvents\Http\Actions\Organizers\Settings\PartialUpdateOrganizerSettingsAction;
 use HiEvents\Http\Actions\Organizers\Stats\GetOrganizerStatsAction;
@@ -554,6 +555,10 @@ $router->prefix('/public')->group(
         // Demo requests
         $router->post('/demo-requests', SendDemoRequestPublicAction::class)
             ->middleware('throttle:5,1');
+
+        // Case study statistics (token protected, used by the case studies GitHub Action)
+        $router->get('/case-study-stats', GetCaseStudyStatsAction::class)
+            ->middleware('throttle:10,1');
 
         // Products
         $router->get('/events/{event_id}/products', GetEventPublicAction::class);

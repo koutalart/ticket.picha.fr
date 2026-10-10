@@ -1,0 +1,125 @@
+name: Cas clients - mise à jour quotidienne
+
+# Chaque matin (7 h à Mayotte), lit les chiffres de la billetterie et propose une PR
+# qui actualise les cas clients. La PR n'est jamais fusionnée automatiquement.
+# Secrets du dépôt requis :
+#   CASE_STUDY_STATS_TOKEN : même valeur que CASE_STUDY_STATS_TOKEN dans l'env backend de production
+#   ANTHROPIC_API_KEY      : clé API Claude
+# Procédure et règles de rédaction : scripts/case-studies/README.md
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: case-studies-daily
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CASE_STUDIES_FILE: frontend/src/components/routes/case-studies/caseStudies.ts
+      STATS_FILE: ${{ runner.temp }}/case-study-stats.json
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: staging
+
+      - name: Récupérer les chiffres de la billetterie
+        env:
+          TOKEN: ${{ secrets.CASE_STUDY_STATS_TOKEN }}
+        run: |
+          set -eu
+          ids=$(grep -oE 'ticketingEventId: [0-9]+' "$CASE_STUDIES_FILE" | grep -oE '[0-9]+' | paste -sd, -)
+          if [ -z "$ids" ]; then echo "Aucun cas client relié à un événement."; exit 0; fi
+          curl -fsS --retry 3 -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
+            "https://ticket.picha.fr/api/public/case-study-stats?event_ids=$ids" -o "$STATS_FILE"
+          jq -e '.data | length > 0' "$STATS_FILE" > /dev/null
+          mkdir -p .case-study-stats && cp "$STATS_FILE" .case-study-stats/stats.json
+          echo "TODAY=$(TZ=Indian/Mayotte date +%F)" >> "$GITHUB_ENV"
+          echo "TODAY_SHORT=$(TZ=Indian/Mayotte date +%d/%m)" >> "$GITHUB_ENV"
+
+      - name: Rédiger la mise à jour
+        if: hashFiles('.case-study-stats/stats.json') != ''
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Tu es expert SEO et rédacteur B2B francophone. Nous sommes le ${{ env.TODAY }} (heure de Mayotte).
+
+            Mets à jour les cas clients de ticket.picha.fr à partir des chiffres réels de la billetterie.
+            1. Lis scripts/case-studies/README.md : procédure et règles de rédaction, à respecter strictement.
+            2. Lis .case-study-stats/stats.json : chiffres agrégés par événement (champ data). Canaux :
+               STRIPE = en ligne par carte, HORS_LIGNE = préventes physiques ou ventes manuelles, GRATUIT = inscriptions gratuites.
+               Dates et heures déjà en heure locale (start_local, end_local, tickets_by_day, check_ins_by_hour) ; first_sale_utc est en UTC.
+            3. Modifie uniquement ${{ env.CASE_STUDIES_FILE }}, et uniquement les cas clients dont le ticketingEventId figure dans les données.
+               Si les chiffres publiés sont déjà à jour, ne modifie rien.
+               Sinon, mets à jour attendees, results, headline, summary (160 caractères maximum, vérifie en comptant), challenge ou solution si nécessaire,
+               et updatedAt = "${{ env.TODAY }}". Après la fin d'un événement, rédige dayOf à partir des scans et passe date et attendees au passé.
+            4. Interdits : chiffre d'affaires ou montant, donnée personnelle, citation sans approved: true, chiffre absent des données,
+               modification d'un autre fichier.
+            5. Termine par un court résumé en français : cas clients modifiés, chiffres avant et après.
+          claude_args: |
+            --model claude-sonnet-5-5
+            --max-turns 25
+            --allowedTools "Read,Edit,Glob,Grep"
+
+      - name: Contrôler le fichier modifié
+        run: |
+          set -eu
+          rm -rf .case-study-stats
+          if git diff --quiet -- "$CASE_STUDIES_FILE"; then
+            echo "CHANGED=false" >> "$GITHUB_ENV"; echo "Aucun changement."; exit 0
+          fi
+          echo "CHANGED=true" >> "$GITHUB_ENV"
+          other=$(git status --porcelain | grep -v " $CASE_STUDIES_FILE\$" || true)
+          if [ -n "$other" ]; then echo "Fichiers inattendus modifiés :"; echo "$other"; exit 1; fi
+          python3 - <<'PY'
+          import os, re, sys
+          src = open(os.environ["CASE_STUDIES_FILE"], encoding="utf-8").read()
+          too_long = [s for s in re.findall(r'summary: "((?:[^"\\]|\\.)*)"', src) if len(s) > 160]
+          if too_long:
+              print("Descriptions de plus de 160 caractères :", *too_long, sep="\n- ")
+              sys.exit(1)
+          PY
+
+      - uses: actions/setup-node@v4
+        if: env.CHANGED == 'true'
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Vérifier TypeScript
+        if: env.CHANGED == 'true'
+        working-directory: frontend
+        run: |
+          yarn install --frozen-lockfile --ignore-scripts
+          errors=$(npx tsc --noEmit 2>&1 | grep -E "case-studies/|marketing/" || true)
+          if [ -n "$errors" ]; then echo "$errors"; exit 1; fi
+
+      - name: Ouvrir ou mettre à jour la PR
+        if: env.CHANGED == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: auto/cas-clients
+          base: staging
+          add-paths: ${{ env.CASE_STUDIES_FILE }}
+          commit-message: "chore(cas-clients): chiffres du ${{ env.TODAY_SHORT }}"
+          title: "Cas clients : chiffres du ${{ env.TODAY_SHORT }}"
+          body: |
+            Mise à jour automatique des cas clients à partir des chiffres de la billetterie au ${{ env.TODAY }}.
+
+            - Fichier modifié : `${{ env.CASE_STUDIES_FILE }}`
+            - Règles appliquées : `scripts/case-studies/README.md`
+            - Déploiement : **frontend seul**, après relecture.
+
+            Le détail de la rédaction est dans le journal du workflow « Cas clients - mise à jour quotidienne ».
+          delete-branch: true
