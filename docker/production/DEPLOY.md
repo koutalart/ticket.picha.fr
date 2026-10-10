@@ -54,10 +54,64 @@ sudo certbot --nginx -d ticket.picha.fr
 ```
 
 ## 8. Sauvegardes
+
+Chaque nuit, `backup.sh` sauvegarde la base et les fichiers téléversés dans
+`/var/backups/picha-ticket` (14 jours). Il envoie ensuite une **copie chiffrée hors
+du serveur** (30 jours) et prévient en cas d'échec.
+
 ```bash
 sudo crontab -e
 0 3 * * * /opt/picha-ticket/docker/production/backup.sh >> /var/log/picha-backup.log 2>&1
 ```
+
+### Copie hors du serveur (OVH Object Storage), une fois
+1. **Espace de stockage** : OVH Public Cloud → Object Storage → créer un conteneur S3
+   `picha-ticket-backups`, **dans une autre région que le VPS**. Créer un utilisateur S3
+   et noter sa clé d'accès, sa clé secrète, l'endpoint et la région
+   (par exemple `https://s3.gra.io.cloud.ovh.net`, région `gra`).
+2. **Deux phrases secrètes de chiffrement** : les générer et les ranger dans un gestionnaire de mots de
+   passe, **hors du VPS**. Sans elles, les sauvegardes sont illisibles, même pour nous.
+   ```bash
+   openssl rand -base64 32   # phrase 1
+   openssl rand -base64 32   # phrase 2 (sel)
+   ```
+3. **Configuration rclone sur le VPS** (rclone tourne dans Docker, rien à installer) :
+   ```bash
+   sudo mkdir -p /etc/picha-ticket/rclone && sudo chmod 700 /etc/picha-ticket
+   RCLONE="sudo docker run --rm -v /etc/picha-ticket/rclone:/config/rclone rclone/rclone:1"
+   $RCLONE config create ovh s3 provider=Other env_auth=false \
+       access_key_id=CLE_ACCES secret_access_key=CLE_SECRETE \
+       endpoint=https://s3.gra.io.cloud.ovh.net region=gra
+   $RCLONE config create picha-offsite crypt remote=ovh:picha-ticket-backups \
+       password=$($RCLONE obscure 'PHRASE_1') password2=$($RCLONE obscure 'PHRASE_2')
+   ```
+4. **Alerte** : créer un check gratuit sur https://healthchecks.io (période 1 jour, tolérance
+   2 h) et y mettre son e-mail. Noter l'URL de ping.
+5. **`/etc/picha-ticket/backup.env`** (`sudo chmod 600`) :
+   ```bash
+   OFFSITE_REMOTE=picha-offsite:
+   OFFSITE_RETENTION_DAYS=30
+   HEALTHCHECK_URL=https://hc-ping.com/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   ```
+6. Tester : `sudo /opt/picha-ticket/docker/production/backup.sh`. La dernière ligne doit dire
+   « copie chiffrée hors serveur OK », et healthchecks.io passer au vert.
+
+### Restaurer
+```bash
+mkdir -p /tmp/restore
+RCLONE="sudo docker run --rm -v /etc/picha-ticket/rclone:/config/rclone -v /tmp/restore:/data rclone/rclone:1"
+$RCLONE lsf picha-offsite:                                  # liste des sauvegardes
+$RCLONE copy picha-offsite: /data --include 'picha-ticket-20261010-*'
+# Base (dans une base de test d'abord, jamais directement sur la production) :
+docker compose -p picha-ticket-prod -f docker/production/docker-compose.prod.yml \
+    exec -T postgres createdb -U picha_ticket picha_ticket_restore
+gzip -dc /tmp/restore/picha-ticket-AAAAMMJJ-HHMMSS.sql.gz | docker compose -p picha-ticket-prod \
+    -f docker/production/docker-compose.prod.yml exec -T postgres psql -U picha_ticket -d picha_ticket_restore
+# Fichiers :
+docker compose -p picha-ticket-prod -f docker/production/docker-compose.prod.yml exec -T backend \
+    tar -xzf - -C /var/www/html/storage < /tmp/restore/picha-ticket-files-AAAAMMJJ-HHMMSS.tar.gz
+```
+Faire un essai de restauration une fois par trimestre : une sauvegarde jamais relue n'est pas une sauvegarde.
 
 ## Domaines personnalisés d'organisateurs
 Un organisateur peut avoir son propre domaine (ex. `innocent976.yt`) : sa page d'accueil y est servie sur `/`,

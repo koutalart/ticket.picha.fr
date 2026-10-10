@@ -15,7 +15,7 @@ main() {
     COMPOSE="docker compose -p picha-ticket-prod --env-file docker/production/.env -f docker/production/docker-compose.prod.yml"
 
     echo "==> Sauvegarde avant mise à jour"
-    sh docker/production/backup.sh
+    bash docker/production/backup.sh
 
     echo "==> Code : $BRANCH"
     git fetch --quiet origin "$BRANCH"
