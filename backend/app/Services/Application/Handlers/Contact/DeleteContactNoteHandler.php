@@ -9,11 +9,9 @@ use HiEvents\Repository\Interfaces\ContactNoteRepositoryInterface;
 class DeleteContactNoteHandler
 {
     public function __construct(
-        private readonly ContactLoader                  $contactLoader,
+        private readonly ContactLoader $contactLoader,
         private readonly ContactNoteRepositoryInterface $contactNoteRepository,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws ResourceNotFoundException

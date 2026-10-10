@@ -37,4 +37,13 @@ interface ContactRepositoryInterface extends RepositoryInterface
      * @return Collection<int, ContactTimelineItemDTO>
      */
     public function getTimeline(int $organizerId, string $email): Collection;
+
+    /**
+     * Existing contacts of an organizer keyed by e-mail and by phone, used to match imported rows.
+     *
+     * @return array{emails: array<string, object>, phones: array<string, object>}
+     */
+    public function getIdentityIndex(int $organizerId): array;
+
+    public function deleteImportedContacts(int $contactImportId): int;
 }

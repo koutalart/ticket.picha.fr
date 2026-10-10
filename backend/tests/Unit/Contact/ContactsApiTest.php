@@ -9,6 +9,7 @@ use HiEvents\Models\Event;
 use HiEvents\Models\Order;
 use HiEvents\Services\Domain\Contact\ContactSyncService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
@@ -73,7 +74,7 @@ class ContactsApiTest extends TestCase
         $intruder = $this->createUnrelatedOrganizerUser(self::PASSWORD);
         $intruderToken = $this->loginAndGetToken($intruder, self::PASSWORD);
 
-        $this->getJson("/organizers/{$this->event->organizer_id}/contacts", ['Authorization' => 'Bearer ' . $intruderToken])
+        $this->getJson("/organizers/{$this->event->organizer_id}/contacts", ['Authorization' => 'Bearer '.$intruderToken])
             ->assertForbidden();
     }
 
@@ -153,13 +154,81 @@ class ContactsApiTest extends TestCase
         self::assertStringContainsString(';', $csv);
     }
 
+    public function test_import_a_french_excel_csv_in_two_steps(): void
+    {
+        $csv = mb_convert_encoding("Prénom;Nom;E-mail;Portable;Ville\nZaïna;AHMED;zaina@example.test;0639 44 55 66;Mamoudzou\nKevin;Madi;KEVIN@example.test;;Dembéni\n", 'Windows-1252', 'UTF-8');
+        $file = UploadedFile::fake()->createWithContent('clients.csv', $csv);
+
+        $upload = $this->withHeaders(['Authorization' => 'Bearer '.$this->token])
+            ->post("/organizers/{$this->event->organizer_id}/contacts/imports/upload", ['file' => $file])
+            ->assertOk()
+            ->assertJsonPath('data.row_count', 2)
+            ->assertJsonPath('data.headers.0', 'Prénom')
+            ->assertJsonPath('data.suggested_mapping', ['FIRST_NAME', 'LAST_NAME', 'EMAIL', 'PHONE', 'IGNORE'])
+            ->json('data');
+
+        $payload = [
+            'token' => $upload['token'],
+            'file_name' => 'clients.csv',
+            'mapping' => ['FIRST_NAME', 'LAST_NAME', 'EMAIL', 'PHONE', 'TAG'],
+            'tag_name' => 'Import test',
+            'email_consent' => true,
+            'sms_consent' => true,
+            'dry_run' => true,
+        ];
+
+        $this->api('post', 'contacts/imports', $payload)
+            ->assertOk()
+            ->assertJsonPath('data.created_count', 1)
+            ->assertJsonPath('data.updated_count', 1);
+
+        $this->api('post', 'contacts/imports', [...$payload, 'dry_run' => false])
+            ->assertOk()
+            ->assertJsonPath('data.created_count', 1);
+
+        $this->api('get', 'contacts?query=zaina')
+            ->assertJsonPath('data.0.phone', '+262639445566')
+            ->assertJsonPath('data.0.sms_consent', true);
+
+        $this->api('post', 'contacts/imports', [...$payload, 'dry_run' => false])->assertUnprocessable();
+    }
+
+    public function test_import_requires_an_email_or_phone_column(): void
+    {
+        $file = UploadedFile::fake()->createWithContent('clients.csv', "Nom\nMadi\n");
+        $token = $this->withHeaders(['Authorization' => 'Bearer '.$this->token])
+            ->post("/organizers/{$this->event->organizer_id}/contacts/imports/upload", ['file' => $file])
+            ->json('data.token');
+
+        $this->api('post', 'contacts/imports', [
+            'token' => $token, 'file_name' => 'clients.csv', 'mapping' => ['LAST_NAME'],
+            'email_consent' => false, 'sms_consent' => false, 'dry_run' => true,
+        ])->assertUnprocessable()->assertJsonValidationErrors('mapping');
+    }
+
+    public function test_create_a_contact_by_hand(): void
+    {
+        $this->api('post', 'contacts', [
+            'first_name' => 'Anissa', 'last_name' => 'Soilihi', 'email' => 'Anissa@Example.test',
+            'phone' => '0639 98 76 54', 'email_consent' => true, 'sms_consent' => false,
+        ])
+            ->assertCreated()
+            ->assertJsonPath('data.email', 'anissa@example.test')
+            ->assertJsonPath('data.source', 'MANUAL')
+            ->assertJsonPath('data.email_consent', true);
+
+        $this->api('post', 'contacts', ['email' => 'fatima@example.test', 'email_consent' => false, 'sms_consent' => false])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('email');
+    }
+
     private function api(string $method, string $path, array $data = [])
     {
         return $this->json(
             strtoupper($method),
             "/organizers/{$this->event->organizer_id}/{$path}",
             $data,
-            ['Authorization' => 'Bearer ' . $this->token],
+            ['Authorization' => 'Bearer '.$this->token],
         );
     }
 

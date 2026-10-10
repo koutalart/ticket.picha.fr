@@ -10,9 +10,7 @@ use Illuminate\Http\Response;
 
 class DeleteContactNoteAction extends BaseAction
 {
-    public function __construct(private readonly DeleteContactNoteHandler $handler)
-    {
-    }
+    public function __construct(private readonly DeleteContactNoteHandler $handler) {}
 
     /**
      * @throws ResourceNotFoundException

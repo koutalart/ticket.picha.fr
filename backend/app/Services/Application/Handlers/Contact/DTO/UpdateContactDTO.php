@@ -7,14 +7,12 @@ use HiEvents\DataTransferObjects\BaseDataObject;
 class UpdateContactDTO extends BaseDataObject
 {
     public function __construct(
-        public readonly int     $organizerId,
-        public readonly int     $contactId,
+        public readonly int $organizerId,
+        public readonly int $contactId,
         public readonly ?string $firstName,
         public readonly ?string $lastName,
         public readonly ?string $phone,
-        public readonly bool    $emailConsent,
-        public readonly bool    $smsConsent,
-    )
-    {
-    }
+        public readonly bool $emailConsent,
+        public readonly bool $smsConsent,
+    ) {}
 }

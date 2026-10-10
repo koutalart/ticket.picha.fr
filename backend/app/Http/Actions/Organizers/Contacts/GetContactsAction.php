@@ -13,9 +13,7 @@ use Illuminate\Http\Request;
 
 class GetContactsAction extends BaseAction
 {
-    public function __construct(private readonly GetContactsHandler $handler)
-    {
-    }
+    public function __construct(private readonly GetContactsHandler $handler) {}
 
     public function __invoke(Request $request, int $organizerId): JsonResponse
     {

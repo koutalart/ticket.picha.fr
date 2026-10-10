@@ -10,11 +10,9 @@ use Illuminate\Support\Collection;
 class GetContactTimelineHandler
 {
     public function __construct(
-        private readonly ContactLoader              $contactLoader,
+        private readonly ContactLoader $contactLoader,
         private readonly ContactRepositoryInterface $contactRepository,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @return Collection<int, ContactTimelineItemDTO>

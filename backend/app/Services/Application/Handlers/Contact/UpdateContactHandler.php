@@ -12,11 +12,9 @@ use HiEvents\Services\Application\Handlers\Contact\DTO\UpdateContactDTO;
 class UpdateContactHandler
 {
     public function __construct(
-        private readonly ContactLoader              $contactLoader,
+        private readonly ContactLoader $contactLoader,
         private readonly ContactRepositoryInterface $contactRepository,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws ResourceNotFoundException
@@ -32,17 +30,17 @@ class UpdateContactHandler
             ContactDomainObject::PHONE => PhoneNumberNormalizer::normalize($dto->phone),
         ];
 
-        if ($dto->emailConsent && !$contact->hasEmailConsent()) {
+        if ($dto->emailConsent && ! $contact->hasEmailConsent()) {
             $attributes[ContactDomainObject::EMAIL_CONSENT_AT] = $now;
             $attributes[ContactDomainObject::EMAIL_CONSENT_SOURCE] = ContactConsentSource::MANUAL->name;
-        } elseif (!$dto->emailConsent && $contact->hasEmailConsent()) {
+        } elseif (! $dto->emailConsent && $contact->hasEmailConsent()) {
             $attributes[ContactDomainObject::EMAIL_UNSUBSCRIBED_AT] = $now;
         }
 
-        if ($dto->smsConsent && !$contact->hasSmsConsent()) {
+        if ($dto->smsConsent && ! $contact->hasSmsConsent()) {
             $attributes[ContactDomainObject::SMS_CONSENT_AT] = $now;
             $attributes[ContactDomainObject::SMS_CONSENT_SOURCE] = ContactConsentSource::MANUAL->name;
-        } elseif (!$dto->smsConsent && $contact->hasSmsConsent()) {
+        } elseif (! $dto->smsConsent && $contact->hasSmsConsent()) {
             $attributes[ContactDomainObject::SMS_UNSUBSCRIBED_AT] = $now;
         }
 

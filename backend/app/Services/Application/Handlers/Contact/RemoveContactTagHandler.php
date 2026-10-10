@@ -9,11 +9,9 @@ use HiEvents\Repository\Interfaces\ContactTagAssignmentRepositoryInterface;
 class RemoveContactTagHandler
 {
     public function __construct(
-        private readonly ContactLoader                           $contactLoader,
+        private readonly ContactLoader $contactLoader,
         private readonly ContactTagAssignmentRepositoryInterface $contactTagAssignmentRepository,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws ResourceNotFoundException

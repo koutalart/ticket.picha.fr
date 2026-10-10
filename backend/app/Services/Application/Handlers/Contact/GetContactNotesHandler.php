@@ -13,11 +13,9 @@ use Illuminate\Support\Collection;
 class GetContactNotesHandler
 {
     public function __construct(
-        private readonly ContactLoader                  $contactLoader,
+        private readonly ContactLoader $contactLoader,
         private readonly ContactNoteRepositoryInterface $contactNoteRepository,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws ResourceNotFoundException

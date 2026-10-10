@@ -10,12 +10,10 @@ use HiEvents\Services\Infrastructure\HtmlPurifier\HtmlPurifierService;
 class CreateContactNoteHandler
 {
     public function __construct(
-        private readonly ContactLoader                  $contactLoader,
+        private readonly ContactLoader $contactLoader,
         private readonly ContactNoteRepositoryInterface $contactNoteRepository,
-        private readonly HtmlPurifierService            $purifier,
-    )
-    {
-    }
+        private readonly HtmlPurifierService $purifier,
+    ) {}
 
     /**
      * @throws ResourceNotFoundException

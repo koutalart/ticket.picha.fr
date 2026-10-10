@@ -10,9 +10,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GetContactsHandler
 {
-    public function __construct(private readonly ContactRepositoryInterface $contactRepository)
-    {
-    }
+    public function __construct(private readonly ContactRepositoryInterface $contactRepository) {}
 
     public function handle(int $organizerId, ContactFilterDTO $filter, QueryParamsDTO $params): LengthAwarePaginator
     {

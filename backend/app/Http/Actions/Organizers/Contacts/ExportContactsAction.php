@@ -13,9 +13,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportContactsAction extends BaseAction
 {
-    public function __construct(private readonly ContactRepositoryInterface $contactRepository)
-    {
-    }
+    public function __construct(private readonly ContactRepositoryInterface $contactRepository) {}
 
     public function __invoke(Request $request, int $organizerId): StreamedResponse
     {
@@ -53,7 +51,7 @@ class ExportContactsAction extends BaseAction
                     $contact->getFirstOrderAt(),
                     $contact->getLastOrderAt(),
                     ($contact->getContactTags() ?? collect())
-                        ->map(fn(ContactTagDomainObject $tag) => $tag->getName())
+                        ->map(fn (ContactTagDomainObject $tag) => $tag->getName())
                         ->implode(', '),
                     $contact->getSource(),
                 ]), ';');
@@ -62,7 +60,7 @@ class ExportContactsAction extends BaseAction
             fclose($output);
         }, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="contacts-' . now()->format('Y-m-d') . '.csv"',
+            'Content-Disposition' => 'attachment; filename="contacts-'.now()->format('Y-m-d').'.csv"',
         ]);
     }
 
@@ -71,7 +69,7 @@ class ExportContactsAction extends BaseAction
         $value = (string) ($value ?? '');
 
         if (preg_match('/^[=@\t\r]/', $value) || preg_match('/^[+\-](?!\d+$)/', $value)) {
-            return "'" . $value;
+            return "'".$value;
         }
 
         return $value;

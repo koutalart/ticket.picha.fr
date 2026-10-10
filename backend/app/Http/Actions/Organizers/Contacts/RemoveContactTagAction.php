@@ -10,9 +10,7 @@ use Illuminate\Http\Response;
 
 class RemoveContactTagAction extends BaseAction
 {
-    public function __construct(private readonly RemoveContactTagHandler $handler)
-    {
-    }
+    public function __construct(private readonly RemoveContactTagHandler $handler) {}
 
     /**
      * @throws ResourceNotFoundException

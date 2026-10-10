@@ -9,9 +9,7 @@ use HiEvents\Repository\Interfaces\ContactRepositoryInterface;
 
 class ContactLoader
 {
-    public function __construct(private readonly ContactRepositoryInterface $contactRepository)
-    {
-    }
+    public function __construct(private readonly ContactRepositoryInterface $contactRepository) {}
 
     /**
      * @throws ResourceNotFoundException

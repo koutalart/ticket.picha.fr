@@ -11,9 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 class AssignContactTagAction extends BaseAction
 {
-    public function __construct(private readonly AssignContactTagHandler $handler)
-    {
-    }
+    public function __construct(private readonly AssignContactTagHandler $handler) {}
 
     public function __invoke(AssignContactTagRequest $request, int $organizerId): JsonResponse
     {

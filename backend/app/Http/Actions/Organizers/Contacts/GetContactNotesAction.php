@@ -11,9 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 class GetContactNotesAction extends BaseAction
 {
-    public function __construct(private readonly GetContactNotesHandler $handler)
-    {
-    }
+    public function __construct(private readonly GetContactNotesHandler $handler) {}
 
     /**
      * @throws ResourceNotFoundException

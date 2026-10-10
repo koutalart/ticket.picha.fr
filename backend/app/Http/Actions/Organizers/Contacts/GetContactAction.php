@@ -11,9 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 class GetContactAction extends BaseAction
 {
-    public function __construct(private readonly ContactLoader $contactLoader)
-    {
-    }
+    public function __construct(private readonly ContactLoader $contactLoader) {}
 
     /**
      * @throws ResourceNotFoundException

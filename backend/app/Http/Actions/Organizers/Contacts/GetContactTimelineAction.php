@@ -10,9 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class GetContactTimelineAction extends BaseAction
 {
-    public function __construct(private readonly GetContactTimelineHandler $handler)
-    {
-    }
+    public function __construct(private readonly GetContactTimelineHandler $handler) {}
 
     /**
      * @throws ResourceNotFoundException

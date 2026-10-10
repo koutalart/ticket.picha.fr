@@ -9,9 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class GetContactTagsAction extends BaseAction
 {
-    public function __construct(private readonly ContactTagRepositoryInterface $contactTagRepository)
-    {
-    }
+    public function __construct(private readonly ContactTagRepositoryInterface $contactTagRepository) {}
 
     public function __invoke(int $organizerId): JsonResponse
     {

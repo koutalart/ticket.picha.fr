@@ -8,9 +8,7 @@ use HiEvents\Services\Application\Handlers\Contact\DTO\ContactSummaryDTO;
 
 class GetContactsSummaryHandler
 {
-    public function __construct(private readonly ContactRepositoryInterface $contactRepository)
-    {
-    }
+    public function __construct(private readonly ContactRepositoryInterface $contactRepository) {}
 
     public function handle(int $organizerId, ContactFilterDTO $filter): ContactSummaryDTO
     {

@@ -15,9 +15,7 @@ use Illuminate\Validation\ValidationException;
 
 class UpdateContactAction extends BaseAction
 {
-    public function __construct(private readonly UpdateContactHandler $handler)
-    {
-    }
+    public function __construct(private readonly UpdateContactHandler $handler) {}
 
     /**
      * @throws ResourceNotFoundException

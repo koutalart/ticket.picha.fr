@@ -6,8 +6,8 @@ use HiEvents\DomainObjects\ContactDomainObject;
 use HiEvents\DomainObjects\Enums\ContactConsentSource;
 use HiEvents\DomainObjects\Enums\ContactSource;
 use HiEvents\DomainObjects\Status\OrderStatus;
-use HiEvents\Models\Contact;
 use HiEvents\Http\DTO\QueryParamsDTO;
+use HiEvents\Models\Contact;
 use HiEvents\Repository\Interfaces\ContactRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Contact\DTO\ContactFilterDTO;
 use HiEvents\Services\Application\Handlers\Contact\DTO\ContactSummaryDTO;
@@ -169,8 +169,8 @@ SQL;
         $row = $this->applyFilter(Contact::query(), $organizerId, $filter)
             ->toBase()
             ->selectRaw('count(*) AS total')
-            ->selectRaw('count(*) FILTER (WHERE ' . self::emailConsentSql() . ') AS email_consent')
-            ->selectRaw('count(*) FILTER (WHERE ' . self::smsConsentSql() . ') AS sms_consent')
+            ->selectRaw('count(*) FILTER (WHERE '.self::emailConsentSql().') AS email_consent')
+            ->selectRaw('count(*) FILTER (WHERE '.self::smsConsentSql().') AS sms_consent')
             ->selectRaw('count(*) FILTER (WHERE events_count >= 2) AS repeat_customers')
             ->selectRaw('coalesce(sum(total_spent), 0) AS total_spent')
             ->first();
@@ -190,12 +190,12 @@ SQL;
             ->with('contact_tags')
             ->orderBy('id')
             ->lazyById(500)
-            ->map(fn(Contact $contact) => $this->handleSingleResult($contact));
+            ->map(fn (Contact $contact) => $this->handleSingleResult($contact));
     }
 
     public function getTimeline(int $organizerId, string $email): Collection
     {
-        $sql = <<<SQL
+        $sql = <<<'SQL'
 WITH params AS (SELECT ?::bigint AS organizer_id, ?::text AS email),
 organizer_events AS (
     SELECT e.id, e.title FROM events e CROSS JOIN params p WHERE e.organizer_id = p.organizer_id
@@ -267,7 +267,7 @@ SQL;
             OrderStatus::CANCELLED->name,
         ]);
 
-        return collect($rows)->map(fn(object $row) => new ContactTimelineItemDTO(
+        return collect($rows)->map(fn (object $row) => new ContactTimelineItemDTO(
             type: $row->type,
             occurred_at: $row->occurred_at,
             event_id: $row->event_id,
@@ -279,6 +279,41 @@ SQL;
             currency: $row->currency,
             status: $row->status,
         ));
+    }
+
+    public function getIdentityIndex(int $organizerId): array
+    {
+        $index = ['emails' => [], 'phones' => []];
+
+        DB::table('contacts')
+            ->where('organizer_id', $organizerId)
+            ->whereNull('merged_into_contact_id')
+            ->orderBy('id')
+            ->select([
+                'id', 'email', 'phone', 'first_name', 'last_name',
+                'email_consent_at', 'email_unsubscribed_at', 'sms_consent_at', 'sms_unsubscribed_at',
+            ])
+            ->lazyById(1000)
+            ->each(function (object $contact) use (&$index) {
+                if ($contact->email !== null) {
+                    $index['emails'][$contact->email] = $contact;
+                }
+                if ($contact->phone !== null && ! isset($index['phones'][$contact->phone])) {
+                    $index['phones'][$contact->phone] = $contact;
+                }
+            });
+
+        return $index;
+    }
+
+    public function deleteImportedContacts(int $contactImportId): int
+    {
+        return DB::table('contacts')
+            ->where('contact_import_id', $contactImportId)
+            ->where('source', ContactSource::IMPORT->name)
+            ->where('orders_count', 0)
+            ->where('events_count', 0)
+            ->delete();
     }
 
     public static function emailConsentSql(): string
@@ -299,8 +334,8 @@ SQL;
             ->whereNull('contacts.merged_into_contact_id');
 
         if ($filter->query !== null) {
-            $like = '%' . addcslashes($filter->query, '%_\\') . '%';
-            $query->where(fn(Builder $q) => $q
+            $like = '%'.addcslashes($filter->query, '%_\\').'%';
+            $query->where(fn (Builder $q) => $q
                 ->whereRaw("(coalesce(first_name, '') || ' ' || coalesce(last_name, '')) ILIKE ?", [$like])
                 ->orWhere('email', 'ilike', $like)
                 ->orWhere('phone', 'ilike', $like));
@@ -308,8 +343,8 @@ SQL;
 
         if ($filter->eventId !== null) {
             $eventId = $filter->eventId;
-            $query->where(fn(Builder $q) => $q
-                ->whereExists(fn($sub) => $sub->selectRaw('1')
+            $query->where(fn (Builder $q) => $q
+                ->whereExists(fn ($sub) => $sub->selectRaw('1')
                     ->from('orders as o')
                     ->join('events as e', 'e.id', '=', 'o.event_id')
                     ->where('o.event_id', $eventId)
@@ -317,7 +352,7 @@ SQL;
                     ->whereNull('o.deleted_at')
                     ->whereIn('o.status', $validStatuses)
                     ->whereRaw('lower(trim(o.email)) = contacts.email'))
-                ->orWhereExists(fn($sub) => $sub->selectRaw('1')
+                ->orWhereExists(fn ($sub) => $sub->selectRaw('1')
                     ->from('attendees as a')
                     ->join('orders as o', 'o.id', '=', 'a.order_id')
                     ->join('events as e', 'e.id', '=', 'a.event_id')
@@ -331,7 +366,7 @@ SQL;
         if ($filter->attendedOnly) {
             if ($filter->eventId !== null) {
                 $eventId = $filter->eventId;
-                $query->whereExists(fn($sub) => $sub->selectRaw('1')
+                $query->whereExists(fn ($sub) => $sub->selectRaw('1')
                     ->from('attendee_check_ins as c')
                     ->join('attendees as a', 'a.id', '=', 'c.attendee_id')
                     ->join('events as e', 'e.id', '=', 'c.event_id')
@@ -346,7 +381,7 @@ SQL;
 
         if ($filter->tagId !== null) {
             $tagId = $filter->tagId;
-            $query->whereExists(fn($sub) => $sub->selectRaw('1')
+            $query->whereExists(fn ($sub) => $sub->selectRaw('1')
                 ->from('contact_tag_assignments as cta')
                 ->join('contact_tags as ct', 'ct.id', '=', 'cta.contact_tag_id')
                 ->whereColumn('cta.contact_id', 'contacts.id')
