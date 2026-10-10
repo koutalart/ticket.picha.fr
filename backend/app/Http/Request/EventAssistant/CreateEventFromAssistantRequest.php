@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace HiEvents\Http\Request\EventAssistant;
 
+use HiEvents\DomainObjects\Enums\EventCategory;
 use HiEvents\Http\Request\BaseRequest;
+use Illuminate\Validation\Rule;
 
 class CreateEventFromAssistantRequest extends BaseRequest
 {
@@ -13,6 +15,7 @@ class CreateEventFromAssistantRequest extends BaseRequest
         return [
             'organizer_id' => ['required', 'integer'],
             'title' => ['required', 'string', 'max:150'],
+            'category' => ['nullable', 'string', Rule::in(EventCategory::valuesArray())],
             'start_date' => ['required', 'date'],
             'end_date' => ['nullable', 'date', 'after:start_date'],
             'venue' => ['nullable', 'string', 'max:255'],

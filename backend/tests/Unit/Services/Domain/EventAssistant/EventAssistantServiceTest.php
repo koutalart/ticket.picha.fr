@@ -28,8 +28,8 @@ class EventAssistantServiceTest extends TestCase
     private function service(array $answer, ?array &$sent = null): EventAssistantService
     {
         $claude = Mockery::mock(ClaudeStructuredOutputClient::class);
-        $claude->shouldReceive('ask')->once()->andReturnUsing(function (string $system, array $content, array $schema) use ($answer, &$sent) {
-            $sent = ['system' => $system, 'content' => $content, 'schema' => $schema];
+        $claude->shouldReceive('ask')->once()->andReturnUsing(function (string $system, array $content, array $schema, array $tools = []) use ($answer, &$sent) {
+            $sent = ['system' => $system, 'content' => $content, 'schema' => $schema, 'tools' => $tools];
 
             return $answer;
         });
@@ -46,12 +46,18 @@ class EventAssistantServiceTest extends TestCase
             'venue' => 'Mayotte la 1ère, Pamandzi',
             'description' => 'Venez découvrir les coulisses.',
             'price' => 0,
+            'capacity' => 500,
+            'category' => 'OPEN_HOUSE',
+            'facts' => 'Organisé par Mayotte la 1ère pour ses 40 ans',
         ], $sent)->readPoster($this->poster(), 'Indian/Mayotte');
 
         self::assertSame('Journée portes ouvertes', $draft->title);
         self::assertSame('2026-10-18T10:00', $draft->start_date);
         self::assertSame('2026-10-18T16:00', $draft->end_date);
         self::assertSame(0.0, $draft->price);
+        self::assertSame(500, $draft->quantity);
+        self::assertSame('OPEN_HOUSE', $draft->category);
+        self::assertSame('Organisé par Mayotte la 1ère pour ses 40 ans', $draft->facts);
 
         $image = new Imagick;
         $image->readImageBlob(base64_decode($sent['content'][0]['source']['data']));
@@ -70,6 +76,9 @@ class EventAssistantServiceTest extends TestCase
             'venue' => '',
             'description' => null,
             'price' => -5,
+            'capacity' => 0,
+            'category' => 'NOT_A_CATEGORY',
+            'facts' => null,
         ])->readPoster($this->poster(800, 600), 'Indian/Mayotte');
 
         self::assertNull($draft->title);
@@ -77,13 +86,15 @@ class EventAssistantServiceTest extends TestCase
         self::assertNull($draft->end_date, 'no end date without a valid start date');
         self::assertNull($draft->venue);
         self::assertNull($draft->price);
+        self::assertNull($draft->quantity);
+        self::assertNull($draft->category);
     }
 
     public function test_end_date_before_start_is_dropped(): void
     {
         $draft = $this->service([
             'title' => 'Concert', 'start_date' => '2026-10-11T18:00', 'end_date' => '2026-10-11T17:00',
-            'venue' => null, 'description' => null, 'price' => 45,
+            'venue' => null, 'description' => null, 'price' => 45, 'capacity' => null, 'category' => 'MUSIC', 'facts' => null,
         ])->readPoster($this->poster(800, 600), 'Indian/Mayotte');
 
         self::assertSame('2026-10-11T18:00', $draft->start_date);
@@ -96,5 +107,17 @@ class EventAssistantServiceTest extends TestCase
         $this->expectException(EventAssistantFailedException::class);
 
         $this->service(['description' => '   '])->improveDescription('Une soirée au 5/5 avec des DJ.', 'Triangle', null);
+    }
+
+    public function test_description_is_researched_on_the_web_from_the_poster_details(): void
+    {
+        $text = $this->service(['description' => "Une soirée au 5/5.\n\nDJ et live."], $sent)
+            ->researchDescription('Triangle des Bermudes', 'Le 5/5, Mamoudzou', 'NIGHTLIFE', 'DJ Kaz, live band', null);
+
+        self::assertSame("Une soirée au 5/5.\n\nDJ et live.", $text);
+        self::assertSame('web_search_20260209', $sent['tools'][0]['type']);
+        self::assertSame(3, $sent['tools'][0]['maxUses']);
+        self::assertStringContainsString('DJ Kaz, live band', $sent['content'][0]['text']);
+        self::assertStringContainsString('Never write a date', $sent['system']);
     }
 }

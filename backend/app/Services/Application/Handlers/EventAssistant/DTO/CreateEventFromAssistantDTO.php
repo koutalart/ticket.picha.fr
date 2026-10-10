@@ -19,5 +19,6 @@ class CreateEventFromAssistantDTO extends BaseDataObject
         public readonly ?string $description,
         public readonly float $price,
         public readonly ?int $quantity,
+        public readonly ?string $category = null,
     ) {}
 }

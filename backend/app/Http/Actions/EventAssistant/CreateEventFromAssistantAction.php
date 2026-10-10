@@ -41,6 +41,7 @@ class CreateEventFromAssistantAction extends BaseAction
                 description: $request->validated('description'),
                 price: (float) $request->validated('price'),
                 quantity: $request->validated('quantity') !== null ? (int) $request->validated('quantity') : null,
+                category: $request->validated('category'),
             ));
         } catch (OrganizerNotFoundException $exception) {
             throw ValidationException::withMessages(['organizer_id' => $exception->getMessage()]);

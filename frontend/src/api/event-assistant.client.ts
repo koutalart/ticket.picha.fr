@@ -8,11 +8,23 @@ export interface EventDraft {
     venue: string | null;
     description: string | null;
     price: number | null;
+    category: string | null;
+    quantity: number | null;
+    facts: string | null;
+}
+
+export interface ResearchDescriptionRequest {
+    title: string;
+    venue?: string | null;
+    category?: string | null;
+    facts?: string | null;
+    draft?: string | null;
 }
 
 export interface CreateEventFromAssistantRequest {
     organizer_id: IdParam;
     title: string;
+    category?: string | null;
     start_date: string;
     end_date?: string | null;
     venue?: string | null;
@@ -40,6 +52,10 @@ export const eventAssistantClient = {
     },
     improveDescription: async (payload: { description: string, title?: string, venue?: string }) => {
         const response = await api.post<GenericDataResponse<{ description: string }>>('events/assistant/description', payload);
+        return response.data;
+    },
+    researchDescription: async (payload: ResearchDescriptionRequest) => {
+        const response = await api.post<GenericDataResponse<{ description: string }>>('events/assistant/description/research', payload);
         return response.data;
     },
     create: async (payload: CreateEventFromAssistantRequest) => {

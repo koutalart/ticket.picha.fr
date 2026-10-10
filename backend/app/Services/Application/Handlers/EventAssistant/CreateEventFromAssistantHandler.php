@@ -49,7 +49,7 @@ class CreateEventFromAssistantHandler
                 start_date: $dto->start_date,
                 end_date: $dto->end_date,
                 description: $this->descriptionHtml($dto->description),
-                category: EventCategory::OTHER,
+                category: EventCategory::tryFrom((string) $dto->category) ?? EventCategory::OTHER,
                 location_details: $dto->venue ? new AddressDTO(venue_name: $dto->venue) : null,
             ));
 

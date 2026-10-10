@@ -18,6 +18,9 @@ class ClaudeStructuredOutputClient
 {
     private const MAX_TOKENS = 8000;
 
+    /** Server tools (web search) may pause a long turn: resume it at most this many times. */
+    private const MAX_CONTINUATIONS = 3;
+
     public function __construct(
         private readonly Repository $config,
         private readonly LoggerInterface $logger,
@@ -31,31 +34,42 @@ class ClaudeStructuredOutputClient
     /**
      * @param  array<int, array<string, mixed>>  $content  User content blocks (text, image)
      * @param  array<string, mixed>  $schema  JSON schema of the expected answer
+     * @param  array<int, array<string, mixed>>  $tools  Server tools Claude may use (e.g. web search)
      * @return array<string, mixed>
      *
      * @throws EventAssistantUnavailableException
      * @throws EventAssistantFailedException
      */
-    public function ask(string $system, array $content, array $schema): array
+    public function ask(string $system, array $content, array $schema, array $tools = []): array
     {
         if (! $this->isConfigured()) {
             throw new EventAssistantUnavailableException(__('The assistant is not available.'));
         }
 
+        $client = new Client(apiKey: (string) $this->config->get('services.anthropic.api_key'));
+        $messages = [['role' => 'user', 'content' => $content]];
+
         try {
-            $message = (new Client(apiKey: (string) $this->config->get('services.anthropic.api_key')))
-                ->beta->messages->create(
+            for ($attempt = 0; $attempt <= self::MAX_CONTINUATIONS; $attempt++) {
+                $message = $client->beta->messages->create(
                     model: (string) $this->config->get('services.anthropic.model'),
                     maxTokens: self::MAX_TOKENS,
                     system: $system,
-                    messages: [['role' => 'user', 'content' => $content]],
+                    messages: $messages,
                     outputConfig: [
                         'effort' => 'low',
                         'format' => ['type' => 'json_schema', 'schema' => $schema],
                     ],
                     fallbacks: 'default',
+                    tools: $tools === [] ? null : $tools,
                     betas: ['server-side-fallback-2026-07-01'],
                 );
+
+                if ($message->stopReason !== 'pause_turn') {
+                    break;
+                }
+                $messages[] = ['role' => 'assistant', 'content' => $message->content];
+            }
         } catch (AnthropicException $exception) {
             $this->logger->error('Event assistant: Claude request failed', ['exception' => $exception]);
 

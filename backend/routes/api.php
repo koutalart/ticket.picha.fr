@@ -70,6 +70,7 @@ use HiEvents\Http\Actions\EventAssistant\CreateEventFromAssistantAction;
 use HiEvents\Http\Actions\EventAssistant\GetEventAssistantStatusAction;
 use HiEvents\Http\Actions\EventAssistant\ImproveEventDescriptionAction;
 use HiEvents\Http\Actions\EventAssistant\ReadEventPosterAction;
+use HiEvents\Http\Actions\EventAssistant\ResearchEventDescriptionAction;
 use HiEvents\Http\Actions\Events\DuplicateEventAction;
 use HiEvents\Http\Actions\Events\GetEventAction;
 use HiEvents\Http\Actions\Events\GetEventPublicAction;
@@ -343,6 +344,7 @@ $router->middleware(['auth:api'])->group(
         $router->get('/events/assistant', GetEventAssistantStatusAction::class);
         $router->post('/events/assistant/poster', ReadEventPosterAction::class)->middleware('throttle:20,1');
         $router->post('/events/assistant/description', ImproveEventDescriptionAction::class)->middleware('throttle:20,1');
+        $router->post('/events/assistant/description/research', ResearchEventDescriptionAction::class)->middleware('throttle:20,1');
         $router->post('/events/assistant/create', CreateEventFromAssistantAction::class);
         $router->post('/events', CreateEventAction::class);
         $router->get('/events', GetEventsAction::class);

@@ -18,5 +18,9 @@ class EventDraftDTO extends BaseDataObject
         public readonly ?string $venue = null,
         public readonly ?string $description = null,
         public readonly ?float $price = null,
+        public readonly ?string $category = null,
+        public readonly ?int $quantity = null,
+        /** Everything else written on the poster (artists, programme, organisers), used to research the description */
+        public readonly ?string $facts = null,
     ) {}
 }

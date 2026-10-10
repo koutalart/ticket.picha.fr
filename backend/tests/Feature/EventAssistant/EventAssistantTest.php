@@ -44,6 +44,7 @@ class EventAssistantTest extends TestCase
         $response = $this->postJson('/events/assistant/create', [
             'organizer_id' => $organizerId,
             'title' => 'Triangle des Bermudes',
+            'category' => 'NIGHTLIFE',
             'start_date' => '2026-11-14 18:00',
             'end_date' => '2026-11-15 00:30',
             'venue' => 'Le 5/5, Mamoudzou',
@@ -55,6 +56,7 @@ class EventAssistantTest extends TestCase
         $eventId = $response->json('data.id');
         $event = DB::table('events')->find($eventId);
         self::assertSame('DRAFT', $event->status);
+        self::assertSame('NIGHTLIFE', $event->category);
         self::assertStringNotContainsString('<script>', $event->description);
         self::assertSame(2, substr_count($event->description, '<p>'));
 

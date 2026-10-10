@@ -10,6 +10,8 @@ import {useGetEventAssistantStatus} from "../../../../queries/useGetEventAssista
 import {useReadEventPoster} from "../../../../mutations/useReadEventPoster.ts";
 import {useImproveEventDescription} from "../../../../mutations/useImproveEventDescription.ts";
 import {useCreateEventFromAssistant} from "../../../../mutations/useCreateEventFromAssistant.ts";
+import {useResearchEventDescription} from "../../../../mutations/useResearchEventDescription.ts";
+import {EventCategories} from "../../../../constants/eventCategories.ts";
 import {EventDraft} from "../../../../api/event-assistant.client.ts";
 import {showError} from "../../../../utilites/notifications.tsx";
 import {IdParam} from "../../../../types.ts";
@@ -20,6 +22,7 @@ type FieldErrors = Partial<Record<'title' | 'startDate' | 'endDate' | 'price' | 
 
 interface Draft {
     title: string;
+    category: string | null;
     startDate: string;
     hasEndDate: boolean;
     endDate: string;
@@ -32,6 +35,7 @@ interface Draft {
 
 const EMPTY_DRAFT: Draft = {
     title: '',
+    category: null,
     startDate: '',
     hasEndDate: false,
     endDate: '',
@@ -82,6 +86,7 @@ const EventAssistant = () => {
     const readPoster = useReadEventPoster();
     const improveDescription = useImproveEventDescription();
     const createEvent = useCreateEventFromAssistant();
+    const researchDescription = useResearchEventDescription();
 
     const organizers = organizersQuery.data?.data ?? [];
     const [organizerId, setOrganizerId] = useState<string | null>(searchParams.get('organizer'));
@@ -135,7 +140,25 @@ const EventAssistant = () => {
             description: found.description ?? current.description,
             isFree: found.price === 0 ? true : current.isFree,
             price: found.price !== null && found.price > 0 ? found.price : current.price,
+            category: found.category ?? current.category,
+            quantity: found.quantity ?? current.quantity,
         }));
+    };
+
+    // The poster gives the facts; the AI then searches the web to write a richer description.
+    const writeDescription = (found: EventDraft) => {
+        if (!found.title) return;
+        researchDescription.mutate({
+            title: found.title,
+            venue: found.venue,
+            category: found.category,
+            facts: found.facts,
+            draft: found.description,
+        }, {
+            onSuccess: ({data}) => setDraft((current) => (
+                current.description === (found.description ?? '') ? {...current, description: data.description} : current
+            )),
+        });
     };
 
     const handlePoster = (files: File[]) => {
@@ -156,6 +179,7 @@ const EventAssistant = () => {
                 applyAiDraft(data);
                 setFilledByAi(true);
                 showReview();
+                writeDescription(data);
             },
             onError: () => {
                 setFilledByAi(false);
@@ -216,6 +240,7 @@ const EventAssistant = () => {
             payload: {
                 organizer_id: organizer.id as IdParam,
                 title: draft.title.trim(),
+                category: draft.category,
                 start_date: toApiDate(draft.startDate),
                 end_date: draft.hasEndDate && draft.endDate ? toApiDate(draft.endDate) : null,
                 venue: draft.venue.trim() || null,
@@ -313,6 +338,19 @@ const EventAssistant = () => {
                         placeholder={t`E.g. Open day at Mayotte la 1ère`}
                         error={errors.title}
                         onChange={(event) => update({title: event.currentTarget.value})}
+                    />
+
+                    <Select
+                        label={t`Type of event`}
+                        placeholder={t`Choose a type`}
+                        size="md"
+                        radius="lg"
+                        searchable
+                        clearable
+                        classNames={{input: classes.input, label: classes.label}}
+                        value={draft.category}
+                        onChange={(value) => update({category: value})}
+                        data={EventCategories.map((category) => ({value: category.id, label: `${category.emoji} ${category.name}`}))}
                     />
 
                     <div>
@@ -415,6 +453,9 @@ const EventAssistant = () => {
                     />
 
                     <div>
+                        {researchDescription.isPending && (
+                            <p className={classes.writing}><Loader size="xs"/> <Trans>The AI is looking up your event and writing the description…</Trans></p>
+                        )}
                         <Textarea
                             label={t`Description`}
                             placeholder={t`A few words to make people want to come (optional)`}
