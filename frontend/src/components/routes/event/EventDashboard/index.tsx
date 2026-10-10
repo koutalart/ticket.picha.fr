@@ -1,401 +1,277 @@
-import {useGetEvent} from "../../../../queries/useGetEvent.ts";
-import {useGetPublicEvent} from "../../../../queries/useGetPublicEvent.ts";
-import {useParams} from "react-router";
-import {PageTitle} from "../../../common/PageTitle";
-import {PageBody} from "../../../common/PageBody";
-import {StatBoxes} from "../../../common/StatBoxes";
-import {useGetMe} from "../../../../queries/useGetMe.ts";
-import {t, Trans} from "@lingui/macro";
+import {useRef, useState} from 'react';
+import {NavLink, useParams} from "react-router";
 import {AreaChart} from "@mantine/charts";
-import {Card} from "../../../common/Card";
-import classes from "./EventDashboard.module.scss";
+import {Button, SegmentedControl, Skeleton} from "@mantine/core";
+import {useDisclosure} from "@mantine/hooks";
+import {IconArrowRight, IconEye, IconShare} from "@tabler/icons-react";
+import {t, Trans} from "@lingui/macro";
+import {i18n} from "@lingui/core";
+import {useGetEvent} from "../../../../queries/useGetEvent.ts";
 import {useGetEventStats} from "../../../../queries/useGetEventStats.ts";
+import {useGetEventOrders} from "../../../../queries/useGetEventOrders.ts";
+import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
 import {formatCurrency} from "../../../../utilites/currency.ts";
-import {formatDateWithLocale} from "../../../../utilites/dates.ts";
-import {Button, SegmentedControl, Skeleton, Tooltip} from "@mantine/core";
-import {useMediaQuery} from "@mantine/hooks";
-import {IconAlertCircle, IconX} from "@tabler/icons-react";
-import {useGetAccount} from "../../../../queries/useGetAccount.ts";
-import {useUpdateEventStatus} from "../../../../mutations/useUpdateEventStatus.ts";
-import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
-import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
-import {useEffect, useRef, useState} from 'react';
-import {EventLifecycleStatus, EventStatus, StripePlatform} from "../../../../types.ts";
-import {isHiEvents} from "../../../../utilites/helpers.ts";
-import {StripeConnectButton} from "../../../common/StripeConnectButton";
-import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
+import {formatDateWithLocale, relativeDate} from "../../../../utilites/dates.ts";
+import {formatNumber, getProductsFromEvent} from "../../../../utilites/helpers.ts";
+import {eventHomepageUrl} from "../../../../utilites/urlHelper.ts";
+import {ShareModal} from "../../../modals/ShareModal";
+import {Event, EventLifecycleStatus, EventStatus, Order, Product} from "../../../../types.ts";
+import classes from "./EventDashboard.module.scss";
 
-export const DashBoardSkeleton = () => {
-    return (
-        <>
-            <Skeleton height={120} radius="l" mb="20px"/>
-            <Skeleton height={350} radius="l" mb="20px"/>
-            <Skeleton height={350} radius="l"/>
-        </>
-    );
-}
+type ChartMode = 'tickets' | 'revenue';
+
+const priceCount = (product: Product, field: 'quantity_sold' | 'initial_quantity_available') => {
+    const prices = product.prices ?? [];
+    if (prices.length === 0) return product[field] ?? null;
+    if (field === 'initial_quantity_available' && prices.some((price) => price.initial_quantity_available == null)) return null;
+    return prices.reduce((total, price) => total + Number(price[field] ?? 0), 0);
+};
+
+const channelOf = (product: Product) => {
+    if (product.is_hidden && product.is_visible_at_box_office !== false) return {label: t`Box Office`, tone: 'boxOffice'};
+    if (!product.is_hidden && product.is_visible_at_box_office === false) return {label: t`Online`, tone: 'online'};
+    return {label: t`Online and box office`, tone: 'both'};
+};
+
+const isFreeProduct = (product: Product) => product.type === 'FREE'
+    || (product.prices ?? []).every((price) => Number(price.price ?? 0) <= 0);
+
+const eventWhen = (event: Event) => {
+    const date = new Intl.DateTimeFormat(i18n.locale, {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: event.timezone,
+    }).format(new Date(event.start_date));
+    return date.charAt(0).toUpperCase() + date.slice(1);
+};
 
 export const EventDashboard = () => {
     const {eventId} = useParams();
-    const eventQuery = useGetEvent(eventId);
-    const {data: me} = useGetMe();
-    const event = eventQuery?.data;
-    const publicEventQuery = useGetPublicEvent(eventId);
-    const publicEvent = publicEventQuery?.data;
-    const defaultDateRangeRef = useRef<string | null>(null);
-    if (event && !defaultDateRangeRef.current) {
-        defaultDateRangeRef.current = (event.lifecycle_status === EventLifecycleStatus.ENDED
-            || event.status === EventStatus.ARCHIVED) ? 'event' : 'last_30_days';
+    const {data: event} = useGetEvent(eventId);
+    const {data: settings} = useGetEventSettings(eventId);
+    const [shareOpened, share] = useDisclosure(false);
+    const [chartMode, setChartMode] = useState<ChartMode>('tickets');
+
+    const defaultRange = useRef<string | null>(null);
+    if (event && !defaultRange.current) {
+        defaultRange.current = event.lifecycle_status === EventLifecycleStatus.ENDED || event.status === EventStatus.ARCHIVED
+            ? 'event'
+            : 'last_30_days';
     }
     const [dateRange, setDateRange] = useState<string | null>(null);
-    const effectiveDateRange = dateRange ?? defaultDateRangeRef.current ?? 'last_30_days';
+    const range = dateRange ?? defaultRange.current ?? 'last_30_days';
 
-    const eventStatsQuery = useGetEventStats(eventId, effectiveDateRange, !!defaultDateRangeRef.current);
-    const {data: eventStats} = eventStatsQuery;
-    const isMobile = useMediaQuery('(max-width: 768px)');
-    const {data: account, isFetched: accountIsFetched} = useGetAccount();
-    const statusToggleMutation = useUpdateEventStatus();
+    const {data: stats} = useGetEventStats(eventId, range, !!defaultRange.current);
+    const {data: ordersResponse, isLoading: ordersLoading} = useGetEventOrders(eventId, {
+        perPage: 5, sortBy: 'created_at', sortDirection: 'desc',
+    });
+    const orders = ordersResponse?.data ?? [];
 
-    const [isChecklistVisible, setIsChecklistVisible] = useState(true);
-    const [isMounted, setIsMounted] = useState(false);
-
-    const products = event?.products?.length ? event.products : (publicEvent?.products ?? []);
-    const isFreeEvent = products.length > 0
-        ? products.every((product) => {
-            if (product.type === 'FREE') return true;
-            if (product.prices?.length) {
-                return product.prices.every((price) => Number(price.price ?? 0) <= 0);
-            }
-            return Number(product.price ?? 0) <= 0;
-        })
-        : event?.category === 'OPEN_HOUSE' || publicEvent?.category === 'OPEN_HOUSE';
-
-    const showStripeUpgradeNotice = account?.stripe_platform === StripePlatform.Canada.valueOf()
-        && account?.stripe_connect_setup_complete
-        && isHiEvents();
-
-    useEffect(() => {
-        setIsMounted(true);
-        const dismissed = window.localStorage.getItem('setupChecklistDismissed-' + eventId);
-        if (dismissed === 'true') {
-            setIsChecklistVisible(false);
-        }
-    }, []);
-
-    const dismissChecklist = () => {
-        setIsChecklistVisible(false);
-        if (isMounted) {
-            window.localStorage.setItem('setupChecklistDismissed-' + eventId, 'true');
-        }
-    };
-
-    const handleStatusToggle = () => {
-        const newStatus = event?.status === 'LIVE' ? 'DRAFT' : 'LIVE';
-        const message = event?.status === 'LIVE'
-            ? t`Are you sure you want to make this event draft? This will make the event invisible to the public`
-            : t`Are you sure you want to make this event public? This will make the event visible to the public`;
-
-        confirmationDialog(message, () => {
-            statusToggleMutation.mutate({
-                eventId,
-                status: newStatus
-            }, {
-                onSuccess: () => {
-                    if (newStatus === 'LIVE') {
-                        trackEvent(AnalyticsEvents.EVENT_PUBLISHED);
-                    }
-                    showSuccess(t`Event status updated`);
-                },
-                onError: (error: any) => {
-                    showError(error?.response?.data?.message || t`Event status update failed. Please try again later`);
-                }
-            });
-        })
+    if (!event) {
+        return (
+            <div className={classes.page}>
+                <Skeleton height={60} width="60%" mb="xl"/>
+                <Skeleton height={90} mb="xl"/>
+                <Skeleton height={260}/>
+            </div>
+        );
     }
 
-    const dateRangeLabel = (eventStats && event)
-        ? `${formatDateWithLocale(eventStats.start_date, 'chartDate', event?.timezone)} - ${formatDateWithLocale(eventStats.end_date, 'chartDate', event?.timezone)}`
-        : '';
+    const products = (getProductsFromEvent(event) ?? []).filter((product) => product.product_type === 'TICKET');
+    const isFree = products.length > 0 && products.every(isFreeProduct);
+    const isLive = event.status === 'LIVE';
+    const location = settings?.location_details ?? event.settings?.location_details;
+    const place = settings?.is_online_event ? t`Online` : location?.venue_name || location?.city;
 
-    const shouldShowChecklist = !isFreeEvent && (isChecklistVisible && event && accountIsFetched && account?.is_saas_mode_enabled) && (
-        !account?.stripe_connect_setup_complete ||
-        event?.status !== 'LIVE'
-    );
+    const checkedIn = stats?.check_in_stats?.total_checked_in_attendees ?? 0;
+    const attendees = stats?.check_in_stats?.total_attendees ?? stats?.total_attendees_registered ?? 0;
+    const attendanceRate = attendees > 0 ? Math.round(checkedIn / attendees * 100) : 0;
+
+    const figures = isFree ? [
+        {label: t`Registrations`, value: stats ? formatNumber(stats.total_attendees_registered) : null},
+        {label: t`Present`, value: stats ? formatNumber(checkedIn) : null},
+        {label: t`Attendance rate`, value: stats ? `${attendanceRate} %` : null},
+        {label: t`Page views`, value: stats ? formatNumber(stats.total_views) : null},
+    ] : [
+        {
+            label: t`Gross sales`,
+            value: stats ? formatCurrency(stats.total_gross_sales, event.currency) : null,
+            note: stats && stats.total_refunded > 0 ? t`including ${formatCurrency(stats.total_refunded, event.currency)} refunded` : null,
+        },
+        {label: t`Tickets sold`, value: stats ? formatNumber(stats.total_products_sold) : null},
+        {label: t`Orders`, value: stats ? formatNumber(stats.total_orders) : null},
+        {label: t`Page views`, value: stats ? formatNumber(stats.total_views) : null},
+    ];
+
+    const chartData = stats?.daily_stats.map((day) => ({
+        date: formatDateWithLocale(day.date, 'chartDate', event.timezone),
+        products_sold: day.products_sold,
+        attendees_registered: day.attendees_registered,
+        total_sales_gross: day.total_sales_gross,
+        total_refunded: day.total_refunded,
+    })) ?? [];
+    const mode: ChartMode = isFree ? 'tickets' : chartMode;
 
     return (
-        <PageBody>
-            <PageTitle style={{marginBottom: 0}}>
-                {!isMobile && (
-                    <Trans>
-                        Welcome back{me?.first_name && ', ' + me?.first_name} 👋
-                    </Trans>
-                )}
-
-                {isMobile && (
-                    <Trans>
-                        Hi {me?.first_name && me?.first_name} 👋
-                    </Trans>
-                )}
-            </PageTitle>
-
-            {!event && <DashBoardSkeleton/>}
-
-            {showStripeUpgradeNotice && (
-                <Card className={classes.stripeUpgradeCard}>
-                    <div className={classes.stripeUpgradeContent}>
-                        <div className={classes.stripeIcon}>
-                            <IconAlertCircle/>
-                        </div>
-                        <div className={classes.stripeTextContainer}>
-                            <div className={classes.stripeText}>
-                                <h3>{t`Important: Stripe reconnection required`}</h3>
-                                <p>{t`We've relocated our headquarters to Ireland. As a result, we need you to reconnect your Stripe account. This quick process takes just a few minutes. Your sales and existing data remain completely unaffected.`}</p>
-                                <p className={classes.stripeApology}>{t`Sorry for the inconvenience.`}</p>
-                            </div>
-                            <StripeConnectButton
-                                className={classes.stripeButton}
-                                buttonText={t`Reconnect Stripe →`}
-                                variant="filled"
-                                size="md"
-                                platform="ie"
-                            />
-                        </div>
+        <div className={classes.page}>
+            <header className={classes.header}>
+                <div className={classes.headerText}>
+                    <span className={classes.kicker}><Trans>Dashboard</Trans></span>
+                    <div className={classes.titleRow}>
+                        <h1 className={classes.title}>{event.title}</h1>
+                        <span className={isLive ? classes.badgeLive : classes.badgeDraft}>
+                            {isLive ? t`Online` : t`Draft`}
+                        </span>
                     </div>
-                </Card>
-            )}
-
-            {event && (<>
-                <StatBoxes/>
-
-                {shouldShowChecklist && (
-                    <Card className={classes.setupCard}>
-                        <div
-                            className={classes.dismissButton}
-                            onClick={dismissChecklist}
-                            role="button"
-                            aria-label="dismiss"
-                        >
-                            <IconX size={20}/>
-                        </div>
-
-                        <div className={classes.setupCardContent}>
-                            <div className={classes.checklistContainer}>
-                                <h2>🚀 {t`Get your event ready`}</h2>
-                                <p className={classes.setupDescription}>
-                                    {t`Complete these steps to start selling tickets for your event.`}
-                                </p>
-
-                                <div className={classes.checklistItems}>
-                                    <div className={classes.checklistItem}>
-                                        <h3>
-                                            <div className={classes.checkboxContainer}>
-                                                <div
-                                                    className={classes.checkbox}
-                                                    style={{backgroundColor: event?.status === 'LIVE' ? 'var(--hi-primary)' : 'transparent'}}
-                                                >
-                                                    {event?.status === 'LIVE' && (
-                                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                                             xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M13.3333 4L6.00001 11.3333L2.66667 8"
-                                                                  stroke="white" strokeWidth="2" strokeLinecap="round"
-                                                                  strokeLinejoin="round"/>
-                                                        </svg>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            {t`Make your event live`}
-                                        </h3>
-                                        <p>{t`Your event must be live before you can sell tickets to attendees.`}</p>
-                                        {event?.status !== 'LIVE' && (
-                                            <Button
-                                                onClick={handleStatusToggle}
-                                                variant="light"
-                                                size="sm"
-                                                radius="md"
-                                                fullWidth
-                                            >
-                                                {t`Publish Event`}
-                                            </Button>
-                                        )}
-                                        {event?.status === 'LIVE' && (
-                                            <Button
-                                                onClick={handleStatusToggle}
-                                                variant="light"
-                                                size="sm"
-                                                radius="md"
-                                                fullWidth
-                                            >
-                                                {t`Unpublish Event`}
-                                            </Button>
-                                        )}
-                                    </div>
-
-                                    <div className={classes.checklistItem}>
-                                        <h3>
-                                            <div className={classes.checkboxContainer}>
-                                                <div
-                                                    className={classes.checkbox}
-                                                    style={{backgroundColor: account?.stripe_connect_setup_complete ? 'var(--hi-primary)' : 'transparent'}}
-                                                >
-                                                    {account?.stripe_connect_setup_complete && (
-                                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                                             xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M13.3333 4L6.00001 11.3333L2.66667 8"
-                                                                  stroke="white" strokeWidth="2" strokeLinecap="round"
-                                                                  strokeLinejoin="round"/>
-                                                        </svg>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            {t`Connect payment processing`}
-                                        </h3>
-                                        <p>{t`Link your Stripe account to receive funds from ticket sales.`}</p>
-                                        {!account?.stripe_connect_setup_complete && (
-                                            <Button
-                                                onClick={() => {
-                                                    window.location.href = '/account/payment';
-                                                }}
-                                                variant="light"
-                                                size="sm"
-                                                radius="md"
-                                                fullWidth
-                                            >
-                                                {account?.stripe_account_id ? t`Complete Stripe Setup` : t`Connect to Stripe`}
-                                            </Button>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
-                )}
-
-                <div className={classes.dateRangeSelector}>
-                    <SegmentedControl
-                        value={effectiveDateRange}
-                        onChange={setDateRange}
-                        data={[
-                            {
-                                label: (
-                                    <Tooltip label={t`Last 30 days`} withArrow>
-                                        <span>{t`Recent`}</span>
-                                    </Tooltip>
-                                ),
-                                value: 'last_30_days',
-                            },
-                            {
-                                label: (
-                                    <Tooltip label={t`First 7 days from event start`} withArrow>
-                                        <span>{t`Week`}</span>
-                                    </Tooltip>
-                                ),
-                                value: 'week',
-                            },
-                            {
-                                label: (
-                                    <Tooltip label={t`First 30 days from event start`} withArrow>
-                                        <span>{t`Month`}</span>
-                                    </Tooltip>
-                                ),
-                                value: 'month',
-                            },
-                            {
-                                label: (
-                                    <Tooltip label={t`First 90 days from event start`} withArrow>
-                                        <span>{t`Quarter`}</span>
-                                    </Tooltip>
-                                ),
-                                value: 'quarter',
-                            },
-                            {
-                                label: (
-                                    <Tooltip label={t`Full event duration`} withArrow>
-                                        <span>{t`Event`}</span>
-                                    </Tooltip>
-                                ),
-                                value: 'event',
-                            },
-                        ]}
-                        size="sm"
-                    />
+                    <p className={classes.meta}>
+                        {eventWhen(event)}{place && <> · {place}</>}
+                    </p>
                 </div>
+                <div className={classes.headerActions}>
+                    <Button component="a" href={`/event/${eventId}/${event.slug}`} target="_blank" variant="subtle"
+                            radius="md" leftSection={<IconEye size={18}/>}>
+                        {t({message: 'Preview', context: 'event menu'})}
+                    </Button>
+                    <Button variant="default" radius="md" leftSection={<IconShare size={18}/>} onClick={share.open}>
+                        {t({message: 'Share', context: 'event menu'})}
+                    </Button>
+                </div>
+            </header>
 
-                <Card className={classes.chartCard}>
-                    <div className={classes.chartCardTitle}>
-                        <h2>{isFreeEvent ? t`Inscriptions` : t`Product Sales`}</h2>
-                        <div className={classes.dateRange}>
-                        <span>
-                            {dateRangeLabel}
-                        </span>
-                        </div>
+            <section className={classes.figures}>
+                {figures.map((figure) => (
+                    <div key={figure.label} className={classes.figure}>
+                        <span className={classes.figureLabel}>{figure.label}</span>
+                        {figure.value === null
+                            ? <Skeleton height={30} width={80} radius="sm"/>
+                            : <span className={classes.figureValue}>{figure.value}</span>}
+                        {'note' in figure && figure.note && <span className={classes.figureNote}>{figure.note}</span>}
                     </div>
-                    <AreaChart
-                        h={300}
-                        data={eventStats?.daily_stats.map(stat => ({
-                            date: formatDateWithLocale(stat.date, 'chartDate', event.timezone),
-                            orders_created: stat.orders_created,
-                            products_sold: stat.products_sold,
-                            attendees_registered: stat.attendees_registered,
-                        })) || []}
-                        dataKey="date"
-                        withLegend
-                        legendProps={{verticalAlign: 'bottom', height: 50}}
+                ))}
+            </section>
 
-                        series={isFreeEvent ? [
-                            {name: 'attendees_registered', color: 'blue.4', label: t`Inscrits`},
-                        ] : [
-                            {name: 'orders_created', color: 'blue.6', label: t`Completed Orders`},
-                            {name: 'products_sold', color: 'blue.2', label: t`Products Sold`},
-                            {name: 'attendees_registered', color: 'blue.4', label: t`Attendees Registered`},
-                        ]}
-                        curveType="bump"
-                        tickLine="none"
-                        areaChartProps={{syncId: 'events'}}
-                    />
-                </Card>
-
-                {!isFreeEvent && (<Card className={classes.chartCard}>
-                    <div className={classes.chartCardTitle}>
-                        <h2>{t`Revenue`}</h2>
-                        <div className={classes.dateRange}>
-                        <span>
-                            {dateRangeLabel}
-                        </span>
-                        </div>
+            <div className={classes.columns}>
+                <section className={classes.section}>
+                    <div className={classes.sectionHead}>
+                        <h2 className={classes.sectionTitle}><Trans>Tickets and capacity</Trans></h2>
+                        <NavLink to={`/manage/event/${eventId}/products`} className={classes.seeAll}>
+                            <Trans>Manage</Trans> <IconArrowRight size={16}/>
+                        </NavLink>
                     </div>
+                    {products.length === 0 && (
+                        <p className={classes.muted}><Trans>No tickets yet.</Trans></p>
+                    )}
+                    {products.map((product) => {
+                        const sold = priceCount(product, 'quantity_sold') ?? 0;
+                        const total = priceCount(product, 'initial_quantity_available');
+                        const channel = channelOf(product);
+                        const percent = total ? Math.min(100, Math.round(sold / total * 100)) : 0;
+                        return (
+                            <div key={product.id} className={classes.ticket}>
+                                <div className={classes.ticketHead}>
+                                    <span className={classes.ticketName}>
+                                        {product.title}
+                                        <span className={`${classes.channel} ${classes[`channel_${channel.tone}`]}`}>{channel.label}</span>
+                                    </span>
+                                    <span className={classes.ticketCount}>
+                                        {formatNumber(sold)}{total !== null && <> / {formatNumber(total)}</>}
+                                    </span>
+                                </div>
+                                {total !== null ? (
+                                    <>
+                                        <div className={classes.bar}><div style={{width: `${percent}%`}}/></div>
+                                        <span className={classes.ticketRemaining}>
+                                            {total - sold > 0
+                                                ? <Trans>{formatNumber(total - sold)} places left</Trans>
+                                                : <Trans>Sold out</Trans>}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <span className={classes.ticketRemaining}><Trans>Unlimited</Trans></span>
+                                )}
+                            </div>
+                        );
+                    })}
+                </section>
 
-                    <AreaChart
-                        h={300}
-                        pl={40}
-                        pr={40}
-                        data={eventStats?.daily_stats.map(stat => {
-                            return ({
-                                date: formatDateWithLocale(stat.date, 'chartDate', event.timezone),
-                                total_fees: stat.total_fees,
-                                total_sales_gross: stat.total_sales_gross,
-                                total_tax: stat.total_tax,
-                                total_refunded: stat.total_refunded,
-                            });
-                        }) || []}
-                        dataKey="date"
-                        valueFormatter={(value) => formatCurrency(value, event.currency)}
-                        withLegend
-                        legendProps={{verticalAlign: 'bottom', height: 50}}
-                        series={[
-                            {name: 'total_fees', label: t`Total Fees`, color: 'primary.3'},
-                            {name: 'total_sales_gross', label: t`Gross Sales`, color: 'grape.5'},
-                            {name: 'total_tax', label: t`Total Tax`, color: 'grape.7'},
-                            {name: 'total_refunded', label: t`Total Refunded`, color: 'red.6'},
-                        ]}
-                        curveType="natural"
-                        tickLine="none"
-                        areaChartProps={{syncId: 'events'}}
-                    />
-                </Card>
-                )}
-            </>)}
-        </PageBody>
-    )
+                <section className={classes.entries}>
+                    <h2 className={classes.sectionTitle}><Trans>Entries</Trans></h2>
+                    <div className={classes.entriesValue}>
+                        {formatNumber(checkedIn)} <span><Trans>/ {formatNumber(attendees)} scanned</Trans></span>
+                    </div>
+                    <div className={`${classes.bar} ${classes.barGreen}`}><div style={{width: `${attendanceRate}%`}}/></div>
+                    <p className={classes.entriesHint}><Trans>Updates live during the event.</Trans></p>
+                    <NavLink to={`/manage/event/${eventId}/check-in`} className={classes.seeAll}>
+                        <Trans>Check-in lists</Trans> <IconArrowRight size={16}/>
+                    </NavLink>
+                </section>
+            </div>
+
+            <section className={classes.section}>
+                <div className={classes.chartHead}>
+                    <h2 className={classes.sectionTitle}><Trans>Sales over time</Trans></h2>
+                    <div className={classes.chartControls}>
+                        {!isFree && (
+                            <SegmentedControl size="xs" radius="md" value={chartMode}
+                                              onChange={(value) => setChartMode(value as ChartMode)}
+                                              data={[{value: 'tickets', label: t`Tickets`}, {value: 'revenue', label: t({message: 'Revenue', context: 'chart'})}]}/>
+                        )}
+                        <SegmentedControl size="xs" radius="md" value={range} onChange={setDateRange}
+                                          data={[
+                                              {value: 'last_30_days', label: t`Recent`},
+                                              {value: 'week', label: t`Week`},
+                                              {value: 'month', label: t`Month`},
+                                              {value: 'event', label: t`Event`},
+                                          ]}/>
+                    </div>
+                </div>
+                <AreaChart
+                    h={240}
+                    data={chartData}
+                    dataKey="date"
+                    curveType="monotone"
+                    tickLine="none"
+                    gridAxis="x"
+                    withDots={false}
+                    valueFormatter={mode === 'revenue' ? (value) => formatCurrency(value, event.currency) : undefined}
+                    series={mode === 'revenue' ? [
+                        {name: 'total_sales_gross', label: t`Gross sales`, color: 'violet.6'},
+                        {name: 'total_refunded', label: t`Total Refunded`, color: 'red.5'},
+                    ] : isFree ? [
+                        {name: 'attendees_registered', label: t`Registrations`, color: 'violet.6'},
+                    ] : [
+                        {name: 'products_sold', label: t`Tickets sold`, color: 'violet.6'},
+                    ]}
+                />
+            </section>
+
+            <section className={classes.section}>
+                <div className={classes.sectionHead}>
+                    <h2 className={classes.sectionTitle}><Trans>Latest orders</Trans></h2>
+                    <NavLink to={`/manage/event/${eventId}/orders`} className={classes.seeAll}>
+                        <Trans>See all</Trans> <IconArrowRight size={16}/>
+                    </NavLink>
+                </div>
+                {ordersLoading && <Skeleton height={56}/>}
+                {!ordersLoading && orders.length === 0 && <p className={classes.muted}><Trans>No orders yet.</Trans></p>}
+                {orders.map((order: Order) => (
+                    <NavLink key={order.id} to={`/manage/event/${eventId}/orders#order-${order.id}`} className={classes.order}>
+                        <span className={classes.orderWho}>
+                            {order.first_name} {order.last_name}
+                            <span className={classes.orderWhen}>· {relativeDate(order.created_at)}</span>
+                        </span>
+                        <span className={classes.orderAmount}>{formatCurrency(order.total_gross, order.currency)}</span>
+                    </NavLink>
+                ))}
+            </section>
+
+            <ShareModal
+                url={eventHomepageUrl(event)}
+                title={event.title}
+                modalTitle={t`Share Event`}
+                opened={shareOpened}
+                onClose={share.close}
+            />
+        </div>
+    );
 };
 
 export default EventDashboard;

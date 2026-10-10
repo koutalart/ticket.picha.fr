@@ -1,361 +1,343 @@
-.chartCard {
-  margin-top: 20px;
+$ink: #14121c;
+$muted: #6b6b78;
+$line: #e7e5ee;
+$violet: #5b2bb5;
 
-  .chartCardTitle {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-
-    h2 {
-      margin: 0;
-    }
-  }
-
-  .dateRange {
-    color: var(--mantine-color-gray-5);
-  }
-
-  h2:first-child {
-    margin-top: 0;
-  }
+.page {
+  max-width: 1040px;
+  color: $ink;
 }
 
-.dateRangeSelector {
+.header {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
 }
 
-.setupCard {
-  margin-bottom: 28px;
-  margin-top: 24px;
-  position: relative;
-  padding: 32px 28px;
-  background: linear-gradient(to right, rgba(249, 250, 251, 0.6), rgba(243, 244, 246, 0.6));
-  border: 1px solid var(--mantine-color-gray-2);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+.headerText {
+  min-width: 0;
 }
 
-.dismissButton {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+.kicker {
+  display: block;
+  margin-bottom: 6px;
+  color: $muted;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.titleRow {
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  color: var(--mantine-color-gray-5);
-  background-color: rgba(255, 255, 255, 0.7);
-  transition: all 0.2s ease;
+  flex-wrap: wrap;
+  gap: 14px;
+}
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: var(--mantine-color-gray-7);
+.title {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+%badge {
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.badgeDraft {
+  @extend %badge;
+  background: #fdf1d6;
+  color: #9a6400;
+}
+
+.badgeLive {
+  @extend %badge;
+  background: #dcf5e6;
+  color: #17763f;
+}
+
+.meta {
+  margin: 8px 0 0;
+  color: $muted;
+  font-size: 16px;
+
+  @media (max-width: 767px) {
+    font-size: 14px;
   }
 }
 
-.setupCardContent {
+.headerActions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+
+  @media (max-width: 767px) {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 40px;
+
+  @media (max-width: 767px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 28px;
+  }
+}
+
+.figure {
   display: flex;
   flex-direction: column;
-  position: relative;
-}
+  gap: 6px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: #f6f5fa;
 
-.checklistContainer {
-  width: 100%;
-
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-    margin-top: 0;
-    color: var(--mantine-color-gray-8);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-
-  .setupDescription {
-    margin-bottom: 1.75rem;
-    color: var(--mantine-color-gray-6);
-    font-size: 1rem;
-    line-height: 1.5;
-    max-width: 80%;
+  @media (max-width: 767px) {
+    padding: 14px;
   }
 }
 
-.checklistItems {
+.figureLabel {
+  color: $muted;
+  font-size: 15px;
+
+  @media (max-width: 767px) {
+    font-size: 13px;
+  }
+}
+
+.figureValue {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+
+  @media (max-width: 767px) {
+    font-size: 22px;
+  }
+}
+
+.figureNote {
+  color: $muted;
+  font-size: 12px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.section {
+  margin-bottom: 40px;
+
+  @media (max-width: 767px) {
+    margin-bottom: 28px;
+  }
+}
+
+.sectionHead,
+.chartHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.chartHead {
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.chartControls {
   display: flex;
   flex-wrap: wrap;
-  margin: 0 -12px;
+  gap: 8px;
 }
 
-.checklistItem {
-  width: calc(50% - 24px);
-  margin: 0 12px 24px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  border: 1px solid var(--mantine-color-gray-2);
-  transition: all 0.2s ease;
+.sectionTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
 
-  h3 {
-    font-size: 1.1rem;
-    margin: 0 0 0.75rem 0;
-    color: var(--mantine-color-gray-8);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-  }
-
-  p {
-    margin: 0 0 1rem 0;
-    color: var(--mantine-color-gray-6);
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-
-  /* Always show a consistent layout with status indicator */
-  .status-section {
-    min-height: 36px;
-    display: flex;
-    align-items: center;
+  @media (max-width: 767px) {
+    font-size: 19px;
   }
 }
 
-.checkboxContainer {
-  margin-right: 12px;
-}
-
-.checkbox {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  border: 2px solid var(--mantine-color-gray-3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.6);
-  transition: all 0.2s ease;
-
-  svg {
-    transform: scale(0.85);
-  }
-}
-
-.status-badge {
+.seeAll {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
+  gap: 6px;
+  color: $violet;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.muted {
+  margin: 0;
+  color: $muted;
+}
+
+.ticket {
+  padding: 14px 0;
+  border-top: 1px solid $line;
+}
+
+.ticketHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ticketName {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.ticketCount {
+  color: $muted;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.channel {
+  padding: 2px 8px;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.channel_online {
+  background: #efe9fb;
+  color: #4a2a92;
+}
+
+.channel_boxOffice {
+  background: #fdf1d6;
+  color: #9a6400;
+}
+
+.channel_both {
+  background: #eef0f4;
+  color: #4a4f5c;
+}
+
+.bar {
+  height: 8px;
+  margin-top: 10px;
+  border-radius: 4px;
+  background: #eeedf3;
+  overflow: hidden;
+
+  div {
+    height: 100%;
+    border-radius: 4px;
+    background: $violet;
+  }
+}
+
+.barGreen div {
+  background: #2fb36a;
+}
+
+.ticketRemaining {
+  display: block;
+  margin-top: 6px;
+  color: $muted;
+  font-size: 13px;
+}
+
+.entries {
+  padding: 20px;
+  border-radius: 16px;
+  background: #f6f5fa;
+  margin-bottom: 40px;
+
+  @media (max-width: 767px) {
+    margin-bottom: 28px;
+  }
+}
+
+.entriesValue {
+  margin-top: 10px;
+  font-size: 30px;
+  font-weight: 800;
+
+  span {
+    color: $muted;
+    font-size: 15px;
+    font-weight: 400;
+  }
+}
+
+.entriesHint {
+  margin: 10px 0 14px;
+  color: $muted;
+  font-size: 13px;
+}
+
+.order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid $line;
+  color: $ink;
+  text-decoration: none;
+
+  &:hover .orderWho {
+    color: $violet;
+  }
+}
+
+.orderWho {
   font-weight: 500;
 }
 
-.status-complete {
-  background-color: var(--mantine-color-green-0);
-  color: var(--mantine-color-green-6);
+.orderWhen {
+  margin-left: 6px;
+  color: $muted;
+  font-size: 13px;
+  font-weight: 400;
 }
 
-.status-pending {
-  background-color: var(--mantine-color-yellow-0);
-  color: var(--mantine-color-yellow-6);
-}
-
-/* Tablet and smaller desktop styles */
-@media (max-width: 1200px) {
-  .setupCard {
-    padding: 24px 20px;
-  }
-
-  .checklistContainer {
-    .setupDescription {
-      max-width: 100%;
-    }
-  }
-}
-
-/* Small tablet styles */
-@media (max-width: 992px) {
-  .checklistItem {
-    width: 100%;
-    margin-bottom: 16px;
-  }
-
-  .setupCard {
-    padding: 20px 18px;
-  }
-
-  .checklistContainer h2 {
-    font-size: 1.4rem;
-  }
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
-  .setupCard {
-    padding: 20px 16px;
-    margin-bottom: 20px;
-  }
-
-  .checklistContainer {
-    h2 {
-      font-size: 1.3rem;
-    }
-
-    .setupDescription {
-      font-size: 0.95rem;
-      margin-bottom: 1.5rem;
-    }
-  }
-
-  .checklistItem {
-    padding: 18px 16px;
-  }
-
-  .dismissButton {
-    top: 12px;
-    right: 12px;
-    width: 28px;
-    height: 28px;
-  }
-}
-
-.stripeUpgradeCard {
-  margin: 24px 0;
-  background: linear-gradient(135deg, var(--mantine-color-primary-0) 0%, var(--mantine-color-secondary-0) 100%);
-  border: 1px solid var(--mantine-color-primary-1);
-  box-shadow: 0 4px 16px var(--mantine-color-primary-1) !important;
-  color: var(--mantine-color-gray-9);
-  padding: 28px 32px;
-  border-radius: 16px;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, var(--mantine-color-primary-0) 0%, transparent 70%);
-    border-radius: 50%;
-    transform: translate(50%, -50%);
-  }
-}
-
-.stripeUpgradeContent {
-  display: flex;
-  align-items: flex-start;
-  gap: 24px;
-  position: relative;
-  z-index: 1;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 20px;
-  }
-}
-
-.stripeTextContainer {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-
-  @media (max-width: 768px) {
-    gap: 24px;
-  }
-}
-
-.stripeIcon {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, var(--mantine-color-primary-1), var(--mantine-color-secondary-1));
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--mantine-color-secondary-5);
-  border: 1px solid var(--mantine-color-primary-2);
-
-  svg {
-    width: 28px;
-    height: 28px;
-  }
-}
-
-.stripeText {
-  flex: 1;
-
-  h3 {
-    margin: 0 0 8px 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--mantine-color-gray-9);
-    letter-spacing: -0.02em;
-  }
-
-  p {
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--mantine-color-gray-7);
-    max-width: 600px;
-  }
-
-  .stripeApology {
-    margin-top: 8px !important;
-    font-size: 0.875rem !important;
-    font-style: italic;
-    color: var(--mantine-color-gray-6) !important;
-  }
-}
-
-.stripeButton {
-  align-self: flex-start;
-
-  background: linear-gradient(135deg, var(--mantine-color-secondary-5) 0%, var(--mantine-color-primary-5) 100%) !important;
-  color: white !important;
-  font-weight: 600;
-  border: none !important;
-  padding: 12px 24px;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px var(--mantine-color-secondary-2), 0 2px 4px var(--mantine-color-secondary-1) !important;
-  min-width: 180px;
-  border-radius: 8px !important;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--mantine-color-secondary-3), 0 4px 8px var(--mantine-color-secondary-2) !important;
-    background: linear-gradient(135deg, var(--mantine-color-secondary-6) 0%, var(--mantine-color-primary-6) 100%) !important;
-  }
-
-  &:disabled {
-    background: linear-gradient(135deg, var(--mantine-color-primary-2) 0%, var(--mantine-color-primary-1) 100%) !important;
-    color: var(--mantine-color-gray-5) !important;
-    transform: none;
-    box-shadow: 0 2px 8px var(--mantine-color-primary-1) !important;
-    opacity: 0.7;
-  }
-
-  &[data-loading="true"] {
-    background: linear-gradient(135deg, var(--mantine-color-primary-4) 0%, var(--mantine-color-primary-3) 100%) !important;
-    color: white !important;
-    box-shadow: 0 2px 8px var(--mantine-color-primary-2) !important;
-  }
-
-  @media (max-width: 768px) {
-    align-self: stretch;
-
-    :global(button) {
-      width: 100%;
-      min-width: unset;
-    }
-  }
+.orderAmount {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
