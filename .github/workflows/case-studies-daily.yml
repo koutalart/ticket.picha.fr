@@ -25,7 +25,6 @@ jobs:
     timeout-minutes: 30
     env:
       CASE_STUDIES_FILE: frontend/src/components/routes/case-studies/caseStudies.ts
-      STATS_FILE: ${{ runner.temp }}/case-study-stats.json
 
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +36,7 @@ jobs:
           TOKEN: ${{ secrets.CASE_STUDY_STATS_TOKEN }}
         run: |
           set -eu
+          STATS_FILE="$RUNNER_TEMP/case-study-stats.json"
           ids=$(grep -oE 'ticketingEventId: [0-9]+' "$CASE_STUDIES_FILE" | grep -oE '[0-9]+' | paste -sd, -)
           if [ -z "$ids" ]; then echo "Aucun cas client relié à un événement."; exit 0; fi
           curl -fsS --retry 3 -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
