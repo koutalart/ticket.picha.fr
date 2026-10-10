@@ -19,6 +19,7 @@ import {contactClient, ContactFilters} from "../../../../api/contact.client.ts";
 import {IdParam} from "../../../../types.ts";
 import {formatCurrency} from "../../../../utilites/currency.ts";
 import {formatDateWithLocale} from "../../../../utilites/dates.ts";
+import {formatPhone} from "../../../../utilites/phone.ts";
 import {downloadBinary} from "../../../../utilites/download.ts";
 import {withLoadingNotification} from "../../../../utilites/withLoadingNotification.tsx";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
@@ -212,7 +213,7 @@ const Contacts = () => {
             )}
 
             {contacts.length > 0 && (
-                <div className={classes.tableWrapper}>
+                <Table.ScrollContainer minWidth={640}>
                     <Table highlightOnHover verticalSpacing="sm">
                         <Table.Thead>
                             <Table.Tr>
@@ -250,7 +251,7 @@ const Contacts = () => {
                                         </div>
                                         <div className={classes.email}>{contact.email}</div>
                                     </Table.Td>
-                                    <Table.Td className={`${classes.numeric} ${classes.hideOnMobile}`}>{contact.phone ?? '—'}</Table.Td>
+                                    <Table.Td className={`${classes.numeric} ${classes.hideOnMobile}`}>{formatPhone(contact.phone)}</Table.Td>
                                     <Table.Td className={classes.numeric}>{contact.events_count}</Table.Td>
                                     <Table.Td className={`${classes.numeric} ${classes.hideOnMobile}`}>{formatDay(contact.last_order_at)}</Table.Td>
                                     <Table.Td className={classes.numeric}>{formatCurrency(contact.total_spent, currency)}</Table.Td>
@@ -270,7 +271,7 @@ const Contacts = () => {
                             ))}
                         </Table.Tbody>
                     </Table>
-                </div>
+                </Table.ScrollContainer>
             )}
 
             {pagination && (

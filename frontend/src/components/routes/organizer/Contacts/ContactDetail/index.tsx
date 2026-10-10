@@ -16,6 +16,7 @@ import {ContactTimelineItem, ContactTimelineType} from "../../../../../api/conta
 import {IdParam} from "../../../../../types.ts";
 import {formatCurrency} from "../../../../../utilites/currency.ts";
 import {formatDateWithLocale} from "../../../../../utilites/dates.ts";
+import {formatPhone} from "../../../../../utilites/phone.ts";
 import {showError} from "../../../../../utilites/notifications.tsx";
 import {EditContactModal} from "./EditContactModal.tsx";
 import classes from "./ContactDetail.module.scss";
@@ -123,8 +124,13 @@ const ContactDetail = () => {
     };
 
     const consentBadge = (active: boolean, at?: string | null) => active
-        ? <Badge variant="light" color="green">{t`accepts`} · {formatDay(at)}</Badge>
-        : <Badge variant="light" color="gray">{t`no consent`}</Badge>;
+        ? (
+            <>
+                <Badge variant="light" color="green" tt="none">{t`accepts`}</Badge>
+                <div className={classes.consentDate}>{formatDay(at)}</div>
+            </>
+        )
+        : <Badge variant="light" color="gray" tt="none">{t`no consent`}</Badge>;
 
     return (
         <PageBody>
@@ -155,7 +161,7 @@ const ContactDetail = () => {
                             <dt>{t`Email`}</dt>
                             <dd>{contact.email ?? '—'}</dd>
                             <dt>{t`Phone`}</dt>
-                            <dd>{contact.phone ?? '—'}</dd>
+                            <dd>{formatPhone(contact.phone)}</dd>
                             <dt>{t`Emails`}</dt>
                             <dd>{consentBadge(contact.email_consent, contact.email_consent_at)}</dd>
                             <dt>{t`SMS`}</dt>
@@ -227,7 +233,7 @@ const ContactDetail = () => {
                             {value: 'ALL', label: t`All`},
                             {value: 'ORDERS', label: t`Orders`},
                             {value: 'CHECK_IN', label: t`Entries`},
-                            {value: 'MESSAGE', label: t`Messages`},
+                            {value: 'MESSAGE', label: t`Emails`},
                             {value: 'ANSWER', label: t`Answers`},
                         ]}
                     />
