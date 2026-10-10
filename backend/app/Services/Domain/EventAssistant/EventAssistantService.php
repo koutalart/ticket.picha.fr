@@ -74,7 +74,7 @@ class EventAssistantService
                     'description' => self::NULLABLE_STRING,
                     'price' => ['type' => ['number', 'null']],
                     'capacity' => ['type' => ['integer', 'null']],
-                    'category' => ['type' => ['string', 'null'], 'enum' => [...EventCategory::valuesArray(), null]],
+                    'category' => ['anyOf' => [['type' => 'string', 'enum' => array_values(EventCategory::valuesArray())], ['type' => 'null']]],
                     'facts' => self::NULLABLE_STRING,
                 ],
                 'required' => ['title', 'start_date', 'end_date', 'venue', 'description', 'price', 'capacity', 'category', 'facts'],
