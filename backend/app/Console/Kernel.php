@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(new SendScheduledMessagesJob)->everyMinute()->withoutOverlapping();
         $schedule->job(new ProcessExpiredWaitlistOffersJob)->everyMinute()->withoutOverlapping();
+        $schedule->command('contacts:sync')->dailyAt('03:30')->withoutOverlapping();
     }
 
     protected function commands(): void
