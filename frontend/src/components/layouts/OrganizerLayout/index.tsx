@@ -19,11 +19,10 @@ import {
 import { t } from "@lingui/macro";
 import { BreadcrumbItem, NavItem } from "../AppLayout/types.ts";
 import AppLayout from "../AppLayout";
-import { NavLink, Navigate, useLocation, useParams } from "react-router";
+import { NavLink, Navigate, useLocation, useNavigate, useParams } from "react-router";
 import { Button, Modal, Stack, Text } from "@mantine/core";
 import { useGetOrganizer } from "../../../queries/useGetOrganizer.ts";
 import { useState } from "react";
-import { CreateEventModal } from "../../modals/CreateEventModal";
 import { TopBarButton } from "../../common/TopBarButton";
 import classes from "./OrganizerLayout.module.scss";
 import { CalloutConfig, SidebarCalloutQueue } from "../../common/SidebarCallout/SidebarCalloutQueue";
@@ -45,9 +44,9 @@ import { isBoxOfficeOperator } from "../../../utilites/kioskAuth.ts";
 
 const OrganizerLayout = () => {
     const { organizerId } = useParams();
+    const navigate = useNavigate();
     const location = useLocation();
     const { data: organizer } = useGetOrganizer(organizerId);
-    const [showCreateEventModal, setShowCreateEventModal] = useState(false);
     const [showCreateOrganizerModal, setShowCreateOrganizerModal] = useState(false);
     const [createModalOpen, { open: openCreateModal, close: closeCreateModal }] = useDisclosure(false);
     const [switchOrganizerModalOpen, { open: openSwitchModal, close: closeSwitchModal }] = useDisclosure(false);
@@ -158,7 +157,7 @@ const OrganizerLayout = () => {
             content: (
                 <span
                     className={classes.createEventBreadcrumb}
-                    onClick={() => setShowCreateEventModal(true)}
+                    onClick={() => navigate(`/manage/new-event?organizer=${organizerId}`)}
                 >
                     <IconCalendarPlus size={16} /> {t`Create Event`}
                 </span>
@@ -278,12 +277,6 @@ const OrganizerLayout = () => {
                     modalTitle={t`Share Organizer Page`}
                     opened={shareModalOpen}
                     onClose={closeShareModal}
-                />
-            )}
-            {showCreateEventModal && (
-                <CreateEventModal
-                    onClose={() => setShowCreateEventModal(false)}
-                    organizerId={organizerId}
                 />
             )}
 

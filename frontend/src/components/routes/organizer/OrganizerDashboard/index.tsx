@@ -6,11 +6,12 @@ import {
     IconCash,
     IconChevronDown,
     IconChevronRight,
-    IconReceiptTax,
-    IconReportMoney,
+    IconPencil,
+    IconSparkles,
     IconTicket,
     IconUserCircle,
-    IconUsers
+    IconUsers,
+    IconWand
 } from '@tabler/icons-react';
 import {t, Trans} from '@lingui/macro';
 
@@ -31,6 +32,7 @@ import {currenciesMap} from "../../../../../data/currencies.ts";
 import {Card} from "../../../common/Card";
 import {CreateEventModal} from "../../../modals/CreateEventModal";
 import {getEventQueryFilters} from "../../../../utilites/eventsPageFiltersHelper.ts";
+import {useGetEventAssistantStatus} from "../../../../queries/useGetEventAssistantStatus.ts";
 
 interface OrganizerStatDisplayItem {
     value: string | number;
@@ -48,7 +50,7 @@ export const DashboardSkeleton = () => {
             </Group>
 
             <div className={classes.statisticsSkeletonContainer}>
-                {[...Array(6)].map((_, index) => (
+                {[...Array(4)].map((_, index) => (
                     <Skeleton key={index} height={105} radius="md"/>
                 ))}
             </div>
@@ -73,6 +75,8 @@ export const OrganizerDashboard = () => {
     const {organizerId} = useParams<{ organizerId: string }>();
     const {data: organizer} = useGetOrganizer(organizerId);
     const [showCreateEventModal, setShowCreateEventModal] = useState(false);
+    const aiEnabled = useGetEventAssistantStatus().data?.ai_enabled === true;
+    const assistantUrl = (mode: 'poster' | 'manual') => `/manage/new-event?organizer=${organizerId}&mode=${mode}`;
 
     const [selectedCurrency, setSelectedCurrency] = useState<string>(
         organizer?.currency || 'USD'
@@ -122,7 +126,7 @@ export const OrganizerDashboard = () => {
             },
             {
                 value: formatNumber(stats.total_products_sold),
-                description: t`Products Sold`,
+                description: t`Tickets Sold`,
                 icon: <IconTicket size={18}/>,
                 backgroundColor: '#4B7BE5'
             },
@@ -137,18 +141,6 @@ export const OrganizerDashboard = () => {
                 description: t`Total Orders`,
                 icon: <IconBuildingStore size={18}/>,
                 backgroundColor: '#E67D49'
-            },
-            {
-                value: formatCurrency(stats.total_tax, selectedCurrency),
-                description: t`Total Tax`,
-                icon: <IconReceiptTax size={18}/>,
-                backgroundColor: '#49A6B7'
-            },
-            {
-                value: formatCurrency(stats.total_fees, selectedCurrency),
-                description: t`Total Fees`,
-                icon: <IconReportMoney size={18}/>,
-                backgroundColor: '#63B3A1'
             },
         );
     }
@@ -196,6 +188,37 @@ export const OrganizerDashboard = () => {
                     </Menu>
                 )}
             </div>
+
+            <section className={classes.createHero}>
+                <h2 className={classes.createTitle}><Trans>Create your event.</Trans></h2>
+                <p className={classes.createSubtitle}>
+                    <Trans>Choose how to start. Your answers are saved as you go.</Trans>
+                </p>
+                <div className={classes.createChoices}>
+                    <NavLink to={assistantUrl('poster')} className={classes.createCard}>
+                        {aiEnabled && (
+                            <span className={classes.createBadge}><IconSparkles size={14}/> <Trans>Recommended</Trans></span>
+                        )}
+                        <IconWand size={30} stroke={1.6}/>
+                        <span className={classes.createCardTitle}><Trans>I have a visual</Trans></span>
+                        <span className={classes.createCardText}>
+                            {aiEnabled
+                                ? <Trans>Upload your poster, the AI pre-fills everything. You check each step.</Trans>
+                                : <Trans>Upload your poster, then answer a few simple questions.</Trans>}
+                        </span>
+                    </NavLink>
+                    <NavLink to={assistantUrl('manual')} className={classes.createCard}>
+                        <IconPencil size={30} stroke={1.6}/>
+                        <span className={classes.createCardTitle}><Trans>I'll fill it in myself</Trans></span>
+                        <span className={classes.createCardText}>
+                            <Trans>A few simple questions, one at a time. No visual needed.</Trans>
+                        </span>
+                    </NavLink>
+                </div>
+                <button type="button" className={classes.advancedLink} onClick={() => setShowCreateEventModal(true)}>
+                    <Trans>Advanced creation</Trans>
+                </button>
+            </section>
 
             {/* Stats Section */}
             {organizerStatsQuery.isLoading && !stats && (
@@ -249,7 +272,8 @@ export const OrganizerDashboard = () => {
                             <p><Trans>Create your first event to start selling tickets and managing attendees.</Trans>
                             </p>
                             <Button
-                                onClick={() => setShowCreateEventModal(true)}
+                                component={NavLink}
+                                to={assistantUrl('manual')}
                                 variant="light"
                                 size="sm"
                                 mt="md"

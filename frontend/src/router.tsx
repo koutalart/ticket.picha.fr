@@ -116,6 +116,23 @@ export const router: RouteObject[] = [
         ]
     },
     {
+        path: "/manage/new-event",
+        errorElement: <ErrorPage />,
+        async lazy() {
+            const WelcomeLayout = await import("./components/layouts/WelcomeLayout");
+            return { Component: WelcomeLayout.default };
+        },
+        children: [
+            {
+                path: "",
+                async lazy() {
+                    const EventAssistant = await import("./components/routes/organizer/EventAssistant");
+                    return { Component: EventAssistant.default };
+                }
+            },
+        ]
+    },
+    {
         path: "welcome",
         async lazy() {
             const WelcomeLayout = await import("./components/layouts/WelcomeLayout");
