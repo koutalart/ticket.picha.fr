@@ -95,11 +95,11 @@ msgstr "{0} girişi kaydedildi"
 msgid "{0} created successfully"
 msgstr "{0} başarıyla oluşturuldu"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:78
+#: src/components/routes/organizer/EventAssistant/index.tsx:67
 msgid "{0} from {1}"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:81
+#: src/components/routes/organizer/EventAssistant/index.tsx:70
 msgid "{0} from {1} to {2}"
 msgstr ""
 
@@ -370,8 +370,12 @@ msgstr "Açılır menü sadece tek seçime izin verir"
 msgid "A fee, like a booking fee or a service fee"
 msgstr "Rezervasyon ücreti veya hizmet ücreti gibi bir ücret"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:451
-msgid "A few words to make people want to come"
+#: src/components/routes/organizer/EventAssistant/index.tsx:211
+msgid "A few details are missing, they're marked in red."
+msgstr ""
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:420
+msgid "A few words to make people want to come (optional)"
 msgstr ""
 
 #: src/components/forms/TaxAndFeeForm/index.tsx:35
@@ -629,7 +633,7 @@ msgstr ""
 msgid "Add a value"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:366
+#: src/components/routes/organizer/EventAssistant/index.tsx:350
 msgid "Add an end time"
 msgstr ""
 
@@ -1543,7 +1547,7 @@ msgid "Awesome Organizer Ltd."
 msgstr "Harika Organizatör Ltd."
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:510
-#: src/components/routes/organizer/EventAssistant/index.tsx:507
+#: src/components/routes/organizer/EventAssistant/index.tsx:474
 msgid "Back"
 msgstr "Geri"
 
@@ -2079,6 +2083,10 @@ msgstr "Çince (Geleneksel)"
 msgid "Choose a color for your background"
 msgstr "Arkaplanınız için bir renk seçin"
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:265
+msgid "Choose a file"
+msgstr ""
+
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:611
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:926
 msgid "Choose a price"
@@ -2112,7 +2120,7 @@ msgstr "Etkinlik tarihinin bilette nasıl gösterileceğini seçin"
 msgid "Choose the default setting for new events. This can be overridden for individual events."
 msgstr "Yeni etkinlikler için varsayılan ayarı seçin. Bu, bireysel etkinlikler için geçersiz kılınabilir."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:227
+#: src/components/routes/organizer/EventAssistant/index.tsx:202
 msgid "Choose who is organizing this event."
 msgstr ""
 
@@ -2864,10 +2872,6 @@ msgstr "İndirimler, gizli biletler için erişim kodları ve özel teklifler ol
 msgid "Create Event"
 msgstr "Etkinlik Oluştur"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:512
-msgid "Create my event"
-msgstr ""
-
 #: src/components/routes/events/Dashboard/index.tsx:171
 msgid "Create new"
 msgstr "Yeni oluştur"
@@ -2902,6 +2906,10 @@ msgstr "Soru Oluştur"
 msgid "Create Tax or Fee"
 msgstr "Vergi veya Ücret Oluştur"
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:479
+msgid "Create the event"
+msgstr ""
+
 #: src/components/modals/CreateProductModal/index.tsx:82
 msgid "Create Ticket or Product"
 msgstr "Bilet veya Ürün Oluştur"
@@ -2928,6 +2936,10 @@ msgstr "Etkinliğinizi Oluşturun"
 #: src/components/routes/landing/index.tsx:150
 msgid "Create your event page, send your invitations and track replies. Every registrant receives a personal ticket with a unique QR code."
 msgstr "Etkinlik sayfanızı oluşturun, davetiyelerinizi gönderin ve yanıtları takip edin. Her kayıtlı kişi benzersiz QR kodlu kişisel bir bilet alır."
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:243
+msgid "Create your event."
+msgstr ""
 
 #: src/components/routes/welcome/index.tsx:306
 msgid "Create your first event"
@@ -3164,7 +3176,7 @@ msgstr "Koyu"
 
 #: src/components/layouts/Admin/index.tsx:13
 #: src/components/layouts/Event/index.tsx:102
-#: src/components/routes/organizer/EventAssistant/index.tsx:526
+#: src/components/routes/organizer/EventAssistant/index.tsx:493
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:161
 msgid "Dashboard"
 msgstr "Gösterge Paneli"
@@ -3323,6 +3335,7 @@ msgstr "Etkinliğinize uyarlanmış demo"
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:266
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:278
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:94
+#: src/components/routes/organizer/EventAssistant/index.tsx:419
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:86
 msgid "Description"
 msgstr "Açıklama"
@@ -3499,12 +3512,12 @@ msgstr "Fatura İndiriliyor"
 msgid "Draft"
 msgstr "Taslak"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:311
-msgid "Drop it here, it will be the cover of your event."
+#: src/components/routes/organizer/EventAssistant/index.tsx:264
+msgid "Drag it in, or"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:310
-msgid "Drop it here, we fill in the form for you."
+#: src/components/routes/organizer/EventAssistant/index.tsx:246
+msgid "Drop your poster: we read it and fill in everything for you."
 msgstr ""
 
 #: src/components/forms/QuestionForm/index.tsx:125
@@ -3555,11 +3568,11 @@ msgstr "Felemenkçe"
 msgid "e.g. 180 (3 hours)"
 msgstr "ör. 180 (3 saat)"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:384
+#: src/components/routes/organizer/EventAssistant/index.tsx:368
 msgid "E.g. Le 5/5, Mamoudzou"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:327
+#: src/components/routes/organizer/EventAssistant/index.tsx:313
 msgid "E.g. Open day at Mayotte la 1ère"
 msgstr ""
 
@@ -3916,7 +3929,7 @@ msgstr "Bitiş saati (isteğe bağlı)"
 msgid "Ended"
 msgstr "Sona Erdi"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:347
+#: src/components/routes/organizer/EventAssistant/index.tsx:333
 msgid "Ends"
 msgstr ""
 
@@ -3930,7 +3943,7 @@ msgstr "İngilizce"
 msgid "Enter a subject and body to see the preview"
 msgstr "Önizlemeyi görmek için bir konu ve gövde girin"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:225
+#: src/components/routes/organizer/EventAssistant/index.tsx:200
 msgid "Enter a ticket price, or choose \"Free\"."
 msgstr ""
 
@@ -4011,7 +4024,7 @@ msgstr "Giriş: {0}"
 msgid "Entries will appear here when customers join the waitlist for sold out products."
 msgstr "Müşteriler tükenmiş ürünler için bekleme listesine katıldığında kayıtlar burada görünecektir."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:406
+#: src/components/routes/organizer/EventAssistant/index.tsx:373
 msgid "Entry"
 msgstr ""
 
@@ -4183,7 +4196,7 @@ msgstr "Etkinlik Yönetim Platformu"
 msgid "Event management software"
 msgstr "Etkinlik yönetim yazılımı"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:321
+#: src/components/routes/organizer/EventAssistant/index.tsx:307
 #: src/components/routes/welcome/index.tsx:356
 msgid "Event name"
 msgstr "Etkinlik adı"
@@ -4715,6 +4728,10 @@ msgstr ""
 msgid "File is too large. Maximum size is 8MB."
 msgstr "Dosya çok büyük. Maksimum boyut 8 MB."
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:292
+msgid "Fill in the essentials. You can complete the rest later."
+msgstr ""
+
 #: src/components/routes/product-widget/CollectInformation/index.tsx:508
 #: src/components/routes/product-widget/CollectInformation/index.tsx:528
 msgid "Fill in your details above first"
@@ -4901,7 +4918,7 @@ msgstr "Form"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1004
 #: src/components/routes/kiosk/Orders/index.tsx:284
 #: src/components/routes/kiosk/Orders/index.tsx:325
-#: src/components/routes/organizer/EventAssistant/index.tsx:415
+#: src/components/routes/organizer/EventAssistant/index.tsx:382
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Ücretsiz"
@@ -4942,7 +4959,7 @@ msgstr "Sık sorulan sorular"
 msgid "Frequently asked questions."
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:83
+#: src/components/routes/organizer/EventAssistant/index.tsx:72
 msgid "From {0} at {1} to {2} at {3}"
 msgstr ""
 
@@ -5049,7 +5066,7 @@ msgstr "Başlarken"
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:471
+#: src/components/routes/organizer/EventAssistant/index.tsx:438
 msgid "Go back to my text"
 msgstr ""
 
@@ -5353,6 +5370,10 @@ msgstr "<0>Şartlar ve koşulları</0> kabul ediyorum"
 msgid "I confirm this is a transactional message related to this event"
 msgstr "Bunun bu etkinlikle ilgili işlemsel bir mesaj olduğunu onaylıyorum"
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:278
+msgid "I don't have a poster yet"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/faq.ts:13
 msgid "I haven't received my ticket, what should I do?"
 msgstr ""
@@ -5442,7 +5463,7 @@ msgstr "Önemli: E-posta adresinizi değiştirmek, bu siparişe erişim bağlant
 msgid "Important: Stripe reconnection required"
 msgstr "Önemli: Stripe yeniden bağlantısı gerekli"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:480
+#: src/components/routes/organizer/EventAssistant/index.tsx:446
 msgid "Improve with AI"
 msgstr ""
 
@@ -5702,6 +5723,10 @@ msgstr "Fatura Ayarları"
 msgid "Irish VAT at 23% will be applied to platform fees (domestic supply)."
 msgstr "Platform ücretlerine %23 İrlanda KDV'si uygulanacaktır (yerel tedarik)."
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:287
+msgid "Is everything right?"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/faq.ts:9
 msgid "Is payment secure?"
 msgstr ""
@@ -5710,8 +5735,12 @@ msgstr ""
 msgid "Is this account VAT registered in the EU?"
 msgstr "Bu hesap AB'de KDV'ye kayıtlı mı?"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:515
+#: src/components/routes/organizer/EventAssistant/index.tsx:482
 msgid "It stays a draft until you publish it."
+msgstr ""
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:479
+msgid "It's right, create the event"
 msgstr ""
 
 #: src/utilites/localeNames.ts:18
@@ -5776,6 +5805,10 @@ msgstr ""
 #: src/components/common/WaitlistTable/index.tsx:197
 msgid "Joined"
 msgstr "Katıldı"
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:266
+msgid "JPG, PNG, WebP or HEIC, up to 8 MB"
+msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:120
 msgid "Just click the button below to reconnect your Stripe account."
@@ -5918,10 +5951,6 @@ msgstr "Son Yanıt"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:535
 msgid "Last sale: <0>{0} tickets</0>"
 msgstr "Son satış: <0>{0} bilet</0>"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:402
-msgid "Last step. Apart from the price, everything is optional."
-msgstr ""
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:534
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1049
@@ -6529,10 +6558,6 @@ msgstr "Yeni Şifre"
 msgid "New Signups"
 msgstr "Yeni Kayıtlar"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:393
-msgid "Next"
-msgstr ""
-
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:88
 msgid "Next steps"
 msgstr ""
@@ -6947,7 +6972,7 @@ msgstr "Katılımcı sayısı"
 msgid "Number of days allowed for payment (leave blank to omit payment terms from invoices)"
 msgstr "Ödeme için izin verilen gün sayısı (faturalardan ödeme koşullarını çıkarmak için boş bırakın)"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:436
+#: src/components/routes/organizer/EventAssistant/index.tsx:405
 msgid "Number of places"
 msgstr ""
 
@@ -7197,14 +7222,6 @@ msgstr "Yoğunlukta isteğe bağlı — en az ad, e-posta veya telefon. E-posta 
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:200
 msgid "Optional prefix for invoice numbers (e.g., INV-)"
 msgstr "Fatura numaraları için isteğe bağlı önek (örn., FAT-)"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:452
-msgid "Optional."
-msgstr ""
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:378
-msgid "Optional. A venue name, a town or a full address."
-msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:125
 msgid "options"
@@ -7477,7 +7494,7 @@ msgstr "Organizasyon Detayları"
 msgid "Organization Name"
 msgstr "Organizasyon Adı"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:488
+#: src/components/routes/organizer/EventAssistant/index.tsx:454
 msgid "Organized by"
 msgstr ""
 
@@ -7658,7 +7675,7 @@ msgstr "Sayfa görüntüleme"
 msgid "Page Views"
 msgstr "Sayfa Görüntülemeleri"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:415
+#: src/components/routes/organizer/EventAssistant/index.tsx:382
 msgid "Paid"
 msgstr ""
 
@@ -8270,6 +8287,10 @@ msgstr "Fiyat"
 msgid "Price display mode"
 msgstr "Fiyat görünüm modu"
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:387
+msgid "Price in €"
+msgstr ""
+
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:108
 msgid "Price not set"
 msgstr "Fiyat belirlenmedi"
@@ -8634,7 +8655,7 @@ msgstr "Gizlilik politikamızı okuyun"
 msgid "Read the case study"
 msgstr "Hikâyeyi okuyun"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:287
+#: src/components/routes/organizer/EventAssistant/index.tsx:255
 msgid "Reading your poster…"
 msgstr ""
 
@@ -8846,11 +8867,11 @@ msgstr "Kaldır"
 msgid "Remove domain"
 msgstr "Alan adını kaldır"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:356
+#: src/components/routes/organizer/EventAssistant/index.tsx:342
 msgid "Remove the end time"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:293
+#: src/components/routes/organizer/EventAssistant/index.tsx:300
 msgid "Remove the poster"
 msgstr ""
 
@@ -9965,7 +9986,7 @@ msgstr "Bazı biletler yazdırılamadı."
 msgid "Something went wrong"
 msgstr "Bir şeyler yanlış gitti"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:269
+#: src/components/routes/organizer/EventAssistant/index.tsx:234
 msgid "Something went wrong and your event wasn't created. Check the details and try again."
 msgstr ""
 
@@ -10069,7 +10090,11 @@ msgstr "Başlangıç tarihi gerekli"
 msgid "Start time of the event"
 msgstr "Etkinliğin başlangıç saati"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:336
+#: src/components/routes/organizer/EventAssistant/index.tsx:247
+msgid "Start with your poster, it will be the cover of your event."
+msgstr ""
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:322
 msgid "Starts"
 msgstr ""
 
@@ -10119,10 +10144,6 @@ msgstr "İstatistikler hesap oluşturma tarihine göre hesaplanır"
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
 msgid "Status"
 msgstr "Durum"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:528
-msgid "Step {stepNumber} of 2"
-msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:183
 msgid "Still handling refunds for your older transactions."
@@ -10521,7 +10542,7 @@ msgstr "Organizasyonunuz hakkında bize bilgi verin. Bu bilgiler etkinlik sayfal
 msgid "Tell us about your project: we will get back to you with a tailored proposal."
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:215
+#: src/components/routes/organizer/EventAssistant/index.tsx:195
 msgid "Tell us when it starts."
 msgstr ""
 
@@ -10566,7 +10587,7 @@ msgstr "Platformumuzu büyütüp geliştirirken desteğiniz için teşekkürler!
 msgid "That promo code is invalid"
 msgstr "Bu promosyon kodu geçersiz"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:208
+#: src/components/routes/organizer/EventAssistant/index.tsx:188
 msgid "The AI couldn't rewrite your text this time. Try again in a moment."
 msgstr ""
 
@@ -10608,12 +10629,8 @@ msgstr "Etkinlikleriniz için varsayılan saat dilimi."
 msgid "The email address has been changed. The attendee will receive a new ticket at the updated email address."
 msgstr "E-posta adresi değiştirildi. Katılımcı güncellenmiş e-posta adresinde yeni bir bilet alacaktır."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:217
+#: src/components/routes/organizer/EventAssistant/index.tsx:197
 msgid "The end has to come after the start."
-msgstr ""
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:280
-msgid "The essentials: what, when and where."
 msgstr ""
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:40
@@ -10857,7 +10874,7 @@ msgstr "Bu etkinlik sona erdi"
 msgid "This event is not published yet"
 msgstr "Bu etkinlik henüz yayınlanmadı"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:195
+#: src/components/routes/organizer/EventAssistant/index.tsx:170
 msgid "This image is over 8 MB. Try a lighter one."
 msgstr ""
 
@@ -11098,7 +11115,7 @@ msgstr "Bilet fiyatı"
 msgid "Ticket Price"
 msgstr "Bilet Fiyatı"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:422
+#: src/components/routes/organizer/EventAssistant/index.tsx:386
 msgid "Ticket price (€)"
 msgstr ""
 
@@ -11133,10 +11150,6 @@ msgstr "Biletler"
 #: src/components/routes/event/products.tsx:48
 msgid "Tickets & Products"
 msgstr "Biletler ve Ürünler"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:401
-msgid "Tickets and presentation"
-msgstr ""
 
 #: src/components/modals/OfferWaitlistModal/index.tsx:90
 msgid "Tickets are automatically offered to waitlisted customers when capacity becomes available."
@@ -11492,7 +11505,7 @@ msgstr ""
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:951
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:78
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:84
-#: src/components/routes/organizer/EventAssistant/index.tsx:437
+#: src/components/routes/organizer/EventAssistant/index.tsx:406
 msgid "Unlimited"
 msgstr "Sınırsız"
 
@@ -11568,6 +11581,10 @@ msgstr ""
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:158
 msgid "Upload Image"
 msgstr "Görsel Yükle"
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:263
+msgid "Upload your poster here"
+msgstr ""
 
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:131
 msgid "Uploading image..."
@@ -11976,7 +11993,7 @@ msgstr ""
 msgid "Warning: This is the system default configuration. Changes will affect all accounts that don't have a specific configuration assigned."
 msgstr "Uyarı: Bu sistem varsayılan yapılandırmasıdır. Değişiklikler, belirli bir yapılandırması atanmamış tüm hesapları etkileyecektir."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:195
+#: src/components/routes/organizer/EventAssistant/index.tsx:170
 msgid "We accept JPG, PNG, WebP and HEIC images."
 msgstr ""
 
@@ -12012,16 +12029,16 @@ msgstr "Bu siparişi bulamadık. Kaldırılmış olabilir."
 msgid "We couldn't load the data. Please try again."
 msgstr "Verileri yükleyemedik. Lütfen tekrar deneyin."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:189
-msgid "We couldn't read your poster, but it's kept as your cover. Just fill in the rest."
+#: src/components/routes/organizer/EventAssistant/index.tsx:162
+msgid "We couldn't read your poster. It's kept as your cover: just fill in the details."
 msgstr ""
 
 #: src/components/common/ProductsTable/SortableCategory/index.tsx:94
 msgid "We couldn't reorder the categories. Please try again."
 msgstr "Kategorileri yeniden sıralayamadık. Lütfen tekrar deneyin."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:187
-msgid "We filled in what we could read on your poster. Have a quick look before going on."
+#: src/components/routes/organizer/EventAssistant/index.tsx:291
+msgid "We filled this in from your poster. Correct anything that's off, then confirm."
 msgstr ""
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:424
@@ -12339,7 +12356,7 @@ msgstr ""
 msgid "Where we are going."
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:377
+#: src/components/routes/organizer/EventAssistant/index.tsx:362
 msgid "Where?"
 msgstr ""
 
@@ -12396,10 +12413,6 @@ msgstr "Çalışıyor..."
 #: src/constants/eventCategories.ts:12
 msgid "Workshop"
 msgstr "Atölye"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:473
-msgid "Write a few lines, the AI turns them into a clear description."
-msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:33
 msgid "Write to us"
@@ -12516,10 +12529,6 @@ msgstr "Hesap sahibinin rolünü veya durumunu düzenleyemezsiniz."
 #: src/components/modals/RefundOrderModal/index.tsx:217
 msgid "You cannot refund a manually created order."
 msgstr "Elle oluşturulan bir siparişi iade edemezsiniz."
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:308
-msgid "You have a poster?"
-msgstr ""
 
 #: src/components/modals/ChooseAccountModal/index.tsx:14
 msgid "You have access to multiple accounts. Please choose one to continue."
@@ -12677,11 +12686,11 @@ msgstr "E-postanız"
 msgid "Your email request change to <0>{0}</0> is pending. Please check your email to confirm"
 msgstr "<0>{0}</0> adresine e-posta değişiklik talebiniz beklemede. Onaylamak için lütfen e-postanızı kontrol edin"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:279
+#: src/components/routes/organizer/EventAssistant/index.tsx:287
 msgid "Your event"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:265
+#: src/components/routes/organizer/EventAssistant/index.tsx:230
 msgid "Your event is created, but we couldn't add the poster. You can add it from the event settings."
 msgstr ""
 
@@ -12693,7 +12702,7 @@ msgstr "Etkinliğiniz yayında!"
 msgid "Your event must be live before you can sell tickets to attendees."
 msgstr "Katılımcılara bilet satmadan önce etkinliğinizin canlı olması gerekir."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:214
+#: src/components/routes/organizer/EventAssistant/index.tsx:194
 msgid "Your event needs a name."
 msgstr ""
 
@@ -12781,10 +12790,6 @@ msgstr "Ödemeniz başarısız oldu. Lütfen tekrar deneyin."
 #: src/components/common/PlatformFeesSettings/index.tsx:149
 msgid "Your Plan"
 msgstr "Planınız"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:289
-msgid "Your poster will be the cover of the event page."
-msgstr ""
 
 #: src/components/modals/RefundOrderModal/index.tsx:60
 msgid "Your refund is processing."

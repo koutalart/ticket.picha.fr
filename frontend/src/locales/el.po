@@ -95,11 +95,11 @@ msgstr "Καταγράφηκε η είσοδος: {0}"
 msgid "{0} created successfully"
 msgstr "{0} δημιουργήθηκε επιτυχώς"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:78
+#: src/components/routes/organizer/EventAssistant/index.tsx:67
 msgid "{0} from {1}"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:81
+#: src/components/routes/organizer/EventAssistant/index.tsx:70
 msgid "{0} from {1} to {2}"
 msgstr ""
 
@@ -370,8 +370,12 @@ msgstr "Ένα αναπτυσσόμενο μενού επιτρέπει μόνο
 msgid "A fee, like a booking fee or a service fee"
 msgstr "Ένα τέλος, όπως τέλος κράτησης ή τέλος υπηρεσίας"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:451
-msgid "A few words to make people want to come"
+#: src/components/routes/organizer/EventAssistant/index.tsx:211
+msgid "A few details are missing, they're marked in red."
+msgstr ""
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:420
+msgid "A few words to make people want to come (optional)"
 msgstr ""
 
 #: src/components/forms/TaxAndFeeForm/index.tsx:35
@@ -629,7 +633,7 @@ msgstr ""
 msgid "Add a value"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:366
+#: src/components/routes/organizer/EventAssistant/index.tsx:350
 msgid "Add an end time"
 msgstr ""
 
@@ -1543,7 +1547,7 @@ msgid "Awesome Organizer Ltd."
 msgstr "Διοργανωτής Α.Ε."
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:510
-#: src/components/routes/organizer/EventAssistant/index.tsx:507
+#: src/components/routes/organizer/EventAssistant/index.tsx:474
 msgid "Back"
 msgstr "Πίσω"
 
@@ -2079,6 +2083,10 @@ msgstr "Κινεζικά (Παραδοσιακά)"
 msgid "Choose a color for your background"
 msgstr "Επιλέξτε χρώμα για το φόντο σας"
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:265
+msgid "Choose a file"
+msgstr ""
+
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:611
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:926
 msgid "Choose a price"
@@ -2112,7 +2120,7 @@ msgstr ""
 msgid "Choose the default setting for new events. This can be overridden for individual events."
 msgstr "Επιλέξτε την προεπιλεγμένη ρύθμιση για νέες εκδηλώσεις. Μπορεί να παρακαμφθεί για μεμονωμένες εκδηλώσεις."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:227
+#: src/components/routes/organizer/EventAssistant/index.tsx:202
 msgid "Choose who is organizing this event."
 msgstr ""
 
@@ -2864,10 +2872,6 @@ msgstr "Δημιουργία εκπτώσεων, κωδικών πρόσβαση
 msgid "Create Event"
 msgstr "Δημιουργία Εκδήλωσης"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:512
-msgid "Create my event"
-msgstr ""
-
 #: src/components/routes/events/Dashboard/index.tsx:171
 msgid "Create new"
 msgstr "Δημιουργία νέου"
@@ -2902,6 +2906,10 @@ msgstr "Δημιουργία Ερώτησης"
 msgid "Create Tax or Fee"
 msgstr "Δημιουργία Φόρου ή Τέλους"
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:479
+msgid "Create the event"
+msgstr ""
+
 #: src/components/modals/CreateProductModal/index.tsx:82
 msgid "Create Ticket or Product"
 msgstr "Δημιουργία Εισιτηρίου ή Προϊόντος"
@@ -2928,6 +2936,10 @@ msgstr "Δημιουργήστε την Εκδήλωσή σας"
 #: src/components/routes/landing/index.tsx:150
 msgid "Create your event page, send your invitations and track replies. Every registrant receives a personal ticket with a unique QR code."
 msgstr "Δημιουργήστε τη σελίδα της εκδήλωσης, στείλτε τις προσκλήσεις και παρακολουθήστε τις απαντήσεις. Κάθε εγγεγραμμένος λαμβάνει ονομαστικό εισιτήριο με μοναδικό QR code."
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:243
+msgid "Create your event."
+msgstr ""
 
 #: src/components/routes/welcome/index.tsx:306
 msgid "Create your first event"
@@ -3164,7 +3176,7 @@ msgstr "Σκοτεινό"
 
 #: src/components/layouts/Admin/index.tsx:13
 #: src/components/layouts/Event/index.tsx:102
-#: src/components/routes/organizer/EventAssistant/index.tsx:526
+#: src/components/routes/organizer/EventAssistant/index.tsx:493
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:161
 msgid "Dashboard"
 msgstr "Πίνακας Ελέγχου"
@@ -3323,6 +3335,7 @@ msgstr "Επίδειξη προσαρμοσμένη στην εκδήλωσή σ
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:266
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:278
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:94
+#: src/components/routes/organizer/EventAssistant/index.tsx:419
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:86
 msgid "Description"
 msgstr "Περιγραφή"
@@ -3499,12 +3512,12 @@ msgstr "Λήψη Τιμολογίου"
 msgid "Draft"
 msgstr "Πρόχειρο"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:311
-msgid "Drop it here, it will be the cover of your event."
+#: src/components/routes/organizer/EventAssistant/index.tsx:264
+msgid "Drag it in, or"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:310
-msgid "Drop it here, we fill in the form for you."
+#: src/components/routes/organizer/EventAssistant/index.tsx:246
+msgid "Drop your poster: we read it and fill in everything for you."
 msgstr ""
 
 #: src/components/forms/QuestionForm/index.tsx:125
@@ -3557,11 +3570,11 @@ msgstr "Ολλανδικά"
 msgid "e.g. 180 (3 hours)"
 msgstr "π.χ. 180 (3 ώρες)"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:384
+#: src/components/routes/organizer/EventAssistant/index.tsx:368
 msgid "E.g. Le 5/5, Mamoudzou"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:327
+#: src/components/routes/organizer/EventAssistant/index.tsx:313
 msgid "E.g. Open day at Mayotte la 1ère"
 msgstr ""
 
@@ -3918,7 +3931,7 @@ msgstr "Ώρα λήξης (προαιρετικό)"
 msgid "Ended"
 msgstr "Τελείωσε"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:347
+#: src/components/routes/organizer/EventAssistant/index.tsx:333
 msgid "Ends"
 msgstr ""
 
@@ -3932,7 +3945,7 @@ msgstr "Αγγλικά"
 msgid "Enter a subject and body to see the preview"
 msgstr "Εισάγετε θέμα και σώμα για προεπισκόπηση"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:225
+#: src/components/routes/organizer/EventAssistant/index.tsx:200
 msgid "Enter a ticket price, or choose \"Free\"."
 msgstr ""
 
@@ -4013,7 +4026,7 @@ msgstr "Είσοδος στις {0}"
 msgid "Entries will appear here when customers join the waitlist for sold out products."
 msgstr "Οι εγγραφές θα εμφανίζονται εδώ όταν οι πελάτες εγγράφονται στη λίστα αναμονής για εξαντλημένα προϊόντα."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:406
+#: src/components/routes/organizer/EventAssistant/index.tsx:373
 msgid "Entry"
 msgstr ""
 
@@ -4185,7 +4198,7 @@ msgstr "Πλατφόρμα Διαχείρισης Εκδηλώσεων"
 msgid "Event management software"
 msgstr "Λογισμικό διαχείρισης εκδηλώσεων"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:321
+#: src/components/routes/organizer/EventAssistant/index.tsx:307
 #: src/components/routes/welcome/index.tsx:356
 msgid "Event name"
 msgstr "Όνομα εκδήλωσης"
@@ -4717,6 +4730,10 @@ msgstr ""
 msgid "File is too large. Maximum size is 8MB."
 msgstr "Το αρχείο είναι πολύ μεγάλο. Το μέγιστο μέγεθος είναι 8 MB."
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:292
+msgid "Fill in the essentials. You can complete the rest later."
+msgstr ""
+
 #: src/components/routes/product-widget/CollectInformation/index.tsx:508
 #: src/components/routes/product-widget/CollectInformation/index.tsx:528
 msgid "Fill in your details above first"
@@ -4903,7 +4920,7 @@ msgstr "Φόρμα"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1004
 #: src/components/routes/kiosk/Orders/index.tsx:284
 #: src/components/routes/kiosk/Orders/index.tsx:325
-#: src/components/routes/organizer/EventAssistant/index.tsx:415
+#: src/components/routes/organizer/EventAssistant/index.tsx:382
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Δωρεάν"
@@ -4944,7 +4961,7 @@ msgstr "Συχνές ερωτήσεις"
 msgid "Frequently asked questions."
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:83
+#: src/components/routes/organizer/EventAssistant/index.tsx:72
 msgid "From {0} at {1} to {2} at {3}"
 msgstr ""
 
@@ -5051,7 +5068,7 @@ msgstr "Ξεκινώντας"
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:471
+#: src/components/routes/organizer/EventAssistant/index.tsx:438
 msgid "Go back to my text"
 msgstr ""
 
@@ -5355,6 +5372,10 @@ msgstr "Συμφωνώ με τους <0>όρους και προϋποθέσει
 msgid "I confirm this is a transactional message related to this event"
 msgstr "Επιβεβαιώνω ότι πρόκειται για συναλλακτικό μήνυμα σχετικό με αυτή την εκδήλωση"
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:278
+msgid "I don't have a poster yet"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/faq.ts:13
 msgid "I haven't received my ticket, what should I do?"
 msgstr ""
@@ -5444,7 +5465,7 @@ msgstr "Σημαντικό: Η αλλαγή διεύθυνσης email θα εν
 msgid "Important: Stripe reconnection required"
 msgstr "Σημαντικό: Απαιτείται επανασύνδεση Stripe"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:480
+#: src/components/routes/organizer/EventAssistant/index.tsx:446
 msgid "Improve with AI"
 msgstr ""
 
@@ -5704,6 +5725,10 @@ msgstr "Ρυθμίσεις Τιμολογίων"
 msgid "Irish VAT at 23% will be applied to platform fees (domestic supply)."
 msgstr "Ιρλανδικός ΦΠΑ 23% θα εφαρμοστεί στα τέλη πλατφόρμας (εγχώρια παροχή)."
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:287
+msgid "Is everything right?"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/faq.ts:9
 msgid "Is payment secure?"
 msgstr ""
@@ -5712,8 +5737,12 @@ msgstr ""
 msgid "Is this account VAT registered in the EU?"
 msgstr "Είναι αυτός ο λογαριασμός εγγεγραμμένος για ΦΠΑ στην ΕΕ;"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:515
+#: src/components/routes/organizer/EventAssistant/index.tsx:482
 msgid "It stays a draft until you publish it."
+msgstr ""
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:479
+msgid "It's right, create the event"
 msgstr ""
 
 #: src/utilites/localeNames.ts:18
@@ -5778,6 +5807,10 @@ msgstr "Εγγραφή στη Λίστα Αναμονής για {productDisplay
 #: src/components/common/WaitlistTable/index.tsx:197
 msgid "Joined"
 msgstr "Εντάχθηκε"
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:266
+msgid "JPG, PNG, WebP or HEIC, up to 8 MB"
+msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:120
 msgid "Just click the button below to reconnect your Stripe account."
@@ -5920,10 +5953,6 @@ msgstr "Τελευταία Απάντηση"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:535
 msgid "Last sale: <0>{0} tickets</0>"
 msgstr "Τελευταία πώληση: <0>{0} εισιτήρια</0>"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:402
-msgid "Last step. Apart from the price, everything is optional."
-msgstr ""
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:534
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1049
@@ -6531,10 +6560,6 @@ msgstr "Νέος Κωδικός"
 msgid "New Signups"
 msgstr "Νέες Εγγραφές"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:393
-msgid "Next"
-msgstr ""
-
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:88
 msgid "Next steps"
 msgstr ""
@@ -6949,7 +6974,7 @@ msgstr "Αριθμός συμμετεχόντων"
 msgid "Number of days allowed for payment (leave blank to omit payment terms from invoices)"
 msgstr "Αριθμός ημερών για πληρωμή (αφήστε κενό για παράλειψη όρων πληρωμής από τιμολόγια)"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:436
+#: src/components/routes/organizer/EventAssistant/index.tsx:405
 msgid "Number of places"
 msgstr ""
 
@@ -7199,14 +7224,6 @@ msgstr "Προαιρετικό στη βιασύνη — τουλάχιστον 
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:200
 msgid "Optional prefix for invoice numbers (e.g., INV-)"
 msgstr "Προαιρετικό πρόθεμα αριθμών τιμολογίου (π.χ., ΤΙΜ-)"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:452
-msgid "Optional."
-msgstr ""
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:378
-msgid "Optional. A venue name, a town or a full address."
-msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:125
 msgid "options"
@@ -7479,7 +7496,7 @@ msgstr "Στοιχεία Οργανισμού"
 msgid "Organization Name"
 msgstr "Όνομα Οργανισμού"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:488
+#: src/components/routes/organizer/EventAssistant/index.tsx:454
 msgid "Organized by"
 msgstr ""
 
@@ -7660,7 +7677,7 @@ msgstr "Προβολές σελίδας"
 msgid "Page Views"
 msgstr "Προβολές Σελίδας"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:415
+#: src/components/routes/organizer/EventAssistant/index.tsx:382
 msgid "Paid"
 msgstr ""
 
@@ -8272,6 +8289,10 @@ msgstr "Τιμή"
 msgid "Price display mode"
 msgstr "Λειτουργία εμφάνισης τιμής"
 
+#: src/components/routes/organizer/EventAssistant/index.tsx:387
+msgid "Price in €"
+msgstr ""
+
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:108
 msgid "Price not set"
 msgstr "Τιμή μη ορισμένη"
@@ -8638,7 +8659,7 @@ msgstr "Διαβάστε την πολιτική απορρήτου"
 msgid "Read the case study"
 msgstr "Διαβάστε τη μελέτη"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:287
+#: src/components/routes/organizer/EventAssistant/index.tsx:255
 msgid "Reading your poster…"
 msgstr ""
 
@@ -8850,11 +8871,11 @@ msgstr "Αφαίρεση"
 msgid "Remove domain"
 msgstr "Αφαίρεση τομέα"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:356
+#: src/components/routes/organizer/EventAssistant/index.tsx:342
 msgid "Remove the end time"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:293
+#: src/components/routes/organizer/EventAssistant/index.tsx:300
 msgid "Remove the poster"
 msgstr ""
 
@@ -9969,7 +9990,7 @@ msgstr "Ορισμένα εισιτήρια δεν εκτυπώθηκαν."
 msgid "Something went wrong"
 msgstr "Κάτι πήγε στραβά"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:269
+#: src/components/routes/organizer/EventAssistant/index.tsx:234
 msgid "Something went wrong and your event wasn't created. Check the details and try again."
 msgstr ""
 
@@ -10073,7 +10094,11 @@ msgstr "Η ημερομηνία έναρξης είναι υποχρεωτική
 msgid "Start time of the event"
 msgstr "Ώρα έναρξης εκδήλωσης"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:336
+#: src/components/routes/organizer/EventAssistant/index.tsx:247
+msgid "Start with your poster, it will be the cover of your event."
+msgstr ""
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:322
 msgid "Starts"
 msgstr ""
 
@@ -10123,10 +10148,6 @@ msgstr "Τα στατιστικά βασίζονται στην ημερομην
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
 msgid "Status"
 msgstr "Κατάσταση"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:528
-msgid "Step {stepNumber} of 2"
-msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:183
 msgid "Still handling refunds for your older transactions."
@@ -10525,7 +10546,7 @@ msgstr "Πείτε μας για τον οργανισμό σας. Αυτές ο
 msgid "Tell us about your project: we will get back to you with a tailored proposal."
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:215
+#: src/components/routes/organizer/EventAssistant/index.tsx:195
 msgid "Tell us when it starts."
 msgstr ""
 
@@ -10570,7 +10591,7 @@ msgstr "Ευχαριστούμε για την υποστήριξή σας κα�
 msgid "That promo code is invalid"
 msgstr "Αυτός ο κωδικός προσφοράς δεν είναι έγκυρος"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:208
+#: src/components/routes/organizer/EventAssistant/index.tsx:188
 msgid "The AI couldn't rewrite your text this time. Try again in a moment."
 msgstr ""
 
@@ -10612,12 +10633,8 @@ msgstr "Η προεπιλεγμένη ζώνη ώρας για τις εκδηλ
 msgid "The email address has been changed. The attendee will receive a new ticket at the updated email address."
 msgstr "Η διεύθυνση email άλλαξε. Ο συμμετέχων θα λάβει νέο εισιτήριο στην ενημερωμένη διεύθυνση."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:217
+#: src/components/routes/organizer/EventAssistant/index.tsx:197
 msgid "The end has to come after the start."
-msgstr ""
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:280
-msgid "The essentials: what, when and where."
 msgstr ""
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:40
@@ -10861,7 +10878,7 @@ msgstr "Αυτή η εκδήλωση έχει τελειώσει"
 msgid "This event is not published yet"
 msgstr "Αυτή η εκδήλωση δεν έχει δημοσιευτεί ακόμα"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:195
+#: src/components/routes/organizer/EventAssistant/index.tsx:170
 msgid "This image is over 8 MB. Try a lighter one."
 msgstr ""
 
@@ -11102,7 +11119,7 @@ msgstr "Τιμή εισιτηρίου"
 msgid "Ticket Price"
 msgstr "Τιμή Εισιτηρίου"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:422
+#: src/components/routes/organizer/EventAssistant/index.tsx:386
 msgid "Ticket price (€)"
 msgstr ""
 
@@ -11137,10 +11154,6 @@ msgstr "Εισιτήρια"
 #: src/components/routes/event/products.tsx:48
 msgid "Tickets & Products"
 msgstr "Εισιτήρια & Προϊόντα"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:401
-msgid "Tickets and presentation"
-msgstr ""
 
 #: src/components/modals/OfferWaitlistModal/index.tsx:90
 msgid "Tickets are automatically offered to waitlisted customers when capacity becomes available."
@@ -11496,7 +11509,7 @@ msgstr ""
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:951
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:78
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:84
-#: src/components/routes/organizer/EventAssistant/index.tsx:437
+#: src/components/routes/organizer/EventAssistant/index.tsx:406
 msgid "Unlimited"
 msgstr "Απεριόριστο"
 
@@ -11572,6 +11585,10 @@ msgstr ""
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:158
 msgid "Upload Image"
 msgstr "Μεταφόρτωση Εικόνας"
+
+#: src/components/routes/organizer/EventAssistant/index.tsx:263
+msgid "Upload your poster here"
+msgstr ""
 
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:131
 msgid "Uploading image..."
@@ -11980,7 +11997,7 @@ msgstr "Η προσφορά λίστας αναμονής έληξε"
 msgid "Warning: This is the system default configuration. Changes will affect all accounts that don't have a specific configuration assigned."
 msgstr "Προειδοποίηση: Αυτή είναι η προεπιλεγμένη ρύθμιση συστήματος. Οι αλλαγές θα επηρεάσουν όλους τους λογαριασμούς."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:195
+#: src/components/routes/organizer/EventAssistant/index.tsx:170
 msgid "We accept JPG, PNG, WebP and HEIC images."
 msgstr ""
 
@@ -12016,16 +12033,16 @@ msgstr "Δεν βρέθηκε αυτή η παραγγελία. Μπορεί ν�
 msgid "We couldn't load the data. Please try again."
 msgstr "Δεν μπορέσαμε να φορτώσουμε τα δεδομένα. Παρακαλώ δοκιμάστε ξανά."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:189
-msgid "We couldn't read your poster, but it's kept as your cover. Just fill in the rest."
+#: src/components/routes/organizer/EventAssistant/index.tsx:162
+msgid "We couldn't read your poster. It's kept as your cover: just fill in the details."
 msgstr ""
 
 #: src/components/common/ProductsTable/SortableCategory/index.tsx:94
 msgid "We couldn't reorder the categories. Please try again."
 msgstr "Δεν μπορέσαμε να αναδιατάξουμε τις κατηγορίες. Παρακαλώ δοκιμάστε ξανά."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:187
-msgid "We filled in what we could read on your poster. Have a quick look before going on."
+#: src/components/routes/organizer/EventAssistant/index.tsx:291
+msgid "We filled this in from your poster. Correct anything that's off, then confirm."
 msgstr ""
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:424
@@ -12343,7 +12360,7 @@ msgstr ""
 msgid "Where we are going."
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:377
+#: src/components/routes/organizer/EventAssistant/index.tsx:362
 msgid "Where?"
 msgstr ""
 
@@ -12400,10 +12417,6 @@ msgstr "Επεξεργασία..."
 #: src/constants/eventCategories.ts:12
 msgid "Workshop"
 msgstr "Εργαστήριο"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:473
-msgid "Write a few lines, the AI turns them into a clear description."
-msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:33
 msgid "Write to us"
@@ -12520,10 +12533,6 @@ msgstr "Δεν μπορείτε να επεξεργαστείτε τον ρόλ�
 #: src/components/modals/RefundOrderModal/index.tsx:217
 msgid "You cannot refund a manually created order."
 msgstr "Δεν μπορείτε να επιστρέψετε χειροκίνητα δημιουργημένη παραγγελία."
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:308
-msgid "You have a poster?"
-msgstr ""
 
 #: src/components/modals/ChooseAccountModal/index.tsx:14
 msgid "You have access to multiple accounts. Please choose one to continue."
@@ -12681,11 +12690,11 @@ msgstr "Το Email σας"
 msgid "Your email request change to <0>{0}</0> is pending. Please check your email to confirm"
 msgstr "Το αίτημα αλλαγής email σε <0>{0}</0> εκκρεμεί. Ελέγξτε το email σας για επιβεβαίωση"
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:279
+#: src/components/routes/organizer/EventAssistant/index.tsx:287
 msgid "Your event"
 msgstr ""
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:265
+#: src/components/routes/organizer/EventAssistant/index.tsx:230
 msgid "Your event is created, but we couldn't add the poster. You can add it from the event settings."
 msgstr ""
 
@@ -12697,7 +12706,7 @@ msgstr "Η εκδήλωσή σας είναι δημοσιευμένη!"
 msgid "Your event must be live before you can sell tickets to attendees."
 msgstr "Η εκδήλωσή σας πρέπει να είναι δημοσιευμένη πριν μπορέσετε να πουλήσετε εισιτήρια."
 
-#: src/components/routes/organizer/EventAssistant/index.tsx:214
+#: src/components/routes/organizer/EventAssistant/index.tsx:194
 msgid "Your event needs a name."
 msgstr ""
 
@@ -12785,10 +12794,6 @@ msgstr "Η πληρωμή σας απέτυχε. Παρακαλώ δοκιμάσ
 #: src/components/common/PlatformFeesSettings/index.tsx:149
 msgid "Your Plan"
 msgstr "Το Πλάνο σας"
-
-#: src/components/routes/organizer/EventAssistant/index.tsx:289
-msgid "Your poster will be the cover of the event page."
-msgstr ""
 
 #: src/components/modals/RefundOrderModal/index.tsx:60
 msgid "Your refund is processing."
