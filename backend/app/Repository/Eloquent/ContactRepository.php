@@ -7,8 +7,16 @@ use HiEvents\DomainObjects\Enums\ContactConsentSource;
 use HiEvents\DomainObjects\Enums\ContactSource;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Models\Contact;
+use HiEvents\Http\DTO\QueryParamsDTO;
 use HiEvents\Repository\Interfaces\ContactRepositoryInterface;
+use HiEvents\Services\Application\Handlers\Contact\DTO\ContactFilterDTO;
+use HiEvents\Services\Application\Handlers\Contact\DTO\ContactSummaryDTO;
+use HiEvents\Services\Application\Handlers\Contact\DTO\ContactTimelineItemDTO;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 
 class ContactRepository extends BaseRepository implements ContactRepositoryInterface
 {
@@ -140,6 +148,225 @@ SQL;
         $this->resetStaleStatistics($organizerId, $emails, $syncStartedAt);
 
         return $synced;
+    }
+
+    public function paginateForOrganizer(int $organizerId, ContactFilterDTO $filter, QueryParamsDTO $params): LengthAwarePaginator
+    {
+        $sortBy = $this->validateSortColumn($params->sort_by, ContactDomainObject::class);
+        $direction = $this->validateSortDirection($params->sort_direction, ContactDomainObject::class);
+
+        $query = $this->model instanceof Builder ? $this->model : $this->model->newQuery();
+
+        $this->model = $this->applyFilter($query, $organizerId, $filter)
+            ->orderByRaw(sprintf('%s %s NULLS LAST', $sortBy, $direction))
+            ->orderBy('id', 'desc');
+
+        return $this->paginate(min($params->per_page ?? 25, 100));
+    }
+
+    public function getSummaryForOrganizer(int $organizerId, ContactFilterDTO $filter): ContactSummaryDTO
+    {
+        $row = $this->applyFilter(Contact::query(), $organizerId, $filter)
+            ->toBase()
+            ->selectRaw('count(*) AS total')
+            ->selectRaw('count(*) FILTER (WHERE ' . self::emailConsentSql() . ') AS email_consent')
+            ->selectRaw('count(*) FILTER (WHERE ' . self::smsConsentSql() . ') AS sms_consent')
+            ->selectRaw('count(*) FILTER (WHERE events_count >= 2) AS repeat_customers')
+            ->selectRaw('coalesce(sum(total_spent), 0) AS total_spent')
+            ->first();
+
+        return new ContactSummaryDTO(
+            total: (int) $row->total,
+            email_consent: (int) $row->email_consent,
+            sms_consent: (int) $row->sms_consent,
+            repeat_customers: (int) $row->repeat_customers,
+            total_spent: (float) $row->total_spent,
+        );
+    }
+
+    public function lazyForOrganizer(int $organizerId, ContactFilterDTO $filter): LazyCollection
+    {
+        return $this->applyFilter(Contact::query(), $organizerId, $filter)
+            ->with('contact_tags')
+            ->orderBy('id')
+            ->lazyById(500)
+            ->map(fn(Contact $contact) => $this->handleSingleResult($contact));
+    }
+
+    public function getTimeline(int $organizerId, string $email): Collection
+    {
+        $sql = <<<SQL
+WITH params AS (SELECT ?::bigint AS organizer_id, ?::text AS email),
+organizer_events AS (
+    SELECT e.id, e.title FROM events e CROSS JOIN params p WHERE e.organizer_id = p.organizer_id
+),
+contact_orders AS (
+    SELECT o.* FROM orders o
+    JOIN organizer_events e ON e.id = o.event_id
+    CROSS JOIN params p
+    WHERE o.deleted_at IS NULL AND o.status IN (?, ?, ?)
+      AND (lower(trim(o.email)) = p.email
+           OR EXISTS (SELECT 1 FROM attendees a WHERE a.order_id = o.id AND a.deleted_at IS NULL AND lower(trim(a.email)) = p.email))
+)
+SELECT 'ORDER' AS type, o.created_at AS occurred_at, o.event_id, e.title AS event_title, o.id AS order_id,
+       o.public_id AS title,
+       (SELECT string_agg(trim(coalesce(a.first_name, '') || ' ' || coalesce(a.last_name, '')), ', ' ORDER BY a.id)
+          FROM attendees a WHERE a.order_id = o.id AND a.deleted_at IS NULL) AS detail,
+       (o.total_gross - coalesce(o.total_refunded, 0))::float AS amount, o.currency, o.status
+FROM contact_orders o JOIN organizer_events e ON e.id = o.event_id CROSS JOIN params p
+WHERE lower(trim(o.email)) = p.email
+UNION ALL
+SELECT 'TICKET_RECEIVED', a.created_at, a.event_id, e.title, a.order_id, a.public_id,
+       trim(coalesce(o.first_name, '') || ' ' || coalesce(o.last_name, '')), NULL, NULL, a.status
+FROM attendees a
+JOIN contact_orders o ON o.id = a.order_id
+JOIN organizer_events e ON e.id = a.event_id
+CROSS JOIN params p
+WHERE a.deleted_at IS NULL AND lower(trim(a.email)) = p.email AND lower(trim(o.email)) <> p.email
+UNION ALL
+SELECT 'CHECK_IN', c.created_at, c.event_id, e.title, c.order_id, a.public_id,
+       cl.name, NULL, NULL, NULL
+FROM attendee_check_ins c
+JOIN attendees a ON a.id = c.attendee_id
+JOIN organizer_events e ON e.id = c.event_id
+LEFT JOIN check_in_lists cl ON cl.id = c.check_in_list_id
+CROSS JOIN params p
+WHERE c.deleted_at IS NULL AND lower(trim(a.email)) = p.email
+UNION ALL
+SELECT 'MESSAGE', om.created_at, om.event_id, e.title, NULL, om.subject, NULL, NULL, NULL, om.status
+FROM outgoing_messages om
+JOIN organizer_events e ON e.id = om.event_id
+CROSS JOIN params p
+WHERE om.deleted_at IS NULL AND lower(trim(om.recipient)) = p.email
+UNION ALL
+SELECT 'ANSWER', qa.created_at, q.event_id, e.title, qa.order_id, q.title,
+       CASE jsonb_typeof(qa.answer)
+           WHEN 'array' THEN (SELECT string_agg(value, ', ') FROM jsonb_array_elements_text(qa.answer))
+           WHEN 'object' THEN (SELECT string_agg(value, ', ') FROM jsonb_each_text(qa.answer))
+           ELSE qa.answer #>> '{}' END,
+       NULL, NULL, NULL
+FROM question_answers qa
+JOIN questions q ON q.id = qa.question_id
+JOIN contact_orders o ON o.id = qa.order_id
+JOIN organizer_events e ON e.id = q.event_id
+CROSS JOIN params p
+WHERE qa.deleted_at IS NULL
+  AND (
+    (qa.attendee_id IS NULL AND lower(trim(o.email)) = p.email)
+    OR EXISTS (SELECT 1 FROM attendees a WHERE a.id = qa.attendee_id AND lower(trim(a.email)) = p.email)
+  )
+ORDER BY occurred_at DESC
+LIMIT 500
+SQL;
+
+        $rows = DB::select($sql, [
+            $organizerId,
+            $email,
+            OrderStatus::COMPLETED->name,
+            OrderStatus::AWAITING_OFFLINE_PAYMENT->name,
+            OrderStatus::CANCELLED->name,
+        ]);
+
+        return collect($rows)->map(fn(object $row) => new ContactTimelineItemDTO(
+            type: $row->type,
+            occurred_at: $row->occurred_at,
+            event_id: $row->event_id,
+            event_title: $row->event_title,
+            order_id: $row->order_id,
+            title: $row->title,
+            detail: $row->detail,
+            amount: $row->amount,
+            currency: $row->currency,
+            status: $row->status,
+        ));
+    }
+
+    public static function emailConsentSql(): string
+    {
+        return '(email_consent_at IS NOT NULL AND (email_unsubscribed_at IS NULL OR email_unsubscribed_at < email_consent_at))';
+    }
+
+    public static function smsConsentSql(): string
+    {
+        return '(phone IS NOT NULL AND sms_consent_at IS NOT NULL AND (sms_unsubscribed_at IS NULL OR sms_unsubscribed_at < sms_consent_at))';
+    }
+
+    private function applyFilter(Builder $query, int $organizerId, ContactFilterDTO $filter): Builder
+    {
+        $validStatuses = [OrderStatus::COMPLETED->name, OrderStatus::AWAITING_OFFLINE_PAYMENT->name];
+
+        $query->where('contacts.organizer_id', $organizerId)
+            ->whereNull('contacts.merged_into_contact_id');
+
+        if ($filter->query !== null) {
+            $like = '%' . addcslashes($filter->query, '%_\\') . '%';
+            $query->where(fn(Builder $q) => $q
+                ->whereRaw("(coalesce(first_name, '') || ' ' || coalesce(last_name, '')) ILIKE ?", [$like])
+                ->orWhere('email', 'ilike', $like)
+                ->orWhere('phone', 'ilike', $like));
+        }
+
+        if ($filter->eventId !== null) {
+            $eventId = $filter->eventId;
+            $query->where(fn(Builder $q) => $q
+                ->whereExists(fn($sub) => $sub->selectRaw('1')
+                    ->from('orders as o')
+                    ->join('events as e', 'e.id', '=', 'o.event_id')
+                    ->where('o.event_id', $eventId)
+                    ->whereColumn('e.organizer_id', 'contacts.organizer_id')
+                    ->whereNull('o.deleted_at')
+                    ->whereIn('o.status', $validStatuses)
+                    ->whereRaw('lower(trim(o.email)) = contacts.email'))
+                ->orWhereExists(fn($sub) => $sub->selectRaw('1')
+                    ->from('attendees as a')
+                    ->join('orders as o', 'o.id', '=', 'a.order_id')
+                    ->join('events as e', 'e.id', '=', 'a.event_id')
+                    ->where('a.event_id', $eventId)
+                    ->whereColumn('e.organizer_id', 'contacts.organizer_id')
+                    ->whereNull('a.deleted_at')
+                    ->whereIn('o.status', $validStatuses)
+                    ->whereRaw('lower(trim(a.email)) = contacts.email')));
+        }
+
+        if ($filter->attendedOnly) {
+            if ($filter->eventId !== null) {
+                $eventId = $filter->eventId;
+                $query->whereExists(fn($sub) => $sub->selectRaw('1')
+                    ->from('attendee_check_ins as c')
+                    ->join('attendees as a', 'a.id', '=', 'c.attendee_id')
+                    ->join('events as e', 'e.id', '=', 'c.event_id')
+                    ->where('c.event_id', $eventId)
+                    ->whereColumn('e.organizer_id', 'contacts.organizer_id')
+                    ->whereNull('c.deleted_at')
+                    ->whereRaw('lower(trim(a.email)) = contacts.email'));
+            } else {
+                $query->where('attended_events_count', '>', 0);
+            }
+        }
+
+        if ($filter->tagId !== null) {
+            $tagId = $filter->tagId;
+            $query->whereExists(fn($sub) => $sub->selectRaw('1')
+                ->from('contact_tag_assignments as cta')
+                ->join('contact_tags as ct', 'ct.id', '=', 'cta.contact_tag_id')
+                ->whereColumn('cta.contact_id', 'contacts.id')
+                ->whereColumn('ct.organizer_id', 'contacts.organizer_id')
+                ->where('cta.contact_tag_id', $tagId));
+        }
+
+        if ($filter->emailConsentOnly) {
+            $query->whereRaw(self::emailConsentSql());
+        }
+
+        if ($filter->smsConsentOnly) {
+            $query->whereRaw(self::smsConsentSql());
+        }
+
+        if ($filter->withPhoneOnly) {
+            $query->whereNotNull('phone');
+        }
+
+        return $query;
     }
 
     private function resetStaleStatistics(int $organizerId, ?array $emails, string $syncStartedAt): void
