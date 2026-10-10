@@ -1,19 +1,22 @@
 import {ReactNode, useEffect, useState} from "react";
 import {NavLink, Outlet, useLocation} from "react-router";
 import {UnstyledButton} from "@mantine/core";
-import {IconChevronDown, IconDots, IconX} from "@tabler/icons-react";
+import {IconArrowLeft, IconChevronDown, IconChevronLeft, IconDots, IconX} from "@tabler/icons-react";
 import {t} from "@lingui/macro";
 import classNames from "classnames";
-import ImpersonationBanner from "../../../common/ImpersonationBanner";
-import {GlobalMenu} from "../../../common/GlobalMenu";
-import {NavItem} from "../../AppLayout/types.ts";
-import {getAppName, getLogoForDarkBackground, getLogoForLightBackground} from "../../../../utilites/branding.ts";
-import classes from "./OrganizerShell.module.scss";
+import ImpersonationBanner from "../../common/ImpersonationBanner";
+import {GlobalMenu} from "../../common/GlobalMenu";
+import {NavItem} from "../AppLayout/types.ts";
+import {getAppName, getLogoForDarkBackground, getLogoForLightBackground} from "../../../utilites/branding.ts";
+import classes from "./ManageShell.module.scss";
 
-interface OrganizerShellProps {
+interface ManageShellProps {
     organizerName?: string;
     onSwitchOrganizer?: () => void;
+    backLink?: { to: string, label: string };
+    breadcrumbs?: ReactNode;
     navItems: NavItem[];
+    moreItems?: NavItem[];
     bottomItems: NavItem[];
     mobileTabs: NavItem[];
     headerActions?: ReactNode;
@@ -45,7 +48,7 @@ const NavEntry = ({item, onNavigate, className, activeClassName}: {
         );
     }
 
-    if (item.link.startsWith('http') || item.link.startsWith('/events/')) {
+    if (item.link.startsWith('http') || item.link.startsWith('/events/') || item.link.startsWith('/event/')) {
         return (
             <a href={item.link} target="_blank" rel="noreferrer" className={className} onClick={onNavigate}>
                 {content}
@@ -64,21 +67,43 @@ const NavEntry = ({item, onNavigate, className, activeClassName}: {
     );
 };
 
-export const OrganizerShell = ({
-                                   organizerName,
-                                   onSwitchOrganizer,
-                                   navItems,
-                                   bottomItems,
-                                   mobileTabs,
-                                   headerActions,
-                                   sidebarFooter,
-                               }: OrganizerShellProps) => {
-    const [drawerOpen, setDrawerOpen] = useState(false);
+const isHeading = (item: NavItem) => !item.link && !item.onClick;
+
+export const ManageShell = ({
+                                organizerName,
+                                onSwitchOrganizer,
+                                backLink,
+                                breadcrumbs,
+                                navItems,
+                                moreItems = [],
+                                bottomItems,
+                                mobileTabs,
+                                headerActions,
+                                sidebarFooter,
+                            }: ManageShellProps) => {
     const location = useLocation();
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const moreIsActive = moreItems.some((item) => item.link && location.pathname.includes(`/${item.link}`));
+    const [moreOpen, setMoreOpen] = useState(moreIsActive);
 
     useEffect(() => setDrawerOpen(false), [location.pathname]);
+    useEffect(() => {
+        if (moreIsActive) setMoreOpen(true);
+    }, [moreIsActive]);
 
     const visible = (items: NavItem[]) => items.filter((item) => !item.showWhen || item.showWhen());
+
+    const renderNav = (items: NavItem[]) => visible(items).map((item, index) => {
+        if (isHeading(item)) {
+            return item.label
+                ? <div key={`h-${index}`} className={classes.navHeading}>{item.label}</div>
+                : <div key={`d-${index}`} className={classes.navDivider}/>;
+        }
+        return (
+            <NavEntry key={item.label} item={item} className={classes.navLink}
+                      activeClassName={classes.navLinkActive} onNavigate={() => setDrawerOpen(false)}/>
+        );
+    });
 
     return (
         <>
@@ -95,6 +120,12 @@ export const OrganizerShell = ({
                         </button>
                     </div>
 
+                    {backLink && (
+                        <NavLink to={backLink.to} className={classes.backLink}>
+                            <IconArrowLeft size={18}/> <span>{backLink.label}</span>
+                        </NavLink>
+                    )}
+
                     {organizerName && (
                         onSwitchOrganizer ? (
                             <UnstyledButton className={classes.organizerSwitch} onClick={onSwitchOrganizer}>
@@ -107,10 +138,20 @@ export const OrganizerShell = ({
                     )}
 
                     <nav className={classes.nav}>
-                        {visible(navItems).map((item) => (
-                            <NavEntry key={item.label} item={item} className={classes.navLink}
-                                      activeClassName={classes.navLinkActive} onNavigate={() => setDrawerOpen(false)}/>
-                        ))}
+                        {renderNav(navItems)}
+                        {visible(moreItems).length > 0 && (
+                            <>
+                                <div className={classes.navDivider}/>
+                                <button type="button" className={classes.navLink} aria-expanded={moreOpen}
+                                        onClick={() => setMoreOpen((open) => !open)}>
+                                    <IconDots size={22} stroke={1.6}/>
+                                    <span>{t`More`}</span>
+                                    <IconChevronDown size={16}
+                                                     className={classNames(classes.moreChevron, moreOpen && classes.moreChevronOpen)}/>
+                                </button>
+                                {moreOpen && <div className={classes.moreItems}>{renderNav(moreItems)}</div>}
+                            </>
+                        )}
                     </nav>
 
                     <div className={classes.spacer}/>
@@ -125,7 +166,8 @@ export const OrganizerShell = ({
                 </aside>
 
                 <div className={classes.mainColumn} id="app-manage-main">
-                    <header className={classes.topbar}>
+                    <header className={classNames(classes.topbar, breadcrumbs && classes.topbarWithBreadcrumbs)}>
+                        {breadcrumbs && <div className={classes.breadcrumbs}>{breadcrumbs}</div>}
                         <NavLink to="/manage/events" className={classes.mobileLogo}>
                             <img src={getLogoForLightBackground()} alt={t`${getAppName()} logo`}/>
                         </NavLink>
@@ -135,6 +177,11 @@ export const OrganizerShell = ({
                         </div>
                     </header>
                     <main className={classes.content}>
+                        {backLink && (
+                            <NavLink to={backLink.to} className={classes.mobileBack}>
+                                <IconChevronLeft size={18}/> {backLink.label}
+                            </NavLink>
+                        )}
                         <Outlet/>
                     </main>
                 </div>

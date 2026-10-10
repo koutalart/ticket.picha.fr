@@ -16,7 +16,7 @@ import {
 } from "@tabler/icons-react";
 import { t } from "@lingui/macro";
 import { NavItem } from "../AppLayout/types.ts";
-import { OrganizerShell } from "./OrganizerShell";
+import { ManageShell } from "../ManageShell";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router";
 import { Button, Modal, Stack, Text } from "@mantine/core";
 import { useGetOrganizer } from "../../../queries/useGetOrganizer.ts";
@@ -165,7 +165,7 @@ const OrganizerLayout = () => {
 
     return (
         <>
-            <OrganizerShell
+            <ManageShell
                 organizerName={organizer?.name}
                 onSwitchOrganizer={organizers && organizers.length > 1 ? openSwitchModal : undefined}
                 navItems={navItems}
