@@ -63,21 +63,39 @@ class CreateEventFromAssistantHandler
             $category = $this->productCategoryRepository->findFirstWhere(['event_id' => $event->getId()]);
             $isFree = $dto->price <= 0;
 
-            $this->createProductHandler->handle(new UpsertProductDTO(
-                account_id: $dto->account_id,
-                event_id: $event->getId(),
-                product_category_id: $category->getId(),
-                title: $isFree ? __('Free entry') : __('Entry'),
-                type: $isFree ? ProductPriceType::FREE : ProductPriceType::PAID,
-                product_type: ProductType::TICKET,
-                prices: collect([new ProductPriceDTO(
-                    price: max(0.0, $dto->price),
-                    initial_quantity_available: $dto->quantity,
-                )]),
-            ));
+            if ($dto->online_quantity !== 0) {
+                $this->createTicket($dto, $event->getId(), $category->getId(), $isFree ? __('Free entry') : __('Online presale'), $dto->online_quantity, isOnline: true);
+            }
+
+            if ($dto->box_office_quantity !== 0) {
+                $this->createTicket($dto, $event->getId(), $category->getId(), $isFree ? __('Free entry (box office)') : __('Box office presale'), $dto->box_office_quantity, isOnline: false);
+            }
 
             return $event;
         });
+    }
+
+    /**
+     * Online tickets are not sold at the box office and box office tickets are hidden online, so each quota is kept apart.
+     */
+    private function createTicket(CreateEventFromAssistantDTO $dto, int $eventId, int $categoryId, string $title, ?int $quantity, bool $isOnline): void
+    {
+        $isFree = $dto->price <= 0;
+
+        $this->createProductHandler->handle(new UpsertProductDTO(
+            account_id: $dto->account_id,
+            event_id: $eventId,
+            product_category_id: $categoryId,
+            title: $title,
+            type: $isFree ? ProductPriceType::FREE : ProductPriceType::PAID,
+            product_type: ProductType::TICKET,
+            is_hidden: !$isOnline,
+            is_visible_at_box_office: !$isOnline,
+            prices: collect([new ProductPriceDTO(
+                price: max(0.0, $dto->price),
+                initial_quantity_available: $quantity,
+            )]),
+        ));
     }
 
     /**

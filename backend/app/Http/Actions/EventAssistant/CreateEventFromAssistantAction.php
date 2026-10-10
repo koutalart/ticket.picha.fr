@@ -40,7 +40,8 @@ class CreateEventFromAssistantAction extends BaseAction
                 venue: $request->validated('venue'),
                 description: $request->validated('description'),
                 price: (float) $request->validated('price'),
-                quantity: $request->validated('quantity') !== null ? (int) $request->validated('quantity') : null,
+                online_quantity: $request->validated('online_quantity') !== null ? (int) $request->validated('online_quantity') : null,
+                box_office_quantity: $request->validated('box_office_quantity') !== null ? (int) $request->validated('box_office_quantity') : null,
                 category: $request->validated('category'),
             ));
         } catch (OrganizerNotFoundException $exception) {

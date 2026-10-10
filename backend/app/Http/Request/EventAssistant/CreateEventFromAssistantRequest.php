@@ -21,14 +21,21 @@ class CreateEventFromAssistantRequest extends BaseRequest
             'venue' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'price' => ['required', 'numeric', 'min:0', 'max:100000'],
-            'quantity' => ['nullable', 'integer', 'min:1', 'max:1000000'],
+            'online_quantity' => ['nullable', 'integer', 'min:0', 'max:1000000'],
+            'box_office_quantity' => ['nullable', 'integer', 'min:0', 'max:1000000'],
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->sometimes('online_quantity', 'not_in:0', fn ($input) => (string) $input->box_office_quantity === '0');
     }
 
     public function messages(): array
     {
         return [
             'end_date.after' => __('The end date must be after the start date.'),
+            'online_quantity.not_in' => __('Sell at least one presale ticket online or at the box office.'),
         ];
     }
 }

@@ -4,7 +4,7 @@ import {i18n} from "@lingui/core";
 import {NavLink, useNavigate, useSearchParams} from "react-router";
 import {Button, Loader, NumberInput, SegmentedControl, Select, Textarea, TextInput} from "@mantine/core";
 import {Dropzone, FileRejection} from "@mantine/dropzone";
-import {IconArrowLeft, IconCalendarEvent, IconCheck, IconPlus, IconSparkles, IconUpload, IconX} from "@tabler/icons-react";
+import {IconArrowLeft, IconArrowRight, IconCalendarEvent, IconCheck, IconPlus, IconSparkles, IconUpload, IconX} from "@tabler/icons-react";
 import {useGetOrganizers} from "../../../../queries/useGetOrganizers.ts";
 import {useGetEventAssistantStatus} from "../../../../queries/useGetEventAssistantStatus.ts";
 import {useReadEventPoster} from "../../../../mutations/useReadEventPoster.ts";
@@ -17,8 +17,8 @@ import {showError} from "../../../../utilites/notifications.tsx";
 import {IdParam} from "../../../../types.ts";
 import classes from "./EventAssistant.module.scss";
 
-type StepId = 'upload' | 'review';
-type FieldErrors = Partial<Record<'title' | 'startDate' | 'endDate' | 'price' | 'organizer', string>>;
+type StepId = 'upload' | 'review' | 'description';
+type FieldErrors = Partial<Record<'title' | 'startDate' | 'endDate' | 'price' | 'onlineQuantity' | 'organizer', string>>;
 
 interface Draft {
     title: string;
@@ -30,7 +30,8 @@ interface Draft {
     description: string;
     isFree: boolean;
     price: number | '';
-    quantity: number | '';
+    onlineQuantity: number | '';
+    boxOfficeQuantity: number | '';
 }
 
 const EMPTY_DRAFT: Draft = {
@@ -43,7 +44,8 @@ const EMPTY_DRAFT: Draft = {
     description: '',
     isFree: false,
     price: '',
-    quantity: '',
+    onlineQuantity: '',
+    boxOfficeQuantity: '',
 };
 
 const POSTER_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
@@ -122,12 +124,14 @@ const EventAssistant = () => {
         setDraft((current) => ({...current, ...values}));
     };
 
-    const showReview = () => {
+    const goTo = (next: StepId) => {
         setErrors({});
         setFormError(null);
-        setStep('review');
+        setStep(next);
         if (typeof window !== 'undefined') window.scrollTo({top: 0});
     };
+
+    const showReview = () => goTo('review');
 
     const applyAiDraft = (found: EventDraft) => {
         setDraft((current) => ({
@@ -141,7 +145,6 @@ const EventAssistant = () => {
             isFree: found.price === 0 ? true : current.isFree,
             price: found.price !== null && found.price > 0 ? found.price : current.price,
             category: found.category ?? current.category,
-            quantity: found.quantity ?? current.quantity,
         }));
     };
 
@@ -223,6 +226,9 @@ const EventAssistant = () => {
         if (!draft.isFree && (draft.price === '' || Number(draft.price) <= 0)) {
             found.price = t`Enter a ticket price, or choose "Free".`;
         }
+        if (draft.onlineQuantity === 0 && draft.boxOfficeQuantity === 0) {
+            found.onlineQuantity = t`Plan at least one presale, online or physical.`;
+        }
         if (!organizer) found.organizer = t`Choose who is organizing this event.`;
         return found;
     };
@@ -233,6 +239,12 @@ const EventAssistant = () => {
         setErrors(found);
         if (Object.keys(found).length > 0 || !organizer) {
             setFormError(t`A few details are missing, they're marked in red.`);
+            if (step !== 'review') setStep('review');
+            return;
+        }
+
+        if (step === 'review') {
+            goTo('description');
             return;
         }
 
@@ -246,7 +258,8 @@ const EventAssistant = () => {
                 venue: draft.venue.trim() || null,
                 description: draft.description.trim() || null,
                 price: draft.isFree ? 0 : Number(draft.price),
-                quantity: draft.quantity === '' ? null : Number(draft.quantity),
+                online_quantity: draft.onlineQuantity === '' ? null : Number(draft.onlineQuantity),
+                box_office_quantity: draft.boxOfficeQuantity === '' ? null : Number(draft.boxOfficeQuantity),
             },
             cover: poster,
         }, {
@@ -439,19 +452,82 @@ const EventAssistant = () => {
                         </div>
                     </div>
 
-                    <NumberInput
-                        label={t`Number of places`}
-                        placeholder={t`Unlimited`}
-                        size="md"
-                        radius="lg"
-                        min={1}
-                        hideControls
-                        allowDecimal={false}
-                        classNames={{input: classes.input, label: classes.label}}
-                        value={draft.quantity}
-                        onChange={(value) => update({quantity: value === '' ? '' : Number(value)})}
-                    />
+                    <div className={classes.twoColumns}>
+                        <NumberInput
+                            label={t`Physical presales`}
+                            placeholder={t`Unlimited`}
+                            size="md"
+                            radius="lg"
+                            min={0}
+                            hideControls
+                            allowDecimal={false}
+                            allowNegative={false}
+                            classNames={{input: classes.input, label: classes.label}}
+                            value={draft.boxOfficeQuantity}
+                            onChange={(value) => update({boxOfficeQuantity: value === '' ? '' : Number(value), onlineQuantity: draft.onlineQuantity})}
+                        />
+                        <NumberInput
+                            label={t`Online presales`}
+                            placeholder={t`Unlimited`}
+                            size="md"
+                            radius="lg"
+                            min={0}
+                            hideControls
+                            allowDecimal={false}
+                            allowNegative={false}
+                            classNames={{input: classes.input, label: classes.label}}
+                            value={draft.onlineQuantity}
+                            error={errors.onlineQuantity}
+                            onChange={(value) => update({onlineQuantity: value === '' ? '' : Number(value)})}
+                        />
+                    </div>
+                    <p className={classes.fieldHint}><Trans>Leave empty for no limit, put 0 if you don't sell that way.</Trans></p>
 
+                    {organizers.length > 1 && (
+                        <Select
+                            label={t`Organized by`}
+                            size="md"
+                            radius="lg"
+                            classNames={{input: classes.input, label: classes.label}}
+                            value={organizerId}
+                            error={errors.organizer}
+                            onChange={(value) => {
+                                setOrganizerId(value);
+                                setErrors((current) => ({...current, organizer: undefined}));
+                            }}
+                            data={organizers.map((item) => ({value: String(item.id), label: item.name}))}
+                        />
+                    )}
+                </div>
+            </div>
+
+            {formError && <p className={classes.error}>{formError}</p>}
+
+            <div className={classes.footer}>
+                <button type="button" className={classes.backLink} onClick={() => setStep('upload')}>
+                    <IconArrowLeft size={18}/> <Trans>Back</Trans>
+                </button>
+                <div className={classes.submitBlock}>
+                    <Button type="submit" size="lg" radius="xl" className={classes.primaryButton}
+                            rightSection={<IconArrowRight size={18}/>}>
+                        {filledByAi ? <Trans>It's right, continue</Trans> : <Trans>Continue</Trans>}
+                    </Button>
+                </div>
+            </div>
+        </>
+    );
+
+    const renderDescription = () => (
+        <>
+            <h1 className={classes.title}><Trans>Present your event</Trans></h1>
+            <p className={classes.subtitle}>
+                {filledByAi
+                    ? <Trans>We wrote this text from your poster and what we found online. Adjust it as you like.</Trans>
+                    : <Trans>A few words to make people want to come. You can also leave it for later.</Trans>}
+            </p>
+
+            <div className={classes.review}>
+                <div className={classes.fields}>
                     <div>
                         {researchDescription.isPending && (
                             <p className={classes.writing}><Loader size="xs"/> <Trans>The AI is looking up your event and writing the description…</Trans></p>
@@ -489,35 +565,19 @@ const EventAssistant = () => {
                             </div>
                         )}
                     </div>
-
-                    {organizers.length > 1 && (
-                        <Select
-                            label={t`Organized by`}
-                            size="md"
-                            radius="lg"
-                            classNames={{input: classes.input, label: classes.label}}
-                            value={organizerId}
-                            error={errors.organizer}
-                            onChange={(value) => {
-                                setOrganizerId(value);
-                                setErrors((current) => ({...current, organizer: undefined}));
-                            }}
-                            data={organizers.map((item) => ({value: String(item.id), label: item.name}))}
-                        />
-                    )}
                 </div>
             </div>
 
             {formError && <p className={classes.error}>{formError}</p>}
 
             <div className={classes.footer}>
-                <button type="button" className={classes.backLink} onClick={() => setStep('upload')}>
+                <button type="button" className={classes.backLink} onClick={() => goTo('review')}>
                     <IconArrowLeft size={18}/> <Trans>Back</Trans>
                 </button>
                 <div className={classes.submitBlock}>
                     <Button type="submit" size="lg" radius="xl" className={classes.primaryButton}
                             loading={createEvent.isPending} leftSection={<IconCheck size={18}/>}>
-                        {filledByAi ? <Trans>It's right, create the event</Trans> : <Trans>Create the event</Trans>}
+                        <Trans>Create the event</Trans>
                     </Button>
                     <span className={classes.submitHint}>
                         <Trans>It stays a draft until you publish it.</Trans>
@@ -537,7 +597,9 @@ const EventAssistant = () => {
             <main className={classes.main}>
                 <form key={step} className={step === 'upload' ? classes.contentNarrow : classes.content}
                       onSubmit={handleSubmit} noValidate>
-                    {step === 'upload' ? renderUpload() : renderReview()}
+                    {step === 'upload' && renderUpload()}
+                    {step === 'review' && renderReview()}
+                    {step === 'description' && renderDescription()}
                 </form>
             </main>
         </div>

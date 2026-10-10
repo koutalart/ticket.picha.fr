@@ -50,7 +50,8 @@ class EventAssistantTest extends TestCase
             'venue' => 'Le 5/5, Mamoudzou',
             'description' => "Une soirée <script>alert(1)</script> au 5/5.\n\nDJ et live jusqu'au bout de la nuit.",
             'price' => 45,
-            'quantity' => 300,
+            'online_quantity' => 200,
+            'box_office_quantity' => 100,
         ], ['Authorization' => 'Bearer '.$token])->assertCreated();
 
         $eventId = $response->json('data.id');
@@ -64,12 +65,42 @@ class EventAssistantTest extends TestCase
         self::assertSame('Le 5/5, Mamoudzou', json_decode($settings->location_details, true)['venue_name']);
 
         $prices = DB::table('product_prices')->join('products', 'products.id', '=', 'product_prices.product_id')
-            ->where('products.event_id', $eventId)->get(['products.type', 'products.product_type', 'product_prices.price', 'product_prices.initial_quantity_available']);
-        self::assertCount(1, $prices);
-        self::assertSame('PAID', $prices[0]->type);
-        self::assertSame('TICKET', $prices[0]->product_type);
-        self::assertEquals(45, $prices[0]->price);
-        self::assertSame(300, $prices[0]->initial_quantity_available);
+            ->where('products.event_id', $eventId)->orderBy('products.id')
+            ->get(['products.type', 'products.product_type', 'products.is_hidden', 'products.is_visible_at_box_office', 'product_prices.price', 'product_prices.initial_quantity_available']);
+        self::assertCount(2, $prices);
+
+        [$online, $boxOffice] = $prices;
+        self::assertSame('PAID', $online->type);
+        self::assertSame('TICKET', $online->product_type);
+        self::assertEquals(45, $online->price);
+        self::assertSame(200, $online->initial_quantity_available);
+        self::assertFalse($online->is_hidden);
+        self::assertFalse($online->is_visible_at_box_office);
+
+        self::assertEquals(45, $boxOffice->price);
+        self::assertSame(100, $boxOffice->initial_quantity_available);
+        self::assertTrue($boxOffice->is_hidden);
+        self::assertTrue($boxOffice->is_visible_at_box_office);
+    }
+
+    public function test_a_zero_quota_skips_that_channel_but_not_both(): void
+    {
+        [$organizerId, $token] = $this->organizerAndToken();
+        $payload = [
+            'organizer_id' => $organizerId,
+            'title' => 'Concert',
+            'start_date' => '2026-11-14 18:00',
+            'price' => 20,
+            'online_quantity' => 150,
+            'box_office_quantity' => 0,
+        ];
+
+        $eventId = $this->postJson('/events/assistant/create', $payload, ['Authorization' => 'Bearer '.$token])
+            ->assertCreated()->json('data.id');
+        self::assertSame(1, DB::table('products')->where('event_id', $eventId)->count());
+
+        $this->postJson('/events/assistant/create', [...$payload, 'online_quantity' => 0], ['Authorization' => 'Bearer '.$token])
+            ->assertUnprocessable()->assertJsonValidationErrors('online_quantity');
     }
 
     public function test_free_event_gets_a_free_ticket(): void

@@ -30,7 +30,8 @@ export interface CreateEventFromAssistantRequest {
     venue?: string | null;
     description?: string | null;
     price: number;
-    quantity?: number | null;
+    online_quantity?: number | null;
+    box_office_quantity?: number | null;
 }
 
 export const eventAssistantClient = {
