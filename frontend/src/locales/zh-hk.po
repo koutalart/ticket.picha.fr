@@ -880,6 +880,11 @@ msgstr "活動結束後"
 msgid "After your request, we reply within 1 business day to schedule a time. We show you the platform based on your next event: invitations, welcome, badges and reporting."
 msgstr "收到您的申請後，我們會於 1 個工作天內回覆並預約時間，以您的下一場活動為您示範平台：邀請、接待、名牌及報表。"
 
+#: src/components/routes/event/orders.tsx:94
+msgctxt "orders filter"
+msgid "All"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:246
 msgid "All"
 msgstr "全部"
@@ -1020,6 +1025,7 @@ msgstr "令人驚歎, 活動, 關鍵詞..."
 
 #: src/components/common/OrdersTable/index.tsx:353
 #: src/components/forms/TaxAndFeeForm/index.tsx:71
+#: src/components/routes/event/OrdersPage/OrderList.tsx:155
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:36
 msgid "Amount"
 msgstr "金額"
@@ -1541,12 +1547,16 @@ msgstr "可退款"
 msgid "Available Tokens"
 msgstr "可用標記"
 
+#: src/components/routes/event/orders.tsx:96
+msgctxt "orders filter"
+msgid "Awaiting"
+msgstr ""
+
 #: src/components/common/OrderStatusBadge/index.tsx:11
 #: src/components/modals/SendMessageModal/index.tsx:335
 msgid "Awaiting offline payment"
 msgstr "等待線下付款"
 
-#: src/components/routes/event/orders.tsx:25
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:60
 msgid "Awaiting Offline Payment"
 msgstr "等待線下付款"
@@ -1558,6 +1568,12 @@ msgstr "等待線下付款"
 #: src/components/common/CheckIn/AttendeeList.tsx:88
 msgid "Awaiting payment"
 msgstr "等待付款"
+
+#: src/components/routes/event/orders.tsx:86
+#: src/components/routes/event/OrdersPage/OrderList.tsx:43
+msgctxt "order status"
+msgid "Awaiting payment"
+msgstr ""
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:29
 #: src/components/common/AttendeeTable/index.tsx:294
@@ -1714,6 +1730,8 @@ msgstr "售票處"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:514
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:871
 #: src/components/routes/event/EventDashboard/index.tsx:31
+#: src/components/routes/event/orders.tsx:103
+#: src/components/routes/event/OrdersPage/OrderList.tsx:174
 msgid "Box Office"
 msgstr ""
 
@@ -1844,6 +1862,7 @@ msgid "Cancel email change"
 msgstr "取消更改電子郵件"
 
 #: src/components/common/OrdersTable/index.tsx:194
+#: src/components/routes/event/OrdersPage/OrderList.tsx:140
 msgid "Cancel order"
 msgstr "取消訂單"
 
@@ -1870,7 +1889,7 @@ msgstr ""
 #: src/components/common/WaitlistTable/index.tsx:27
 #: src/components/routes/admin/Messages/index.tsx:126
 #: src/components/routes/event/attendees.tsx:27
-#: src/components/routes/event/orders.tsx:24
+#: src/components/routes/event/OrdersPage/OrderList.tsx:37
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:75
 #: src/components/routes/kiosk/Orders/index.tsx:175
 #: src/components/routes/kiosk/Orders/index.tsx:190
@@ -1878,6 +1897,11 @@ msgstr ""
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:98
 msgid "Cancelled"
 msgstr "已取消"
+
+#: src/components/routes/event/orders.tsx:97
+msgctxt "orders filter"
+msgid "Cancelled"
+msgstr ""
 
 #: src/components/common/CheckIn/AttendeeList.tsx:30
 msgid "Cannot Check In"
@@ -2294,6 +2318,10 @@ msgstr "按訂單收集資料"
 msgid "Collect details per ticket"
 msgstr "按門票收集資料"
 
+#: src/components/routes/event/orders.tsx:82
+msgid "Collected"
+msgstr ""
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
 msgid "Color"
@@ -2386,10 +2414,19 @@ msgstr "完成您的個人資料以加入團隊。"
 #: src/components/common/OrdersTable/index.tsx:417
 #: src/components/common/OrderStatusBadge/index.tsx:8
 #: src/components/modals/SendMessageModal/index.tsx:334
-#: src/components/routes/event/orders.tsx:23
 #: src/components/routes/my-tickets/index.tsx:34
 msgid "Completed"
 msgstr "已完成"
+
+#: src/components/routes/event/orders.tsx:83
+msgctxt "orders figure"
+msgid "Completed"
+msgstr ""
+
+#: src/components/routes/event/orders.tsx:95
+msgctxt "orders filter"
+msgid "Completed"
+msgstr ""
 
 #: src/components/common/StatBoxes/index.tsx:91
 msgid "Completed orders"
@@ -2748,6 +2785,7 @@ msgid "Copy Code"
 msgstr "複製代碼"
 
 #: src/components/common/OrdersTable/index.tsx:162
+#: src/components/routes/event/OrdersPage/OrderList.tsx:113
 msgid "Copy customer link"
 msgstr ""
 
@@ -3130,10 +3168,12 @@ msgstr "自定義範本"
 
 #: src/components/common/AdminOrdersTable/index.tsx:71
 #: src/components/common/OrdersTable/index.tsx:208
+#: src/components/routes/event/OrdersPage/OrderList.tsx:153
 msgid "Customer"
 msgstr "客户"
 
 #: src/components/common/OrdersTable/index.tsx:160
+#: src/components/routes/event/OrdersPage/OrderList.tsx:111
 msgid "Customer link copied to clipboard"
 msgstr ""
 
@@ -3561,6 +3601,7 @@ msgid "Download CSV"
 msgstr "下載 CSV"
 
 #: src/components/common/OrdersTable/index.tsx:166
+#: src/components/routes/event/OrdersPage/OrderList.tsx:118
 msgid "Download invoice"
 msgstr "下載發票"
 
@@ -3582,6 +3623,7 @@ msgstr ""
 
 #: src/components/common/OrdersTable/index.tsx:99
 #: src/components/layouts/Checkout/index.tsx:87
+#: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Downloading Invoice"
 msgstr "正在下載發票"
 
@@ -4135,6 +4177,7 @@ msgstr "設備租賃"
 #: src/components/common/OrdersTable/index.tsx:107
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
 #: src/components/layouts/Checkout/index.tsx:95
+#: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Error"
 msgstr "錯誤"
 
@@ -4483,9 +4526,12 @@ msgstr "有效期"
 
 #: src/components/routes/event/Affiliates/index.tsx:81
 #: src/components/routes/event/attendees.tsx:205
-#: src/components/routes/event/orders.tsx:142
 msgid "Export"
 msgstr "出口"
+
+#: src/components/routes/event/orders.tsx:115
+msgid "Export (Excel)"
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:403
 msgid "Export Answers"
@@ -4519,7 +4565,7 @@ msgstr "正在導出與會者"
 msgid "Exporting complete. Downloading file..."
 msgstr "導出完成。正在下載文件..."
 
-#: src/components/routes/event/orders.tsx:90
+#: src/components/routes/event/orders.tsx:76
 msgid "Exporting Orders"
 msgstr "正在導出訂單"
 
@@ -4609,6 +4655,7 @@ msgstr "刪除範本失敗"
 
 #: src/components/common/OrdersTable/index.tsx:108
 #: src/components/layouts/Checkout/index.tsx:96
+#: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Failed to download invoice. Please try again."
 msgstr "下載發票失敗。請重試。"
 
@@ -4620,7 +4667,7 @@ msgstr "匯出推廣夥伴失敗"
 msgid "Failed to export attendees"
 msgstr "導出與會者失敗"
 
-#: src/components/routes/event/orders.tsx:99
+#: src/components/routes/event/orders.tsx:78
 msgid "Failed to export orders"
 msgstr "導出訂單失敗"
 
@@ -4851,8 +4898,8 @@ msgid "Filter by Event"
 msgstr "按活動篩選"
 
 #: src/components/routes/event/orders.tsx:123
-msgid "Filter Orders"
-msgstr "篩選訂單"
+#~ msgid "Filter Orders"
+#~ msgstr "篩選訂單"
 
 #: src/components/common/FilterModal/index.tsx:87
 #: src/components/common/FilterModal/index.tsx:254
@@ -5031,6 +5078,11 @@ msgstr "表格"
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "免費"
+
+#: src/components/routes/event/OrdersPage/OrderList.tsx:46
+msgctxt "order status"
+msgid "Free"
+msgstr ""
 
 #: src/components/modals/CreateAttendeeModal/index.tsx:151
 msgid "Free (no payment)"
@@ -5817,6 +5869,7 @@ msgstr "發票"
 
 #: src/components/common/OrdersTable/index.tsx:104
 #: src/components/layouts/Checkout/index.tsx:92
+#: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Invoice downloaded successfully"
 msgstr "發票下載成功"
 
@@ -6323,6 +6376,7 @@ msgid "Manage kiosk operators"
 msgstr "管理售票亭操作員"
 
 #: src/components/common/OrdersTable/index.tsx:154
+#: src/components/routes/event/OrdersPage/OrderList.tsx:104
 msgid "Manage order"
 msgstr "管理訂單"
 
@@ -6380,6 +6434,8 @@ msgid "Manually Add Attendee"
 msgstr "手動添加與會者"
 
 #: src/components/common/OrdersTable/index.tsx:171
+#: src/components/routes/event/OrdersPage/OrderList.tsx:123
+#: src/components/routes/event/OrdersPage/OrderList.tsx:196
 msgid "Mark as paid"
 msgstr "標記為已支付"
 
@@ -6427,6 +6483,7 @@ msgid "Message attendees with specific tickets"
 msgstr "向與會者發送特定門票的信息"
 
 #: src/components/common/OrdersTable/index.tsx:156
+#: src/components/routes/event/OrdersPage/OrderList.tsx:107
 msgid "Message buyer"
 msgstr "留言買家"
 
@@ -6552,6 +6609,7 @@ msgstr "月"
 msgid "More"
 msgstr ""
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:97
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:105
 msgid "More actions"
 msgstr ""
@@ -6890,9 +6948,17 @@ msgstr "無信息顯示"
 msgid "No more tickets available for this price."
 msgstr "此票價已售罄。"
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:169
+msgid "No name"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:264
 msgid "No order found."
 msgstr "找不到訂單。"
+
+#: src/components/routes/event/orders.tsx:180
+msgid "No order matches these filters"
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:489
 msgid "No order questions yet"
@@ -6903,6 +6969,7 @@ msgid "No orders found"
 msgstr "找不到訂單"
 
 #: src/components/common/OrdersTable/index.tsx:471
+#: src/components/routes/event/orders.tsx:181
 msgid "No orders to show"
 msgstr "無訂單顯示"
 
@@ -7305,6 +7372,8 @@ msgstr "持續進行"
 #: src/components/routes/event/EventDashboard/index.tsx:83
 #: src/components/routes/event/EventDashboard/index.tsx:129
 #: src/components/routes/event/GettingStarted/index.tsx:164
+#: src/components/routes/event/orders.tsx:102
+#: src/components/routes/event/OrdersPage/OrderList.tsx:174
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:248
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:45
@@ -7542,6 +7611,7 @@ msgid "Order Locale"
 msgstr "訂單語言"
 
 #: src/components/common/OrdersTable/index.tsx:79
+#: src/components/routes/event/OrdersPage/OrderList.tsx:70
 msgid "Order marked as paid"
 msgstr "訂單已標記為已支付"
 
@@ -7595,7 +7665,6 @@ msgstr "訂單已退款"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:64
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:64
-#: src/components/routes/event/orders.tsx:45
 msgid "Order Status"
 msgstr "訂單狀態"
 
@@ -7641,7 +7710,7 @@ msgstr "訂單已被取消"
 #: src/components/routes/admin/Attribution/index.tsx:138
 #: src/components/routes/admin/Orders/index.tsx:44
 #: src/components/routes/event/EventDashboard/index.tsx:101
-#: src/components/routes/event/orders.tsx:115
+#: src/components/routes/event/orders.tsx:110
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:76
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
@@ -7653,7 +7722,7 @@ msgstr "訂單"
 msgid "Orders Completed"
 msgstr "已完成訂單"
 
-#: src/components/routes/event/orders.tsx:94
+#: src/components/routes/event/orders.tsx:77
 msgid "Orders Exported"
 msgstr "訂單已導出"
 
@@ -7884,6 +7953,11 @@ msgstr "頁面瀏覽量"
 msgid "Page Views"
 msgstr "頁面瀏覽量"
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:47
+msgctxt "order status"
+msgid "Paid"
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:433
 msgid "Paid"
 msgstr ""
@@ -7904,8 +7978,11 @@ msgstr "付費、免費、分級定價和捐贈型門票"
 msgid "Partial refund"
 msgstr "部分退款"
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:39
+msgid "Partially refunded"
+msgstr ""
+
 #: src/components/common/OrderStatusBadge/index.tsx:16
-#: src/components/routes/event/orders.tsx:30
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:71
 msgid "Partially Refunded"
 msgstr "部分退款"
@@ -8052,6 +8129,10 @@ msgstr "付款日期"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:216
 msgid "Payment Due Period"
 msgstr "付款期限"
+
+#: src/components/routes/event/OrdersPage/OrderList.tsx:45
+msgid "Payment failed"
+msgstr ""
 
 #: src/components/common/OrderStatusBadge/index.tsx:14
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:58
@@ -8379,7 +8460,7 @@ msgstr "請選擇至少一個產品"
 
 #: src/components/routes/event/Affiliates/index.tsx:52
 #: src/components/routes/event/attendees.tsx:137
-#: src/components/routes/event/orders.tsx:100
+#: src/components/routes/event/orders.tsx:78
 msgid "Please try again."
 msgstr "請再試一次。"
 
@@ -8401,10 +8482,11 @@ msgstr "請稍候，我們正在準備導出您的與會者..."
 
 #: src/components/common/OrdersTable/index.tsx:100
 #: src/components/layouts/Checkout/index.tsx:88
+#: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Please wait while we prepare your invoice..."
 msgstr "請稍候，我們正在準備您的發票..."
 
-#: src/components/routes/event/orders.tsx:91
+#: src/components/routes/event/orders.tsx:76
 msgid "Please wait while we prepare your orders for export..."
 msgstr "請稍候，我們正在準備導出您的訂單..."
 
@@ -9017,6 +9099,7 @@ msgid "Refund amount"
 msgstr "退款金額"
 
 #: src/components/common/OrdersTable/index.tsx:371
+#: src/components/routes/event/OrdersPage/OrderList.tsx:41
 msgid "Refund failed"
 msgstr "退款失敗"
 
@@ -9025,6 +9108,7 @@ msgid "Refund Failed"
 msgstr "退款失敗"
 
 #: src/components/common/OrdersTable/index.tsx:176
+#: src/components/routes/event/OrdersPage/OrderList.tsx:128
 msgid "Refund order"
 msgstr "退款訂單"
 
@@ -9033,6 +9117,7 @@ msgid "Refund Order {0}"
 msgstr "退款訂單 {0}"
 
 #: src/components/common/OrdersTable/index.tsx:370
+#: src/components/routes/event/OrdersPage/OrderList.tsx:40
 msgid "Refund pending"
 msgstr "退款待處理"
 
@@ -9041,7 +9126,6 @@ msgstr "退款待處理"
 msgid "Refund Pending"
 msgstr "退款處理中"
 
-#: src/components/routes/event/orders.tsx:51
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:274
 msgid "Refund Status"
 msgstr "退款狀態"
@@ -9049,10 +9133,20 @@ msgstr "退款狀態"
 #: src/components/common/OrderStatusBadge/index.tsx:15
 #: src/components/common/OrderSummary/index.tsx:80
 #: src/components/common/StatBoxes/index.tsx:88
-#: src/components/routes/event/orders.tsx:29
+#: src/components/routes/event/OrdersPage/OrderList.tsx:38
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:70
 msgid "Refunded"
 msgstr "退款"
+
+#: src/components/routes/event/orders.tsx:90
+msgctxt "orders figure"
+msgid "Refunded"
+msgstr ""
+
+#: src/components/routes/event/orders.tsx:98
+msgctxt "orders filter"
+msgid "Refunded"
+msgstr ""
 
 #: src/components/modals/RefundOrderModal/index.tsx:128
 msgid "Refunded tickets are cancelled and can no longer be used at the entrance."
@@ -9237,6 +9331,7 @@ msgid "Resend invitation"
 msgstr "重新發送邀請"
 
 #: src/components/common/OrdersTable/index.tsx:183
+#: src/components/routes/event/OrdersPage/OrderList.tsx:133
 msgid "Resend order email"
 msgstr "重新發送訂單電子郵件"
 
@@ -9584,6 +9679,10 @@ msgstr "已排程"
 msgid "Scheduled time"
 msgstr "排程時間"
 
+#: src/components/routes/event/orders.tsx:160
+msgid "Search a name, an email or an order number…"
+msgstr ""
+
 #: src/components/routes/event/Affiliates/index.tsx:68
 msgid "Search affiliates..."
 msgstr "搜尋推廣夥伴..."
@@ -9622,8 +9721,8 @@ msgid "Search by name, email, or account..."
 msgstr "按姓名、電子郵件或帳戶搜索..."
 
 #: src/components/routes/event/orders.tsx:128
-msgid "Search by name, email, or order #..."
-msgstr "按姓名、電子郵件或訂單號搜索..."
+#~ msgid "Search by name, email, or order #..."
+#~ msgstr "按姓名、電子郵件或訂單號搜索..."
 
 #: src/components/layouts/CheckIn/index.tsx:439
 msgid "Search by name, order #, attendee # or email..."
@@ -10463,6 +10562,7 @@ msgstr "統計數據基於帳戶創建日期"
 #: src/components/routes/admin/Messages/index.tsx:167
 #: src/components/routes/admin/Messages/index.tsx:293
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:100
+#: src/components/routes/event/OrdersPage/OrderList.tsx:156
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:88
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
 msgid "Status"
@@ -10541,6 +10641,7 @@ msgstr "小計"
 #: src/components/common/OrdersTable/index.tsx:103
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
 #: src/components/layouts/Checkout/index.tsx:91
+#: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Success"
 msgstr "成功"
 
@@ -11122,6 +11223,7 @@ msgid "There is a refund pending. Please wait for it to complete before requesti
 msgstr "退款正在處理中。請等待退款完成後再申請退款。"
 
 #: src/components/common/OrdersTable/index.tsx:80
+#: src/components/routes/event/OrdersPage/OrderList.tsx:71
 msgid "There was an error marking the order as paid"
 msgstr "標記訂單為已支付時出錯"
 
@@ -11130,6 +11232,7 @@ msgid "There was an error processing your request. Please try again."
 msgstr "處理您的請求時出現錯誤。請重試。"
 
 #: src/components/common/OrdersTable/index.tsx:87
+#: src/components/routes/event/OrdersPage/OrderList.tsx:76
 msgid "There was an error sending your message"
 msgstr "發送信息時出現錯誤"
 
@@ -11494,6 +11597,7 @@ msgstr ""
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:547
 #: src/components/routes/event/EventDashboard/index.tsx:224
 #: src/components/routes/event/GettingStarted/index.tsx:83
+#: src/components/routes/event/OrdersPage/OrderList.tsx:154
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "門票"
@@ -12289,8 +12393,8 @@ msgid "View Order Details"
 msgstr "查看訂單詳情"
 
 #: src/components/routes/event/orders.tsx:114
-msgid "View order details, issue refunds, and resend confirmations."
-msgstr "查看訂單詳情、退款和重新傳送確認。"
+#~ msgid "View order details, issue refunds, and resend confirmations."
+#~ msgstr "查看訂單詳情、退款和重新傳送確認。"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:253
 #: src/components/layouts/OrganizerLayout/index.tsx:256
@@ -12306,6 +12410,10 @@ msgstr "查看門票"
 #: src/components/routes/event/attendees.tsx:171
 msgid "View, edit, and export your registered attendees."
 msgstr "查看、編輯和匯出您的已註冊參與者。"
+
+#: src/components/routes/event/orders.tsx:111
+msgid "View, refund and resend tickets."
+msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:103
 msgid "Vimeo"
@@ -13111,6 +13219,7 @@ msgid "Your logo, colors, and style on every page"
 msgstr "您的標誌、顏色和風格出現在每個頁面上"
 
 #: src/components/common/OrdersTable/index.tsx:86
+#: src/components/routes/event/OrdersPage/OrderList.tsx:75
 msgid "Your message has been sent"
 msgstr "您的信息已發送"
 
@@ -13150,11 +13259,12 @@ msgstr "您的訂單已被取消。"
 msgid "Your order is awaiting payment"
 msgstr "您的訂單正在等待付款"
 
-#: src/components/routes/event/orders.tsx:95
+#: src/components/routes/event/orders.tsx:77
 msgid "Your orders have been exported successfully."
 msgstr "您的訂單已成功導出。"
 
 #: src/components/common/OrdersTable/index.tsx:474
+#: src/components/routes/event/orders.tsx:182
 msgid "Your orders will appear here once they start rolling in."
 msgstr "您的訂單一旦開始滾動，就會出現在這裏。"
 

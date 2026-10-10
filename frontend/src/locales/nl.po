@@ -881,6 +881,11 @@ msgstr "Na het evenement"
 msgid "After your request, we reply within 1 business day to schedule a time. We show you the platform based on your next event: invitations, welcome, badges and reporting."
 msgstr "Na uw aanvraag reageren we binnen 1 werkdag om een afspraak te plannen. We tonen u het platform aan de hand van uw volgende evenement: uitnodigingen, ontvangst, badges en rapportage."
 
+#: src/components/routes/event/orders.tsx:94
+msgctxt "orders filter"
+msgid "All"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:246
 msgid "All"
 msgstr "Alle"
@@ -1021,6 +1026,7 @@ msgstr "Verbazingwekkend, evenement, trefwoorden..."
 
 #: src/components/common/OrdersTable/index.tsx:353
 #: src/components/forms/TaxAndFeeForm/index.tsx:71
+#: src/components/routes/event/OrdersPage/OrderList.tsx:155
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:36
 msgid "Amount"
 msgstr "Bedrag"
@@ -1542,12 +1548,16 @@ msgstr "Beschikbaar voor terugbetaling"
 msgid "Available Tokens"
 msgstr "Beschikbare Tokens"
 
+#: src/components/routes/event/orders.tsx:96
+msgctxt "orders filter"
+msgid "Awaiting"
+msgstr ""
+
 #: src/components/common/OrderStatusBadge/index.tsx:11
 #: src/components/modals/SendMessageModal/index.tsx:335
 msgid "Awaiting offline payment"
 msgstr "In afwachting van offline betaling"
 
-#: src/components/routes/event/orders.tsx:25
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:60
 msgid "Awaiting Offline Payment"
 msgstr "In afwachting van offline betaling"
@@ -1559,6 +1569,12 @@ msgstr "In afwachting van offline betaling"
 #: src/components/common/CheckIn/AttendeeList.tsx:88
 msgid "Awaiting payment"
 msgstr "Wacht op betaling"
+
+#: src/components/routes/event/orders.tsx:86
+#: src/components/routes/event/OrdersPage/OrderList.tsx:43
+msgctxt "order status"
+msgid "Awaiting payment"
+msgstr ""
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:29
 #: src/components/common/AttendeeTable/index.tsx:294
@@ -1715,6 +1731,8 @@ msgstr "Kassa"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:514
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:871
 #: src/components/routes/event/EventDashboard/index.tsx:31
+#: src/components/routes/event/orders.tsx:103
+#: src/components/routes/event/OrdersPage/OrderList.tsx:174
 msgid "Box Office"
 msgstr ""
 
@@ -1845,6 +1863,7 @@ msgid "Cancel email change"
 msgstr "E-mailwijziging annuleren"
 
 #: src/components/common/OrdersTable/index.tsx:194
+#: src/components/routes/event/OrdersPage/OrderList.tsx:140
 msgid "Cancel order"
 msgstr "Bestelling annuleren"
 
@@ -1871,7 +1890,7 @@ msgstr ""
 #: src/components/common/WaitlistTable/index.tsx:27
 #: src/components/routes/admin/Messages/index.tsx:126
 #: src/components/routes/event/attendees.tsx:27
-#: src/components/routes/event/orders.tsx:24
+#: src/components/routes/event/OrdersPage/OrderList.tsx:37
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:75
 #: src/components/routes/kiosk/Orders/index.tsx:175
 #: src/components/routes/kiosk/Orders/index.tsx:190
@@ -1879,6 +1898,11 @@ msgstr ""
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:98
 msgid "Cancelled"
 msgstr "Geannuleerd"
+
+#: src/components/routes/event/orders.tsx:97
+msgctxt "orders filter"
+msgid "Cancelled"
+msgstr ""
 
 #: src/components/common/CheckIn/AttendeeList.tsx:30
 msgid "Cannot Check In"
@@ -2295,6 +2319,10 @@ msgstr "Gegevens per bestelling verzamelen"
 msgid "Collect details per ticket"
 msgstr "Gegevens per ticket verzamelen"
 
+#: src/components/routes/event/orders.tsx:82
+msgid "Collected"
+msgstr ""
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
 msgid "Color"
@@ -2387,10 +2415,19 @@ msgstr "Voltooi uw profiel om deel te nemen aan het team."
 #: src/components/common/OrdersTable/index.tsx:417
 #: src/components/common/OrderStatusBadge/index.tsx:8
 #: src/components/modals/SendMessageModal/index.tsx:334
-#: src/components/routes/event/orders.tsx:23
 #: src/components/routes/my-tickets/index.tsx:34
 msgid "Completed"
 msgstr "Voltooid"
+
+#: src/components/routes/event/orders.tsx:83
+msgctxt "orders figure"
+msgid "Completed"
+msgstr ""
+
+#: src/components/routes/event/orders.tsx:95
+msgctxt "orders filter"
+msgid "Completed"
+msgstr ""
 
 #: src/components/common/StatBoxes/index.tsx:91
 msgid "Completed orders"
@@ -2749,6 +2786,7 @@ msgid "Copy Code"
 msgstr "Kopieer code"
 
 #: src/components/common/OrdersTable/index.tsx:162
+#: src/components/routes/event/OrdersPage/OrderList.tsx:113
 msgid "Copy customer link"
 msgstr ""
 
@@ -3131,10 +3169,12 @@ msgstr "Aangepaste sjabloon"
 
 #: src/components/common/AdminOrdersTable/index.tsx:71
 #: src/components/common/OrdersTable/index.tsx:208
+#: src/components/routes/event/OrdersPage/OrderList.tsx:153
 msgid "Customer"
 msgstr "Klant"
 
 #: src/components/common/OrdersTable/index.tsx:160
+#: src/components/routes/event/OrdersPage/OrderList.tsx:111
 msgid "Customer link copied to clipboard"
 msgstr ""
 
@@ -3562,6 +3602,7 @@ msgid "Download CSV"
 msgstr "CSV downloaden"
 
 #: src/components/common/OrdersTable/index.tsx:166
+#: src/components/routes/event/OrdersPage/OrderList.tsx:118
 msgid "Download invoice"
 msgstr "Factuur downloaden"
 
@@ -3583,6 +3624,7 @@ msgstr ""
 
 #: src/components/common/OrdersTable/index.tsx:99
 #: src/components/layouts/Checkout/index.tsx:87
+#: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Downloading Invoice"
 msgstr "Factuur downloaden"
 
@@ -4136,6 +4178,7 @@ msgstr "Verhuur van apparatuur"
 #: src/components/common/OrdersTable/index.tsx:107
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
 #: src/components/layouts/Checkout/index.tsx:95
+#: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Error"
 msgstr "Fout"
 
@@ -4484,9 +4527,12 @@ msgstr "Vervaldatum"
 
 #: src/components/routes/event/Affiliates/index.tsx:81
 #: src/components/routes/event/attendees.tsx:205
-#: src/components/routes/event/orders.tsx:142
 msgid "Export"
 msgstr "Exporteer"
+
+#: src/components/routes/event/orders.tsx:115
+msgid "Export (Excel)"
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:403
 msgid "Export Answers"
@@ -4520,7 +4566,7 @@ msgstr "Deelnemers exporteren"
 msgid "Exporting complete. Downloading file..."
 msgstr "Exporteren voltooid. Bestand wordt gedownload..."
 
-#: src/components/routes/event/orders.tsx:90
+#: src/components/routes/event/orders.tsx:76
 msgid "Exporting Orders"
 msgstr "Orders exporteren"
 
@@ -4610,6 +4656,7 @@ msgstr "Sjabloon verwijderen mislukt"
 
 #: src/components/common/OrdersTable/index.tsx:108
 #: src/components/layouts/Checkout/index.tsx:96
+#: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Failed to download invoice. Please try again."
 msgstr "Downloaden van factuur mislukt. Probeer het opnieuw."
 
@@ -4621,7 +4668,7 @@ msgstr "Exporteren affiliates mislukt"
 msgid "Failed to export attendees"
 msgstr "Geen deelnemers geëxporteerd"
 
-#: src/components/routes/event/orders.tsx:99
+#: src/components/routes/event/orders.tsx:78
 msgid "Failed to export orders"
 msgstr "Geen orders kunnen exporteren"
 
@@ -4852,8 +4899,8 @@ msgid "Filter by Event"
 msgstr "Filteren op evenement"
 
 #: src/components/routes/event/orders.tsx:123
-msgid "Filter Orders"
-msgstr "Bestellingen filteren"
+#~ msgid "Filter Orders"
+#~ msgstr "Bestellingen filteren"
 
 #: src/components/common/FilterModal/index.tsx:87
 #: src/components/common/FilterModal/index.tsx:254
@@ -5032,6 +5079,11 @@ msgstr "Formulier"
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Gratis"
+
+#: src/components/routes/event/OrdersPage/OrderList.tsx:46
+msgctxt "order status"
+msgid "Free"
+msgstr ""
 
 #: src/components/modals/CreateAttendeeModal/index.tsx:151
 msgid "Free (no payment)"
@@ -5818,6 +5870,7 @@ msgstr "Factuur"
 
 #: src/components/common/OrdersTable/index.tsx:104
 #: src/components/layouts/Checkout/index.tsx:92
+#: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Invoice downloaded successfully"
 msgstr "Factuur succesvol gedownload"
 
@@ -6324,6 +6377,7 @@ msgid "Manage kiosk operators"
 msgstr "Kioskbedieners beheren"
 
 #: src/components/common/OrdersTable/index.tsx:154
+#: src/components/routes/event/OrdersPage/OrderList.tsx:104
 msgid "Manage order"
 msgstr "Bestelling beheren"
 
@@ -6381,6 +6435,8 @@ msgid "Manually Add Attendee"
 msgstr "Deelnemer handmatig toevoegen"
 
 #: src/components/common/OrdersTable/index.tsx:171
+#: src/components/routes/event/OrdersPage/OrderList.tsx:123
+#: src/components/routes/event/OrdersPage/OrderList.tsx:196
 msgid "Mark as paid"
 msgstr "Markeer als betaald"
 
@@ -6428,6 +6484,7 @@ msgid "Message attendees with specific tickets"
 msgstr "Deelnemers berichten sturen met specifieke tickets"
 
 #: src/components/common/OrdersTable/index.tsx:156
+#: src/components/routes/event/OrdersPage/OrderList.tsx:107
 msgid "Message buyer"
 msgstr "Bericht koper"
 
@@ -6553,6 +6610,7 @@ msgstr "Maand"
 msgid "More"
 msgstr ""
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:97
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:105
 msgid "More actions"
 msgstr ""
@@ -6891,9 +6949,17 @@ msgstr "Geen berichten om te tonen"
 msgid "No more tickets available for this price."
 msgstr "Geen tickets meer voor dit tarief."
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:169
+msgid "No name"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:264
 msgid "No order found."
 msgstr "Geen bestelling gevonden."
+
+#: src/components/routes/event/orders.tsx:180
+msgid "No order matches these filters"
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:489
 msgid "No order questions yet"
@@ -6904,6 +6970,7 @@ msgid "No orders found"
 msgstr "Geen bestellingen gevonden"
 
 #: src/components/common/OrdersTable/index.tsx:471
+#: src/components/routes/event/orders.tsx:181
 msgid "No orders to show"
 msgstr "Geen orders om te laten zien"
 
@@ -7306,6 +7373,8 @@ msgstr "Doorlopend"
 #: src/components/routes/event/EventDashboard/index.tsx:83
 #: src/components/routes/event/EventDashboard/index.tsx:129
 #: src/components/routes/event/GettingStarted/index.tsx:164
+#: src/components/routes/event/orders.tsx:102
+#: src/components/routes/event/OrdersPage/OrderList.tsx:174
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:248
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:45
@@ -7543,6 +7612,7 @@ msgid "Order Locale"
 msgstr "Besteltaal"
 
 #: src/components/common/OrdersTable/index.tsx:79
+#: src/components/routes/event/OrdersPage/OrderList.tsx:70
 msgid "Order marked as paid"
 msgstr "Bestelling gemarkeerd als betaald"
 
@@ -7596,7 +7666,6 @@ msgstr "Bestelling terugbetaald"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:64
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:64
-#: src/components/routes/event/orders.tsx:45
 msgid "Order Status"
 msgstr "Bestelstatus"
 
@@ -7642,7 +7711,7 @@ msgstr "Bestelling is geannuleerd"
 #: src/components/routes/admin/Attribution/index.tsx:138
 #: src/components/routes/admin/Orders/index.tsx:44
 #: src/components/routes/event/EventDashboard/index.tsx:101
-#: src/components/routes/event/orders.tsx:115
+#: src/components/routes/event/orders.tsx:110
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:76
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
@@ -7654,7 +7723,7 @@ msgstr "Bestellingen"
 msgid "Orders Completed"
 msgstr "Voltooide bestellingen"
 
-#: src/components/routes/event/orders.tsx:94
+#: src/components/routes/event/orders.tsx:77
 msgid "Orders Exported"
 msgstr "Geëxporteerde bestellingen"
 
@@ -7885,6 +7954,11 @@ msgstr "Bekeken pagina's"
 msgid "Page Views"
 msgstr "Paginaweergaven"
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:47
+msgctxt "order status"
+msgid "Paid"
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:433
 msgid "Paid"
 msgstr ""
@@ -7905,8 +7979,11 @@ msgstr "Betaalde, gratis, gelaagde prijzen en op donaties gebaseerde tickets"
 msgid "Partial refund"
 msgstr "Gedeeltelijke terugbetaling"
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:39
+msgid "Partially refunded"
+msgstr ""
+
 #: src/components/common/OrderStatusBadge/index.tsx:16
-#: src/components/routes/event/orders.tsx:30
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:71
 msgid "Partially Refunded"
 msgstr "Gedeeltelijk Terugbetaald"
@@ -8053,6 +8130,10 @@ msgstr "Betaaldatum"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:216
 msgid "Payment Due Period"
 msgstr "Betalingstermijn"
+
+#: src/components/routes/event/OrdersPage/OrderList.tsx:45
+msgid "Payment failed"
+msgstr ""
 
 #: src/components/common/OrderStatusBadge/index.tsx:14
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:58
@@ -8380,7 +8461,7 @@ msgstr "Selecteer ten minste één product"
 
 #: src/components/routes/event/Affiliates/index.tsx:52
 #: src/components/routes/event/attendees.tsx:137
-#: src/components/routes/event/orders.tsx:100
+#: src/components/routes/event/orders.tsx:78
 msgid "Please try again."
 msgstr "Probeer het opnieuw."
 
@@ -8402,10 +8483,11 @@ msgstr "Wacht even terwijl we je deelnemers voorbereiden voor export..."
 
 #: src/components/common/OrdersTable/index.tsx:100
 #: src/components/layouts/Checkout/index.tsx:88
+#: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Please wait while we prepare your invoice..."
 msgstr "Wacht even terwijl we uw factuur opstellen..."
 
-#: src/components/routes/event/orders.tsx:91
+#: src/components/routes/event/orders.tsx:76
 msgid "Please wait while we prepare your orders for export..."
 msgstr "Even geduld alstublieft terwijl we uw bestellingen klaarmaken voor export..."
 
@@ -9018,6 +9100,7 @@ msgid "Refund amount"
 msgstr "Terugbetalingsbedrag"
 
 #: src/components/common/OrdersTable/index.tsx:371
+#: src/components/routes/event/OrdersPage/OrderList.tsx:41
 msgid "Refund failed"
 msgstr "Terugbetaling mislukt"
 
@@ -9026,6 +9109,7 @@ msgid "Refund Failed"
 msgstr "Terugbetaling mislukt"
 
 #: src/components/common/OrdersTable/index.tsx:176
+#: src/components/routes/event/OrdersPage/OrderList.tsx:128
 msgid "Refund order"
 msgstr "Bestelling terugbetalen"
 
@@ -9034,6 +9118,7 @@ msgid "Refund Order {0}"
 msgstr "Bestelling {0} terugbetalen"
 
 #: src/components/common/OrdersTable/index.tsx:370
+#: src/components/routes/event/OrdersPage/OrderList.tsx:40
 msgid "Refund pending"
 msgstr "Terugbetaling in behandeling"
 
@@ -9042,7 +9127,6 @@ msgstr "Terugbetaling in behandeling"
 msgid "Refund Pending"
 msgstr "Restitutie in behandeling"
 
-#: src/components/routes/event/orders.tsx:51
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:274
 msgid "Refund Status"
 msgstr "Restitutie Status"
@@ -9050,10 +9134,20 @@ msgstr "Restitutie Status"
 #: src/components/common/OrderStatusBadge/index.tsx:15
 #: src/components/common/OrderSummary/index.tsx:80
 #: src/components/common/StatBoxes/index.tsx:88
-#: src/components/routes/event/orders.tsx:29
+#: src/components/routes/event/OrdersPage/OrderList.tsx:38
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:70
 msgid "Refunded"
 msgstr "Terugbetaald"
+
+#: src/components/routes/event/orders.tsx:90
+msgctxt "orders figure"
+msgid "Refunded"
+msgstr ""
+
+#: src/components/routes/event/orders.tsx:98
+msgctxt "orders filter"
+msgid "Refunded"
+msgstr ""
 
 #: src/components/modals/RefundOrderModal/index.tsx:128
 msgid "Refunded tickets are cancelled and can no longer be used at the entrance."
@@ -9238,6 +9332,7 @@ msgid "Resend invitation"
 msgstr "Uitnodiging opnieuw versturen"
 
 #: src/components/common/OrdersTable/index.tsx:183
+#: src/components/routes/event/OrdersPage/OrderList.tsx:133
 msgid "Resend order email"
 msgstr "E-mail met bestelling opnieuw verzenden"
 
@@ -9585,6 +9680,10 @@ msgstr "Gepland"
 msgid "Scheduled time"
 msgstr "Geplande tijd"
 
+#: src/components/routes/event/orders.tsx:160
+msgid "Search a name, an email or an order number…"
+msgstr ""
+
 #: src/components/routes/event/Affiliates/index.tsx:68
 msgid "Search affiliates..."
 msgstr "Zoek affiliates..."
@@ -9623,8 +9722,8 @@ msgid "Search by name, email, or account..."
 msgstr "Zoeken op naam, e-mail of account..."
 
 #: src/components/routes/event/orders.tsx:128
-msgid "Search by name, email, or order #..."
-msgstr "Zoeken op naam, e-mail of bestelnummer..."
+#~ msgid "Search by name, email, or order #..."
+#~ msgstr "Zoeken op naam, e-mail of bestelnummer..."
 
 #: src/components/layouts/CheckIn/index.tsx:439
 msgid "Search by name, order #, attendee # or email..."
@@ -10464,6 +10563,7 @@ msgstr "Statistieken zijn gebaseerd op de aanmaakdatum van het account"
 #: src/components/routes/admin/Messages/index.tsx:167
 #: src/components/routes/admin/Messages/index.tsx:293
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:100
+#: src/components/routes/event/OrdersPage/OrderList.tsx:156
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:88
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
 msgid "Status"
@@ -10542,6 +10642,7 @@ msgstr "Subtotaal"
 #: src/components/common/OrdersTable/index.tsx:103
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
 #: src/components/layouts/Checkout/index.tsx:91
+#: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Success"
 msgstr "Succes"
 
@@ -11123,6 +11224,7 @@ msgid "There is a refund pending. Please wait for it to complete before requesti
 msgstr "Er is een restitutie in behandeling. Wacht tot deze is voltooid voordat je een nieuwe restitutie aanvraagt."
 
 #: src/components/common/OrdersTable/index.tsx:80
+#: src/components/routes/event/OrdersPage/OrderList.tsx:71
 msgid "There was an error marking the order as paid"
 msgstr "Er is een fout opgetreden bij het markeren van de bestelling als betaald"
 
@@ -11131,6 +11233,7 @@ msgid "There was an error processing your request. Please try again."
 msgstr "Er is een fout opgetreden bij het verwerken van uw verzoek. Probeer het opnieuw."
 
 #: src/components/common/OrdersTable/index.tsx:87
+#: src/components/routes/event/OrdersPage/OrderList.tsx:76
 msgid "There was an error sending your message"
 msgstr "Er is een fout opgetreden bij het verzenden van uw bericht"
 
@@ -11495,6 +11598,7 @@ msgstr ""
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:547
 #: src/components/routes/event/EventDashboard/index.tsx:224
 #: src/components/routes/event/GettingStarted/index.tsx:83
+#: src/components/routes/event/OrdersPage/OrderList.tsx:154
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "Tickets"
@@ -12290,8 +12394,8 @@ msgid "View Order Details"
 msgstr "Bekijk bestelgegevens"
 
 #: src/components/routes/event/orders.tsx:114
-msgid "View order details, issue refunds, and resend confirmations."
-msgstr "Bekijk bestellingsdetails, geef terugbetalingen en verstuur bevestigingen opnieuw."
+#~ msgid "View order details, issue refunds, and resend confirmations."
+#~ msgstr "Bekijk bestellingsdetails, geef terugbetalingen en verstuur bevestigingen opnieuw."
 
 #: src/components/layouts/OrganizerLayout/index.tsx:253
 #: src/components/layouts/OrganizerLayout/index.tsx:256
@@ -12307,6 +12411,10 @@ msgstr "Ticket Bekijken"
 #: src/components/routes/event/attendees.tsx:171
 msgid "View, edit, and export your registered attendees."
 msgstr "Bekijk, bewerk en exporteer je geregistreerde deelnemers."
+
+#: src/components/routes/event/orders.tsx:111
+msgid "View, refund and resend tickets."
+msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:103
 msgid "Vimeo"
@@ -13112,6 +13220,7 @@ msgid "Your logo, colors, and style on every page"
 msgstr "Uw logo, kleuren en stijl op elke pagina"
 
 #: src/components/common/OrdersTable/index.tsx:86
+#: src/components/routes/event/OrdersPage/OrderList.tsx:75
 msgid "Your message has been sent"
 msgstr "Uw bericht is verzonden"
 
@@ -13151,11 +13260,12 @@ msgstr "Uw bestelling is geannuleerd."
 msgid "Your order is awaiting payment"
 msgstr "Je bestelling wacht op betaling"
 
-#: src/components/routes/event/orders.tsx:95
+#: src/components/routes/event/orders.tsx:77
 msgid "Your orders have been exported successfully."
 msgstr "Je bestellingen zijn succesvol geëxporteerd."
 
 #: src/components/common/OrdersTable/index.tsx:474
+#: src/components/routes/event/orders.tsx:182
 msgid "Your orders will appear here once they start rolling in."
 msgstr "Je bestellingen verschijnen hier zodra ze binnenkomen."
 

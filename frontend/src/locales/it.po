@@ -880,6 +880,11 @@ msgstr "Dopo l'evento"
 msgid "After your request, we reply within 1 business day to schedule a time. We show you the platform based on your next event: invitations, welcome, badges and reporting."
 msgstr "Dopo la vostra richiesta, rispondiamo entro 1 giorno lavorativo per fissare un appuntamento. Vi mostriamo la piattaforma partendo dal vostro prossimo evento: inviti, accoglienza, badge e report."
 
+#: src/components/routes/event/orders.tsx:94
+msgctxt "orders filter"
+msgid "All"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:246
 msgid "All"
 msgstr "Tutti"
@@ -1020,6 +1025,7 @@ msgstr "Fantastico, Evento, Parole chiave..."
 
 #: src/components/common/OrdersTable/index.tsx:353
 #: src/components/forms/TaxAndFeeForm/index.tsx:71
+#: src/components/routes/event/OrdersPage/OrderList.tsx:155
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:36
 msgid "Amount"
 msgstr "Importo"
@@ -1541,12 +1547,16 @@ msgstr "Disponibile per rimborso"
 msgid "Available Tokens"
 msgstr "Token Disponibili"
 
+#: src/components/routes/event/orders.tsx:96
+msgctxt "orders filter"
+msgid "Awaiting"
+msgstr ""
+
 #: src/components/common/OrderStatusBadge/index.tsx:11
 #: src/components/modals/SendMessageModal/index.tsx:335
 msgid "Awaiting offline payment"
 msgstr "In attesa di pagamento offline"
 
-#: src/components/routes/event/orders.tsx:25
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:60
 msgid "Awaiting Offline Payment"
 msgstr "In Attesa di Pagamento Offline"
@@ -1558,6 +1568,12 @@ msgstr "In Attesa di Pagamento Offline"
 #: src/components/common/CheckIn/AttendeeList.tsx:88
 msgid "Awaiting payment"
 msgstr "In attesa di pagamento"
+
+#: src/components/routes/event/orders.tsx:86
+#: src/components/routes/event/OrdersPage/OrderList.tsx:43
+msgctxt "order status"
+msgid "Awaiting payment"
+msgstr ""
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:29
 #: src/components/common/AttendeeTable/index.tsx:294
@@ -1714,6 +1730,8 @@ msgstr "Biglietteria"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:514
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:871
 #: src/components/routes/event/EventDashboard/index.tsx:31
+#: src/components/routes/event/orders.tsx:103
+#: src/components/routes/event/OrdersPage/OrderList.tsx:174
 msgid "Box Office"
 msgstr ""
 
@@ -1844,6 +1862,7 @@ msgid "Cancel email change"
 msgstr "Annulla cambio email"
 
 #: src/components/common/OrdersTable/index.tsx:194
+#: src/components/routes/event/OrdersPage/OrderList.tsx:140
 msgid "Cancel order"
 msgstr "Annulla ordine"
 
@@ -1870,7 +1889,7 @@ msgstr ""
 #: src/components/common/WaitlistTable/index.tsx:27
 #: src/components/routes/admin/Messages/index.tsx:126
 #: src/components/routes/event/attendees.tsx:27
-#: src/components/routes/event/orders.tsx:24
+#: src/components/routes/event/OrdersPage/OrderList.tsx:37
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:75
 #: src/components/routes/kiosk/Orders/index.tsx:175
 #: src/components/routes/kiosk/Orders/index.tsx:190
@@ -1878,6 +1897,11 @@ msgstr ""
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:98
 msgid "Cancelled"
 msgstr "Annullato"
+
+#: src/components/routes/event/orders.tsx:97
+msgctxt "orders filter"
+msgid "Cancelled"
+msgstr ""
 
 #: src/components/common/CheckIn/AttendeeList.tsx:30
 msgid "Cannot Check In"
@@ -2294,6 +2318,10 @@ msgstr "Raccogli i dati per ordine"
 msgid "Collect details per ticket"
 msgstr "Raccogli i dati per biglietto"
 
+#: src/components/routes/event/orders.tsx:82
+msgid "Collected"
+msgstr ""
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
 msgid "Color"
@@ -2386,10 +2414,19 @@ msgstr "Completa il tuo profilo per unirti al team."
 #: src/components/common/OrdersTable/index.tsx:417
 #: src/components/common/OrderStatusBadge/index.tsx:8
 #: src/components/modals/SendMessageModal/index.tsx:334
-#: src/components/routes/event/orders.tsx:23
 #: src/components/routes/my-tickets/index.tsx:34
 msgid "Completed"
 msgstr "Completato"
+
+#: src/components/routes/event/orders.tsx:83
+msgctxt "orders figure"
+msgid "Completed"
+msgstr ""
+
+#: src/components/routes/event/orders.tsx:95
+msgctxt "orders filter"
+msgid "Completed"
+msgstr ""
 
 #: src/components/common/StatBoxes/index.tsx:91
 msgid "Completed orders"
@@ -2748,6 +2785,7 @@ msgid "Copy Code"
 msgstr "Copia codice"
 
 #: src/components/common/OrdersTable/index.tsx:162
+#: src/components/routes/event/OrdersPage/OrderList.tsx:113
 msgid "Copy customer link"
 msgstr ""
 
@@ -3130,10 +3168,12 @@ msgstr "Modello personalizzato"
 
 #: src/components/common/AdminOrdersTable/index.tsx:71
 #: src/components/common/OrdersTable/index.tsx:208
+#: src/components/routes/event/OrdersPage/OrderList.tsx:153
 msgid "Customer"
 msgstr "Cliente"
 
 #: src/components/common/OrdersTable/index.tsx:160
+#: src/components/routes/event/OrdersPage/OrderList.tsx:111
 msgid "Customer link copied to clipboard"
 msgstr "Link cliente copiato negli appunti"
 
@@ -3561,6 +3601,7 @@ msgid "Download CSV"
 msgstr "Scarica CSV"
 
 #: src/components/common/OrdersTable/index.tsx:166
+#: src/components/routes/event/OrdersPage/OrderList.tsx:118
 msgid "Download invoice"
 msgstr "Scarica fattura"
 
@@ -3582,6 +3623,7 @@ msgstr ""
 
 #: src/components/common/OrdersTable/index.tsx:99
 #: src/components/layouts/Checkout/index.tsx:87
+#: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Downloading Invoice"
 msgstr "Scaricamento Fattura in corso"
 
@@ -4137,6 +4179,7 @@ msgstr "Noleggio attrezzature"
 #: src/components/common/OrdersTable/index.tsx:107
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
 #: src/components/layouts/Checkout/index.tsx:95
+#: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Error"
 msgstr "Errore"
 
@@ -4485,9 +4528,12 @@ msgstr "Data di Scadenza"
 
 #: src/components/routes/event/Affiliates/index.tsx:81
 #: src/components/routes/event/attendees.tsx:205
-#: src/components/routes/event/orders.tsx:142
 msgid "Export"
 msgstr "Esporta"
+
+#: src/components/routes/event/orders.tsx:115
+msgid "Export (Excel)"
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:403
 msgid "Export Answers"
@@ -4521,7 +4567,7 @@ msgstr "Esportazione Partecipanti"
 msgid "Exporting complete. Downloading file..."
 msgstr "Esportazione completata. Download file in corso..."
 
-#: src/components/routes/event/orders.tsx:90
+#: src/components/routes/event/orders.tsx:76
 msgid "Exporting Orders"
 msgstr "Esportazione Ordini"
 
@@ -4611,6 +4657,7 @@ msgstr "Impossibile eliminare il modello"
 
 #: src/components/common/OrdersTable/index.tsx:108
 #: src/components/layouts/Checkout/index.tsx:96
+#: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Failed to download invoice. Please try again."
 msgstr "Impossibile scaricare la fattura. Riprova."
 
@@ -4622,7 +4669,7 @@ msgstr "Esportazione affiliati non riuscita"
 msgid "Failed to export attendees"
 msgstr "Impossibile esportare i partecipanti"
 
-#: src/components/routes/event/orders.tsx:99
+#: src/components/routes/event/orders.tsx:78
 msgid "Failed to export orders"
 msgstr "Impossibile esportare gli ordini"
 
@@ -4853,8 +4900,8 @@ msgid "Filter by Event"
 msgstr "Filtra per evento"
 
 #: src/components/routes/event/orders.tsx:123
-msgid "Filter Orders"
-msgstr "Filtra Ordini"
+#~ msgid "Filter Orders"
+#~ msgstr "Filtra Ordini"
 
 #: src/components/common/FilterModal/index.tsx:87
 #: src/components/common/FilterModal/index.tsx:254
@@ -5033,6 +5080,11 @@ msgstr "Modulo"
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Gratuito"
+
+#: src/components/routes/event/OrdersPage/OrderList.tsx:46
+msgctxt "order status"
+msgid "Free"
+msgstr ""
 
 #: src/components/modals/CreateAttendeeModal/index.tsx:151
 msgid "Free (no payment)"
@@ -5819,6 +5871,7 @@ msgstr "Fattura"
 
 #: src/components/common/OrdersTable/index.tsx:104
 #: src/components/layouts/Checkout/index.tsx:92
+#: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Invoice downloaded successfully"
 msgstr "Fattura scaricata con successo"
 
@@ -6325,6 +6378,7 @@ msgid "Manage kiosk operators"
 msgstr "Gestisci operatori del chiosco"
 
 #: src/components/common/OrdersTable/index.tsx:154
+#: src/components/routes/event/OrdersPage/OrderList.tsx:104
 msgid "Manage order"
 msgstr "Gestisci ordine"
 
@@ -6382,6 +6436,8 @@ msgid "Manually Add Attendee"
 msgstr "Aggiungi Manualmente Partecipante"
 
 #: src/components/common/OrdersTable/index.tsx:171
+#: src/components/routes/event/OrdersPage/OrderList.tsx:123
+#: src/components/routes/event/OrdersPage/OrderList.tsx:196
 msgid "Mark as paid"
 msgstr "Segna come pagato"
 
@@ -6429,6 +6485,7 @@ msgid "Message attendees with specific tickets"
 msgstr "Invia messaggio ai partecipanti con biglietti specifici"
 
 #: src/components/common/OrdersTable/index.tsx:156
+#: src/components/routes/event/OrdersPage/OrderList.tsx:107
 msgid "Message buyer"
 msgstr "Messaggio all'acquirente"
 
@@ -6554,6 +6611,7 @@ msgstr "Mese"
 msgid "More"
 msgstr ""
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:97
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:105
 msgid "More actions"
 msgstr ""
@@ -6892,9 +6950,17 @@ msgstr "Nessun messaggio da mostrare"
 msgid "No more tickets available for this price."
 msgstr "Nessun biglietto rimasto per questo prezzo."
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:169
+msgid "No name"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:264
 msgid "No order found."
 msgstr "Nessun ordine trovato."
+
+#: src/components/routes/event/orders.tsx:180
+msgid "No order matches these filters"
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:489
 msgid "No order questions yet"
@@ -6905,6 +6971,7 @@ msgid "No orders found"
 msgstr "Nessun ordine trovato"
 
 #: src/components/common/OrdersTable/index.tsx:471
+#: src/components/routes/event/orders.tsx:181
 msgid "No orders to show"
 msgstr "Nessun ordine da mostrare"
 
@@ -7307,6 +7374,8 @@ msgstr "In Corso"
 #: src/components/routes/event/EventDashboard/index.tsx:83
 #: src/components/routes/event/EventDashboard/index.tsx:129
 #: src/components/routes/event/GettingStarted/index.tsx:164
+#: src/components/routes/event/orders.tsx:102
+#: src/components/routes/event/OrdersPage/OrderList.tsx:174
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:248
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:45
@@ -7544,6 +7613,7 @@ msgid "Order Locale"
 msgstr "Lingua dell'Ordine"
 
 #: src/components/common/OrdersTable/index.tsx:79
+#: src/components/routes/event/OrdersPage/OrderList.tsx:70
 msgid "Order marked as paid"
 msgstr "Ordine contrassegnato come pagato"
 
@@ -7597,7 +7667,6 @@ msgstr "Ordine Rimborsato"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:64
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:64
-#: src/components/routes/event/orders.tsx:45
 msgid "Order Status"
 msgstr "Stato Ordine"
 
@@ -7643,7 +7712,7 @@ msgstr "L'ordine è stato annullato"
 #: src/components/routes/admin/Attribution/index.tsx:138
 #: src/components/routes/admin/Orders/index.tsx:44
 #: src/components/routes/event/EventDashboard/index.tsx:101
-#: src/components/routes/event/orders.tsx:115
+#: src/components/routes/event/orders.tsx:110
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:76
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
@@ -7655,7 +7724,7 @@ msgstr "Ordini"
 msgid "Orders Completed"
 msgstr "Ordini completati"
 
-#: src/components/routes/event/orders.tsx:94
+#: src/components/routes/event/orders.tsx:77
 msgid "Orders Exported"
 msgstr "Ordini Esportati"
 
@@ -7886,6 +7955,11 @@ msgstr "Visualizzazioni pagina"
 msgid "Page Views"
 msgstr "Visualizzazioni pagina"
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:47
+msgctxt "order status"
+msgid "Paid"
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:433
 msgid "Paid"
 msgstr ""
@@ -7906,8 +7980,11 @@ msgstr "Biglietti a pagamento, gratuiti, a prezzi differenziati e basati su dona
 msgid "Partial refund"
 msgstr "Rimborso parziale"
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:39
+msgid "Partially refunded"
+msgstr ""
+
 #: src/components/common/OrderStatusBadge/index.tsx:16
-#: src/components/routes/event/orders.tsx:30
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:71
 msgid "Partially Refunded"
 msgstr "Parzialmente Rimborsato"
@@ -8054,6 +8131,10 @@ msgstr "Data di pagamento"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:216
 msgid "Payment Due Period"
 msgstr "Periodo di Scadenza Pagamento"
+
+#: src/components/routes/event/OrdersPage/OrderList.tsx:45
+msgid "Payment failed"
+msgstr ""
 
 #: src/components/common/OrderStatusBadge/index.tsx:14
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:58
@@ -8381,7 +8462,7 @@ msgstr "Seleziona almeno un prodotto"
 
 #: src/components/routes/event/Affiliates/index.tsx:52
 #: src/components/routes/event/attendees.tsx:137
-#: src/components/routes/event/orders.tsx:100
+#: src/components/routes/event/orders.tsx:78
 msgid "Please try again."
 msgstr "Riprova."
 
@@ -8403,10 +8484,11 @@ msgstr "Attendi mentre prepariamo i tuoi partecipanti per l'esportazione..."
 
 #: src/components/common/OrdersTable/index.tsx:100
 #: src/components/layouts/Checkout/index.tsx:88
+#: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Please wait while we prepare your invoice..."
 msgstr "Attendi mentre prepariamo la tua fattura..."
 
-#: src/components/routes/event/orders.tsx:91
+#: src/components/routes/event/orders.tsx:76
 msgid "Please wait while we prepare your orders for export..."
 msgstr "Attendi mentre prepariamo i tuoi ordini per l'esportazione..."
 
@@ -9021,6 +9103,7 @@ msgid "Refund amount"
 msgstr "Importo rimborso"
 
 #: src/components/common/OrdersTable/index.tsx:371
+#: src/components/routes/event/OrdersPage/OrderList.tsx:41
 msgid "Refund failed"
 msgstr "Rimborso fallito"
 
@@ -9029,6 +9112,7 @@ msgid "Refund Failed"
 msgstr "Rimborso Fallito"
 
 #: src/components/common/OrdersTable/index.tsx:176
+#: src/components/routes/event/OrdersPage/OrderList.tsx:128
 msgid "Refund order"
 msgstr "Rimborsa ordine"
 
@@ -9037,6 +9121,7 @@ msgid "Refund Order {0}"
 msgstr "Rimborsa ordine {0}"
 
 #: src/components/common/OrdersTable/index.tsx:370
+#: src/components/routes/event/OrdersPage/OrderList.tsx:40
 msgid "Refund pending"
 msgstr "Rimborso in sospeso"
 
@@ -9045,7 +9130,6 @@ msgstr "Rimborso in sospeso"
 msgid "Refund Pending"
 msgstr "Rimborso in Attesa"
 
-#: src/components/routes/event/orders.tsx:51
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:274
 msgid "Refund Status"
 msgstr "Stato Rimborso"
@@ -9053,10 +9137,20 @@ msgstr "Stato Rimborso"
 #: src/components/common/OrderStatusBadge/index.tsx:15
 #: src/components/common/OrderSummary/index.tsx:80
 #: src/components/common/StatBoxes/index.tsx:88
-#: src/components/routes/event/orders.tsx:29
+#: src/components/routes/event/OrdersPage/OrderList.tsx:38
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:70
 msgid "Refunded"
 msgstr "Rimborsato"
+
+#: src/components/routes/event/orders.tsx:90
+msgctxt "orders figure"
+msgid "Refunded"
+msgstr ""
+
+#: src/components/routes/event/orders.tsx:98
+msgctxt "orders filter"
+msgid "Refunded"
+msgstr ""
 
 #: src/components/modals/RefundOrderModal/index.tsx:128
 msgid "Refunded tickets are cancelled and can no longer be used at the entrance."
@@ -9241,6 +9335,7 @@ msgid "Resend invitation"
 msgstr "Reinvia invito"
 
 #: src/components/common/OrdersTable/index.tsx:183
+#: src/components/routes/event/OrdersPage/OrderList.tsx:133
 msgid "Resend order email"
 msgstr "Reinvia email ordine"
 
@@ -9588,6 +9683,10 @@ msgstr "Programmata"
 msgid "Scheduled time"
 msgstr "Orario programmato"
 
+#: src/components/routes/event/orders.tsx:160
+msgid "Search a name, an email or an order number…"
+msgstr ""
+
 #: src/components/routes/event/Affiliates/index.tsx:68
 msgid "Search affiliates..."
 msgstr "Cerca affiliati..."
@@ -9626,8 +9725,8 @@ msgid "Search by name, email, or account..."
 msgstr "Cerca per nome, email o account..."
 
 #: src/components/routes/event/orders.tsx:128
-msgid "Search by name, email, or order #..."
-msgstr "Cerca per nome, email o numero ordine..."
+#~ msgid "Search by name, email, or order #..."
+#~ msgstr "Cerca per nome, email o numero ordine..."
 
 #: src/components/layouts/CheckIn/index.tsx:439
 msgid "Search by name, order #, attendee # or email..."
@@ -10467,6 +10566,7 @@ msgstr "Le statistiche si basano sulla data di creazione dell'account"
 #: src/components/routes/admin/Messages/index.tsx:167
 #: src/components/routes/admin/Messages/index.tsx:293
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:100
+#: src/components/routes/event/OrdersPage/OrderList.tsx:156
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:88
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
 msgid "Status"
@@ -10545,6 +10645,7 @@ msgstr "Subtotale"
 #: src/components/common/OrdersTable/index.tsx:103
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
 #: src/components/layouts/Checkout/index.tsx:91
+#: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Success"
 msgstr "Successo"
 
@@ -11126,6 +11227,7 @@ msgid "There is a refund pending. Please wait for it to complete before requesti
 msgstr "C'è un rimborso in attesa. Attendi che sia completato prima di richiedere un altro rimborso."
 
 #: src/components/common/OrdersTable/index.tsx:80
+#: src/components/routes/event/OrdersPage/OrderList.tsx:71
 msgid "There was an error marking the order as paid"
 msgstr "Si è verificato un errore nel contrassegnare l'ordine come pagato"
 
@@ -11134,6 +11236,7 @@ msgid "There was an error processing your request. Please try again."
 msgstr "Si è verificato un errore durante l'elaborazione della tua richiesta. Riprova."
 
 #: src/components/common/OrdersTable/index.tsx:87
+#: src/components/routes/event/OrdersPage/OrderList.tsx:76
 msgid "There was an error sending your message"
 msgstr "Si è verificato un errore durante l'invio del tuo messaggio"
 
@@ -11498,6 +11601,7 @@ msgstr ""
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:547
 #: src/components/routes/event/EventDashboard/index.tsx:224
 #: src/components/routes/event/GettingStarted/index.tsx:83
+#: src/components/routes/event/OrdersPage/OrderList.tsx:154
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "Biglietti"
@@ -12293,8 +12397,8 @@ msgid "View Order Details"
 msgstr "Visualizza dettagli ordine"
 
 #: src/components/routes/event/orders.tsx:114
-msgid "View order details, issue refunds, and resend confirmations."
-msgstr "Visualizza i dettagli degli ordini, emetti rimborsi e reinvia le conferme."
+#~ msgid "View order details, issue refunds, and resend confirmations."
+#~ msgstr "Visualizza i dettagli degli ordini, emetti rimborsi e reinvia le conferme."
 
 #: src/components/layouts/OrganizerLayout/index.tsx:253
 #: src/components/layouts/OrganizerLayout/index.tsx:256
@@ -12310,6 +12414,10 @@ msgstr "Visualizza Biglietto"
 #: src/components/routes/event/attendees.tsx:171
 msgid "View, edit, and export your registered attendees."
 msgstr "Visualizza, modifica ed esporta i tuoi partecipanti registrati."
+
+#: src/components/routes/event/orders.tsx:111
+msgid "View, refund and resend tickets."
+msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:103
 msgid "Vimeo"
@@ -13115,6 +13223,7 @@ msgid "Your logo, colors, and style on every page"
 msgstr "Il tuo logo, i tuoi colori e il tuo stile su ogni pagina"
 
 #: src/components/common/OrdersTable/index.tsx:86
+#: src/components/routes/event/OrdersPage/OrderList.tsx:75
 msgid "Your message has been sent"
 msgstr "Il tuo messaggio è stato inviato"
 
@@ -13154,11 +13263,12 @@ msgstr "Il tuo ordine è stato annullato."
 msgid "Your order is awaiting payment"
 msgstr "Il tuo ordine è in attesa di pagamento"
 
-#: src/components/routes/event/orders.tsx:95
+#: src/components/routes/event/orders.tsx:77
 msgid "Your orders have been exported successfully."
 msgstr "I tuoi ordini sono stati esportati con successo."
 
 #: src/components/common/OrdersTable/index.tsx:474
+#: src/components/routes/event/orders.tsx:182
 msgid "Your orders will appear here once they start rolling in."
 msgstr "I tuoi ordini appariranno qui una volta che inizieranno ad arrivare."
 

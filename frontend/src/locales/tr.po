@@ -880,6 +880,11 @@ msgstr "Etkinlikten sonra"
 msgid "After your request, we reply within 1 business day to schedule a time. We show you the platform based on your next event: invitations, welcome, badges and reporting."
 msgstr "Talebinizin ardından bir randevu belirlemek için 1 iş günü içinde yanıt veriyoruz. Platformu bir sonraki etkinliğiniz üzerinden gösteriyoruz: davetiyeler, karşılama, yaka kartları ve raporlama."
 
+#: src/components/routes/event/orders.tsx:94
+msgctxt "orders filter"
+msgid "All"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:246
 msgid "All"
 msgstr "Tümü"
@@ -1020,6 +1025,7 @@ msgstr "Harika, Etkinlik, Anahtar Kelimeler..."
 
 #: src/components/common/OrdersTable/index.tsx:353
 #: src/components/forms/TaxAndFeeForm/index.tsx:71
+#: src/components/routes/event/OrdersPage/OrderList.tsx:155
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:36
 msgid "Amount"
 msgstr "Miktar"
@@ -1541,12 +1547,16 @@ msgstr "İade Edilebilir"
 msgid "Available Tokens"
 msgstr "Mevcut Token'lar"
 
+#: src/components/routes/event/orders.tsx:96
+msgctxt "orders filter"
+msgid "Awaiting"
+msgstr ""
+
 #: src/components/common/OrderStatusBadge/index.tsx:11
 #: src/components/modals/SendMessageModal/index.tsx:335
 msgid "Awaiting offline payment"
 msgstr "Çevrimdışı ödeme bekleniyor"
 
-#: src/components/routes/event/orders.tsx:25
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:60
 msgid "Awaiting Offline Payment"
 msgstr "Çevrimdışı Ödeme Bekleniyor"
@@ -1558,6 +1568,12 @@ msgstr "Çevrimdışı Ödeme Bekleniyor"
 #: src/components/common/CheckIn/AttendeeList.tsx:88
 msgid "Awaiting payment"
 msgstr "Ödeme bekleniyor"
+
+#: src/components/routes/event/orders.tsx:86
+#: src/components/routes/event/OrdersPage/OrderList.tsx:43
+msgctxt "order status"
+msgid "Awaiting payment"
+msgstr ""
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:29
 #: src/components/common/AttendeeTable/index.tsx:294
@@ -1714,6 +1730,8 @@ msgstr "Gişe"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:514
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:871
 #: src/components/routes/event/EventDashboard/index.tsx:31
+#: src/components/routes/event/orders.tsx:103
+#: src/components/routes/event/OrdersPage/OrderList.tsx:174
 msgid "Box Office"
 msgstr ""
 
@@ -1844,6 +1862,7 @@ msgid "Cancel email change"
 msgstr "E-posta değişikliğini iptal et"
 
 #: src/components/common/OrdersTable/index.tsx:194
+#: src/components/routes/event/OrdersPage/OrderList.tsx:140
 msgid "Cancel order"
 msgstr "Siparişi iptal et"
 
@@ -1870,7 +1889,7 @@ msgstr ""
 #: src/components/common/WaitlistTable/index.tsx:27
 #: src/components/routes/admin/Messages/index.tsx:126
 #: src/components/routes/event/attendees.tsx:27
-#: src/components/routes/event/orders.tsx:24
+#: src/components/routes/event/OrdersPage/OrderList.tsx:37
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:75
 #: src/components/routes/kiosk/Orders/index.tsx:175
 #: src/components/routes/kiosk/Orders/index.tsx:190
@@ -1878,6 +1897,11 @@ msgstr ""
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:98
 msgid "Cancelled"
 msgstr "İptal Edildi"
+
+#: src/components/routes/event/orders.tsx:97
+msgctxt "orders filter"
+msgid "Cancelled"
+msgstr ""
 
 #: src/components/common/CheckIn/AttendeeList.tsx:30
 msgid "Cannot Check In"
@@ -2294,6 +2318,10 @@ msgstr "Sipariş başına bilgi toplayın"
 msgid "Collect details per ticket"
 msgstr "Bilet başına bilgi toplayın"
 
+#: src/components/routes/event/orders.tsx:82
+msgid "Collected"
+msgstr ""
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
 msgid "Color"
@@ -2386,10 +2414,19 @@ msgstr "Ekibe katılmak için profilinizi tamamlayın."
 #: src/components/common/OrdersTable/index.tsx:417
 #: src/components/common/OrderStatusBadge/index.tsx:8
 #: src/components/modals/SendMessageModal/index.tsx:334
-#: src/components/routes/event/orders.tsx:23
 #: src/components/routes/my-tickets/index.tsx:34
 msgid "Completed"
 msgstr "Tamamlandı"
+
+#: src/components/routes/event/orders.tsx:83
+msgctxt "orders figure"
+msgid "Completed"
+msgstr ""
+
+#: src/components/routes/event/orders.tsx:95
+msgctxt "orders filter"
+msgid "Completed"
+msgstr ""
 
 #: src/components/common/StatBoxes/index.tsx:91
 msgid "Completed orders"
@@ -2748,6 +2785,7 @@ msgid "Copy Code"
 msgstr "Kodu Kopyala"
 
 #: src/components/common/OrdersTable/index.tsx:162
+#: src/components/routes/event/OrdersPage/OrderList.tsx:113
 msgid "Copy customer link"
 msgstr ""
 
@@ -3130,10 +3168,12 @@ msgstr "Özel şablon"
 
 #: src/components/common/AdminOrdersTable/index.tsx:71
 #: src/components/common/OrdersTable/index.tsx:208
+#: src/components/routes/event/OrdersPage/OrderList.tsx:153
 msgid "Customer"
 msgstr "Müşteri"
 
 #: src/components/common/OrdersTable/index.tsx:160
+#: src/components/routes/event/OrdersPage/OrderList.tsx:111
 msgid "Customer link copied to clipboard"
 msgstr ""
 
@@ -3561,6 +3601,7 @@ msgid "Download CSV"
 msgstr "CSV İndir"
 
 #: src/components/common/OrdersTable/index.tsx:166
+#: src/components/routes/event/OrdersPage/OrderList.tsx:118
 msgid "Download invoice"
 msgstr "Faturayı indir"
 
@@ -3582,6 +3623,7 @@ msgstr ""
 
 #: src/components/common/OrdersTable/index.tsx:99
 #: src/components/layouts/Checkout/index.tsx:87
+#: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Downloading Invoice"
 msgstr "Fatura İndiriliyor"
 
@@ -4135,6 +4177,7 @@ msgstr "Ekipman kiralama"
 #: src/components/common/OrdersTable/index.tsx:107
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
 #: src/components/layouts/Checkout/index.tsx:95
+#: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Error"
 msgstr "Hata"
 
@@ -4483,9 +4526,12 @@ msgstr "Son Kullanım Tarihi"
 
 #: src/components/routes/event/Affiliates/index.tsx:81
 #: src/components/routes/event/attendees.tsx:205
-#: src/components/routes/event/orders.tsx:142
 msgid "Export"
 msgstr "Dışa Aktar"
+
+#: src/components/routes/event/orders.tsx:115
+msgid "Export (Excel)"
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:403
 msgid "Export Answers"
@@ -4519,7 +4565,7 @@ msgstr "Katılımcılar Dışa Aktarılıyor"
 msgid "Exporting complete. Downloading file..."
 msgstr "Dışa aktarma tamamlandı. Dosya indiriliyor..."
 
-#: src/components/routes/event/orders.tsx:90
+#: src/components/routes/event/orders.tsx:76
 msgid "Exporting Orders"
 msgstr "Siparişler Dışa Aktarılıyor"
 
@@ -4609,6 +4655,7 @@ msgstr "Şablon silinemedi"
 
 #: src/components/common/OrdersTable/index.tsx:108
 #: src/components/layouts/Checkout/index.tsx:96
+#: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Failed to download invoice. Please try again."
 msgstr "Fatura indirilemedi. Lütfen tekrar deneyin."
 
@@ -4620,7 +4667,7 @@ msgstr "Bağlı kuruluşlar dışa aktarılamadı"
 msgid "Failed to export attendees"
 msgstr "Katılımcılar dışa aktarılamadı"
 
-#: src/components/routes/event/orders.tsx:99
+#: src/components/routes/event/orders.tsx:78
 msgid "Failed to export orders"
 msgstr "Siparişler dışa aktarılamadı"
 
@@ -4851,8 +4898,8 @@ msgid "Filter by Event"
 msgstr "Etkinliğe göre filtrele"
 
 #: src/components/routes/event/orders.tsx:123
-msgid "Filter Orders"
-msgstr "Siparişleri Filtrele"
+#~ msgid "Filter Orders"
+#~ msgstr "Siparişleri Filtrele"
 
 #: src/components/common/FilterModal/index.tsx:87
 #: src/components/common/FilterModal/index.tsx:254
@@ -5031,6 +5078,11 @@ msgstr "Form"
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
 msgstr "Ücretsiz"
+
+#: src/components/routes/event/OrdersPage/OrderList.tsx:46
+msgctxt "order status"
+msgid "Free"
+msgstr ""
 
 #: src/components/modals/CreateAttendeeModal/index.tsx:151
 msgid "Free (no payment)"
@@ -5817,6 +5869,7 @@ msgstr "Fatura"
 
 #: src/components/common/OrdersTable/index.tsx:104
 #: src/components/layouts/Checkout/index.tsx:92
+#: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Invoice downloaded successfully"
 msgstr "Fatura başarıyla indirildi"
 
@@ -6323,6 +6376,7 @@ msgid "Manage kiosk operators"
 msgstr "Kiosk operatörlerini yönet"
 
 #: src/components/common/OrdersTable/index.tsx:154
+#: src/components/routes/event/OrdersPage/OrderList.tsx:104
 msgid "Manage order"
 msgstr "Siparişi yönet"
 
@@ -6380,6 +6434,8 @@ msgid "Manually Add Attendee"
 msgstr "Manuel Katılımcı Ekle"
 
 #: src/components/common/OrdersTable/index.tsx:171
+#: src/components/routes/event/OrdersPage/OrderList.tsx:123
+#: src/components/routes/event/OrdersPage/OrderList.tsx:196
 msgid "Mark as paid"
 msgstr "Ödendi olarak işaretle"
 
@@ -6427,6 +6483,7 @@ msgid "Message attendees with specific tickets"
 msgstr "Belirli biletlere sahip katılımcılara mesaj gönderin"
 
 #: src/components/common/OrdersTable/index.tsx:156
+#: src/components/routes/event/OrdersPage/OrderList.tsx:107
 msgid "Message buyer"
 msgstr "Alıcıya mesaj gönder"
 
@@ -6552,6 +6609,7 @@ msgstr "Ay"
 msgid "More"
 msgstr ""
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:97
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:105
 msgid "More actions"
 msgstr ""
@@ -6890,9 +6948,17 @@ msgstr "Gösterilecek mesaj yok"
 msgid "No more tickets available for this price."
 msgstr "Bu fiyat için bilet kalmadı."
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:169
+msgid "No name"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:264
 msgid "No order found."
 msgstr "Sipariş bulunamadı."
+
+#: src/components/routes/event/orders.tsx:180
+msgid "No order matches these filters"
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:489
 msgid "No order questions yet"
@@ -6903,6 +6969,7 @@ msgid "No orders found"
 msgstr "Sipariş bulunamadı"
 
 #: src/components/common/OrdersTable/index.tsx:471
+#: src/components/routes/event/orders.tsx:181
 msgid "No orders to show"
 msgstr "Gösterilecek sipariş yok"
 
@@ -7305,6 +7372,8 @@ msgstr "Devam Eden"
 #: src/components/routes/event/EventDashboard/index.tsx:83
 #: src/components/routes/event/EventDashboard/index.tsx:129
 #: src/components/routes/event/GettingStarted/index.tsx:164
+#: src/components/routes/event/orders.tsx:102
+#: src/components/routes/event/OrdersPage/OrderList.tsx:174
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:248
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:45
@@ -7542,6 +7611,7 @@ msgid "Order Locale"
 msgstr "Sipariş Dili"
 
 #: src/components/common/OrdersTable/index.tsx:79
+#: src/components/routes/event/OrdersPage/OrderList.tsx:70
 msgid "Order marked as paid"
 msgstr "Sipariş ödendi olarak işaretlendi"
 
@@ -7595,7 +7665,6 @@ msgstr "Sipariş İade Edildi"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:64
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:64
-#: src/components/routes/event/orders.tsx:45
 msgid "Order Status"
 msgstr "Sipariş Durumu"
 
@@ -7641,7 +7710,7 @@ msgstr "Sipariş iptal edildi"
 #: src/components/routes/admin/Attribution/index.tsx:138
 #: src/components/routes/admin/Orders/index.tsx:44
 #: src/components/routes/event/EventDashboard/index.tsx:101
-#: src/components/routes/event/orders.tsx:115
+#: src/components/routes/event/orders.tsx:110
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:76
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
@@ -7653,7 +7722,7 @@ msgstr "Siparişler"
 msgid "Orders Completed"
 msgstr "Tamamlanan Siparişler"
 
-#: src/components/routes/event/orders.tsx:94
+#: src/components/routes/event/orders.tsx:77
 msgid "Orders Exported"
 msgstr "Siparişler Dışa Aktarıldı"
 
@@ -7884,6 +7953,11 @@ msgstr "Sayfa görüntüleme"
 msgid "Page Views"
 msgstr "Sayfa Görüntülemeleri"
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:47
+msgctxt "order status"
+msgid "Paid"
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:433
 msgid "Paid"
 msgstr ""
@@ -7904,8 +7978,11 @@ msgstr "Ücretli, ücretsiz, kademeli fiyatlandırma ve bağış tabanlı biletl
 msgid "Partial refund"
 msgstr "Kısmi iade"
 
+#: src/components/routes/event/OrdersPage/OrderList.tsx:39
+msgid "Partially refunded"
+msgstr ""
+
 #: src/components/common/OrderStatusBadge/index.tsx:16
-#: src/components/routes/event/orders.tsx:30
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:71
 msgid "Partially Refunded"
 msgstr "Kısmen İade Edildi"
@@ -8052,6 +8129,10 @@ msgstr "Ödeme Tarihi"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:216
 msgid "Payment Due Period"
 msgstr "Ödeme Vade Süresi"
+
+#: src/components/routes/event/OrdersPage/OrderList.tsx:45
+msgid "Payment failed"
+msgstr ""
 
 #: src/components/common/OrderStatusBadge/index.tsx:14
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:58
@@ -8379,7 +8460,7 @@ msgstr "Lütfen en az bir ürün seçin"
 
 #: src/components/routes/event/Affiliates/index.tsx:52
 #: src/components/routes/event/attendees.tsx:137
-#: src/components/routes/event/orders.tsx:100
+#: src/components/routes/event/orders.tsx:78
 msgid "Please try again."
 msgstr "Lütfen tekrar deneyin."
 
@@ -8401,10 +8482,11 @@ msgstr "Katılımcılarınızı dışa aktarma için hazırlarken lütfen bekley
 
 #: src/components/common/OrdersTable/index.tsx:100
 #: src/components/layouts/Checkout/index.tsx:88
+#: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Please wait while we prepare your invoice..."
 msgstr "Faturanızı hazırlarken lütfen bekleyin..."
 
-#: src/components/routes/event/orders.tsx:91
+#: src/components/routes/event/orders.tsx:76
 msgid "Please wait while we prepare your orders for export..."
 msgstr "Siparişlerinizi dışa aktarma için hazırlarken lütfen bekleyin..."
 
@@ -9017,6 +9099,7 @@ msgid "Refund amount"
 msgstr "İade tutarı"
 
 #: src/components/common/OrdersTable/index.tsx:371
+#: src/components/routes/event/OrdersPage/OrderList.tsx:41
 msgid "Refund failed"
 msgstr "İade başarısız oldu"
 
@@ -9025,6 +9108,7 @@ msgid "Refund Failed"
 msgstr "İade Başarısız"
 
 #: src/components/common/OrdersTable/index.tsx:176
+#: src/components/routes/event/OrdersPage/OrderList.tsx:128
 msgid "Refund order"
 msgstr "Siparişi iade et"
 
@@ -9033,6 +9117,7 @@ msgid "Refund Order {0}"
 msgstr "Siparişi İade Et {0}"
 
 #: src/components/common/OrdersTable/index.tsx:370
+#: src/components/routes/event/OrdersPage/OrderList.tsx:40
 msgid "Refund pending"
 msgstr "İade beklemede"
 
@@ -9041,7 +9126,6 @@ msgstr "İade beklemede"
 msgid "Refund Pending"
 msgstr "İade Bekliyor"
 
-#: src/components/routes/event/orders.tsx:51
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:274
 msgid "Refund Status"
 msgstr "İade Durumu"
@@ -9049,10 +9133,20 @@ msgstr "İade Durumu"
 #: src/components/common/OrderStatusBadge/index.tsx:15
 #: src/components/common/OrderSummary/index.tsx:80
 #: src/components/common/StatBoxes/index.tsx:88
-#: src/components/routes/event/orders.tsx:29
+#: src/components/routes/event/OrdersPage/OrderList.tsx:38
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:70
 msgid "Refunded"
 msgstr "İade Edildi"
+
+#: src/components/routes/event/orders.tsx:90
+msgctxt "orders figure"
+msgid "Refunded"
+msgstr ""
+
+#: src/components/routes/event/orders.tsx:98
+msgctxt "orders filter"
+msgid "Refunded"
+msgstr ""
 
 #: src/components/modals/RefundOrderModal/index.tsx:128
 msgid "Refunded tickets are cancelled and can no longer be used at the entrance."
@@ -9237,6 +9331,7 @@ msgid "Resend invitation"
 msgstr "Daveti tekrar gönder"
 
 #: src/components/common/OrdersTable/index.tsx:183
+#: src/components/routes/event/OrdersPage/OrderList.tsx:133
 msgid "Resend order email"
 msgstr "Sipariş e-postasını tekrar gönder"
 
@@ -9584,6 +9679,10 @@ msgstr "Planlandı"
 msgid "Scheduled time"
 msgstr "Zamanlanmış saat"
 
+#: src/components/routes/event/orders.tsx:160
+msgid "Search a name, an email or an order number…"
+msgstr ""
+
 #: src/components/routes/event/Affiliates/index.tsx:68
 msgid "Search affiliates..."
 msgstr "Bağlı kuruluşları ara..."
@@ -9622,8 +9721,8 @@ msgid "Search by name, email, or account..."
 msgstr "Ad, e-posta veya hesaba göre ara..."
 
 #: src/components/routes/event/orders.tsx:128
-msgid "Search by name, email, or order #..."
-msgstr "Ad, e-posta veya sipariş #'a göre ara..."
+#~ msgid "Search by name, email, or order #..."
+#~ msgstr "Ad, e-posta veya sipariş #'a göre ara..."
 
 #: src/components/layouts/CheckIn/index.tsx:439
 msgid "Search by name, order #, attendee # or email..."
@@ -10463,6 +10562,7 @@ msgstr "İstatistikler hesap oluşturma tarihine göre hesaplanır"
 #: src/components/routes/admin/Messages/index.tsx:167
 #: src/components/routes/admin/Messages/index.tsx:293
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:100
+#: src/components/routes/event/OrdersPage/OrderList.tsx:156
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:88
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
 msgid "Status"
@@ -10541,6 +10641,7 @@ msgstr "Ara Toplam"
 #: src/components/common/OrdersTable/index.tsx:103
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
 #: src/components/layouts/Checkout/index.tsx:91
+#: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Success"
 msgstr "Başarılı"
 
@@ -11122,6 +11223,7 @@ msgid "There is a refund pending. Please wait for it to complete before requesti
 msgstr "Bekleyen bir iade var. Başka bir iade talebinde bulunmadan önce lütfen tamamlanmasını bekleyin."
 
 #: src/components/common/OrdersTable/index.tsx:80
+#: src/components/routes/event/OrdersPage/OrderList.tsx:71
 msgid "There was an error marking the order as paid"
 msgstr "Sipariş ödendi olarak işaretlenirken bir hata oluştu"
 
@@ -11130,6 +11232,7 @@ msgid "There was an error processing your request. Please try again."
 msgstr "İsteğiniz işlenirken bir hata oluştu. Lütfen tekrar deneyin."
 
 #: src/components/common/OrdersTable/index.tsx:87
+#: src/components/routes/event/OrdersPage/OrderList.tsx:76
 msgid "There was an error sending your message"
 msgstr "Mesajınız gönderilirken bir hata oluştu"
 
@@ -11494,6 +11597,7 @@ msgstr ""
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:547
 #: src/components/routes/event/EventDashboard/index.tsx:224
 #: src/components/routes/event/GettingStarted/index.tsx:83
+#: src/components/routes/event/OrdersPage/OrderList.tsx:154
 #: src/components/routes/my-tickets/index.tsx:84
 msgid "Tickets"
 msgstr "Biletler"
@@ -12289,8 +12393,8 @@ msgid "View Order Details"
 msgstr "Sipariş Detaylarını Görüntüle"
 
 #: src/components/routes/event/orders.tsx:114
-msgid "View order details, issue refunds, and resend confirmations."
-msgstr "Sipariş detaylarını görüntüleyin, iade yapın ve onayları yeniden gönderin."
+#~ msgid "View order details, issue refunds, and resend confirmations."
+#~ msgstr "Sipariş detaylarını görüntüleyin, iade yapın ve onayları yeniden gönderin."
 
 #: src/components/layouts/OrganizerLayout/index.tsx:253
 #: src/components/layouts/OrganizerLayout/index.tsx:256
@@ -12306,6 +12410,10 @@ msgstr "Bileti Görüntüle"
 #: src/components/routes/event/attendees.tsx:171
 msgid "View, edit, and export your registered attendees."
 msgstr "Kayıtlı katılımcılarınızı görüntüleyin, düzenleyin ve dışa aktarın."
+
+#: src/components/routes/event/orders.tsx:111
+msgid "View, refund and resend tickets."
+msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:103
 msgid "Vimeo"
@@ -13111,6 +13219,7 @@ msgid "Your logo, colors, and style on every page"
 msgstr "Her sayfada logonuz, renkleriniz ve tarzınız"
 
 #: src/components/common/OrdersTable/index.tsx:86
+#: src/components/routes/event/OrdersPage/OrderList.tsx:75
 msgid "Your message has been sent"
 msgstr "Mesajınız gönderildi"
 
@@ -13150,11 +13259,12 @@ msgstr "Siparişiniz iptal edildi."
 msgid "Your order is awaiting payment"
 msgstr "Siparişiniz ödeme bekliyor"
 
-#: src/components/routes/event/orders.tsx:95
+#: src/components/routes/event/orders.tsx:77
 msgid "Your orders have been exported successfully."
 msgstr "Siparişleriniz başarıyla dışa aktarıldı."
 
 #: src/components/common/OrdersTable/index.tsx:474
+#: src/components/routes/event/orders.tsx:182
 msgid "Your orders will appear here once they start rolling in."
 msgstr "Siparişleriniz gelmeye başladığında burada görünecek."
 
