@@ -329,10 +329,6 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                 <div className={classes.ticketBody}>
                     <div className={classes.ticketHead}>
                         <div className={classes.ticketTitleRow}>
-                            <h3 className={classes.ticketTitle}>{product.title}</h3>
-                            <span className={classNames(classes.channelTag, classes[`channelTag_${channel.tone}`])}>
-                                {channel.label}
-                            </span>
                             <Tooltip label={product.is_sales_paused ? t`Resume sales` : t`Pause sales online and at the box office`} withArrow>
                                 <Switch
                                     size="md"
@@ -346,6 +342,10 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                                     }}
                                 />
                             </Tooltip>
+                            <h3 className={classes.ticketTitle}>{product.title}</h3>
+                            <span className={classNames(classes.channelTag, classes[`channelTag_${channel.tone}`])}>
+                                {channel.label}
+                            </span>
                             {!isTicket && <span className={classes.extraTag}>{t`Product`}</span>}
                             {product.is_hidden_without_promo_code && (
                                 <span className={classes.extraTag}><IconLock size={12}/> {t`Promo Only`}</span>

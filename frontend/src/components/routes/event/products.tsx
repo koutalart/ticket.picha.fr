@@ -7,7 +7,6 @@ import {ProductCategoryList} from "../../common/ProductsTable";
 import {TableSkeleton} from "../../common/TableSkeleton";
 import {t, Trans} from "@lingui/macro";
 import classes from "./ProductsPage.module.scss";
-import {QuickAddTicket} from "./QuickAddTicket.tsx";
 import {useGetEventSettings} from "../../../queries/useGetEventSettings.ts";
 import {useUpdateEventSettings} from "../../../mutations/useUpdateEventSettings.ts";
 import {showError, showSuccess} from "../../../utilites/notifications.tsx";
@@ -117,11 +116,6 @@ export const Products = () => {
                         onCreateOpen={openCreateProduct}
                     />
                 )}
-
-            {productCategories && productCategories.length > 0 && eventId && (
-                <QuickAddTicket eventId={eventId} categories={productCategories} boxOfficeEnabled={boxOfficeEnabled}
-                                onMoreOptions={() => openCreateProduct(undefined)}/>
-            )}
 
             {createProductModalOpen &&
                 <CreateProductModal selectedCategoryId={selectedCategoryId} onClose={closeCreateProductModal}

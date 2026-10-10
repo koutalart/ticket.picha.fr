@@ -66,6 +66,23 @@ class PausedTicketSalesTest extends TestCase
         ], ['Authorization' => 'Bearer '.$token])->assertStatus(422);
     }
 
+    public function test_paused_or_box_office_only_ticket_cannot_be_ordered_online(): void
+    {
+        [$event, $product, $productPrice] = $this->createEventWithProduct(price: 25.00);
+        \Illuminate\Support\Facades\Auth::logout();
+        $order = fn () => $this->postJson("/public/events/{$event->id}/order", [
+            'products' => [['product_id' => $product->id, 'quantities' => [['price_id' => $productPrice->id, 'quantity' => 1]]]],
+        ]);
+
+        $order()->assertCreated();
+
+        DB::table('products')->where('id', $product->id)->update(['is_sales_paused' => true]);
+        $order()->assertStatus(422)->assertJsonValidationErrors('products.0');
+
+        DB::table('products')->where('id', $product->id)->update(['is_sales_paused' => false, 'is_hidden' => true]);
+        $order()->assertStatus(422)->assertJsonValidationErrors('products.0');
+    }
+
     public function test_editing_a_ticket_keeps_its_pause_unless_told_otherwise(): void
     {
         [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00, userPassword: self::PASSWORD);
