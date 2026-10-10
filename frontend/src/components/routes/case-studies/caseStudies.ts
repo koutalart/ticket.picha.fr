@@ -127,9 +127,9 @@ export const caseStudies: CaseStudy[] = [
         ticketingEventId: 4,
         date: "Dimanche 11 octobre 2026, à partir de 18 h",
         location: "Le 5/5, rond-point de la Barge, Mamoudzou (Mayotte)",
-        attendees: "755 billets vendus au 7 octobre",
-        headline: "Billetterie de concert à Mayotte : 755 billets vendus en 7 jours pour Triangle des Bermudes",
-        summary: "Billetterie en ligne, préventes au 5/5 et campagne influenceurs : Innocent Event a vendu 755 billets en 7 jours pour son concert à Mamoudzou.",
+        attendees: "886 billets vendus au 10 octobre",
+        headline: "Billetterie de concert à Mayotte : 886 billets vendus en 10 jours pour Triangle des Bermudes",
+        summary: "Billetterie en ligne, préventes au 5/5 et campagne influenceurs : Innocent Event a vendu 886 billets en 10 jours pour son concert à Mamoudzou.",
         challenge: "Innocent Event organise des concerts et des soirées à Mayotte. Pour Triangle des Bermudes, le dimanche 11 octobre 2026 au 5/5 à Mamoudzou, l'organisateur devait vendre vite sur deux canaux à la fois, en ligne et en préventes physiques, sans jamais vendre deux fois la même place. Le jour J, il fallait aussi faire entrer le public rapidement et continuer à vendre des billets sur place.",
         solution: [
             "Campagne influenceurs pour lancer la billetterie et relayer chaque palier de vente",
@@ -141,8 +141,8 @@ export const caseStudies: CaseStudy[] = [
             "Vente de billets sur place le soir du concert",
         ],
         results: [
-            {value: "755", label: "billets vendus en 7 jours"},
-            {value: "355", label: "billets vendus en ligne, par carte bancaire"},
+            {value: "886", label: "billets vendus en 10 jours"},
+            {value: "486", label: "billets vendus en ligne, par carte bancaire"},
             {value: "400", label: "billets écoulés en préventes physiques au 5/5"},
             {value: "292", label: "places « Vente flash » : offre épuisée"},
         ],
@@ -153,7 +153,7 @@ export const caseStudies: CaseStudy[] = [
         eventLocality: "Mamoudzou",
         eventCountryCode: "YT",
         publishedAt: "2026-10-07",
-        updatedAt: "2026-10-07",
+        updatedAt: "2026-10-10",
     },
     {
         slug: "mayotte-la-1ere-journee-portes-ouvertes",
