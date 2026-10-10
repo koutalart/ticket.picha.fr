@@ -128,6 +128,10 @@ msgstr ""
 msgid "{0} services{1}"
 msgstr ""
 
+#: src/components/routes/event/attendees.tsx:110
+msgid "{0} still to come"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/pages/ServicesPage.tsx:16
 msgid "{0} supports companies, institutions and partners in creating their events."
 msgstr ""
@@ -612,7 +616,6 @@ msgstr "Data aktywacji"
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:19
 #: src/components/modals/EditUserModal/index.tsx:110
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:105
-#: src/components/routes/event/attendees.tsx:26
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:116
 msgid "Active"
 msgstr "Aktywny"
@@ -651,6 +654,11 @@ msgstr ""
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:264
 msgid "Add a value"
+msgstr ""
+
+#: src/components/routes/event/attendees.tsx:95
+#: src/components/routes/event/attendees.tsx:162
+msgid "Add an attendee"
 msgstr ""
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:401
@@ -879,6 +887,11 @@ msgstr "Po wydarzeniu"
 #: src/components/routes/landing/index.tsx:277
 msgid "After your request, we reply within 1 business day to schedule a time. We show you the platform based on your next event: invitations, welcome, badges and reporting."
 msgstr "Po otrzymaniu zgłoszenia odpowiadamy w ciągu 1 dnia roboczego, aby ustalić termin. Pokażemy platformę na przykładzie Waszego najbliższego wydarzenia: zaproszenia, recepcja, identyfikatory i raporty."
+
+#: src/components/routes/event/attendees.tsx:74
+msgctxt "attendees filter"
+msgid "All"
+msgstr ""
 
 #: src/components/routes/event/orders.tsx:94
 msgctxt "orders filter"
@@ -1168,6 +1181,7 @@ msgid "Archived Organizers"
 msgstr "Zarchiwizowani organizatorzy"
 
 #: src/components/common/AttendeeTable/index.tsx:82
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:57
 msgid "Are you sure you want to activate this attendee?"
 msgstr "Czy na pewno chcesz aktywować tego uczestnika?"
 
@@ -1185,6 +1199,7 @@ msgid "Are you sure you want to archive this organizer? This will also archive a
 msgstr "Czy na pewno chcesz zarchiwizować tego organizatora? Spowoduje to również archiwizację wszystkich wydarzeń należących do tego organizatora."
 
 #: src/components/common/AttendeeTable/index.tsx:83
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:58
 msgid "Are you sure you want to cancel this attendee? This will void their ticket"
 msgstr "Czy na pewno chcesz anulować tego uczestnika? To unieważni jego bilet"
 
@@ -1390,6 +1405,7 @@ msgid "Attendee"
 msgstr "Uczestnik"
 
 #: src/components/common/AttendeeTable/index.tsx:95
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:64
 msgid "Attendee activated successfully"
 msgstr "Uczestnik został ponownie aktywowany"
 
@@ -1398,6 +1414,7 @@ msgid "Attendee Cancelled"
 msgstr "Uczestnik anulowany"
 
 #: src/components/common/AttendeeTable/index.tsx:96
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:64
 msgid "Attendee cancelled successfully"
 msgstr "Uczestnik został anulowany"
 
@@ -1443,8 +1460,8 @@ msgid "Attendee Notes"
 msgstr "Notatki uczestnika"
 
 #: src/components/routes/event/attendees.tsx:72
-msgid "Attendee Status"
-msgstr "Status uczestnika"
+#~ msgid "Attendee Status"
+#~ msgstr "Status uczestnika"
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:95
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:201
@@ -1471,11 +1488,11 @@ msgstr "Bilet uczestnika nie jest uwzględniony na tej liście"
 #: src/components/modals/ManageOrderModal/index.tsx:126
 #: src/components/routes/admin/Messages/index.tsx:90
 #: src/components/routes/admin/Messages/index.tsx:139
-#: src/components/routes/event/attendees.tsx:173
+#: src/components/routes/event/attendees.tsx:86
 msgid "Attendees"
 msgstr "Uczestnicy"
 
-#: src/components/routes/event/attendees.tsx:131
+#: src/components/routes/event/attendees.tsx:65
 msgid "Attendees Exported"
 msgstr "Uczestnicy wyeksportowani"
 
@@ -1569,6 +1586,8 @@ msgstr "Oczekuje na płatność offline"
 msgid "Awaiting payment"
 msgstr "Oczekuje na płatność"
 
+#: src/components/routes/event/attendees.tsx:76
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:75
 #: src/components/routes/event/orders.tsx:86
 #: src/components/routes/event/OrdersPage/OrderList.tsx:43
 msgctxt "order status"
@@ -1579,7 +1598,6 @@ msgstr ""
 #: src/components/common/AttendeeTable/index.tsx:294
 #: src/components/common/OrdersTable/index.tsx:429
 #: src/components/common/OrderStatusBadge/index.tsx:10
-#: src/components/routes/event/attendees.tsx:28
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:57
 msgid "Awaiting Payment"
 msgstr "Oczekuje na płatność"
@@ -1874,6 +1892,10 @@ msgstr "Anuluj zamówienie"
 msgid "Cancel Order {0}"
 msgstr "Anuluj zamówienie {0}"
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:151
+msgid "Cancel the ticket"
+msgstr ""
+
 #: src/components/modals/CancelOrderModal/index.tsx:67
 msgid "Canceling will cancel all attendees associated with this order, and release the tickets back into the available pool."
 msgstr "Anulowanie anuluje wszystkich uczestników związanych z tym zamówieniem i zwolni bilety z powrotem do dostępnej puli."
@@ -1888,7 +1910,7 @@ msgstr ""
 #: src/components/common/OrderStatusBadge/index.tsx:9
 #: src/components/common/WaitlistTable/index.tsx:27
 #: src/components/routes/admin/Messages/index.tsx:126
-#: src/components/routes/event/attendees.tsx:27
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:72
 #: src/components/routes/event/OrdersPage/OrderList.tsx:37
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:75
 #: src/components/routes/kiosk/Orders/index.tsx:175
@@ -1897,6 +1919,11 @@ msgstr ""
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:98
 msgid "Cancelled"
 msgstr "Anulowane"
+
+#: src/components/routes/event/attendees.tsx:77
+msgctxt "attendees filter"
+msgid "Cancelled"
+msgstr ""
 
 #: src/components/routes/event/orders.tsx:97
 msgctxt "orders filter"
@@ -2861,7 +2888,6 @@ msgstr "Obraz okładki będzie wyświetlany na górze strony wydarzenia"
 msgid "Cover image will be displayed at the top of your organizer page"
 msgstr "Obraz okładki będzie wyświetlany na górze strony organizatora"
 
-#: src/components/routes/event/attendees.tsx:196
 #: src/components/routes/event/products.tsx:76
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:132
 msgid "Create"
@@ -4145,9 +4171,14 @@ msgstr "Wprowadź swoje imię"
 msgid "Enter your VAT number including the country code, without spaces (e.g., IE1234567A, DE123456789)"
 msgstr "Wprowadź swój numer VAT wraz z kodem kraju, bez spacji (np. IE1234567A, DE123456789)"
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:87
 #: src/components/routes/kiosk/Orders/index.tsx:196
 msgid "Entered at {0}"
 msgstr "Wejście o {0}"
+
+#: src/components/routes/event/attendees.tsx:105
+msgid "entered out of {0}"
+msgstr ""
 
 #: src/components/routes/event/EventDashboard/index.tsx:205
 msgid "Entries"
@@ -4486,6 +4517,10 @@ msgstr "Każdy szablon e-mail musi zawierać przycisk wezwania do działania, kt
 msgid "Every order of the event — find a buyer, reprint tickets and record entries."
 msgstr "Wszystkie zamówienia wydarzenia — znajdź kupującego, wydrukuj ponownie bilety i rejestruj wejścia."
 
+#: src/components/routes/event/attendees.tsx:87
+msgid "Everyone who has a ticket for this event."
+msgstr ""
+
 #: src/components/routes/event/GettingStarted/index.tsx:231
 msgid "Everything essential is ready. You can put your event online."
 msgstr ""
@@ -4525,7 +4560,7 @@ msgid "Expiry Date"
 msgstr "Data wygaśnięcia"
 
 #: src/components/routes/event/Affiliates/index.tsx:81
-#: src/components/routes/event/attendees.tsx:205
+#: src/components/routes/event/attendees.tsx:92
 msgid "Export"
 msgstr "Eksportuj"
 
@@ -4557,7 +4592,7 @@ msgstr "Eksport pomyślny"
 msgid "Exporting Affiliates"
 msgstr "Eksportowanie partnerów"
 
-#: src/components/routes/event/attendees.tsx:127
+#: src/components/routes/event/attendees.tsx:64
 msgid "Exporting Attendees"
 msgstr "Eksportowanie uczestników"
 
@@ -4600,6 +4635,7 @@ msgid "Failed to assign configuration"
 msgstr "Nie udało się przypisać konfiguracji"
 
 #: src/components/common/AttendeeTable/index.tsx:98
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:65
 msgid "Failed to cancel attendee"
 msgstr "Nie udało się anulować uczestnika"
 
@@ -4663,7 +4699,7 @@ msgstr "Nie udało się pobrać faktury. Spróbuj ponownie."
 msgid "Failed to export affiliates"
 msgstr "Nie udało się wyeksportować partnerów"
 
-#: src/components/routes/event/attendees.tsx:136
+#: src/components/routes/event/attendees.tsx:66
 msgid "Failed to export attendees"
 msgstr "Nie udało się wyeksportować uczestników"
 
@@ -4713,6 +4749,7 @@ msgid "Failed to resend ticket"
 msgstr "Nie udało się ponownie wysłać biletu"
 
 #: src/components/common/AttendeeTable/index.tsx:76
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:51
 msgid "Failed to resend ticket email"
 msgstr "Nie udało się ponownie wysłać e-maila z biletem"
 
@@ -4890,8 +4927,8 @@ msgid "Fill in your details above first"
 msgstr "Najpierw wypełnij swoje dane powyżej"
 
 #: src/components/routes/event/attendees.tsx:183
-msgid "Filter Attendees"
-msgstr "Filtruj uczestników"
+#~ msgid "Filter Attendees"
+#~ msgstr "Filtruj uczestników"
 
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:123
 msgid "Filter by Event"
@@ -6363,6 +6400,7 @@ msgid "Manage"
 msgstr "Zarządzaj"
 
 #: src/components/common/AttendeeTable/index.tsx:354
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:134
 msgid "Manage attendee"
 msgstr "Zarządzaj uczestnikiem"
 
@@ -6471,6 +6509,7 @@ msgid "Message approved successfully"
 msgstr "Wiadomość zatwierdzona pomyślnie"
 
 #: src/components/common/AttendeeTable/index.tsx:359
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:140
 msgid "Message attendee"
 msgstr "Wyślij wiadomość do uczestnika"
 
@@ -6609,6 +6648,7 @@ msgstr "Miesiąc"
 msgid "More"
 msgstr ""
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:128
 #: src/components/routes/event/OrdersPage/OrderList.tsx:97
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:105
 msgid "More actions"
@@ -6799,6 +6839,10 @@ msgstr "Brak partnerów do wyświetlenia"
 msgid "No archived events to show."
 msgstr "Brak zarchiwizowanych wydarzeń do wyświetlenia."
 
+#: src/components/routes/event/attendees.tsx:156
+msgid "No attendee matches these filters"
+msgstr ""
+
 #: src/components/common/QuestionsTable/index.tsx:490
 msgid "No attendee questions yet"
 msgstr "Brak pytań dla uczestników jeszcze"
@@ -6812,6 +6856,7 @@ msgid "No attendees have been added to this order."
 msgstr "Żadni uczestnicy nie zostali dodani do tego zamówienia."
 
 #: src/components/common/AttendeeTable/index.tsx:404
+#: src/components/routes/event/attendees.tsx:156
 msgid "No Attendees to show"
 msgstr "Brak uczestników do wyświetlenia"
 
@@ -6948,6 +6993,7 @@ msgstr "Brak wiadomości do wyświetlenia"
 msgid "No more tickets available for this price."
 msgstr "Brak biletów w tej cenie."
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:105
 #: src/components/routes/event/OrdersPage/OrderList.tsx:169
 msgid "No name"
 msgstr ""
@@ -7180,6 +7226,7 @@ msgstr "Nie kwalifikuje się"
 msgid "Not entered"
 msgstr "Nie weszli"
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:92
 #: src/components/routes/kiosk/Orders/index.tsx:198
 msgid "Not entered yet"
 msgstr "Jeszcze nie wszedł"
@@ -7496,6 +7543,10 @@ msgstr "Opcje"
 #: src/components/modals/CreateEventModal/index.tsx:165
 msgid "or"
 msgstr "lub"
+
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:121
+msgid "order"
+msgstr ""
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:21
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:22
@@ -8459,7 +8510,7 @@ msgid "Please select at least one product"
 msgstr "Wybierz co najmniej jeden produkt"
 
 #: src/components/routes/event/Affiliates/index.tsx:52
-#: src/components/routes/event/attendees.tsx:137
+#: src/components/routes/event/attendees.tsx:66
 #: src/components/routes/event/orders.tsx:78
 msgid "Please try again."
 msgstr "Spróbuj ponownie."
@@ -8476,7 +8527,7 @@ msgstr "Poczekaj przed żądaniem innego kodu"
 msgid "Please wait while we prepare your affiliates for export..."
 msgstr "Poczekaj, przygotowujemy Twoich partnerów do eksportu..."
 
-#: src/components/routes/event/attendees.tsx:128
+#: src/components/routes/event/attendees.tsx:64
 msgid "Please wait while we prepare your attendees for export..."
 msgstr "Poczekaj, przygotowujemy Twoich uczestników do eksportu..."
 
@@ -8992,6 +9043,10 @@ msgstr ""
 msgid "Reach an engaged audience"
 msgstr ""
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:151
+msgid "Reactivate the ticket"
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:519
 msgid "Read our privacy policy"
 msgstr "Przeczytaj naszą politykę prywatności"
@@ -9340,6 +9395,7 @@ msgid "Resend Ticket"
 msgstr "Wyślij ponownie bilet"
 
 #: src/components/common/AttendeeTable/index.tsx:364
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:144
 msgid "Resend ticket email"
 msgstr "Wyślij ponownie email biletu"
 
@@ -9679,6 +9735,7 @@ msgstr "Zaplanowane"
 msgid "Scheduled time"
 msgstr "Zaplanowany czas"
 
+#: src/components/routes/event/attendees.tsx:137
 #: src/components/routes/event/orders.tsx:160
 msgid "Search a name, an email or an order number…"
 msgstr ""
@@ -9696,8 +9753,8 @@ msgid "Search by account name or email..."
 msgstr "Szukaj po nazwie konta lub e-mailu..."
 
 #: src/components/routes/event/attendees.tsx:188
-msgid "Search by attendee name, email or order #..."
-msgstr "Szukaj po nazwie uczestnika, e-mailu lub numerze zamówienia..."
+#~ msgid "Search by attendee name, email or order #..."
+#~ msgstr "Szukaj po nazwie uczestnika, e-mailu lub numerze zamówienia..."
 
 #: src/components/routes/events/Dashboard/index.tsx:149
 #: src/components/routes/organizer/Events/index.tsx:46
@@ -10371,6 +10428,10 @@ msgstr ""
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:382
 msgid "Sold"
 msgstr "Sprzedane"
+
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:115
+msgid "Sold at the box office"
+msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:327
 msgid "Sold by {0}"
@@ -11474,6 +11535,7 @@ msgstr "bilet"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:482
 #: src/components/forms/ProductForm/index.tsx:138
 #: src/components/modals/CreateAttendeeModal/index.tsx:132
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:120
 msgid "Ticket"
 msgstr "Bilet"
 
@@ -11504,6 +11566,7 @@ msgstr "Projekt biletów został pomyślnie zapisany"
 #~ msgstr "Projektant biletów"
 
 #: src/components/common/AttendeeTable/index.tsx:75
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:50
 msgid "Ticket email has been resent to attendee"
 msgstr "E-mail z biletem został ponownie wysłany do uczestnika"
 
@@ -11571,8 +11634,8 @@ msgid "Ticket resent successfully"
 msgstr "Bilet został pomyślnie ponownie wysłany"
 
 #: src/components/routes/event/attendees.tsx:66
-msgid "Ticket Type"
-msgstr "Typ biletu"
+#~ msgid "Ticket Type"
+#~ msgstr "Typ biletu"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:60
 msgid "Ticket URL"
@@ -12182,6 +12245,11 @@ msgstr ""
 msgid "Valid"
 msgstr ""
 
+#: src/components/routes/event/attendees.tsx:75
+msgctxt "attendees filter"
+msgid "Valid"
+msgstr ""
+
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:377
 msgid "Validated"
 msgstr ""
@@ -12379,6 +12447,10 @@ msgstr ""
 msgid "View on Google Maps"
 msgstr ""
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:137
+msgid "View order"
+msgstr ""
+
 #: src/components/common/EmailTemplateEditor/CTAConfiguration.tsx:28
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:57
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:69
@@ -12408,8 +12480,8 @@ msgid "View Ticket"
 msgstr "Zobacz bilet"
 
 #: src/components/routes/event/attendees.tsx:171
-msgid "View, edit, and export your registered attendees."
-msgstr ""
+#~ msgid "View, edit, and export your registered attendees."
+#~ msgstr ""
 
 #: src/components/routes/event/orders.tsx:111
 msgid "View, refund and resend tickets."
@@ -13138,11 +13210,12 @@ msgstr "Nazwa Twojego konta jest używana na stronach wydarzeń i w e-mailach."
 msgid "Your affiliates have been exported successfully."
 msgstr "Twoi partnerzy afiliacji zostali pomyślnie wyeksportowani."
 
-#: src/components/routes/event/attendees.tsx:132
+#: src/components/routes/event/attendees.tsx:65
 msgid "Your attendees have been exported successfully."
 msgstr "Twoi uczestnicy zostali pomyślnie wyeksportowani."
 
 #: src/components/common/AttendeeTable/index.tsx:409
+#: src/components/routes/event/attendees.tsx:159
 msgid "Your attendees will appear here once they have registered for your event. You can also manually add attendees."
 msgstr "Twoi uczestnicy pojawią się tutaj po zarejestrowaniu się na Twoje wydarzenie. Możesz również ręcznie dodać uczestników."
 

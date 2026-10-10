@@ -167,6 +167,19 @@ $violet: #5b2bb5;
     width: 100%;
   }
 
+  > div > :first-child {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > div > :last-child:not(:first-child) {
+    flex: 0 0 270px;
+
+    :global(.mantine-Select-root) {
+      width: 100%;
+    }
+  }
+
   @media (max-width: 767px) {
     > div {
       flex-direction: column;
@@ -175,6 +188,7 @@ $violet: #5b2bb5;
 
     > div > * {
       width: 100%;
+      flex: none !important;
     }
   }
 

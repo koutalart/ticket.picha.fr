@@ -1,0 +1,383 @@
+$ink: #14121c;
+$muted: #5f5d6b;
+$line: #e7e5ee;
+$violet: #5b2bb5;
+$green: #17763f;
+
+.page {
+  max-width: 1080px;
+  color: $ink;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  color: $muted;
+  font-size: 17px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 767px) {
+    width: 100%;
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+}
+
+.entries {
+  margin-bottom: 28px;
+  padding: 22px 24px;
+  border-radius: 16px;
+  background: #f4fbf6;
+
+  @media (max-width: 767px) {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+}
+
+.entriesText {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  font-size: 19px;
+
+  strong {
+    font-size: 34px;
+    font-weight: 800;
+    color: $green;
+  }
+}
+
+.entriesPercent {
+  margin-left: auto;
+  color: $green;
+  font-weight: 700;
+}
+
+.bar {
+  height: 10px;
+  margin: 12px 0 8px;
+  border-radius: 5px;
+  background: #dcefe3;
+  overflow: hidden;
+
+  div {
+    height: 100%;
+    border-radius: 5px;
+    background: #2fb36a;
+  }
+}
+
+.entriesRemaining {
+  margin: 0;
+  color: $muted;
+  font-size: 16px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border: 1px solid $line;
+  border-radius: 999px;
+  background: #fff;
+  color: $ink;
+  font-size: 15px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #c9c4da;
+  }
+}
+
+.chipActive {
+  @extend .chip;
+  border-color: $violet;
+  background: #efe9fb;
+  color: #3f1f86;
+  font-weight: 600;
+
+  &:hover {
+    border-color: $violet;
+  }
+}
+
+.chipCount {
+  min-width: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #eeedf3;
+  color: $muted;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.chipDivider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 24px;
+  margin: 0 4px;
+  background: $line;
+}
+
+.search {
+  max-width: 760px;
+
+  > * {
+    width: 100%;
+  }
+
+  > div > :first-child {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > div > :last-child:not(:first-child) {
+    flex: 0 0 270px;
+
+    :global(.mantine-Select-root) {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 767px) {
+    > div {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    > div > * {
+      width: 100%;
+      flex: none !important;
+    }
+  }
+}
+
+.skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list {
+  margin-bottom: 24px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1.6fr) minmax(0, 1.4fr) minmax(0, 1.2fr) 36px;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 12px;
+  border-bottom: 1px solid $line;
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+
+  &:hover,
+  &:focus-visible {
+    background: #f8f7fc;
+  }
+
+  @media (max-width: 860px) {
+    grid-template-columns: 44px minmax(0, 1fr) 36px;
+    grid-template-areas:
+      "avatar person actions"
+      ". ticket ticket"
+      ". entry entry";
+    gap: 6px 12px;
+    margin: 10px 0;
+    padding: 16px;
+    border: 1px solid $line;
+    border-radius: 14px;
+  }
+}
+
+.rowCancelled {
+  opacity: 0.6;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #efe9fb;
+  color: #3f1f86;
+  font-size: 15px;
+  font-weight: 700;
+
+  @media (max-width: 860px) {
+    grid-area: avatar;
+  }
+}
+
+.person,
+.ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.person {
+  @media (max-width: 860px) {
+    grid-area: person;
+  }
+}
+
+.ticket {
+  @media (max-width: 860px) {
+    grid-area: ticket;
+  }
+}
+
+.name {
+  font-size: 17px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticketName {
+  font-weight: 500;
+}
+
+.secondary {
+  color: $muted;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entry {
+  @media (max-width: 860px) {
+    grid-area: entry;
+  }
+}
+
+%entryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.entered {
+  @extend %entryButton;
+  color: $green;
+  font-weight: 600;
+
+  svg {
+    color: #2fb36a;
+  }
+}
+
+.notEntered {
+  @extend %entryButton;
+  color: $muted;
+}
+
+.pill {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pillCancelled {
+  background: #fde2e2;
+  color: #b42318;
+}
+
+.pillWaiting {
+  background: #fdf1d6;
+  color: #8a5a00;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+
+  @media (max-width: 860px) {
+    grid-area: actions;
+  }
+}
+
+.moreButton {
+  display: inline-flex;
+  padding: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: $muted;
+  cursor: pointer;
+
+  &:hover {
+    background: #eeedf3;
+    color: $ink;
+  }
+}

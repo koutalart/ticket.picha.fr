@@ -128,6 +128,10 @@ msgstr ""
 msgid "{0} services{1}"
 msgstr ""
 
+#: src/components/routes/event/attendees.tsx:110
+msgid "{0} still to come"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/pages/ServicesPage.tsx:16
 msgid "{0} supports companies, institutions and partners in creating their events."
 msgstr ""
@@ -612,7 +616,6 @@ msgstr "激活日期"
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:19
 #: src/components/modals/EditUserModal/index.tsx:110
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:105
-#: src/components/routes/event/attendees.tsx:26
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:116
 msgid "Active"
 msgstr "活躍"
@@ -651,6 +654,11 @@ msgstr ""
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:264
 msgid "Add a value"
+msgstr ""
+
+#: src/components/routes/event/attendees.tsx:95
+#: src/components/routes/event/attendees.tsx:162
+msgid "Add an attendee"
 msgstr ""
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:401
@@ -879,6 +887,11 @@ msgstr "活動結束後"
 #: src/components/routes/landing/index.tsx:277
 msgid "After your request, we reply within 1 business day to schedule a time. We show you the platform based on your next event: invitations, welcome, badges and reporting."
 msgstr "收到您的申請後，我們會於 1 個工作天內回覆並預約時間，以您的下一場活動為您示範平台：邀請、接待、名牌及報表。"
+
+#: src/components/routes/event/attendees.tsx:74
+msgctxt "attendees filter"
+msgid "All"
+msgstr ""
 
 #: src/components/routes/event/orders.tsx:94
 msgctxt "orders filter"
@@ -1168,6 +1181,7 @@ msgid "Archived Organizers"
 msgstr "已封存的主辦方"
 
 #: src/components/common/AttendeeTable/index.tsx:82
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:57
 msgid "Are you sure you want to activate this attendee?"
 msgstr "您確定要激活該與會者嗎？"
 
@@ -1185,6 +1199,7 @@ msgid "Are you sure you want to archive this organizer? This will also archive a
 msgstr "您確定要封存此主辦方嗎？這也將封存屬於此主辦方的所有活動。"
 
 #: src/components/common/AttendeeTable/index.tsx:83
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:58
 msgid "Are you sure you want to cancel this attendee? This will void their ticket"
 msgstr "您確定要取消該與會者嗎？這將使其門票作廢"
 
@@ -1390,6 +1405,7 @@ msgid "Attendee"
 msgstr "參加者"
 
 #: src/components/common/AttendeeTable/index.tsx:95
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:64
 msgid "Attendee activated successfully"
 msgstr "參加者已重新啟用"
 
@@ -1398,6 +1414,7 @@ msgid "Attendee Cancelled"
 msgstr "與會者已取消"
 
 #: src/components/common/AttendeeTable/index.tsx:96
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:64
 msgid "Attendee cancelled successfully"
 msgstr "參加者已取消"
 
@@ -1443,8 +1460,8 @@ msgid "Attendee Notes"
 msgstr "與會者備註"
 
 #: src/components/routes/event/attendees.tsx:72
-msgid "Attendee Status"
-msgstr "參與者狀態"
+#~ msgid "Attendee Status"
+#~ msgstr "參與者狀態"
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:95
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:201
@@ -1471,11 +1488,11 @@ msgstr "參與者的票不包含在此列表中"
 #: src/components/modals/ManageOrderModal/index.tsx:126
 #: src/components/routes/admin/Messages/index.tsx:90
 #: src/components/routes/admin/Messages/index.tsx:139
-#: src/components/routes/event/attendees.tsx:173
+#: src/components/routes/event/attendees.tsx:86
 msgid "Attendees"
 msgstr "參與者"
 
-#: src/components/routes/event/attendees.tsx:131
+#: src/components/routes/event/attendees.tsx:65
 msgid "Attendees Exported"
 msgstr "與會者已導出"
 
@@ -1569,6 +1586,8 @@ msgstr "等待線下付款"
 msgid "Awaiting payment"
 msgstr "等待付款"
 
+#: src/components/routes/event/attendees.tsx:76
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:75
 #: src/components/routes/event/orders.tsx:86
 #: src/components/routes/event/OrdersPage/OrderList.tsx:43
 msgctxt "order status"
@@ -1579,7 +1598,6 @@ msgstr ""
 #: src/components/common/AttendeeTable/index.tsx:294
 #: src/components/common/OrdersTable/index.tsx:429
 #: src/components/common/OrderStatusBadge/index.tsx:10
-#: src/components/routes/event/attendees.tsx:28
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:57
 msgid "Awaiting Payment"
 msgstr "等待付款"
@@ -1874,6 +1892,10 @@ msgstr "取消訂單"
 msgid "Cancel Order {0}"
 msgstr "取消訂單 {0}"
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:151
+msgid "Cancel the ticket"
+msgstr ""
+
 #: src/components/modals/CancelOrderModal/index.tsx:67
 msgid "Canceling will cancel all attendees associated with this order, and release the tickets back into the available pool."
 msgstr "取消將取消與此訂單關聯的所有參與者，並將門票釋放回可用池。"
@@ -1888,7 +1910,7 @@ msgstr ""
 #: src/components/common/OrderStatusBadge/index.tsx:9
 #: src/components/common/WaitlistTable/index.tsx:27
 #: src/components/routes/admin/Messages/index.tsx:126
-#: src/components/routes/event/attendees.tsx:27
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:72
 #: src/components/routes/event/OrdersPage/OrderList.tsx:37
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:75
 #: src/components/routes/kiosk/Orders/index.tsx:175
@@ -1897,6 +1919,11 @@ msgstr ""
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:98
 msgid "Cancelled"
 msgstr "已取消"
+
+#: src/components/routes/event/attendees.tsx:77
+msgctxt "attendees filter"
+msgid "Cancelled"
+msgstr ""
 
 #: src/components/routes/event/orders.tsx:97
 msgctxt "orders filter"
@@ -2861,7 +2888,6 @@ msgstr "封面圖片將顯示在活動頁面頂部"
 msgid "Cover image will be displayed at the top of your organizer page"
 msgstr "封面圖片將顯示在您的主辦單位頁面頂部"
 
-#: src/components/routes/event/attendees.tsx:196
 #: src/components/routes/event/products.tsx:76
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:132
 msgid "Create"
@@ -4145,9 +4171,14 @@ msgstr "輸入您的姓名"
 msgid "Enter your VAT number including the country code, without spaces (e.g., IE1234567A, DE123456789)"
 msgstr "輸入您的增值稅號碼，包括國家代碼，不含空格（例如：IE1234567A、DE123456789）"
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:87
 #: src/components/routes/kiosk/Orders/index.tsx:196
 msgid "Entered at {0}"
 msgstr "入場時間 {0}"
+
+#: src/components/routes/event/attendees.tsx:105
+msgid "entered out of {0}"
+msgstr ""
 
 #: src/components/routes/event/EventDashboard/index.tsx:205
 msgid "Entries"
@@ -4486,6 +4517,10 @@ msgstr "每個郵件範本都必須包含一個連結到相應頁面的行動號
 msgid "Every order of the event — find a buyer, reprint tickets and record entries."
 msgstr "活動的所有訂單——查找購票人、重印門票及記錄入場。"
 
+#: src/components/routes/event/attendees.tsx:87
+msgid "Everyone who has a ticket for this event."
+msgstr ""
+
 #: src/components/routes/event/GettingStarted/index.tsx:231
 msgid "Everything essential is ready. You can put your event online."
 msgstr ""
@@ -4525,7 +4560,7 @@ msgid "Expiry Date"
 msgstr "有效期"
 
 #: src/components/routes/event/Affiliates/index.tsx:81
-#: src/components/routes/event/attendees.tsx:205
+#: src/components/routes/event/attendees.tsx:92
 msgid "Export"
 msgstr "出口"
 
@@ -4557,7 +4592,7 @@ msgstr "匯出成功"
 msgid "Exporting Affiliates"
 msgstr "匯出緊推廣夥伴"
 
-#: src/components/routes/event/attendees.tsx:127
+#: src/components/routes/event/attendees.tsx:64
 msgid "Exporting Attendees"
 msgstr "正在導出與會者"
 
@@ -4600,6 +4635,7 @@ msgid "Failed to assign configuration"
 msgstr "分配配置失敗"
 
 #: src/components/common/AttendeeTable/index.tsx:98
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:65
 msgid "Failed to cancel attendee"
 msgstr "取消與會者失敗"
 
@@ -4663,7 +4699,7 @@ msgstr "下載發票失敗。請重試。"
 msgid "Failed to export affiliates"
 msgstr "匯出推廣夥伴失敗"
 
-#: src/components/routes/event/attendees.tsx:136
+#: src/components/routes/event/attendees.tsx:66
 msgid "Failed to export attendees"
 msgstr "導出與會者失敗"
 
@@ -4713,6 +4749,7 @@ msgid "Failed to resend ticket"
 msgstr "重新發送門票失敗"
 
 #: src/components/common/AttendeeTable/index.tsx:76
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:51
 msgid "Failed to resend ticket email"
 msgstr "重新發送票據電子郵件失敗"
 
@@ -4890,8 +4927,8 @@ msgid "Fill in your details above first"
 msgstr "請先在上方填寫您的詳細信息"
 
 #: src/components/routes/event/attendees.tsx:183
-msgid "Filter Attendees"
-msgstr "篩選參與者"
+#~ msgid "Filter Attendees"
+#~ msgstr "篩選參與者"
 
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:123
 msgid "Filter by Event"
@@ -6363,6 +6400,7 @@ msgid "Manage"
 msgstr "管理"
 
 #: src/components/common/AttendeeTable/index.tsx:354
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:134
 msgid "Manage attendee"
 msgstr "管理與會者"
 
@@ -6471,6 +6509,7 @@ msgid "Message approved successfully"
 msgstr "訊息批准成功"
 
 #: src/components/common/AttendeeTable/index.tsx:359
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:140
 msgid "Message attendee"
 msgstr "與會者留言"
 
@@ -6609,6 +6648,7 @@ msgstr "月"
 msgid "More"
 msgstr ""
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:128
 #: src/components/routes/event/OrdersPage/OrderList.tsx:97
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:105
 msgid "More actions"
@@ -6799,6 +6839,10 @@ msgstr "冇推廣夥伴可顯示"
 msgid "No archived events to show."
 msgstr "沒有可顯示的已歸檔活動。"
 
+#: src/components/routes/event/attendees.tsx:156
+msgid "No attendee matches these filters"
+msgstr ""
+
 #: src/components/common/QuestionsTable/index.tsx:490
 msgid "No attendee questions yet"
 msgstr "暫無參與者問題"
@@ -6812,6 +6856,7 @@ msgid "No attendees have been added to this order."
 msgstr "尚未向此訂單添加參會者。"
 
 #: src/components/common/AttendeeTable/index.tsx:404
+#: src/components/routes/event/attendees.tsx:156
 msgid "No Attendees to show"
 msgstr "無與會者"
 
@@ -6948,6 +6993,7 @@ msgstr "無信息顯示"
 msgid "No more tickets available for this price."
 msgstr "此票價已售罄。"
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:105
 #: src/components/routes/event/OrdersPage/OrderList.tsx:169
 msgid "No name"
 msgstr ""
@@ -7180,6 +7226,7 @@ msgstr "不符合條件"
 msgid "Not entered"
 msgstr "未入場"
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:92
 #: src/components/routes/kiosk/Orders/index.tsx:198
 msgid "Not entered yet"
 msgstr "尚未入場"
@@ -7496,6 +7543,10 @@ msgstr "選項"
 #: src/components/modals/CreateEventModal/index.tsx:165
 msgid "or"
 msgstr "或"
+
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:121
+msgid "order"
+msgstr ""
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:21
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:22
@@ -8459,7 +8510,7 @@ msgid "Please select at least one product"
 msgstr "請選擇至少一個產品"
 
 #: src/components/routes/event/Affiliates/index.tsx:52
-#: src/components/routes/event/attendees.tsx:137
+#: src/components/routes/event/attendees.tsx:66
 #: src/components/routes/event/orders.tsx:78
 msgid "Please try again."
 msgstr "請再試一次。"
@@ -8476,7 +8527,7 @@ msgstr "請等一陣再申請新嘅驗證碼"
 msgid "Please wait while we prepare your affiliates for export..."
 msgstr "請稍候，我哋準備緊匯出你嘅推廣夥伴..."
 
-#: src/components/routes/event/attendees.tsx:128
+#: src/components/routes/event/attendees.tsx:64
 msgid "Please wait while we prepare your attendees for export..."
 msgstr "請稍候，我們正在準備導出您的與會者..."
 
@@ -8992,6 +9043,10 @@ msgstr "重新提供名額"
 msgid "Reach an engaged audience"
 msgstr ""
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:151
+msgid "Reactivate the ticket"
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:519
 msgid "Read our privacy policy"
 msgstr "閱讀我們的私隱政策"
@@ -9340,6 +9395,7 @@ msgid "Resend Ticket"
 msgstr "重新發送門票"
 
 #: src/components/common/AttendeeTable/index.tsx:364
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:144
 msgid "Resend ticket email"
 msgstr "重新發送門票電郵"
 
@@ -9679,6 +9735,7 @@ msgstr "已排程"
 msgid "Scheduled time"
 msgstr "排程時間"
 
+#: src/components/routes/event/attendees.tsx:137
 #: src/components/routes/event/orders.tsx:160
 msgid "Search a name, an email or an order number…"
 msgstr ""
@@ -9696,8 +9753,8 @@ msgid "Search by account name or email..."
 msgstr "按賬戶名稱或電子郵件搜尋..."
 
 #: src/components/routes/event/attendees.tsx:188
-msgid "Search by attendee name, email or order #..."
-msgstr "按與會者姓名、電子郵件或訂單號搜索..."
+#~ msgid "Search by attendee name, email or order #..."
+#~ msgstr "按與會者姓名、電子郵件或訂單號搜索..."
 
 #: src/components/routes/events/Dashboard/index.tsx:149
 #: src/components/routes/organizer/Events/index.tsx:46
@@ -10371,6 +10428,10 @@ msgstr ""
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:382
 msgid "Sold"
 msgstr "已售出"
+
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:115
+msgid "Sold at the box office"
+msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:327
 msgid "Sold by {0}"
@@ -11474,6 +11535,7 @@ msgstr "入場券"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:482
 #: src/components/forms/ProductForm/index.tsx:138
 #: src/components/modals/CreateAttendeeModal/index.tsx:132
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:120
 msgid "Ticket"
 msgstr "門票"
 
@@ -11504,6 +11566,7 @@ msgstr "門票設計儲存成功"
 #~ msgstr "門票設計器"
 
 #: src/components/common/AttendeeTable/index.tsx:75
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:50
 msgid "Ticket email has been resent to attendee"
 msgstr "門票電子郵件已重新發送給與會者"
 
@@ -11571,8 +11634,8 @@ msgid "Ticket resent successfully"
 msgstr "門票重新發送成功"
 
 #: src/components/routes/event/attendees.tsx:66
-msgid "Ticket Type"
-msgstr "門票類型"
+#~ msgid "Ticket Type"
+#~ msgstr "門票類型"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:60
 msgid "Ticket URL"
@@ -12182,6 +12245,11 @@ msgstr "UUID"
 msgid "Valid"
 msgstr "有效"
 
+#: src/components/routes/event/attendees.tsx:75
+msgctxt "attendees filter"
+msgid "Valid"
+msgstr ""
+
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:377
 msgid "Validated"
 msgstr "已驗證"
@@ -12379,6 +12447,10 @@ msgstr "查看訊息"
 msgid "View on Google Maps"
 msgstr "在谷歌地圖上查看"
 
+#: src/components/routes/event/AttendeesPage/AttendeeList.tsx:137
+msgid "View order"
+msgstr ""
+
 #: src/components/common/EmailTemplateEditor/CTAConfiguration.tsx:28
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:57
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:69
@@ -12408,8 +12480,8 @@ msgid "View Ticket"
 msgstr "查看門票"
 
 #: src/components/routes/event/attendees.tsx:171
-msgid "View, edit, and export your registered attendees."
-msgstr "查看、編輯和匯出您的已註冊參與者。"
+#~ msgid "View, edit, and export your registered attendees."
+#~ msgstr "查看、編輯和匯出您的已註冊參與者。"
 
 #: src/components/routes/event/orders.tsx:111
 msgid "View, refund and resend tickets."
@@ -13138,11 +13210,12 @@ msgstr "您的賬户名稱會在活動頁面和電子郵件中使用。"
 msgid "Your affiliates have been exported successfully."
 msgstr "你嘅推廣夥伴已經成功匯出。"
 
-#: src/components/routes/event/attendees.tsx:132
+#: src/components/routes/event/attendees.tsx:65
 msgid "Your attendees have been exported successfully."
 msgstr "您的與會者已成功導出。"
 
 #: src/components/common/AttendeeTable/index.tsx:409
+#: src/components/routes/event/attendees.tsx:159
 msgid "Your attendees will appear here once they have registered for your event. You can also manually add attendees."
 msgstr "與會者註冊參加活動後，就會出現在這裏。您也可以手動添加與會者。"
 
