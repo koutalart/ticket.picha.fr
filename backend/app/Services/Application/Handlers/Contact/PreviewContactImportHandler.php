@@ -30,12 +30,12 @@ class PreviewContactImportHandler
         }
 
         return [
-            'token' => $token,
+            'import_token' => $token,
             'file_name' => $file->getClientOriginalName(),
             'headers' => $headers,
             'sample_rows' => array_slice($rows, 0, 5),
             'row_count' => count($rows),
-            'suggested_mapping' => $this->importService->suggestMapping($headers),
+            'suggested_mapping' => $this->importService->suggestMapping($headers, $rows),
         ];
     }
 }

@@ -35,6 +35,12 @@ class ContactImportTest extends TestCase
         $mapping = $this->service->suggestMapping(['CONTACT ID', 'LANDLINE_NUMBER', 'PRENOM', 'NOM', 'EMAIL', 'NATURE', 'SMS']);
 
         self::assertSame(['IGNORE', 'PHONE', 'FIRST_NAME', 'LAST_NAME', 'EMAIL', 'IGNORE', 'IGNORE'], $mapping);
+
+        $withData = $this->service->suggestMapping(
+            ['LANDLINE_NUMBER', 'PRENOM', 'EMAIL', 'SMS'],
+            [['', 'Laura', 'laura@example.test', '0639 11 22 33'], ['', 'Mae', 'mae@example.test', '']],
+        );
+        self::assertSame(['IGNORE', 'FIRST_NAME', 'EMAIL', 'PHONE'], $withData);
     }
 
     public function test_full_name_split_keeps_uppercase_family_name(): void

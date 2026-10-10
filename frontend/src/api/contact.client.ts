@@ -85,6 +85,41 @@ export interface UpdateContactRequest {
     sms_consent: boolean;
 }
 
+export type ContactImportField = 'FIRST_NAME' | 'LAST_NAME' | 'FULL_NAME' | 'EMAIL' | 'PHONE' | 'TAG' | 'IGNORE';
+
+export interface ContactImportPreview {
+    import_token: string;
+    file_name: string;
+    headers: string[];
+    sample_rows: string[][];
+    row_count: number;
+    suggested_mapping: ContactImportField[];
+}
+
+export interface RunContactImportRequest {
+    import_token: string;
+    file_name: string;
+    mapping: ContactImportField[];
+    tag_name?: string | null;
+    email_consent: boolean;
+    sms_consent: boolean;
+    default_country: 'FR' | 'YT' | 'RE' | 'MG' | 'DK';
+    dry_run: boolean;
+}
+
+export interface ContactImportResult {
+    import_id: IdParam | null;
+    created_count: number;
+    updated_count: number;
+    rejected_count: number;
+    rejected_rows: { line: number, reason: 'INVALID_EMAIL' | 'INVALID_PHONE' | 'NO_EMAIL_OR_PHONE', values: string[] }[];
+    dry_run: boolean;
+}
+
+export interface CreateContactRequest extends UpdateContactRequest {
+    email?: string | null;
+}
+
 export const buildContactQueryString = (filters: ContactFilters): string => {
     const params = new URLSearchParams();
 
@@ -165,6 +200,34 @@ export const contactClient = {
         const response = await api.post<GenericDataResponse<ContactTag>>(
             `organizers/${organizerId}/contacts/tags`,
             {name, contact_ids: contactIds}
+        );
+        return response.data.data;
+    },
+
+    create: async (organizerId: IdParam, data: CreateContactRequest) => {
+        const response = await api.post<GenericDataResponse<Contact>>(`organizers/${organizerId}/contacts`, data);
+        return response.data.data;
+    },
+
+    uploadImport: async (organizerId: IdParam, file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await api.post<GenericDataResponse<ContactImportPreview>>(
+            `organizers/${organizerId}/contacts/imports/upload`,
+            formData,
+            {headers: {'Content-Type': 'multipart/form-data'}}
+        );
+        return response.data.data;
+    },
+
+    runImport: async (organizerId: IdParam, data: RunContactImportRequest) => {
+        const response = await api.post<GenericDataResponse<ContactImportResult>>(`organizers/${organizerId}/contacts/imports`, data);
+        return response.data.data;
+    },
+
+    revertImport: async (organizerId: IdParam, importId: IdParam) => {
+        const response = await api.delete<GenericDataResponse<{ deleted_count: number }>>(
+            `organizers/${organizerId}/contacts/imports/${importId}`
         );
         return response.data.data;
     },

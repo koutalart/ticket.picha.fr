@@ -1,30 +1,28 @@
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+.header {
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 20px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
 
-.kpi {
-  padding: 14px 16px;
-  border: 1px solid var(--mantine-color-gray-3);
-  border-radius: 10px;
-  background: var(--mantine-color-body);
+.titleGroup {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
 }
 
-.kpiValue {
+.title {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.titleCount {
   font-size: 1.4rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.kpiLabel {
-  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--mantine-color-dimmed);
+  font-variant-numeric: tabular-nums;
 }
 
 .filters {
@@ -32,11 +30,58 @@
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.filterPill {
+  padding-right: 6px;
+}
+
+.pillClose {
+  cursor: pointer;
+}
+
+.menuScroll {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.menuCount {
+  font-size: 0.75rem;
+  color: var(--mantine-color-dimmed);
+}
+
+.countRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.countText {
+  font-size: 0.9rem;
+  color: var(--mantine-color-dimmed);
+  font-variant-numeric: tabular-nums;
+}
+
+.countDetail {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.countActions {
+  flex-wrap: wrap;
 }
 
 .search {
-  flex: 1 1 260px;
+  width: 240px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .selectionBar {
@@ -51,8 +96,22 @@
   background: var(--mantine-color-primary-light);
 }
 
-.row {
-  cursor: pointer;
+.tableCard {
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: 12px;
+  background: var(--mantine-color-body);
+  overflow: hidden;
+}
+
+.checkboxCell {
+  width: 44px;
+}
+
+.headCell {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .name {
@@ -60,7 +119,7 @@
 }
 
 .email {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--mantine-color-dimmed);
 }
 
@@ -75,8 +134,15 @@
   gap: 4px;
 }
 
-.hideOnMobile {
-  @media (max-width: 768px) {
-    display: none;
+.importSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--mantine-color-gray-0);
+
+  strong {
+    font-variant-numeric: tabular-nums;
   }
 }

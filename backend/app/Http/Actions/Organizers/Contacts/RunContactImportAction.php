@@ -34,7 +34,7 @@ class RunContactImportAction extends BaseAction
 
         try {
             $result = $this->handler->handle(
-                token: $request->validated('token'),
+                token: $request->validated('import_token'),
                 options: new ContactImportOptionsDTO(
                     organizerId: $organizerId,
                     userId: $this->getAuthenticatedUser()->getId(),
@@ -48,7 +48,7 @@ class RunContactImportAction extends BaseAction
                 dryRun: (bool) $request->validated('dry_run'),
             );
         } catch (ContactImportException $exception) {
-            throw ValidationException::withMessages(['token' => $exception->getMessage()]);
+            throw ValidationException::withMessages(['import_token' => $exception->getMessage()]);
         }
 
         return $this->jsonResponse($result->toArray(), wrapInData: true);

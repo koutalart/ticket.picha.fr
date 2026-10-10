@@ -112,7 +112,7 @@ class ContactsApiTest extends TestCase
         $this->api('post', 'contacts/tags', ['name' => 'VIP', 'contact_ids' => [$contactId]])->assertOk();
         $this->api('post', 'contacts/tags', ['name' => 'vip', 'contact_ids' => [$contactId]])->assertOk();
         $this->api('get', 'contacts/tags')->assertJsonCount(1, 'data')->assertJsonPath('data.0.contacts_count', 1);
-        $tagId = DB::table('contact_tags')->value('id');
+        $tagId = DB::table('contact_tags')->where('organizer_id', $this->event->organizer_id)->value('id');
         $this->api('get', "contacts?tag_id={$tagId}")->assertJsonCount(1, 'data')->assertJsonPath('data.0.tags.0.name', 'VIP');
         $this->api('delete', "contacts/{$contactId}/tags/{$tagId}")->assertNoContent();
         $this->api('get', "contacts?tag_id={$tagId}")->assertJsonCount(0, 'data');
@@ -168,7 +168,7 @@ class ContactsApiTest extends TestCase
             ->json('data');
 
         $payload = [
-            'token' => $upload['token'],
+            'import_token' => $upload['import_token'],
             'file_name' => 'clients.csv',
             'mapping' => ['FIRST_NAME', 'LAST_NAME', 'EMAIL', 'PHONE', 'TAG'],
             'tag_name' => 'Import test',
@@ -198,10 +198,10 @@ class ContactsApiTest extends TestCase
         $file = UploadedFile::fake()->createWithContent('clients.csv', "Nom\nMadi\n");
         $token = $this->withHeaders(['Authorization' => 'Bearer '.$this->token])
             ->post("/organizers/{$this->event->organizer_id}/contacts/imports/upload", ['file' => $file])
-            ->json('data.token');
+            ->json('data.import_token');
 
         $this->api('post', 'contacts/imports', [
-            'token' => $token, 'file_name' => 'clients.csv', 'mapping' => ['LAST_NAME'],
+            'import_token' => $token, 'file_name' => 'clients.csv', 'mapping' => ['LAST_NAME'],
             'email_consent' => false, 'sms_consent' => false, 'dry_run' => true,
         ])->assertUnprocessable()->assertJsonValidationErrors('mapping');
     }

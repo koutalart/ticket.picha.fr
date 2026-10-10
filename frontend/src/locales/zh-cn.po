@@ -54,6 +54,10 @@ msgstr ""
 msgid "{0} — home"
 msgstr ""
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:170
+msgid "{0} · {1} lines. Tell us what each column contains."
+msgstr "{0} · {1} 行。请说明每一列的内容。"
+
 #: src/components/common/CheckInStatusModal/index.tsx:143
 msgid "{0} {1}"
 msgstr "{0} {1}"
@@ -70,6 +74,10 @@ msgstr "{0} <0>签到</0>成功"
 msgid "{0} <0>checked out</0> successfully"
 msgstr "{0} <0>签退</0>成功"
 
+#: src/components/routes/organizer/Contacts/index.tsx:279
+msgid "{0} accept emails"
+msgstr "{0} 人接受邮件"
+
 #: src/components/routes/event/Webhooks/index.tsx:24
 #: src/components/routes/organizer/Webhooks/index.tsx:25
 msgid "{0} Active Webhooks"
@@ -83,6 +91,10 @@ msgstr "{0} 已于 {1} 入场"
 msgid "{0} available"
 msgstr "{0}可用"
 
+#: src/components/routes/organizer/Contacts/index.tsx:280
+msgid "{0} came to 2 events or more"
+msgstr "{0} 人参加了 2 场或以上活动"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:251
 msgid "{0} charges platform fees to maintain and improve its services. These fees are automatically deducted from each transaction."
 msgstr "{0} 收取平台费用以维护和改进服务。这些费用会从每笔交易中自动扣除。"
@@ -90,6 +102,10 @@ msgstr "{0} 收取平台费用以维护和改进服务。这些费用会从每�
 #: src/components/routes/kiosk/Orders/index.tsx:86
 msgid "{0} checked in"
 msgstr "{0} 已签到"
+
+#: src/components/routes/organizer/Contacts/index.tsx:276
+msgid "{0} contacts"
+msgstr "{0} 个联系人"
 
 #: src/components/modals/CreateTaxOrFeeModal/index.tsx:36
 msgid "{0} created successfully"
@@ -120,7 +136,7 @@ msgstr "{0} 位组织者"
 msgid "{0} presents"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:186
+#: src/components/routes/organizer/Contacts/index.tsx:324
 msgid "{0} selected contacts"
 msgstr "已选择 {0} 个联系人"
 
@@ -489,11 +505,7 @@ msgstr "接受银行转账、支票或其他线下支付方式"
 msgid "Accept credit card payments with Stripe"
 msgstr "通过 Stripe 接受信用卡支付"
 
-#: src/components/routes/organizer/Contacts/index.tsx:122
-msgid "accept emails"
-msgstr "接受邮件"
-
-#: src/components/routes/organizer/Contacts/index.tsx:174
+#: src/components/routes/organizer/Contacts/index.tsx:213
 msgid "Accept emails"
 msgstr "接受邮件"
 
@@ -505,7 +517,7 @@ msgstr "接受邀请"
 msgid "Accept Invitation"
 msgstr "接受邀请"
 
-#: src/components/routes/organizer/Contacts/index.tsx:175
+#: src/components/routes/organizer/Contacts/index.tsx:214
 msgid "Accept SMS"
 msgstr "接受短信"
 
@@ -514,10 +526,12 @@ msgid "accepts"
 msgstr "已同意"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/EditContactModal.tsx:52
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:51
 msgid "Accepts to receive your emails"
 msgstr "同意接收您的邮件"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/EditContactModal.tsx:57
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:56
 msgid "Accepts to receive your SMS"
 msgstr "同意接收您的短信"
 
@@ -653,7 +667,7 @@ msgstr ""
 msgid "Add a service"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:198
+#: src/components/routes/organizer/Contacts/index.tsx:336
 msgid "Add a tag"
 msgstr "添加标签"
 
@@ -692,6 +706,10 @@ msgstr "添加描述"
 #: src/components/routes/event/GettingStarted/index.tsx:142
 msgid "Add event details and manage event settings."
 msgstr "添加活动详情并管理活动设置。"
+
+#: src/components/routes/organizer/Contacts/index.tsx:250
+msgid "Add filter"
+msgstr "添加筛选"
 
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:153
 msgid "Add instructions for offline payments (e.g., bank transfer details, where to send checks, payment deadlines)"
@@ -765,6 +783,10 @@ msgstr "添加 Webhook"
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:185
 msgid "Add your social media handles and website URL. These will be displayed on your public organizer page."
 msgstr "添加您的社交媒体账号和网站链接。这些信息将显示在您的公开组织者页面上。"
+
+#: src/components/routes/organizer/Contacts/index.tsx:126
+msgid "Added by hand"
+msgstr "手动添加"
 
 #: src/components/routes/kiosk/Orders/index.tsx:206
 msgid "Added manually"
@@ -902,6 +924,10 @@ msgstr "所有参与者"
 msgid "All attendees of this event"
 msgstr "本次活动的所有与会者"
 
+#: src/components/routes/organizer/Contacts/index.tsx:212
+msgid "All contacts"
+msgstr "所有联系人"
+
 #: src/components/common/OrganizerReportTable/index.tsx:291
 msgid "All Currencies"
 msgstr "所有货币"
@@ -915,7 +941,6 @@ msgid "All Ended Events"
 msgstr "所有已结束活动"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:179
-#: src/components/routes/organizer/Contacts/index.tsx:146
 msgid "All events"
 msgstr ""
 
@@ -938,10 +963,6 @@ msgstr "所有产品"
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:64
 msgid "All Statuses"
 msgstr "所有状态"
-
-#: src/components/routes/organizer/Contacts/index.tsx:154
-msgid "All tags"
-msgstr "所有标签"
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:19
 msgid "All upcoming dates by {0}, and a look back at past editions."
@@ -997,6 +1018,10 @@ msgstr ""
 #: src/components/routes/auth/Register/index.tsx:75
 msgid "Already have an account? <0>{0}</0>"
 msgstr "已有账户？<0>{0}</0>"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:259
+msgid "already known, completed without being overwritten"
+msgstr "已存在，补充信息但不覆盖"
 
 #: src/components/modals/RefundOrderModal/index.tsx:110
 msgid "Already Refunded"
@@ -1589,6 +1614,8 @@ msgid "Awesome Organizer Ltd."
 msgstr "Awesome Organizer Ltd."
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:510
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:247
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:289
 msgid "Back"
 msgstr "返回"
 
@@ -1799,16 +1826,18 @@ msgid "Call-to-Action Button"
 msgstr "行动号召按钮"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:169
+#: src/components/routes/organizer/Contacts/index.tsx:113
 msgid "Came"
 msgstr "出席"
 
-#: src/components/routes/organizer/Contacts/index.tsx:176
+#: src/components/routes/organizer/Contacts/index.tsx:105
+#: src/components/routes/organizer/Contacts/index.tsx:255
 msgid "Came (scanned)"
 msgstr "已出席（已扫码）"
 
-#: src/components/routes/organizer/Contacts/index.tsx:126
-msgid "came to 2 events or more"
-msgstr "参加了 2 场或以上活动"
+#: src/components/routes/organizer/Contacts/index.tsx:226
+msgid "Came to an event"
+msgstr "参加过某场活动"
 
 #: src/components/common/AttendeeCheckInTable/PermissionDeniedMessage.tsx:16
 msgid "Camera permission was denied. <0>Request Permission</0> again, or if this doesn't work, you will need to <1>grant this page</1> access to your camera in your browser settings."
@@ -1872,6 +1901,10 @@ msgstr "取消订单"
 #: src/components/modals/CancelOrderModal/index.tsx:57
 msgid "Cancel Order {0}"
 msgstr "取消订单 {0}"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:306
+msgid "Cancel this import"
+msgstr "撤销此次导入"
 
 #: src/components/modals/CancelOrderModal/index.tsx:67
 msgid "Canceling will cancel all attendees associated with this order, and release the tickets back into the available pool."
@@ -1997,6 +2030,10 @@ msgstr "更改等候名单设置"
 #: src/constants/eventCategories.ts:17
 msgid "Charity"
 msgstr "慈善"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:139
+msgid "Check"
+msgstr "确认"
 
 #: src/components/routes/kiosk/Orders/index.tsx:349
 msgid "Check everyone in ({pendingCount})"
@@ -2173,6 +2210,10 @@ msgstr "选择日历"
 msgid "Choose how the event date is shown on the ticket"
 msgstr "选择活动日期在票券上的显示方式"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:207
+msgid "Choose the column that contains the email address or the phone number."
+msgstr "请选择包含邮箱或电话号码的列。"
+
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:45
 msgid "Choose the default setting for new events. This can be overridden for individual events."
 msgstr "为新活动选择默认设置。这可以针对单个活动进行覆盖。"
@@ -2229,6 +2270,7 @@ msgstr "关闭"
 #: src/components/modals/JoinWaitlistModal/index.tsx:103
 #: src/components/modals/JoinWaitlistModal/index.tsx:130
 #: src/components/modals/RefundOrderModal/index.tsx:210
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:308
 #: src/components/routes/product-widget/SelectProducts/index.tsx:598
 msgid "Close"
 msgstr "关闭"
@@ -2313,7 +2355,16 @@ msgstr "颜色必须是有效的十六进制颜色代码。例如#ffffff"
 msgid "Colors"
 msgstr "颜色"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:184
+msgid "Column {0}"
+msgstr "第 {0} 列"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:176
+msgid "Column in your file"
+msgstr "文件中的列"
+
 #: src/components/common/ColumnVisibilityToggle/index.tsx:21
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:138
 msgid "Columns"
 msgstr "列"
 
@@ -2606,7 +2657,7 @@ msgstr "连接详情"
 #: src/components/organizerTemplates/Poster/index.tsx:77
 #: src/components/organizerTemplates/Poster/index.tsx:246
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:67
-#: src/components/routes/organizer/Contacts/index.tsx:228
+#: src/components/routes/organizer/Contacts/index.tsx:367
 msgid "Contact"
 msgstr "联系"
 
@@ -2625,6 +2676,10 @@ msgstr ""
 #: src/components/organizerTemplates/Poster/index.tsx:119
 msgid "Contact and press | {0}"
 msgstr ""
+
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:29
+msgid "Contact created"
+msgstr "联系人已创建"
 
 #: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:29
 msgid "Contact details"
@@ -2655,22 +2710,31 @@ msgstr ""
 msgid "Contact us to become a partner"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:118
-msgid "contacts"
-msgstr "联系人"
-
 #: src/components/layouts/OrganizerLayout/index.tsx:96
-#: src/components/routes/organizer/Contacts/index.tsx:112
+#: src/components/routes/organizer/Contacts/index.tsx:194
 msgid "Contacts"
 msgstr "联系人"
 
-#: src/components/routes/organizer/Contacts/index.tsx:103
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:301
+msgid "contacts completed"
+msgstr "个联系人已补充"
+
+#: src/components/routes/organizer/Contacts/index.tsx:186
 msgid "Contacts exported"
 msgstr "联系人已导出"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:112
+msgid "Contacts imported"
+msgstr "联系人已导入"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:270
+msgid "Content"
+msgstr "内容"
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:502
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:249
 #: src/components/routes/product-widget/SelectProducts/index.tsx:550
 msgid "Continue"
 msgstr "继续"
@@ -2847,6 +2911,11 @@ msgstr "创建 {0}"
 msgid "Create {0} Template"
 msgstr "创建{0}模板"
 
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:37
+#: src/components/routes/organizer/Contacts/index.tsx:198
+msgid "Create a contact"
+msgstr "创建联系人"
+
 #: src/components/common/WidgetEditor/index.tsx:161
 msgid "Create a custom widget to sell tickets on your site."
 msgstr "创建自定义小部件以在您的网站上销售门票。"
@@ -2977,6 +3046,10 @@ msgstr "创建问题"
 msgid "Create Tax or Fee"
 msgstr "创建税费"
 
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:60
+msgid "Create the contact"
+msgstr "创建联系人"
+
 #: src/components/modals/CreateProductModal/index.tsx:82
 msgid "Create Ticket or Product"
 msgstr "创建门票或产品"
@@ -3038,6 +3111,10 @@ msgstr "正在创建您的活动，请稍候"
 #: src/components/forms/OrganizerForm/index.tsx:123
 msgid "Creating your organizer profile, please wait"
 msgstr "正在创建您的主办方资料，请稍候"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:159
+msgid "CSV or Excel, one contact per line, with a first line of column names. A Brevo export works as is."
+msgstr "CSV 或 Excel，每行一个联系人，第一行为列名。Brevo 导出文件可直接使用。"
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:48
 msgid "CTA label is required"
@@ -3158,6 +3235,10 @@ msgstr "客户姓氏"
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:108
 msgid "Customers"
 msgstr "客户"
+
+#: src/components/routes/organizer/Contacts/index.tsx:288
+msgid "Customize columns"
+msgstr "自定义列"
 
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:56
 msgid "Customize the email and notification settings for this event"
@@ -3398,6 +3479,10 @@ msgstr "删除 Webhook"
 msgid "Demo tailored to your event"
 msgstr "根据您的活动定制演示"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:225
+msgid "Denmark"
+msgstr "丹麦"
+
 #: src/components/forms/ProductCategoryForm/index.tsx:29
 #: src/components/forms/ProductForm/index.tsx:279
 #: src/components/forms/TaxAndFeeForm/index.tsx:81
@@ -3580,6 +3665,10 @@ msgstr "正在下载发票"
 #: src/components/layouts/OrganizerLayout/index.tsx:224
 msgid "Draft"
 msgstr "草稿"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:157
+msgid "Drop your file here or click to choose it"
+msgstr "将文件拖到此处或点击选择"
 
 #: src/components/forms/QuestionForm/index.tsx:125
 msgid "Dropdown selection"
@@ -3814,6 +3903,9 @@ msgstr "符合条件的签到列表"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:984
 #: src/components/routes/kiosk/Login/index.tsx:75
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:161
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:44
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:59
+#: src/components/routes/organizer/Contacts/index.tsx:110
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:68
@@ -3912,7 +4004,7 @@ msgstr "邮箱验证成功！"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:165
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:236
-#: src/components/routes/organizer/Contacts/index.tsx:233
+#: src/components/routes/organizer/Contacts/index.tsx:116
 msgid "Emails"
 msgstr "邮件"
 
@@ -4369,6 +4461,10 @@ msgstr ""
 msgid "Event Venue"
 msgstr "活动场地"
 
+#: src/components/routes/organizer/Contacts/index.tsx:99
+msgid "Event: {0}"
+msgstr "活动：{0}"
+
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
 #: src/components/layouts/OrganizerLayout/index.tsx:93
@@ -4377,7 +4473,7 @@ msgstr "活动场地"
 #: src/components/routes/admin/Attribution/index.tsx:133
 #: src/components/routes/admin/Dashboard/index.tsx:403
 #: src/components/routes/admin/Events/index.tsx:77
-#: src/components/routes/organizer/Contacts/index.tsx:230
+#: src/components/routes/organizer/Contacts/index.tsx:112
 #: src/components/routes/organizer/Events/index.tsx:43
 msgid "Events"
 msgstr "活动"
@@ -4407,15 +4503,16 @@ msgstr "每个邮件模板都必须包含一个链接到相应页面的行动号
 msgid "Every order of the event — find a buyer, reprint tickets and record entries."
 msgstr "活动的所有订单——查找购票人、重印门票并记录入场。"
 
-#: src/components/routes/organizer/Contacts/index.tsx:111
-msgid "Everyone who bought or received a ticket from you."
-msgstr "所有在您这里购买或获得门票的人。"
-
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:131
 msgid "Everything you need to know."
 msgstr ""
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:177
+msgid "Example"
+msgstr "示例"
+
 #: src/components/routes/organizer/Contacts/ContactDetail/EditContactModal.tsx:48
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:47
 msgid "Example: 0639 12 34 56 or +262 639 12 34 56"
 msgstr "示例：0639 12 34 56 或 +262 639 12 34 56"
 
@@ -4455,7 +4552,7 @@ msgstr "有效期"
 msgid "Export"
 msgstr "出口"
 
-#: src/components/routes/organizer/Contacts/index.tsx:161
+#: src/components/routes/organizer/Contacts/index.tsx:305
 msgid "Export (CSV)"
 msgstr "导出 (CSV)"
 
@@ -4467,7 +4564,7 @@ msgstr "导出答案"
 msgid "Export CSV"
 msgstr "导出CSV"
 
-#: src/components/routes/organizer/Contacts/index.tsx:104
+#: src/components/routes/organizer/Contacts/index.tsx:187
 msgid "Export failed"
 msgstr "导出失败"
 
@@ -4495,7 +4592,7 @@ msgstr "正在导出与会者"
 msgid "Exporting complete. Downloading file..."
 msgstr "导出完成。正在下载文件..."
 
-#: src/components/routes/organizer/Contacts/index.tsx:102
+#: src/components/routes/organizer/Contacts/index.tsx:185
 msgid "Exporting contacts"
 msgstr "正在导出联系人"
 
@@ -4801,6 +4898,10 @@ msgstr "音乐节、工作坊、颁奖典礼。"
 msgid "Fewer than 50"
 msgstr "少于 50"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:178
+msgid "Field"
+msgstr "字段"
+
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:258
 msgid "Figure"
 msgstr ""
@@ -4808,6 +4909,10 @@ msgstr ""
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:227
 msgid "Figures & values"
 msgstr ""
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:137
+msgid "File"
+msgstr "文件"
 
 #: src/components/common/ImageUploadDropzone/index.tsx:56
 msgid "File is too large. Maximum size is 8MB."
@@ -4896,6 +5001,8 @@ msgstr "第一张发票号码"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:962
 #: src/components/routes/landing/DemoRequestForm/index.tsx:119
 #: src/components/routes/organizer/Contacts/ContactDetail/EditContactModal.tsx:44
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:41
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:56
 #: src/components/routes/product-widget/CollectInformation/index.tsx:474
 #: src/components/routes/product-widget/CollectInformation/index.tsx:696
 msgid "First name"
@@ -5055,6 +5162,10 @@ msgstr "完整使用平台"
 #: src/components/routes/event/EventDashboard/index.tsx:312
 msgid "Full event duration"
 msgstr "活动全程"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:58
+msgid "Full name"
+msgstr "全名"
 
 #: src/components/modals/RefundOrderModal/index.tsx:150
 msgid "Full refund"
@@ -5479,6 +5590,10 @@ msgstr "如果您没有要求更改密码，请立即更改密码。"
 msgid "If you have an account with us, you will receive an email with instructions on how to reset your password."
 msgstr "如果您在我们这里有账户，您将收到一封包含如何重置密码说明的电子邮件。"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:62
+msgid "Ignore"
+msgstr "忽略"
+
 #: src/components/common/ImageUploadDropzone/index.tsx:121
 msgid "Image deleted successfully"
 msgstr "图像已成功删除"
@@ -5519,6 +5634,23 @@ msgstr "模拟已开始"
 #: src/components/common/ImpersonationBanner/index.tsx:23
 msgid "Impersonation stopped"
 msgstr "模拟已停止"
+
+#: src/components/routes/organizer/Contacts/index.tsx:125
+msgid "Import"
+msgstr "导入"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:291
+msgid "Import {importable} contacts"
+msgstr "导入 {importable} 个联系人"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:124
+msgid "Import cancelled"
+msgstr "导入已撤销"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:135
+#: src/components/routes/organizer/Contacts/index.tsx:199
+msgid "Import contacts"
+msgstr "导入联系人"
 
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:114
 msgid "Important Notice"
@@ -5655,6 +5787,10 @@ msgstr "无效"
 msgid "Invalid email"
 msgstr "无效邮箱"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:66
+msgid "Invalid email address"
+msgstr "邮箱地址无效"
+
 #: src/components/modals/CreateAffiliateModal/index.tsx:38
 #: src/components/modals/EditAffiliateModal/index.tsx:36
 msgid "Invalid email format"
@@ -5672,6 +5808,10 @@ msgstr "无效的Liquid语法。请更正后再试。"
 #: src/pages/digit/ScannerDevicePage.tsx:67
 msgid "Invalid or forged QR code"
 msgstr ""
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:67
+msgid "Invalid phone number"
+msgstr "电话号码无效"
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:157
 msgid "Invalid VAT number format"
@@ -5972,6 +6112,8 @@ msgstr "最后登录"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:967
 #: src/components/routes/landing/DemoRequestForm/index.tsx:126
 #: src/components/routes/organizer/Contacts/ContactDetail/EditContactModal.tsx:45
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:42
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:57
 msgid "Last name"
 msgstr "姓氏"
 
@@ -5997,7 +6139,7 @@ msgstr "姓氏"
 msgid "Last name is required"
 msgstr "姓氏为必填项"
 
-#: src/components/routes/organizer/Contacts/index.tsx:231
+#: src/components/routes/organizer/Contacts/index.tsx:114
 msgid "Last purchase"
 msgstr "最近购买"
 
@@ -6056,9 +6198,18 @@ msgstr "浅色"
 msgid "Limited retention"
 msgstr "有限保存"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:268
+msgid "Line"
+msgstr "行"
+
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:18
 msgid "Line-up & archives."
 msgstr ""
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:260
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:302
+msgid "lines rejected"
+msgstr "行被拒绝"
 
 #: src/components/routes/my-tickets/index.tsx:160
 msgid "Link Expired or Invalid"
@@ -6111,6 +6262,10 @@ msgstr "直播活动"
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:89
 msgid "Live the experience."
 msgstr ""
+
+#: src/components/routes/organizer/Contacts/index.tsx:222
+msgid "Load an event or a tag"
+msgstr "加载活动或标签"
 
 #: src/components/routes/kiosk/Orders/index.tsx:300
 msgid "Load more"
@@ -6201,6 +6356,10 @@ msgstr "查找我的门票"
 #: src/components/common/WidgetEditor/index.tsx:341
 msgid "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam placerat elementum..."
 msgstr "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam placerat elementum..."
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:224
+msgid "Madagascar"
+msgstr "马达加斯加"
 
 #: src/components/organizerTemplates/Poster/index.tsx:232
 #: src/components/organizerTemplates/Poster/index.tsx:259
@@ -6321,6 +6480,10 @@ msgstr "最大收件人数 / 消息"
 #: src/components/forms/ProductForm/index.tsx:441
 msgid "Maximum Per Order"
 msgstr "每份订单的最高限额"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:223
+msgid "Mayotte or France"
+msgstr "马约特或法国"
 
 #: src/components/routes/admin/Attribution/index.tsx:108
 msgid "Medium"
@@ -6603,6 +6766,11 @@ msgstr ""
 msgid "Never"
 msgstr "从不"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:258
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:300
+msgid "new contacts"
+msgstr "个新联系人"
+
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:87
 msgid "New dates are coming soon. Follow us so you don't miss the on-sale date."
 msgstr ""
@@ -6624,7 +6792,7 @@ msgstr "新标签"
 msgid "Next steps"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:260
+#: src/components/routes/organizer/Contacts/index.tsx:131
 msgid "no"
 msgstr "否"
 
@@ -6710,7 +6878,11 @@ msgstr "未找到配置"
 msgid "no consent"
 msgstr "未同意"
 
-#: src/components/routes/organizer/Contacts/index.tsx:208
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:286
+msgid "No contact is created before you click Import."
+msgstr "点击导入之前不会创建任何联系人。"
+
+#: src/components/routes/organizer/Contacts/index.tsx:346
 msgid "No contacts yet"
 msgstr "暂无联系人"
 
@@ -6734,6 +6906,10 @@ msgstr "无数据显示。请选择日期范围"
 msgid "No Discount"
 msgstr "无折扣"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:68
+msgid "No email address or phone number"
+msgstr "没有邮箱或电话"
+
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:439
 msgid "No end date"
 msgstr "无结束日期"
@@ -6745,6 +6921,10 @@ msgstr "没有可显示的已结束活动。"
 #: src/components/routes/kiosk/NoEvent/index.tsx:24
 msgid "No event assigned"
 msgstr "未分配活动"
+
+#: src/components/routes/organizer/Contacts/index.tsx:227
+msgid "No events"
+msgstr "暂无活动"
 
 #: src/components/common/AdminEventsTable/index.tsx:22
 msgid "No events found"
@@ -6930,6 +7110,10 @@ msgstr "没有搜索结果"
 msgid "No search results."
 msgstr "没有搜索结果。"
 
+#: src/components/routes/organizer/Contacts/index.tsx:236
+msgid "No tags yet"
+msgstr "暂无标签"
+
 #: src/components/common/TaxAndFeeList/index.tsx:105
 msgid "No Taxes or Fees have been added."
 msgstr "未加收任何税费。"
@@ -7053,6 +7237,10 @@ msgstr "允许支付的天数（留空以从发票中省略付款条款）"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:199
 msgid "Number Prefix"
 msgstr "号码前缀"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:218
+msgid "Numbers without a country code are from"
+msgstr "没有国家代码的号码来自"
 
 #: src/components/common/OrganizerReportTable/index.tsx:356
 msgid "of"
@@ -7235,11 +7423,17 @@ msgstr "仅发送给具有这些状态的订单"
 msgid "Only show start date and time"
 msgstr "仅显示开始日期和时间"
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:242
+msgid "Only tick these boxes if you can prove it. Otherwise these contacts will be visible but will not receive any announcement."
+msgstr "仅在您能证明时勾选。否则这些联系人可见，但不会收到任何通知。"
+
 #: src/components/routes/organizer/Contacts/ContactDetail/EditContactModal.tsx:53
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:52
 msgid "Only tick this if the person agreed to it."
 msgstr "仅在对方同意时勾选。"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/EditContactModal.tsx:58
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:57
 msgid "Only tick this if the person agreed to it. A phone number is required."
 msgstr "仅在对方同意时勾选。需要电话号码。"
 
@@ -8065,7 +8259,9 @@ msgstr "印有您品牌色彩和标志的个性化二维码腕带"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/EditContactModal.tsx:47
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:163
-#: src/components/routes/organizer/Contacts/index.tsx:229
+#: src/components/routes/organizer/Contacts/CreateContactModal.tsx:46
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:60
+#: src/components/routes/organizer/Contacts/index.tsx:111
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:97
 msgid "Phone"
 msgstr "电话"
@@ -8241,7 +8437,7 @@ msgstr "请选择至少一个产品"
 #: src/components/routes/event/Affiliates/index.tsx:52
 #: src/components/routes/event/attendees.tsx:137
 #: src/components/routes/event/orders.tsx:100
-#: src/components/routes/organizer/Contacts/index.tsx:104
+#: src/components/routes/organizer/Contacts/index.tsx:187
 msgid "Please try again."
 msgstr "请再试一次。"
 
@@ -8261,7 +8457,7 @@ msgstr "请稍候，我们正在准备导出您的推广员..."
 msgid "Please wait while we prepare your attendees for export..."
 msgstr "请稍候，我们正在准备导出您的与会者..."
 
-#: src/components/routes/organizer/Contacts/index.tsx:102
+#: src/components/routes/organizer/Contacts/index.tsx:185
 msgid "Please wait while we prepare your contacts."
 msgstr "请稍候，正在准备您的联系人。"
 
@@ -8639,6 +8835,10 @@ msgstr "发布"
 msgid "Publish Event"
 msgstr "发布活动"
 
+#: src/components/routes/organizer/Contacts/index.tsx:123
+msgid "Purchase"
+msgstr "购买"
+
 #: src/components/common/WaitlistStats/index.tsx:14
 #: src/components/common/WaitlistTable/index.tsx:26
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:73
@@ -8762,6 +8962,10 @@ msgstr "实时参与者名单"
 #: src/components/routes/landing/index.tsx:141
 msgid "Real-time attendee list, exportable attendance sheet, follow-up messages by e-mail and SMS."
 msgstr "实时到场名单、可导出的签到表，以及通过电子邮件和短信发送的跟进消息。"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:269
+msgid "Reason"
+msgstr "原因"
 
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:138
 msgid "Reassign"
@@ -8950,6 +9154,10 @@ msgstr "移除"
 #: src/components/modals/EditOrganizerCustomDomainModal/index.tsx:70
 msgid "Remove domain"
 msgstr "移除域名"
+
+#: src/components/routes/organizer/Contacts/index.tsx:266
+msgid "Remove filter"
+msgstr "移除筛选"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:182
 msgid "Remove tag"
@@ -9375,7 +9583,11 @@ msgstr "已安排"
 msgid "Scheduled time"
 msgstr "定时时间"
 
-#: src/components/routes/organizer/Contacts/index.tsx:138
+#: src/components/routes/organizer/Contacts/index.tsx:310
+msgid "Search"
+msgstr "搜索"
+
+#: src/components/routes/organizer/Contacts/index.tsx:311
 msgid "Search a name, an email or a phone number"
 msgstr "搜索姓名、邮箱或电话"
 
@@ -9543,7 +9755,7 @@ msgstr "选择级别"
 msgid "Select Account"
 msgstr "选择账户"
 
-#: src/components/routes/organizer/Contacts/index.tsx:222
+#: src/components/routes/organizer/Contacts/index.tsx:361
 msgid "Select all"
 msgstr "全选"
 
@@ -9567,7 +9779,7 @@ msgstr "选择相机"
 msgid "Select category..."
 msgstr "选择类别..."
 
-#: src/components/routes/organizer/Contacts/index.tsx:243
+#: src/components/routes/organizer/Contacts/index.tsx:378
 msgid "Select contact"
 msgstr "选择联系人"
 
@@ -10025,6 +10237,7 @@ msgid "Smith"
 msgstr "史密斯"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:167
+#: src/components/routes/organizer/Contacts/index.tsx:117
 msgid "SMS"
 msgstr "短信"
 
@@ -10109,6 +10322,7 @@ msgstr "出了点问题。请稍后再试。"
 #: src/components/routes/auth/Login/index.tsx:72
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:42
 #: src/components/routes/my-tickets/index.tsx:145
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:37
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
 msgid "Something went wrong. Please try again."
@@ -10123,6 +10337,7 @@ msgid "Sorry, this promo code is not recognized"
 msgstr "对不起，此优惠代码不可用"
 
 #: src/components/routes/admin/Attribution/index.tsx:106
+#: src/components/routes/organizer/Contacts/index.tsx:119
 msgid "Source"
 msgstr "来源"
 
@@ -10133,10 +10348,6 @@ msgstr "西班牙语"
 #: src/components/routes/landing/ProductVisuals/index.tsx:44
 msgid "Speaker"
 msgstr "演讲嘉宾"
-
-#: src/components/routes/organizer/Contacts/index.tsx:130
-msgid "spent in total"
-msgstr "总消费"
 
 #: src/components/routes/event/TicketDesigner/index.tsx:160
 msgid "Sponsor logo"
@@ -10514,20 +10725,33 @@ msgstr "T恤衫"
 msgid "Tablets, scanners and badge printers provided"
 msgstr "提供平板电脑、扫描器和胸卡打印机"
 
-#: src/components/routes/organizer/Contacts/index.tsx:90
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:61
+msgid "Tag"
+msgstr "标签"
+
+#: src/components/routes/organizer/Contacts/index.tsx:173
 msgid "Tag added"
 msgstr "标签已添加"
 
-#: src/components/routes/organizer/Contacts/index.tsx:191
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:213
+msgid "Tag added to every imported contact"
+msgstr "为每个导入的联系人添加的标签"
+
+#: src/components/routes/organizer/Contacts/index.tsx:329
 msgid "Tag name"
 msgstr "标签名称"
+
+#: src/components/routes/organizer/Contacts/index.tsx:103
+msgid "Tag: {0}"
+msgstr "标签：{0}"
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:237
 msgid "Tagline"
 msgstr ""
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:177
-#: src/components/routes/organizer/Contacts/index.tsx:234
+#: src/components/routes/organizer/Contacts/index.tsx:118
+#: src/components/routes/organizer/Contacts/index.tsx:235
 msgid "Tags"
 msgstr "标签"
 
@@ -10746,6 +10970,10 @@ msgstr "订单全额将退款至客户的原始付款方式。"
 msgid "The image could not be uploaded"
 msgstr ""
 
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:127
+msgid "The import could not be cancelled. Please try again."
+msgstr "无法撤销导入，请重试。"
+
 #: src/components/modals/CreateAttendeeModal/index.tsx:127
 msgid "The language the attendee will receive emails in."
 msgstr "与会者接收电子邮件的语言。"
@@ -10825,7 +11053,7 @@ msgid "The scheduled time must be in the future"
 msgstr "定时时间必须是将来的时间"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:122
-#: src/components/routes/organizer/Contacts/index.tsx:94
+#: src/components/routes/organizer/Contacts/index.tsx:177
 msgid "The tag could not be added. Please try again."
 msgstr "无法添加标签，请重试。"
 
@@ -10896,6 +11124,14 @@ msgstr "发送信息时出现错误"
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:105
 msgid "These details will only be shown if order is completed successfully. Orders awaiting payment will not show this message."
 msgstr "这些详细信息仅在订单成功完成后显示。等待付款的订单不会显示此消息。"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:232
+msgid "These people agreed to receive my emails"
+msgstr "这些人同意接收我的邮件"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:237
+msgid "These people agreed to receive my SMS"
+msgstr "这些人同意接收我的短信"
 
 #: src/components/common/WidgetEditor/index.tsx:178
 msgid "These settings apply only to copied embed code and won't be stored."
@@ -11210,6 +11446,10 @@ msgstr "票价"
 msgid "Ticket Price"
 msgstr "门票价格"
 
+#: src/components/routes/organizer/Contacts/index.tsx:124
+msgid "Ticket received"
+msgstr "收到门票"
+
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:77
 msgid "Ticket received from {0}"
 msgstr "来自 {0} 的门票"
@@ -11364,7 +11604,7 @@ msgstr "顶级组织者（过去14天）"
 #: src/components/common/AdminOrdersTable/index.tsx:81
 #: src/components/common/InlineOrderSummary/index.tsx:206
 #: src/components/common/OrderSummary/index.tsx:92
-#: src/components/routes/organizer/Contacts/index.tsx:232
+#: src/components/routes/organizer/Contacts/index.tsx:115
 msgid "Total"
 msgstr "总计"
 
@@ -11731,6 +11971,10 @@ msgstr "使用 <0>Liquid 模板</0> 个性化您的邮件"
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:257
 msgid "Use a blurred version of the cover image as the background"
 msgstr "使用封面图片的模糊版本作为背景"
+
+#: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:147
+msgid "Use a CSV or Excel file of 10 MB maximum."
+msgstr "请使用不超过 10 MB 的 CSV 或 Excel 文件。"
 
 #: src/components/routes/event/TicketDesigner/index.tsx:162
 msgid "Use a dark logo on a white or transparent background for the best thermal print"
@@ -12463,7 +12707,8 @@ msgstr "小部件预览"
 msgid "Widget Settings"
 msgstr "小部件设置"
 
-#: src/components/routes/organizer/Contacts/index.tsx:177
+#: src/components/routes/organizer/Contacts/index.tsx:106
+#: src/components/routes/organizer/Contacts/index.tsx:258
 msgid "With a phone number"
 msgstr "有电话号码"
 
@@ -12518,7 +12763,7 @@ msgstr "X（推特）"
 msgid "Year to date"
 msgstr "年度至今"
 
-#: src/components/routes/organizer/Contacts/index.tsx:260
+#: src/components/routes/organizer/Contacts/index.tsx:131
 msgid "yes"
 msgstr "是"
 
@@ -12753,15 +12998,15 @@ msgstr "与会者注册参加活动后，就会出现在这里。您也可以手
 msgid "Your awesome website 🎉"
 msgstr "您的精彩网站 🎉"
 
-#: src/components/routes/organizer/Contacts/index.tsx:210
-msgid "Your buyers and attendees appear here as soon as an order is confirmed."
-msgstr "订单确认后，您的买家和参与者将显示在这里。"
+#: src/components/routes/organizer/Contacts/index.tsx:348
+msgid "Your buyers and attendees appear here as soon as an order is confirmed. You can also import a file."
+msgstr "订单确认后，您的买家和参与者会显示在这里。您也可以导入文件。"
 
 #: src/components/modals/CheckInListSuccessModal/index.tsx:23
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "您的签到列表已成功创建。与您的签到工作人员共享以下链接。"
 
-#: src/components/routes/organizer/Contacts/index.tsx:103
+#: src/components/routes/organizer/Contacts/index.tsx:186
 msgid "Your contacts have been exported."
 msgstr "您的联系人已导出。"
 

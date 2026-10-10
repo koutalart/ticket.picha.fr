@@ -38,30 +38,34 @@ class ContactImportService
     ) {}
 
     /**
+     * Suggests a field per column from its header. When several columns match the same field
+     * (a Brevo export has LANDLINE_NUMBER, SMS and WHATSAPP), the one holding the most values wins.
+     *
      * @param  string[]  $headers
+     * @param  array<int, string[]>  $rows
      * @return array<int, string> column index => ContactImportField name
      */
-    public function suggestMapping(array $headers): array
+    public function suggestMapping(array $headers, array $rows = []): array
     {
-        $mapping = [];
-        $used = [];
+        $candidates = [];
 
         foreach ($headers as $index => $header) {
-            $normalized = mb_strtolower(trim(str_replace(['_', '-'], [' ', '-'], $header)));
-            $field = ContactImportField::IGNORE->name;
+            $normalized = mb_strtolower(trim(str_replace('_', ' ', $header)));
 
-            foreach (self::HEADER_ALIASES as $candidate => $aliases) {
-                $matches = in_array($normalized, $aliases, true)
-                    || in_array(str_replace(' ', '_', $normalized), $aliases, true);
-
-                if ($matches && ! in_array($candidate, $used, true)) {
-                    $field = $candidate;
-                    $used[] = $candidate;
+            foreach (self::HEADER_ALIASES as $field => $aliases) {
+                if (in_array($normalized, $aliases, true) || in_array(str_replace(' ', '_', $normalized), $aliases, true)) {
+                    $filled = count(array_filter($rows, fn (array $row) => trim((string) ($row[$index] ?? '')) !== ''));
+                    $candidates[$field][] = ['index' => $index, 'filled' => $filled];
                     break;
                 }
             }
+        }
 
-            $mapping[$index] = $field;
+        $mapping = array_fill_keys(array_keys($headers), ContactImportField::IGNORE->name);
+
+        foreach ($candidates as $field => $columns) {
+            usort($columns, fn (array $a, array $b) => [$b['filled'], $a['index']] <=> [$a['filled'], $b['index']]);
+            $mapping[$columns[0]['index']] = $field;
         }
 
         return $mapping;
@@ -263,7 +267,7 @@ class ContactImportService
             if ($rawEmail !== null) {
                 $email = ContactSyncService::normalizeEmail($rawEmail);
                 if ($email === null || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-                    $rejected[] = ['line' => $line, 'reason' => __('Invalid email address'), 'values' => $values];
+                    $rejected[] = ['line' => $line, 'reason' => 'INVALID_EMAIL', 'values' => $values];
 
                     continue;
                 }
@@ -277,7 +281,7 @@ class ContactImportService
             if ($row['email'] === null && $row['phone'] === null) {
                 $rejected[] = [
                     'line' => $line,
-                    'reason' => $rawPhone !== null ? __('Invalid phone number') : __('No email address or phone number'),
+                    'reason' => $rawPhone !== null ? 'INVALID_PHONE' : 'NO_EMAIL_OR_PHONE',
                     'values' => $values,
                 ];
 

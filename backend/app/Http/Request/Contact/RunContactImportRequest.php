@@ -11,7 +11,7 @@ class RunContactImportRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'token' => ['required', 'uuid'],
+            'import_token' => ['required', 'uuid'],
             'file_name' => ['required', 'string', 'max:255'],
             'mapping' => ['required', 'array', 'min:1'],
             'mapping.*' => ['required', Rule::in(ContactImportField::valuesArray())],
