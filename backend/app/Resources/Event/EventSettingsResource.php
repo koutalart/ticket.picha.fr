@@ -47,6 +47,7 @@ class EventSettingsResource extends JsonResource
 
             'price_display_mode' => $this->getPriceDisplayMode(),
             'hide_getting_started_page' => $this->getHideGettingStartedPage(),
+            'box_office_enabled' => $this->getBoxOfficeEnabled(),
 
             // Ticket design settings
             'ticket_design_settings' => $this->getTicketDesignSettings(),

@@ -61,6 +61,7 @@ class UpdateEventSettingsRequest extends BaseRequest
             'price_display_mode' => [Rule::in(PriceDisplayMode::valuesArray())],
 
             'hide_getting_started_page' => ['boolean'],
+            'box_office_enabled' => ['boolean'],
 
             // Payment settings
             'payment_providers' => ['array'],

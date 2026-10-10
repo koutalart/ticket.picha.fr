@@ -40,6 +40,32 @@ class PausedTicketSalesTest extends TestCase
         self::assertSame(0, DB::table('attendees')->where('product_id', $product->id)->count());
     }
 
+    public function test_box_office_can_be_turned_off_for_the_whole_event(): void
+    {
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00, userPassword: self::PASSWORD);
+        $this->attachCheckInList($event, $product);
+        $token = $this->loginAndGetToken($user, self::PASSWORD);
+
+        DB::table('event_settings')->where('event_id', $event->id)->update(['payment_providers' => json_encode(['OFFLINE'])]);
+
+        $this->patchJson("/events/{$event->id}/settings", ['box_office_enabled' => false], ['Authorization' => 'Bearer '.$token])
+            ->assertOk()
+            ->assertJsonPath('data.box_office_enabled', false);
+
+        $catalog = $this->getJson("/events/{$event->id}/box-office/products", ['Authorization' => 'Bearer '.$token])->assertOk();
+        self::assertCount(0, $catalog->json('data'));
+
+        $this->postJson("/events/{$event->id}/box-office-sales", [
+            'items' => [['product_id' => $product->id, 'product_price_id' => $productPrice->id, 'quantity' => 1]],
+            'first_name' => 'Jane',
+            'locale' => 'fr',
+            'payment_method' => 'CASH',
+            'amount' => 25.00,
+            'amount_collected' => 25.00,
+            'idempotency_key' => Str::uuid()->toString(),
+        ], ['Authorization' => 'Bearer '.$token])->assertStatus(422);
+    }
+
     public function test_editing_a_ticket_keeps_its_pause_unless_told_otherwise(): void
     {
         [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00, userPassword: self::PASSWORD);

@@ -192,6 +192,13 @@ class CreateBoxOfficeSaleHandler
                 __('Sales are only possible for published events that have not ended.')
             );
         }
+
+        $settings = $this->eventSettingsRepository->findFirstWhere(['event_id' => $eventId]);
+        if ($settings !== null && ! $settings->getBoxOfficeEnabled()) {
+            throw new BoxOfficeEventNotActiveException(
+                __('Box office sales are turned off for this event.')
+            );
+        }
     }
 
     private function findCompletedSale(string $idempotencyKey): ?BoxOfficeSaleResultDTO

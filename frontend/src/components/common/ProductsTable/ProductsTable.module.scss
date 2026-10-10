@@ -775,3 +775,40 @@ $color-money: #059669;
   width: 120px;
   vertical-align: middle;
 }
+
+.ticketCardDisabled {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.salePopover {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 240px;
+}
+
+.salePopoverLabel {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.salePopoverInput {
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #d9d6e3;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 15px;
+}
+
+.salePopoverActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.ticketTitleRow :global(.mantine-Switch-root) {
+  display: flex;
+  align-items: center;
+}

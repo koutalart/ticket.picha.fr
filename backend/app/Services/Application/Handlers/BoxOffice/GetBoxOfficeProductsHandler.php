@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
+use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use Illuminate\Support\Collection;
 
@@ -27,6 +28,7 @@ class GetBoxOfficeProductsHandler
 {
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
+        private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
     ) {}
 
     /**
@@ -34,6 +36,10 @@ class GetBoxOfficeProductsHandler
      */
     public function handle(int $eventId): Collection
     {
+        if ($this->eventSettingsRepository->findFirstWhere(['event_id' => $eventId])?->getBoxOfficeEnabled() === false) {
+            return collect();
+        }
+
         $products = $this->productRepository
             ->loadRelation(ProductPriceDomainObject::class)
             ->findWhere([

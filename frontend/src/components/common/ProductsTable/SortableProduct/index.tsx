@@ -11,7 +11,7 @@ import {
 } from "@tabler/icons-react";
 import classes from "../ProductsTable.module.scss";
 import classNames from "classnames";
-import {Button, Menu, Progress, Switch, Tooltip} from "@mantine/core";
+import {Button, Menu, Popover, Progress, Switch, Tooltip} from "@mantine/core";
 import {t} from "@lingui/macro";
 import {i18n} from "@lingui/core";
 import {relativeDate} from "../../../../utilites/dates.ts";
@@ -35,6 +35,8 @@ import {useSortProducts} from "../../../../mutations/useSortProducts.ts";
 import {DuplicateProductModal} from "../../../modals/DuplicateProductModal";
 import {useUpdateProduct} from "../../../../mutations/useUpdateProduct.ts";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
+import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
+import {utcToTz} from "../../../../utilites/dates.ts";
 import {productUpdatePayload} from "../../../../utilites/productUpdatePayload.ts";
 import {InlineNumberEdit} from "../InlineNumberEdit.tsx";
 
@@ -45,27 +47,33 @@ interface SortableProductProps {
     categories: ProductCategory[];
 }
 
-const formatSaleDate = (date: string | Date) => new Intl.DateTimeFormat(i18n.locale, {
-    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
-}).format(new Date(date));
+const formatSaleDate = (date: string | Date, timezone?: string) => new Intl.DateTimeFormat(i18n.locale, {
+    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: timezone,
+}).format(new Date(typeof date === 'string' && !/(Z|[+-]\d\d:?\d\d)$/.test(date) ? `${date.replace(' ', 'T')}Z` : date));
 
-const getChannel = (product: Product): { label: string, tone: string } => {
+const getChannel = (product: Product, boxOfficeEnabled: boolean): { label: string, tone: string, disabled?: boolean } => {
     const online = !product.is_hidden;
     const boxOffice = product.is_visible_at_box_office !== false;
+    if (!boxOfficeEnabled) {
+        if (online) return {label: t`Online`, tone: 'online'};
+        return boxOffice
+            ? {label: t`Box office turned off`, tone: 'hidden', disabled: true}
+            : {label: t`Hidden`, tone: 'hidden'};
+    }
     if (online && boxOffice) return {label: t`Online and box office`, tone: 'both'};
     if (online) return {label: t`Online`, tone: 'online'};
     if (boxOffice) return {label: t`Box office only`, tone: 'boxOffice'};
     return {label: t`Hidden`, tone: 'hidden'};
 };
 
-const getSaleText = (product: Product) => {
+const getSaleText = (product: Product, timezone?: string) => {
     if (product.is_before_sale_start_date && product.sale_start_date) {
-        return t`From ${formatSaleDate(product.sale_start_date)}`;
+        return t`From ${formatSaleDate(product.sale_start_date, timezone)}`;
     }
     if (product.sale_end_date) {
         return product.is_after_sale_end_date
-            ? t`Ended on ${formatSaleDate(product.sale_end_date)}`
-            : t`Until ${formatSaleDate(product.sale_end_date)}`;
+            ? t`Ended on ${formatSaleDate(product.sale_end_date, timezone)}`
+            : t`Until ${formatSaleDate(product.sale_end_date, timezone)}`;
     }
     return t`Starting now, no end date`;
 };
@@ -79,6 +87,9 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     const sortMutation = useSortProducts();
     const updateMutation = useUpdateProduct();
     const {data: event} = useGetEvent(product?.event_id);
+    const {data: eventSettings} = useGetEventSettings(product?.event_id ? String(product.event_id) : undefined);
+    const [endDraft, setEndDraft] = useState<string>('');
+    const [saleOpen, setSaleOpen] = useState(false);
 
     if (!product?.id || !category?.id || !Array.isArray(category.products)) {
         return null;
@@ -275,7 +286,7 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     const priceInfo = getPriceRange(product);
     const salesProgress = getSalesProgress();
 
-    const channel = getChannel(product);
+    const channel = getChannel(product, eventSettings?.box_office_enabled !== false);
     const singlePrice = product.prices?.length === 1 && product.type !== ProductPriceType.Tiered;
     const priceEditable = singlePrice && product.type === ProductPriceType.Paid;
 
@@ -297,11 +308,14 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     });
 
     const initialQuantity = product.prices?.[0]?.initial_quantity_available ?? null;
-    const saleText = getSaleText(product);
+    const saleText = getSaleText(product, event?.timezone);
 
     return (
         <>
-            <div className={classNames(classes.ticketCard, {[classes.ticketCardSoldOut]: product.is_sold_out || product.is_sales_paused})}>
+            <div className={classNames(classes.ticketCard, {
+                [classes.ticketCardSoldOut]: product.is_sold_out || product.is_sales_paused,
+                [classes.ticketCardDisabled]: channel.disabled,
+            })}>
                 <div className={classes.ticketSort}>
                     <SortArrows
                         upArrowEnabled={canMoveUp}
@@ -319,6 +333,19 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                             <span className={classNames(classes.channelTag, classes[`channelTag_${channel.tone}`])}>
                                 {channel.label}
                             </span>
+                            <Tooltip label={product.is_sales_paused ? t`Resume sales` : t`Pause sales online and at the box office`} withArrow>
+                                <Switch
+                                    size="md"
+                                    color="green"
+                                    checked={!product.is_sales_paused}
+                                    disabled={updateMutation.isPending || !event}
+                                    aria-label={product.is_sales_paused ? t`Resume sales` : t`Pause sales online and at the box office`}
+                                    onChange={(changeEvent) => {
+                                        const resume = changeEvent.currentTarget.checked;
+                                        quickUpdate(() => ({is_sales_paused: !resume}), resume ? t`Sales resumed` : t`Sales paused`).catch(() => undefined);
+                                    }}
+                                />
+                            </Tooltip>
                             {!isTicket && <span className={classes.extraTag}>{t`Product`}</span>}
                             {product.is_hidden_without_promo_code && (
                                 <span className={classes.extraTag}><IconLock size={12}/> {t`Promo Only`}</span>
@@ -334,19 +361,6 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                                 <span className={classNames(classes.statusPill, classes[`statusPill_${statusInfo.color}`])}>
                                     {statusInfo.label}
                                 </span>
-                            </Tooltip>
-                            <Tooltip label={product.is_sales_paused ? t`Resume sales` : t`Pause sales online and at the box office`} withArrow>
-                                <Switch
-                                    size="md"
-                                    color="green"
-                                    checked={!product.is_sales_paused}
-                                    disabled={updateMutation.isPending || !event}
-                                    aria-label={product.is_sales_paused ? t`Resume sales` : t`Pause sales online and at the box office`}
-                                    onChange={(changeEvent) => {
-                                        const resume = changeEvent.currentTarget.checked;
-                                        quickUpdate(() => ({is_sales_paused: !resume}), resume ? t`Sales resumed` : t`Sales paused`).catch(() => undefined);
-                                    }}
-                                />
                             </Tooltip>
                             <Button size="xs" variant="default" radius="md" leftSection={<IconPencil size={14}/>}
                                     onClick={() => handleModalClick(product.id, editModal)}>
@@ -449,7 +463,41 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                         </div>
                         <div>
                             <span className={classes.ticketLabel}>{t({message: 'Sale', context: 'ticket card'})}</span>
-                            <span className={classes.ticketSale}>{saleText}</span>
+                            <Popover opened={saleOpen} onChange={setSaleOpen} position="bottom-start" withArrow shadow="md" trapFocus>
+                                <Popover.Target>
+                                    <button type="button" className={classes.inlineEdit} aria-label={t`Set an end date`}
+                                            onClick={() => {
+                                                setEndDraft(event ? (utcToTz(product.sale_end_date, event.timezone) ?? '') : '');
+                                                setSaleOpen((open) => !open);
+                                            }}>
+                                        <span className={classes.ticketSale}>{saleText}</span>
+                                        <IconPencil size={13} className={classes.inlineEditIcon}/>
+                                    </button>
+                                </Popover.Target>
+                                <Popover.Dropdown>
+                                    <div className={classes.salePopover}>
+                                        <label className={classes.salePopoverLabel} htmlFor={`sale-end-${product.id}`}>
+                                            {t`End of sale`}
+                                        </label>
+                                        <input id={`sale-end-${product.id}`} type="datetime-local" className={classes.salePopoverInput}
+                                               value={endDraft} onChange={(changeEvent) => setEndDraft(changeEvent.currentTarget.value)}/>
+                                        <div className={classes.salePopoverActions}>
+                                            {product.sale_end_date && (
+                                                <Button size="xs" variant="subtle" color="gray" loading={updateMutation.isPending}
+                                                        onClick={() => quickUpdate(() => ({sale_end_date: undefined}), t`End date removed`)
+                                                            .then(() => setSaleOpen(false)).catch(() => undefined)}>
+                                                    {t`No end date`}
+                                                </Button>
+                                            )}
+                                            <Button size="xs" radius="md" disabled={!endDraft} loading={updateMutation.isPending}
+                                                    onClick={() => quickUpdate(() => ({sale_end_date: endDraft}), t`End date saved`)
+                                                        .then(() => setSaleOpen(false)).catch(() => undefined)}>
+                                                {t`Save`}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </Popover.Dropdown>
+                            </Popover>
                         </div>
                     </div>
                 </div>

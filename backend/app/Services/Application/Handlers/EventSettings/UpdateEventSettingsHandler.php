@@ -65,6 +65,7 @@ class UpdateEventSettingsHandler
                     'notify_organizer_of_new_orders' => $settings->notify_organizer_of_new_orders,
                     'price_display_mode' => $settings->price_display_mode->name,
                     'hide_getting_started_page' => $settings->hide_getting_started_page,
+                    ...($settings->box_office_enabled !== null ? ['box_office_enabled' => $settings->box_office_enabled] : []),
 
                     // Payment settings
                     'payment_providers' => $settings->payment_providers,

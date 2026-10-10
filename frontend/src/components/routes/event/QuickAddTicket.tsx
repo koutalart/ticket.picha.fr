@@ -1,5 +1,5 @@
 import {FormEvent, useState} from "react";
-import {Button, NumberInput, SegmentedControl, Select, TextInput} from "@mantine/core";
+import {Button, NumberInput, SegmentedControl, TextInput} from "@mantine/core";
 import {IconPlus} from "@tabler/icons-react";
 import {t, Trans} from "@lingui/macro";
 import {i18n} from "@lingui/core";
@@ -8,21 +8,22 @@ import {IdParam, Product, ProductCategory, ProductPriceType, ProductType} from "
 import {showSuccess} from "../../../utilites/notifications.tsx";
 import classes from "./ProductsPage.module.scss";
 
-type Channel = 'both' | 'online' | 'box_office';
+type Channel = 'online' | 'box_office';
 
 interface QuickAddTicketProps {
     eventId: IdParam;
     categories: ProductCategory[];
+    boxOfficeEnabled: boolean;
     onMoreOptions: () => void;
 }
 
-export const QuickAddTicket = ({eventId, categories, onMoreOptions}: QuickAddTicketProps) => {
+export const QuickAddTicket = ({eventId, categories, boxOfficeEnabled, onMoreOptions}: QuickAddTicketProps) => {
     const createMutation = useCreateProduct();
     const [title, setTitle] = useState('');
     const [isFree, setIsFree] = useState(false);
     const [price, setPrice] = useState<number | ''>('');
     const [quantity, setQuantity] = useState<number | ''>('');
-    const [channel, setChannel] = useState<Channel>('both');
+    const [channel, setChannel] = useState<Channel>('online');
     const [error, setError] = useState<string | null>(null);
 
     const submit = (event: FormEvent) => {
@@ -44,8 +45,8 @@ export const QuickAddTicket = ({eventId, categories, onMoreOptions}: QuickAddTic
                 type: isFree ? ProductPriceType.Free : ProductPriceType.Paid,
                 product_type: ProductType.Ticket,
                 product_category_id: categories[0]?.id,
-                is_hidden: channel === 'box_office',
-                is_visible_at_box_office: channel !== 'online',
+                is_hidden: boxOfficeEnabled && channel === 'box_office',
+                is_visible_at_box_office: boxOfficeEnabled && channel === 'box_office',
                 max_per_order: 100,
                 min_per_order: 1,
                 tax_and_fee_ids: [],
@@ -123,19 +124,21 @@ export const QuickAddTicket = ({eventId, categories, onMoreOptions}: QuickAddTic
                     value={quantity}
                     onChange={(value) => setQuantity(value === '' ? '' : Number(value))}
                 />
-                <Select
-                    className={classes.quickChannel}
-                    label={t`Sold`}
-                    radius="md"
-                    allowDeselect={false}
-                    value={channel}
-                    onChange={(value) => setChannel((value ?? 'both') as Channel)}
-                    data={[
-                        {value: 'both', label: t`Online and box office`},
-                        {value: 'online', label: t`Online`},
-                        {value: 'box_office', label: t`Box office only`},
-                    ]}
-                />
+                <div className={classes.quickChannel}>
+                    <span className={classes.quickLabel}><Trans>Sold</Trans></span>
+                    <SegmentedControl
+                        className={classes.quickSegmented}
+                        size="sm"
+                        radius="md"
+                        fullWidth
+                        value={boxOfficeEnabled ? channel : 'online'}
+                        onChange={(value) => setChannel(value as Channel)}
+                        data={[
+                            {value: 'online', label: t`Online`},
+                            {value: 'box_office', label: t`Box Office`, disabled: !boxOfficeEnabled},
+                        ]}
+                    />
+                </div>
                 <Button type="submit" size="sm" radius="md" leftSection={<IconPlus size={16}/>} loading={createMutation.isPending}
                         className={classes.quickSubmit}>
                     <Trans>Add</Trans>
