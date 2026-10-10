@@ -81,6 +81,10 @@ class EventAssistantTest extends TestCase
         self::assertSame(100, $boxOffice->initial_quantity_available);
         self::assertTrue($boxOffice->is_hidden);
         self::assertTrue($boxOffice->is_visible_at_box_office);
+
+        $lists = DB::table('check_in_lists')->where('event_id', $eventId)->whereNull('deleted_at')->get();
+        self::assertCount(1, $lists);
+        self::assertSame(2, DB::table('product_check_in_lists')->where('check_in_list_id', $lists[0]->id)->whereNull('deleted_at')->count());
     }
 
     public function test_a_zero_quota_skips_that_channel_but_not_both(): void
