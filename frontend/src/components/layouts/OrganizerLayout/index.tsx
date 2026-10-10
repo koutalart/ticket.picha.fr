@@ -1,33 +1,30 @@
 import {
-    IconArrowsHorizontal,
     IconBrandStripe,
     IconCalendar,
-    IconCalendarPlus,
-    IconChartPie,
-    IconChevronRight,
+    IconChartBar,
     IconCreditCard,
-    IconDashboard,
     IconExternalLink,
+    IconHome,
     IconEye,
     IconEyeOff,
     IconPaint,
+    IconPlus,
     IconSettings,
     IconShare,
     IconUsersGroup,
     IconWebhook
 } from "@tabler/icons-react";
 import { t } from "@lingui/macro";
-import { BreadcrumbItem, NavItem } from "../AppLayout/types.ts";
-import AppLayout from "../AppLayout";
-import { NavLink, Navigate, useLocation, useNavigate, useParams } from "react-router";
+import { NavItem } from "../AppLayout/types.ts";
+import { OrganizerShell } from "./OrganizerShell";
+import { Navigate, useLocation, useNavigate, useParams } from "react-router";
 import { Button, Modal, Stack, Text } from "@mantine/core";
 import { useGetOrganizer } from "../../../queries/useGetOrganizer.ts";
 import { useState } from "react";
-import { TopBarButton } from "../../common/TopBarButton";
 import classes from "./OrganizerLayout.module.scss";
 import { CalloutConfig, SidebarCalloutQueue } from "../../common/SidebarCallout/SidebarCalloutQueue";
 import { InviteUserModal } from "../../modals/InviteUserModal";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { SwitchOrganizerModal } from "../../modals/SwitchOrganizerModal";
 import { CreateOrganizerModal } from "../../modals/CreateOrganizerModal";
 import { useGetOrganizers } from "../../../queries/useGetOrganizers.ts";
@@ -62,7 +59,6 @@ const OrganizerLayout = () => {
     const [emailConfirmationResent, setEmailConfirmationResent] = useState(false);
     const { data: me, isSuccess: isMeSuccess } = useGetMe();
     const isUserEmailVerfied = me?.is_email_verified;
-    const isMobile = useMediaQuery('(max-width: 768px)');
 
     if (isMeSuccess && isBoxOfficeOperator(me)) {
         return <Navigate to="/kiosk" replace />;
@@ -70,32 +66,17 @@ const OrganizerLayout = () => {
 
     const statusToggleMutation = useUpdateOrganizerStatus();
 
+    const isDashboard = (isActive: boolean) => isActive || /\/manage\/organizer\/[^/]+\/?$/.test(location.pathname);
+
     const navItems: NavItem[] = [
-        {
-            label: t`Switch Organizer`,
-            icon: IconArrowsHorizontal,
-            onClick: openSwitchModal,
-            isActive: () => false,
-            showWhen: () => organizers && organizers.length > 1,
-        },
-        { label: 'Overview' },
-        { link: 'dashboard', label: t`Organizer Dashboard`, icon: IconDashboard },
+        {link: 'dashboard', label: t`Home`, icon: IconHome, isActive: isDashboard},
+        {link: 'events', label: t`Events`, icon: IconCalendar},
         {
             link: 'reports',
             label: t`Reports`,
-            icon: IconChartPie,
+            icon: IconChartBar,
             isActive: (isActive) => isActive || location.pathname.includes('/report/')
         },
-
-        { label: t`Manage` },
-        { link: 'events', label: t`Events`, icon: IconCalendar },
-        { link: 'settings', label: t`Settings`, icon: IconSettings },
-
-        { label: t`Tools` },
-        { link: 'organizer-homepage-designer', label: t`Homepage Designer`, icon: IconPaint },
-
-        { label: t`Integrations` },
-        { link: 'webhooks', label: t`Webhooks`, icon: IconWebhook },
     ];
 
     const handleEmailConfirmationResend = () => {
@@ -111,16 +92,6 @@ const OrganizerLayout = () => {
             }
         })
     }
-
-    const navItemsWithLoading: NavItem[] = navItems.map(item => {
-        if (!organizer) {
-            return {
-                ...item,
-                loading: true
-            };
-        }
-        return item;
-    });
 
     const handleStatusToggle = () => {
         // Check if user email is verified
@@ -148,22 +119,18 @@ const OrganizerLayout = () => {
         });
     };
 
-    const breadcrumbItems: BreadcrumbItem[] = [
+    const bottomItems: NavItem[] = organizer ? [
+        {link: `/events/${organizerId}/${organizer.slug || ''}`, label: t`Organizer page`, icon: IconExternalLink},
+        {label: t`Share the page`, icon: IconShare, onClick: openShareModal},
         {
-            link: `/manage/organizer/${organizerId}`,
-            content: organizer?.name,
+            label: organizer.status === 'LIVE' ? t`Page online` : t`Publish the page`,
+            icon: organizer.status === 'LIVE' ? IconEye : IconEyeOff,
+            onClick: handleStatusToggle,
         },
-        {
-            content: (
-                <span
-                    className={classes.createEventBreadcrumb}
-                    onClick={() => navigate(`/manage/new-event?organizer=${organizerId}`)}
-                >
-                    <IconCalendarPlus size={16} /> {t`Create Event`}
-                </span>
-            ),
-        }
-    ];
+        {link: 'organizer-homepage-designer', label: t`Customize the page`, icon: IconPaint},
+        {link: 'webhooks', label: t`Webhooks`, icon: IconWebhook},
+        {link: 'settings', label: t`Settings`, icon: IconSettings},
+    ] : [];
 
     const callouts: CalloutConfig[] = [
         {
@@ -198,63 +165,16 @@ const OrganizerLayout = () => {
 
     return (
         <>
-            <AppLayout
-                navItems={navItemsWithLoading}
-                breadcrumbItems={breadcrumbItems}
-                entityType="organizer"
-                topBarContent={(
-                    <div className={classes.statusToggleContainer}>
-                        {organizer && (
-                            <TopBarButton
-                                onClick={handleStatusToggle}
-                                size="sm"
-                                leftSection={organizer?.status === 'DRAFT' ? <IconEyeOff size={16} /> :
-                                    <IconEye size={16} />}
-                                rightSection={<IconChevronRight size={14} />}
-                            >
-                                {organizer?.status === 'DRAFT'
-                                    ? <span>{t`Draft`} <span
-                                        className={classes.statusAction}>{t`- Click to Publish`}</span></span>
-                                    : <span>{t`Live`} <span
-                                        className={classes.statusAction}>{t`- Click to Unpublish`}</span></span>
-                                }
-                            </TopBarButton>
-                        )}
-                    </div>
-                )}
-                breadcrumbContentRight={(
-                    <>
-                        {organizer && !isMobile && (
-                            <>
-                                <Button
-                                    onClick={openShareModal}
-                                    variant="transparent"
-                                    leftSection={<IconShare size={16} />}
-                                >
-                                    <span className={classes.shareButtonTextDesktop}>
-                                        {t`Share Organizer Page`}
-                                    </span>
-                                    <span className={classes.shareButtonTextMobile}>
-                                        {t`Share`}
-                                    </span>
-                                </Button>
-                            </>
-                        )}
-                    </>
-                )}
-                actionGroupContent={(
-                    <Button
-                        component={NavLink}
-                        to={`/events/${organizerId}/${organizer?.slug || ''}`}
-                        target={'_blank'}
-                        variant={'transparent'}
-                        className={classes.viewHomepageButton}
-                        leftSection={<IconExternalLink size={17} />}
-                        title={t`View Organizer Homepage`}
-                    >
-                        <span className={classes.viewHomepageButtonTextDesktop}>
-                            {t`View Organizer Homepage`}
-                        </span>
+            <OrganizerShell
+                organizerName={organizer?.name}
+                onSwitchOrganizer={organizers && organizers.length > 1 ? openSwitchModal : undefined}
+                navItems={navItems}
+                bottomItems={bottomItems}
+                mobileTabs={navItems}
+                headerActions={(
+                    <Button radius="md" size="md" leftSection={<IconPlus size={18}/>}
+                            onClick={() => navigate(`/manage/new-event?organizer=${organizerId}`)}>
+                        {t`Create Event`}
                     </Button>
                 )}
                 sidebarFooter={<SidebarCalloutQueue callouts={callouts} />}
