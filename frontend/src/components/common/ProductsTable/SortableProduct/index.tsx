@@ -360,8 +360,9 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                                 />
                             </div>
                             <Button size="xs" variant="default" radius="md" leftSection={<IconPencil size={14}/>}
+                                    className={classes.editButton} aria-label={t`Edit`}
                                     onClick={() => handleModalClick(product.id, editModal)}>
-                                {t`Edit`}
+                                <span className={classes.editLabel}>{t`Edit`}</span>
                             </Button>
                             <Menu shadow="md" width={220} position="bottom-end">
                                 <Menu.Target>

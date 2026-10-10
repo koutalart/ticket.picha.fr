@@ -551,6 +551,8 @@ $color-money: #059669;
 
   @media (max-width: 767px) {
     flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
   }
 }
 
@@ -853,4 +855,35 @@ $color-money: #059669;
   font-size: 12px;
   font-weight: 600;
   color: #17763f;
+}
+
+@media (max-width: 767px) {
+  .ticketActions {
+    width: 100%;
+  }
+
+  .ticketActions .channelSwitch {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.channelSwitchName {
+  white-space: nowrap;
+}
+
+.ticketActions .channelSwitch :global(.mantine-Switch-root),
+.ticketActions .channelSwitch :global(.mantine-Switch-body),
+.ticketActions .channelSwitch :global(.mantine-Switch-labelWrapper) {
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .editLabel {
+    display: none;
+  }
+
+  .editButton :global(.mantine-Button-section) {
+    margin: 0;
+  }
 }
