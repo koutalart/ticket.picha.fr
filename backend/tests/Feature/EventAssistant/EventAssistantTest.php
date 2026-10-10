@@ -81,6 +81,8 @@ class EventAssistantTest extends TestCase
         self::assertSame(100, $boxOffice->initial_quantity_available);
         self::assertTrue($boxOffice->is_hidden);
         self::assertTrue($boxOffice->is_visible_at_box_office);
+        self::assertTrue((bool) DB::table('products')->where('event_id', $eventId)->orderByDesc('id')->value('is_sales_paused'));
+        self::assertFalse((bool) DB::table('products')->where('event_id', $eventId)->orderBy('id')->value('is_sales_paused'));
 
         $lists = DB::table('check_in_lists')->where('event_id', $eventId)->whereNull('deleted_at')->get();
         self::assertCount(1, $lists);

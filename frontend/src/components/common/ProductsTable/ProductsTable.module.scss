@@ -10,7 +10,6 @@ $card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04
 $transition-fast: 150ms ease;
 $transition-base: 200ms ease;
 
-
 $color-text-primary: #1f2937;
 $color-text-secondary: #6b7280;
 $color-text-muted: #9ca3af;
@@ -179,7 +178,6 @@ $color-money: #059669;
     }
   }
 }
-
 
 // Sort controls
 .sortControls {
@@ -477,7 +475,6 @@ $color-money: #059669;
   }
 }
 
-
 // ==========================================
 // Drag Preview
 // ==========================================
@@ -548,7 +545,7 @@ $color-money: #059669;
 
 .ticketHead {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
 
@@ -567,6 +564,7 @@ $color-money: #059669;
 
 .ticketTitle {
   margin: 0;
+  line-height: 1.25;
   font-size: 19px;
   font-weight: 700;
   color: #14121c;
@@ -776,11 +774,6 @@ $color-money: #059669;
   vertical-align: middle;
 }
 
-.ticketCardDisabled {
-  opacity: 0.45;
-  filter: grayscale(1);
-}
-
 .salePopover {
   display: flex;
   flex-direction: column;
@@ -808,8 +801,56 @@ $color-money: #059669;
   gap: 8px;
 }
 
-.ticketTitleRow :global(.mantine-Switch-root) {
+.ticketTitleRow :global(.mantine-Switch-root),
+.ticketTitleRow :global(.mantine-Switch-body) {
   display: flex;
   align-items: center;
-  margin-top: 4px;
+}
+
+.ticketTitleRow > * {
+  align-self: center;
+  margin-bottom: 0 !important;
+}
+
+.channelSwitch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 170px;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid #dcefe3;
+  border-radius: 12px;
+  background: #f4fbf6;
+  cursor: pointer;
+
+  :global(.mantine-Switch-root) {
+    margin-bottom: 0 !important;
+  }
+}
+
+.channelSwitchOff {
+  border-color: #e7e5ee;
+  background: #f6f5f9;
+
+  .channelSwitchState {
+    color: #6b6b78;
+  }
+}
+
+.channelSwitchText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.channelSwitchName {
+  font-size: 14px;
+  font-weight: 700;
+  color: #14121c;
+}
+
+.channelSwitchState {
+  font-size: 12px;
+  font-weight: 600;
+  color: #17763f;
 }

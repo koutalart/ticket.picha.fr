@@ -1,15 +1,12 @@
 import {useParams} from "react-router";
 import {useDisclosure} from "@mantine/hooks";
-import {Button, Switch} from "@mantine/core";
+import {Button} from "@mantine/core";
 import {IconCategory, IconPlus} from "@tabler/icons-react";
 import {CreateProductModal} from "../../modals/CreateProductModal";
 import {ProductCategoryList} from "../../common/ProductsTable";
 import {TableSkeleton} from "../../common/TableSkeleton";
 import {t, Trans} from "@lingui/macro";
 import classes from "./ProductsPage.module.scss";
-import {useGetEventSettings} from "../../../queries/useGetEventSettings.ts";
-import {useUpdateEventSettings} from "../../../mutations/useUpdateEventSettings.ts";
-import {showError, showSuccess} from "../../../utilites/notifications.tsx";
 import {useUrlHash} from "../../../hooks/useUrlHash.ts";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
 import {useGetEventProductCategories} from "../../../queries/useGetProductCategories.ts";
@@ -44,13 +41,6 @@ export const Products = () => {
 
     const productCount = (productCategories ?? []).reduce((total, category) => total + (category.products?.length ?? 0), 0);
     const tickets = (productCategories ?? []).flatMap((category) => category.products ?? []);
-    const {data: eventSettings} = useGetEventSettings(eventId);
-    const settingsMutation = useUpdateEventSettings();
-    const boxOfficeEnabled = eventSettings?.box_office_enabled !== false;
-    const toggleBoxOffice = (enabled: boolean) => settingsMutation.mutate({eventId, eventSettings: {box_office_enabled: enabled}}, {
-        onSuccess: () => showSuccess(enabled ? t`Box office sales turned on` : t`Box office sales turned off`),
-        onError: () => showError(t`The change could not be saved. Please try again.`),
-    });
     const almostGone = tickets.filter((product) => {
         const total = Number(product.initial_quantity_available) || 0;
         const left = total - (Number(product.quantity_sold) || 0);
@@ -74,20 +64,6 @@ export const Products = () => {
                     </Button>
                 </div>
             </header>
-
-            <section className={classes.boxOffice}>
-                <Switch
-                    size="md"
-                    color="green"
-                    checked={boxOfficeEnabled}
-                    disabled={!eventSettings || settingsMutation.isPending}
-                    onChange={(changeEvent) => toggleBoxOffice(changeEvent.currentTarget.checked)}
-                    label={<span className={classes.boxOfficeLabel}><Trans>Box office sales</Trans></span>}
-                    description={boxOfficeEnabled
-                        ? t`Tickets can be sold on site, at the box office.`
-                        : t`Turned off: box office tickets are greyed out and cannot be sold.`}
-                />
-            </section>
 
             {almostGone.length > 0 && (
                 <p className={classes.almostGone}>

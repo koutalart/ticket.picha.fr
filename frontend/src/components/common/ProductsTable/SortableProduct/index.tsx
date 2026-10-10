@@ -35,7 +35,6 @@ import {useSortProducts} from "../../../../mutations/useSortProducts.ts";
 import {DuplicateProductModal} from "../../../modals/DuplicateProductModal";
 import {useUpdateProduct} from "../../../../mutations/useUpdateProduct.ts";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
-import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
 import {utcToTz} from "../../../../utilites/dates.ts";
 import {productUpdatePayload} from "../../../../utilites/productUpdatePayload.ts";
 import {InlineNumberEdit} from "../InlineNumberEdit.tsx";
@@ -51,18 +50,12 @@ const formatSaleDate = (date: string | Date, timezone?: string) => new Intl.Date
     day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: timezone,
 }).format(new Date(typeof date === 'string' && !/(Z|[+-]\d\d:?\d\d)$/.test(date) ? `${date.replace(' ', 'T')}Z` : date));
 
-const getChannel = (product: Product, boxOfficeEnabled: boolean): { label: string, tone: string, disabled?: boolean } => {
+const getChannel = (product: Product): { label: string, tone: string } => {
     const online = !product.is_hidden;
     const boxOffice = product.is_visible_at_box_office !== false;
-    if (!boxOfficeEnabled) {
-        if (online) return {label: t`Online`, tone: 'online'};
-        return boxOffice
-            ? {label: t`Box office turned off`, tone: 'hidden', disabled: true}
-            : {label: t`Hidden`, tone: 'hidden'};
-    }
-    if (online && boxOffice) return {label: t`Online and box office`, tone: 'both'};
-    if (online) return {label: t`Online`, tone: 'online'};
-    if (boxOffice) return {label: t`Box office only`, tone: 'boxOffice'};
+    if (online && boxOffice) return {label: t`Online and box office sales`, tone: 'both'};
+    if (online) return {label: t`Online sales`, tone: 'online'};
+    if (boxOffice) return {label: t`Box Office`, tone: 'boxOffice'};
     return {label: t`Hidden`, tone: 'hidden'};
 };
 
@@ -87,7 +80,6 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     const sortMutation = useSortProducts();
     const updateMutation = useUpdateProduct();
     const {data: event} = useGetEvent(product?.event_id);
-    const {data: eventSettings} = useGetEventSettings(product?.event_id ? String(product.event_id) : undefined);
     const [endDraft, setEndDraft] = useState<string>('');
     const [saleOpen, setSaleOpen] = useState(false);
 
@@ -286,7 +278,7 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     const priceInfo = getPriceRange(product);
     const salesProgress = getSalesProgress();
 
-    const channel = getChannel(product, eventSettings?.box_office_enabled !== false);
+    const channel = getChannel(product);
     const singlePrice = product.prices?.length === 1 && product.type !== ProductPriceType.Tiered;
     const priceEditable = singlePrice && product.type === ProductPriceType.Paid;
 
@@ -314,7 +306,6 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
         <>
             <div className={classNames(classes.ticketCard, {
                 [classes.ticketCardSoldOut]: product.is_sold_out || product.is_sales_paused,
-                [classes.ticketCardDisabled]: channel.disabled,
             })}>
                 <div className={classes.ticketSort}>
                     <SortArrows
@@ -329,23 +320,7 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                 <div className={classes.ticketBody}>
                     <div className={classes.ticketHead}>
                         <div className={classes.ticketTitleRow}>
-                            <Tooltip label={product.is_sales_paused ? t`Resume sales` : t`Pause sales online and at the box office`} withArrow>
-                                <Switch
-                                    size="md"
-                                    color="green"
-                                    checked={!product.is_sales_paused}
-                                    disabled={updateMutation.isPending || !event}
-                                    aria-label={product.is_sales_paused ? t`Resume sales` : t`Pause sales online and at the box office`}
-                                    onChange={(changeEvent) => {
-                                        const resume = changeEvent.currentTarget.checked;
-                                        quickUpdate(() => ({is_sales_paused: !resume}), resume ? t`Sales resumed` : t`Sales paused`).catch(() => undefined);
-                                    }}
-                                />
-                            </Tooltip>
                             <h3 className={classes.ticketTitle}>{product.title}</h3>
-                            <span className={classNames(classes.channelTag, classes[`channelTag_${channel.tone}`])}>
-                                {channel.label}
-                            </span>
                             {!isTicket && <span className={classes.extraTag}>{t`Product`}</span>}
                             {product.is_hidden_without_promo_code && (
                                 <span className={classes.extraTag}><IconLock size={12}/> {t`Promo Only`}</span>
@@ -357,11 +332,33 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                             )}
                         </div>
                         <div className={classes.ticketActions}>
-                            <Tooltip label={getStatusTooltip(product)} withArrow>
-                                <span className={classNames(classes.statusPill, classes[`statusPill_${statusInfo.color}`])}>
-                                    {statusInfo.label}
-                                </span>
-                            </Tooltip>
+                            {statusInfo.color !== 'green' && statusInfo.color !== 'orange' && (
+                                <Tooltip label={getStatusTooltip(product)} withArrow>
+                                    <span className={classNames(classes.statusPill, classes[`statusPill_${statusInfo.color}`])}>
+                                        {statusInfo.label}
+                                    </span>
+                                </Tooltip>
+                            )}
+                            <div className={classNames(classes.channelSwitch, {[classes.channelSwitchOff]: product.is_sales_paused})}>
+                                <Switch
+                                    size="md"
+                                    color="green"
+                                    checked={!product.is_sales_paused}
+                                    disabled={updateMutation.isPending || !event}
+                                    onChange={(changeEvent) => {
+                                        const resume = changeEvent.currentTarget.checked;
+                                        quickUpdate(() => ({is_sales_paused: !resume}), resume ? t`Sales resumed` : t`Sales suspended`).catch(() => undefined);
+                                    }}
+                                    label={(
+                                        <span className={classes.channelSwitchText}>
+                                            <span className={classes.channelSwitchName}>{channel.label}</span>
+                                            <span className={classes.channelSwitchState}>
+                                                {product.is_sales_paused ? t`Suspended` : t({message: 'Active', context: 'sales channel'})}
+                                            </span>
+                                        </span>
+                                    )}
+                                />
+                            </div>
                             <Button size="xs" variant="default" radius="md" leftSection={<IconPencil size={14}/>}
                                     onClick={() => handleModalClick(product.id, editModal)}>
                                 {t`Edit`}

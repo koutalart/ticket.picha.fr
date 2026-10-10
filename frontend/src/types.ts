@@ -221,7 +221,6 @@ export interface EventSettings {
     allow_search_engine_indexing?: boolean;
     price_display_mode?: 'INCLUSIVE' | 'EXCLUSIVE';
     hide_getting_started_page: boolean;
-    box_office_enabled?: boolean;
     attendee_details_collection_method?: AttendeeDetailsCollectionMethod;
 
     // Payment settings
