@@ -78,6 +78,7 @@ export const EventDashboard = () => {
     const products = (getProductsFromEvent(event) ?? []).filter((product) => product.product_type === 'TICKET');
     const isFree = products.length > 0 && products.every(isFreeProduct);
     const isLive = event.status === 'LIVE';
+    const isOngoing = isLive && event.lifecycle_status === EventLifecycleStatus.ONGOING;
     const location = settings?.location_details ?? event.settings?.location_details;
     const place = settings?.is_online_event ? t`Online` : location?.venue_name || location?.city;
 
@@ -117,9 +118,17 @@ export const EventDashboard = () => {
                     <span className={classes.kicker}><Trans>Dashboard</Trans></span>
                     <div className={classes.titleRow}>
                         <h1 className={classes.title}>{event.title}</h1>
-                        <span className={isLive ? classes.badgeLive : classes.badgeDraft}>
-                            {isLive ? t`Online` : t`Draft`}
-                        </span>
+                        {isOngoing ? (
+                            <NavLink to={`/manage/event/${eventId}/box-office`} className={classes.liveButton}
+                                     title={t`The event is happening now. Open the box office`}>
+                                <span className={classes.liveDot}/>
+                                {t({message: 'Live', context: 'ongoing event'})}
+                            </NavLink>
+                        ) : (
+                            <span className={isLive ? classes.badgeLive : classes.badgeDraft}>
+                                {isLive ? t`Online` : t`Draft`}
+                            </span>
+                        )}
                     </div>
                     <p className={classes.meta}>
                         {eventWhen(event)}{place && <> · {place}</>}

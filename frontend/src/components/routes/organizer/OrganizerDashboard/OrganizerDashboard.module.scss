@@ -452,3 +452,27 @@ $lavender: #efe9fb;
 .orderArrow {
   color: $muted;
 }
+
+.tone_ongoing {
+  color: #e5243b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+
+  .statusDot {
+    animation: livePulse 1.4s ease-in-out infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}

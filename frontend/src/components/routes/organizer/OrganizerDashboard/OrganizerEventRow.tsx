@@ -24,7 +24,7 @@ const statusOf = (event: Event) => {
     if (event.status === 'ARCHIVED') return {label: t`Archived`, tone: 'muted'};
     if (event.lifecycle_status === 'ENDED') return {label: t`Ended`, tone: 'muted'};
     if (event.status === 'DRAFT') return {label: t`Draft`, tone: 'draft'};
-    if (event.lifecycle_status === 'ONGOING') return {label: t`Live`, tone: 'live'};
+    if (event.lifecycle_status === 'ONGOING') return {label: t({message: 'Live', context: 'ongoing event'}), tone: 'ongoing'};
     return {label: t`On Sale`, tone: 'live'};
 };
 
