@@ -7,6 +7,10 @@ import {ProductCategoryList} from "../../common/ProductsTable";
 import {TableSkeleton} from "../../common/TableSkeleton";
 import {t, Trans} from "@lingui/macro";
 import classes from "./ProductsPage.module.scss";
+import {QuickAddTicket} from "./QuickAddTicket.tsx";
+import {useGetEventStats} from "../../../queries/useGetEventStats.ts";
+import {formatCurrency} from "../../../utilites/currency.ts";
+import {formatNumber} from "../../../utilites/helpers.ts";
 import {useUrlHash} from "../../../hooks/useUrlHash.ts";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
 import {useGetEventProductCategories} from "../../../queries/useGetProductCategories.ts";
@@ -40,6 +44,16 @@ export const Products = () => {
     }
 
     const productCount = (productCategories ?? []).reduce((total, category) => total + (category.products?.length ?? 0), 0);
+    const {data: stats} = useGetEventStats(eventId, 'event');
+    const tickets = (productCategories ?? []).flatMap((category) => category.products ?? []);
+    const sold = tickets.reduce((total, product) => total + (Number(product.quantity_sold) || 0), 0);
+    const unlimited = tickets.some((product) => !product.initial_quantity_available);
+    const capacity = tickets.reduce((total, product) => total + (Number(product.initial_quantity_available) || 0), 0);
+    const almostGone = tickets.filter((product) => {
+        const total = Number(product.initial_quantity_available) || 0;
+        const left = total - (Number(product.quantity_sold) || 0);
+        return total > 0 && left > 0 && left <= Math.max(10, total * 0.1);
+    });
 
     return (
         <div className={classes.page}>
@@ -58,6 +72,30 @@ export const Products = () => {
                     </Button>
                 </div>
             </header>
+
+            {tickets.length > 0 && (
+                <section className={classes.summary}>
+                    <div className={classes.summaryItem}>
+                        <span className={classes.summaryLabel}><Trans>Tickets sold</Trans></span>
+                        <span className={classes.summaryValue}>
+                            {formatNumber(sold)}
+                            <span className={classes.summaryMuted}> / {unlimited ? t`unlimited` : formatNumber(capacity)}</span>
+                        </span>
+                    </div>
+                    <div className={classes.summaryItem}>
+                        <span className={classes.summaryLabel}>{t({message: 'Revenue', context: 'chart'})}</span>
+                        <span className={classes.summaryValue}>
+                            {stats ? formatCurrency(stats.total_gross_sales - stats.total_refunded, event?.currency) : '…'}
+                        </span>
+                    </div>
+                    <div className={`${classes.summaryItem} ${almostGone.length > 0 ? classes.summaryWarning : ''}`}>
+                        <span className={classes.summaryLabel}><Trans>Almost sold out</Trans></span>
+                        <span className={classes.summaryValue}>
+                            {almostGone.length > 0 ? almostGone.map((product) => product.title).join(', ') : t`None`}
+                        </span>
+                    </div>
+                </section>
+            )}
 
             {productCount >= 8 && (
                 <div className={classes.search}>
@@ -80,6 +118,10 @@ export const Products = () => {
                         onCreateOpen={openCreateProduct}
                     />
                 )}
+
+            {productCategories && productCategories.length > 0 && eventId && (
+                <QuickAddTicket eventId={eventId} categories={productCategories} onMoreOptions={() => openCreateProduct(undefined)}/>
+            )}
 
             {createProductModalOpen &&
                 <CreateProductModal selectedCategoryId={selectedCategoryId} onClose={closeCreateProductModal}

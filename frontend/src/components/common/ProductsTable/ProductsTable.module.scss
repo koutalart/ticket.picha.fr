@@ -740,3 +740,38 @@ $color-money: #059669;
 .ticketSold .ticketMuted {
   margin-left: 6px;
 }
+
+.inlineEdit {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px;
+  margin: 0 -4px;
+  border: 0;
+  border-bottom: 1px dashed #c9c4da;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: #f3f0fb;
+
+    .inlineEditIcon {
+      opacity: 1;
+    }
+  }
+}
+
+.inlineEditIcon {
+  color: #6b6b78;
+  opacity: 0.45;
+}
+
+.inlineInput {
+  display: inline-block;
+  width: 120px;
+  vertical-align: middle;
+}

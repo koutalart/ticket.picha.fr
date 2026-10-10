@@ -264,6 +264,12 @@ class OrderCreateRequestValidationService
      */
     private function validateSoldOutProducts(int $productId, int $productIndex, ProductDomainObject $product): void
     {
+        if ($product->getIsSalesPaused()) {
+            throw ValidationException::withMessages([
+                "products.$productIndex" => __('Sales of :product are paused', ['product' => $product->getTitle()]),
+            ]);
+        }
+
         if ($product->isSoldOut()) {
             throw ValidationException::withMessages([
                 "products.$productIndex" => __("The product :product is sold out", [

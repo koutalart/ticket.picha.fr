@@ -11,7 +11,7 @@ import {
 } from "@tabler/icons-react";
 import classes from "../ProductsTable.module.scss";
 import classNames from "classnames";
-import {Button, Menu, Progress, Tooltip} from "@mantine/core";
+import {Button, Menu, Progress, Switch, Tooltip} from "@mantine/core";
 import {t} from "@lingui/macro";
 import {i18n} from "@lingui/core";
 import {relativeDate} from "../../../../utilites/dates.ts";
@@ -33,6 +33,10 @@ import {SendMessageModal} from "../../../modals/SendMessageModal";
 import {SortArrows} from "../../SortArrows";
 import {useSortProducts} from "../../../../mutations/useSortProducts.ts";
 import {DuplicateProductModal} from "../../../modals/DuplicateProductModal";
+import {useUpdateProduct} from "../../../../mutations/useUpdateProduct.ts";
+import {useGetEvent} from "../../../../queries/useGetEvent.ts";
+import {productUpdatePayload} from "../../../../utilites/productUpdatePayload.ts";
+import {InlineNumberEdit} from "../InlineNumberEdit.tsx";
 
 interface SortableProductProps {
     product: Product;
@@ -73,6 +77,8 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     const [productId, setProductId] = useState<IdParam>();
     const deleteMutation = useDeleteProduct();
     const sortMutation = useSortProducts();
+    const updateMutation = useUpdateProduct();
+    const {data: event} = useGetEvent(product?.event_id);
 
     if (!product?.id || !category?.id || !Array.isArray(category.products)) {
         return null;
@@ -97,6 +103,9 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     }
 
     const getStatusInfo = (product: Product) => {
+        if (product.is_sales_paused) {
+            return {label: t`Paused`, color: 'orange', variant: 'light' as const};
+        }
         if (product.is_sold_out) {
             return {label: t`Sold Out`, color: 'red', variant: 'filled' as const};
         }
@@ -117,6 +126,7 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     }
 
     const getStatusTooltip = (product: Product) => {
+        if (product.is_sales_paused) return t`Sales are paused online and at the box office`;
         if (product.is_sold_out) return t`This product is sold out`;
         if (product.is_before_sale_start_date) return t`On sale ${relativeDate(product.sale_start_date as string)}`;
         if (product.is_after_sale_end_date) return t`Sale ended ${relativeDate(product.sale_end_date as string)}`;
@@ -266,11 +276,32 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     const salesProgress = getSalesProgress();
 
     const channel = getChannel(product);
+    const singlePrice = product.prices?.length === 1 && product.type !== ProductPriceType.Tiered;
+    const priceEditable = singlePrice && product.type === ProductPriceType.Paid;
+
+    const quickUpdate = (overrides: (payload: Product) => Partial<Product>, message: string) => {
+        if (!event) return Promise.resolve();
+        const payload = productUpdatePayload(product, event.timezone);
+        return updateMutation.mutateAsync({
+            productId: product.id,
+            eventId: product.event_id,
+            productData: {...payload, ...overrides(payload)},
+        }).then(() => showSuccess(message)).catch((error: any) => {
+            showError(error?.response?.data?.message || t`The change could not be saved. Please try again.`);
+            throw error;
+        });
+    };
+
+    const updateFirstPrice = (changes: Partial<ProductPrice>) => (payload: Product) => ({
+        prices: (payload.prices ?? []).map((price, index) => index === 0 ? {...price, ...changes} : price),
+    });
+
+    const initialQuantity = product.prices?.[0]?.initial_quantity_available ?? null;
     const saleText = getSaleText(product);
 
     return (
         <>
-            <div className={classNames(classes.ticketCard, {[classes.ticketCardSoldOut]: product.is_sold_out})}>
+            <div className={classNames(classes.ticketCard, {[classes.ticketCardSoldOut]: product.is_sold_out || product.is_sales_paused})}>
                 <div className={classes.ticketSort}>
                     <SortArrows
                         upArrowEnabled={canMoveUp}
@@ -303,6 +334,19 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                                 <span className={classNames(classes.statusPill, classes[`statusPill_${statusInfo.color}`])}>
                                     {statusInfo.label}
                                 </span>
+                            </Tooltip>
+                            <Tooltip label={product.is_sales_paused ? t`Resume sales` : t`Pause sales online and at the box office`} withArrow>
+                                <Switch
+                                    size="md"
+                                    color="green"
+                                    checked={!product.is_sales_paused}
+                                    disabled={updateMutation.isPending || !event}
+                                    aria-label={product.is_sales_paused ? t`Resume sales` : t`Pause sales online and at the box office`}
+                                    onChange={(changeEvent) => {
+                                        const resume = changeEvent.currentTarget.checked;
+                                        quickUpdate(() => ({is_sales_paused: !resume}), resume ? t`Sales resumed` : t`Sales paused`).catch(() => undefined);
+                                    }}
+                                />
                             </Tooltip>
                             <Button size="xs" variant="default" radius="md" leftSection={<IconPencil size={14}/>}
                                     onClick={() => handleModalClick(product.id, editModal)}>
@@ -338,9 +382,20 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                     <div className={classes.ticketDetails}>
                         <div>
                             <span className={classes.ticketLabel}>{t`Price`}</span>
-                            <span className={classNames(classes.ticketPrice, {[classes.freePrice]: priceInfo.isFree})}>
-                                {priceInfo.display}
-                            </span>
+                            {priceEditable ? (
+                                <InlineNumberEdit
+                                    label={t`Edit the price`}
+                                    value={Number(product.prices?.[0]?.price ?? 0)}
+                                    decimals={2}
+                                    suffix=" €"
+                                    display={<span className={classes.ticketPrice}>{priceInfo.display}</span>}
+                                    onSave={(value) => quickUpdate(updateFirstPrice({price: value ?? 0}), t`Price updated`)}
+                                />
+                            ) : (
+                                <span className={classNames(classes.ticketPrice, {[classes.freePrice]: priceInfo.isFree})}>
+                                    {priceInfo.display}
+                                </span>
+                            )}
                             {hasTaxesOrFees() && (
                                 <Tooltip label={getTaxFeeTooltip()} withArrow>
                                     <span className={classes.ticketMuted}><IconReceipt size={13}/> {t`+Tax/Fees`}</span>
@@ -352,7 +407,17 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                             {salesProgress ? (
                                 <>
                                     <span className={classes.ticketSold}>
-                                        <strong>{salesProgress.sold}</strong> / {salesProgress.total}
+                                        <strong>{salesProgress.sold}</strong> /{' '}
+                                        {singlePrice ? (
+                                            <InlineNumberEdit
+                                                label={t`Edit the quantity`}
+                                                value={initialQuantity}
+                                                allowEmpty
+                                                placeholder={t`Unlimited`}
+                                                display={<span>{salesProgress.total}</span>}
+                                                onSave={(value) => quickUpdate(updateFirstPrice({initial_quantity_available: value ?? undefined}), t`Quantity updated`)}
+                                            />
+                                        ) : salesProgress.total}
                                         <span className={classes.ticketMuted}>
                                             · {salesProgress.remaining > 0
                                                 ? t`${salesProgress.remaining} places left`
@@ -366,7 +431,19 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                             ) : (
                                 <span className={classes.ticketSold}>
                                     <strong>{Number(product.quantity_sold) || 0}</strong>
-                                    <span className={classes.ticketMuted}> · {t`Unlimited`}</span>
+                                    <span className={classes.ticketMuted}>
+                                        ·{' '}
+                                        {singlePrice ? (
+                                            <InlineNumberEdit
+                                                label={t`Edit the quantity`}
+                                                value={null}
+                                                allowEmpty
+                                                placeholder={t`Unlimited`}
+                                                display={<span>{t`Unlimited`}</span>}
+                                                onSave={(value) => quickUpdate(updateFirstPrice({initial_quantity_available: value ?? undefined}), t`Quantity updated`)}
+                                            />
+                                        ) : t`Unlimited`}
+                                    </span>
                                 </span>
                             )}
                         </div>

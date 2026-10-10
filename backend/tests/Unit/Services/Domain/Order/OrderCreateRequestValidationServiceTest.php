@@ -267,6 +267,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $product->shouldReceive('getMaxPerOrder')->andReturn(100);
         $product->shouldReceive('getMinPerOrder')->andReturn(1);
         $product->shouldReceive('isSoldOut')->andReturn(false);
+        $product->shouldReceive('getIsSalesPaused')->andReturn(false);
         $product->shouldReceive('getType')->andReturn(ProductPriceType::TIERED->name);
         $product->shouldReceive('getProductPrices')->andReturn($productPrices);
 

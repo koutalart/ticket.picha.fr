@@ -74,6 +74,7 @@ class CreateProductHandler
                 ->setShowQuantityRemaining($productsData->show_quantity_remaining)
                 ->setIsHiddenWithoutPromoCode($productsData->is_hidden_without_promo_code)
                 ->setIsVisibleAtBoxOffice($productsData->is_visible_at_box_office ?? true)
+                ->setIsSalesPaused($productsData->is_sales_paused ?? false)
                 ->setIsHighlighted($productsData->is_highlighted ?? false)
                 ->setHighlightMessage($productsData->highlight_message)
                 ->setWaitlistEnabled($productsData->waitlist_enabled)

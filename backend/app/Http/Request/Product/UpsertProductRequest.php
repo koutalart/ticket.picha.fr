@@ -38,6 +38,7 @@ class UpsertProductRequest extends BaseRequest
             'show_quantity_remaining' => 'boolean',
             'is_hidden_without_promo_code' => 'boolean',
             'is_visible_at_box_office' => 'boolean',
+            'is_sales_paused' => 'boolean',
             'type' => ['required', Rule::in(ProductPriceType::valuesArray())],
             'product_type' => ['required', Rule::in(ProductType::valuesArray())],
             'tax_and_fee_ids' => 'array',

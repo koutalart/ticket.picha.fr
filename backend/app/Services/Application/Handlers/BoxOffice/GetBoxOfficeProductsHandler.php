@@ -40,6 +40,7 @@ class GetBoxOfficeProductsHandler
                 ProductDomainObjectAbstract::EVENT_ID => $eventId,
                 ProductDomainObjectAbstract::PRODUCT_TYPE => ProductType::TICKET->name,
                 ProductDomainObjectAbstract::IS_VISIBLE_AT_BOX_OFFICE => true,
+                ProductDomainObjectAbstract::IS_SALES_PAUSED => false,
             ]);
 
         return $products->map(function (ProductDomainObject $product) {
