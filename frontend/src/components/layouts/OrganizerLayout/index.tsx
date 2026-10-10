@@ -1,5 +1,4 @@
 import {
-    IconAddressBook,
     IconArrowsHorizontal,
     IconBrandStripe,
     IconCalendar,
@@ -91,12 +90,6 @@ const OrganizerLayout = () => {
 
         { label: t`Manage` },
         { link: 'events', label: t`Events`, icon: IconCalendar },
-        {
-            link: 'contacts',
-            label: t`Contacts`,
-            icon: IconAddressBook,
-            isActive: (isActive) => isActive || location.pathname.includes('/contacts/')
-        },
         { link: 'settings', label: t`Settings`, icon: IconSettings },
 
         { label: t`Tools` },
