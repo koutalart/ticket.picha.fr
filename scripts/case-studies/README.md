@@ -39,4 +39,10 @@ Pour chaque cas client relié à un événement, comparer avec les chiffres publ
 - Jamais de chiffre d'affaires ni de montant encaissé sans accord écrit du client.
 - Jamais de citation sans `approved: true`, donné par la personne citée.
 - Un résultat ne s'affiche que s'il valorise le client : sinon, ne pas l'afficher.
+- Toujours compter les billets payés ou inscrits (`tickets_by_channel_product`, hors `GRATUIT` pour une billetterie payante),
+  jamais une jauge ni un `quantity_sold` de `prices`, qui inclut des places réservées mais non payées.
+  Une offre est « épuisée » quand `quantity_sold` atteint `capacity`, mais le nombre affiché reste celui des billets payés.
+- Avant l'événement, ne pas publier un nombre d'inscrits ou de billets inférieur à 20 % de la jauge totale :
+  laisser le cas client tel quel, sans résultat chiffré.
+- Garder les mots-clés déjà présents dans `headline` et `summary` (anniversaire, lieu, type d'événement) quand on les met à jour.
 - Ne pas toucher au sitemap des domaines personnalisés (innocent976.yt).
