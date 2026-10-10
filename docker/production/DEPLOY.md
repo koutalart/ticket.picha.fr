@@ -79,12 +79,29 @@ Domaines en service :
   `/etc/nginx/sites-available/innocent976.yt.conf.staging-backup-20261001`.
 
 ## Mise à jour
+
+### Depuis GitHub (recommandé)
+Actions → **Déployer en production** → *Run workflow* → branche (`staging` par défaut).
+Le workflow refuse de déployer si la CI n'est pas verte, puis lance `deploy.sh` sur le VPS :
+sauvegarde, `git pull`, reconstruction des conteneurs, migrations, vérification que
+le site répond en 200 et l'API sans erreur serveur.
+
+Mise en place (une fois) :
+1. Sur le VPS, avec l'utilisateur qui possède `/opt/picha-ticket` et appartient au groupe `docker` :
+   ```bash
+   ssh-keygen -t ed25519 -N "" -C "github-deploy-picha" -f ~/.ssh/github_deploy
+   cat ~/.ssh/github_deploy.pub >> ~/.ssh/authorized_keys
+   cat ~/.ssh/github_deploy          # clé privée → secret PROD_SSH_KEY
+   ssh-keyscan -t ed25519 51.210.5.75  # → secret PROD_SSH_KNOWN_HOSTS
+   ```
+2. GitHub → Settings → Secrets and variables → Actions → *New repository secret* :
+   `PROD_SSH_HOST` (51.210.5.75), `PROD_SSH_USER`, `PROD_SSH_KEY`, `PROD_SSH_KNOWN_HOSTS`.
+3. Optionnel : Settings → Environments → `production` → *Required reviewers* pour exiger
+   une validation avant chaque déploiement.
+
+### À la main (sur le VPS)
 ```bash
-cd /opt/picha-ticket && git pull
-docker compose -p picha-ticket-prod --env-file docker/production/.env \
-  -f docker/production/docker-compose.prod.yml up -d --build
-docker compose -p picha-ticket-prod -f docker/production/docker-compose.prod.yml exec backend php artisan migrate --force
-docker builder prune -f   # cache de build uniquement, pour préserver le disque
+sh /opt/picha-ticket/docker/production/deploy.sh staging
 ```
 
 ## Mémoire (VPS 4 Go)
