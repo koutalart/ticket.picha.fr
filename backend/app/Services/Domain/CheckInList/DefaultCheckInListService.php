@@ -20,12 +20,10 @@ use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 class DefaultCheckInListService
 {
     public function __construct(
-        private readonly CheckInListRepositoryInterface       $checkInListRepository,
-        private readonly ProductRepositoryInterface           $productRepository,
+        private readonly CheckInListRepositoryInterface $checkInListRepository,
+        private readonly ProductRepositoryInterface $productRepository,
         private readonly CheckInListProductAssociationService $checkInListProductAssociationService,
-    )
-    {
-    }
+    ) {}
 
     public function createForEvent(int $eventId): CheckInListDomainObject
     {
@@ -50,6 +48,7 @@ class DefaultCheckInListService
         if ($lists->isEmpty()) {
             $list = $this->createForEvent($eventId);
             $this->checkInListProductAssociationService->addCheckInListToProducts($list->getId(), [$ticket->getId()], false);
+
             return;
         }
 
@@ -58,14 +57,14 @@ class DefaultCheckInListService
                 ProductDomainObjectAbstract::EVENT_ID => $eventId,
                 ProductDomainObjectAbstract::PRODUCT_TYPE => ProductType::TICKET->name,
             ])
-            ->map(fn(ProductDomainObject $product) => $product->getId())
-            ->reject(fn(int $id) => $id === $ticket->getId())
+            ->map(fn (ProductDomainObject $product) => $product->getId())
+            ->reject(fn (int $id) => $id === $ticket->getId())
             ->values()
             ->all();
 
         /** @var CheckInListDomainObject $list */
         foreach ($lists as $list) {
-            $listProductIds = $list->getProducts()?->map(fn(ProductDomainObject $product) => $product->getId())->all() ?? [];
+            $listProductIds = $list->getProducts()?->map(fn (ProductDomainObject $product) => $product->getId())->all() ?? [];
 
             if (array_diff($otherTicketIds, $listProductIds) !== []) {
                 continue;

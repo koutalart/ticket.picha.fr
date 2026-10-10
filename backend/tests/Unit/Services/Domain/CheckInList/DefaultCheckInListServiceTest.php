@@ -17,8 +17,11 @@ use Tests\TestCase;
 class DefaultCheckInListServiceTest extends TestCase
 {
     private CheckInListRepositoryInterface $checkInListRepository;
+
     private ProductRepositoryInterface $productRepository;
+
     private CheckInListProductAssociationService $associationService;
+
     private DefaultCheckInListService $service;
 
     protected function setUp(): void
@@ -40,16 +43,16 @@ class DefaultCheckInListServiceTest extends TestCase
     {
         $this->checkInListRepository->shouldReceive('create')
             ->once()
-            ->with(m::on(fn(array $data) => $data['event_id'] === 7 && $data['name'] !== '' && str_starts_with($data['short_id'], 'cil')))
-            ->andReturn((new CheckInListDomainObject())->setId(3));
+            ->with(m::on(fn (array $data) => $data['event_id'] === 7 && $data['name'] !== '' && str_starts_with($data['short_id'], 'cil')))
+            ->andReturn((new CheckInListDomainObject)->setId(3));
 
         self::assertSame(3, $this->service->createForEvent(7)->getId());
     }
 
     public function test_new_ticket_joins_lists_covering_every_ticket_but_not_restricted_ones(): void
     {
-        $full = (new CheckInListDomainObject())->setId(1)->setProducts(collect([$this->ticket(10), $this->ticket(11)]));
-        $vipOnly = (new CheckInListDomainObject())->setId(2)->setProducts(collect([$this->ticket(11)]));
+        $full = (new CheckInListDomainObject)->setId(1)->setProducts(collect([$this->ticket(10), $this->ticket(11)]));
+        $vipOnly = (new CheckInListDomainObject)->setId(2)->setProducts(collect([$this->ticket(11)]));
 
         $this->checkInListRepository->shouldReceive('loadRelation')->andReturnSelf();
         $this->checkInListRepository->shouldReceive('findWhere')->andReturn(collect([$full, $vipOnly]));
@@ -65,7 +68,7 @@ class DefaultCheckInListServiceTest extends TestCase
     {
         $this->checkInListRepository->shouldReceive('loadRelation')->andReturnSelf();
         $this->checkInListRepository->shouldReceive('findWhere')->andReturn(collect());
-        $this->checkInListRepository->shouldReceive('create')->once()->andReturn((new CheckInListDomainObject())->setId(5));
+        $this->checkInListRepository->shouldReceive('create')->once()->andReturn((new CheckInListDomainObject)->setId(5));
 
         $this->associationService->shouldReceive('addCheckInListToProducts')->once()->with(5, [12], false);
 
@@ -82,6 +85,6 @@ class DefaultCheckInListServiceTest extends TestCase
 
     private function ticket(int $id): ProductDomainObject
     {
-        return (new ProductDomainObject())->setId($id)->setEventId(7)->setProductType(ProductType::TICKET->name);
+        return (new ProductDomainObject)->setId($id)->setEventId(7)->setProductType(ProductType::TICKET->name);
     }
 }
