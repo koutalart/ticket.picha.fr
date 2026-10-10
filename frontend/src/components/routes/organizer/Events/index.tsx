@@ -1,7 +1,6 @@
 import {useFilterQueryParamSync} from "../../../../hooks/useFilterQueryParamSync.ts";
-import {useDisclosure} from "@mantine/hooks";
 import {Event, QueryFilters} from "../../../../types.ts";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import {t} from "@lingui/macro";
 import {ToolBar} from "../../../common/ToolBar";
 import {SearchBarWrapper} from "../../../common/SearchBar";
@@ -9,7 +8,6 @@ import {Button, Skeleton} from "@mantine/core";
 import {IconCalendarPlus} from "@tabler/icons-react";
 import {EventCard} from "../../../common/EventCard";
 import {Pagination} from "../../../common/Pagination";
-import {CreateEventModal} from "../../../modals/CreateEventModal";
 import {useGetEvents} from "../../../../queries/useGetEvents.ts";
 import {getEventQueryFilters} from "../../../../utilites/eventsPageFiltersHelper.ts";
 import {EventsDashboardStatusButtons} from "../../../common/EventsDashboardStatusButtons";
@@ -20,7 +18,8 @@ import {PageTitle} from "../../../common/PageTitle";
 const Events = () => {
     const {organizerId, eventsState} = useParams();
     const [searchParams, setSearchParams] = useFilterQueryParamSync();
-    const [createModalOpen, {open: openCreateModal, close: closeCreateModal}] = useDisclosure(false);
+    const navigate = useNavigate();
+    const openCreateModal = () => navigate(`/manage/new-event?organizer=${organizerId}`);
     const {data: eventsData, isFetched: isEventsFetched} = useGetEvents(
         getEventQueryFilters(searchParams) as QueryFilters
     );
@@ -86,7 +85,6 @@ const Events = () => {
                                total={Number(pagination?.last_page)}
                 />
             }
-            {createModalOpen && <CreateEventModal organizerId={organizerId} onClose={closeCreateModal}/>}
         </PageBody>
     );
 }

@@ -1,20 +1,10 @@
-import {FormEvent, ReactNode, useEffect, useMemo, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {t, Trans} from "@lingui/macro";
 import {i18n} from "@lingui/core";
 import {NavLink, useNavigate, useSearchParams} from "react-router";
-import {Button, Loader, NumberInput, Select, Textarea, TextInput} from "@mantine/core";
+import {Button, Loader, NumberInput, SegmentedControl, Select, Textarea, TextInput} from "@mantine/core";
 import {Dropzone, FileRejection} from "@mantine/dropzone";
-import {
-    IconArrowLeft,
-    IconArrowRight,
-    IconCalendarEvent,
-    IconPencil,
-    IconPlus,
-    IconSparkles,
-    IconUpload,
-    IconWand,
-    IconX,
-} from "@tabler/icons-react";
+import {IconArrowLeft, IconArrowRight, IconCalendarEvent, IconPhoto, IconPlus, IconSparkles, IconX} from "@tabler/icons-react";
 import {useGetOrganizers} from "../../../../queries/useGetOrganizers.ts";
 import {useGetEventAssistantStatus} from "../../../../queries/useGetEventAssistantStatus.ts";
 import {useReadEventPoster} from "../../../../mutations/useReadEventPoster.ts";
@@ -25,29 +15,29 @@ import {showError} from "../../../../utilites/notifications.tsx";
 import {IdParam} from "../../../../types.ts";
 import classes from "./EventAssistant.module.scss";
 
-type Mode = 'poster' | 'manual';
-type StepId = 'start' | 'poster' | 'title' | 'date' | 'venue' | 'description' | 'price' | 'cover' | 'review';
+type StepId = 'essentials' | 'details';
+type FieldErrors = Partial<Record<'title' | 'startDate' | 'endDate' | 'price' | 'organizer', string>>;
 
 interface Draft {
-    mode: Mode | null;
     title: string;
     startDate: string;
     hasEndDate: boolean;
     endDate: string;
     venue: string;
     description: string;
+    isFree: boolean;
     price: number | '';
     quantity: number | '';
 }
 
 const EMPTY_DRAFT: Draft = {
-    mode: null,
     title: '',
     startDate: '',
     hasEndDate: false,
     endDate: '',
     venue: '',
     description: '',
+    isFree: false,
     price: '',
     quantity: '',
 };
@@ -95,8 +85,6 @@ const describeDates = (start: string, end: string | null): string => {
 
 const toApiDate = (value: string) => value.replace('T', ' ');
 
-const formatPrice = (price: number) => new Intl.NumberFormat(i18n.locale, {style: 'currency', currency: 'EUR'}).format(price);
-
 const EventAssistant = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -116,19 +104,14 @@ const EventAssistant = () => {
     const [poster, setPoster] = useState<File | null>(null);
     const [posterPreview, setPosterPreview] = useState<string | null>(null);
     const [previousDescription, setPreviousDescription] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    const [errors, setErrors] = useState<FieldErrors>({});
+    const [formError, setFormError] = useState<string | null>(null);
     const [aiNotice, setAiNotice] = useState<string | null>(null);
 
-    const initialMode = searchParams.get('mode');
-    const [step, setStep] = useState<StepId>(() => {
-        if (initialMode === 'poster') return 'poster';
-        if (initialMode === 'manual') return 'title';
-        return 'start';
-    });
+    const [step, setStep] = useState<StepId>('essentials');
 
     useEffect(() => {
-        const stored = readStoredDraft(searchParams.get('organizer') ?? undefined);
-        setDraft(initialMode === 'poster' || initialMode === 'manual' ? {...stored, mode: initialMode} : stored);
+        setDraft(readStoredDraft(searchParams.get('organizer') ?? undefined));
         setDraftLoaded(true);
     }, []);
 
@@ -151,34 +134,26 @@ const EventAssistant = () => {
         if (posterPreview) URL.revokeObjectURL(posterPreview);
     }, [posterPreview]);
 
-    const steps: StepId[] = useMemo(() => {
-        const flow: StepId[] = ['start'];
-        if (draft.mode === 'poster') flow.push('poster');
-        flow.push('title', 'date', 'venue', 'description', 'price');
-        if (draft.mode !== 'poster') flow.push('cover');
-        flow.push('review');
-        return flow;
-    }, [draft.mode]);
-
-    const position = Math.max(0, steps.indexOf(step));
-    const progress = steps.length > 1 ? position / (steps.length - 1) : 0;
-
     const update = (values: Partial<Draft>) => {
-        setError(null);
+        setErrors((current) => {
+            const next = {...current};
+            Object.keys(values).forEach((key) => delete next[key as keyof FieldErrors]);
+            return next;
+        });
+        setFormError(null);
         setDraft((current) => ({...current, ...values}));
     };
 
     const goTo = (target: StepId) => {
-        setError(null);
+        setErrors({});
+        setFormError(null);
         setStep(target);
+        if (typeof window !== 'undefined') window.scrollTo({top: 0});
     };
 
-    const next = () => goTo(steps[Math.min(position + 1, steps.length - 1)]);
-    const back = () => goTo(steps[Math.max(position - 1, 0)]);
-
-    const choose = (mode: Mode) => {
-        update({mode});
-        goTo(mode === 'poster' ? 'poster' : 'title');
+    const keepPoster = (file: File) => {
+        setPoster(file);
+        setPosterPreview(URL.createObjectURL(file));
     };
 
     const applyDraft = (found: EventDraft) => {
@@ -190,43 +165,34 @@ const EventAssistant = () => {
             endDate: found.end_date ?? current.endDate,
             venue: found.venue ?? current.venue,
             description: found.description ?? current.description,
-            price: found.price ?? current.price,
+            isFree: found.price === 0 ? true : current.isFree,
+            price: found.price !== null && found.price > 0 ? found.price : current.price,
         }));
     };
 
     const handlePoster = (files: File[]) => {
         const file = files[0];
         if (!file) return;
-        setPoster(file);
-        setPosterPreview(URL.createObjectURL(file));
+        keepPoster(file);
         setAiNotice(null);
+        setFormError(null);
 
         if (!aiEnabled) {
-            goTo('title');
             return;
         }
 
         readPoster.mutate({poster: file, timezone: organizer?.timezone}, {
             onSuccess: ({data}) => {
                 applyDraft(data);
-                setAiNotice(t`We filled in what we could read on your poster. Check each answer before continuing.`);
-                goTo('title');
+                setAiNotice(t`We filled in what we could read on your poster. Have a quick look before going on.`);
             },
-            onError: () => {
-                setAiNotice(t`We couldn't read your poster. Your visual is kept: fill in the details yourself.`);
-                goTo('title');
-            },
+            onError: () => setAiNotice(t`We couldn't read your poster, but it's kept as your cover. Just fill in the rest.`),
         });
     };
 
     const rejectPoster = (rejections: FileRejection[]) => {
         const tooBig = rejections.some((rejection) => rejection.errors.some((item) => item.code === 'file-too-large'));
-        setError(tooBig ? t`The image must not be larger than 8 MB.` : t`Use a JPG, PNG, WebP or HEIC image.`);
-    };
-
-    const removePoster = () => {
-        setPoster(null);
-        setPosterPreview(null);
+        setFormError(tooBig ? t`This image is over 8 MB. Try a lighter one.` : t`We accept JPG, PNG, WebP and HEIC images.`);
     };
 
     const handleImprove = () => {
@@ -239,47 +205,43 @@ const EventAssistant = () => {
                 setPreviousDescription(draft.description);
                 update({description: data.description});
             },
-            onError: () => showError(t`The assistant could not answer. Please try again or fill in the form yourself.`),
+            onError: () => showError(t`The AI couldn't rewrite your text this time. Try again in a moment.`),
         });
     };
 
-    const validate = (current: StepId): string | null => {
-        switch (current) {
-            case 'title':
-                if (!draft.title.trim()) return t`Give your event a title.`;
-                if (draft.title.trim().length > 150) return t`The title must be 150 characters or fewer.`;
-                return null;
-            case 'date':
-                if (!draft.startDate) return t`Choose when your event starts.`;
-                if (draft.hasEndDate && draft.endDate && draft.endDate <= draft.startDate) return t`The end must be after the start.`;
-                return null;
-            case 'price':
-                if (draft.price === '' || Number(draft.price) < 0) return t`Enter a price, or 0 for a free event.`;
-                return null;
-            default:
-                return null;
+    const validateEssentials = (): FieldErrors => {
+        const found: FieldErrors = {};
+        if (!draft.title.trim()) found.title = t`Your event needs a name.`;
+        if (!draft.startDate) found.startDate = t`Tell us when it starts.`;
+        if (draft.hasEndDate && draft.endDate && draft.startDate && draft.endDate <= draft.startDate) {
+            found.endDate = t`The end has to come after the start.`;
         }
+        return found;
     };
 
-    const submitStep = (event: FormEvent) => {
+    const validateDetails = (): FieldErrors => {
+        const found: FieldErrors = {};
+        if (!draft.isFree && (draft.price === '' || Number(draft.price) <= 0)) {
+            found.price = t`Enter a ticket price, or choose "Free".`;
+        }
+        if (!organizer) found.organizer = t`Choose who is organizing this event.`;
+        return found;
+    };
+
+    const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        const message = validate(step);
-        if (message) {
-            setError(message);
-            return;
-        }
-        if (step === 'review') {
-            handleCreate();
-            return;
-        }
-        next();
-    };
 
-    const handleCreate = () => {
-        if (!organizer) {
-            setError(t`Choose the organizer of this event.`);
+        if (step === 'essentials') {
+            const found = validateEssentials();
+            setErrors(found);
+            if (Object.keys(found).length === 0) goTo('details');
             return;
         }
+
+        const found = validateDetails();
+        setErrors(found);
+        if (Object.keys(found).length > 0 || !organizer) return;
+
         createEvent.mutate({
             payload: {
                 organizer_id: organizer.id as IdParam,
@@ -288,7 +250,7 @@ const EventAssistant = () => {
                 end_date: draft.hasEndDate && draft.endDate ? toApiDate(draft.endDate) : null,
                 venue: draft.venue.trim() || null,
                 description: draft.description.trim() || null,
-                price: Number(draft.price),
+                price: draft.isFree ? 0 : Number(draft.price),
                 quantity: draft.quantity === '' ? null : Number(draft.quantity),
             },
             cover: poster,
@@ -300,345 +262,262 @@ const EventAssistant = () => {
                     // Nothing to clean.
                 }
                 if (!coverUploaded) {
-                    showError(t`Your event is created, but the visual could not be added. Add it from the event settings.`);
+                    showError(t`Your event is created, but we couldn't add the poster. You can add it from the event settings.`);
                 }
                 navigate(`/manage/event/${event.id}/getting-started?new_event=true`);
             },
-            onError: () => setError(t`Your event could not be created. Check your answers and try again.`),
+            onError: () => setFormError(t`Something went wrong and your event wasn't created. Check the details and try again.`),
         });
     };
 
     const dashboardUrl = organizer ? `/manage/organizer/${organizer.id}/dashboard` : '/manage/events';
     const endValue = draft.hasEndDate ? draft.endDate : null;
+    const stepNumber = step === 'details' ? 2 : 1;
 
-    const footer = (continueLabel: ReactNode = <Trans>Continue</Trans>, canSkip = false) => (
-        <div className={classes.footer}>
-            {position > 0 ? (
-                <button type="button" className={classes.backLink} onClick={back}>
-                    <IconArrowLeft size={18}/> <Trans>Back</Trans>
-                </button>
-            ) : <span/>}
-            <div className={classes.footerActions}>
-                {canSkip && (
-                    <button type="button" className={classes.skipLink} onClick={next}><Trans>Skip</Trans></button>
-                )}
-                <Button type="submit" size="lg" radius="xl" className={classes.primaryButton}
-                        loading={createEvent.isPending} rightSection={<IconArrowRight size={18}/>}>
-                    {continueLabel}
-                </Button>
-            </div>
-        </div>
-    );
+    const renderEssentials = () => (
+        <>
+            <h1 className={classes.title}><Trans>Your event</Trans></h1>
+            <p className={classes.subtitle}><Trans>The essentials: what, when and where.</Trans></p>
 
-    const renderStep = () => {
-        switch (step) {
-            case 'start':
-                return (
-                    <>
-                        <h1 className={classes.title}><Trans>Create your event.</Trans></h1>
-                        <p className={classes.subtitle}>
-                            <Trans>Choose how to start. Your answers are saved as you go.</Trans>
-                        </p>
-                        <div className={classes.choices}>
-                            <button type="button" className={classes.choiceCard} onClick={() => choose('poster')}>
-                                {aiEnabled && (
-                                    <span className={classes.badge}><IconSparkles size={14}/> <Trans>Recommended</Trans></span>
-                                )}
-                                <IconWand size={34} stroke={1.6}/>
-                                <span className={classes.choiceTitle}><Trans>I have a visual</Trans></span>
-                                <span className={classes.choiceText}>
-                                    {aiEnabled
-                                        ? <Trans>Upload your poster, the AI pre-fills everything. You check each step.</Trans>
-                                        : <Trans>Upload your poster, then answer a few simple questions.</Trans>}
-                                </span>
-                            </button>
-                            <button type="button" className={classes.choiceCard} onClick={() => choose('manual')}>
-                                <IconPencil size={34} stroke={1.6}/>
-                                <span className={classes.choiceTitle}><Trans>I'll fill it in myself</Trans></span>
-                                <span className={classes.choiceText}>
-                                    <Trans>A few simple questions, one at a time. No visual needed.</Trans>
-                                </span>
-                            </button>
-                        </div>
-                    </>
-                );
-
-            case 'poster':
-            case 'cover':
-                return (
-                    <>
-                        <h1 className={classes.title}>
-                            {step === 'poster' ? <Trans>Upload your visual.</Trans> : <Trans>Add a visual</Trans>}
-                        </h1>
-                        <p className={classes.subtitle}>
-                            {step === 'poster' && aiEnabled
-                                ? <Trans>The AI reads the poster and pre-fills the form. You can check and change everything afterwards.</Trans>
-                                : <Trans>It will be the cover of your event page. (Optional)</Trans>}
-                        </p>
+            {posterPreview ? (
+                <div className={classes.posterBar}>
+                    <img src={posterPreview} alt=""/>
+                    <div className={classes.posterBarText}>
                         {readPoster.isPending ? (
-                            <div className={classes.reading}>
-                                {posterPreview && <img src={posterPreview} alt="" className={classes.readingPreview}/>}
-                                <Loader size="md"/>
-                                <p><Trans>Reading your poster…</Trans></p>
-                            </div>
-                        ) : posterPreview && step === 'cover' ? (
-                            <div className={classes.posterKept}>
-                                <img src={posterPreview} alt=""/>
-                                <button type="button" className={classes.skipLink} onClick={removePoster}>
-                                    <IconX size={16}/> <Trans>Remove</Trans>
-                                </button>
-                            </div>
+                            <span className={classes.posterReading}><Loader size="xs"/> <Trans>Reading your poster…</Trans></span>
                         ) : (
-                            <Dropzone
-                                onDrop={step === 'poster' ? handlePoster : (files) => {
-                                    if (files[0]) {
-                                        setPoster(files[0]);
-                                        setPosterPreview(URL.createObjectURL(files[0]));
-                                    }
-                                }}
-                                onReject={rejectPoster}
-                                accept={POSTER_TYPES}
-                                maxSize={MAX_POSTER_SIZE}
-                                multiple={false}
-                                className={classes.dropzone}
-                            >
-                                <div className={classes.dropzoneInner}>
-                                    <IconUpload size={40} stroke={1.5} className={classes.dropzoneIcon}/>
-                                    <span className={classes.dropzoneTitle}><Trans>Drop your image here</Trans></span>
-                                    <span className={classes.dropzoneHint}><Trans>JPG, PNG, WebP or HEIC — 8 MB max</Trans></span>
-                                    <span className={classes.fakeButton}><IconUpload size={18}/> <Trans>Choose a file</Trans></span>
-                                </div>
-                            </Dropzone>
+                            <span>{aiNotice ?? t`Your poster will be the cover of the event page.`}</span>
                         )}
-                        {error && <p className={classes.error}>{error}</p>}
-                        {step === 'poster' ? (
-                            <div className={classes.footer}>
-                                <button type="button" className={classes.backLink} onClick={() => choose('manual')}>
-                                    <IconArrowLeft size={18}/> <Trans>No visual, I'll fill it in</Trans>
-                                </button>
-                            </div>
-                        ) : footer(<Trans>Continue</Trans>, !poster)}
-                    </>
-                );
+                    </div>
+                    {!readPoster.isPending && (
+                        <button type="button" className={classes.clearButton} aria-label={t`Remove the poster`} onClick={() => {
+                            setPoster(null);
+                            setPosterPreview(null);
+                            setAiNotice(null);
+                        }}>
+                            <IconX size={18}/>
+                        </button>
+                    )}
+                </div>
+            ) : (
+                <Dropzone onDrop={handlePoster} onReject={rejectPoster} accept={POSTER_TYPES} maxSize={MAX_POSTER_SIZE}
+                          multiple={false} className={classes.posterDrop}>
+                    <div className={classes.posterDropInner}>
+                        {aiEnabled ? <IconSparkles size={22}/> : <IconPhoto size={22}/>}
+                        <span>
+                            <strong><Trans>You have a poster?</Trans></strong>{' '}
+                            {aiEnabled
+                                ? <Trans>Drop it here, we fill in the form for you.</Trans>
+                                : <Trans>Drop it here, it will be the cover of your event.</Trans>}
+                        </span>
+                    </div>
+                </Dropzone>
+            )}
+            {formError && step === 'essentials' && <p className={classes.error}>{formError}</p>}
 
-            case 'title':
-                return (
-                    <>
-                        {aiNotice && <p className={classes.notice}><IconSparkles size={16}/> {aiNotice}</p>}
-                        <h1 className={classes.title}><Trans>What is the title of your event?</Trans></h1>
-                        <p className={classes.subtitle}><Trans>The name your guests will see.</Trans></p>
-                        <TextInput
-                            data-autofocus
-                            autoFocus
-                            size="xl"
-                            radius="xl"
-                            classNames={{input: classes.input}}
-                            value={draft.title}
-                            maxLength={150}
-                            placeholder={t`Open day of Mayotte la 1ère`}
-                            onChange={(event) => update({title: event.currentTarget.value})}
-                        />
-                        {error && <p className={classes.error}>{error}</p>}
-                        {footer()}
-                    </>
-                );
+            <div className={classes.fields}>
+                <TextInput
+                    autoFocus={!draft.title}
+                    label={t`Event name`}
+                    size="lg"
+                    radius="xl"
+                    classNames={{input: classes.input, label: classes.label}}
+                    value={draft.title}
+                    maxLength={150}
+                    placeholder={t`E.g. Open day at Mayotte la 1ère`}
+                    error={errors.title}
+                    onChange={(event) => update({title: event.currentTarget.value})}
+                />
 
-            case 'date':
-                return (
-                    <>
-                        <h1 className={classes.title}><Trans>When does your event take place?</Trans></h1>
-                        <p className={classes.subtitle}><Trans>Start date and time.</Trans></p>
+                <div>
+                    <div className={classes.dateRow}>
                         <TextInput
-                            autoFocus
                             type="datetime-local"
-                            size="xl"
+                            label={t`Starts`}
+                            size="lg"
                             radius="xl"
-                            classNames={{input: classes.input}}
+                            classNames={{input: classes.input, label: classes.label}}
                             value={draft.startDate}
+                            error={errors.startDate}
                             onChange={(event) => update({startDate: event.currentTarget.value})}
                         />
-                        {draft.hasEndDate ? (
-                            <div className={classes.endDate}>
-                                <TextInput
-                                    type="datetime-local"
-                                    size="lg"
-                                    radius="xl"
-                                    label={t`Ends`}
-                                    classNames={{input: classes.input}}
-                                    value={draft.endDate}
-                                    min={draft.startDate || undefined}
-                                    onChange={(event) => update({endDate: event.currentTarget.value})}
-                                />
-                                <button type="button" className={classes.skipLink} onClick={() => update({hasEndDate: false, endDate: ''})}>
-                                    <IconX size={16}/> <Trans>Remove the end date</Trans>
-                                </button>
-                            </div>
-                        ) : (
-                            <button type="button" className={classes.addLink} onClick={() => update({hasEndDate: true})}>
-                                <IconPlus size={18}/> <Trans>Add an end date</Trans>
-                            </button>
-                        )}
-                        {draft.startDate && (
-                            <p className={classes.datePreview}>
-                                <IconCalendarEvent size={20}/> {describeDates(draft.startDate, endValue)}
-                            </p>
-                        )}
-                        {error && <p className={classes.error}>{error}</p>}
-                        {footer()}
-                    </>
-                );
-
-            case 'venue':
-                return (
-                    <>
-                        <h1 className={classes.title}><Trans>Where is it happening?</Trans></h1>
-                        <p className={classes.subtitle}><Trans>Venue, town or full address. (Optional)</Trans></p>
-                        <TextInput
-                            autoFocus
-                            size="xl"
-                            radius="xl"
-                            classNames={{input: classes.input}}
-                            value={draft.venue}
-                            maxLength={255}
-                            placeholder={t`Le 5/5, Mamoudzou`}
-                            onChange={(event) => update({venue: event.currentTarget.value})}
-                        />
-                        {footer(<Trans>Continue</Trans>, !draft.venue)}
-                    </>
-                );
-
-            case 'description':
-                return (
-                    <>
-                        <h1 className={classes.title}><Trans>Describe your event</Trans></h1>
-                        <p className={classes.subtitle}><Trans>Make people want to come, in a few lines. (Optional)</Trans></p>
-                        <Textarea
-                            autoFocus
-                            autosize
-                            minRows={5}
-                            maxRows={14}
-                            radius="lg"
-                            size="lg"
-                            classNames={{input: classes.textarea}}
-                            value={draft.description}
-                            maxLength={5000}
-                            onChange={(event) => update({description: event.currentTarget.value})}
-                        />
-                        {aiEnabled && (
-                            <div className={classes.aiRow}>
-                                <span className={classes.aiHint}>
-                                    {previousDescription !== null ? (
-                                        <button type="button" className={classes.skipLink} onClick={() => {
-                                            update({description: previousDescription});
-                                            setPreviousDescription(null);
-                                        }}>
-                                            <Trans>Undo the rewrite</Trans>
-                                        </button>
-                                    ) : <Trans>The AI rewrites your text into a clear description, good for search engines.</Trans>}
-                                </span>
-                                <Button type="button" radius="xl" className={classes.aiButton}
-                                        leftSection={<IconSparkles size={18}/>}
-                                        loading={improveDescription.isPending}
-                                        disabled={draft.description.trim().length < 10}
-                                        onClick={handleImprove}>
-                                    <Trans>Improve with AI</Trans>
-                                </Button>
-                            </div>
-                        )}
-                        {footer(<Trans>Continue</Trans>, !draft.description)}
-                    </>
-                );
-
-            case 'price':
-                return (
-                    <>
-                        <h1 className={classes.title}><Trans>Price and quantity</Trans></h1>
-                        <p className={classes.subtitle}><Trans>Enter 0 € for a free event.</Trans></p>
-                        <div className={classes.priceGrid}>
-                            <NumberInput
-                                autoFocus
-                                label={t`Price (€)`}
-                                size="xl"
-                                radius="xl"
-                                min={0}
-                                decimalScale={2}
-                                decimalSeparator={i18n.locale.startsWith('fr') ? ',' : '.'}
-                                classNames={{input: classes.input, label: classes.label}}
-                                value={draft.price}
-                                onChange={(value) => update({price: value === '' ? '' : Number(value)})}
-                            />
-                            <NumberInput
-                                label={t`Quantity`}
-                                size="xl"
-                                radius="xl"
-                                min={1}
-                                allowDecimal={false}
-                                placeholder={t`Unlimited`}
-                                classNames={{input: classes.input, label: classes.label}}
-                                value={draft.quantity}
-                                onChange={(value) => update({quantity: value === '' ? '' : Number(value)})}
-                            />
-                        </div>
-                        {error && <p className={classes.error}>{error}</p>}
-                        {footer()}
-                    </>
-                );
-
-            case 'review': {
-                const price = Number(draft.price);
-                const rows: { label: string, value: ReactNode, target: StepId }[] = [
-                    {label: t`Title`, value: draft.title, target: 'title'},
-                    {label: t`Date`, value: describeDates(draft.startDate, endValue), target: 'date'},
-                    {label: t`Venue`, value: draft.venue || <em>{t`Not specified`}</em>, target: 'venue'},
-                    {
-                        label: t`Description`,
-                        value: draft.description ? <span className={classes.reviewDescription}>{draft.description}</span> : <em>{t`Not specified`}</em>,
-                        target: 'description',
-                    },
-                    {
-                        label: t`Ticket`,
-                        value: `${price > 0 ? formatPrice(price) : t`Free`} · ${draft.quantity === '' ? t`unlimited` : t`${draft.quantity} places`}`,
-                        target: 'price',
-                    },
-                ];
-                return (
-                    <>
-                        <h1 className={classes.title}><Trans>Everything looks right?</Trans></h1>
-                        <p className={classes.subtitle}>
-                            <Trans>Your event is created as a draft: you can still change everything before publishing it.</Trans>
-                        </p>
-                        <div className={classes.review}>
-                            {posterPreview && <img src={posterPreview} alt="" className={classes.reviewPoster}/>}
-                            <dl className={classes.reviewList}>
-                                {rows.map((row) => (
-                                    <div key={row.label} className={classes.reviewRow}>
-                                        <dt>{row.label}</dt>
-                                        <dd>{row.value}</dd>
-                                        <button type="button" className={classes.editLink} onClick={() => goTo(row.target)}>
-                                            <Trans>Edit</Trans>
-                                        </button>
-                                    </div>
-                                ))}
-                            </dl>
-                        </div>
-                        {organizers.length > 1 && (
-                            <Select
-                                label={t`Organizer`}
+                        {draft.hasEndDate && (
+                            <TextInput
+                                type="datetime-local"
+                                label={t`Ends`}
                                 size="lg"
                                 radius="xl"
-                                className={classes.organizerSelect}
-                                value={organizerId}
-                                onChange={setOrganizerId}
-                                data={organizers.map((item) => ({value: String(item.id), label: item.name}))}
+                                classNames={{input: classes.input, label: classes.label}}
+                                value={draft.endDate}
+                                min={draft.startDate || undefined}
+                                error={errors.endDate}
+                                onChange={(event) => update({endDate: event.currentTarget.value})}
+                                rightSection={
+                                    <button type="button" className={classes.clearButton} aria-label={t`Remove the end time`}
+                                            onClick={() => update({hasEndDate: false, endDate: ''})}>
+                                        <IconX size={16}/>
+                                    </button>
+                                }
                             />
                         )}
-                        {error && <p className={classes.error}>{error}</p>}
-                        {footer(<Trans>Create my event</Trans>)}
-                    </>
-                );
-            }
-        }
-    };
+                    </div>
+                    {!draft.hasEndDate && (
+                        <button type="button" className={classes.addLink} onClick={() => update({hasEndDate: true})}>
+                            <IconPlus size={16}/> <Trans>Add an end time</Trans>
+                        </button>
+                    )}
+                    {draft.startDate && (
+                        <p className={classes.datePreview}>
+                            <IconCalendarEvent size={18}/> {describeDates(draft.startDate, endValue)}
+                        </p>
+                    )}
+                </div>
+
+                <TextInput
+                    label={t`Where?`}
+                    description={t`Optional. A venue name, a town or a full address.`}
+                    size="lg"
+                    radius="xl"
+                    classNames={{input: classes.input, label: classes.label, description: classes.fieldHint}}
+                    value={draft.venue}
+                    maxLength={255}
+                    placeholder={t`E.g. Le 5/5, Mamoudzou`}
+                    onChange={(event) => update({venue: event.currentTarget.value})}
+                />
+            </div>
+
+            <div className={classes.footer}>
+                <span/>
+                <Button type="submit" size="lg" radius="xl" className={classes.primaryButton}
+                        rightSection={<IconArrowRight size={18}/>}>
+                    <Trans>Next</Trans>
+                </Button>
+            </div>
+        </>
+    );
+
+    const renderDetails = () => (
+        <>
+            <h1 className={classes.title}><Trans>Tickets and presentation</Trans></h1>
+            <p className={classes.subtitle}><Trans>Last step. Apart from the price, everything is optional.</Trans></p>
+
+            <div className={classes.fields}>
+                <div>
+                    <span className={classes.label}><Trans>Entry</Trans></span>
+                    <SegmentedControl
+                        fullWidth
+                        size="md"
+                        radius="xl"
+                        className={classes.segmented}
+                        classNames={{indicator: classes.segmentedIndicator, label: classes.segmentedLabel}}
+                        value={draft.isFree ? 'free' : 'paid'}
+                        onChange={(value) => update({isFree: value === 'free'})}
+                        data={[{value: 'paid', label: t`Paid`}, {value: 'free', label: t`Free`}]}
+                    />
+                </div>
+
+                <div className={classes.priceGrid}>
+                    {!draft.isFree && (
+                        <NumberInput
+                            label={t`Ticket price (€)`}
+                            size="lg"
+                            radius="xl"
+                            min={0}
+                            hideControls
+                            decimalScale={2}
+                            decimalSeparator={i18n.locale.startsWith('fr') ? ',' : '.'}
+                            classNames={{input: classes.input, label: classes.label}}
+                            value={draft.price}
+                            error={errors.price}
+                            onChange={(value) => update({price: value === '' ? '' : Number(value)})}
+                        />
+                    )}
+                    <NumberInput
+                        label={t`Number of places`}
+                        placeholder={t`Unlimited`}
+                        size="lg"
+                        radius="xl"
+                        min={1}
+                        hideControls
+                        allowDecimal={false}
+                        classNames={{input: classes.input, label: classes.label}}
+                        value={draft.quantity}
+                        onChange={(value) => update({quantity: value === '' ? '' : Number(value)})}
+                    />
+                </div>
+
+                <div>
+                    <Textarea
+                        label={t`A few words to make people want to come`}
+                        description={t`Optional.`}
+                        autosize
+                        minRows={4}
+                        maxRows={12}
+                        radius="lg"
+                        size="lg"
+                        classNames={{input: classes.textarea, label: classes.label, description: classes.fieldHint}}
+                        value={draft.description}
+                        maxLength={5000}
+                        onChange={(event) => update({description: event.currentTarget.value})}
+                    />
+                    {aiEnabled && (
+                        <div className={classes.aiRow}>
+                            <span className={classes.aiHint}>
+                                {previousDescription !== null ? (
+                                    <button type="button" className={classes.skipLink} onClick={() => {
+                                        update({description: previousDescription});
+                                        setPreviousDescription(null);
+                                    }}>
+                                        <Trans>Go back to my text</Trans>
+                                    </button>
+                                ) : <Trans>Write a few lines, the AI turns them into a clear description.</Trans>}
+                            </span>
+                            <Button type="button" radius="xl" className={classes.aiButton}
+                                    leftSection={<IconSparkles size={18}/>}
+                                    loading={improveDescription.isPending}
+                                    disabled={draft.description.trim().length < 10}
+                                    onClick={handleImprove}>
+                                <Trans>Improve with AI</Trans>
+                            </Button>
+                        </div>
+                    )}
+                </div>
+
+                {organizers.length > 1 && (
+                    <Select
+                        label={t`Organized by`}
+                        size="lg"
+                        radius="xl"
+                        classNames={{input: classes.input, label: classes.label}}
+                        value={organizerId}
+                        error={errors.organizer}
+                        onChange={(value) => {
+                            setOrganizerId(value);
+                            setErrors((current) => ({...current, organizer: undefined}));
+                        }}
+                        data={organizers.map((item) => ({value: String(item.id), label: item.name}))}
+                    />
+                )}
+            </div>
+
+            {formError && <p className={classes.error}>{formError}</p>}
+
+            <div className={classes.footer}>
+                <button type="button" className={classes.backLink} onClick={() => goTo('essentials')}>
+                    <IconArrowLeft size={18}/> <Trans>Back</Trans>
+                </button>
+                <div className={classes.submitBlock}>
+                    <Button type="submit" size="lg" radius="xl" className={classes.primaryButton}
+                            loading={createEvent.isPending} rightSection={<IconArrowRight size={18}/>}>
+                        <Trans>Create my event</Trans>
+                    </Button>
+                    <span className={classes.submitHint}>
+                        <Trans>It stays a draft until you publish it.</Trans>
+                    </span>
+                </div>
+            </div>
+        </>
+    );
 
     return (
         <div className={classes.page}>
@@ -646,18 +525,15 @@ const EventAssistant = () => {
                 <NavLink to={dashboardUrl} className={classes.backLink}>
                     <IconArrowLeft size={18}/> <Trans>Dashboard</Trans>
                 </NavLink>
-                {step !== 'start' && (
-                    <span className={classes.stepCount}>
-                        <Trans>Step {position} of {steps.length - 1}</Trans>
-                    </span>
-                )}
+                <span className={classes.stepCount}><Trans>Step {stepNumber} of 2</Trans></span>
             </header>
             <div className={classes.progress}>
-                <div className={classes.progressBar} style={{width: `${progress * 100}%`}}/>
+                <div className={classes.progressBar} style={{width: step === 'details' ? '100%' : '50%'}}/>
             </div>
             <main className={classes.main}>
-                <form key={step} className={step === 'start' ? classes.wide : classes.content} onSubmit={submitStep}>
-                    {renderStep()}
+                <form key={step} className={classes.content} onSubmit={handleSubmit} noValidate>
+                    {step === 'essentials' && renderEssentials()}
+                    {step === 'details' && renderDetails()}
                 </form>
             </main>
         </div>
