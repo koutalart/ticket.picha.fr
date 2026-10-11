@@ -4,6 +4,7 @@ import {Badge, Button, Group, Menu, Skeleton, UnstyledButton} from '@mantine/cor
 import {
     IconBuildingStore,
     IconCash,
+    IconHourglass,
     IconChevronDown,
     IconChevronRight,
     IconReceiptTax,
@@ -120,6 +121,12 @@ export const OrganizerDashboard = () => {
                 icon: <IconCash size={18}/>,
                 backgroundColor: '#7C63E6'
             },
+            ...(Number(stats.total_awaiting_payment) > 0 ? [{
+                value: formatCurrency(Number(stats.total_awaiting_payment), selectedCurrency),
+                description: t`Awaiting payment collection`,
+                icon: <IconHourglass size={18}/>,
+                backgroundColor: '#E8A33D'
+            }] : []),
             {
                 value: formatNumber(stats.total_products_sold),
                 description: t`Products Sold`,

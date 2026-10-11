@@ -382,6 +382,8 @@ export interface EventStats {
     total_fees: number;
     total_views: number;
     total_refunded: number;
+    total_awaiting_payment?: number;
+    orders_awaiting_payment?: number;
 }
 
 export interface OrganizerStats {
@@ -394,6 +396,8 @@ export interface OrganizerStats {
     total_views: number;
     total_refunded: number;
     all_organizers_currencies: string[];
+    total_awaiting_payment?: number;
+    orders_awaiting_payment?: number;
 }
 
 export interface OrganizerSiteContent {
