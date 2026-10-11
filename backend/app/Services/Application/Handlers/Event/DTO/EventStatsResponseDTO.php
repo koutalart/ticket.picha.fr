@@ -25,6 +25,8 @@ class EventStatsResponseDTO extends BaseDTO
         public float                        $total_tax,
         public float                        $total_views,
         public float                        $total_refunded,
+        public float                        $total_awaiting_payment = 0,
+        public int                          $orders_awaiting_payment = 0,
     )
     {
     }

@@ -81,6 +81,23 @@ class OrganizerRepository extends BaseRepository implements OrganizerRepositoryI
             'currencyCode' => $currencyCode,
         ]);
 
+        $awaitingPayment = $this->db->selectOne(<<<SQL
+            SELECT COALESCE(SUM(o.total_gross), 0) AS total, COUNT(*) AS orders
+            FROM orders o
+            JOIN events e ON e.id = o.event_id
+            WHERE e.organizer_id = :organizerId
+              AND e.account_id = :accountId
+              AND e.currency = :currencyCode
+              AND e.deleted_at IS NULL
+              AND o.payment_status = 'AWAITING_OFFLINE_PAYMENT'
+              AND o.status <> 'CANCELLED'
+              AND o.deleted_at IS NULL;
+        SQL, [
+            'organizerId' => $organizerId,
+            'accountId' => $accountId,
+            'currencyCode' => $currencyCode,
+        ]);
+
         $allOrganizersCurrenciesQuery = <<<SQL
         SELECT DISTINCT e.currency FROM events e
         WHERE e.organizer_id = :organizerId
@@ -107,6 +124,8 @@ SQL;
                 static fn($currency) => $currency->currency,
                 $allOrganizersCurrencies
             ),
+            total_awaiting_payment: (float) $awaitingPayment->total,
+            orders_awaiting_payment: (int) $awaitingPayment->orders,
         );
     }
 }

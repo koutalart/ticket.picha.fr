@@ -1,5 +1,5 @@
 import classes from "./StatBoxes.module.scss";
-import {IconCash, IconCreditCardRefund, IconEye, IconReceipt, IconShoppingCart, IconUsers, IconUserCheck, IconTicket} from "@tabler/icons-react";
+import {IconCash, IconHourglass, IconCreditCardRefund, IconEye, IconReceipt, IconShoppingCart, IconUsers, IconUserCheck, IconTicket} from "@tabler/icons-react";
 import {Card} from "../Card";
 import {useGetEventStats} from "../../../queries/useGetEventStats.ts";
 import {useParams} from "react-router";
@@ -87,6 +87,12 @@ export const StatBoxes = () => {
         {number: formatNumber(eventStats?.total_products_sold as number), description: t`Products sold`, icon: <IconShoppingCart size={18}/>, backgroundColor: "#4B7BE5"},
         {number: formatCurrency(eventStats?.total_refunded as number || 0, event?.currency), description: t`Refunded`, icon: <IconCreditCardRefund size={18}/>, backgroundColor: "#49A6B7"},
         {number: formatCurrency(eventStats?.total_gross_sales || 0, event?.currency), description: t`Gross sales`, icon: <IconCash size={18}/>, backgroundColor: "#7C63E6"},
+        ...(Number(eventStats?.total_awaiting_payment) > 0 ? [{
+            number: formatCurrency(Number(eventStats?.total_awaiting_payment), event?.currency),
+            description: t`Awaiting payment collection`,
+            icon: <IconHourglass size={18}/>,
+            backgroundColor: "#E8A33D",
+        }] : []),
         {number: formatNumber(eventStats?.total_views as number), description: t`Page views`, icon: <IconEye size={18}/>, backgroundColor: "#63B3A1"},
         {number: formatNumber(eventStats?.total_orders as number), description: t`Completed orders`, icon: <IconReceipt size={18}/>, backgroundColor: "#E67D49"}
     ];

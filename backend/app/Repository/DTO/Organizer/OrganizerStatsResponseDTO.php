@@ -18,6 +18,9 @@ class OrganizerStatsResponseDTO
         public string $currency_code,
 
         public array $all_organizers_currencies = [],
+
+        public float $total_awaiting_payment = 0,
+        public int $orders_awaiting_payment = 0,
     )
     {
     }
