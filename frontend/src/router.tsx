@@ -321,10 +321,7 @@ export const router: RouteObject[] = [
             },
             {
                 path: "webhooks",
-                async lazy() {
-                    const Webhooks = await import("./components/routes/organizer/Webhooks");
-                    return { Component: Webhooks.default };
-                }
+                element: <Navigate to="../settings#webhooks" replace/>,
             },
             {
                 path: "reports",

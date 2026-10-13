@@ -7,13 +7,14 @@ import { EventDefaults } from "./Sections/EventDefaults";
 import { PlatformFeesSettings } from "./Sections/PlatformFeesSettings";
 import { DangerZoneSettings } from "./Sections/DangerZoneSettings";
 import { TrackingPixelSettings } from "./Sections/TrackingPixelSettings";
+import { WebhookSettings } from "./Sections/WebhookSettings";
 import { PageBody } from "../../../common/PageBody";
 import { PageTitle } from "../../../common/PageTitle";
 import { t } from "@lingui/macro";
 import { Box, Group, NavLink as MantineNavLink, Stack } from "@mantine/core";
-import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar } from "@tabler/icons-react";
+import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconWebhook } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "../../../common/Card";
 import { useParams } from "react-router";
 import { useGetAccount } from "../../../../queries/useGetAccount.ts";
@@ -74,6 +75,12 @@ const Settings = () => {
                 component: TrackingPixelSettings,
             },
             {
+                id: 'webhooks',
+                label: t`Webhooks`,
+                icon: IconWebhook,
+                component: WebhookSettings,
+            },
+            {
                 id: 'danger-zone',
                 label: t`Danger Zone`,
                 icon: IconAlertTriangle,
@@ -96,6 +103,14 @@ const Settings = () => {
 
     const isLargeScreen = useMediaQuery('(min-width: 1200px)', true);
     const [activeSection, setActiveSection] = useState('basic-settings');
+
+    useEffect(() => {
+        const sectionId = window.location.hash.replace('#', '');
+        if (sectionId && SECTIONS.some((section) => section.id === sectionId)) {
+            setActiveSection(sectionId);
+            setTimeout(() => document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' }), 300);
+        }
+    }, [SECTIONS]);
 
     const handleClick = (sectionId: string) => {
         setActiveSection(sectionId);

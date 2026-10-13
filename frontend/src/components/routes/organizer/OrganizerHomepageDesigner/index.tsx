@@ -22,6 +22,7 @@ import {ThemeColorControls} from "../../../common/ThemeColorControls";
 import {ThemeFontControl} from "../../../common/ThemeFontControl";
 import {computeThemeVariables, validateThemeSettings} from "../../../../utilites/themeUtils.ts";
 import {DEFAULT_HOMEPAGE_FONT} from "../../../../constants/homepageFonts.ts";
+import {OrganizerPageActions} from "../../../common/OrganizerPageActions";
 
 interface FormValues {
     homepage_theme_settings: Partial<HomepageThemeSettings>;
@@ -173,6 +174,12 @@ const OrganizerHomepageDesigner = () => {
                         <h2>{t`Homepage Design`}</h2>
                         <Text c="dimmed" size="sm">{t`Customize your organizer page appearance`}</Text>
                     </div>
+
+                    {organizerData && (
+                        <div className={classes.pageActions}>
+                            <OrganizerPageActions organizer={organizerData}/>
+                        </div>
+                    )}
 
                     <Accordion
                         multiple
