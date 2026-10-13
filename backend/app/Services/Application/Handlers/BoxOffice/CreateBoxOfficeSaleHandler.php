@@ -308,6 +308,17 @@ class CreateBoxOfficeSaleHandler
                 __('This ticket is not sold at the box office.')
             );
         }
+
+        $pausedCount = $this->productRepository->countWhere([
+            [ProductDomainObjectAbstract::ID, 'in', $productIds],
+            ProductDomainObjectAbstract::IS_SALES_PAUSED => true,
+        ]);
+
+        if ($pausedCount > 0) {
+            throw new ProductNotSoldAtBoxOfficeException(
+                __('Sales of this ticket are paused.')
+            );
+        }
     }
 
     /**

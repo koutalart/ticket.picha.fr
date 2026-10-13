@@ -1,0 +1,431 @@
+$cream: #f8f7f4;
+$ink: #0b0b12;
+$muted: #6b6b73;
+$line: #e4e2dd;
+$violet: #6d28d9;
+$serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+.page {
+  min-height: 100vh;
+  background: $cream;
+  color: $ink;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 20px 32px;
+
+  @media (max-width: 600px) {
+    padding: 16px;
+  }
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 32px 56px;
+
+  @media (max-width: 600px) {
+    padding: 16px 16px 40px;
+  }
+}
+
+.content {
+  width: 100%;
+  max-width: 920px;
+}
+
+.contentNarrow {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 32px;
+}
+
+.title {
+  font-family: $serif;
+  font-weight: 700;
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  color: $muted;
+  font-size: clamp(16px, 2vw, 19px);
+  line-height: 1.5;
+  margin: 0 0 32px;
+}
+
+// Upload screen
+
+.dropzone {
+  width: 100%;
+  background: #fff;
+  border: 2px dashed #cfcbc3;
+  border-radius: 32px;
+  padding: 56px 24px;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+
+  &:hover,
+  &[data-accept] {
+    border-color: $ink;
+    background: #fdfcfa;
+  }
+
+  &[data-reject] {
+    border-color: #e03131;
+  }
+}
+
+.dropzoneInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.dropzoneIcon {
+  color: $violet;
+}
+
+.dropzoneTitle {
+  font-family: $serif;
+  font-weight: 700;
+  font-size: 26px;
+}
+
+.dropzoneHint {
+  color: $muted;
+  font-size: 15px;
+}
+
+.fakeButton {
+  background: $ink;
+  color: #fff;
+  border-radius: 999px;
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.noPosterLink {
+  margin-top: 24px;
+  background: none;
+  border: 0;
+  padding: 6px;
+  color: $muted;
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+
+  &:hover {
+    color: $ink;
+  }
+}
+
+.reading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 0;
+}
+
+.readingPreview {
+  max-height: 300px;
+  max-width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(11, 11, 18, 0.14);
+}
+
+.readingText {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: $violet;
+  font-weight: 600;
+  font-size: 17px;
+}
+
+// Review screen
+
+.review {
+  display: flex;
+  gap: 32px;
+  background: #fff;
+  border: 1.5px solid $line;
+  border-radius: 28px;
+  padding: 32px;
+
+  @media (max-width: 760px) {
+    flex-direction: column;
+    padding: 20px;
+    gap: 24px;
+  }
+}
+
+.posterColumn {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  @media (max-width: 760px) {
+    width: 100%;
+  }
+}
+
+.posterImage {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(11, 11, 18, 0.12);
+
+  @media (max-width: 760px) {
+    width: auto;
+    max-width: 60%;
+  }
+}
+
+.fields {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: $ink;
+  margin-bottom: 6px;
+}
+
+.input {
+  background: #fff;
+  border: 1.5px solid $line;
+  font-size: 16px;
+  min-height: 48px;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  &:focus {
+    border-color: $ink;
+  }
+}
+
+.textarea {
+  @extend .input;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  line-height: 1.55;
+}
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+
+    .addEndButton {
+      margin-top: 0;
+    }
+  }
+}
+
+.addEndButton {
+  margin-top: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  border: 1.5px dashed $line;
+  border-radius: 12px;
+  background: none;
+  color: $muted;
+  font-size: 15px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $ink;
+    color: $ink;
+  }
+}
+
+.clearButton {
+  display: inline-flex;
+  background: none;
+  border: 0;
+  color: $muted;
+  cursor: pointer;
+  padding: 4px;
+
+  &:hover {
+    color: $ink;
+  }
+}
+
+.datePreview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3b3b44;
+
+  svg {
+    color: #f08c00;
+  }
+}
+
+.segmented {
+  background: #f1efeb;
+  height: 48px;
+  padding: 4px;
+}
+
+.segmentedIndicator {
+  background: $ink;
+}
+
+.segmentedLabel {
+  font-weight: 600;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &[data-active] {
+    color: #fff;
+  }
+}
+
+.aiRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.aiButton {
+  color: $violet;
+}
+
+.smallLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  color: $muted;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    color: $ink;
+  }
+}
+
+// Shared
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 0;
+  padding: 6px 0;
+  color: $muted;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    color: $ink;
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 28px;
+
+  @media (max-width: 560px) {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
+
+.submitBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+
+  @media (max-width: 560px) {
+    align-items: stretch;
+    text-align: center;
+  }
+}
+
+.primaryButton {
+  background: $ink;
+  height: 56px;
+  padding: 0 28px;
+  font-size: 17px;
+
+  &:hover {
+    background: #26262f;
+  }
+}
+
+.submitHint {
+  color: $muted;
+  font-size: 13px;
+}
+
+.error {
+  color: #c92a2a;
+  margin: 16px 0 0;
+  font-size: 15px;
+}
+
+.writing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  color: $violet;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fieldHint {
+  margin: -12px 0 0;
+  color: $muted;
+  font-size: 13px;
+}

@@ -122,6 +122,7 @@ class EditProductHandler
                 'show_quantity_remaining' => $productsData->show_quantity_remaining,
                 'is_hidden_without_promo_code' => $productsData->is_hidden_without_promo_code,
                 'is_visible_at_box_office' => $productsData->is_visible_at_box_office ?? true,
+                ...($productsData->is_sales_paused !== null ? ['is_sales_paused' => $productsData->is_sales_paused] : []),
                 'product_type' => $productsData->product_type->name,
                 'product_category_id' => $productCategory->getId(),
                 'is_highlighted' => $productsData->is_highlighted ?? false,

@@ -16,7 +16,6 @@ import {ToolBar} from "../../../common/ToolBar";
 import {Pagination} from "../../../common/Pagination";
 import {useFilterQueryParamSync} from "../../../../hooks/useFilterQueryParamSync.ts";
 import {useDisclosure} from "@mantine/hooks";
-import {CreateEventModal} from "../../../modals/CreateEventModal";
 import {useGetOrganizers} from "../../../../queries/useGetOrganizers.ts";
 import {Navigate, useNavigate, useParams} from "react-router";
 import {CreateOrganizerModal} from "../../../modals/CreateOrganizerModal";
@@ -42,7 +41,7 @@ export function Dashboard() {
     const {eventsState} = useParams();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useFilterQueryParamSync();
-    const [createModalOpen, {open: openCreateModal, close: closeCreateModal}] = useDisclosure(false);
+    const openCreateModal = () => navigate('/manage/new-event');
     const [createOrganizerModalOpen, {
         open: openCreateOrganizerModal,
         close: closeCreateOrganizerModal
@@ -220,7 +219,6 @@ export function Dashboard() {
                                total={Number(pagination?.last_page)}
                 />
             }
-            {createModalOpen && <CreateEventModal onClose={closeCreateModal}/>}
             {createOrganizerModalOpen && <CreateOrganizerModal onClose={closeCreateOrganizerModal}/>}
             {organizerModalOpen && (
                 <SwitchOrganizerModal

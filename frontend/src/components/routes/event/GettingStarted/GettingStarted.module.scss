@@ -1,222 +1,306 @@
-@use "../../../../styles/mixins.scss";
+$ink: #14121c;
+$muted: #6b6b78;
+$line: #e7e5ee;
+$violet: #5b2bb5;
 
-.headerCard {
-  background: linear-gradient(135deg, var(--mantine-color-primary-0) 0%, var(--mantine-color-secondary-0) 100%);
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08) !important;
-  padding: 32px;
-  margin-bottom: 32px;
-  border: none;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 240px;
-    height: 240px;
-    background-image: url("/images/balloons.svg");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: top right;
-    opacity: 0.7;
-    z-index: 0;
-  }
-
-  @include mixins.respond-below(lg) {
-    &::before {
-      display: none;
-    }
-  }
-
-  @include mixins.respond-below(sm) {
-    padding: 24px;
-
-    &::before {
-      width: 180px;
-      height: 180px;
-      opacity: 0.5;
-    }
-  }
+.page {
+  max-width: 880px;
+  color: $ink;
 }
 
-.headerContent {
+.header {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  position: relative;
-  z-index: 1;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
 
-  @include mixins.respond-below(sm) {
+  @media (max-width: 767px) {
     flex-direction: column;
-    gap: 24px;
+    gap: 12px;
+    margin-bottom: 20px;
   }
 }
 
-.headerTitle {
-  flex: 1;
+.headerText {
+  min-width: 0;
 }
 
-.mainTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--mantine-color-gray-9);
+.titleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.title {
   margin: 0;
-  line-height: 1.2;
-
-  @include mixins.respond-below(sm) {
-    font-size: 24px;
-  }
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
-.confettiIcon {
-  color: var(--mantine-color-secondary-5);
-  animation: pulse 2s infinite ease-in-out;
+%badge {
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
+.badgeDraft {
+  @extend %badge;
+  background: #fdf1d6;
+  color: #9a6400;
+}
+
+.badgeLive {
+  @extend %badge;
+  background: #dcf5e6;
+  color: #17763f;
 }
 
 .subtitle {
-  margin-top: 12px;
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--mantine-color-gray-7);
-  max-width: 600px;
+  margin: 10px 0 0;
+  color: $muted;
+  font-size: 17px;
+
+  @media (max-width: 767px) {
+    font-size: 15px;
+  }
 }
 
-.progressBarContainer {
-  margin-top: 24px;
-  max-width: 600px;
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
 
-  @include mixins.respond-below(sm) {
+  @media (max-width: 767px) {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.card {
+  border: 1px solid $line;
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.cardHead {
+  padding: 28px 28px 24px;
+
+  @media (max-width: 767px) {
+    padding: 20px 16px 16px;
+  }
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+
+  @media (max-width: 767px) {
+    font-size: 19px;
+  }
+}
+
+.cardSubtitle {
+  margin: 6px 0 16px;
+  color: $muted;
+  font-size: 16px;
+
+  @media (max-width: 767px) {
+    font-size: 14px;
+  }
+}
+
+.progress {
+  :global(.mantine-Progress-section) {
+    background: $violet;
+  }
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 150px 170px;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 28px;
+  border-top: 1px solid $line;
+
+  @media (max-width: 767px) {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon text state"
+      "action action action";
+    gap: 10px 12px;
+    padding: 16px;
+  }
+}
+
+.stepIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f1eef9;
+  color: #4a3a7a;
+
+  @media (max-width: 767px) {
+    grid-area: icon;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.stepText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+
+  @media (max-width: 767px) {
+    grid-area: text;
+  }
+}
+
+.stepTitle {
+  font-size: 18px;
+  font-weight: 600;
+
+  @media (max-width: 767px) {
+    font-size: 15px;
+  }
+}
+
+.stepDescription {
+  color: $muted;
+  font-size: 15px;
+
+  @media (max-width: 767px) {
+    font-size: 13px;
+  }
+}
+
+.stepState {
+  font-size: 15px;
+
+  @media (max-width: 767px) {
+    grid-area: state;
+    font-size: 13px;
+  }
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.stateDone {
+  color: #17763f;
+
+  svg {
+    color: #2fb36a;
+  }
+}
+
+.stateTodo {
+  color: #b86e00;
+
+  svg {
+    color: #f2a516;
+  }
+}
+
+.stateOptional {
+  color: $muted;
+}
+
+.stepAction {
+  display: flex;
+  justify-content: flex-end;
+
+  @media (max-width: 767px) {
+    grid-area: action;
+    justify-content: stretch;
+
+    > * {
+      width: 100%;
+    }
+  }
+
+  &:empty {
     display: none;
   }
 }
 
-.progressBar {
-  height: 8px;
-  background-color: var(--mantine-color-secondary-1);
+.editLink {
+  color: $violet;
+  font-size: 16px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 
-  [role="progressbar"] {
-    background: linear-gradient(90deg, var(--mantine-color-secondary-5), var(--mantine-color-primary-5));
-    box-shadow: 0 0 8px var(--mantine-color-secondary-3);
-    transition: width 0.5s ease-in-out;
+  @media (max-width: 767px) {
+    width: auto !important;
+    margin-left: 52px;
+    font-size: 14px;
   }
 }
 
-.confettiContainer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  pointer-events: none;
-  animation: confettiAnimation 4s ease-in-out forwards;
-  background-image: radial-gradient(circle at 25% 25%, #ff4a4a 2px, transparent 0),
-  radial-gradient(circle at 75% 75%, #4a4aff 2px, transparent 0),
-  radial-gradient(circle at 25% 75%, #4aff4a 3px, transparent 0),
-  radial-gradient(circle at 75% 25%, #ffff4a 3px, transparent 0),
-  radial-gradient(circle at 50% 50%, #ff4aff 4px, transparent 0);
-  background-size: 10% 10%;
-}
+.publish {
+  margin-top: 48px;
 
-@keyframes confettiAnimation {
-  0% {
-    background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  100% {
-    background-position: 0% 100%, 0% 100%, 0% 100%, 0% 100%, 0% 100%;
-    opacity: 0;
+  @media (max-width: 767px) {
+    margin-top: 24px;
+    padding: 20px 16px;
+    border: 1px solid $line;
+    border-radius: 16px;
   }
 }
 
-.actionItems {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(calc(50% - 16px), 1fr));
-  gap: 24px;
+.sectionTitle {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
 
-  @include mixins.respond-below(sm) {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  & > div {
-    margin-bottom: 0;
-    position: relative;
-    padding: 28px;
-    border: 1px solid var(--mantine-color-gray-2);
-    border-radius: 12px;
-    transition: all 0.2s ease-in-out;
-
-    &:hover {
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-      transform: translateY(-2px);
-    }
-
-    h2 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--mantine-color-gray-9);
-    }
-
-    p {
-      margin-bottom: 20px;
-      color: var(--mantine-color-gray-7);
-      line-height: 1.5;
-      font-size: 14px;
-    }
-
-    @include mixins.respond-below(sm) {
-      padding: 20px;
-    }
+  @media (max-width: 767px) {
+    font-size: 19px;
+    font-weight: 700;
   }
 }
 
-.completedCard {
-  background-color: var(--mantine-color-green-0);
-  border-color: var(--mantine-color-green-2);
+.muted {
+  margin: 0 0 20px;
+  color: $muted;
+  font-size: 17px;
+
+  @media (max-width: 767px) {
+    font-size: 14px;
+  }
 }
 
-.completedBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background-color: var(--mantine-color-green-1);
-  color: var(--mantine-color-green-6);
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
+.publishButton {
+  min-width: 220px;
+
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+}
+
+.publishActions {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  flex-wrap: wrap;
+  gap: 12px;
+}
 
-  &:hover {
-    background-color: var(--mantine-color-green-2);
-    transform: scale(1.05);
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
-  }
+.hint {
+  margin: 12px 0 0;
+  color: $muted;
+  font-size: 14px;
 }

@@ -234,6 +234,11 @@ class ProductFilterService
             $hidden = true;
         }
 
+        if ($product->getIsSalesPaused()) {
+            $product->setOffSaleReason(__('Sales of this ticket are paused'));
+            $hidden = true;
+        }
+
         return $hidden && $hideSoldOutProducts;
     }
 
@@ -347,12 +352,14 @@ class ProductFilterService
             return !$price->isSoldOut()
                 && !$price->isBeforeSaleStartDate()
                 && !$price->isAfterSaleEndDate()
-                && !$price->getIsHidden();
+                && !$price->getIsHidden()
+                && !$product->getIsSalesPaused();
         }
 
         return !$product->isSoldOut()
             && !$product->isBeforeSaleStartDate()
             && !$product->isAfterSaleEndDate()
-            && !$product->getIsHidden();
+            && !$product->getIsHidden()
+            && !$product->getIsSalesPaused();
     }
 }

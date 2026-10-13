@@ -1,3 +1,4 @@
+import {t} from "@lingui/macro";
 import {Link, useParams} from "react-router";
 import {PageBody} from "../../../../common/PageBody";
 import {Button} from "@mantine/core";
@@ -32,7 +33,7 @@ const ReportLayout = () => {
                     to={`/manage/event/${eventId}/reports`}
                     pl={0}
             >
-                Back to Reports
+                {t`Back to Reports`}
             </Button>
             <div>
                 {renderReport(reportType as string)}

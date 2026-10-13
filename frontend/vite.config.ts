@@ -25,7 +25,8 @@ export default defineConfig({
     },
     server: {
         hmr: {
-            port: 24678,
+            // Two dev servers on one machine need distinct HMR ports.
+            port: Number(process.env.VITE_HMR_PORT || 24678),
             protocol: "ws",
         },
     },
