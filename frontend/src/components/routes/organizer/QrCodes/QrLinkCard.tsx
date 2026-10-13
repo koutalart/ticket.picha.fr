@@ -1,10 +1,12 @@
-import {useRef} from "react";
+import {useRef, useState} from "react";
+import {useParams} from "react-router";
 import {t} from "@lingui/macro";
 import {Badge, Button, Group, Text} from "@mantine/core";
 import {
     IconChartBar,
     IconDownload,
     IconExternalLink,
+    IconPhoto,
     IconPencil,
     IconPlayerPause,
     IconPlayerPlay,
@@ -15,7 +17,9 @@ import {CopyButton} from "../../../common/CopyButton";
 import {ActionMenu} from "../../../common/ActionMenu";
 import {QrLink} from "../../../../types.ts";
 import {formatCurrency} from "../../../../utilites/currency.ts";
-import {downloadQrPng, downloadQrSvg, QrCodeImage} from "./QrCodeImage.tsx";
+import {downloadQrPng, downloadQrSvg, QrCodeImage, triggerDownload, qrFileName} from "./QrCodeImage.tsx";
+import {qrLinkClient} from "../../../../api/qr-link.client.ts";
+import {showError} from "../../../../utilites/notifications.tsx";
 import classes from "./QrCodes.module.scss";
 
 interface QrLinkCardProps {
@@ -29,7 +33,22 @@ interface QrLinkCardProps {
 
 export const QrLinkCard = ({qrLink, currency, onEdit, onStats, onToggleStatus, onDelete}: QrLinkCardProps) => {
     const qrRef = useRef<HTMLDivElement>(null);
+    const {organizerId} = useParams();
+    const [isDownloadingPoster, setIsDownloadingPoster] = useState(false);
     const isPaused = qrLink.status === 'PAUSED';
+    const hasPoster = !!qrLink.design?.template && qrLink.design.template !== 'none';
+
+    const downloadPoster = () => {
+        setIsDownloadingPoster(true);
+        qrLinkClient.poster(organizerId!, qrLink.id)
+            .then((blob) => {
+                const url = URL.createObjectURL(blob);
+                triggerDownload(url, qrFileName(`${t`visual`}-${qrLink.name}`, 'png'));
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            })
+            .catch(() => showError(t`Unable to generate the visual`))
+            .finally(() => setIsDownloadingPoster(false));
+    };
 
     const destinationLabel = {
         LINK_PAGE: t`Link page`,
@@ -86,7 +105,14 @@ export const QrLinkCard = ({qrLink, currency, onEdit, onStats, onToggleStatus, o
                 ))}
             </div>
 
-            <Group gap="xs" grow>
+            {hasPoster && (
+                <Button size="xs" leftSection={<IconPhoto size={14}/>} onClick={downloadPoster}
+                        loading={isDownloadingPoster}>
+                    {t`Download the visual`}
+                </Button>
+            )}
+
+            <Group gap="xs">
                 <Button size="xs" variant="light" leftSection={<IconDownload size={14}/>}
                         onClick={() => downloadQrPng(qrRef.current, qrLink.name, qrLink.design)}>
                     {t`PNG`}

@@ -4,9 +4,11 @@ namespace Tests\Unit\Services\Application\Handlers\QrLink;
 
 use HiEvents\DomainObjects\Enums\QrLinkDestinationType;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\Status\QrLinkStatus;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
+use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Services\Application\Handlers\QrLink\DTO\UpsertQrLinkDTO;
 use HiEvents\Services\Application\Handlers\QrLink\QrLinkAttributesBuilder;
 use Mockery;
@@ -23,7 +25,7 @@ class QrLinkAttributesBuilderTest extends TestCase
 
         $this->expectException(ResourceNotFoundException::class);
 
-        (new QrLinkAttributesBuilder($eventRepository))->build($this->dto(eventId: 99));
+        (new QrLinkAttributesBuilder($eventRepository, Mockery::mock(ImageRepositoryInterface::class)))->build($this->dto(eventId: 99));
     }
 
     public function test_cleans_text_and_drops_url_for_link_page(): void
@@ -31,7 +33,7 @@ class QrLinkAttributesBuilderTest extends TestCase
         $eventRepository = Mockery::mock(EventRepositoryInterface::class);
         $eventRepository->shouldReceive('findFirstWhere')->andReturn(new EventDomainObject);
 
-        $attributes = (new QrLinkAttributesBuilder($eventRepository))->build($this->dto(
+        $attributes = (new QrLinkAttributesBuilder($eventRepository, Mockery::mock(ImageRepositoryInterface::class)))->build($this->dto(
             eventId: 7,
             title: ' <b>Festival</b> ',
             description: '<script>x</script>',
@@ -48,13 +50,58 @@ class QrLinkAttributesBuilderTest extends TestCase
 
     public function test_keeps_url_for_url_destination(): void
     {
-        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class)))->build($this->dto(
+        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), Mockery::mock(ImageRepositoryInterface::class)))->build($this->dto(
             destinationType: QrLinkDestinationType::URL,
             destinationUrl: 'https://instagram.com/picha',
         ));
 
         $this->assertSame('https://instagram.com/picha', $attributes['destination_url']);
         $this->assertNull($attributes['event_id']);
+    }
+
+    public function test_custom_template_requires_an_image_from_the_same_account(): void
+    {
+        $imageRepository = Mockery::mock(ImageRepositoryInterface::class);
+        $imageRepository->shouldReceive('findFirstWhere')
+            ->with(['id' => 55, 'account_id' => 1])
+            ->andReturnNull();
+
+        $this->expectException(ResourceNotFoundException::class);
+
+        (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), $imageRepository))
+            ->build($this->dto(design: ['template' => 'custom', 'background_image_id' => 55]));
+    }
+
+    public function test_custom_template_stores_background_url_and_layout(): void
+    {
+        $imageRepository = Mockery::mock(ImageRepositoryInterface::class);
+        $imageRepository->shouldReceive('findFirstWhere')->andReturn(
+            (new ImageDomainObject)->setId(55)->setPath('qr_poster_background/story.webp')->setWidth(1067)->setHeight(2000)
+        );
+
+        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), $imageRepository))
+            ->build($this->dto(design: [
+                'template' => 'custom',
+                'background_image_id' => 55,
+                'qr_position' => 45,
+                'qr_scale' => 55,
+                'caption' => '<b>Scannez-moi</b>',
+            ]));
+
+        $this->assertSame('custom', $attributes['design']['template']);
+        $this->assertSame(55, $attributes['design']['background_image_id']);
+        $this->assertStringEndsWith('qr_poster_background/story.webp', $attributes['design']['background_image_url']);
+        $this->assertSame(2000, $attributes['design']['background_height']);
+        $this->assertSame(45, $attributes['design']['qr_position']);
+        $this->assertSame('Scannez-moi', $attributes['design']['caption']);
+    }
+
+    public function test_preset_template_ignores_background_image(): void
+    {
+        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), Mockery::mock(ImageRepositoryInterface::class)))
+            ->build($this->dto(design: ['template' => 'story', 'background_image_id' => 55]));
+
+        $this->assertSame(['template' => 'story'], $attributes['design']);
     }
 
     private function dto(
@@ -64,6 +111,7 @@ class QrLinkAttributesBuilderTest extends TestCase
         ?string $description = null,
         ?string $destinationUrl = null,
         ?array $socialLinks = null,
+        ?array $design = null,
     ): UpsertQrLinkDTO {
         return new UpsertQrLinkDTO(
             accountId: 1,
@@ -76,6 +124,7 @@ class QrLinkAttributesBuilderTest extends TestCase
             title: $title,
             description: $description,
             socialLinks: $socialLinks,
+            design: $design,
         );
     }
 }

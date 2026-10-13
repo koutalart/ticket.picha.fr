@@ -23,13 +23,13 @@ export const QrCodeImage = forwardRef<HTMLDivElement, QrCodeImageProps>(({value,
     </div>
 ));
 
-const fileName = (name: string, extension: string) => {
+export const qrFileName = (name: string, extension: string) => {
     const slug = name.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
         .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     return `qr-${slug || 'code'}.${extension}`;
 };
 
-const triggerDownload = (href: string, name: string) => {
+export const triggerDownload = (href: string, name: string) => {
     const link = document.createElement('a');
     link.href = href;
     link.download = name;
@@ -53,7 +53,7 @@ export const downloadQrSvg = (container: HTMLElement | null, name: string) => {
     if (!svg) return;
 
     const url = URL.createObjectURL(new Blob([svg], {type: 'image/svg+xml'}));
-    triggerDownload(url, fileName(name, 'svg'));
+    triggerDownload(url, qrFileName(name, 'svg'));
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
 
@@ -75,7 +75,7 @@ export const downloadQrPng = (container: HTMLElement | null, name: string, desig
         context.fillRect(0, 0, canvas.width, canvas.height);
         context.imageSmoothingEnabled = false;
         context.drawImage(image, margin, margin, size, size);
-        triggerDownload(canvas.toDataURL('image/png'), fileName(name, 'png'));
+        triggerDownload(canvas.toDataURL('image/png'), qrFileName(name, 'png'));
     };
     image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 };

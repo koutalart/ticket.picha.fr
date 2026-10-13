@@ -50,7 +50,11 @@ export const qrLinkClient = {
         );
         return response.data;
     },
-    testMetaConversionsApi: async (organizerId: IdParam) => {
+    poster: async (organizerId: IdParam, qrLinkId: IdParam) => {
+        const response = await api.get<Blob>(`organizers/${organizerId}/qr-links/${qrLinkId}/poster`, {responseType: 'blob'});
+        return response.data;
+    },
+        testMetaConversionsApi: async (organizerId: IdParam) => {
         const response = await api.post<GenericDataResponse<MetaConversionsApiTestResult>>(
             `organizers/${organizerId}/settings/meta-conversions-api/test`
         );

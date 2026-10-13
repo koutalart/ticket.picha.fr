@@ -187,7 +187,7 @@ export interface Image {
     lqip_base64?: string | null;
 }
 
-export type ImageType = 'EVENT_COVER' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_IMAGE' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
+export type ImageType = 'EVENT_COVER' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
 
 export type PaymentProvider = 'STRIPE' | 'OFFLINE';
 
@@ -498,9 +498,20 @@ export interface QrLinkSocialLink {
     url: string;
 }
 
+export type QrPosterTemplate = 'none' | 'story' | 'poster' | 'square' | 'custom';
+
 export interface QrLinkDesign {
     foreground?: string;
     background?: string;
+    template?: QrPosterTemplate;
+    background_image_id?: IdParam | null;
+    background_image_url?: string;
+    background_width?: number;
+    background_height?: number;
+    qr_position?: number;
+    qr_scale?: number;
+    caption?: string;
+    caption_color?: string;
 }
 
 export interface QrLink {

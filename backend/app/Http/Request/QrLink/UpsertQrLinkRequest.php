@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Http\Request\QrLink;
 
 use HiEvents\DomainObjects\Enums\QrLinkDestinationType;
+use HiEvents\DomainObjects\Enums\QrPosterTemplate;
 use HiEvents\DomainObjects\QrLinkDomainObject;
 use HiEvents\DomainObjects\Status\QrLinkStatus;
 use HiEvents\Http\Request\BaseRequest;
@@ -38,6 +39,12 @@ class UpsertQrLinkRequest extends BaseRequest
             'design' => ['nullable', 'array'],
             'design.foreground' => ['nullable', self::HEX_COLOR],
             'design.background' => ['nullable', self::HEX_COLOR],
+            'design.template' => ['nullable', Rule::in(QrPosterTemplate::valuesArray())],
+            'design.background_image_id' => ['nullable', 'integer', 'required_if:design.template,'.QrPosterTemplate::CUSTOM->value],
+            'design.qr_position' => ['nullable', 'integer', 'between:10,90'],
+            'design.qr_scale' => ['nullable', 'integer', 'between:15,80'],
+            'design.caption' => ['nullable', 'string', 'max:60'],
+            'design.caption_color' => ['nullable', self::HEX_COLOR],
             'status' => ['sometimes', Rule::in(QrLinkStatus::valuesArray())],
         ];
     }
@@ -49,6 +56,8 @@ class UpsertQrLinkRequest extends BaseRequest
             'event_id.required_if' => __('Please choose an event.'),
             'design.foreground.regex' => __('Colors must be in the #RRGGBB format.'),
             'design.background.regex' => __('Colors must be in the #RRGGBB format.'),
+            'design.caption_color.regex' => __('Colors must be in the #RRGGBB format.'),
+            'design.background_image_id.required_if' => __('Please upload a background image.'),
         ];
     }
 }

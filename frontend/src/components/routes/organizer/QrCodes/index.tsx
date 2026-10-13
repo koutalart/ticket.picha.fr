@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {useParams} from "react-router";
 import {t} from "@lingui/macro";
 import {Alert, Box, Button, Text} from "@mantine/core";
@@ -15,7 +15,7 @@ import {useDeleteQrLink} from "../../../../mutations/useDeleteQrLink.ts";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
 import {QrLinkCard} from "./QrLinkCard.tsx";
-import {QrLinkFormModal} from "./QrLinkFormModal.tsx";
+import {QrLinkFormModal, QrPosterBackground} from "./QrLinkFormModal.tsx";
 import {QrLinkStatsDrawer} from "./QrLinkStatsDrawer.tsx";
 import classes from "./QrCodes.module.scss";
 
@@ -29,6 +29,21 @@ const QrCodes = () => {
     const [statsTarget, setStatsTarget] = useState<QrLink | null>(null);
     const qrLinks = qrLinksQuery.data;
     const currency = organizer?.currency || 'EUR';
+
+    const backgrounds = useMemo<QrPosterBackground[]>(() => {
+        const unique = new Map<number, QrPosterBackground>();
+        (qrLinks || []).forEach(({design}) => {
+            if (design?.template === 'custom' && design.background_image_id && design.background_image_url) {
+                unique.set(Number(design.background_image_id), {
+                    id: Number(design.background_image_id),
+                    url: design.background_image_url,
+                    width: design.background_width,
+                    height: design.background_height,
+                });
+            }
+        });
+        return [...unique.values()];
+    }, [qrLinks]);
 
     const toggleStatus = (qrLink: QrLink) => {
         updateMutation.mutate({
@@ -115,6 +130,8 @@ const QrCodes = () => {
             {formTarget && (
                 <QrLinkFormModal
                     qrLink={formTarget === 'new' ? undefined : formTarget}
+                    backgrounds={backgrounds}
+                    organizerName={organizer?.name}
                     onClose={() => setFormTarget(null)}
                 />
             )}

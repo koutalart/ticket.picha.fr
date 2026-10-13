@@ -23,6 +23,7 @@ use HiEvents\Http\Actions\Organizers\Settings\TestMetaConversionsApiAction;
 use HiEvents\Http\Actions\QrLinks\CreateQrLinkAction;
 use HiEvents\Http\Actions\QrLinks\DeleteQrLinkAction;
 use HiEvents\Http\Actions\QrLinks\GetQrLinksAction;
+use HiEvents\Http\Actions\QrLinks\GetQrLinkPosterAction;
 use HiEvents\Http\Actions\QrLinks\GetQrLinkStatsAction;
 use HiEvents\Http\Actions\QrLinks\Public\GetQrLinkPublicAction;
 use HiEvents\Http\Actions\QrLinks\Public\RecordQrLinkVisitPublicAction;
@@ -331,6 +332,8 @@ $router->middleware(['auth:api'])->group(
         $router->put('/organizers/{organizer_id}/qr-links/{qr_link_id}', UpdateQrLinkAction::class);
         $router->delete('/organizers/{organizer_id}/qr-links/{qr_link_id}', DeleteQrLinkAction::class);
         $router->get('/organizers/{organizer_id}/qr-links/{qr_link_id}/stats', GetQrLinkStatsAction::class);
+        $router->get('/organizers/{organizer_id}/qr-links/{qr_link_id}/poster', GetQrLinkPosterAction::class)
+            ->middleware('throttle:30,1');
         $router->get('/organizers/{organizer_id}/reports/{report_type}', GetOrganizerReportAction::class);
         $router->get('/organizers/{organizer_id}/reports/{report_type}/export', ExportOrganizerReportAction::class);
         $router->post('/organizers/{organizer_id}/webhooks', CreateOrganizerWebhookAction::class);
