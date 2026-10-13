@@ -128,6 +128,8 @@ class PartialUpdateOrganizerSettingsRequest extends BaseRequest
             'tracking_pixels.*.pixel_id' => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z0-9\-_]+$/'],
             'tracking_pixels.*.enabled' => ['required', 'boolean'],
             'tracking_consent_acknowledged' => ['sometimes', 'nullable', 'boolean'],
+            'meta_conversions_api_token' => ['sometimes', 'nullable', 'string', 'min:20', 'max:1024', 'regex:/^[A-Za-z0-9_\-]+$/'],
+            'meta_test_event_code' => ['sometimes', 'nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9_\-]+$/'],
         ];
     }
 }

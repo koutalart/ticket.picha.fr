@@ -20,6 +20,7 @@ import {
     ProductFormValue,
     ProductPriceQuantityFormValue
 } from "../../../../api/order.client.ts";
+import {getOrderTrackingContext, getQrLinkCode} from "../../../../utilites/qrAttribution.ts";
 import {useForm} from "@mantine/form";
 import {range, useInputState, useResizeObserver} from "@mantine/hooks";
 import React, {useEffect, useMemo, useRef, useState} from "react";
@@ -145,7 +146,11 @@ const SelectProducts = (props: SelectProductsProps) => {
     });
 
     const productMutation = useMutation({
-        mutationFn: (orderData: ProductFormPayload) => orderClientPublic.create(Number(eventId), orderData),
+        mutationFn: (orderData: ProductFormPayload) => orderClientPublic.create(Number(eventId), {
+            ...orderData,
+            qr_link_code: getQrLinkCode(),
+            tracking_context: getOrderTrackingContext(),
+        }),
 
         onSuccess: (data) => queryClient.invalidateQueries()
             .then(() => {

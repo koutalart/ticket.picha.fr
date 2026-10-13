@@ -12,7 +12,8 @@ import {
     IconSettings,
     IconShare,
     IconUsersGroup,
-    IconWebhook
+    IconWebhook,
+    IconQrcode
 } from "@tabler/icons-react";
 import { t } from "@lingui/macro";
 import { NavItem } from "../AppLayout/types.ts";
@@ -77,6 +78,7 @@ const OrganizerLayout = () => {
             icon: IconChartBar,
             isActive: (isActive) => isActive || location.pathname.includes('/report/')
         },
+        {link: 'qr-codes', label: t`QR codes`, icon: IconQrcode},
     ];
 
     const handleEmailConfirmationResend = () => {

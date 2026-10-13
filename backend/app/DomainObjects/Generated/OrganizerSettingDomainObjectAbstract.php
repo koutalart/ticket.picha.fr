@@ -31,6 +31,8 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     final public const DEFAULT_ALLOW_ATTENDEE_SELF_EDIT = 'default_allow_attendee_self_edit';
     final public const TRACKING_PIXELS = 'tracking_pixels';
     final public const TRACKING_CONSENT_ACKNOWLEDGED = 'tracking_consent_acknowledged';
+    final public const META_CONVERSIONS_API_TOKEN = 'meta_conversions_api_token';
+    final public const META_TEST_EVENT_CODE = 'meta_test_event_code';
 
     protected int $id;
     protected int $organizer_id;
@@ -53,6 +55,8 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     protected bool $default_allow_attendee_self_edit = true;
     protected array|string|null $tracking_pixels = null;
     protected bool $tracking_consent_acknowledged = false;
+    protected ?string $meta_conversions_api_token = null;
+    protected ?string $meta_test_event_code = null;
 
     public function toArray(): array
     {
@@ -78,6 +82,8 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
                     'default_allow_attendee_self_edit' => $this->default_allow_attendee_self_edit ?? null,
                     'tracking_pixels' => $this->tracking_pixels ?? null,
                     'tracking_consent_acknowledged' => $this->tracking_consent_acknowledged ?? null,
+                    'meta_conversions_api_token' => $this->meta_conversions_api_token ?? null,
+                    'meta_test_event_code' => $this->meta_test_event_code ?? null,
                 ];
     }
 
@@ -311,5 +317,27 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     public function getTrackingConsentAcknowledged(): bool
     {
         return $this->tracking_consent_acknowledged;
+    }
+
+    public function setMetaConversionsApiToken(?string $meta_conversions_api_token): self
+    {
+        $this->meta_conversions_api_token = $meta_conversions_api_token;
+        return $this;
+    }
+
+    public function getMetaConversionsApiToken(): ?string
+    {
+        return $this->meta_conversions_api_token;
+    }
+
+    public function setMetaTestEventCode(?string $meta_test_event_code): self
+    {
+        $this->meta_test_event_code = $meta_test_event_code;
+        return $this;
+    }
+
+    public function getMetaTestEventCode(): ?string
+    {
+        return $this->meta_test_event_code;
     }
 }

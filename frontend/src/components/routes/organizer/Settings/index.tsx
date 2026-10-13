@@ -7,11 +7,12 @@ import { EventDefaults } from "./Sections/EventDefaults";
 import { PlatformFeesSettings } from "./Sections/PlatformFeesSettings";
 import { DangerZoneSettings } from "./Sections/DangerZoneSettings";
 import { TrackingPixelSettings } from "./Sections/TrackingPixelSettings";
+import { MetaConversionsApiSettings } from "./Sections/MetaConversionsApiSettings";
 import { PageBody } from "../../../common/PageBody";
 import { PageTitle } from "../../../common/PageTitle";
 import { t } from "@lingui/macro";
 import { Box, Group, NavLink as MantineNavLink, Stack } from "@mantine/core";
-import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar } from "@tabler/icons-react";
+import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconBrandMeta } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useMemo, useState } from "react";
 import { Card } from "../../../common/Card";
@@ -72,6 +73,12 @@ const Settings = () => {
                 label: t`Tracking & Analytics`,
                 icon: IconChartBar,
                 component: TrackingPixelSettings,
+            },
+            {
+                id: 'meta-conversions-api',
+                label: t`Meta Conversions API`,
+                icon: IconBrandMeta,
+                component: MetaConversionsApiSettings,
             },
             {
                 id: 'danger-zone',

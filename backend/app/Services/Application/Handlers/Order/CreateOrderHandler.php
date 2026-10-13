@@ -9,13 +9,17 @@ use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\AffiliateDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\PromoCodeDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\QrLinkDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\PromoCodeDomainObject;
+use HiEvents\DomainObjects\QrLinkDomainObject;
 use HiEvents\DomainObjects\Status\AffiliateStatus;
 use HiEvents\DomainObjects\Status\EventStatus;
+use HiEvents\DomainObjects\Status\QrLinkStatus;
 use HiEvents\Repository\Interfaces\AffiliateRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
+use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Order\DTO\CreateOrderPublicDTO;
 use HiEvents\Services\Domain\Order\OrderItemProcessingService;
 use HiEvents\Services\Domain\Order\OrderManagementService;
@@ -37,6 +41,7 @@ class CreateOrderHandler
         private readonly OrderItemProcessingService             $orderItemProcessingService,
         private readonly AvailableProductQuantitiesFetchService $availableProductQuantitiesFetchService,
         private readonly DatabaseManager                        $databaseManager,
+        private readonly QrLinkRepositoryInterface              $qrLinkRepository,
     )
     {
     }
@@ -66,6 +71,7 @@ class CreateOrderHandler
 
             $promoCode = $this->getPromoCode($createOrderPublicDTO, $eventId);
             $affiliate = $this->getAffiliate($createOrderPublicDTO, $eventId);
+            $qrLink = $this->getQrLink($createOrderPublicDTO, $event);
 
             $this->validateProductAvailability($eventId, $createOrderPublicDTO);
 
@@ -77,6 +83,8 @@ class CreateOrderHandler
                 promoCode: $promoCode,
                 affiliate: $affiliate,
                 sessionId: $createOrderPublicDTO->session_identifier,
+                qrLink: $qrLink,
+                trackingContext: $createOrderPublicDTO->tracking_context,
             );
 
             $orderItems = $this->orderItemProcessingService->process(
@@ -106,6 +114,19 @@ class CreateOrderHandler
         }
 
         return $promoCode;
+    }
+
+    private function getQrLink(CreateOrderPublicDTO $createOrderPublicDTO, EventDomainObject $event): ?QrLinkDomainObject
+    {
+        if ($createOrderPublicDTO->qr_link_code === null || trim($createOrderPublicDTO->qr_link_code) === '') {
+            return null;
+        }
+
+        return $this->qrLinkRepository->findFirstWhere([
+            QrLinkDomainObjectAbstract::SHORT_ID => strtolower(trim($createOrderPublicDTO->qr_link_code)),
+            QrLinkDomainObjectAbstract::ORGANIZER_ID => $event->getOrganizerId(),
+            QrLinkDomainObjectAbstract::STATUS => QrLinkStatus::ACTIVE->value,
+        ]);
     }
 
     private function getAffiliate(CreateOrderPublicDTO $createOrderPublicDTO, int $eventId): ?AffiliateDomainObject

@@ -51,6 +51,11 @@ class Order extends BaseModel
         return $this->belongsTo(Affiliate::class);
     }
 
+    public function qr_link(): BelongsTo
+    {
+        return $this->belongsTo(QrLink::class);
+    }
+
     protected function getCastMap(): array
     {
         return [
@@ -65,6 +70,8 @@ class Order extends BaseModel
             'taxes_and_fees_rollup' => 'array',
             'statistics_decremented_at' => 'datetime',
             'opted_into_marketing_at' => 'datetime',
+            'tracking_context' => 'array',
+            'meta_capi_sent_at' => 'datetime',
         ];
     }
 }

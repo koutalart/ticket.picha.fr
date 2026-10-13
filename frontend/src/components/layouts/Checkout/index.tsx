@@ -175,6 +175,7 @@ const Checkout = () => {
             contentName: event.title,
             contentId: event.id,
             transactionId: order.short_id,
+            eventId: `order_${order.short_id}`,
         });
 
         if (typeof sessionStorage !== 'undefined') {
