@@ -53,6 +53,15 @@ readonly class EventStatsFetchService
         // Execute the totals and comparison queries
         $totalsResult = $this->db->selectOne($totalsQuery, ['eventId' => $eventId]);
 
+        $awaitingPayment = $this->db->selectOne(<<<SQL
+            SELECT COALESCE(SUM(total_gross), 0) AS total, COUNT(*) AS orders
+            FROM orders
+            WHERE event_id = :eventId
+              AND payment_status = 'AWAITING_OFFLINE_PAYMENT'
+              AND status <> 'CANCELLED'
+              AND deleted_at IS NULL;
+        SQL, ['eventId' => $eventId]);
+
         // Use the results to populate the response DTO
         return new EventStatsResponseDTO(
             daily_stats: $this->getDailyEventStats($requestData),
@@ -66,6 +75,8 @@ readonly class EventStatsFetchService
             total_tax: $totalsResult->total_tax ?? 0,
             total_views: $totalsResult->total_views ?? 0,
             total_refunded: $totalsResult->total_refunded ?? 0,
+            total_awaiting_payment: (float) $awaitingPayment->total,
+            orders_awaiting_payment: (int) $awaitingPayment->orders,
             check_in_stats: $this->getCheckedInStats($eventId),
         );
     }

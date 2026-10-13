@@ -70,8 +70,14 @@ export const OrganizerDashboard = () => {
         {value: 'drafts', label: t`Drafts`},
     ];
 
+    const awaitingPayment = Number(stats?.total_awaiting_payment ?? 0);
+
     const statItems = [
-        {label: t`Gross sales`, value: stats ? formatCurrency(stats.total_gross_sales, currency) : null},
+        {
+            label: t`Gross sales`,
+            value: stats ? formatCurrency(stats.total_gross_sales, currency) : null,
+            hint: awaitingPayment > 0 ? t`+ ${formatCurrency(awaitingPayment, currency)} awaiting payment collection` : null,
+        },
         {label: t`Tickets sold`, value: stats ? formatNumber(stats.total_products_sold) : null},
         {label: t`Orders`, value: stats ? formatNumber(stats.total_orders) : null},
     ];
@@ -103,6 +109,7 @@ export const OrganizerDashboard = () => {
                         {item.value === null
                             ? <Skeleton height={36} width={90} radius="sm"/>
                             : <span className={classes.statValue}>{item.value}</span>}
+                        {'hint' in item && item.hint && <span className={classes.statHint}>{item.hint}</span>}
                     </div>
                 ))}
                 {currencies.length > 1 && (

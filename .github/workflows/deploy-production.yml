@@ -1,0 +1,68 @@
+name: Déployer en production
+
+# Lancement manuel uniquement : Actions → « Déployer en production » → Run workflow.
+# Secrets du dépôt requis (voir docker/production/DEPLOY.md, « Déploiement automatique ») :
+#   PROD_SSH_HOST, PROD_SSH_USER, PROD_SSH_KEY, PROD_SSH_KNOWN_HOSTS
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branche à mettre en ligne'
+        required: true
+        default: staging
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+
+    steps:
+      - name: Vérifier que la CI est verte sur la branche
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          set -eu
+          sha=$(gh api "repos/${{ github.repository }}/commits/$BRANCH" --jq .sha)
+          not_green=$(gh api "repos/${{ github.repository }}/commits/$sha/check-runs" \
+            --jq '[.check_runs[] | select(.status != "completed" or (.conclusion != "success" and .conclusion != "skipped"))] | length')
+          if [ "$not_green" != "0" ]; then
+            echo "::error::La CI n'est pas (encore) verte sur $BRANCH ($sha) : déploiement annulé."
+            exit 1
+          fi
+          echo "CI verte sur $BRANCH ($sha)"
+
+      - name: Préparer la clé SSH
+        env:
+          PROD_SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
+          PROD_SSH_KNOWN_HOSTS: ${{ secrets.PROD_SSH_KNOWN_HOSTS }}
+        run: |
+          set -eu
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$PROD_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$PROD_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Sauvegarder, mettre à jour, migrer, vérifier
+        env:
+          HOST: ${{ secrets.PROD_SSH_HOST }}
+          USER: ${{ secrets.PROD_SSH_USER }}
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          set -eu
+          case "$BRANCH" in
+            *[!A-Za-z0-9._/-]*) echo "::error::Nom de branche invalide"; exit 1 ;;
+          esac
+          ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=yes -o BatchMode=yes "$USER@$HOST" \
+            "set -eu; cd /opt/picha-ticket; git fetch --quiet origin '$BRANCH'; \
+             git show 'origin/$BRANCH:docker/production/deploy.sh' > /tmp/picha-deploy.sh; \
+             sh /tmp/picha-deploy.sh '$BRANCH'"
+
+      - name: Nettoyer la clé
+        if: always()
+        run: rm -f ~/.ssh/id_deploy

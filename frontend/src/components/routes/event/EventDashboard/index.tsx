@@ -96,6 +96,9 @@ export const EventDashboard = () => {
             label: t`Gross sales`,
             value: stats ? formatCurrency(stats.total_gross_sales, event.currency) : null,
             note: stats && stats.total_refunded > 0 ? t`including ${formatCurrency(stats.total_refunded, event.currency)} refunded` : null,
+            pending: Number(stats?.total_awaiting_payment ?? 0) > 0
+                ? t`+ ${formatCurrency(Number(stats?.total_awaiting_payment), event.currency)} awaiting payment collection`
+                : null,
         },
         {label: t`Tickets sold`, value: stats ? formatNumber(stats.total_products_sold) : null},
         {label: t`Orders`, value: stats ? formatNumber(stats.total_orders) : null},
@@ -153,6 +156,7 @@ export const EventDashboard = () => {
                             ? <Skeleton height={30} width={80} radius="sm"/>
                             : <span className={classes.figureValue}>{figure.value}</span>}
                         {'note' in figure && figure.note && <span className={classes.figureNote}>{figure.note}</span>}
+                        {'pending' in figure && figure.pending && <span className={classes.figurePending}>{figure.pending}</span>}
                     </div>
                 ))}
             </section>

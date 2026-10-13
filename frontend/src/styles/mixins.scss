@@ -89,12 +89,14 @@ $breakpoints: (
   $green: color.green($color) / 255;
   $blue: color.blue($color) / 255;
   
-  // Apply gamma correction
-  $red: if($red <= 0.03928, $red / 12.92, math.pow(($red + 0.055) / 1.055, 2.4));
-  $green: if($green <= 0.03928, $green / 12.92, math.pow(($green + 0.055) / 1.055, 2.4));
-  $blue: if($blue <= 0.03928, $blue / 12.92, math.pow(($blue + 0.055) / 1.055, 2.4));
-  
-  @return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
+  @return 0.2126 * gamma-correct($red) + 0.7152 * gamma-correct($green) + 0.0722 * gamma-correct($blue);
+}
+
+@function gamma-correct($channel) {
+  @if $channel <= 0.03928 {
+    @return $channel / 12.92;
+  }
+  @return math.pow(($channel + 0.055) / 1.055, 2.4);
 }
 
 @function contrast-color($bg-color) {
