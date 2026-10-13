@@ -12,6 +12,7 @@ use HiEvents\Services\Application\Handlers\Order\CreateOrderHandler;
 use HiEvents\Services\Application\Handlers\Order\DTO\CreateOrderPublicDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\ProductOrderDetailsDTO;
 use HiEvents\Services\Application\Locale\LocaleService;
+use HiEvents\Services\Domain\Meta\OrderTrackingContextFactory;
 use HiEvents\Services\Domain\Order\OrderCreateRequestValidationService;
 use HiEvents\Services\Infrastructure\Session\CheckoutSessionManagementService;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +25,7 @@ class CreateOrderActionPublic extends BaseAction
         private readonly OrderCreateRequestValidationService $orderCreateRequestValidationService,
         private readonly CheckoutSessionManagementService    $sessionIdentifierService,
         private readonly LocaleService                        $localeService,
+        private readonly OrderTrackingContextFactory          $trackingContextFactory,
 
     )
     {
@@ -43,6 +45,12 @@ class CreateOrderActionPublic extends BaseAction
                 'is_user_authenticated' => $this->isUserAuthenticated(),
                 'promo_code' => $request->input('promo_code'),
                 'affiliate_code' => $request->input('affiliate_code'),
+                'qr_link_code' => is_string($request->input('qr_link_code')) ? $request->input('qr_link_code') : null,
+                'tracking_context' => $this->trackingContextFactory->create(
+                    input: is_array($request->input('tracking_context')) ? $request->input('tracking_context') : null,
+                    ipAddress: $request->ip(),
+                    userAgent: $request->userAgent(),
+                ),
                 'products' => ProductOrderDetailsDTO::collectionFromArray($request->input('products')),
                 'session_identifier' => $sessionId,
                 'order_locale' => $this->localeService->getLocaleOrDefault($request->getPreferredLanguage()),

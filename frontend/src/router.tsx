@@ -2,6 +2,7 @@ import { Navigate, RouteObject } from "react-router";
 import ErrorPage from "./error-page.tsx";
 import { publicEventRouteLoader } from "./routeLoaders/publicEventRouteLoader.ts";
 import { publicOrganizerRouteLoader } from "./routeLoaders/publicOrganizerRouteLoader.ts";
+import { qrLinkPageLoader } from "./routeLoaders/qrLinkPageLoader.ts";
 import { organizerPreviewRouteLoader } from "./routeLoaders/organizerPreviewRouteLoader.ts";
 import { SOLUTION_SLUGS } from "./components/routes/solutions/slugs.ts";
 import {
@@ -320,6 +321,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "qr-codes",
+                async lazy() {
+                    const QrCodes = await import("./components/routes/organizer/QrCodes");
+                    return { Component: QrCodes.default };
+                }
+            },
+            {
                 path: "webhooks",
                 element: <Navigate to="../settings#webhooks" replace/>,
             },
@@ -539,6 +547,15 @@ export const router: RouteObject[] = [
         },
         errorElement: <ErrorPage />,
     })),
+    {
+        path: "/q/:shortId",
+        loader: qrLinkPageLoader,
+        async lazy() {
+            const QrLinkPage = await import("./components/layouts/QrLinkPage");
+            return {Component: QrLinkPage.default};
+        },
+        errorElement: <ErrorPage/>,
+    },
     {
         path: "/e/:eventId/:eventSlug",
         async lazy() {

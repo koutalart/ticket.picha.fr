@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\PromoCodeDomainObject;
+use HiEvents\DomainObjects\QrLinkDomainObject;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Helper\IdHelper;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
@@ -41,6 +42,8 @@ class OrderManagementService
         ?PromoCodeDomainObject $promoCode,
         ?AffiliateDomainObject $affiliate = null,
         ?string                $sessionId = null,
+        ?QrLinkDomainObject    $qrLink = null,
+        ?array                 $trackingContext = null,
     ): OrderDomainObject
     {
         $reservedUntil = Carbon::now()->addMinutes($timeOutMinutes);
@@ -56,6 +59,8 @@ class OrderManagementService
             'promo_code_id' => $promoCode?->getId(),
             'promo_code' => $promoCode?->getCode(),
             'affiliate_id' => $affiliate?->getId(),
+            'qr_link_id' => $qrLink?->getId(),
+            'tracking_context' => $trackingContext,
             'locale' => $locale,
         ]);
     }

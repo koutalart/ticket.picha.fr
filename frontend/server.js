@@ -200,6 +200,51 @@ Sitemap: ${frontendUrl}/sitemap.xml
             res.status(500).send('Internal server error');
         }
     });
+    const QR_SHORT_ID = /^[A-Za-z0-9]{4,32}$/;
+    const clientIp = (req) => (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.socket?.remoteAddress || '';
+
+    app.get('/q/:shortId', async (req, res, next) => {
+        const {shortId} = req.params;
+        if (!QR_SHORT_ID.test(shortId)) {
+            return next();
+        }
+
+        try {
+            const headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'User-Agent': req.get('user-agent') || '',
+                'X-Forwarded-For': clientIp(req),
+            };
+            if (req.get('cf-ipcountry')) {
+                headers['CF-IPCountry'] = req.get('cf-ipcountry');
+            }
+
+            const response = await fetch(
+                `${process.env.VITE_API_URL_SERVER}/public/qr-links/${encodeURIComponent(shortId.toLowerCase())}/visits`,
+                {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({type: 'SCAN', referrer: req.get('referer') || null}),
+                    signal: AbortSignal.timeout(3000),
+                }
+            );
+
+            if (response.ok) {
+                const {data} = await response.json();
+                if (data?.redirect_url) {
+                    res.setHeader('Cache-Control', 'no-store');
+                    return res.redirect(302, data.redirect_url);
+                }
+            }
+        } catch (error) {
+            console.error(`QR scan recording failed for ${shortId}`, error);
+        }
+
+        res.setHeader('Cache-Control', 'no-store');
+        return next();
+    });
+
     app.get('/sitemap-events-:page.xml', sitemapEventsHandler);
     app.get('/sitemap-organizers-:page.xml', sitemapOrganizersHandler);
 

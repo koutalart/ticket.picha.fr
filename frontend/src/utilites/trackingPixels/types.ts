@@ -12,6 +12,7 @@ export interface TrackingEventData {
     currency?: string;
     contentName?: string;
     contentId?: string | number;
+    eventId?: string;
     [key: string]: unknown;
 }
 

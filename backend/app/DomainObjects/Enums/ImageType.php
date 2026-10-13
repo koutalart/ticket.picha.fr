@@ -22,6 +22,7 @@ enum ImageType
     // Organizer images
     case ORGANIZER_LOGO;
     case ORGANIZER_COVER;
+    case QR_POSTER_BACKGROUND;
 
     public static function eventImageTypes(): array
     {
@@ -38,6 +39,7 @@ enum ImageType
         return [
             self::ORGANIZER_LOGO,
             self::ORGANIZER_COVER,
+            self::QR_POSTER_BACKGROUND,
         ];
     }
 
@@ -58,6 +60,7 @@ enum ImageType
             self::EVENT_SHARE_IMAGE->name => [600, 315],
             self::ORGANIZER_LOGO->name => [100, 100],
             self::ORGANIZER_COVER->name => [600, 50],
+            self::QR_POSTER_BACKGROUND->name => [600, 600],
         ];
 
         return $map[$imageType->name] ?? $map[self::GENERIC->name];
