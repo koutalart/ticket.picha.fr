@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useParams} from "react-router";
 import {t} from "@lingui/macro";
-import {Box, Button, Text} from "@mantine/core";
+import {Alert, Box, Button, Text} from "@mantine/core";
 import {IconPlus, IconQrcode} from "@tabler/icons-react";
 import {PageBody} from "../../../common/PageBody";
 import {PageTitle} from "../../../common/PageTitle";
@@ -69,13 +69,20 @@ const QrCodes = () => {
                         <Text size="sm" c="dimmed" maw={620}>
                             {t`Create a QR code for each medium (poster, flyer, screen...) and see how many people scan it, from which device, and how many tickets it sells. You can change where a QR code leads at any time without reprinting it.`}
                         </Text>
-                        <Button leftSection={<IconPlus size={16}/>} onClick={() => setFormTarget('new')}>
+                        <Button leftSection={<IconPlus size={16}/>} onClick={() => setFormTarget('new')}
+                                disabled={qrLinksQuery.isError}>
                             {t`New QR code`}
                         </Button>
                     </div>
                 </Card>
 
-                <TableSkeleton isVisible={!qrLinks}/>
+                {qrLinksQuery.isError && (
+                    <Alert color="red" variant="light" mb="md">
+                        {t`This organizer could not be found. Choose your organizer from the menu, then open QR codes again.`}
+                    </Alert>
+                )}
+
+                <TableSkeleton isVisible={!qrLinks && !qrLinksQuery.isError}/>
 
                 {qrLinks && qrLinks.length === 0 && (
                     <Card className={classes.emptyState}>
