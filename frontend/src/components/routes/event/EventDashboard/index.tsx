@@ -13,6 +13,7 @@ import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
 import {formatCurrency} from "../../../../utilites/currency.ts";
 import {formatDateWithLocale, relativeDate} from "../../../../utilites/dates.ts";
 import {formatNumber, getProductsFromEvent} from "../../../../utilites/helpers.ts";
+import {isFreeEvent} from "../../../../utilites/eventPricing.ts";
 import {eventHomepageUrl} from "../../../../utilites/urlHelper.ts";
 import {ShareModal} from "../../../modals/ShareModal";
 import {Event, EventLifecycleStatus, EventStatus, Order, Product} from "../../../../types.ts";
@@ -32,9 +33,6 @@ const channelOf = (product: Product) => {
     if (!product.is_hidden && product.is_visible_at_box_office === false) return {label: t`Online`, tone: 'online'};
     return {label: t`Online and box office`, tone: 'both'};
 };
-
-const isFreeProduct = (product: Product) => product.type === 'FREE'
-    || (product.prices ?? []).every((price) => Number(price.price ?? 0) <= 0);
 
 const eventWhen = (event: Event) => {
     const date = new Intl.DateTimeFormat(i18n.locale, {
@@ -76,7 +74,7 @@ export const EventDashboard = () => {
     }
 
     const products = (getProductsFromEvent(event) ?? []).filter((product) => product.product_type === 'TICKET');
-    const isFree = products.length > 0 && products.every(isFreeProduct);
+    const isFree = isFreeEvent(event);
     const isLive = event.status === 'LIVE';
     const isOngoing = isLive && event.lifecycle_status === EventLifecycleStatus.ONGOING;
     const location = settings?.location_details ?? event.settings?.location_details;
