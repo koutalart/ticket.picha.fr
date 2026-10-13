@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\PromoCodeDomainObject;
 use HiEvents\Repository\Interfaces\AffiliateRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
+use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Order\CreateOrderHandler;
 use HiEvents\Services\Application\Handlers\Order\DTO\CreateOrderPublicDTO;
 use HiEvents\Services\Domain\Order\OrderItemProcessingService;
@@ -104,6 +105,7 @@ class CreateOrderHandlerPromoCodeTest extends TestCase
             $orderItemProcessingService,
             $availabilityService,
             $databaseManager,
+            Mockery::mock(QrLinkRepositoryInterface::class),
         );
 
         $dto = new CreateOrderPublicDTO(

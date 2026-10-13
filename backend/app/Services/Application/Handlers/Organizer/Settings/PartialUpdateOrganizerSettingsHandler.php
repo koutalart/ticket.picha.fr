@@ -98,10 +98,17 @@ class PartialUpdateOrganizerSettingsHandler
 
             'tracking_pixels' => $dto->getProvided('trackingPixels', $organizerSettings->getTrackingPixels()),
             'tracking_consent_acknowledged' => $dto->getProvided('trackingConsentAcknowledged', $organizerSettings->getTrackingConsentAcknowledged()),
+            'meta_test_event_code' => $dto->getProvided('metaTestEventCode', $organizerSettings->getMetaTestEventCode()),
         ], [
             'organizer_id' => $dto->organizerId,
             'id' => $organizerSettings->getId(),
         ]);
+
+        if ($dto->wasProvided('metaConversionsApiToken')) {
+            $this->organizerSettingsRepository->updateFromArray($organizerSettings->getId(), [
+                'meta_conversions_api_token' => $dto->metaConversionsApiToken ?: null,
+            ]);
+        }
 
         return $this->organizerSettingsRepository->findFirst($organizerSettings->getId());
     }

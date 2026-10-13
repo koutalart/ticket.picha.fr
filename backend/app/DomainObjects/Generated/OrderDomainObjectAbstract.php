@@ -14,6 +14,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     final public const EVENT_ID = 'event_id';
     final public const PROMO_CODE_ID = 'promo_code_id';
     final public const AFFILIATE_ID = 'affiliate_id';
+    final public const QR_LINK_ID = 'qr_link_id';
     final public const SHORT_ID = 'short_id';
     final public const TOTAL_BEFORE_ADDITIONS = 'total_before_additions';
     final public const TOTAL_REFUNDED = 'total_refunded';
@@ -44,11 +45,14 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     final public const NOTES = 'notes';
     final public const STATISTICS_DECREMENTED_AT = 'statistics_decremented_at';
     final public const OPTED_INTO_MARKETING_AT = 'opted_into_marketing_at';
+    final public const TRACKING_CONTEXT = 'tracking_context';
+    final public const META_CAPI_SENT_AT = 'meta_capi_sent_at';
 
     protected int $id;
     protected int $event_id;
     protected ?int $promo_code_id = null;
     protected ?int $affiliate_id = null;
+    protected ?int $qr_link_id = null;
     protected string $short_id;
     protected float $total_before_additions = 0.0;
     protected float $total_refunded = 0.0;
@@ -79,6 +83,8 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     protected ?string $notes = null;
     protected ?string $statistics_decremented_at = null;
     protected ?string $opted_into_marketing_at = null;
+    protected array|string|null $tracking_context = null;
+    protected ?string $meta_capi_sent_at = null;
 
     public function toArray(): array
     {
@@ -87,6 +93,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
                     'event_id' => $this->event_id ?? null,
                     'promo_code_id' => $this->promo_code_id ?? null,
                     'affiliate_id' => $this->affiliate_id ?? null,
+                    'qr_link_id' => $this->qr_link_id ?? null,
                     'short_id' => $this->short_id ?? null,
                     'total_before_additions' => $this->total_before_additions ?? null,
                     'total_refunded' => $this->total_refunded ?? null,
@@ -117,6 +124,8 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
                     'notes' => $this->notes ?? null,
                     'statistics_decremented_at' => $this->statistics_decremented_at ?? null,
                     'opted_into_marketing_at' => $this->opted_into_marketing_at ?? null,
+                    'tracking_context' => $this->tracking_context ?? null,
+                    'meta_capi_sent_at' => $this->meta_capi_sent_at ?? null,
                 ];
     }
 
@@ -162,6 +171,17 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     public function getAffiliateId(): ?int
     {
         return $this->affiliate_id;
+    }
+
+    public function setQrLinkId(?int $qr_link_id): self
+    {
+        $this->qr_link_id = $qr_link_id;
+        return $this;
+    }
+
+    public function getQrLinkId(): ?int
+    {
+        return $this->qr_link_id;
     }
 
     public function setShortId(string $short_id): self
@@ -492,5 +512,27 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     public function getOptedIntoMarketingAt(): ?string
     {
         return $this->opted_into_marketing_at;
+    }
+
+    public function setTrackingContext(array|string|null $tracking_context): self
+    {
+        $this->tracking_context = $tracking_context;
+        return $this;
+    }
+
+    public function getTrackingContext(): array|string|null
+    {
+        return $this->tracking_context;
+    }
+
+    public function setMetaCapiSentAt(?string $meta_capi_sent_at): self
+    {
+        $this->meta_capi_sent_at = $meta_capi_sent_at;
+        return $this;
+    }
+
+    public function getMetaCapiSentAt(): ?string
+    {
+        return $this->meta_capi_sent_at;
     }
 }

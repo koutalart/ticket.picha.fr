@@ -19,6 +19,14 @@ use HiEvents\Http\Actions\Attendees\EditAttendeeAction;
 use HiEvents\Http\Actions\Attendees\ExportAttendeesAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeActionPublic;
+use HiEvents\Http\Actions\Organizers\Settings\TestMetaConversionsApiAction;
+use HiEvents\Http\Actions\QrLinks\CreateQrLinkAction;
+use HiEvents\Http\Actions\QrLinks\DeleteQrLinkAction;
+use HiEvents\Http\Actions\QrLinks\GetQrLinksAction;
+use HiEvents\Http\Actions\QrLinks\GetQrLinkStatsAction;
+use HiEvents\Http\Actions\QrLinks\Public\GetQrLinkPublicAction;
+use HiEvents\Http\Actions\QrLinks\Public\RecordQrLinkVisitPublicAction;
+use HiEvents\Http\Actions\QrLinks\UpdateQrLinkAction;
 use HiEvents\Http\Actions\Tickets\GetAttendeeTicketImageActionPublic;
 use HiEvents\Http\Actions\Tickets\GetEventTicketPreviewImageAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeesAction;
@@ -316,6 +324,13 @@ $router->middleware(['auth:api'])->group(
         $router->get('/organizers/{organizer_id}/orders', GetOrganizerOrdersAction::class);
         $router->get('/organizers/{organizer_id}/settings', GetOrganizerSettingsAction::class);
         $router->patch('/organizers/{organizer_id}/settings', PartialUpdateOrganizerSettingsAction::class);
+        $router->post('/organizers/{organizer_id}/settings/meta-conversions-api/test', TestMetaConversionsApiAction::class)
+            ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/qr-links', GetQrLinksAction::class);
+        $router->post('/organizers/{organizer_id}/qr-links', CreateQrLinkAction::class);
+        $router->put('/organizers/{organizer_id}/qr-links/{qr_link_id}', UpdateQrLinkAction::class);
+        $router->delete('/organizers/{organizer_id}/qr-links/{qr_link_id}', DeleteQrLinkAction::class);
+        $router->get('/organizers/{organizer_id}/qr-links/{qr_link_id}/stats', GetQrLinkStatsAction::class);
         $router->get('/organizers/{organizer_id}/reports/{report_type}', GetOrganizerReportAction::class);
         $router->get('/organizers/{organizer_id}/reports/{report_type}/export', ExportOrganizerReportAction::class);
         $router->post('/organizers/{organizer_id}/webhooks', CreateOrganizerWebhookAction::class);
@@ -562,6 +577,13 @@ $router->prefix('/public')->group(
         $router->post('/organizers/{organizer_id}/contact', SendOrganizerContactMessagePublicAction::class)
             ->middleware('throttle:5,1');
         $router->get('/custom-domains/{domain}', GetOrganizerByCustomDomainPublicAction::class);
+
+        // QR codes
+        $router->get('/qr-links/{short_id}', GetQrLinkPublicAction::class)
+            ->where('short_id', '[A-Za-z0-9]{4,32}');
+        $router->post('/qr-links/{short_id}/visits', RecordQrLinkVisitPublicAction::class)
+            ->where('short_id', '[A-Za-z0-9]{4,32}')
+            ->middleware('throttle:60,1');
 
         // Demo requests
         $router->post('/demo-requests', SendDemoRequestPublicAction::class)
