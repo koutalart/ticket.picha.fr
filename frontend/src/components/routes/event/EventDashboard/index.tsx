@@ -218,7 +218,7 @@ export const EventDashboard = () => {
 
             <section className={classes.section}>
                 <div className={classes.chartHead}>
-                    <h2 className={classes.sectionTitle}><Trans>Sales over time</Trans></h2>
+                    <h2 className={classes.sectionTitle}>{isFree ? <Trans>Registrations over time</Trans> : <Trans>Sales over time</Trans>}</h2>
                     <div className={classes.chartControls}>
                         {!isFree && (
                             <SegmentedControl size="xs" radius="md" value={chartMode}
@@ -256,13 +256,13 @@ export const EventDashboard = () => {
 
             <section className={classes.section}>
                 <div className={classes.sectionHead}>
-                    <h2 className={classes.sectionTitle}><Trans>Latest orders</Trans></h2>
+                    <h2 className={classes.sectionTitle}>{isFree ? <Trans>Latest registrations</Trans> : <Trans>Latest orders</Trans>}</h2>
                     <NavLink to={`/manage/event/${eventId}/orders`} className={classes.seeAll}>
                         <Trans>See all</Trans> <IconArrowRight size={16}/>
                     </NavLink>
                 </div>
                 {ordersLoading && <Skeleton height={56}/>}
-                {!ordersLoading && orders.length === 0 && <p className={classes.muted}><Trans>No orders yet.</Trans></p>}
+                {!ordersLoading && orders.length === 0 && <p className={classes.muted}>{isFree ? <Trans>No registrations yet.</Trans> : <Trans>No orders yet.</Trans>}</p>}
                 {orders.map((order: Order) => (
                     <NavLink key={order.id} to={`/manage/event/${eventId}/orders#order-${order.id}`} className={classes.order}>
                         <span className={classes.orderWho}>
