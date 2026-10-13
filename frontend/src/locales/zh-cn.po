@@ -77,7 +77,7 @@ msgstr "{0} 个活动的 Webhook"
 msgid "{0} already entered at {1}"
 msgstr "{0} 已于 {1} 入场"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:476
+#: src/components/routes/product-widget/SelectProducts/index.tsx:481
 msgid "{0} available"
 msgstr "{0}可用"
 
@@ -221,6 +221,10 @@ msgstr "{total, plural, other {# 个订单}}"
 #: src/components/common/EventCard/index.tsx:119
 msgid "{totalCount} ticket types"
 msgstr "{totalCount} 个票种"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:92
+msgid "{value} days"
+msgstr ""
 
 #: src/components/routes/event/EventDashboard/index.tsx:211
 msgid "/ {0} scanned"
@@ -432,6 +436,10 @@ msgstr ""
 msgid "A promo code with no discount can be used to reveal hidden products."
 msgstr "无折扣的促销代码可以用来显示隐藏的产品。"
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:109
+msgid "A purchase is only sent if the buyer accepted cookies on your pages."
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:26
 msgid "A question about an event, a booking, a project? The {0} team answers you."
 msgstr ""
@@ -468,6 +476,10 @@ msgstr "每个产品一个问题。例如，您的T恤尺码是多少？"
 #: src/components/forms/TaxAndFeeForm/index.tsx:14
 msgid "A standard tax, like VAT or GST"
 msgstr "标准税，如增值税或消费税"
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:120
+msgid "A token is saved. Paste a new one to replace it."
+msgstr ""
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:191
 msgid "A valid email is required"
@@ -540,6 +552,14 @@ msgstr "允许入场"
 msgid "Access revoked for this event"
 msgstr "已撤销此活动的访问权限"
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:119
+msgid "Access token"
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:68
+msgid "Access token removed"
+msgstr ""
+
 #: src/components/common/AdminOrdersTable/index.tsx:70
 #: src/components/routes/account/ManageAccount/index.tsx:24
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:53
@@ -601,6 +621,7 @@ msgstr "需要操作:需要提供增值税信息"
 #: src/components/common/WaitlistTable/index.tsx:55
 #: src/components/common/WaitlistTable/index.tsx:210
 #: src/components/routes/admin/FailedJobs/index.tsx:167
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:55
 msgid "Actions"
 msgstr "操作"
 
@@ -650,6 +671,10 @@ msgstr ""
 msgid "Add a figure"
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:208
+msgid "Add a network"
+msgstr ""
+
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:302
 msgid "Add a partner"
 msgstr ""
@@ -681,6 +706,10 @@ msgstr ""
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:401
 msgid "Add an end time"
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:102
+msgid "Add and enable your Facebook Pixel in the Tracking & Analytics section first: the Conversions API sends events to that pixel."
 msgstr ""
 
 #: src/components/modals/ManageAttendeeModal/index.tsx:132
@@ -807,7 +836,7 @@ msgstr "附加信息"
 #: src/components/common/OrderDetails/index.tsx:99
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:131
-#: src/components/routes/organizer/Settings/index.tsx:42
+#: src/components/routes/organizer/Settings/index.tsx:43
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
 msgstr "地址"
@@ -1124,6 +1153,10 @@ msgstr "出现意外错误。请重试。"
 msgid "Annual Convention"
 msgstr "年度大会"
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:146
+msgid "Another link"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:247
 msgid "Another question? Contact the organizer"
 msgstr ""
@@ -1144,7 +1177,7 @@ msgstr "外观"
 msgid "Application Fees Configuration"
 msgstr "应用费用配置"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:564
+#: src/components/routes/product-widget/SelectProducts/index.tsx:569
 msgid "applied"
 msgstr "应用"
 
@@ -1160,7 +1193,7 @@ msgstr "适用于1个产品"
 msgid "Apply"
 msgstr "应用"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:592
+#: src/components/routes/product-widget/SelectProducts/index.tsx:597
 msgid "Apply Promo Code"
 msgstr "应用促销代码"
 
@@ -1267,7 +1300,7 @@ msgstr "确定要删除此模板吗？此操作无法撤消，邮件将回退到
 msgid "Are you sure you want to delete this webhook?"
 msgstr "您确定要删除此 Webhook 吗？"
 
-#: src/components/layouts/Checkout/index.tsx:312
+#: src/components/layouts/Checkout/index.tsx:313
 msgid "Are you sure you want to leave?"
 msgstr "您确定要离开吗？"
 
@@ -1281,11 +1314,11 @@ msgstr "您确定要将此活动设为草稿吗？这将使公众无法看到该
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "您确定要将此事件公开吗？这将使事件对公众可见"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:104
+#: src/components/layouts/OrganizerLayout/index.tsx:106
 msgid "Are you sure you want to make this organizer draft? This will make the organizer page invisible to the public"
 msgstr "您确定要将此组织者设为草稿吗？这样将使组织者页面对公众不可见。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:105
+#: src/components/layouts/OrganizerLayout/index.tsx:107
 msgid "Are you sure you want to make this organizer public? This will make the organizer page visible to the public"
 msgstr "您确定要将此组织者设为公开吗？这样将使组织者页面对公众可见。"
 
@@ -1669,7 +1702,7 @@ msgstr "返回账户"
 msgid "Back to Event"
 msgstr "返回活动"
 
-#: src/components/layouts/Checkout/index.tsx:200
+#: src/components/layouts/Checkout/index.tsx:201
 msgid "Back to event page"
 msgstr "返回活动页面"
 
@@ -1687,6 +1720,10 @@ msgstr "返回消息"
 #: src/components/routes/organizer/Reports/ReportLayout/index.tsx:42
 msgid "Back to Reports"
 msgstr "返回报告"
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:231
+msgid "Background"
+msgstr ""
 
 #: src/components/common/ThemeColorControls/index.tsx:61
 #: src/components/common/WidgetEditor/index.tsx:181
@@ -1706,7 +1743,7 @@ msgstr "胸牌 + 入场"
 msgid "Badge printing…"
 msgstr "正在打印胸卡…"
 
-#: src/components/routes/organizer/Settings/index.tsx:30
+#: src/components/routes/organizer/Settings/index.tsx:31
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
 msgstr "基本信息"
@@ -1922,6 +1959,7 @@ msgstr "我们可以在没有陪同服务的情况下自行使用平台吗？"
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:323
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:240
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:85
@@ -2108,7 +2146,7 @@ msgstr "仅签到"
 msgid "Check Out"
 msgstr "签出"
 
-#: src/components/layouts/Checkout/index.tsx:240
+#: src/components/layouts/Checkout/index.tsx:241
 msgid "Check out this event!"
 msgstr "看看这个活动吧！"
 
@@ -2256,6 +2294,7 @@ msgid "Choose an account"
 msgstr "选择账户"
 
 #: src/components/routes/kiosk/SelectEvent/index.tsx:41
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:169
 msgid "Choose an event"
 msgstr "选择活动"
 
@@ -2331,7 +2370,12 @@ msgstr ""
 msgid "Click to view notes"
 msgstr "点击查看备注"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:597
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:72
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:151
+msgid "Clicks on the page"
+msgstr ""
+
+#: src/components/routes/product-widget/SelectProducts/index.tsx:602
 msgid "close"
 msgstr "关闭"
 
@@ -2340,7 +2384,7 @@ msgstr "关闭"
 #: src/components/modals/JoinWaitlistModal/index.tsx:103
 #: src/components/modals/JoinWaitlistModal/index.tsx:130
 #: src/components/modals/RefundOrderModal/index.tsx:210
-#: src/components/routes/product-widget/SelectProducts/index.tsx:598
+#: src/components/routes/product-widget/SelectProducts/index.tsx:603
 msgid "Close"
 msgstr "关闭"
 
@@ -2387,7 +2431,7 @@ msgstr "代码长度必须在 3 至 50 个字符之间"
 msgid "Code must be no more than 20 characters"
 msgstr "代码不能超过20个字符"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:139
+#: src/components/layouts/OrganizerLayout/index.tsx:141
 msgid "Collaborate with your team to create amazing events together."
 msgstr "与您的团队协作，共同创建精彩的活动。"
 
@@ -2414,6 +2458,7 @@ msgstr ""
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:230
 msgid "Color"
 msgstr "颜色"
 
@@ -2539,6 +2584,10 @@ msgstr "组件代码"
 msgid "Compose"
 msgstr "撰写"
 
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:37
+msgid "Computer"
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:219
 msgid "Concerts, parties, sports and cultural events: online ticketing, physical presales and on-site sales on the day."
 msgstr "音乐会、派对、体育与文化活动：在线售票、线下预售及活动当天现场售票。"
@@ -2597,6 +2646,10 @@ msgstr "配置税费"
 msgid "Configure this scanner"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:96
+msgid "Configured"
+msgstr ""
+
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:35
 msgid "Configured Discount"
 msgstr "已配置折扣"
@@ -2640,7 +2693,7 @@ msgstr "确认密码"
 msgid "Confirm your email to access all features."
 msgstr "请确认您的邮箱以访问所有功能。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:227
+#: src/components/layouts/OrganizerLayout/index.tsx:229
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "确认邮件已发送！请检查您的收件箱。"
 
@@ -2672,8 +2725,8 @@ msgstr "连接文档"
 #~ msgid "Connect payment processing"
 #~ msgstr "连接支付处理"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:152
-#: src/components/layouts/OrganizerLayout/index.tsx:160
+#: src/components/layouts/OrganizerLayout/index.tsx:154
+#: src/components/layouts/OrganizerLayout/index.tsx:162
 #: src/components/routes/event/GettingStarted/index.tsx:120
 msgid "Connect Stripe"
 msgstr "连接条纹"
@@ -2701,7 +2754,7 @@ msgstr ""
 msgid "Connect with Stripe"
 msgstr "与 Stripe 连接"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:153
+#: src/components/layouts/OrganizerLayout/index.tsx:155
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "连接您的 Stripe 账户以接受门票和产品付款。"
 
@@ -2724,6 +2777,14 @@ msgstr "连接您的 Stripe 账户以开始接受付款。"
 #: src/components/routes/kiosk/Settings/index.tsx:226
 msgid "Connected at"
 msgstr "登录时间"
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:80
+msgid "Connected to pixel {pixel}."
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:79
+msgid "Connected to pixel {pixel}. A test event was sent: check the Test events tab in Meta Events Manager."
+msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:391
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:628
@@ -2791,7 +2852,7 @@ msgstr ""
 #: src/components/common/WidgetEditor/index.tsx:222
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:502
 #: src/components/routes/organizer/EventAssistant/index.tsx:513
-#: src/components/routes/product-widget/SelectProducts/index.tsx:550
+#: src/components/routes/product-widget/SelectProducts/index.tsx:555
 msgid "Continue"
 msgstr "继续"
 
@@ -2810,7 +2871,7 @@ msgstr "继续按钮文字"
 msgid "Continue Setup"
 msgstr "继续设置"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:386
+#: src/components/routes/product-widget/SelectProducts/index.tsx:391
 msgid "Continue to Checkout"
 msgstr "继续结账"
 
@@ -2829,6 +2890,14 @@ msgstr "继续付款"
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:47
 msgid "Control how platform fees are handled for this event"
 msgstr "控制此活动的平台费用如何处理"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:75
+msgid "Conversion"
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:56
+msgid "Conversions API settings saved"
+msgstr ""
 
 #: src/components/common/PoweredByFooter/index.tsx:24
 msgid "Cookies"
@@ -2930,6 +2999,10 @@ msgstr ""
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:155
+msgid "Countries"
+msgstr ""
+
 #: src/components/common/CheckoutQuestion/index.tsx:193
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:152
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:110
@@ -2982,6 +3055,10 @@ msgstr "创建一个产品"
 #: src/components/common/PromoCodeTable/index.tsx:57
 msgid "Create a Promo Code"
 msgstr "创建促销代码"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:70
+msgid "Create a QR code for each medium (poster, flyer, screen...) and see how many people scan it, from which device, and how many tickets it sells. You can change where a QR code leads at any time without reprinting it."
+msgstr ""
 
 #: src/components/modals/CreateCheckInListModal/index.tsx:64
 msgid "Create a Ticket"
@@ -3061,11 +3138,15 @@ msgid "Create discounts, access codes for hidden tickets, and special offers."
 msgstr "创建折扣、隐藏门票的访问码和特别优惠。"
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:177
+#: src/components/layouts/OrganizerLayout/index.tsx:179
 #: src/components/routes/organizer/Events/index.tsx:61
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:176
 msgid "Create Event"
 msgstr "创建活动"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:87
+msgid "Create my first QR code"
+msgstr ""
 
 #: src/components/routes/events/Dashboard/index.tsx:171
 msgid "Create new"
@@ -3103,6 +3184,10 @@ msgstr "创建税费"
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:580
 msgid "Create the event"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:241
+msgid "Create the QR code"
 msgstr ""
 
 #: src/components/modals/CreateProductModal/index.tsx:83
@@ -3313,7 +3398,7 @@ msgstr "自定义活动主页的布局、颜色和品牌。"
 msgid "Customize the miscellaneous settings for this event"
 msgstr "自定义此事件的其他设置"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:130
+#: src/components/layouts/OrganizerLayout/index.tsx:132
 msgid "Customize the page"
 msgstr ""
 
@@ -3370,7 +3455,7 @@ msgstr "危险区"
 #: src/components/common/AttendeeTable/index.tsx:372
 #: src/components/common/DangerZone/index.tsx:30
 #: src/components/routes/event/Settings/index.tsx:88
-#: src/components/routes/organizer/Settings/index.tsx:78
+#: src/components/routes/organizer/Settings/index.tsx:85
 msgid "Danger Zone"
 msgstr "危险区"
 
@@ -3469,6 +3554,10 @@ msgstr "将使用默认模板"
 msgid "Default ticket language"
 msgstr "默认票券语言"
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:176
+msgid "Defaults to the event or organizer name"
+msgstr ""
+
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:28
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:30
 msgid "delete"
@@ -3479,6 +3568,7 @@ msgstr "删除"
 #: src/components/common/QuestionsTable/index.tsx:153
 #: src/components/common/TaxAndFeeList/index.tsx:78
 #: src/components/routes/admin/FailedJobs/index.tsx:209
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:64
 msgid "Delete"
 msgstr "删除"
 
@@ -3529,6 +3619,10 @@ msgstr "删除主办方"
 msgid "Delete Template"
 msgstr "删除模板"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:55
+msgid "Delete this QR code? Printed copies will stop working and its statistics will be lost."
+msgstr ""
+
 #: src/components/common/QuestionsTable/index.tsx:218
 msgid "Delete this question? This cannot be undone."
 msgstr "删除此问题？此操作无法撤销。"
@@ -3575,6 +3669,10 @@ msgstr "详细信息"
 msgid "Device token"
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:152
+msgid "Devices"
+msgstr ""
+
 #: src/components/routes/welcome/index.tsx:195
 msgid "Didn't receive the code?"
 msgstr "没有收到验证码？"
@@ -3584,6 +3682,10 @@ msgstr "没有收到验证码？"
 #: src/components/routes/landing/MarketingFooter/index.tsx:13
 msgid "Digital attendance sheet"
 msgstr "电子签到表"
+
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:37
+msgid "Direct link"
+msgstr ""
 
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:27
 msgid "Disabling this capacity will track sales but not stop them when the limit is reached"
@@ -3629,7 +3731,7 @@ msgstr ""
 msgid "Discover the story, the vision and the team of {0}."
 msgstr ""
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:403
+#: src/components/routes/product-widget/SelectProducts/index.tsx:408
 msgid "Dismiss this message"
 msgstr "关闭此消息"
 
@@ -3701,7 +3803,7 @@ msgstr "下载 CSV"
 msgid "Download invoice"
 msgstr "下载发票"
 
-#: src/components/layouts/Checkout/index.tsx:260
+#: src/components/layouts/Checkout/index.tsx:261
 msgid "Download Invoice"
 msgstr "下载发票"
 
@@ -3712,6 +3814,10 @@ msgstr "下载二维码"
 #: src/components/routes/event/Reports/index.tsx:38
 msgid "Download sales, attendee, and financial reports for all completed orders."
 msgstr "下载所有已完成订单的销售、参与者和财务报告。"
+
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:58
+msgid "Download SVG (print)"
+msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:55
 msgid "Download the press kit"
@@ -3823,6 +3929,10 @@ msgstr "例如，标准版、高级版、企业版"
 msgid "Each person will receive an email with a reserved spot to complete their purchase."
 msgstr "每个人将收到一封包含预留名额的电子邮件，以完成购买。"
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:111
+msgid "Each purchase carries the same identifier as the pixel event, so Meta counts it only once."
+msgstr ""
+
 #: src/components/forms/ProductForm/index.tsx:88
 msgid "Early bird"
 msgstr "早起的鸟儿"
@@ -3835,6 +3945,7 @@ msgstr "早起的鸟儿"
 #: src/components/modals/ManageOrderModal/index.tsx:203
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:358
 #: src/components/routes/event/GettingStarted/index.tsx:76
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:57
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:236
 msgid "Edit"
 msgstr "编辑"
@@ -3919,6 +4030,10 @@ msgstr "编辑产品类别"
 #: src/components/modals/EditPromoCodeModal/index.tsx:84
 msgid "Edit Promo Code"
 msgstr "编辑促销代码"
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:128
+msgid "Edit QR code"
+msgstr ""
 
 #: src/components/modals/EditQuestionModal/index.tsx:95
 #: src/components/modals/EditQuestionModal/index.tsx:101
@@ -4036,6 +4151,10 @@ msgstr "邮箱地址已复制到剪贴板"
 msgid "Email addresses do not match"
 msgstr "电子邮件地址不匹配"
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:110
+msgid "Email and names are hashed (SHA-256) before leaving our servers."
+msgstr ""
+
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:149
 msgid "Email Body"
 msgstr "邮件正文"
@@ -4053,7 +4172,7 @@ msgid "Email confirmation resent"
 msgstr "重新发送电子邮件确认"
 
 #: src/components/layouts/Event/index.tsx:75
-#: src/components/layouts/OrganizerLayout/index.tsx:87
+#: src/components/layouts/OrganizerLayout/index.tsx:89
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
 msgstr "成功重新发送电子邮件确认"
@@ -4077,11 +4196,11 @@ msgid "Email Preview"
 msgstr "邮件预览"
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:336
-#: src/components/routes/organizer/Settings/index.tsx:66
+#: src/components/routes/organizer/Settings/index.tsx:67
 msgid "Email Templates"
 msgstr "邮件模板"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:206
+#: src/components/layouts/OrganizerLayout/index.tsx:208
 msgid "Email Verification Required"
 msgstr "需要验证邮箱"
 
@@ -4369,6 +4488,7 @@ msgstr "欧元"
 #: src/components/routes/event/EventDashboard/index.tsx:235
 #: src/components/routes/events/Dashboard/index.tsx:183
 #: src/components/routes/kiosk/Settings/index.tsx:218
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:167
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:19
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:41
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:43
@@ -4413,7 +4533,7 @@ msgid "Event date display"
 msgstr "活动日期显示"
 
 #: src/components/routes/account/ManageAccount/sections/EventDefaultsSettings/index.tsx:5
-#: src/components/routes/organizer/Settings/index.tsx:36
+#: src/components/routes/organizer/Settings/index.tsx:37
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:73
 msgid "Event Defaults"
 msgstr "事件默认值"
@@ -4449,7 +4569,7 @@ msgstr "事件成功复制"
 msgid "Event Full Address"
 msgstr "活动完整地址"
 
-#: src/components/layouts/Checkout/index.tsx:205
+#: src/components/layouts/Checkout/index.tsx:206
 msgid "Event Homepage"
 msgstr "活动主页"
 
@@ -4499,6 +4619,11 @@ msgstr "活动组织者姓名"
 #: src/components/layouts/Event/index.tsx:99
 #: src/components/routes/event/GettingStarted/index.tsx:101
 msgctxt "event menu"
+msgid "Event page"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:36
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:144
 msgid "Event page"
 msgstr ""
 
@@ -4589,7 +4714,7 @@ msgstr "活动场地"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:73
+#: src/components/layouts/OrganizerLayout/index.tsx:74
 #: src/components/organizerTemplates/Poster/index.tsx:73
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:184
 #: src/components/routes/admin/Attribution/index.tsx:133
@@ -4601,6 +4726,10 @@ msgstr "活动"
 
 #: src/components/organizerTemplates/Poster/index.tsx:105
 msgid "Events and concerts{where}: line-up and archives | {0}"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:24
+msgid "Events button"
 msgstr ""
 
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:120
@@ -5357,6 +5486,10 @@ msgstr ""
 msgid "Get Directions"
 msgstr "获取路线"
 
+#: src/components/layouts/QrLinkPage/index.tsx:174
+msgid "Get my ticket"
+msgstr ""
+
 #: src/components/layouts/AuthLayout/index.tsx:36
 msgid "Get paid immediately via Stripe Connect"
 msgstr "通过Stripe Connect立即获得付款"
@@ -5443,7 +5576,7 @@ msgstr "总销售额"
 msgid "Guests"
 msgstr "宾客"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:559
+#: src/components/routes/product-widget/SelectProducts/index.tsx:564
 msgid "Have a promo code?"
 msgstr "有促销代码吗？"
 
@@ -5502,8 +5635,8 @@ msgstr "隐藏于公众视线之外"
 msgid "Hidden questions are only visible to the event organizer and not to the customer."
 msgstr "隐藏问题只有活动组织者可以看到，客户看不到。"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:424
-#: src/components/routes/product-widget/SelectProducts/index.tsx:524
+#: src/components/routes/product-widget/SelectProducts/index.tsx:429
+#: src/components/routes/product-widget/SelectProducts/index.tsx:529
 msgid "Hide"
 msgstr "隐藏"
 
@@ -5585,7 +5718,7 @@ msgstr "已突出显示"
 msgid "Highlighted products will have a different background color to make them stand out on the event page."
 msgstr "突出显示的产品将具有不同的背景色，使其在活动页面上脱颖而出。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:72
+#: src/components/layouts/OrganizerLayout/index.tsx:73
 #: src/components/organizerTemplates/Poster/index.tsx:72
 msgid "Home"
 msgstr ""
@@ -5640,6 +5773,7 @@ msgstr "演示如何进行？"
 
 #: src/components/routes/landing/index.tsx:374
 #: src/components/routes/landing/MarketingHeader/index.tsx:50
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:107
 msgid "How it works"
 msgstr "工作原理"
 
@@ -5708,7 +5842,7 @@ msgstr ""
 msgid "I haven't received my ticket, what should I do?"
 msgstr ""
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:363
+#: src/components/routes/product-widget/SelectProducts/index.tsx:368
 msgid "If a new tab did not open automatically, please click the button below to continue to checkout."
 msgstr "如果没有自动打开新标签页，请点击下方按钮继续结账。"
 
@@ -5809,6 +5943,10 @@ msgstr "{diffHours}小时后"
 msgid "In {diffMinutes} minutes"
 msgstr "{diffMinutes}分钟后"
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:122
+msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
+msgstr ""
+
 #: src/components/common/AffiliateTable/index.tsx:131
 #: src/components/common/CheckInListList/index.tsx:114
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:267
@@ -5883,6 +6021,10 @@ msgstr "插入变量"
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:53
 msgid "Instagram"
 msgstr "Instagram"
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:147
+msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
+msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:69
 msgid "Instant e-ticket"
@@ -6002,7 +6144,7 @@ msgstr "邀请他人在门口售票。他们会收到设置密码的邮件，然
 msgid "Invite Team Member"
 msgstr "邀请团队成员"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:141
+#: src/components/layouts/OrganizerLayout/index.tsx:143
 msgid "Invite Team Members"
 msgstr "邀请团队成员"
 
@@ -6014,7 +6156,7 @@ msgstr "邀请无限团队成员并自定义角色"
 msgid "Invite User"
 msgstr "邀请用户"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:138
+#: src/components/layouts/OrganizerLayout/index.tsx:140
 msgid "Invite Your Team"
 msgstr "邀请您的团队"
 
@@ -6159,6 +6301,10 @@ msgstr "只是在找您的票？"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:266
 msgid "Keep"
 msgstr "保留"
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:234
+msgid "Keep a dark color on a light background so every phone can scan it."
+msgstr ""
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:606
 #: src/components/routes/product-widget/CollectInformation/index.tsx:761
@@ -6320,6 +6466,10 @@ msgstr "留空以使用默认词“发票”"
 msgid "Leave empty for no limit, put 0 if you don't sell that way."
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:182
+msgid "Leave empty to use the links from your organizer settings."
+msgstr ""
+
 #: src/components/modals/EditAccountVatSettingsModal/index.tsx:141
 msgid "Legal business name for VAT purposes"
 msgstr "用于增值税目的的法定企业名称"
@@ -6348,9 +6498,25 @@ msgstr "有限保存"
 msgid "Line-up & archives."
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:155
+msgid "Link"
+msgstr ""
+
 #: src/components/routes/my-tickets/index.tsx:160
 msgid "Link Expired or Invalid"
 msgstr "链接已过期或无效"
+
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:35
+msgid "Link page"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:142
+msgid "Link page (recommended)"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:160
+msgid "Link previews (WhatsApp, Facebook...) and robots are not counted. A unique visitor is a phone that scanned this QR code for the first time."
+msgstr ""
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:27
 msgid "Link to order details"
@@ -6611,6 +6777,10 @@ msgstr "手动添加与会者"
 msgid "Mark as paid"
 msgstr "标记为已支付"
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:137
+msgid "Market poster"
+msgstr ""
+
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:326
 msgid "Max Messages / 24h"
 msgstr "最大消息数 / 24小时"
@@ -6719,6 +6889,11 @@ msgstr "消息级别"
 msgid "Messaging tier updated successfully"
 msgstr "消息级别更新成功"
 
+#: src/components/routes/organizer/Settings/index.tsx:79
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:89
+msgid "Meta Conversions API"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/Countdown.tsx:34
 msgid "min"
 msgstr ""
@@ -6748,6 +6923,10 @@ msgstr "杂项设置"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:979
 msgid "Missing phone calling code — set it in station settings."
 msgstr "缺少国际区号 — 请在工位设置中填写。"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:35
+msgid "Mobile"
+msgstr ""
 
 #: src/components/layouts/AuthLayout/index.tsx:50
 msgid "Mobile Optimized"
@@ -6949,6 +7128,11 @@ msgstr ""
 msgid "New Password"
 msgstr "新密码"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:73
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:128
+msgid "New QR code"
+msgstr ""
+
 #: src/components/routes/admin/Dashboard/index.tsx:225
 msgid "New Signups"
 msgstr "新注册"
@@ -7059,6 +7243,10 @@ msgstr "未找到所选筛选条件的数据。请尝试调整日期范围或货
 #: src/components/common/ReportTable/index.tsx:214
 msgid "No data to show. Please select a date range"
 msgstr "无数据显示。请选择日期范围"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:50
+msgid "No data yet"
+msgstr ""
 
 #: src/components/forms/PromoCodeForm/index.tsx:78
 msgid "No Discount"
@@ -7241,6 +7429,10 @@ msgstr "尚无产品"
 msgid "No Promo Codes to show"
 msgstr "无促销代码显示"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:83
+msgid "No QR codes yet"
+msgstr ""
+
 #: src/components/modals/ManageAttendeeModal/index.tsx:192
 msgid "No questions answered by this attendee."
 msgstr "此与会者未回答任何问题。"
@@ -7278,6 +7470,10 @@ msgstr "尚无响应"
 #: src/components/common/NoResultsSplash/index.tsx:24
 msgid "No results"
 msgstr "无结果"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:111
+msgid "No scans on this period yet. Print or share the QR code: scans appear here in real time."
+msgstr ""
 
 #: src/components/common/ProductsTable/ProductsBlankSlate/index.tsx:20
 msgid "No Search Results"
@@ -7338,7 +7534,7 @@ msgstr "没有 Webhooks"
 msgid "No Zebra printer IP is set for this station. Enter it to print, or open the tickets as PDF."
 msgstr "此售票点未设置 Zebra 打印机 IP。请输入以打印，或以 PDF 打开门票。"
 
-#: src/components/layouts/Checkout/index.tsx:322
+#: src/components/layouts/Checkout/index.tsx:323
 msgid "No, keep me here"
 msgstr "否，保留在此"
 
@@ -7365,6 +7561,10 @@ msgstr "不详"
 #: src/components/common/CheckInStatusModal/index.tsx:110
 msgid "Not Checked In"
 msgstr "未签到"
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:97
+msgid "Not configured"
+msgstr ""
 
 #: src/components/routes/landing/DemoRequestForm/index.tsx:82
 msgid "Not decided yet"
@@ -7559,6 +7759,10 @@ msgstr "一旦开始收集数据，您将在这里看到。"
 msgid "One platform for every type of event"
 msgstr "适用于各类活动的一站式平台"
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:136
+msgid "One QR code per medium lets you compare them: poster, flyer, screen, stand..."
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:135
 msgid "One scan of the QR code and the entry is recorded: the badge prints or the wristband is handed over right away. Last-minute registrations are done on a tablet."
 msgstr "扫描一次二维码即完成入场登记：胸卡随即打印，或当场发放腕带。临时报名可通过平板电脑办理。"
@@ -7640,6 +7844,10 @@ msgstr ""
 #~ msgid "Only visible with promo code"
 #~ msgstr "仅使用促销代码可见"
 
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:99
+msgid "Open"
+msgstr ""
+
 #: src/components/common/CheckInListList/index.tsx:165
 #: src/components/modals/CheckInListSuccessModal/index.tsx:56
 msgid "Open Check-In Page"
@@ -7672,6 +7880,18 @@ msgstr "打开 Stripe 仪表板"
 #: src/hooks/useKioskTicketPrinter.tsx:182
 msgid "Open tickets as PDF"
 msgstr "以 PDF 打开门票"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:154
+msgid "Opened from"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:145
+msgid "Opens the ticketing page directly. Sales are attributed to this QR code."
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:153
+msgid "Operating systems"
+msgstr ""
 
 #: src/components/layouts/Kiosk/index.tsx:71
 #: src/components/routes/kiosk/Settings/index.tsx:214
@@ -7933,6 +8153,8 @@ msgstr "订单已被取消"
 #: src/components/routes/event/EventDashboard/index.tsx:104
 #: src/components/routes/event/orders.tsx:110
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:82
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:43
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:73
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
 #: src/components/routes/organizer/Reports/TaxSummaryReport/index.tsx:55
@@ -8034,7 +8256,7 @@ msgstr "组织者姓名"
 msgid "Organizer Not Found"
 msgstr "未找到组织者"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:123
+#: src/components/layouts/OrganizerLayout/index.tsx:125
 msgid "Organizer page"
 msgstr ""
 
@@ -8042,7 +8264,7 @@ msgstr ""
 msgid "Organizer restored successfully"
 msgstr "主办方已成功恢复"
 
-#: src/components/routes/organizer/Settings/index.tsx:131
+#: src/components/routes/organizer/Settings/index.tsx:138
 msgid "Organizer Settings"
 msgstr "组织者设置"
 
@@ -8051,12 +8273,12 @@ msgstr "组织者设置"
 #~ msgstr "所选货币无法获取组织者统计信息，或发生错误。"
 
 #: src/components/common/StatusToggle/index.tsx:64
-#: src/components/layouts/OrganizerLayout/index.tsx:116
+#: src/components/layouts/OrganizerLayout/index.tsx:118
 msgid "Organizer status update failed. Please try again later"
 msgstr "组织者状态更新失败。请稍后再试"
 
 #: src/components/common/StatusToggle/index.tsx:56
-#: src/components/layouts/OrganizerLayout/index.tsx:113
+#: src/components/layouts/OrganizerLayout/index.tsx:115
 msgid "Organizer status updated"
 msgstr "组织者状态已更新"
 
@@ -8077,6 +8299,7 @@ msgstr "主办方、域名与模板"
 #: src/components/common/OrdersTable/index.tsx:399
 #: src/components/common/QuestionsTable/index.tsx:370
 #: src/components/routes/landing/DemoRequestForm/index.tsx:69
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:38
 #: src/constants/eventCategories.ts:9
 msgid "Other"
 msgstr "其他"
@@ -8157,8 +8380,12 @@ msgstr "页面不再可用"
 msgid "Page not found"
 msgstr "页面未找到"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:126
+#: src/components/layouts/OrganizerLayout/index.tsx:128
 msgid "Page online"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:175
+msgid "Page title"
 msgstr ""
 
 #: src/components/modals/ShareModal/index.tsx:236
@@ -8311,6 +8538,10 @@ msgstr "帕特里克"
 msgid "patrick@acme.com"
 msgstr "patrick@acme.com"
 
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:60
+msgid "Pause"
+msgstr ""
+
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:323
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:329
 #~ msgid "Pause sales online and at the box office"
@@ -8319,6 +8550,7 @@ msgstr "patrick@acme.com"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:110
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:128
 #: src/components/forms/WebhookForm/index.tsx:28
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:70
 msgid "Paused"
 msgstr "已暂停"
 
@@ -8560,7 +8792,7 @@ msgstr "从您的付款中扣除 {0} 的平台费用"
 #: src/components/routes/event/Settings/index.tsx:98
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
-#: src/components/routes/organizer/Settings/index.tsx:88
+#: src/components/routes/organizer/Settings/index.tsx:95
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:42
 msgid "Platform Fees"
 msgstr "平台费用"
@@ -8607,7 +8839,7 @@ msgstr "请选择参会人数"
 msgid "Please choose an event type"
 msgstr "请选择活动类型"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:354
+#: src/components/routes/product-widget/SelectProducts/index.tsx:359
 msgid "Please continue in the new tab"
 msgstr "请在新标签页中继续"
 
@@ -8660,6 +8892,10 @@ msgstr "请输入您的机构"
 msgid "Please enter your VAT number"
 msgstr "请输入您的增值税号码"
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:90
+msgid "Please give this QR code a name"
+msgstr ""
+
 #: src/components/modals/CancelOrderModal/index.tsx:65
 msgid "Please Note"
 msgstr "请注意"
@@ -8672,7 +8908,7 @@ msgstr "请提供一张图片。"
 msgid "Please restart the checkout process."
 msgstr "请重新开始结账流程。"
 
-#: src/components/layouts/Checkout/index.tsx:291
+#: src/components/layouts/Checkout/index.tsx:292
 msgid "Please return to the event page to start over."
 msgstr "请返回活动页面重新开始。"
 
@@ -8684,7 +8920,7 @@ msgstr "请选择日期范围"
 msgid "Please select an image."
 msgstr "请选择一张图片。"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:285
+#: src/components/routes/product-widget/SelectProducts/index.tsx:290
 msgid "Please select at least one product"
 msgstr "请选择至少一个产品"
 
@@ -8720,6 +8956,10 @@ msgstr "请稍候，我们正在准备您的发票..."
 msgid "Please wait while we prepare your orders for export..."
 msgstr "请稍候，我们正在准备导出您的订单..."
 
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:92
+msgid "PNG"
+msgstr ""
+
 #: src/utilites/localeNames.ts:34
 msgid "Polish"
 msgstr "波兰语"
@@ -8754,6 +8994,7 @@ msgid "Poster or flyer"
 msgstr ""
 
 #: src/components/common/PoweredByFooter/index.tsx:14
+#: src/components/layouts/QrLinkPage/index.tsx:196
 msgid "Powered by"
 msgstr ""
 
@@ -8896,7 +9137,7 @@ msgstr "打印预览"
 msgid "Print Ticket"
 msgstr "打印门票"
 
-#: src/components/layouts/Checkout/index.tsx:248
+#: src/components/layouts/Checkout/index.tsx:249
 #: src/components/routes/my-tickets/index.tsx:119
 msgid "Print Tickets"
 msgstr "打印票"
@@ -9055,7 +9296,7 @@ msgstr "简介"
 msgid "Profile updated successfully"
 msgstr "成功更新个人资料"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:226
+#: src/components/routes/product-widget/SelectProducts/index.tsx:231
 msgid "Promo {promo_code} code applied"
 msgstr "已使用促销 {promo_code} 代码"
 
@@ -9129,7 +9370,7 @@ msgstr "发布"
 msgid "Publish the event"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:126
+#: src/components/layouts/OrganizerLayout/index.tsx:128
 msgid "Publish the page"
 msgstr ""
 
@@ -9155,9 +9396,38 @@ msgstr "二维码门禁"
 msgid "QR Code Check-in"
 msgstr "二维码签到"
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:114
+msgid "QR code created"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:57
+msgid "QR code deleted"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:49
+msgid "QR code paused"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:49
+msgid "QR code reactivated"
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:113
 msgid "QR code tickets"
 msgstr "二维码门票"
+
+#: src/components/layouts/QrLinkPage/index.tsx:130
+msgid "QR code unavailable"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:114
+msgid "QR code updated"
+msgstr ""
+
+#: src/components/layouts/OrganizerLayout/index.tsx:81
+#: src/components/routes/organizer/QrCodes/index.tsx:65
+msgid "QR codes"
+msgstr ""
 
 #: src/components/modals/OfferWaitlistModal/index.tsx:164
 msgid "Qty"
@@ -9252,6 +9522,10 @@ msgstr "重新提供名额"
 
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:42
 msgid "Reach an engaged audience"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:60
+msgid "Reactivate"
 msgstr ""
 
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:151
@@ -9355,6 +9629,10 @@ msgstr "正在重定向到 Stripe..."
 #: src/components/routes/admin/Attribution/index.tsx:73
 msgid "Referral Accounts"
 msgstr "推荐账户"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:156
+msgid "Referring sites"
+msgstr ""
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:175
 msgid "Refresh Preview"
@@ -9479,7 +9757,7 @@ msgstr "剩余使用次数"
 msgid "Reminder sent"
 msgstr "已提醒"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:568
+#: src/components/routes/product-widget/SelectProducts/index.tsx:573
 msgid "remove"
 msgstr "去除"
 
@@ -9487,7 +9765,8 @@ msgstr "去除"
 #: src/components/common/WaitlistTable/index.tsx:78
 #: src/components/common/WaitlistTable/index.tsx:111
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:186
-#: src/components/routes/product-widget/SelectProducts/index.tsx:569
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:198
+#: src/components/routes/product-widget/SelectProducts/index.tsx:574
 msgid "Remove"
 msgstr "移除"
 
@@ -9495,12 +9774,20 @@ msgstr "移除"
 msgid "Remove domain"
 msgstr "移除域名"
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:63
+msgid "Remove the access token? Purchases will no longer be sent to Meta from the server."
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:393
 msgid "Remove the end time"
 msgstr ""
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:338
 msgid "Remove the poster"
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:150
+msgid "Remove the token"
 msgstr ""
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:586
@@ -9535,7 +9822,7 @@ msgid "Report not found"
 msgstr "未找到报告"
 
 #: src/components/layouts/Event/index.tsx:92
-#: src/components/layouts/OrganizerLayout/index.tsx:76
+#: src/components/layouts/OrganizerLayout/index.tsx:77
 #: src/components/routes/event/Reports/index.tsx:39
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -9576,7 +9863,7 @@ msgstr "重新发送验证码"
 msgid "Resend Confirmation"
 msgstr "重新发送确认"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:223
+#: src/components/layouts/OrganizerLayout/index.tsx:225
 msgid "Resend Confirmation Email"
 msgstr "重新发送确认邮件"
 
@@ -9706,13 +9993,15 @@ msgstr "重试任务"
 msgid "Return to Event"
 msgstr "返回活动"
 
-#: src/components/layouts/Checkout/index.tsx:298
+#: src/components/layouts/Checkout/index.tsx:299
 msgid "Return to Event Page"
 msgstr "返回活动页面"
 
 #: src/components/common/AffiliateTable/index.tsx:157
 #: src/components/common/EventCard/index.tsx:235
 #: src/components/routes/admin/Attribution/index.tsx:137
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:44
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:74
 msgid "Revenue"
 msgstr "收入"
 
@@ -9876,9 +10165,11 @@ msgstr "旧金山"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:265
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:102
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:76
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:241
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:116
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:132
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
@@ -9938,6 +10229,17 @@ msgstr ""
 
 #: src/pages/digit/ScannerDevicePage.tsx:71
 msgid "Scan failed"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:41
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:70
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:129
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:146
+msgid "Scans"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:116
+msgid "Scans per day"
 msgstr ""
 
 #: src/components/modals/SendMessageModal/index.tsx:382
@@ -10122,6 +10424,7 @@ msgstr ""
 msgid "See the event"
 msgstr ""
 
+#: src/components/layouts/QrLinkPage/index.tsx:174
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:90
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:91
 msgid "See the events"
@@ -10350,6 +10653,10 @@ msgstr "发送重置链接"
 msgid "Send Test"
 msgstr "发送测试"
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:90
+msgid "Send ticket purchases to Meta directly from our servers. This is more reliable than the pixel alone (ad blockers, iOS restrictions) and improves your ad campaign measurement."
+msgstr ""
+
 #: src/components/routes/kiosk/Settings/index.tsx:166
 msgid "Send tickets by email when possible"
 msgstr "尽可能通过电子邮件发送门票"
@@ -10392,7 +10699,7 @@ msgid "Sent to each attendee with their ticket details"
 msgstr "发送给每位参会者及其门票详情"
 
 #: src/components/routes/event/Settings/index.tsx:58
-#: src/components/routes/organizer/Settings/index.tsx:60
+#: src/components/routes/organizer/Settings/index.tsx:61
 msgid "SEO"
 msgstr "SEO"
 
@@ -10489,7 +10796,7 @@ msgstr "设置已更新"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
 #: src/components/layouts/Kiosk/index.tsx:65
-#: src/components/layouts/OrganizerLayout/index.tsx:132
+#: src/components/layouts/OrganizerLayout/index.tsx:134
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/kiosk/Settings/index.tsx:59
 msgid "Settings"
@@ -10541,7 +10848,7 @@ msgstr "分享推广链接"
 msgid "Share Event"
 msgstr "分享活动"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:197
+#: src/components/layouts/OrganizerLayout/index.tsx:199
 msgid "Share Organizer Page"
 msgstr "分享组织者页面"
 
@@ -10549,7 +10856,7 @@ msgstr "分享组织者页面"
 msgid "Share the event"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:124
+#: src/components/layouts/OrganizerLayout/index.tsx:126
 msgid "Share the page"
 msgstr ""
 
@@ -10563,6 +10870,7 @@ msgid "Shop"
 msgstr "商店"
 
 #: src/components/common/QuestionsTable/index.tsx:68
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:177
 msgid "Short text"
 msgstr ""
 
@@ -10590,8 +10898,8 @@ msgstr "显示营销订阅复选框"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "默认显示营销订阅复选框"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:424
-#: src/components/routes/product-widget/SelectProducts/index.tsx:523
+#: src/components/routes/product-widget/SelectProducts/index.tsx:429
+#: src/components/routes/product-widget/SelectProducts/index.tsx:528
 msgid "Show more"
 msgstr "显示更多"
 
@@ -10644,6 +10952,10 @@ msgstr "注册时间"
 msgid "Simpson"
 msgstr "辛普森"
 
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:92
+msgid "Since creation"
+msgstr ""
+
 #: src/components/common/QuestionsTable/index.tsx:71
 msgid "Single choice"
 msgstr ""
@@ -10682,13 +10994,17 @@ msgstr "史密斯"
 msgid "Snapchat"
 msgstr "Snapchat"
 
-#: src/components/routes/organizer/Settings/index.tsx:54
+#: src/components/routes/organizer/Settings/index.tsx:55
 msgid "Social Links"
 msgstr "社交链接"
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:184
 msgid "Social Links & Website"
 msgstr "社交链接与网站"
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:180
+msgid "Social networks"
+msgstr ""
 
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:92
 msgid "Social sharing image (WhatsApp, Facebook…). Recommended: landscape 1200 × 630. By default, the event cover is used."
@@ -10774,7 +11090,7 @@ msgid "Something went wrong. Please try again later."
 msgstr "出了点问题。请稍后再试。"
 
 #: src/components/layouts/Event/index.tsx:79
-#: src/components/layouts/OrganizerLayout/index.tsx:91
+#: src/components/layouts/OrganizerLayout/index.tsx:93
 #: src/components/routes/auth/Login/index.tsx:72
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:42
 #: src/components/routes/my-tickets/index.tsx:145
@@ -10787,7 +11103,7 @@ msgstr "出错了。请重试。"
 #~ msgid "Sorry for the inconvenience."
 #~ msgstr "对于给您带来的不便，我们深表歉意。"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:294
+#: src/components/routes/product-widget/SelectProducts/index.tsx:299
 msgid "Sorry, this promo code is not recognized"
 msgstr "对不起，此优惠代码不可用"
 
@@ -10852,6 +11168,10 @@ msgstr "开始日期为必填项"
 msgid "Start time of the event"
 msgstr "活动开始时间"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:85
+msgid "Start with the poster for your next event."
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:285
 msgid "Start with your poster, it will be the cover of your event."
 msgstr ""
@@ -10880,6 +11200,7 @@ msgid "Station name"
 msgstr "工位名称"
 
 #: src/components/common/AdminEventsTable/index.tsx:110
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:95
 msgid "Statistics"
 msgstr "统计数据"
 
@@ -11201,6 +11522,10 @@ msgstr "系统默认"
 msgid "T-shirt"
 msgstr "T恤衫"
 
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:36
+msgid "Tablet"
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:232
 msgid "Tablets, scanners and badge printers provided"
 msgstr "提供平板电脑、扫描器和胸卡打印机"
@@ -11350,6 +11675,14 @@ msgstr "销售条款"
 msgid "Terms of use"
 msgstr "使用条款"
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:132
+msgid "Test event code (optional)"
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:146
+msgid "Test the connection"
+msgstr ""
+
 #: src/components/common/ThemeColorControls/index.tsx:107
 msgid "Text may be hard to read"
 msgstr "文字可能难以阅读"
@@ -11362,8 +11695,8 @@ msgstr "谢谢 {0}，我们已收到您的申请。"
 msgid "Thanks for your support as we continue to grow and improve our platform!"
 msgstr "感谢您在我们持续发展和改进平台期间的支持！"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:186
-#: src/components/routes/product-widget/SelectProducts/index.tsx:234
+#: src/components/routes/product-widget/SelectProducts/index.tsx:191
+#: src/components/routes/product-widget/SelectProducts/index.tsx:239
 msgid "That promo code is invalid"
 msgstr "促销代码无效"
 
@@ -11469,9 +11802,13 @@ msgstr "您点击的链接无效。"
 msgid "The locale of the customer"
 msgstr "客户的语言"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:508
+#: src/components/routes/product-widget/SelectProducts/index.tsx:513
 msgid "The maximum number of products for {0}is {1}"
 msgstr "{0}的最大产品数量是{1}"
+
+#: src/components/layouts/QrLinkPage/index.tsx:135
+msgid "The organizer has paused or removed it."
+msgstr ""
 
 #: src/components/layouts/PublicOrganizer/OrganizerNotFound/index.tsx:9
 #: src/components/layouts/PublicOrganizer/OrganizerNotFound/index.tsx:11
@@ -11575,11 +11912,11 @@ msgstr "主题与颜色"
 msgid "Then enable HTTPS for the domain on the server with the add-custom-domain.sh script."
 msgstr "然后在服务器上使用 add-custom-domain.sh 脚本为该域名启用 HTTPS。"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:320
+#: src/components/routes/product-widget/SelectProducts/index.tsx:325
 msgid "There are no products available for this event"
 msgstr "此活动没有可用产品"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:433
+#: src/components/routes/product-widget/SelectProducts/index.tsx:438
 msgid "There are no products available in this category"
 msgstr "此类别中没有可用产品"
 
@@ -11794,6 +12131,10 @@ msgstr "此产品为门票。购买后买家将收到门票"
 msgid "This product is sold out"
 msgstr "此产品已售罄"
 
+#: src/components/layouts/QrLinkPage/index.tsx:134
+msgid "This QR code is no longer active"
+msgstr ""
+
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:118
 msgid "This report is for informational purposes only. Always consult with a tax professional before using this data for accounting or tax purposes. Please cross-reference with your Stripe dashboard as the platform may be missing historical data."
 msgstr "本报告仅供参考。将这些数据用于会计或税务用途前，请务必咨询税务专业人士。请与您的 Stripe 控制台核对，因为平台可能缺少历史数据。"
@@ -11848,6 +12189,11 @@ msgstr "门票"
 #: src/components/routes/event/QuickAddTicket.tsx:60
 #~ msgid "Ticket added"
 #~ msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:167
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:22
+msgid "Ticket button"
+msgstr ""
 
 #: src/components/common/CheckIn/AttendeeList.tsx:83
 msgid "Ticket Cancelled"
@@ -12043,9 +12389,13 @@ msgstr ""
 msgid "Time left before the event"
 msgstr ""
 
-#: src/components/layouts/Checkout/index.tsx:224
+#: src/components/layouts/Checkout/index.tsx:225
 msgid "Time left:"
 msgstr "剩余时间："
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:136
+msgid "Time of scan"
+msgstr ""
 
 #: src/components/common/PromoCodeTable/index.tsx:71
 msgid "Times used"
@@ -12189,7 +12539,7 @@ msgstr "按归因来源跟踪账户增长和表现"
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "通过详细报告跟踪销售、收入和出席情况"
 
-#: src/components/routes/organizer/Settings/index.tsx:72
+#: src/components/routes/organizer/Settings/index.tsx:73
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
 msgid "Tracking & Analytics"
 msgstr ""
@@ -12280,13 +12630,17 @@ msgstr "无法签退参与者"
 msgid "Unable to create product. Please check the your details"
 msgstr "无法创建产品。请检查您的详细信息"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:171
+#: src/components/routes/product-widget/SelectProducts/index.tsx:176
 msgid "Unable to create product. Please check your details"
 msgstr "无法创建产品。请检查您的详细信息"
 
 #: src/components/modals/CreateQuestionModal/index.tsx:61
 msgid "Unable to create question. Please check the your details"
 msgstr "无法创建问题。请检查您的详细信息"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:58
+msgid "Unable to delete the QR code"
+msgstr ""
 
 #: src/components/modals/DuplicateProductModal/index.tsx:109
 msgid "Unable to duplicate product. Please check the your details"
@@ -12300,13 +12654,29 @@ msgstr "无法获取参与者"
 msgid "Unable to join waitlist"
 msgstr "无法加入候补名单"
 
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:82
+msgid "Unable to reach Meta. Please try again."
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:69
+msgid "Unable to remove the access token"
+msgstr ""
+
 #: src/components/modals/EditQuestionModal/index.tsx:84
 msgid "Unable to update question. Please check the your details"
 msgstr "无法更新问题。请检查您的详细信息"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:50
+msgid "Unable to update the QR code"
+msgstr ""
+
 #: src/components/routes/admin/Attribution/index.tsx:84
 msgid "Unattributed Accounts"
 msgstr "未归因账户"
+
+#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:42
+msgid "Unique"
+msgstr ""
 
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:30
 msgid "Unique Customers"
@@ -12315,6 +12685,11 @@ msgstr "独立客户"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:21
 msgid "Unique order reference"
 msgstr "唯一订单参考"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:71
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:130
+msgid "Unique visitors"
+msgstr ""
 
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:153
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:111
@@ -12333,6 +12708,8 @@ msgstr ""
 #: src/components/common/MessageList/index.tsx:49
 #: src/components/routes/event/messages.tsx:27
 #: src/components/routes/event/messages.tsx:66
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:28
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:40
 msgid "Unknown"
 msgstr "未知"
 
@@ -12366,7 +12743,7 @@ msgstr ""
 msgid "Unlimited"
 msgstr "无限制"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:471
+#: src/components/routes/product-widget/SelectProducts/index.tsx:476
 msgid "Unlimited available"
 msgstr "无限供应"
 
@@ -13022,14 +13399,16 @@ msgid "Webhook will send notifications"
 msgstr "Webhook 将发送通知"
 
 #: src/components/layouts/Event/index.tsx:126
-#: src/components/layouts/OrganizerLayout/index.tsx:131
+#: src/components/layouts/OrganizerLayout/index.tsx:133
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
 #: src/components/routes/organizer/Webhooks/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#: src/components/layouts/QrLinkPage/index.tsx:189
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:307
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:26
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:102
 msgid "Website"
 msgstr "网站"
@@ -13086,6 +13465,10 @@ msgstr "欢迎来到 {0}，这是您所有活动的列表"
 #: src/components/forms/ProductForm/index.tsx:266
 msgid "What are Tiered Products?"
 msgstr "什么是分层产品？"
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:140
+msgid "What does it open?"
+msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:50
 msgid "What drives us."
@@ -13255,6 +13638,10 @@ msgstr ""
 msgid "Where we are going."
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:135
+msgid "Where will this QR code be displayed?"
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:413
 msgid "Where?"
 msgstr ""
@@ -13262,6 +13649,10 @@ msgstr ""
 #: src/components/forms/CheckInListForm/index.tsx:43
 msgid "Which tickets should be associated with this check-in list?"
 msgstr "哪些票应与此签到列表关联？"
+
+#: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:133
+msgid "While it is set, events only appear in the Test events tab and are not used by your campaigns. Remove it once your tests are done."
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:460
 msgid "Who fills in the details?"
@@ -13286,6 +13677,14 @@ msgstr "小部件预览"
 #: src/components/common/WidgetEditor/index.tsx:160
 msgid "Widget Settings"
 msgstr "小部件设置"
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:218
+msgid "With a direct link, visitors leave immediately: your Meta pixel cannot record them. Choose the link page to build retargeting audiences."
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:168
+msgid "Without an event, the button opens your organizer page."
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:370
 msgid "Word of mouth"
@@ -13351,7 +13750,7 @@ msgstr "是"
 msgid "Yes - I have a valid EU VAT registration number"
 msgstr "是 - 我有有效的欧盟增值税注册号码"
 
-#: src/components/layouts/Checkout/index.tsx:330
+#: src/components/layouts/Checkout/index.tsx:331
 msgid "Yes, cancel my order"
 msgstr "是，取消我的订单"
 
@@ -13453,7 +13852,7 @@ msgstr "您没有待处理的电子邮件更改。"
 msgid "You have reached your messaging limit."
 msgstr "您已达到消息限制。"
 
-#: src/components/layouts/Checkout/index.tsx:288
+#: src/components/layouts/Checkout/index.tsx:289
 msgid "You have run out of time to complete your order."
 msgstr "您已超时，未能完成订单。"
 
@@ -13485,7 +13884,7 @@ msgstr "必须先创建机票，然后才能手动添加与会者。"
 msgid "You must have at least one price tier"
 msgstr "您必须至少有一个价格等级"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:212
+#: src/components/layouts/OrganizerLayout/index.tsx:214
 msgid "You must verify your email address before you can update the organizer status."
 msgstr "您必须先验证电子邮箱地址，才能更新组织者状态。"
 
@@ -13578,7 +13977,7 @@ msgstr "您的精彩网站 🎉"
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "您的签到列表已成功创建。与您的签到工作人员共享以下链接。"
 
-#: src/components/layouts/Checkout/index.tsx:315
+#: src/components/layouts/Checkout/index.tsx:316
 msgid "Your current order will be lost."
 msgstr "您当前的订单将丢失。"
 
@@ -13663,7 +14062,7 @@ msgstr "您的姓名"
 msgid "Your new password must be at least 8 characters long."
 msgstr "您的新密码长度必须至少为8个字符。"
 
-#: src/components/layouts/Checkout/index.tsx:217
+#: src/components/layouts/Checkout/index.tsx:218
 msgid "Your Order"
 msgstr "您的订单"
 
@@ -13739,6 +14138,10 @@ msgstr "您的退款正在处理中。"
 
 #: src/components/common/InlineOrderSummary/index.tsx:55
 msgid "Your registration"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:143
+msgid "Your social networks and a ticket button, on a page where your pixel can measure visits."
 msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:179

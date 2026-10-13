@@ -476,12 +476,99 @@ export interface OrganizerSettings {
     allow_search_engine_indexing?: boolean;
     tracking_pixels?: TrackingPixelConfig[];
     tracking_consent_acknowledged?: boolean;
+    meta_conversions_api_configured?: boolean;
+    meta_test_event_code?: string | null;
+    meta_conversions_api_token?: string | null;
 }
 
 export interface TrackingPixelConfig {
     provider: string;
     pixel_id: string;
     enabled: boolean;
+}
+
+export type QrLinkDestinationType = 'LINK_PAGE' | 'EVENT' | 'URL';
+
+export type QrLinkStatus = 'ACTIVE' | 'PAUSED';
+
+export type QrLinkSocialPlatform = 'instagram' | 'facebook' | 'tiktok' | 'whatsapp' | 'snapchat' | 'youtube' | 'x' | 'linkedin' | 'telegram' | 'website';
+
+export interface QrLinkSocialLink {
+    platform: QrLinkSocialPlatform;
+    url: string;
+}
+
+export interface QrLinkDesign {
+    foreground?: string;
+    background?: string;
+}
+
+export interface QrLink {
+    id: IdParam;
+    short_id: string;
+    public_url: string;
+    name: string;
+    destination_type: QrLinkDestinationType;
+    destination_url: string | null;
+    event_id: IdParam | null;
+    event_title: string | null;
+    title: string | null;
+    description: string | null;
+    social_links: QrLinkSocialLink[];
+    design: QrLinkDesign;
+    status: QrLinkStatus;
+    scans_count: number;
+    unique_scans_count: number;
+    clicks_count: number;
+    orders_count: number;
+    revenue_gross: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface QrLinkPublic {
+    short_id: string;
+    name: string;
+    organizer_id: IdParam;
+    event_id: IdParam | null;
+    event_title: string | null;
+    ticket_url: string | null;
+    destination_type: QrLinkDestinationType;
+    title: string | null;
+    description: string | null;
+    social_links: QrLinkSocialLink[];
+    design: QrLinkDesign;
+}
+
+export interface QrLinkBreakdownItem {
+    key: string | null;
+    count: number;
+}
+
+export interface QrLinkStats {
+    qr_link_id: IdParam;
+    days: number | null;
+    timezone: string;
+    scans: number;
+    unique_scans: number;
+    clicks: number;
+    orders: number;
+    revenue_gross: number;
+    conversion_rate: number | null;
+    daily: { date: string; scans: number; unique_scans: number; clicks: number }[];
+    hours: { hour: number; count: number }[];
+    devices: QrLinkBreakdownItem[];
+    operating_systems: QrLinkBreakdownItem[];
+    browsers: QrLinkBreakdownItem[];
+    countries: QrLinkBreakdownItem[];
+    referrers: QrLinkBreakdownItem[];
+    clicks_by_target: QrLinkBreakdownItem[];
+}
+
+export interface MetaConversionsApiTestResult {
+    pixel_id: string;
+    pixel_name: string | null;
+    test_event_sent: boolean;
 }
 
 export interface SortDirectionLabel {

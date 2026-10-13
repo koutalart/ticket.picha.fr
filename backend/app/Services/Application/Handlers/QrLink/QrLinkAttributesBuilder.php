@@ -79,7 +79,6 @@ class QrLinkAttributesBuilder
         return array_filter([
             'foreground' => $design['foreground'] ?? null,
             'background' => $design['background'] ?? null,
-            'show_logo' => isset($design['show_logo']) ? (bool) $design['show_logo'] : null,
         ], static fn ($value) => $value !== null);
     }
 

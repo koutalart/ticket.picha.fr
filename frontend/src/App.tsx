@@ -23,6 +23,7 @@ import {ThirdPartyScripts} from "./components/common/ThirdPartyScripts";
 import {getConfig} from "./utilites/config.ts";
 import {CookieConsentBanner} from "./components/common/CookieConsentBanner";
 import {isConsentPending, setConsentState, updateGoogleConsentMode} from "./utilites/trackingPixels/consent";
+import {captureQrLinkCodeFromUrl} from "./utilites/qrAttribution";
 import "./utilites/dateLocales.ts";
 import {getAppName} from "./utilites/branding.ts";
 
@@ -52,6 +53,7 @@ export const App: FC<
 
     useEffect(() => {
         setIsLoadedOnBrowser(!isSsr());
+        captureQrLinkCodeFromUrl();
     }, []);
 
     return (

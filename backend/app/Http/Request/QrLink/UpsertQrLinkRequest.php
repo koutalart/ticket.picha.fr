@@ -38,7 +38,6 @@ class UpsertQrLinkRequest extends BaseRequest
             'design' => ['nullable', 'array'],
             'design.foreground' => ['nullable', self::HEX_COLOR],
             'design.background' => ['nullable', self::HEX_COLOR],
-            'design.show_logo' => ['nullable', 'boolean'],
             'status' => ['sometimes', Rule::in(QrLinkStatus::valuesArray())],
         ];
     }

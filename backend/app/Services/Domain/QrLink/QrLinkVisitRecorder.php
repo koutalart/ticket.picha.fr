@@ -42,7 +42,7 @@ class QrLinkVisitRecorder
             'browser' => $userAgent->browser,
             'country_code' => $this->normalizeCountryCode($context->countryCode),
             'referrer_host' => $this->referrerHost($context->referrer),
-            'created_at' => Carbon::now('UTC'),
+            'created_at' => Carbon::now('UTC')->toDateTimeString(),
         ]);
 
         $this->qrLinkRepository->incrementVisitCounters($qrLink->getId(), $isScan, $isUnique);
