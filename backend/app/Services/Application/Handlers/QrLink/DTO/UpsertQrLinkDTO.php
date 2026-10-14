@@ -19,6 +19,8 @@ class UpsertQrLinkDTO extends BaseDataObject
         public ?int $eventId = null,
         public ?int $qrCampaignId = null,
         public ?string $destinationUrl = null,
+        public ?string $appStoreUrl = null,
+        public ?string $playStoreUrl = null,
         public ?string $title = null,
         public ?string $description = null,
         public ?array $socialLinks = null,

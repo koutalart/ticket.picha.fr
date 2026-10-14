@@ -45,6 +45,7 @@ export const QrLinkRow = ({qrLink, currency, campaignName, showRevenue, onEdit, 
         LINK_PAGE: t`Link page`,
         EVENT: t`Event page`,
         URL: t`Direct link`,
+        APP: t`App`,
     }[qrLink.destination_type];
 
     const downloadPoster = () => {

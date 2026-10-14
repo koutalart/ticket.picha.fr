@@ -11,4 +11,5 @@ enum QrLinkDestinationType: string
     case LINK_PAGE = 'LINK_PAGE';
     case EVENT = 'EVENT';
     case URL = 'URL';
+    case APP = 'APP';
 }

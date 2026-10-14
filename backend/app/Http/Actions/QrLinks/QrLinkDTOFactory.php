@@ -24,6 +24,8 @@ class QrLinkDTOFactory
             eventId: $eventId !== null ? (int) $eventId : null,
             qrCampaignId: $request->validated('qr_campaign_id') !== null ? (int) $request->validated('qr_campaign_id') : null,
             destinationUrl: $request->validated('destination_url'),
+            appStoreUrl: $request->validated('app_store_url'),
+            playStoreUrl: $request->validated('play_store_url'),
             title: $request->validated('title'),
             description: $request->validated('description'),
             socialLinks: $request->validated('social_links'),

@@ -487,7 +487,7 @@ export interface TrackingPixelConfig {
     enabled: boolean;
 }
 
-export type QrLinkDestinationType = 'LINK_PAGE' | 'EVENT' | 'URL';
+export type QrLinkDestinationType = 'LINK_PAGE' | 'EVENT' | 'URL' | 'APP';
 
 export type QrLinkStatus = 'ACTIVE' | 'PAUSED';
 
@@ -521,6 +521,8 @@ export interface QrLink {
     name: string;
     destination_type: QrLinkDestinationType;
     destination_url: string | null;
+    app_store_url: string | null;
+    play_store_url: string | null;
     event_id: IdParam | null;
     event_title: string | null;
     qr_campaign_id: IdParam | null;
