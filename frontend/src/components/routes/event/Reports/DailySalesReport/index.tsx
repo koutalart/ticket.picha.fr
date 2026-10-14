@@ -1,7 +1,9 @@
 import {useParams} from "react-router";
+import {t} from "@lingui/macro";
 import {useGetEvent} from "../../../../../queries/useGetEvent.ts";
 import {formatCurrency} from "../../../../../utilites/currency.ts";
 import {formatDateWithLocale} from "../../../../../utilites/dates.ts";
+import {isFreeEvent} from "../../../../../utilites/eventPricing.ts";
 import ReportTable from "../../../../common/ReportTable";
 
 export const DailySalesReport = () => {
@@ -13,66 +15,53 @@ export const DailySalesReport = () => {
         return null;
     }
 
+    const isFree = isFreeEvent(event);
+    const money = <K extends string>(key: K, label: string) => ({
+        key,
+        label,
+        sortable: true,
+        render: (value: string) => formatCurrency(value, event?.currency),
+    });
+
     const columns = [
         {
             key: 'date' as const,
-            label: 'Date',
+            label: t`Date`,
             sortable: true,
             render: (value: string) => formatDateWithLocale(value, 'shortDate', event?.timezone)
         },
-        {
-            key: 'sales_total_gross' as const,
-            label: 'Sales Total Gross',
-            sortable: true,
-            render: (value: string) => formatCurrency(value)
-        },
-        {
-            key: 'total_tax' as const,
-            label: 'Total Tax',
-            sortable: true,
-            render: (value: string) => formatCurrency(value)
-        },
-        {
-            key: 'sales_total_before_additions' as const,
-            label: 'Net Sales',
-            sortable: true,
-            render: (value: string) => formatCurrency(value)
-        },
+        ...(isFree ? [] : [
+            money('sales_total_gross', t`Gross sales`),
+            money('total_tax', t`Tax`),
+            money('sales_total_before_additions', t`Net sales`),
+        ]),
         {
             key: 'products_sold' as const,
-            label: 'Products Sold',
+            label: isFree ? t`Registered people` : t`Tickets sold`,
             sortable: true
         },
         {
             key: 'orders_created' as const,
-            label: 'Completed Orders',
+            label: isFree ? t`Confirmed registrations` : t`Completed orders`,
             sortable: true
         },
-        {
-            key: 'total_fee' as const,
-            label: 'Total Fee',
-            sortable: true,
-            render: (value: string) => formatCurrency(value)
-        },
-        {
-            key: 'total_refunded' as const,
-            label: 'Total Refunded',
-            sortable: true,
-            render: (value: string) => formatCurrency(value)
-        },
+        ...(isFree ? [] : [
+            money('total_fee', t`Fees`),
+            money('total_refunded', t`Refunded`),
+        ]),
         {
             key: 'total_views' as const,
-            label: 'Total Views',
+            label: t`Page views`,
             sortable: true
         }
     ];
 
     return (
         <ReportTable
-            title="Daily Sales Report"
+            title={isFree ? t`Daily registrations` : t`Daily Sales Report`}
             columns={columns}
             isLoading={eventQuery.isLoading}
-            downloadFileName="daily_sales_report.csv"
+            downloadFileName={isFree ? 'inscriptions_par_jour.csv' : 'daily_sales_report.csv'}
             showDateFilter={true}
             event={event}
         />
