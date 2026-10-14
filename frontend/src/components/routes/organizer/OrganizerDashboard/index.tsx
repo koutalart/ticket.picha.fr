@@ -72,7 +72,14 @@ export const OrganizerDashboard = () => {
 
     const awaitingPayment = Number(stats?.total_awaiting_payment ?? 0);
 
-    const statItems = [
+    // Only free registrations so far: talk about registrations rather than sales.
+    const onlyFreeRegistrations = !!stats && stats.total_orders > 0
+        && Number(stats.total_gross_sales) === 0 && awaitingPayment === 0;
+
+    const statItems = onlyFreeRegistrations ? [
+        {label: t`Registered people`, value: formatNumber(stats.total_attendees_registered)},
+        {label: t`Orders`, value: formatNumber(stats.total_orders)},
+    ] : [
         {
             label: t`Gross sales`,
             value: stats ? formatCurrency(stats.total_gross_sales, currency) : null,
@@ -182,7 +189,9 @@ export const OrganizerDashboard = () => {
 
             <section className={classes.section}>
                 <div className={classes.sectionHead}>
-                    <h2 className={classes.sectionTitle}><Trans>Latest orders</Trans></h2>
+                    <h2 className={classes.sectionTitle}>
+                        {onlyFreeRegistrations ? <Trans>Latest registrations</Trans> : <Trans>Latest orders</Trans>}
+                    </h2>
                 </div>
 
                 {ordersQuery.isLoading && <Skeleton height={64} radius="md"/>}

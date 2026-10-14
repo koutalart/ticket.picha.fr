@@ -13,6 +13,7 @@ import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
 import {formatCurrency} from "../../../../utilites/currency.ts";
 import {formatDateWithLocale, relativeDate} from "../../../../utilites/dates.ts";
 import {formatNumber, getProductsFromEvent} from "../../../../utilites/helpers.ts";
+import {isFreeEvent} from "../../../../utilites/eventPricing.ts";
 import {eventHomepageUrl} from "../../../../utilites/urlHelper.ts";
 import {ShareModal} from "../../../modals/ShareModal";
 import {Event, EventLifecycleStatus, EventStatus, Order, Product} from "../../../../types.ts";
@@ -32,9 +33,6 @@ const channelOf = (product: Product) => {
     if (!product.is_hidden && product.is_visible_at_box_office === false) return {label: t`Online`, tone: 'online'};
     return {label: t`Online and box office`, tone: 'both'};
 };
-
-const isFreeProduct = (product: Product) => product.type === 'FREE'
-    || (product.prices ?? []).every((price) => Number(price.price ?? 0) <= 0);
 
 const eventWhen = (event: Event) => {
     const date = new Intl.DateTimeFormat(i18n.locale, {
@@ -76,7 +74,7 @@ export const EventDashboard = () => {
     }
 
     const products = (getProductsFromEvent(event) ?? []).filter((product) => product.product_type === 'TICKET');
-    const isFree = products.length > 0 && products.every(isFreeProduct);
+    const isFree = isFreeEvent(event);
     const isLive = event.status === 'LIVE';
     const isOngoing = isLive && event.lifecycle_status === EventLifecycleStatus.ONGOING;
     const location = settings?.location_details ?? event.settings?.location_details;
@@ -220,7 +218,7 @@ export const EventDashboard = () => {
 
             <section className={classes.section}>
                 <div className={classes.chartHead}>
-                    <h2 className={classes.sectionTitle}><Trans>Sales over time</Trans></h2>
+                    <h2 className={classes.sectionTitle}>{isFree ? <Trans>Registrations over time</Trans> : <Trans>Sales over time</Trans>}</h2>
                     <div className={classes.chartControls}>
                         {!isFree && (
                             <SegmentedControl size="xs" radius="md" value={chartMode}
@@ -258,13 +256,13 @@ export const EventDashboard = () => {
 
             <section className={classes.section}>
                 <div className={classes.sectionHead}>
-                    <h2 className={classes.sectionTitle}><Trans>Latest orders</Trans></h2>
+                    <h2 className={classes.sectionTitle}>{isFree ? <Trans>Latest registrations</Trans> : <Trans>Latest orders</Trans>}</h2>
                     <NavLink to={`/manage/event/${eventId}/orders`} className={classes.seeAll}>
                         <Trans>See all</Trans> <IconArrowRight size={16}/>
                     </NavLink>
                 </div>
                 {ordersLoading && <Skeleton height={56}/>}
-                {!ordersLoading && orders.length === 0 && <p className={classes.muted}><Trans>No orders yet.</Trans></p>}
+                {!ordersLoading && orders.length === 0 && <p className={classes.muted}>{isFree ? <Trans>No registrations yet.</Trans> : <Trans>No orders yet.</Trans>}</p>}
                 {orders.map((order: Order) => (
                     <NavLink key={order.id} to={`/manage/event/${eventId}/orders#order-${order.id}`} className={classes.order}>
                         <span className={classes.orderWho}>

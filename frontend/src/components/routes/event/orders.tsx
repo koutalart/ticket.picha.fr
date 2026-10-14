@@ -4,6 +4,7 @@ import {Button, Skeleton} from "@mantine/core";
 import {IconDownload} from "@tabler/icons-react";
 import {t, Trans} from "@lingui/macro";
 import {useGetEvent} from "../../../queries/useGetEvent";
+import {isFreeEvent} from "../../../utilites/eventPricing.ts";
 import {useGetEventOrders} from "../../../queries/useGetEventOrders";
 import {useGetEventStats} from "../../../queries/useGetEventStats";
 import {SearchBarWrapper} from "../../common/SearchBar";
@@ -71,14 +72,19 @@ export const Orders: React.FC = () => {
     const exportOrders = (id: IdParam) => withLoadingNotification(async () => {
         setExporting(true);
         const blob = await orderClient.exportOrders(id);
-        downloadBinary(blob, 'commandes.xlsx');
+        downloadBinary(blob, isFree ? 'inscriptions.xlsx' : 'commandes.xlsx');
     }, {
         loading: {title: t`Exporting Orders`, message: t`Please wait while we prepare your orders for export...`},
         success: {title: t`Orders Exported`, message: t`Your orders have been exported successfully.`, onRun: () => setExporting(false)},
         error: {title: t`Failed to export orders`, message: t`Please try again.`, onRun: () => setExporting(false)},
     });
 
-    const figures: { key: StatusTab | 'gross', label: string, value?: string, highlight?: boolean }[] = [
+    const isFree = isFreeEvent(event);
+
+    const figures: { key: StatusTab | 'gross' | 'registered', label: string, value?: string, highlight?: boolean }[] = isFree ? [
+        {key: 'completed', label: t`Orders`, value: completedCount !== undefined ? String(formatNumber(completedCount)) : undefined},
+        {key: 'registered', label: t`Registered people`, value: stats ? String(formatNumber(stats.total_attendees_registered)) : undefined},
+    ] : [
         {key: 'gross', label: t`Collected`, value: stats ? formatCurrency(stats.total_gross_sales - stats.total_refunded, event?.currency) : undefined},
         {key: 'completed', label: t({message: 'Completed', context: 'orders figure'}), value: completedCount !== undefined ? String(formatNumber(completedCount)) : undefined},
         {
@@ -93,9 +99,9 @@ export const Orders: React.FC = () => {
     const statusTabs: { value: StatusTab, label: string }[] = [
         {value: 'all', label: t({message: 'All', context: 'orders filter'})},
         {value: 'completed', label: t({message: 'Completed', context: 'orders filter'})},
-        {value: 'awaiting', label: t({message: 'Awaiting', context: 'orders filter'})},
+        ...(isFree ? [] : [{value: 'awaiting' as StatusTab, label: t({message: 'Awaiting', context: 'orders filter'})}]),
         {value: 'cancelled', label: t({message: 'Cancelled', context: 'orders filter'})},
-        {value: 'refunded', label: t({message: 'Refunded', context: 'orders filter'})},
+        ...(isFree ? [] : [{value: 'refunded' as StatusTab, label: t({message: 'Refunded', context: 'orders filter'})}]),
     ];
 
     const channelTabs: { value: ChannelTab, label: string }[] = [
@@ -107,8 +113,10 @@ export const Orders: React.FC = () => {
         <div className={classes.page}>
             <header className={classes.header}>
                 <div>
-                    <h1 className={classes.title}><Trans>Orders</Trans></h1>
-                    <p className={classes.subtitle}><Trans>View, refund and resend tickets.</Trans></p>
+                    <h1 className={classes.title}>{isFree ? t({message: 'Registrations', context: 'orders page title'}) : <Trans>Orders</Trans>}</h1>
+                    <p className={classes.subtitle}>
+                        {isFree ? <Trans>View registrations and resend tickets.</Trans> : <Trans>View, refund and resend tickets.</Trans>}
+                    </p>
                 </div>
                 <Button variant="default" radius="md" leftSection={<IconDownload size={16}/>} loading={exporting}
                         onClick={() => exportOrders(eventId as IdParam)}>
@@ -118,7 +126,7 @@ export const Orders: React.FC = () => {
 
             <section className={classes.figures}>
                 {figures.map((figure) => {
-                    const clickable = figure.key !== 'gross';
+                    const clickable = figure.key !== 'gross' && figure.key !== 'registered';
                     const content = (
                         <>
                             <span className={classes.figureLabel}>{figure.label}</span>
@@ -177,9 +185,11 @@ export const Orders: React.FC = () => {
                 <NoResultsSplash
                     imageHref={'/blank-slate/orders.svg'}
                     heading={searchParams.query || statusTab !== 'all' || channelTab !== 'all'
-                        ? t`No order matches these filters`
-                        : t`No orders to show`}
-                    subHeading={<p>{t`Your orders will appear here once they start rolling in.`}</p>}
+                        ? (isFree ? t`No registration matches these filters` : t`No order matches these filters`)
+                        : (isFree ? t`No registrations yet` : t`No orders to show`)}
+                    subHeading={<p>{isFree
+                        ? t`Registrations will appear here as soon as people sign up.`
+                        : t`Your orders will appear here once they start rolling in.`}</p>}
                 />
             )}
 

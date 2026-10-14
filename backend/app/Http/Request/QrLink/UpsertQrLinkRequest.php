@@ -31,6 +31,7 @@ class UpsertQrLinkRequest extends BaseRequest
                 'required_if:destination_type,'.QrLinkDestinationType::EVENT->value,
                 'integer',
             ],
+            'qr_campaign_id' => ['nullable', 'integer'],
             'title' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string', 'max:500'],
             'social_links' => ['nullable', 'array', 'max:12'],

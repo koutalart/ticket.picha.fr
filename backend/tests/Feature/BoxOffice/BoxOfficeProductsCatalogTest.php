@@ -74,6 +74,21 @@ class BoxOfficeProductsCatalogTest extends TestCase
             ->assertJsonPath('data.0.prices.0.quantity_remaining', null);
     }
 
+    public function test_box_office_only_ticket_hidden_online_is_available_at_the_box_office(): void
+    {
+        [$event, $product] = $this->createEventWithProduct(price: 25.00);
+        Product::query()->whereKey($product->id)->update(['is_hidden' => true]);
+        $this->attachCheckInList($event, $product);
+        $operator = $this->makeBoxOfficeOperator($event, self::PASSWORD);
+        $token = $this->loginAndGetToken($operator, self::PASSWORD);
+
+        $this->getJson("/events/{$event->id}/box-office/products", ['Authorization' => 'Bearer '.$token])
+            ->assertStatus(200)
+            ->assertJsonPath('data.0.id', $product->id)
+            ->assertJsonPath('data.0.is_hidden', true)
+            ->assertJsonPath('data.0.is_available', true);
+    }
+
     /** GENERAL (non-ticket) products are not returned. */
     public function test_general_products_are_excluded(): void
     {

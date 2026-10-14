@@ -22,6 +22,7 @@ class QrLinkDTOFactory
             destinationType: QrLinkDestinationType::from($request->validated('destination_type')),
             status: QrLinkStatus::from($request->validated('status', QrLinkStatus::ACTIVE->value)),
             eventId: $eventId !== null ? (int) $eventId : null,
+            qrCampaignId: $request->validated('qr_campaign_id') !== null ? (int) $request->validated('qr_campaign_id') : null,
             destinationUrl: $request->validated('destination_url'),
             title: $request->validated('title'),
             description: $request->validated('description'),

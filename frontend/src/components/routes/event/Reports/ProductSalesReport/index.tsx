@@ -1,6 +1,8 @@
 import {useParams} from "react-router";
+import {t} from "@lingui/macro";
 import {useGetEvent} from "../../../../../queries/useGetEvent.ts";
 import {formatCurrency} from "../../../../../utilites/currency.ts";
+import {isFreeEvent} from "../../../../../utilites/eventPricing.ts";
 import ReportTable from "../../../../common/ReportTable";
 
 const ProductSalesReport = () => {
@@ -12,43 +14,47 @@ const ProductSalesReport = () => {
         return null;
     }
 
+    const isFree = isFreeEvent(event);
+
     const columns = [
         {
             key: 'product_title' as const,
-            label: 'Product Title',
+            label: isFree ? t`Ticket` : t`Product`,
             sortable: true
         },
         {
             key: 'number_sold' as const,
-            label: 'Units Sold',
+            label: isFree ? t`Registered people` : t`Units sold`,
             sortable: true
         },
-        {
-            key: 'total_gross' as const,
-            label: 'Gross Sales',
-            sortable: true,
-            render: (value: string) => formatCurrency(value, event?.currency)
-        },
-        {
-            key: 'total_tax' as const,
-            label: 'Tax',
-            sortable: true,
-            render: (value: string) => formatCurrency(value, event?.currency)
-        },
-        {
-            key: 'total_service_fees' as const,
-            label: 'Service Fees',
-            sortable: true,
-            render: (value: string) => formatCurrency(value, event?.currency)
-        }
+        ...(isFree ? [] : [
+            {
+                key: 'total_gross' as const,
+                label: t`Gross sales`,
+                sortable: true,
+                render: (value: string) => formatCurrency(value, event?.currency)
+            },
+            {
+                key: 'total_tax' as const,
+                label: t`Tax`,
+                sortable: true,
+                render: (value: string) => formatCurrency(value, event?.currency)
+            },
+            {
+                key: 'total_service_fees' as const,
+                label: t`Service fees`,
+                sortable: true,
+                render: (value: string) => formatCurrency(value, event?.currency)
+            },
+        ]),
     ];
 
     return (
         <ReportTable
-            title="Product Sales Report"
+            title={isFree ? t`Registrations per ticket` : t`Product Sales`}
             columns={columns}
             isLoading={eventQuery.isLoading}
-            downloadFileName="product_sales_report.csv"
+            downloadFileName={isFree ? 'inscriptions_par_billet.csv' : 'product_sales_report.csv'}
             event={event}
         />
     );
