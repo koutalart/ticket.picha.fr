@@ -43,6 +43,7 @@ const PLATFORMS: { value: QrLinkSocialPlatform, label: string }[] = [
     {value: 'x', label: 'X'},
     {value: 'linkedin', label: 'LinkedIn'},
     {value: 'telegram', label: 'Telegram'},
+    {value: 'threads', label: 'Threads'},
     {value: 'website', label: 'Web'},
 ];
 

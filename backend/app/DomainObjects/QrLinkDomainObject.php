@@ -16,6 +16,7 @@ class QrLinkDomainObject extends Generated\QrLinkDomainObjectAbstract
         'x',
         'linkedin',
         'telegram',
+        'threads',
         'website',
     ];
 
