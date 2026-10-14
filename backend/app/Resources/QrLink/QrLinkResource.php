@@ -24,6 +24,7 @@ class QrLinkResource extends BaseResource
             'destination_url' => $this->getDestinationUrl(),
             'event_id' => $this->getEventId(),
             'event_title' => $this->getEvent()?->getTitle(),
+            'qr_campaign_id' => $this->getQrCampaignId(),
             'title' => $this->getTitle(),
             'description' => $this->getDescription(),
             'social_links' => $this->getSocialLinks() ?? [],

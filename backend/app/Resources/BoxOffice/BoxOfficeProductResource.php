@@ -18,7 +18,7 @@ class BoxOfficeProductResource extends JsonResource
             'id' => $this->getId(),
             'title' => $this->getTitle(),
             'product_type' => $this->getProductType(),
-            'is_available' => $this->isAvailable(),
+            'is_available' => $this->isAvailableAtBoxOffice(),
             'is_hidden' => $this->getIsHidden(),
             'is_scannable' => $this->isScannable(),
             'prices' => $this->getProductPrices()

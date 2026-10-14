@@ -121,7 +121,7 @@ msgid "{0} organizers"
 msgstr "{0} szervező"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:435
-#: src/components/routes/event/EventDashboard/index.tsx:196
+#: src/components/routes/event/EventDashboard/index.tsx:194
 msgid "{0} places left"
 msgstr ""
 
@@ -149,7 +149,7 @@ msgstr ""
 msgid "{0} tickets"
 msgstr "{0} jegy"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:357
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:340
 msgid "{0} tickets created"
 msgstr "{0} jegy létrehozva"
 
@@ -210,9 +210,17 @@ msgstr "{minutes} perc és {seconds} másodperc"
 msgid "{organizerName}'s first event"
 msgstr "{organizerName} első eseménye"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:882
+msgid "{pausedCount} box office tickets are paused and hidden here."
+msgstr ""
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:856
+msgid "{remaining} remaining"
+msgstr ""
+
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:950
-msgid "{selectedPriceRemaining} remaining"
-msgstr "{selectedPriceRemaining} maradt"
+#~ msgid "{selectedPriceRemaining} remaining"
+#~ msgstr "{selectedPriceRemaining} maradt"
 
 #: src/components/organizerTemplates/Poster/index.tsx:110
 msgid "{serviceNames}{where} | {0}"
@@ -230,12 +238,12 @@ msgstr "{totalCount} jegytípus"
 msgid "{value} days"
 msgstr ""
 
-#: src/components/routes/event/EventDashboard/index.tsx:211
+#: src/components/routes/event/EventDashboard/index.tsx:209
 msgid "/ {0} scanned"
 msgstr ""
 
-#: src/components/routes/event/EventDashboard/index.tsx:100
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:79
+#: src/components/routes/event/EventDashboard/index.tsx:98
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:86
 msgid "+ {0} awaiting payment collection"
 msgstr ""
 
@@ -309,6 +317,10 @@ msgstr "1 aktív webhook"
 msgid "1 attendee"
 msgstr ""
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:881
+msgid "1 box office ticket is paused and hidden here."
+msgstr ""
+
 #: src/components/modals/SendMessageModal/index.tsx:120
 msgid "1 day after end date"
 msgstr "1 nappal a befejezési dátum után"
@@ -338,8 +350,8 @@ msgid "1 week before event"
 msgstr "1 héttel az esemény előtt"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:891
-msgid "1. Choose a ticket"
-msgstr ""
+#~ msgid "1. Choose a ticket"
+#~ msgstr ""
 
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:81
@@ -356,16 +368,16 @@ msgid "150 to 500"
 msgstr "150–500"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:959
-msgid "2. Attendee details"
-msgstr ""
+#~ msgid "2. Attendee details"
+#~ msgstr ""
 
 #: src/components/common/WidgetEditor/index.tsx:230
 msgid "20"
 msgstr "20"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:999
-msgid "3. Payment method"
-msgstr ""
+#~ msgid "3. Payment method"
+#~ msgstr ""
 
 #: src/components/routes/landing/DemoRequestForm/index.tsx:75
 msgid "50 to 150"
@@ -489,11 +501,11 @@ msgstr "Standard adó, mint az ÁFA vagy a GST"
 msgid "A token is saved. Paste a new one to replace it."
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:191
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:193
 msgid "A valid email is required"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:182
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:184
 msgid "A valid phone number is required"
 msgstr "Érvényes telefonszám szükséges"
 
@@ -501,7 +513,7 @@ msgstr "Érvényes telefonszám szükséges"
 msgid "A welcome without queues"
 msgstr "Fogadás sorban állás nélkül"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:146
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:152
 msgid "A4 poster"
 msgstr ""
 
@@ -633,7 +645,7 @@ msgstr "Beavatkozás szükséges: ÁFA információ szükséges"
 #: src/components/common/WaitlistTable/index.tsx:55
 #: src/components/common/WaitlistTable/index.tsx:210
 #: src/components/routes/admin/FailedJobs/index.tsx:167
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:74
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:108
 msgid "Actions"
 msgstr "Műveletek"
 
@@ -655,6 +667,7 @@ msgstr "Aktiválás dátuma"
 #: src/components/modals/EditUserModal/index.tsx:110
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:105
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:116
+#: src/components/routes/organizer/QrCodes/index.tsx:283
 msgid "Active"
 msgstr "Aktív"
 
@@ -683,7 +696,7 @@ msgstr ""
 msgid "Add a figure"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:315
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:341
 msgid "Add a network"
 msgstr ""
 
@@ -793,16 +806,21 @@ msgstr "Adó vagy díj hozzáadása"
 msgid "Add this event to your calendar"
 msgstr "Adja hozzá ezt az eseményt a naptárához"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:598
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:643
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:785
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:524
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:569
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:711
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:867
 msgid "Add ticket"
 msgstr "Jegy hozzáadása"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:811
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:737
 #: src/components/routes/event/GettingStarted/index.tsx:87
 msgid "Add tickets"
 msgstr "Jegyek hozzáadása"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:924
+msgid "Add tickets with the + buttons."
+msgstr ""
 
 #: src/components/forms/ProductForm/index.tsx:385
 msgid "Add tier"
@@ -930,7 +948,7 @@ msgstr "A partneri értékesítések nem kerülnek nyomon követésre. Ez inakti
 msgid "Affiliate updated successfully"
 msgstr "Partner sikeresen frissítve"
 
-#: src/components/layouts/Event/index.tsx:123
+#: src/components/layouts/Event/index.tsx:125
 #: src/components/modals/DuplicateEventModal/index.tsx:34
 #: src/components/routes/event/Affiliates/index.tsx:63
 msgid "Affiliates"
@@ -957,7 +975,7 @@ msgctxt "attendees filter"
 msgid "All"
 msgstr ""
 
-#: src/components/routes/event/orders.tsx:94
+#: src/components/routes/event/orders.tsx:100
 msgctxt "orders filter"
 msgid "All"
 msgstr ""
@@ -968,6 +986,11 @@ msgstr "Összes"
 
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:67
 msgctxt "events tab"
+msgid "All"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:282
+msgctxt "qr status filter"
 msgid "All"
 msgstr ""
 
@@ -1015,6 +1038,12 @@ msgstr "Minden feladat újrapróbálásra sorba állítva"
 #: src/components/common/PromoCodeTable/index.tsx:131
 msgid "All Products"
 msgstr "Minden termék"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:159
+#: src/components/routes/organizer/QrCodes/index.tsx:164
+#: src/components/routes/organizer/QrCodes/index.tsx:205
+msgid "All QR codes"
+msgstr ""
 
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:64
 msgid "All Statuses"
@@ -1115,18 +1144,21 @@ msgstr "Csodálatos, esemény, kulcsszavak..."
 msgid "Amount"
 msgstr "Összeg"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:745
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1025
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:671
 msgid "Amount collected"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:193
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:195
 msgid "Amount collected is required"
 msgstr ""
 
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:69
 msgid "Amount Paid"
 msgstr "Fizetett összeg"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:955
+msgid "Amount received"
+msgstr ""
 
 #: src/components/routes/kiosk/NoEvent/index.tsx:26
 msgid "An administrator needs to assign you to an event before you can sell tickets."
@@ -1165,7 +1197,7 @@ msgstr "Váratlan hiba történt. Kérjük, próbálja újra."
 msgid "Annual Convention"
 msgstr "Éves konferencia"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:253
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:279
 msgid "Another link"
 msgstr ""
 
@@ -1317,12 +1349,12 @@ msgstr "Biztosan törölni szeretné ezt a webhookot?"
 msgid "Are you sure you want to leave?"
 msgstr "Biztos, hogy el akarsz menni?"
 
-#: src/components/layouts/Event/index.tsx:142
+#: src/components/layouts/Event/index.tsx:144
 #: src/components/routes/event/GettingStarted/index.tsx:141
 msgid "Are you sure you want to make this event draft? This will make the event invisible to the public"
 msgstr "Biztosan piszkozatba szeretné tenni ezt az eseményt? Ezzel az esemény láthatatlanná válik a nyilvánosság számára."
 
-#: src/components/layouts/Event/index.tsx:143
+#: src/components/layouts/Event/index.tsx:145
 #: src/components/routes/event/GettingStarted/index.tsx:140
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "Biztosan nyilvánossá szeretné tenni ezt az eseményt? Ezzel az esemény láthatóvá válik a nyilvánosság számára."
@@ -1462,7 +1494,7 @@ msgstr "jelenlét"
 msgid "Attendance and check-in rates across all events"
 msgstr "Részvétel és bejelentkezési arányok minden eseményen"
 
-#: src/components/routes/event/EventDashboard/index.tsx:92
+#: src/components/routes/event/EventDashboard/index.tsx:90
 msgid "Attendance rate"
 msgstr ""
 
@@ -1563,7 +1595,7 @@ msgstr "A résztvevő jegye nincs ebben a listában"
 
 #: src/components/common/EventCard/index.tsx:227
 #: src/components/common/StatBoxes/index.tsx:86
-#: src/components/layouts/Event/index.tsx:114
+#: src/components/layouts/Event/index.tsx:116
 #: src/components/modals/ManageOrderModal/index.tsx:126
 #: src/components/routes/admin/Messages/index.tsx:90
 #: src/components/routes/admin/Messages/index.tsx:139
@@ -1643,7 +1675,7 @@ msgstr "Visszatérítésre elérhető"
 msgid "Available Tokens"
 msgstr "Elérhető tokenek"
 
-#: src/components/routes/event/orders.tsx:96
+#: src/components/routes/event/orders.tsx:102
 msgctxt "orders filter"
 msgid "Awaiting"
 msgstr ""
@@ -1667,7 +1699,7 @@ msgstr "Fizetésre vár"
 
 #: src/components/routes/event/attendees.tsx:76
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:75
-#: src/components/routes/event/orders.tsx:86
+#: src/components/routes/event/orders.tsx:92
 #: src/components/routes/event/OrdersPage/OrderList.tsx:43
 msgctxt "order status"
 msgid "Awaiting payment"
@@ -1698,7 +1730,7 @@ msgstr "Awesome Events Kft."
 msgid "Awesome Organizer Ltd."
 msgstr "Awesome Organizer Kft."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:510
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:436
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
 msgid "Back"
@@ -1734,7 +1766,7 @@ msgstr "Vissza az üzenetekhez"
 msgid "Back to Reports"
 msgstr "Vissza a jelentésekhez"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:427
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:453
 msgid "Background"
 msgstr ""
 
@@ -1743,7 +1775,7 @@ msgstr ""
 msgid "Background Color"
 msgstr "Háttérszín"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:349
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:375
 msgid "Background image"
 msgstr ""
 
@@ -1835,12 +1867,12 @@ msgid "Box office"
 msgstr "Pénztár"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:58
-#: src/components/layouts/Event/index.tsx:108
-#: src/components/layouts/Event/index.tsx:132
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:514
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:871
-#: src/components/routes/event/EventDashboard/index.tsx:31
-#: src/components/routes/event/orders.tsx:103
+#: src/components/layouts/Event/index.tsx:110
+#: src/components/layouts/Event/index.tsx:134
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:440
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:802
+#: src/components/routes/event/EventDashboard/index.tsx:32
+#: src/components/routes/event/orders.tsx:109
 #: src/components/routes/event/OrdersPage/OrderList.tsx:174
 msgid "Box Office"
 msgstr ""
@@ -1949,8 +1981,36 @@ msgid "Camera Scanner"
 msgstr "Kamera szkenner"
 
 #: src/components/routes/admin/Attribution/index.tsx:107
+#: src/components/routes/organizer/QrCodes/index.tsx:161
+#: src/components/routes/organizer/QrCodes/index.tsx:238
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:260
 msgid "Campaign"
 msgstr "Kampány"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:245
+msgid "Campaign actions"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:28
+msgid "Campaign created"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:152
+msgid "Campaign deleted"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:44
+msgid "Campaign name"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:28
+msgid "Campaign renamed"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:201
+#: src/components/routes/organizer/QrCodes/index.tsx:209
+msgid "Campaigns"
+msgstr ""
 
 #: src/components/organizerTemplates/Poster/faq.ts:17
 msgid "Can I get a refund?"
@@ -1976,7 +2036,8 @@ msgstr "Használhatjuk a platformot önállóan, támogatás nélkül?"
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:323
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:436
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:462
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:85
@@ -2038,7 +2099,7 @@ msgctxt "attendees filter"
 msgid "Cancelled"
 msgstr ""
 
-#: src/components/routes/event/orders.tsx:97
+#: src/components/routes/event/orders.tsx:103
 msgctxt "orders filter"
 msgid "Cancelled"
 msgstr ""
@@ -2071,7 +2132,7 @@ msgstr "Kapacitás-hozzárendelés sikeresen törölve"
 msgid "Capacity Assignments"
 msgstr "Kapacitás-hozzárendelések"
 
-#: src/components/layouts/Event/index.tsx:122
+#: src/components/layouts/Event/index.tsx:124
 msgid "Capacity Management"
 msgstr "Kapacitás kezelése"
 
@@ -2079,13 +2140,13 @@ msgstr "Kapacitás kezelése"
 msgid "Caption"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:714
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1003
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:640
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:942
 msgid "Card"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:761
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:823
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:687
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:749
 msgid "Cart contents"
 msgstr "Kosár tartalma"
 
@@ -2095,8 +2156,8 @@ msgstr "Kosár tartalma"
 msgid "Case studies"
 msgstr "Esettanulmányok"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:713
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1002
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:639
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:941
 msgid "Cash"
 msgstr ""
 
@@ -2129,6 +2190,10 @@ msgstr "Esemény váltása"
 #: src/components/routes/profile/ManageProfile/index.tsx:238
 msgid "Change password"
 msgstr "Jelszó módosítása"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:967
+msgid "Change to give back: {0}"
+msgstr ""
 
 #: src/components/modals/OfferWaitlistModal/index.tsx:98
 msgid "Change waitlist settings"
@@ -2213,7 +2278,7 @@ msgstr "A bejelentkezési lista nem aktív"
 msgid "Check-in list not found"
 msgstr "Bejelentkezési lista nem található"
 
-#: src/components/routes/event/EventDashboard/index.tsx:216
+#: src/components/routes/event/EventDashboard/index.tsx:214
 msgid "Check-in lists"
 msgstr ""
 
@@ -2221,7 +2286,7 @@ msgstr ""
 msgid "Check-in Lists"
 msgstr "Bejelentkezési listák"
 
-#: src/components/layouts/Event/index.tsx:119
+#: src/components/layouts/Event/index.tsx:121
 #: src/components/modals/DuplicateEventModal/index.tsx:30
 #: src/components/routes/event/CheckInLists/index.tsx:34
 msgid "Check-In Lists"
@@ -2293,8 +2358,7 @@ msgstr "Válasszon színt a háttérhez"
 msgid "Choose a file"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:611
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:926
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:537
 msgid "Choose a price"
 msgstr ""
 
@@ -2311,7 +2375,7 @@ msgid "Choose an account"
 msgstr "Válasszon fiókot"
 
 #: src/components/routes/kiosk/SelectEvent/index.tsx:41
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:276
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:302
 msgid "Choose an event"
 msgstr "Válasszon eseményt"
 
@@ -2452,13 +2516,17 @@ msgstr "A kódnak 3 és 50 karakter között kell lennie"
 msgid "Code must be no more than 20 characters"
 msgstr "A kód legfeljebb 20 karakter hosszúságú lehet"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:77
+#: src/components/layouts/OrganizerLayout/index.tsx:78
 msgid "Collaborate with your team to create amazing events together."
 msgstr "Kollaboráljon csapatával, hogy csodálatos eseményeket hozzanak létre együtt."
 
 #: src/components/forms/ProductForm/index.tsx:498
 msgid "Collapse this product when the event page is initially loaded"
 msgstr "Összecsukja ezt a terméket, amikor az eseményoldal kezdetben betöltődik"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:979
+msgid "Collect {0}"
+msgstr ""
 
 #: src/components/routes/event/Settings/Sections/HomepageAndCheckoutSettings/index.tsx:43
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:34
@@ -2473,13 +2541,13 @@ msgstr "Résztvevő adatok gyűjtése minden megvásárolt jegyhez."
 #~ msgid "Collect details per ticket"
 #~ msgstr "Adatok gyűjtése jegyenként"
 
-#: src/components/routes/event/orders.tsx:82
+#: src/components/routes/event/orders.tsx:88
 msgid "Collected"
 msgstr ""
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:256
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:426
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:452
 msgid "Color"
 msgstr "Szín"
 
@@ -2499,8 +2567,8 @@ msgstr "Színek"
 msgid "Columns"
 msgstr "Oszlopok"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:734
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:739
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:660
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:665
 msgid "Coming soon"
 msgstr "Hamarosan"
 
@@ -2578,17 +2646,18 @@ msgstr "Töltse ki a profilját a csapathoz való csatlakozáshoz."
 msgid "Completed"
 msgstr "Befejezett"
 
-#: src/components/routes/event/orders.tsx:83
+#: src/components/routes/event/orders.tsx:89
 msgctxt "orders figure"
 msgid "Completed"
 msgstr ""
 
-#: src/components/routes/event/orders.tsx:95
+#: src/components/routes/event/orders.tsx:101
 msgctxt "orders filter"
 msgid "Completed"
 msgstr ""
 
 #: src/components/common/StatBoxes/index.tsx:97
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:45
 msgid "Completed orders"
 msgstr "Befejezett megrendelések"
 
@@ -2710,7 +2779,7 @@ msgstr "Jelszó megerősítése"
 msgid "Confirm Password"
 msgstr "Jelszó megerősítése"
 
-#: src/components/layouts/Event/index.tsx:194
+#: src/components/layouts/Event/index.tsx:196
 msgid "Confirm your email to access all features."
 msgstr "Erősítse meg e-mail címét az összes funkció eléréséhez."
 
@@ -2721,6 +2790,12 @@ msgstr "Megerősítő e-mail elküldve! Kérjük, ellenőrizze postaládáját."
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:197
 msgid "Confirmation sent to"
 msgstr "Megerősítés elküldve a következő címre:"
+
+#: src/components/routes/event/orders.tsx:85
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:45
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:81
+#~ msgid "Confirmed registrations"
+#~ msgstr ""
 
 #: src/components/routes/profile/ConfirmEmailAddress/index.tsx:36
 msgid "Confirming email address..."
@@ -2746,8 +2821,8 @@ msgstr "Dokumentáció csatlakoztatása"
 #~ msgid "Connect payment processing"
 #~ msgstr "Fizetésfeldolgozás csatlakoztatása"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:90
-#: src/components/layouts/OrganizerLayout/index.tsx:98
+#: src/components/layouts/OrganizerLayout/index.tsx:91
+#: src/components/layouts/OrganizerLayout/index.tsx:99
 #: src/components/routes/event/GettingStarted/index.tsx:120
 msgid "Connect Stripe"
 msgstr "Stripe csatlakoztatása"
@@ -2775,7 +2850,7 @@ msgstr ""
 msgid "Connect with Stripe"
 msgstr "Csatlakozás a Stripe-hoz"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:91
+#: src/components/layouts/OrganizerLayout/index.tsx:92
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "Csatlakoztassa Stripe fiókját, hogy elfogadja a jegyek és termékek fizetését."
 
@@ -2871,7 +2946,7 @@ msgstr ""
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:502
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:428
 #: src/components/routes/organizer/EventAssistant/index.tsx:513
 #: src/components/routes/product-widget/SelectProducts/index.tsx:555
 msgid "Continue"
@@ -2929,6 +3004,7 @@ msgstr "Sütik"
 #: src/components/modals/CheckInListSuccessModal/index.tsx:42
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:75
 #: src/components/modals/ShareModal/index.tsx:255
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:118
 msgid "Copied"
 msgstr "Másolva"
 
@@ -2995,6 +3071,10 @@ msgstr "Link másolása"
 msgid "Copy my details to:"
 msgstr "Adataim másolása:"
 
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:118
+msgid "Copy the link"
+msgstr ""
+
 #: src/components/modals/ShareModal/index.tsx:264
 msgid "Copy this link to share it anywhere"
 msgstr "Másolja ezt a linket a megosztáshoz bárhol"
@@ -3049,7 +3129,8 @@ msgstr "A borítókép az eseményoldal tetején jelenik meg"
 msgid "Cover image will be displayed at the top of your organizer page"
 msgstr "A borítókép a szervezői oldal tetején jelenik meg"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:139
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:146
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:48
 msgid "Create"
 msgstr "Létrehozás"
 
@@ -3060,6 +3141,10 @@ msgstr "Létrehozás {0}"
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:108
 msgid "Create {0} Template"
 msgstr "{0} sablon létrehozása"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:221
+msgid "Create a campaign to group the QR codes of one operation."
+msgstr ""
 
 #: src/components/common/WidgetEditor/index.tsx:161
 msgid "Create a custom widget to sell tickets on your site."
@@ -3078,8 +3163,8 @@ msgid "Create a Promo Code"
 msgstr "Promóciós kód létrehozása"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:85
-msgid "Create a QR code for each medium (poster, flyer, screen...) and see how many people scan it, from which device, and how many tickets it sells. You can change where a QR code leads at any time without reprinting it."
-msgstr ""
+#~ msgid "Create a QR code for each medium (poster, flyer, screen...) and see how many people scan it, from which device, and how many tickets it sells. You can change where a QR code leads at any time without reprinting it."
+#~ msgstr ""
 
 #: src/components/modals/CreateCheckInListModal/index.tsx:64
 msgid "Create a Ticket"
@@ -3159,15 +3244,15 @@ msgid "Create discounts, access codes for hidden tickets, and special offers."
 msgstr "Kedvezmények, hozzáférési kódok rejtett jegyekhez és különleges ajánlatok létrehozása."
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:115
+#: src/components/layouts/OrganizerLayout/index.tsx:116
 #: src/components/routes/organizer/Events/index.tsx:66
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:176
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:183
 msgid "Create Event"
 msgstr "Esemény létrehozása"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:109
-msgid "Create my first QR code"
-msgstr ""
+#~ msgid "Create my first QR code"
+#~ msgstr ""
 
 #: src/components/routes/events/Dashboard/index.tsx:171
 msgid "Create new"
@@ -3207,8 +3292,12 @@ msgstr "Adó vagy díj létrehozása"
 msgid "Create the event"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:437
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:463
 msgid "Create the QR code"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:329
+msgid "Create the QR codes of this campaign: poster, flyer, story..."
 msgstr ""
 
 #: src/components/modals/CreateProductModal/index.tsx:83
@@ -3366,6 +3455,7 @@ msgstr "Egyedi sablon"
 
 #: src/components/common/AdminOrdersTable/index.tsx:71
 #: src/components/common/OrdersTable/index.tsx:208
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:890
 #: src/components/routes/event/OrdersPage/OrderList.tsx:153
 msgid "Customer"
 msgstr "Ügyfél"
@@ -3399,11 +3489,7 @@ msgstr "Vásárlók"
 msgid "Customize"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:69
-#~ msgid "Customize my organizer page"
-#~ msgstr ""
-
-#: src/components/layouts/OrganizerLayout/index.tsx:69
+#: src/components/layouts/OrganizerLayout/index.tsx:70
 msgid "Customize my page"
 msgstr ""
 
@@ -3427,7 +3513,7 @@ msgstr "Testreszabhatja az esemény kezdőlapjának elrendezését, színeit és
 msgid "Customize the miscellaneous settings for this event"
 msgstr "Testreszabhatja az esemény egyéb beállításait."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:130
+#: src/components/layouts/OrganizerLayout/index.tsx:133
 #~ msgid "Customize the page"
 #~ msgstr ""
 
@@ -3460,15 +3546,21 @@ msgstr "Testreszabhatja az e-mail sablonját Liquid sablonok használatával"
 msgid "Customize your organizer page appearance"
 msgstr "Testreszabhatja szervezői oldalának megjelenését."
 
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:61
+#: src/components/routes/event/Reports/index.tsx:27
+msgid "Daily registrations"
+msgstr ""
+
 #: src/components/routes/organizer/Reports/index.tsx:18
 msgid "Daily revenue, taxes, fees, and refunds across all events"
 msgstr "Napi bevétel, adók, díjak és visszatérítések az összes eseményen"
 
-#: src/components/routes/event/Reports/index.tsx:23
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:61
+#: src/components/routes/event/Reports/index.tsx:40
 msgid "Daily Sales Report"
 msgstr "Napi értékesítési jelentés"
 
-#: src/components/routes/event/Reports/index.tsx:24
+#: src/components/routes/event/Reports/index.tsx:41
 msgid "Daily sales, tax, and fee breakdown"
 msgstr "Napi értékesítési, adó- és díj bontás."
 
@@ -3493,9 +3585,9 @@ msgid "Dark"
 msgstr "Sötét"
 
 #: src/components/layouts/Admin/index.tsx:13
-#: src/components/layouts/Event/index.tsx:89
-#: src/components/layouts/Event/index.tsx:130
-#: src/components/routes/event/EventDashboard/index.tsx:121
+#: src/components/layouts/Event/index.tsx:91
+#: src/components/layouts/Event/index.tsx:132
+#: src/components/routes/event/EventDashboard/index.tsx:119
 #: src/components/routes/organizer/EventAssistant/index.tsx:594
 msgid "Dashboard"
 msgstr "Irányítópult"
@@ -3521,6 +3613,7 @@ msgstr "Adattulajdonlás"
 #: src/components/common/QuestionsTable/index.tsx:73
 #: src/components/forms/QuestionForm/index.tsx:143
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:135
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:29
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:56
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:24
 msgid "Date"
@@ -3583,7 +3676,7 @@ msgstr "Alapértelmezett sablon lesz használva"
 msgid "Default ticket language"
 msgstr "Alapértelmezett jegy nyelve"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:283
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:309
 msgid "Defaults to the event or organizer name"
 msgstr ""
 
@@ -3597,7 +3690,7 @@ msgstr "törlés"
 #: src/components/common/QuestionsTable/index.tsx:153
 #: src/components/common/TaxAndFeeList/index.tsx:78
 #: src/components/routes/admin/FailedJobs/index.tsx:209
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:83
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:141
 msgid "Delete"
 msgstr "Törlés"
 
@@ -3648,7 +3741,15 @@ msgstr "Szervező törlése"
 msgid "Delete Template"
 msgstr "Sablon törlése"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:70
+#: src/components/routes/organizer/QrCodes/index.tsx:256
+msgid "Delete the campaign"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:148
+msgid "Delete the campaign \"{0}\"? Its QR codes are kept and keep working, they just move to \"No campaign\"."
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:139
 msgid "Delete this QR code? Printed copies will stop working and its statistics will be lost."
 msgstr ""
 
@@ -3712,7 +3813,7 @@ msgstr "Nem kapta meg a kódot?"
 msgid "Digital attendance sheet"
 msgstr "Digitális jelenléti ív"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:56
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:47
 msgid "Direct link"
 msgstr ""
 
@@ -3836,15 +3937,23 @@ msgstr "Számla letöltése"
 msgid "Download Invoice"
 msgstr "Számla letöltése"
 
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:129
+msgid "Download PNG (QR only)"
+msgstr ""
+
 #: src/components/modals/ShareModal/index.tsx:228
 msgid "Download QR Code"
 msgstr "QR kód letöltése"
 
-#: src/components/routes/event/Reports/index.tsx:38
+#: src/components/routes/event/Reports/index.tsx:56
+msgid "Download registration and attendee reports."
+msgstr ""
+
+#: src/components/routes/event/Reports/index.tsx:57
 msgid "Download sales, attendee, and financial reports for all completed orders."
 msgstr "Értékesítési, résztvevői és pénzügyi jelentések letöltése minden befejezett rendeléshez."
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:77
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:133
 msgid "Download SVG (print)"
 msgstr ""
 
@@ -3852,13 +3961,13 @@ msgstr ""
 msgid "Download the press kit"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:326
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:352
 msgid "Download the QR code alone, or a ready-to-share visual with the QR code on it."
 msgstr ""
 
 #: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:111
-msgid "Download the visual"
-msgstr ""
+#~ msgid "Download the visual"
+#~ msgstr ""
 
 #: src/components/common/OrdersTable/index.tsx:99
 #: src/components/layouts/Checkout/index.tsx:87
@@ -3867,7 +3976,7 @@ msgid "Downloading Invoice"
 msgstr "Számla letöltése"
 
 #: src/components/common/EventCard/index.tsx:84
-#: src/components/routes/event/EventDashboard/index.tsx:132
+#: src/components/routes/event/EventDashboard/index.tsx:130
 #: src/components/routes/event/GettingStarted/index.tsx:164
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:28
 msgid "Draft"
@@ -3982,7 +4091,8 @@ msgstr "Korai madár"
 #: src/components/modals/ManageOrderModal/index.tsx:203
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:358
 #: src/components/routes/event/GettingStarted/index.tsx:76
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:76
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:64
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:113
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:236
 msgid "Edit"
 msgstr "Szerkesztés"
@@ -4068,7 +4178,7 @@ msgstr "Termékkategória szerkesztése"
 msgid "Edit Promo Code"
 msgstr "Promóciós kód szerkesztése"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:235
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:242
 msgid "Edit QR code"
 msgstr ""
 
@@ -4146,8 +4256,8 @@ msgstr "Jogosult bejelentkezési listák"
 #: src/components/routes/auth/Login/index.tsx:93
 #: src/components/routes/auth/Register/index.tsx:104
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:99
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:687
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:984
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:613
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:906
 #: src/components/routes/kiosk/Login/index.tsx:75
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
@@ -4209,7 +4319,7 @@ msgid "Email confirmation resent"
 msgstr "E-mail megerősítés újraküldve"
 
 #: src/components/common/OrganizerPageActions/index.tsx:48
-#: src/components/layouts/Event/index.tsx:75
+#: src/components/layouts/Event/index.tsx:77
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
 msgstr "E-mail megerősítés sikeresen újraküldve"
@@ -4258,13 +4368,14 @@ msgstr "Beágyazási szkript"
 msgid "Embed Widget"
 msgstr "Widget beágyazása"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:266
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:847
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:848
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:253
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:773
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:774
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:985
 msgid "Empty basket"
 msgstr "Kosár ürítése"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:264
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:251
 msgid "Empty the basket? All selected tickets and the customer details will be removed."
 msgstr "Kiüríti a kosarat? Minden kiválasztott jegy és az ügyfél adatai törlődnek."
 
@@ -4374,7 +4485,8 @@ msgstr "Adja meg a partner e-mail címét (opcionális)"
 msgid "Enter affiliate name"
 msgstr "Adja meg a partner nevét"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:479
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:405
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:891
 msgid "Enter at least a first name, an email, or a phone number."
 msgstr "Adjon meg legalább egy keresztnevet, e-mailt vagy telefonszámot."
 
@@ -4444,7 +4556,7 @@ msgstr "Belépett: {0}"
 msgid "entered out of {0}"
 msgstr ""
 
-#: src/components/routes/event/EventDashboard/index.tsx:209
+#: src/components/routes/event/EventDashboard/index.tsx:207
 msgid "Entries"
 msgstr ""
 
@@ -4523,10 +4635,10 @@ msgstr "EUR"
 #: src/components/routes/admin/Dashboard/index.tsx:305
 #: src/components/routes/admin/Messages/index.tsx:163
 #: src/components/routes/admin/Messages/index.tsx:277
-#: src/components/routes/event/EventDashboard/index.tsx:235
+#: src/components/routes/event/EventDashboard/index.tsx:233
 #: src/components/routes/events/Dashboard/index.tsx:183
 #: src/components/routes/kiosk/Settings/index.tsx:218
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:274
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:300
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:19
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:41
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:43
@@ -4654,14 +4766,14 @@ msgstr "Esemény nem elérhető"
 msgid "Event organizer name"
 msgstr "Eseményszervező neve"
 
-#: src/components/layouts/Event/index.tsx:99
+#: src/components/layouts/Event/index.tsx:101
 #: src/components/routes/event/GettingStarted/index.tsx:101
 msgctxt "event menu"
 msgid "Event page"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:55
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:251
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:277
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:46
 msgid "Event page"
 msgstr ""
 
@@ -4692,7 +4804,7 @@ msgstr "Rendezvényszoftver önkormányzatoknak"
 
 #: src/components/common/EventCard/index.tsx:70
 #: src/components/common/StatusToggle/index.tsx:63
-#: src/components/layouts/Event/index.tsx:158
+#: src/components/layouts/Event/index.tsx:160
 #: src/components/routes/event/GettingStarted/index.tsx:149
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:65
 msgid "Event status update failed. Please try again later"
@@ -4700,7 +4812,7 @@ msgstr "Esemény állapotának frissítése sikertelen. Kérjük, próbálja új
 
 #: src/components/common/EventCard/index.tsx:67
 #: src/components/common/StatusToggle/index.tsx:55
-#: src/components/layouts/Event/index.tsx:154
+#: src/components/layouts/Event/index.tsx:156
 #: src/components/routes/event/GettingStarted/index.tsx:147
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:64
 msgid "Event status updated"
@@ -4752,7 +4864,7 @@ msgstr "Esemény helyszíne"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:55
+#: src/components/layouts/OrganizerLayout/index.tsx:56
 #: src/components/organizerTemplates/Poster/index.tsx:73
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:184
 #: src/components/routes/admin/Attribution/index.tsx:133
@@ -4838,7 +4950,7 @@ msgstr "Lejárati dátum"
 msgid "Export"
 msgstr "Exportálás"
 
-#: src/components/routes/event/orders.tsx:115
+#: src/components/routes/event/orders.tsx:123
 msgid "Export (Excel)"
 msgstr ""
 
@@ -4874,7 +4986,7 @@ msgstr "Résztvevők exportálása"
 msgid "Exporting complete. Downloading file..."
 msgstr "Exportálás befejezve. Fájl letöltése..."
 
-#: src/components/routes/event/orders.tsx:76
+#: src/components/routes/event/orders.tsx:77
 msgid "Exporting Orders"
 msgstr "Megrendelések exportálása"
 
@@ -4978,7 +5090,7 @@ msgstr "Nem sikerült exportálni a partnereket."
 msgid "Failed to export attendees"
 msgstr "Résztvevők exportálása sikertelen"
 
-#: src/components/routes/event/orders.tsx:78
+#: src/components/routes/event/orders.tsx:79
 msgid "Failed to export orders"
 msgstr "Megrendelések exportálása sikertelen"
 
@@ -5155,6 +5267,7 @@ msgstr "Díjkezelés"
 #: src/components/common/InlineOrderSummary/index.tsx:143
 #: src/components/common/OrdersTable/index.tsx:364
 #: src/components/forms/ProductForm/index.tsx:434
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:49
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:54
 msgid "Fees"
 msgstr "Díjak"
@@ -5234,7 +5347,7 @@ msgstr "Jegyeim megkeresése"
 msgid "Find us"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:501
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:427
 msgid "Finish"
 msgstr "Befejezés"
 
@@ -5263,8 +5376,8 @@ msgstr ""
 #~ msgid "First 90 days from event start"
 #~ msgstr "Az esemény kezdetétől számított első 90 nap"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:465
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:468
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:391
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:394
 msgid "First and last name are required to print the badge."
 msgstr "A kitűző nyomtatásához a vezeték- és keresztnév kötelező."
 
@@ -5279,8 +5392,8 @@ msgstr "Első számla száma"
 #: src/components/modals/CreateAttendeeModal/index.tsx:99
 #: src/components/modals/ManageAttendeeModal/index.tsx:111
 #: src/components/modals/ManageOrderModal/index.tsx:144
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:662
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:962
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:588
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:893
 #: src/components/routes/landing/DemoRequestForm/index.tsx:119
 #: src/components/routes/product-widget/CollectInformation/index.tsx:474
 #: src/components/routes/product-widget/CollectInformation/index.tsx:696
@@ -5373,7 +5486,7 @@ msgstr ""
 msgid "Forgot password?"
 msgstr "Elfelejtette jelszavát?"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:518
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:444
 msgid "Form"
 msgstr "Űrlap"
 
@@ -5388,7 +5501,6 @@ msgstr "Űrlap"
 #: src/components/modals/CreateAttendeeModal/index.tsx:144
 #: src/components/organizerTemplates/Poster/eventData.ts:51
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:109
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1004
 #: src/components/routes/kiosk/Orders/index.tsx:284
 #: src/components/routes/kiosk/Orders/index.tsx:325
 #: src/components/routes/organizer/EventAssistant/index.tsx:433
@@ -5406,8 +5518,8 @@ msgid "Free (no payment)"
 msgstr "Ingyenes (fizetés nélkül)"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1014
-msgid "Free can only be used for a ticket priced at 0"
-msgstr ""
+#~ msgid "Free can only be used for a ticket priced at 0"
+#~ msgstr ""
 
 #: src/components/routes/landing/index.tsx:154
 msgid "Free or paid tickets: your sales revenue is paid to you every Monday"
@@ -5424,6 +5536,10 @@ msgstr "Ingyenes termék, fizetési információ nem szükséges"
 #: src/components/routes/landing/index.tsx:246
 msgid "Free registrations at no cost, 0.99 € per paid ticket sold"
 msgstr "Ingyenes regisztráció díjmentesen, eladott fizetős jegyenként 0,99 €"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:936
+msgid "Free tickets: nothing to collect."
+msgstr ""
 
 #: src/utilites/localeNames.ts:16
 msgid "French"
@@ -5464,6 +5580,10 @@ msgstr "Teljes hozzáférés a platformhoz"
 #: src/components/modals/RefundOrderModal/index.tsx:150
 msgid "Full refund"
 msgstr "Teljes visszatérítés"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:814
+msgid "Full screen"
+msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:43
 msgid "Gain visibility"
@@ -5544,8 +5664,8 @@ msgstr "Jegyek vásárlása"
 #~ msgid "Get your event ready"
 #~ msgstr "Készítse elő eseményét"
 
-#: src/components/layouts/Event/index.tsx:88
-#: src/components/layouts/Event/index.tsx:134
+#: src/components/layouts/Event/index.tsx:90
+#: src/components/layouts/Event/index.tsx:136
 msgid "Getting Started"
 msgstr "Első lépések"
 
@@ -5595,9 +5715,11 @@ msgid "Gross Revenue"
 msgstr "Bruttó bevétel"
 
 #: src/components/common/StatBoxes/index.tsx:89
-#: src/components/routes/event/EventDashboard/index.tsx:96
-#: src/components/routes/event/EventDashboard/index.tsx:249
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:77
+#: src/components/routes/event/EventDashboard/index.tsx:94
+#: src/components/routes/event/EventDashboard/index.tsx:247
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:34
+#: src/components/routes/event/Reports/ProductSalesReport/index.tsx:33
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:84
 msgid "Gross sales"
 msgstr "Bruttó értékesítés"
 
@@ -5605,6 +5727,10 @@ msgstr "Bruttó értékesítés"
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:30
 msgid "Gross Sales"
 msgstr "Bruttó értékesítés"
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:41
+msgid "Group the QR codes of one operation (poster, flyer, story, screen...) to follow its total results."
+msgstr ""
 
 #: src/components/layouts/Event/index.tsx:137
 #~ msgid "Guest Management"
@@ -5756,7 +5882,7 @@ msgstr "Kiemelt"
 msgid "Highlighted products will have a different background color to make them stand out on the event page."
 msgstr "A kiemelt termékek eltérő háttérszínnel jelennek meg, hogy kiemelkedjenek az esemény oldalán."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:54
+#: src/components/layouts/OrganizerLayout/index.tsx:55
 #: src/components/organizerTemplates/Poster/index.tsx:72
 msgid "Home"
 msgstr ""
@@ -6015,7 +6141,7 @@ msgstr "{0} terméket tartalmaz"
 msgid "Includes 1 product"
 msgstr "1 terméket tartalmaz"
 
-#: src/components/routes/event/EventDashboard/index.tsx:98
+#: src/components/routes/event/EventDashboard/index.tsx:96
 msgid "including {0} refunded"
 msgstr ""
 
@@ -6060,7 +6186,7 @@ msgstr "Változó beszúrása"
 msgid "Instagram"
 msgstr "Instagram"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:254
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:280
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
@@ -6182,7 +6308,7 @@ msgstr "Hívjon meg valakit, aki a bejáratnál ad el jegyet. E-mailt kap a jels
 msgid "Invite Team Member"
 msgstr "Csapattag meghívása"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:79
+#: src/components/layouts/OrganizerLayout/index.tsx:80
 msgid "Invite Team Members"
 msgstr "Csapattagok meghívása"
 
@@ -6194,7 +6320,7 @@ msgstr "Korlátlan számú csapattag meghívása egyedi szerepkörökkel"
 msgid "Invite User"
 msgstr "Felhasználó meghívása"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:76
+#: src/components/layouts/OrganizerLayout/index.tsx:77
 msgid "Invite Your Team"
 msgstr "Hívja meg csapatát"
 
@@ -6336,11 +6462,11 @@ msgstr "Csak kattintson az alábbi gombra a Stripe fiók újracsatlakoztatásáh
 msgid "Just looking for your tickets?"
 msgstr "Csak a jegyeit keresi?"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:266
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:253
 msgid "Keep"
 msgstr "Megtartás"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:430
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:456
 msgid "Keep a dark color on a light background so every phone can scan it."
 msgstr ""
 
@@ -6361,7 +6487,7 @@ msgstr ""
 msgid "Kiosk"
 msgstr "Pénztár"
 
-#: src/components/layouts/Event/index.tsx:124
+#: src/components/layouts/Event/index.tsx:126
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:72
 msgid "Kiosk operators"
 msgstr "Kioszk operátorok"
@@ -6436,8 +6562,8 @@ msgstr "Utolsó bejelentkezés"
 #: src/components/modals/CreateAttendeeModal/index.tsx:106
 #: src/components/modals/ManageAttendeeModal/index.tsx:112
 #: src/components/modals/ManageOrderModal/index.tsx:150
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:667
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:967
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:593
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:894
 #: src/components/routes/landing/DemoRequestForm/index.tsx:126
 msgid "Last name"
 msgstr "Vezetéknév"
@@ -6469,12 +6595,15 @@ msgstr "A vezetéknév kötelező"
 msgid "Last Response"
 msgstr "Utolsó válasz"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:535
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:461
 msgid "Last sale: <0>{0} tickets</0>"
 msgstr "Utolsó eladás: <0>{0} jegy</0>"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:534
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1049
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:992
+msgid "Last sale: <0>{0}</0>"
+msgstr ""
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:460
 msgid "Last ticket: <0>{0}</0>"
 msgstr ""
 
@@ -6487,9 +6616,14 @@ msgstr "Utoljára aktiválva"
 msgid "Last Used"
 msgstr "Utoljára használva"
 
-#: src/components/routes/event/EventDashboard/index.tsx:261
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:185
+#: src/components/routes/event/EventDashboard/index.tsx:259
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:193
 msgid "Latest orders"
+msgstr ""
+
+#: src/components/routes/event/EventDashboard/index.tsx:259
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:193
+msgid "Latest registrations"
 msgstr ""
 
 #: src/components/routes/landing/index.tsx:242
@@ -6504,7 +6638,7 @@ msgstr "Hagyja üresen az alapértelmezett „Számla” szó használatához"
 msgid "Leave empty for no limit, put 0 if you don't sell that way."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:289
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:315
 msgid "Leave empty to use the links from your organizer settings."
 msgstr ""
 
@@ -6536,7 +6670,7 @@ msgstr "Korlátozott megőrzés"
 msgid "Line-up & archives."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:262
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:288
 msgid "Link"
 msgstr ""
 
@@ -6544,11 +6678,11 @@ msgstr ""
 msgid "Link Expired or Invalid"
 msgstr "A link lejárt vagy érvénytelen"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:54
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:45
 msgid "Link page"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:249
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:275
 msgid "Link page (recommended)"
 msgstr ""
 
@@ -6581,7 +6715,7 @@ msgstr "Linkek engedélyezve"
 msgid "Live"
 msgstr "Élő"
 
-#: src/components/routes/event/EventDashboard/index.tsx:128
+#: src/components/routes/event/EventDashboard/index.tsx:126
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:29
 msgctxt "ongoing event"
 msgid "Live"
@@ -6637,8 +6771,8 @@ msgstr "Webhookok betöltése"
 msgid "Loading..."
 msgstr "Betöltés..."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:682
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:978
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:608
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:902
 msgid "Local number without the leading 0."
 msgstr "Helyi szám a kezdő 0 nélkül."
 
@@ -6732,7 +6866,7 @@ msgstr "Tegye kötelezővé ezt a kérdést"
 #: src/components/common/OrdersTable/index.tsx:152
 #: src/components/common/OrganizerWebhookTable/index.tsx:96
 #: src/components/common/PromoCodeTable/index.tsx:167
-#: src/components/routes/event/EventDashboard/index.tsx:169
+#: src/components/routes/event/EventDashboard/index.tsx:167
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:114
 msgid "Manage"
 msgstr "Kezelés"
@@ -6748,8 +6882,8 @@ msgid "Manage event"
 msgstr "Esemény kezelése"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:881
-msgid "Manage kiosk operators"
-msgstr "Kioszk operátorok kezelése"
+#~ msgid "Manage kiosk operators"
+#~ msgstr "Kioszk operátorok kezelése"
 
 #: src/components/common/OrdersTable/index.tsx:154
 #: src/components/routes/event/OrdersPage/OrderList.tsx:104
@@ -6773,6 +6907,7 @@ msgid "Manage taxes and fees which can be applied to your products"
 msgstr "Kezelje az adókat és díjakat, amelyek alkalmazhatók a termékeire."
 
 #: src/components/modals/CreateAttendeeModal/index.tsx:87
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:884
 msgid "Manage tickets"
 msgstr "Jegyek kezelése"
 
@@ -6815,7 +6950,7 @@ msgstr "Résztvevő manuális hozzáadása"
 msgid "Mark as paid"
 msgstr "Fizetettként jelölés"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:244
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:251
 msgid "Market poster"
 msgstr ""
 
@@ -6909,7 +7044,7 @@ msgstr "Üzenet elküldve"
 msgid "Messages"
 msgstr "Üzenetek"
 
-#: src/components/layouts/Event/index.tsx:120
+#: src/components/layouts/Event/index.tsx:122
 msgctxt "event menu"
 msgid "Messages"
 msgstr ""
@@ -6956,11 +7091,14 @@ msgstr "Egyéb"
 msgid "Miscellaneous Settings"
 msgstr "Egyéb beállítások"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:180
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:683
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:979
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:182
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:609
 msgid "Missing phone calling code — set it in station settings."
 msgstr "Hiányzó hívószám-előtét — adja meg az állomás beállításaiban."
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:966
+msgid "Missing: {0}"
+msgstr ""
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:35
 msgid "Mobile"
@@ -6990,7 +7128,7 @@ msgstr "Sikertelen háttérfeladatok figyelése és kezelése"
 msgid "Monitor attendance in real time"
 msgstr "Kövesse a jelenlétet valós időben"
 
-#: src/components/routes/event/EventDashboard/index.tsx:234
+#: src/components/routes/event/EventDashboard/index.tsx:232
 msgid "Month"
 msgstr "Hónap"
 
@@ -7015,8 +7153,28 @@ msgstr ""
 msgid "More than 1,000"
 msgstr "Több mint 1000"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:291
+msgid "Most orders"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/eventData.ts:34
 msgid "Most popular"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:289
+msgid "Most recent"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:291
+#~ msgid "Most registrations"
+#~ msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:291
+msgid "Most sales"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:290
+msgid "Most scanned"
 msgstr ""
 
 #: src/components/routes/admin/Dashboard/index.tsx:294
@@ -7047,8 +7205,7 @@ msgstr "Többsoros szövegdoboz"
 msgid "Multiple price options. Perfect for early bird products etc."
 msgstr "Több árlehetőség. Tökéletes a korai madár termékekhez stb."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:578
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:918
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:504
 msgid "Multiple prices"
 msgstr ""
 
@@ -7067,16 +7224,16 @@ msgstr "Az én csodálatos eseményem leírása..."
 msgid "My amazing event title..."
 msgstr "Az én csodálatos eseményem címe..."
 
-#: src/components/layouts/Event/index.tsx:177
-#: src/components/layouts/Event/index.tsx:180
+#: src/components/layouts/Event/index.tsx:179
+#: src/components/layouts/Event/index.tsx:182
 msgid "My events"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:150
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:156
 msgid "My image"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:68
+#: src/components/layouts/OrganizerLayout/index.tsx:69
 msgid "My organizer page"
 msgstr ""
 
@@ -7120,6 +7277,10 @@ msgstr "Nam placerat elementum..."
 msgid "Name"
 msgstr "Név"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:292
+msgid "Name (A-Z)"
+msgstr ""
+
 #: src/components/common/QuestionsTable/index.tsx:436
 msgid "Name and email of each attendee."
 msgstr ""
@@ -7154,6 +7315,10 @@ msgstr "Navigálás a résztvevőhöz"
 msgid "Net Revenue"
 msgstr "Nettó bevétel"
 
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:36
+msgid "Net sales"
+msgstr ""
+
 #: src/pages/digit/ScannerDevicePage.tsx:58
 msgid "Network error - please try again"
 msgstr ""
@@ -7165,6 +7330,12 @@ msgstr ""
 msgid "Never"
 msgstr "Soha"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:184
+#: src/components/routes/organizer/QrCodes/index.tsx:231
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:37
+msgid "New campaign"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:87
 msgid "New dates are coming soon. Follow us so you don't miss the on-sale date."
 msgstr ""
@@ -7174,8 +7345,9 @@ msgstr ""
 msgid "New Password"
 msgstr "Új jelszó"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:89
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:235
+#: src/components/routes/organizer/QrCodes/index.tsx:188
+#: src/components/routes/organizer/QrCodes/index.tsx:333
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:242
 msgid "New QR code"
 msgstr ""
 
@@ -7246,6 +7418,17 @@ msgstr ""
 msgid "No attribution data found"
 msgstr "Nem található hozzárendelési adat"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:829
+msgid "No box office ticket is on sale. Check on the Tickets page that a ticket is sold at the box office, that its sale is turned on, and that it is on a check-in list."
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:160
+#: src/components/routes/organizer/QrCodes/index.tsx:166
+#: src/components/routes/organizer/QrCodes/index.tsx:227
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:264
+msgid "No campaign"
+msgstr ""
+
 #: src/components/modals/OfferWaitlistModal/index.tsx:187
 msgid "No capacity"
 msgstr "Nincs kapacitás"
@@ -7311,7 +7494,7 @@ msgid "No event assigned"
 msgstr "Nincs hozzárendelt esemény"
 
 #: src/components/routes/organizer/Events/index.tsx:96
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:171
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:178
 msgid "No event matches your search."
 msgstr ""
 
@@ -7319,7 +7502,7 @@ msgstr ""
 msgid "No events found"
 msgstr "Nem találhatók események"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:172
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:179
 msgid "No events here yet."
 msgstr ""
 
@@ -7372,7 +7555,7 @@ msgstr "Nem található üzenet"
 msgid "No messages to show"
 msgstr "Nincs megjeleníthető üzenet"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:225
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:212
 msgid "No more tickets available for this price."
 msgstr "Ehhez az árhoz nincs több jegy."
 
@@ -7385,7 +7568,7 @@ msgstr ""
 msgid "No order found."
 msgstr "Nincs találat."
 
-#: src/components/routes/event/orders.tsx:180
+#: src/components/routes/event/orders.tsx:188
 msgid "No order matches these filters"
 msgstr ""
 
@@ -7398,7 +7581,7 @@ msgid "No orders found"
 msgstr "Nem találhatók rendelések"
 
 #: src/components/common/OrdersTable/index.tsx:471
-#: src/components/routes/event/orders.tsx:181
+#: src/components/routes/event/orders.tsx:189
 msgid "No orders to show"
 msgstr "Nincs megjeleníthető megrendelés"
 
@@ -7406,8 +7589,8 @@ msgstr "Nincs megjeleníthető megrendelés"
 #~ msgid "No orders yet"
 #~ msgstr "Még nincsenek megrendelések"
 
-#: src/components/routes/event/EventDashboard/index.tsx:267
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:191
+#: src/components/routes/event/EventDashboard/index.tsx:265
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:200
 msgid "No orders yet."
 msgstr ""
 
@@ -7476,9 +7659,17 @@ msgstr "Még nincsenek termékek"
 msgid "No Promo Codes to show"
 msgstr "Nincs megjeleníthető promóciós kód"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:105
-msgid "No QR codes yet"
+#: src/components/routes/organizer/QrCodes/index.tsx:323
+msgid "No QR code matches these filters"
 msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:323
+msgid "No QR codes here yet"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:105
+#~ msgid "No QR codes yet"
+#~ msgstr ""
 
 #: src/components/modals/ManageAttendeeModal/index.tsx:192
 msgid "No questions answered by this attendee."
@@ -7499,6 +7690,18 @@ msgstr "Nincs új fiók regisztráció"
 #: src/components/modals/MessageRecipientsModal/index.tsx:54
 msgid "No recipients found"
 msgstr "Nem találhatók címzettek"
+
+#: src/components/routes/event/orders.tsx:188
+msgid "No registration matches these filters"
+msgstr ""
+
+#: src/components/routes/event/orders.tsx:189
+msgid "No registrations yet"
+msgstr ""
+
+#: src/components/routes/event/EventDashboard/index.tsx:265
+msgid "No registrations yet."
+msgstr ""
 
 #: src/components/common/OrganizerWebhookTable/index.tsx:174
 #: src/components/common/WebhookTable/index.tsx:174
@@ -7534,8 +7737,7 @@ msgstr "Nincs találat."
 msgid "No Taxes or Fees have been added."
 msgstr "Nem adtak hozzá adókat vagy díjakat."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:550
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:895
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:476
 msgid "No ticket is both active and attached to an active check-in list. Attach a product to a check-in list first — otherwise it would not be scannable at the door."
 msgstr ""
 
@@ -7543,7 +7745,7 @@ msgstr ""
 msgid "No Tickets Found"
 msgstr "Nem találhatók jegyek"
 
-#: src/components/routes/event/EventDashboard/index.tsx:173
+#: src/components/routes/event/EventDashboard/index.tsx:171
 msgid "No tickets yet."
 msgstr ""
 
@@ -7662,6 +7864,10 @@ msgstr "Engedélyezett napok száma a fizetésre (hagyja üresen a fizetési fel
 #: src/components/routes/organizer/EventAssistant/index.tsx:443
 #~ msgid "Number of places"
 #~ msgstr ""
+
+#: src/components/routes/event/Reports/index.tsx:22
+msgid "Number of registrations for each ticket type"
+msgstr ""
 
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:199
 msgid "Number Prefix"
@@ -7806,7 +8012,11 @@ msgstr "Miután elkezd gyűjteni adatokat, itt fogja látni."
 msgid "One platform for every type of event"
 msgstr "Egy platform minden rendezvénytípushoz"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:243
+#: src/components/routes/organizer/QrCodes/index.tsx:178
+msgid "One QR code per medium (poster, flyer, screen...), grouped by campaign. Change where a QR code leads at any time without reprinting it."
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:250
 msgid "One QR code per medium lets you compare them: poster, flyer, screen, stand..."
 msgstr ""
 
@@ -7825,11 +8035,11 @@ msgstr "Folyamatban"
 
 #: src/components/common/EventCard/index.tsx:93
 #: src/components/forms/ProductForm/index.tsx:293
-#: src/components/routes/event/EventDashboard/index.tsx:32
-#: src/components/routes/event/EventDashboard/index.tsx:83
-#: src/components/routes/event/EventDashboard/index.tsx:132
+#: src/components/routes/event/EventDashboard/index.tsx:33
+#: src/components/routes/event/EventDashboard/index.tsx:81
+#: src/components/routes/event/EventDashboard/index.tsx:130
 #: src/components/routes/event/GettingStarted/index.tsx:164
-#: src/components/routes/event/orders.tsx:102
+#: src/components/routes/event/orders.tsx:108
 #: src/components/routes/event/OrdersPage/OrderList.tsx:174
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:248
@@ -7838,7 +8048,7 @@ msgstr "Folyamatban"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/routes/event/EventDashboard/index.tsx:33
+#: src/components/routes/event/EventDashboard/index.tsx:34
 msgid "Online and box office"
 msgstr ""
 
@@ -7891,7 +8101,7 @@ msgstr ""
 #~ msgid "Only visible with promo code"
 #~ msgstr "Csak promóciós kóddal látható"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:125
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:124
 msgid "Open"
 msgstr ""
 
@@ -7899,6 +8109,10 @@ msgstr ""
 #: src/components/modals/CheckInListSuccessModal/index.tsx:56
 msgid "Open Check-In Page"
 msgstr "Bejelentkezési oldal megnyitása"
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:44
+msgid "Open day 2026"
+msgstr ""
 
 #: src/components/routes/landing/index.tsx:203
 msgid "Open days, seminars, internal events."
@@ -7932,7 +8146,7 @@ msgstr "Jegyek megnyitása PDF-ként"
 msgid "Opened from"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:252
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:278
 msgid "Opens the ticketing page directly. Sales are attributed to this QR code."
 msgstr ""
 
@@ -7949,6 +8163,10 @@ msgstr "Operátor"
 msgid "Operator restored for this event"
 msgstr "Operátor visszaállítva ehhez az eseményhez"
 
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:809
+msgid "Operators"
+msgstr ""
+
 #: src/components/forms/QuestionForm/index.tsx:46
 msgid "Option {i}"
 msgstr "Opció {i}"
@@ -7961,7 +8179,7 @@ msgstr ""
 msgid "Optional additional information to appear on all invoices (e.g., payment terms, late payment fees, return policy)"
 msgstr "Opcionális további információk, amelyek megjelennek minden számlán (pl. fizetési feltételek, késedelmi díjak, visszatérítési szabályzat)."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:704
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:630
 msgid "Optional in a rush — enter at least a first name, an email, or a phone number. The email can be completed later from the attendees screen."
 msgstr "Sietős esetben opcionális — legalább keresztnév, e-mail vagy telefon. Az e-mail később a Résztvevők képernyőn pótolható."
 
@@ -8191,16 +8409,18 @@ msgid "Order was cancelled"
 msgstr "Rendelés törölve lett"
 
 #: src/components/layouts/Admin/index.tsx:17
-#: src/components/layouts/Event/index.tsx:104
-#: src/components/layouts/Event/index.tsx:131
-#: src/components/layouts/Event/index.tsx:136
+#: src/components/layouts/Event/index.tsx:61
 #: src/components/layouts/Kiosk/index.tsx:58
 #: src/components/routes/admin/Attribution/index.tsx:138
 #: src/components/routes/admin/Orders/index.tsx:44
-#: src/components/routes/event/EventDashboard/index.tsx:104
-#: src/components/routes/event/orders.tsx:110
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:82
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:62
+#: src/components/routes/event/EventDashboard/index.tsx:102
+#: src/components/routes/event/orders.tsx:85
+#: src/components/routes/event/orders.tsx:116
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:45
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:81
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:89
+#: src/components/routes/organizer/QrCodes/index.tsx:269
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:83
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:73
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
@@ -8212,7 +8432,7 @@ msgstr "Megrendelések"
 msgid "Orders Completed"
 msgstr "Befejezett rendelések"
 
-#: src/components/routes/event/orders.tsx:77
+#: src/components/routes/event/orders.tsx:78
 msgid "Orders Exported"
 msgstr "Exportált megrendelések"
 
@@ -8303,7 +8523,7 @@ msgstr "Szervező neve"
 msgid "Organizer Not Found"
 msgstr "Szervező nem található"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:123
+#: src/components/layouts/OrganizerLayout/index.tsx:126
 #~ msgid "Organizer page"
 #~ msgstr ""
 
@@ -8402,7 +8622,7 @@ msgstr ""
 msgid "Outgoing Messages"
 msgstr "Kimenő üzenetek"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:102
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:109
 msgctxt "organizer home"
 msgid "Overview"
 msgstr ""
@@ -8431,7 +8651,7 @@ msgstr "Oldal nem található"
 msgid "Page online"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:282
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:308
 msgid "Page title"
 msgstr ""
 
@@ -8440,8 +8660,9 @@ msgid "Page URL"
 msgstr "Oldal URL-címe"
 
 #: src/components/common/StatBoxes/index.tsx:96
-#: src/components/routes/event/EventDashboard/index.tsx:93
-#: src/components/routes/event/EventDashboard/index.tsx:105
+#: src/components/routes/event/EventDashboard/index.tsx:91
+#: src/components/routes/event/EventDashboard/index.tsx:103
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:54
 msgid "Page views"
 msgstr "Oldalmegtekintések"
 
@@ -8585,7 +8806,7 @@ msgstr "Patrik"
 msgid "patrick@acme.com"
 msgstr "patrick@acme.com"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:79
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:138
 msgid "Pause"
 msgstr ""
 
@@ -8597,7 +8818,8 @@ msgstr ""
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:110
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:128
 #: src/components/forms/WebhookForm/index.tsx:28
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:89
+#: src/components/routes/organizer/QrCodes/index.tsx:284
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:74
 msgid "Paused"
 msgstr "Szüneteltetve"
 
@@ -8613,7 +8835,7 @@ msgstr "Adattartalom"
 #: src/components/common/OrdersTable/index.tsx:380
 #: src/components/common/ProgressStepper/index.tsx:19
 #: src/components/forms/StripeCheckoutForm/index.tsx:126
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:520
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:446
 msgid "Payment"
 msgstr "Fizetés"
 
@@ -8795,8 +9017,8 @@ msgid "Phone calling code"
 msgstr "Hívószám-előtét"
 
 #: src/components/common/QuestionsTable/index.tsx:364
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:673
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:972
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:599
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:896
 msgid "Phone number"
 msgstr "Telefonszám"
 
@@ -8939,7 +9161,11 @@ msgstr "Kérjük, adja meg szervezetét"
 msgid "Please enter your VAT number"
 msgstr "Kérjük, adja meg ÁFA számát"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:124
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:22
+msgid "Please give the campaign a name"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:130
 msgid "Please give this QR code a name"
 msgstr ""
 
@@ -8973,11 +9199,11 @@ msgstr "Kérjük, válasszon ki legalább egy terméket."
 
 #: src/components/routes/event/Affiliates/index.tsx:52
 #: src/components/routes/event/attendees.tsx:66
-#: src/components/routes/event/orders.tsx:78
+#: src/components/routes/event/orders.tsx:79
 msgid "Please try again."
 msgstr "Kérjük, próbálja újra."
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:201
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:207
 msgid "Please upload a background image"
 msgstr ""
 
@@ -9003,11 +9229,11 @@ msgstr "Kérjük, várjon, amíg előkészítjük résztvevőit az exportálásr
 msgid "Please wait while we prepare your invoice..."
 msgstr "Kérjük, várjon, amíg előkészítjük számláját..."
 
-#: src/components/routes/event/orders.tsx:76
+#: src/components/routes/event/orders.tsx:77
 msgid "Please wait while we prepare your orders for export..."
 msgstr "Kérjük, várjon, amíg előkészítjük megrendeléseit az exportálásra..."
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:118
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:98
 msgid "PNG"
 msgstr ""
 
@@ -9073,7 +9299,7 @@ msgstr ""
 msgid "present"
 msgstr "jelen"
 
-#: src/components/routes/event/EventDashboard/index.tsx:91
+#: src/components/routes/event/EventDashboard/index.tsx:89
 msgid "Present"
 msgstr ""
 
@@ -9114,8 +9340,8 @@ msgstr "Megelőzheti a túlértékesítést azáltal, hogy megosztja a készlete
 msgid "Preview"
 msgstr "Előnézet"
 
-#: src/components/layouts/Event/index.tsx:165
-#: src/components/routes/event/EventDashboard/index.tsx:143
+#: src/components/layouts/Event/index.tsx:167
+#: src/components/routes/event/EventDashboard/index.tsx:141
 #: src/components/routes/event/GettingStarted/index.tsx:178
 msgctxt "event menu"
 msgid "Preview"
@@ -9254,8 +9480,7 @@ msgstr ""
 msgid "Processing order"
 msgstr "Rendelés feldolgozása"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:501
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1042
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:427
 msgid "Processing…"
 msgstr ""
 
@@ -9264,6 +9489,7 @@ msgstr ""
 #: src/components/common/WaitlistTable/index.tsx:170
 #: src/components/modals/ManageAttendeeModal/index.tsx:120
 #: src/components/modals/OfferWaitlistModal/index.tsx:161
+#: src/components/routes/event/Reports/ProductSalesReport/index.tsx:22
 msgid "Product"
 msgstr "Termék"
 
@@ -9291,11 +9517,12 @@ msgstr "Termék sikeresen törölve"
 msgid "Product Price Type"
 msgstr "Termék ár típusa"
 
-#: src/components/routes/event/Reports/index.tsx:17
+#: src/components/routes/event/Reports/index.tsx:34
+#: src/components/routes/event/Reports/ProductSalesReport/index.tsx:54
 msgid "Product Sales"
 msgstr "Termék értékesítés"
 
-#: src/components/routes/event/Reports/index.tsx:18
+#: src/components/routes/event/Reports/index.tsx:35
 msgid "Product sales, revenue, and tax breakdown"
 msgstr "Termék értékesítés, bevétel és adó bontás"
 
@@ -9363,11 +9590,11 @@ msgstr "Promóciós kód"
 msgid "Promo Code page"
 msgstr "Promóciós kód oldal"
 
-#: src/components/routes/event/Reports/index.tsx:30
+#: src/components/routes/event/Reports/index.tsx:47
 msgid "Promo code usage and discount breakdown"
 msgstr "Promóciós kód felhasználás és kedvezmény bontás"
 
-#: src/components/layouts/Event/index.tsx:105
+#: src/components/layouts/Event/index.tsx:107
 msgctxt "event menu"
 msgid "Promo codes"
 msgstr ""
@@ -9381,7 +9608,7 @@ msgstr "Promóciós kódok"
 msgid "Promo codes can be used to offer discounts, presale access, or provide special access to your event."
 msgstr "A promóciós kódok kedvezmények, előzetes hozzáférés vagy különleges hozzáférés biztosítására használhatók az eseményéhez."
 
-#: src/components/routes/event/Reports/index.tsx:29
+#: src/components/routes/event/Reports/index.tsx:46
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:95
 msgid "Promo Codes Report"
 msgstr "Promóciós kódok jelentés"
@@ -9416,7 +9643,7 @@ msgstr "Közzététel"
 #~ msgid "Publish Event"
 #~ msgstr "Esemény közzététele"
 
-#: src/components/layouts/Event/index.tsx:168
+#: src/components/layouts/Event/index.tsx:170
 #: src/components/routes/event/GettingStarted/index.tsx:236
 msgid "Publish the event"
 msgstr ""
@@ -9447,27 +9674,27 @@ msgstr "Beléptetés QR-kóddal"
 msgid "QR Code Check-in"
 msgstr "QR kód bejelentkezés"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:221
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:228
 msgid "QR code created"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:72
+#: src/components/routes/organizer/QrCodes/index.tsx:141
 msgid "QR code deleted"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:380
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:406
 msgid "QR code height"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:64
+#: src/components/routes/organizer/QrCodes/index.tsx:133
 msgid "QR code paused"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:64
+#: src/components/routes/organizer/QrCodes/index.tsx:133
 msgid "QR code reactivated"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:385
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:411
 msgid "QR code size"
 msgstr ""
 
@@ -9479,16 +9706,17 @@ msgstr "QR-kódos jegyek"
 msgid "QR code unavailable"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:221
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:228
 msgid "QR code updated"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:62
-#: src/components/routes/organizer/QrCodes/index.tsx:80
+#: src/components/layouts/OrganizerLayout/index.tsx:63
+#: src/components/routes/organizer/QrCodes/index.tsx:176
+#: src/components/routes/organizer/QrCodes/index.tsx:264
 msgid "QR codes"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:144
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:150
 msgid "QR only"
 msgstr ""
 
@@ -9575,7 +9803,7 @@ msgstr "Arány"
 msgid "Rate limit exceeded. Please try again later."
 msgstr "Túllépte a korlátot. Kérjük, próbálja újra később."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:517
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:443
 msgid "Rates"
 msgstr "Árak"
 
@@ -9587,7 +9815,7 @@ msgstr "Hely újbóli felajánlása"
 msgid "Reach an engaged audience"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:79
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:138
 msgid "Reactivate"
 msgstr ""
 
@@ -9637,7 +9865,7 @@ msgstr "Újra hozzárendelés"
 msgid "Receive product updates from {0}."
 msgstr "Termékfrissítések fogadása a {0}-től."
 
-#: src/components/routes/event/EventDashboard/index.tsx:232
+#: src/components/routes/event/EventDashboard/index.tsx:230
 msgid "Recent"
 msgstr "Legutóbbi"
 
@@ -9741,16 +9969,17 @@ msgstr "Visszatérítés állapota"
 #: src/components/common/OrderSummary/index.tsx:80
 #: src/components/common/StatBoxes/index.tsx:88
 #: src/components/routes/event/OrdersPage/OrderList.tsx:38
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:50
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:70
 msgid "Refunded"
 msgstr "Visszatérítve"
 
-#: src/components/routes/event/orders.tsx:90
+#: src/components/routes/event/orders.tsx:96
 msgctxt "orders figure"
 msgid "Refunded"
 msgstr ""
 
-#: src/components/routes/event/orders.tsx:98
+#: src/components/routes/event/orders.tsx:104
 msgctxt "orders filter"
 msgid "Refunded"
 msgstr ""
@@ -9786,23 +10015,53 @@ msgstr "regisztrált"
 msgid "Registered"
 msgstr "Regisztrált"
 
+#: src/components/routes/event/orders.tsx:86
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:40
+#: src/components/routes/event/Reports/ProductSalesReport/index.tsx:27
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:80
+msgid "Registered people"
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:152
 msgid "Registration page in your colors"
 msgstr "Regisztrációs oldal az Ön színeiben"
 
 #: src/components/common/QuestionsTable/index.tsx:445
-#: src/components/layouts/Event/index.tsx:101
+#: src/components/layouts/Event/index.tsx:103
 msgid "Registration Questions"
 msgstr "Regisztrációs kérdések"
 
-#: src/components/routes/event/EventDashboard/index.tsx:90
-#: src/components/routes/event/EventDashboard/index.tsx:252
+#: src/components/layouts/Event/index.tsx:61
+#: src/components/routes/event/orders.tsx:116
+msgctxt "orders page title"
 msgid "Registrations"
+msgstr ""
+
+#: src/components/routes/event/EventDashboard/index.tsx:88
+#: src/components/routes/event/EventDashboard/index.tsx:250
+msgid "Registrations"
+msgstr ""
+
+#: src/components/routes/event/Reports/index.tsx:28
+msgid "Registrations day by day"
+msgstr ""
+
+#: src/components/routes/event/EventDashboard/index.tsx:221
+msgid "Registrations over time"
+msgstr ""
+
+#: src/components/routes/event/Reports/index.tsx:21
+#: src/components/routes/event/Reports/ProductSalesReport/index.tsx:54
+msgid "Registrations per ticket"
 msgstr ""
 
 #: src/components/routes/landing/index.tsx:128
 msgid "Registrations that run themselves"
 msgstr "Regisztrációk, amelyek maguktól mennek"
+
+#: src/components/routes/event/orders.tsx:191
+msgid "Registrations will appear here as soon as people sign up."
+msgstr ""
 
 #: src/pages/digit/ScannerDevicePage.tsx:52
 msgid "Rejected"
@@ -9828,7 +10087,7 @@ msgstr "eltávolítás"
 #: src/components/common/WaitlistTable/index.tsx:78
 #: src/components/common/WaitlistTable/index.tsx:111
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:186
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:305
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:331
 #: src/components/routes/product-widget/SelectProducts/index.tsx:574
 msgid "Remove"
 msgstr "Eltávolítás"
@@ -9853,11 +10112,20 @@ msgstr ""
 msgid "Remove the token"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:586
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:633
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:776
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:512
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:559
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:702
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:861
 msgid "Remove ticket"
 msgstr "Jegy eltávolítása"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:252
+msgid "Rename"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:37
+msgid "Rename the campaign"
+msgstr ""
 
 #: src/components/routes/landing/index.tsx:484
 msgid "Rent equipment online"
@@ -9884,15 +10152,15 @@ msgstr "Válasz 1 munkanapon belül. Adatait csak arra használjuk, hogy e kér�
 msgid "Report not found"
 msgstr "Jelentés nem található"
 
-#: src/components/layouts/Event/index.tsx:92
-#: src/components/layouts/OrganizerLayout/index.tsx:58
-#: src/components/routes/event/Reports/index.tsx:39
+#: src/components/layouts/Event/index.tsx:94
+#: src/components/layouts/OrganizerLayout/index.tsx:59
+#: src/components/routes/event/Reports/index.tsx:58
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
 msgstr "Jelentések"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:543
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1057
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:469
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:997
 #: src/components/routes/kiosk/Orders/index.tsx:379
 msgid "Reprint"
 msgstr ""
@@ -9930,7 +10198,7 @@ msgstr "Visszaigazolás újraküldése"
 msgid "Resend Confirmation Email"
 msgstr "Megerősítő e-mail újraküldése"
 
-#: src/components/layouts/Event/index.tsx:196
+#: src/components/layouts/Event/index.tsx:198
 msgid "Resend email"
 msgstr "E-mail újraküldése"
 
@@ -10063,12 +10331,13 @@ msgstr "Vissza az esemény oldalára"
 #: src/components/common/AffiliateTable/index.tsx:157
 #: src/components/common/EventCard/index.tsx:235
 #: src/components/routes/admin/Attribution/index.tsx:137
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:63
+#: src/components/routes/organizer/QrCodes/index.tsx:272
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:85
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:74
 msgid "Revenue"
 msgstr "Bevétel"
 
-#: src/components/routes/event/EventDashboard/index.tsx:228
+#: src/components/routes/event/EventDashboard/index.tsx:226
 msgctxt "chart"
 msgid "Revenue"
 msgstr ""
@@ -10154,7 +10423,7 @@ msgstr "Értékesítés kezdési dátuma"
 msgid "Sales"
 msgstr "Értékesítések"
 
-#: src/components/layouts/Event/index.tsx:103
+#: src/components/layouts/Event/index.tsx:105
 msgctxt "event menu"
 msgid "Sales"
 msgstr ""
@@ -10172,7 +10441,7 @@ msgstr ""
 msgid "Sales ended"
 msgstr "Értékesítés befejezve"
 
-#: src/components/routes/event/EventDashboard/index.tsx:223
+#: src/components/routes/event/EventDashboard/index.tsx:221
 msgid "Sales over time"
 msgstr ""
 
@@ -10228,7 +10497,8 @@ msgstr "San Francisco"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:265
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:102
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:76
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:437
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:48
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:463
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:116
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:132
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
@@ -10294,12 +10564,13 @@ msgstr ""
 msgid "Scan failed"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:178
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:395
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:184
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:421
 msgid "Scan me"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:60
+#: src/components/routes/organizer/QrCodes/index.tsx:265
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:81
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:70
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:129
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:146
@@ -10347,8 +10618,12 @@ msgid "Scheduled time"
 msgstr "Ütemezett időpont"
 
 #: src/components/routes/event/attendees.tsx:137
-#: src/components/routes/event/orders.tsx:160
+#: src/components/routes/event/orders.tsx:168
 msgid "Search a name, an email or an order number…"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:278
+msgid "Search a QR code or an event…"
 msgstr ""
 
 #: src/components/routes/event/products.tsx:78
@@ -10360,7 +10635,7 @@ msgid "Search affiliates..."
 msgstr "Partnerek keresése..."
 
 #: src/components/routes/organizer/Events/index.tsx:60
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:90
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:97
 msgid "Search an event…"
 msgstr ""
 
@@ -10465,7 +10740,7 @@ msgstr ""
 msgid "Secured access"
 msgstr "Biztonságos hozzáférés"
 
-#: src/components/routes/event/EventDashboard/index.tsx:263
+#: src/components/routes/event/EventDashboard/index.tsx:261
 msgid "See all"
 msgstr ""
 
@@ -10659,8 +10934,8 @@ msgid "Self-service"
 msgstr "Önálló"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:870
-msgid "Sell a ticket at the door and print it immediately."
-msgstr ""
+#~ msgid "Sell a ticket at the door and print it immediately."
+#~ msgstr ""
 
 #: src/components/forms/ProductForm/index.tsx:535
 msgid "Selling fast 🔥"
@@ -10804,6 +11079,10 @@ msgstr ""
 msgid "Service Fee"
 msgstr "Szolgáltatási díj"
 
+#: src/components/routes/event/Reports/ProductSalesReport/index.tsx:45
+msgid "Service fees"
+msgstr ""
+
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:228
 #: src/components/organizerTemplates/Poster/index.tsx:74
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:191
@@ -10869,18 +11148,18 @@ msgstr "Beállítás frissítve"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
 #: src/components/layouts/Kiosk/index.tsx:65
-#: src/components/layouts/OrganizerLayout/index.tsx:70
+#: src/components/layouts/OrganizerLayout/index.tsx:71
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/kiosk/Settings/index.tsx:59
 msgid "Settings"
 msgstr "Beállítások"
 
-#: src/components/layouts/Event/index.tsx:98
+#: src/components/layouts/Event/index.tsx:100
 msgctxt "event menu"
 msgid "Settings"
 msgstr ""
 
-#: src/components/layouts/Event/index.tsx:97
+#: src/components/layouts/Event/index.tsx:99
 msgctxt "event menu"
 msgid "Setup"
 msgstr ""
@@ -10906,8 +11185,8 @@ msgstr ""
 msgid "Share"
 msgstr "Megosztás"
 
-#: src/components/layouts/Event/index.tsx:166
-#: src/components/routes/event/EventDashboard/index.tsx:146
+#: src/components/layouts/Event/index.tsx:168
+#: src/components/routes/event/EventDashboard/index.tsx:144
 #: src/components/routes/event/GettingStarted/index.tsx:181
 msgctxt "event menu"
 msgid "Share"
@@ -10918,10 +11197,10 @@ msgstr ""
 msgid "Share Affiliate Link"
 msgstr "Partnerlink megosztása"
 
-#: src/components/layouts/Event/index.tsx:208
+#: src/components/layouts/Event/index.tsx:210
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:102
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:131
-#: src/components/routes/event/EventDashboard/index.tsx:282
+#: src/components/routes/event/EventDashboard/index.tsx:280
 #: src/components/routes/event/GettingStarted/index.tsx:248
 msgid "Share Event"
 msgstr "Esemény megosztása"
@@ -10934,7 +11213,7 @@ msgstr "Szervezői oldal megosztása"
 msgid "Share the event"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:124
+#: src/components/layouts/OrganizerLayout/index.tsx:127
 #~ msgid "Share the page"
 #~ msgstr ""
 
@@ -10948,7 +11227,7 @@ msgid "Shop"
 msgstr "Webshop"
 
 #: src/components/common/QuestionsTable/index.tsx:68
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:284
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:310
 msgid "Short text"
 msgstr ""
 
@@ -11080,7 +11359,7 @@ msgstr "Közösségi linkek"
 msgid "Social Links & Website"
 msgstr "Közösségi linkek és weboldal"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:287
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:313
 msgid "Social networks"
 msgstr ""
 
@@ -11114,7 +11393,8 @@ msgstr ""
 #: src/components/common/ProductPriceAvailability/index.tsx:50
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:436
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:112
-#: src/components/routes/event/EventDashboard/index.tsx:197
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:855
+#: src/components/routes/event/EventDashboard/index.tsx:195
 msgid "Sold out"
 msgstr "Elfogyott"
 
@@ -11168,7 +11448,7 @@ msgid "Something went wrong. Please try again later."
 msgstr "Valami hiba történt. Kérjük, próbálja újra később."
 
 #: src/components/common/OrganizerPageActions/index.tsx:51
-#: src/components/layouts/Event/index.tsx:79
+#: src/components/layouts/Event/index.tsx:81
 #: src/components/routes/auth/Login/index.tsx:72
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:42
 #: src/components/routes/my-tickets/index.tsx:145
@@ -11184,6 +11464,10 @@ msgstr "Valami hiba történt. Kérjük, próbálja újra."
 #: src/components/routes/product-widget/SelectProducts/index.tsx:299
 msgid "Sorry, this promo code is not recognized"
 msgstr "Sajnáljuk, ez a promóciós kód nem felismerhető."
+
+#: src/components/routes/organizer/QrCodes/index.tsx:294
+msgid "Sort"
+msgstr ""
 
 #: src/components/routes/admin/Attribution/index.tsx:106
 msgid "Source"
@@ -11214,12 +11498,12 @@ msgstr ""
 msgid "Sports"
 msgstr "Sport"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:147
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:153
 msgid "Square"
 msgstr ""
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:625
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:935
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:551
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:849
 msgid "Standard"
 msgstr ""
 
@@ -11250,7 +11534,11 @@ msgstr "Kezdés dátuma kötelező"
 msgid "Start time of the event"
 msgstr "Az esemény kezdési ideje"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:107
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:903
+msgid "Start with the country code, e.g. +262 639…"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:330
 msgid "Start with the poster for your next event."
 msgstr ""
 
@@ -11282,7 +11570,8 @@ msgid "Station name"
 msgstr "Állomás neve"
 
 #: src/components/common/AdminEventsTable/index.tsx:110
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:121
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:101
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:102
 msgid "Statistics"
 msgstr "Statisztikák"
 
@@ -11323,7 +11612,7 @@ msgstr "Még mindig feldolgozza a régebbi tranzakciók visszatérítéseit."
 msgid "Stop Impersonating"
 msgstr "Megszemélyesítés leállítása"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:145
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:151
 msgid "Story"
 msgstr ""
 
@@ -11591,7 +11880,7 @@ msgstr ""
 msgid "Swedish"
 msgstr "Svéd"
 
-#: src/components/layouts/Event/index.tsx:168
+#: src/components/layouts/Event/index.tsx:170
 #: src/components/routes/event/GettingStarted/index.tsx:223
 msgid "Switch back to draft"
 msgstr ""
@@ -11625,8 +11914,8 @@ msgid "Tailored partnership"
 msgstr ""
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:1042
-msgid "Take Payment & Create Ticket"
-msgstr ""
+#~ msgid "Take Payment & Create Ticket"
+#~ msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:85
 msgid "Takes just a few minutes"
@@ -11645,6 +11934,8 @@ msgstr ""
 #: src/components/modals/EditTaxOrFeeModal/index.tsx:42
 #: src/components/modals/EditTaxOrFeeModal/index.tsx:52
 #: src/components/modals/EditTaxOrFeeModal/index.tsx:59
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:35
+#: src/components/routes/event/Reports/ProductSalesReport/index.tsx:39
 msgid "Tax"
 msgstr "Adó"
 
@@ -11769,7 +12060,7 @@ msgstr ""
 msgid "Test the connection"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:397
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:423
 msgid "Text color"
 msgstr ""
 
@@ -11777,7 +12068,7 @@ msgstr ""
 msgid "Text may be hard to read"
 msgstr "A szöveg nehezen olvasható lehet"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:394
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:420
 msgid "Text under the QR code"
 msgstr ""
 
@@ -11806,7 +12097,7 @@ msgstr ""
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
 msgstr "Az oldal háttérszíne. Borítókép használatakor ez átfedésként kerül alkalmazásra."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:763
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:689
 msgid "The basket is empty."
 msgstr "A kosár üres."
 
@@ -11849,7 +12140,7 @@ msgstr "Az e-mail cím megváltozott. A résztvevő új jegyet kap a frissített
 msgid "The end has to come after the start."
 msgstr ""
 
-#: src/components/routes/event/EventDashboard/index.tsx:126
+#: src/components/routes/event/EventDashboard/index.tsx:124
 msgid "The event is happening now. Open the box office"
 msgstr ""
 
@@ -11933,8 +12224,7 @@ msgstr "Az ügyfélnek megjelenő ár tartalmazza az adókat és díjakat."
 msgid "The price displayed to the customer will not include taxes and fees. They will be shown separately"
 msgstr "Az ügyfélnek megjelenő ár nem tartalmazza az adókat és díjakat. Külön lesznek feltüntetve."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:369
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:423
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:352
 msgid "The price has changed — please reselect the ticket type."
 msgstr ""
 
@@ -12197,7 +12487,7 @@ msgstr "Ez a rendelés elhagyásra került. Bármikor kezdhet új rendelést."
 msgid "This order was cancelled. You can start a new order anytime."
 msgstr "Ez a rendelés törölve lett. Bármikor kezdhet új rendelést."
 
-#: src/components/routes/organizer/QrCodes/index.tsx:96
+#: src/components/routes/organizer/QrCodes/index.tsx:195
 msgid "This organizer could not be found. Choose your organizer from the menu, then open QR codes again."
 msgstr ""
 
@@ -12241,8 +12531,7 @@ msgstr "Ez a jelentés csak tájékoztató jellegű. Könyvelési vagy adózási
 msgid "This reset password link is invalid or expired."
 msgstr "Ez a jelszó-visszaállító link érvénytelen vagy lejárt."
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:371
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:428
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:354
 msgid "This sale could not be completed. Please try again."
 msgstr ""
 
@@ -12281,6 +12570,7 @@ msgstr "jegy"
 #: src/components/forms/ProductForm/index.tsx:139
 #: src/components/modals/CreateAttendeeModal/index.tsx:132
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:120
+#: src/components/routes/event/Reports/ProductSalesReport/index.tsx:22
 msgid "Ticket"
 msgstr "Jegy"
 
@@ -12288,7 +12578,7 @@ msgstr "Jegy"
 #~ msgid "Ticket added"
 #~ msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:274
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:300
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:22
 msgid "Ticket button"
 msgstr ""
@@ -12297,12 +12587,11 @@ msgstr ""
 msgid "Ticket Cancelled"
 msgstr "Jegy törölve"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:356
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:410
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:339
 msgid "Ticket created — {0}"
 msgstr ""
 
-#: src/components/layouts/Event/index.tsx:118
+#: src/components/layouts/Event/index.tsx:120
 msgctxt "event menu"
 msgid "Ticket design"
 msgstr ""
@@ -12345,8 +12634,8 @@ msgstr "Jegytulajdonosok"
 msgid "Ticket Holders"
 msgstr "Jegytulajdonosok"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:694
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:990
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:620
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:909
 msgid "Ticket language"
 msgstr ""
 
@@ -12403,16 +12692,16 @@ msgstr "Jegy URL"
 msgid "tickets"
 msgstr "jegyek"
 
-#: src/components/layouts/Event/index.tsx:100
-#: src/components/layouts/Event/index.tsx:135
+#: src/components/layouts/Event/index.tsx:102
+#: src/components/layouts/Event/index.tsx:137
 msgctxt "event menu"
 msgid "Tickets"
 msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:102
 #: src/components/organizerTemplates/Poster/shared.tsx:55
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:547
-#: src/components/routes/event/EventDashboard/index.tsx:228
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:473
+#: src/components/routes/event/EventDashboard/index.tsx:226
 #: src/components/routes/event/GettingStarted/index.tsx:83
 #: src/components/routes/event/OrdersPage/OrderList.tsx:154
 #: src/components/routes/event/products.tsx:54
@@ -12424,7 +12713,7 @@ msgstr "Jegyek"
 #~ msgid "Tickets & Products"
 #~ msgstr "Jegyek és termékek"
 
-#: src/components/routes/event/EventDashboard/index.tsx:167
+#: src/components/routes/event/EventDashboard/index.tsx:165
 msgid "Tickets and capacity"
 msgstr ""
 
@@ -12444,13 +12733,18 @@ msgstr "Elérhető jegyek"
 msgid "Tickets for"
 msgstr "Jegyek ehhez:"
 
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:827
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:753
 msgid "tickets in the basket"
 msgstr "jegy a kosárban"
 
-#: src/components/routes/event/EventDashboard/index.tsx:103
-#: src/components/routes/event/EventDashboard/index.tsx:254
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:81
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:825
+msgid "Tickets on sale at the box office"
+msgstr ""
+
+#: src/components/routes/event/EventDashboard/index.tsx:101
+#: src/components/routes/event/EventDashboard/index.tsx:252
+#: src/components/routes/event/Reports/DailySalesReport/index.tsx:40
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:88
 msgid "Tickets sold"
 msgstr ""
 
@@ -12521,6 +12815,10 @@ msgstr "TIPP"
 #: src/components/routes/event/messages.tsx:93
 msgid "To"
 msgstr "Címzett"
+
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:922
+msgid "To collect"
+msgstr ""
 
 #: src/components/common/AttendeeTable/index.tsx:204
 #: src/components/routes/event/GettingStarted/index.tsx:134
@@ -12613,7 +12911,7 @@ msgstr "Teljes megrendelési összeg"
 msgid "Total refunded"
 msgstr "Összes visszatérített"
 
-#: src/components/routes/event/EventDashboard/index.tsx:250
+#: src/components/routes/event/EventDashboard/index.tsx:248
 msgid "Total Refunded"
 msgstr "Összes visszatérített"
 
@@ -12736,7 +13034,11 @@ msgstr "Nem sikerült létrehozni a terméket. Kérjük, ellenőrizze adatait."
 msgid "Unable to create question. Please check the your details"
 msgstr "Nem sikerült kérdést létrehozni. Kérjük, ellenőrizze adatait."
 
-#: src/components/routes/organizer/QrCodes/index.tsx:73
+#: src/components/routes/organizer/QrCodes/index.tsx:154
+msgid "Unable to delete the campaign"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:142
 msgid "Unable to delete the QR code"
 msgstr ""
 
@@ -12748,7 +13050,7 @@ msgstr "Nem sikerült másolni a terméket. Kérjük, ellenőrizze adatait."
 msgid "Unable to fetch attendee"
 msgstr "Nem sikerült lekérni a résztvevőt."
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:49
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:58
 msgid "Unable to generate the visual"
 msgstr ""
 
@@ -12768,11 +13070,11 @@ msgstr ""
 msgid "Unable to update question. Please check the your details"
 msgstr "Nem sikerült frissíteni a kérdést. Kérjük, ellenőrizze adatait."
 
-#: src/components/routes/organizer/QrCodes/index.tsx:65
+#: src/components/routes/organizer/QrCodes/index.tsx:134
 msgid "Unable to update the QR code"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:195
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:201
 msgid "Unable to upload the image"
 msgstr ""
 
@@ -12780,7 +13082,7 @@ msgstr ""
 msgid "Unattributed Accounts"
 msgstr "Nem hozzárendelt fiókok"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:61
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:82
 msgid "Unique"
 msgstr ""
 
@@ -12792,6 +13094,7 @@ msgstr "Egyedi ügyfelek"
 msgid "Unique order reference"
 msgstr "Egyedi rendelési hivatkozás"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:266
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:71
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:130
 msgid "Unique visitors"
@@ -12801,6 +13104,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:111
 msgid "United States"
 msgstr "Egyesült Államok"
+
+#: src/components/routes/event/Reports/ProductSalesReport/index.tsx:27
+msgid "Units sold"
+msgstr ""
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:226
 msgid "Universe"
@@ -12840,8 +13147,8 @@ msgstr ""
 #: src/components/forms/ProductForm/index.tsx:346
 #: src/components/forms/PromoCodeForm/index.tsx:113
 #: src/components/modals/OfferWaitlistModal/index.tsx:189
-#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:951
-#: src/components/routes/event/EventDashboard/index.tsx:201
+#: src/components/routes/event/BoxOffice/SaleForm/index.tsx:856
+#: src/components/routes/event/EventDashboard/index.tsx:199
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:78
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:84
 #: src/components/routes/organizer/EventAssistant/index.tsx:458
@@ -12906,7 +13213,7 @@ msgstr "Eseménynév, leírás és dátumok frissítése"
 msgid "Update profile"
 msgstr "Profil frissítése"
 
-#: src/components/routes/event/EventDashboard/index.tsx:214
+#: src/components/routes/event/EventDashboard/index.tsx:212
 msgid "Updates live during the event."
 msgstr ""
 
@@ -12914,7 +13221,7 @@ msgstr ""
 msgid "Upgrade Available"
 msgstr "Frissítés elérhető"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:370
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:396
 msgid "Upload"
 msgstr ""
 
@@ -13017,7 +13324,7 @@ msgstr "Rendelési adatok használata minden résztvevőhöz. A résztvevők nev
 #~ msgid "Use the buyer's details for all attendees"
 #~ msgstr "Vásárló adatainak használata minden résztvevőhöz"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:362
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:388
 msgid "Use this background"
 msgstr ""
 
@@ -13201,7 +13508,7 @@ msgstr "Ellenőrzött"
 msgid "Verify Email"
 msgstr "E-mail ellenőrzése"
 
-#: src/components/layouts/Event/index.tsx:193
+#: src/components/layouts/Event/index.tsx:195
 msgid "Verify your email"
 msgstr "Ellenőrizze e-mail címét"
 
@@ -13296,6 +13603,10 @@ msgstr "Rendelés részleteinek megtekintése"
 #~ msgid "View Organizer Homepage"
 #~ msgstr "Szervezői honlap megtekintése"
 
+#: src/components/routes/event/orders.tsx:118
+msgid "View registrations and resend tickets."
+msgstr ""
+
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:57
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:69
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:106
@@ -13306,7 +13617,7 @@ msgstr "Jegy megtekintése"
 #~ msgid "View, edit, and export your registered attendees."
 #~ msgstr "Regisztrált résztvevők megtekintése, szerkesztése és exportálása."
 
-#: src/components/routes/event/orders.tsx:111
+#: src/components/routes/event/orders.tsx:118
 msgid "View, refund and resend tickets."
 msgstr ""
 
@@ -13334,11 +13645,12 @@ msgstr "Láthatóság"
 msgid "Visible to check-in staff only. Helps identify this list during check-in."
 msgstr "Csak a bejelentkezési személyzet látja. Segít azonosítani ezt a listát bejelentkezéskor."
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:46
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:55
 msgid "visual"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:324
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:350
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:93
 msgid "Visual"
 msgstr ""
 
@@ -13357,7 +13669,7 @@ msgstr "Várakozik"
 msgid "Waiting for payment"
 msgstr "Fizetésre vár"
 
-#: src/components/layouts/Event/index.tsx:121
+#: src/components/layouts/Event/index.tsx:123
 #: src/components/routes/event/Settings/index.tsx:76
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:51
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:49
@@ -13521,7 +13833,7 @@ msgstr "A Webhook nem küld értesítéseket."
 msgid "Webhook will send notifications"
 msgstr "A Webhook értesítéseket küld."
 
-#: src/components/layouts/Event/index.tsx:126
+#: src/components/layouts/Event/index.tsx:128
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
 #: src/components/routes/organizer/Settings/index.tsx:86
@@ -13540,7 +13852,7 @@ msgstr "Weboldal"
 msgid "Website content — {0}"
 msgstr ""
 
-#: src/components/routes/event/EventDashboard/index.tsx:233
+#: src/components/routes/event/EventDashboard/index.tsx:231
 msgid "Week"
 msgstr "Hét"
 
@@ -13589,7 +13901,7 @@ msgstr "Üdv a {0} oldalon, itt található az összes eseménye."
 msgid "What are Tiered Products?"
 msgstr "Mik azok a többszintű termékek?"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:247
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:273
 msgid "What does it open?"
 msgstr ""
 
@@ -13761,7 +14073,7 @@ msgstr ""
 msgid "Where we are going."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:242
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:249
 msgid "Where will this QR code be displayed?"
 msgstr ""
 
@@ -13789,7 +14101,7 @@ msgstr "Ki szervezi ezt az eseményt?"
 msgid "Who should be asked this question?"
 msgstr "Kinek kell feltenni ezt a kérdést?"
 
-#: src/components/layouts/Event/index.tsx:125
+#: src/components/layouts/Event/index.tsx:127
 msgid "Widget Embed"
 msgstr "Widget beágyazása"
 
@@ -13801,11 +14113,11 @@ msgstr "Widget előnézet"
 msgid "Widget Settings"
 msgstr "Widget beállítások"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:405
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:431
 msgid "With a direct link, visitors leave immediately: your Meta pixel cannot record them. Choose the link page to build retargeting audiences."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:275
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:301
 msgid "Without an event, the button opens your organizer page."
 msgstr ""
 
@@ -14156,7 +14468,7 @@ msgstr ""
 msgid "Your event, from idea to stage."
 msgstr ""
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:135
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:142
 msgid "Your events"
 msgstr ""
 
@@ -14205,16 +14517,16 @@ msgstr "A rendelésed törlésre került."
 msgid "Your order is awaiting payment"
 msgstr "A rendelése fizetésre vár"
 
-#: src/components/routes/event/orders.tsx:77
+#: src/components/routes/event/orders.tsx:78
 msgid "Your orders have been exported successfully."
 msgstr "Megrendelései sikeresen exportálva."
 
 #: src/components/common/OrdersTable/index.tsx:474
-#: src/components/routes/event/orders.tsx:182
+#: src/components/routes/event/orders.tsx:192
 msgid "Your orders will appear here once they start rolling in."
 msgstr "Megrendelései itt fognak megjelenni, amint beérkeznek."
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:101
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:108
 msgid "Your organization"
 msgstr ""
 
@@ -14222,7 +14534,7 @@ msgstr ""
 msgid "Your organizer address"
 msgstr "Szervezői címe"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:351
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:377
 msgid "Your own design (JPG, PNG or WebP, up to 8 MB). Leave an empty area where the QR code goes."
 msgstr ""
 
@@ -14267,7 +14579,7 @@ msgstr "Visszatérítése feldolgozás alatt áll."
 msgid "Your registration"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:250
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:276
 msgid "Your social networks and a ticket button, on a page where your pixel can measure visits."
 msgstr ""
 

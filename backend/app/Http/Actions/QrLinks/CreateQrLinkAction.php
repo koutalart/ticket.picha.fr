@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Http\Actions\QrLinks;
 
 use HiEvents\DomainObjects\OrganizerDomainObject;
-use HiEvents\Exceptions\ResourceNotFoundException;
+use HiEvents\Exceptions\QrLinkReferenceException;
 use HiEvents\Exceptions\UniqueIdGenerationFailedException;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\Request\QrLink\UpsertQrLinkRequest;
@@ -33,8 +33,8 @@ class CreateQrLinkAction extends BaseAction
             $qrLink = $this->handler->handle(
                 QrLinkDTOFactory::fromRequest($request, $this->getAuthenticatedAccountId(), $organizerId)
             );
-        } catch (ResourceNotFoundException $exception) {
-            throw ValidationException::withMessages(['event_id' => $exception->getMessage()]);
+        } catch (QrLinkReferenceException $exception) {
+            throw ValidationException::withMessages([$exception->getField() => $exception->getMessage()]);
         }
 
         return $this->resourceResponse(

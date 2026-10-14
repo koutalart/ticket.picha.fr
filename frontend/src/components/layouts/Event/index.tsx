@@ -28,6 +28,7 @@ import {t} from "@lingui/macro";
 import {useGetEvent} from "../../../queries/useGetEvent";
 import {useGetEventSettings} from "../../../queries/useGetEventSettings";
 import {useGetEventStats} from "../../../queries/useGetEventStats";
+import {isFreeEvent} from "../../../utilites/eventPricing.ts";
 import {NavItem} from "../AppLayout/types.ts";
 import {ManageShell} from "../ManageShell";
 import {NavLink, Navigate, useLocation, useParams} from "react-router";
@@ -57,6 +58,7 @@ const EventLayout = () => {
     const {data: event, isFetched: isEventFetched} = useGetEvent(eventId);
     const {data: eventSettings, isFetched: isEventSettingsFetched} = useGetEventSettings(eventId);
     const {data: eventStats} = useGetEventStats(eventId);
+    const ordersLabel = isFreeEvent(event) ? t({message: 'Registrations', context: 'orders page title'}) : t`Orders`;
     const {data: me, isSuccess: isMeSuccess} = useGetMe();
     const isAdmin = useIsCurrentUserAdmin();
 
@@ -101,7 +103,7 @@ const EventLayout = () => {
         {link: 'questions', label: t`Registration Questions`, icon: IconUserQuestion},
 
         {label: t({message: 'Sales', context: 'event menu'})},
-        {link: 'orders', label: t`Orders`, icon: IconReceipt, badge: eventStats?.total_orders || undefined},
+        {link: 'orders', label: ordersLabel, icon: IconReceipt, badge: eventStats?.total_orders || undefined},
         {link: 'promo-codes', label: t({message: 'Promo codes', context: 'event menu'}), icon: IconDiscount2},
         {
             link: 'box-office',
@@ -128,12 +130,12 @@ const EventLayout = () => {
 
     const mobileTabs: NavItem[] = isLive || !showGettingStarted() ? [
         {link: 'dashboard', label: t`Dashboard`, icon: IconLayoutDashboard},
-        {link: 'orders', label: t`Orders`, icon: IconReceipt},
+        {link: 'orders', label: ordersLabel, icon: IconReceipt},
         {link: 'box-office', label: t`Box Office`, icon: IconCashRegister},
     ] : [
         {link: 'getting-started', label: t`Getting Started`, icon: IconHome},
         {link: 'products', label: t({message: 'Tickets', context: 'event menu'}), icon: IconTicket},
-        {link: 'orders', label: t`Orders`, icon: IconReceipt},
+        {link: 'orders', label: ordersLabel, icon: IconReceipt},
     ];
 
     const handleStatusToggle = () => {
