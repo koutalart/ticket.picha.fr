@@ -69,13 +69,17 @@ msgid "{0} <0>checked out</0> successfully"
 msgstr "{0} <0>uscita registrata</0> con successo"
 
 #: src/components/routes/event/Webhooks/index.tsx:24
-#: src/components/routes/organizer/Webhooks/index.tsx:25
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:24
 msgid "{0} Active Webhooks"
 msgstr "{0} Webhook Attivi"
 
 #: src/components/routes/kiosk/Orders/index.tsx:88
 msgid "{0} already entered at {1}"
 msgstr "{0} è già entrato alle {1}"
+
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:106
+msgid "{0} attendees"
+msgstr "{0} partecipanti"
 
 #: src/components/routes/product-widget/SelectProducts/index.tsx:481
 msgid "{0} available"
@@ -305,9 +309,13 @@ msgid "0 minutes and 0 seconds"
 msgstr "0 minuti e 0 secondi"
 
 #: src/components/routes/event/Webhooks/index.tsx:23
-#: src/components/routes/organizer/Webhooks/index.tsx:24
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:23
 msgid "1 Active Webhook"
 msgstr "1 Webhook Attivo"
+
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:106
+msgid "1 attendee"
+msgstr "1 partecipante"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:881
 msgid "1 box office ticket is paused and hidden here."
@@ -831,7 +839,7 @@ msgstr "Aggiungi i pixel di tracciamento alle pagine pubbliche dei tuoi eventi e
 #: src/components/common/OrganizerWebhookTable/index.tsx:223
 #: src/components/common/WebhookTable/index.tsx:223
 #: src/components/routes/event/Webhooks/index.tsx:37
-#: src/components/routes/organizer/Webhooks/index.tsx:35
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:35
 msgid "Add Webhook"
 msgstr "Aggiungi Webhook"
 
@@ -859,7 +867,7 @@ msgstr "Informazioni Aggiuntive"
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:131
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
-#: src/components/routes/organizer/Settings/index.tsx:43
+#: src/components/routes/organizer/Settings/index.tsx:44
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
 msgstr "Indirizzo"
@@ -1253,7 +1261,7 @@ msgid "Archive"
 msgstr "Archivia"
 
 #: src/components/common/EventCard/index.tsx:146
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:71
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:77
 msgid "Archive event"
 msgstr "Archivia evento"
 
@@ -1277,7 +1285,8 @@ msgstr "Archivia questo organizzatore. Verranno archiviati anche tutti gli event
 
 #: src/components/common/EventCard/index.tsx:78
 #: src/components/common/EventsDashboardStatusButtons/index.tsx:32
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:24
+#: src/components/routes/organizer/Events/index.tsx:45
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:26
 msgid "Archived"
 msgstr "Archiviati"
 
@@ -1291,7 +1300,7 @@ msgid "Are you sure you want to activate this attendee?"
 msgstr "Sei sicuro di voler attivare questo partecipante?"
 
 #: src/components/common/EventCard/index.tsx:58
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:50
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:56
 msgid "Are you sure you want to archive this event?"
 msgstr "Sei sicuro di voler archiviare questo evento?"
 
@@ -1355,11 +1364,11 @@ msgstr "Sei sicuro di voler rendere questo evento una bozza? Questo renderà l'e
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "Sei sicuro di voler rendere questo evento pubblico? Questo renderà l'evento visibile al pubblico"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:107
+#: src/components/common/OrganizerPageActions/index.tsx:31
 msgid "Are you sure you want to make this organizer draft? This will make the organizer page invisible to the public"
 msgstr "Sei sicuro di voler rendere questo organizzatore una bozza? La pagina dell'organizzatore sarà invisibile al pubblico."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:108
+#: src/components/common/OrganizerPageActions/index.tsx:32
 msgid "Are you sure you want to make this organizer public? This will make the organizer page visible to the public"
 msgstr "Sei sicuro di voler rendere pubblico questo organizzatore? La pagina dell'organizzatore sarà visibile al pubblico."
 
@@ -1392,7 +1401,7 @@ msgid "Are you sure you want to restore this event?"
 msgstr "Sei sicuro di voler ripristinare questo evento?"
 
 #: src/components/common/EventCard/index.tsx:59
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:51
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:57
 msgid "Are you sure you want to restore this event? It will be restored as a draft event."
 msgstr "Sei sicuro di voler ripristinare questo evento? Verrà ripristinato come bozza."
 
@@ -1776,7 +1785,7 @@ msgid "Background image"
 msgstr ""
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:229
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:261
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:268
 msgid "Background Type"
 msgstr "Tipo di Sfondo"
 
@@ -1788,7 +1797,7 @@ msgstr "Badge + ingresso"
 msgid "Badge printing…"
 msgstr "Stampa del badge…"
 
-#: src/components/routes/organizer/Settings/index.tsx:31
+#: src/components/routes/organizer/Settings/index.tsx:32
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
 msgstr "Informazioni di base"
@@ -2346,7 +2355,7 @@ msgid "Chinese (Traditional)"
 msgstr "Cinese (Tradizionale)"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:219
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:251
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:258
 msgid "Choose a color for your background"
 msgstr "Scegli un colore per lo sfondo"
 
@@ -2427,7 +2436,7 @@ msgstr ""
 msgid "Classic"
 msgstr "Classico"
 
-#: src/components/common/SearchBar/index.tsx:75
+#: src/components/common/SearchBar/index.tsx:77
 msgid "Clear Search Text"
 msgstr "Cancella Testo di Ricerca"
 
@@ -2475,6 +2484,10 @@ msgstr "Chiudi menu"
 msgid "Close modal"
 msgstr "Chiudi la finestra"
 
+#: src/components/routes/organizer/Events/index.tsx:60
+msgid "Close search"
+msgstr "Chiudi la ricerca"
+
 #: src/components/layouts/AppLayout/Sidebar/index.tsx:98
 msgid "Close sidebar"
 msgstr "Chiudi barra laterale"
@@ -2508,7 +2521,7 @@ msgstr "Il codice deve essere compreso tra 3 e 50 caratteri"
 msgid "Code must be no more than 20 characters"
 msgstr "Il codice non deve superare i 20 caratteri"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:142
+#: src/components/layouts/OrganizerLayout/index.tsx:78
 msgid "Collaborate with your team to create amazing events together."
 msgstr "Collabora con il tuo team per creare eventi straordinari insieme."
 
@@ -2538,7 +2551,7 @@ msgid "Collected"
 msgstr ""
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:256
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:452
 msgid "Color"
 msgstr "Colore"
@@ -2607,7 +2620,7 @@ msgstr "Completa Pagamento"
 msgid "Complete Stripe Setup"
 msgstr "Completa Configurazione Stripe"
 
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:113
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:125
 msgid "Complete the details before publishing your event."
 msgstr ""
 
@@ -2775,7 +2788,7 @@ msgstr "Conferma Password"
 msgid "Confirm your email to access all features."
 msgstr "Conferma la tua email per accedere a tutte le funzionalità."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:230
+#: src/components/common/OrganizerPageActions/index.tsx:92
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "Email di conferma inviata! Controlla la tua casella di posta."
 
@@ -2813,8 +2826,8 @@ msgstr "Documentazione di Connessione"
 #~ msgid "Connect payment processing"
 #~ msgstr "Connetti elaborazione pagamenti"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:155
-#: src/components/layouts/OrganizerLayout/index.tsx:163
+#: src/components/layouts/OrganizerLayout/index.tsx:91
+#: src/components/layouts/OrganizerLayout/index.tsx:99
 #: src/components/routes/event/GettingStarted/index.tsx:120
 msgid "Connect Stripe"
 msgstr "Connect Stripe"
@@ -2842,7 +2855,7 @@ msgstr ""
 msgid "Connect with Stripe"
 msgstr "Connetti con Stripe"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:156
+#: src/components/layouts/OrganizerLayout/index.tsx:92
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "Collega il tuo account Stripe per accettare pagamenti per biglietti e prodotti."
 
@@ -3109,7 +3122,7 @@ msgid "Cover"
 msgstr "Copertina"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:182
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:192
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:199
 msgid "Cover Image"
 msgstr "Immagine di Copertina"
 
@@ -3117,7 +3130,7 @@ msgstr "Immagine di Copertina"
 msgid "Cover image will be displayed at the top of your event page"
 msgstr "L'immagine di copertina sarà visualizzata in cima alla pagina dell'evento"
 
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:207
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:214
 msgid "Cover image will be displayed at the top of your organizer page"
 msgstr "L'immagine di copertina sarà visualizzata in cima alla pagina dell'organizzatore"
 
@@ -3236,8 +3249,8 @@ msgid "Create discounts, access codes for hidden tickets, and special offers."
 msgstr "Crea sconti, codici di accesso per biglietti nascosti e offerte speciali."
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:180
-#: src/components/routes/organizer/Events/index.tsx:61
+#: src/components/layouts/OrganizerLayout/index.tsx:116
+#: src/components/routes/organizer/Events/index.tsx:66
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:183
 msgid "Create Event"
 msgstr "Crea Evento"
@@ -3481,6 +3494,10 @@ msgstr "Clienti"
 msgid "Customize"
 msgstr ""
 
+#: src/components/layouts/OrganizerLayout/index.tsx:70
+msgid "Customize my page"
+msgstr "Personalizza la mia pagina"
+
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:56
 msgid "Customize the email and notification settings for this event"
 msgstr "Personalizza le impostazioni di email e notifiche per questo evento"
@@ -3502,8 +3519,8 @@ msgid "Customize the miscellaneous settings for this event"
 msgstr "Personalizza le impostazioni varie per questo evento"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:133
-msgid "Customize the page"
-msgstr ""
+#~ msgid "Customize the page"
+#~ msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:411
 #~ msgid "Customize the questions asked during checkout to gather important information from your attendees."
@@ -3530,7 +3547,7 @@ msgstr "Personalizza il tuo modello di email utilizzando i modelli Liquid"
 #~ msgid "Customize your event page to match your brand and style."
 #~ msgstr "Personalizza la pagina del tuo evento per adattarla al tuo brand e stile."
 
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:174
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:175
 msgid "Customize your organizer page appearance"
 msgstr "Personalizza l'aspetto della pagina del tuo organizzatore"
 
@@ -3563,7 +3580,7 @@ msgstr "Zona pericolosa"
 
 #: src/components/common/AttendeeTable/index.tsx:372
 #: src/components/common/DangerZone/index.tsx:30
-#: src/components/routes/organizer/Settings/index.tsx:85
+#: src/components/routes/organizer/Settings/index.tsx:92
 msgid "Danger Zone"
 msgstr "Zona pericolosa"
 
@@ -3965,7 +3982,7 @@ msgstr "Scaricamento Fattura in corso"
 #: src/components/common/EventCard/index.tsx:84
 #: src/components/routes/event/EventDashboard/index.tsx:130
 #: src/components/routes/event/GettingStarted/index.tsx:164
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:26
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:28
 msgid "Draft"
 msgstr "Bozza"
 
@@ -3998,7 +4015,7 @@ msgid ""
 "Due to the high risk of spam, you must connect a Stripe account before you can send messages to attendees.\n"
 "This is to ensure that all event organizers are verified and accountable."
 msgstr ""
-"A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.\n"
+"A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili.A causa dell'elevato rischio di spam, è necessario collegare un account Stripe prima di poter inviare messaggi ai partecipanti.\n"
 "Questo per garantire che tutti gli organizzatori dell'evento siano verificati e responsabili."
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:382
@@ -4006,7 +4023,7 @@ msgid "Duplicate"
 msgstr "Duplica"
 
 #: src/components/common/EventCard/index.tsx:141
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:69
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:75
 msgid "Duplicate event"
 msgstr "Duplica evento"
 
@@ -4307,8 +4324,8 @@ msgstr "Modifica email in attesa"
 msgid "Email confirmation resent"
 msgstr "Conferma email inviata nuovamente"
 
+#: src/components/common/OrganizerPageActions/index.tsx:48
 #: src/components/layouts/Event/index.tsx:77
-#: src/components/layouts/OrganizerLayout/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
 msgstr "Conferma email inviata nuovamente con successo"
@@ -4332,11 +4349,11 @@ msgid "Email Preview"
 msgstr "Anteprima Email"
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:336
-#: src/components/routes/organizer/Settings/index.tsx:67
+#: src/components/routes/organizer/Settings/index.tsx:68
 msgid "Email Templates"
 msgstr "Modelli Email"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:209
+#: src/components/common/OrganizerPageActions/index.tsx:82
 msgid "Email Verification Required"
 msgstr "Verifica email richiesta"
 
@@ -4440,7 +4457,8 @@ msgstr "Ora di fine (facoltativo)"
 #: src/components/common/EventsDashboardStatusButtons/index.tsx:26
 #: src/components/common/EventStatusBadge/index.tsx:14
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:119
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:25
+#: src/components/routes/organizer/Events/index.tsx:44
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:27
 msgid "Ended"
 msgstr "Terminato"
 
@@ -4681,7 +4699,7 @@ msgid "Event date display"
 msgstr "Visualizzazione della data dell'evento"
 
 #: src/components/routes/account/ManageAccount/sections/EventDefaultsSettings/index.tsx:5
-#: src/components/routes/organizer/Settings/index.tsx:37
+#: src/components/routes/organizer/Settings/index.tsx:38
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:73
 msgid "Event Defaults"
 msgstr "Impostazioni Predefinite Evento"
@@ -4803,7 +4821,7 @@ msgstr "Software per eventi per enti locali"
 #: src/components/common/StatusToggle/index.tsx:63
 #: src/components/layouts/Event/index.tsx:160
 #: src/components/routes/event/GettingStarted/index.tsx:149
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:59
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:65
 msgid "Event status update failed. Please try again later"
 msgstr "Aggiornamento stato evento fallito. Riprova più tardi"
 
@@ -4811,7 +4829,7 @@ msgstr "Aggiornamento stato evento fallito. Riprova più tardi"
 #: src/components/common/StatusToggle/index.tsx:55
 #: src/components/layouts/Event/index.tsx:156
 #: src/components/routes/event/GettingStarted/index.tsx:147
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:58
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:64
 msgid "Event status updated"
 msgstr "Stato evento aggiornato"
 
@@ -4861,13 +4879,13 @@ msgstr "Sede dell'Evento"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:75
+#: src/components/layouts/OrganizerLayout/index.tsx:56
 #: src/components/organizerTemplates/Poster/index.tsx:73
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:184
 #: src/components/routes/admin/Attribution/index.tsx:133
 #: src/components/routes/admin/Dashboard/index.tsx:403
 #: src/components/routes/admin/Events/index.tsx:77
-#: src/components/routes/organizer/Events/index.tsx:42
+#: src/components/routes/organizer/Events/index.tsx:52
 msgid "Events"
 msgstr "Eventi"
 
@@ -5879,13 +5897,13 @@ msgstr "Evidenziato"
 msgid "Highlighted products will have a different background color to make them stand out on the event page."
 msgstr "I prodotti evidenziati avranno un colore di sfondo diverso per farli risaltare nella pagina dell'evento."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:74
+#: src/components/layouts/OrganizerLayout/index.tsx:55
 #: src/components/organizerTemplates/Poster/index.tsx:72
 msgid "Home"
 msgstr ""
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:163
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:173
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:174
 msgid "Homepage Design"
 msgstr "Design Homepage"
 
@@ -5894,7 +5912,7 @@ msgstr "Design Homepage"
 #~ msgstr "Designer homepage"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:299
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:311
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:318
 msgid "Homepage Preview"
 msgstr "Anteprima Homepage"
 
@@ -6048,7 +6066,7 @@ msgid "Image URL"
 msgstr "URL Immagine"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:176
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:186
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:193
 msgid "Images"
 msgstr "Immagini"
 
@@ -6305,7 +6323,7 @@ msgstr "Invita qualcuno a vendere biglietti all’ingresso. Riceverà un’email
 msgid "Invite Team Member"
 msgstr "Invita membro del team"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:144
+#: src/components/layouts/OrganizerLayout/index.tsx:80
 msgid "Invite Team Members"
 msgstr "Invita membri del team"
 
@@ -6317,7 +6335,7 @@ msgstr "Invita un numero illimitato di membri del team con ruoli personalizzati"
 msgid "Invite User"
 msgstr "Invita Utente"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:141
+#: src/components/layouts/OrganizerLayout/index.tsx:77
 msgid "Invite Your Team"
 msgstr "Invita il tuo team"
 
@@ -6713,7 +6731,7 @@ msgid "Live"
 msgstr "Online"
 
 #: src/components/routes/event/EventDashboard/index.tsx:126
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:27
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:29
 msgctxt "ongoing event"
 msgid "Live"
 msgstr ""
@@ -6757,7 +6775,7 @@ msgid "Loading webhook logs..."
 msgstr "Caricamento dei log del webhook..."
 
 #: src/components/routes/event/Webhooks/index.tsx:21
-#: src/components/routes/organizer/Webhooks/index.tsx:22
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:21
 msgid "Loading Webhooks"
 msgstr "Caricamento Webhooks"
 
@@ -6795,7 +6813,7 @@ msgstr "Accesso in corso"
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:306
 #: src/components/routes/event/TicketDesigner/index.tsx:138
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:214
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:221
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:26
 msgid "Logo"
 msgstr "Logo"
@@ -6808,7 +6826,7 @@ msgstr "Logo e Copertina"
 msgid "Logo and cover image for your organizer"
 msgstr "Logo e immagine di copertina per il tuo organizzatore"
 
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:228
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:235
 msgid "Logo will be displayed in the header"
 msgstr "Il logo verrà visualizzato nell'intestazione"
 
@@ -6863,7 +6881,7 @@ msgstr "Rendi obbligatoria questa domanda"
 #: src/components/common/OrganizerWebhookTable/index.tsx:96
 #: src/components/common/PromoCodeTable/index.tsx:167
 #: src/components/routes/event/EventDashboard/index.tsx:167
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:102
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:114
 msgid "Manage"
 msgstr "Gestisci"
 
@@ -6873,7 +6891,7 @@ msgid "Manage attendee"
 msgstr "Gestisci partecipante"
 
 #: src/components/common/EventCard/index.tsx:136
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:68
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:74
 msgid "Manage event"
 msgstr "Gestisci evento"
 
@@ -7058,7 +7076,7 @@ msgstr "Livello di messaggistica"
 msgid "Messaging tier updated successfully"
 msgstr "Livello di messaggistica aggiornato con successo"
 
-#: src/components/routes/organizer/Settings/index.tsx:79
+#: src/components/routes/organizer/Settings/index.tsx:80
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:89
 msgid "Meta Conversions API"
 msgstr ""
@@ -7137,7 +7155,7 @@ msgstr ""
 #: src/components/common/QuestionsTable/index.tsx:136
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:128
 #: src/components/routes/event/OrdersPage/OrderList.tsx:97
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:105
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:117
 msgid "More actions"
 msgstr ""
 
@@ -7236,6 +7254,10 @@ msgstr ""
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:156
 msgid "My image"
 msgstr ""
+
+#: src/components/layouts/OrganizerLayout/index.tsx:69
+msgid "My organizer page"
+msgstr "La mia pagina organizzatore"
 
 #: src/components/common/GlobalMenu/index.tsx:40
 msgid "My Profile"
@@ -7377,7 +7399,7 @@ msgid "No accounts found"
 msgstr "Nessun account trovato"
 
 #: src/components/routes/event/Webhooks/index.tsx:22
-#: src/components/routes/organizer/Webhooks/index.tsx:23
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:22
 msgid "No Active Webhooks"
 msgstr "Nessun Webhook Attivo"
 
@@ -7493,6 +7515,7 @@ msgstr "Nessun evento terminato da mostrare."
 msgid "No event assigned"
 msgstr "Nessun evento assegnato"
 
+#: src/components/routes/organizer/Events/index.tsx:96
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:178
 msgid "No event matches your search."
 msgstr ""
@@ -7958,7 +7981,7 @@ msgstr "Impostazioni Pagamenti Offline"
 #: src/components/common/EventCard/index.tsx:89
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:123
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:127
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:28
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:30
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:32
 msgid "On Sale"
 msgstr "In Vendita"
@@ -8042,7 +8065,7 @@ msgstr "In Corso"
 #: src/components/routes/event/OrdersPage/OrderList.tsx:174
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:248
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:45
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:47
 #: src/components/routes/product-widget/Payment/index.tsx:136
 msgid "Online"
 msgstr "Online"
@@ -8523,14 +8546,14 @@ msgid "Organizer Not Found"
 msgstr "Organizzatore non trovato"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:126
-msgid "Organizer page"
-msgstr ""
+#~ msgid "Organizer page"
+#~ msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:61
 msgid "Organizer restored successfully"
 msgstr "Organizzatore ripristinato con successo"
 
-#: src/components/routes/organizer/Settings/index.tsx:138
+#: src/components/routes/organizer/Settings/index.tsx:153
 msgid "Organizer Settings"
 msgstr "Impostazioni organizzatore"
 
@@ -8538,13 +8561,13 @@ msgstr "Impostazioni organizzatore"
 #~ msgid "Organizer statistics are not available for the selected currency or an error occurred."
 #~ msgstr "Le statistiche dell'organizzatore non sono disponibili per la valuta selezionata o si è verificato un errore."
 
+#: src/components/common/OrganizerPageActions/index.tsx:40
 #: src/components/common/StatusToggle/index.tsx:64
-#: src/components/layouts/OrganizerLayout/index.tsx:119
 msgid "Organizer status update failed. Please try again later"
 msgstr "Aggiornamento dello stato dell'organizzatore non riuscito. Riprova più tardi"
 
+#: src/components/common/OrganizerPageActions/index.tsx:39
 #: src/components/common/StatusToggle/index.tsx:56
-#: src/components/layouts/OrganizerLayout/index.tsx:116
 msgid "Organizer status updated"
 msgstr "Stato dell'organizzatore aggiornato"
 
@@ -8646,7 +8669,7 @@ msgstr "Pagina non più disponibile"
 msgid "Page not found"
 msgstr "Pagina non trovata"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:129
+#: src/components/common/OrganizerPageActions/index.tsx:65
 msgid "Page online"
 msgstr ""
 
@@ -9059,7 +9082,7 @@ msgstr "Commissione piattaforma di {0} detratta dal tuo pagamento"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:248
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
-#: src/components/routes/organizer/Settings/index.tsx:95
+#: src/components/routes/organizer/Settings/index.tsx:102
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:42
 msgid "Platform Fees"
 msgstr "Commissioni piattaforma"
@@ -9628,7 +9651,7 @@ msgid ""
 "Provide additional context or instructions for this question. Use this field to add terms\n"
 "and conditions, guidelines, or any important information that attendees need to know before answering."
 msgstr ""
-"Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere termini\n"
+"Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere terminie condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere.Fornisci ulteriori informazioni o istruzioni per questa domanda. Utilizza questo campo per aggiungere termini\n"
 "e condizioni, linee guida o qualsiasi altra informazione importante che i partecipanti debbano conoscere prima di rispondere."
 
 #: src/components/routes/event/GettingStarted/index.tsx:211
@@ -9648,7 +9671,7 @@ msgstr "Pubblica"
 msgid "Publish the event"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:129
+#: src/components/common/OrganizerPageActions/index.tsx:65
 msgid "Publish the page"
 msgstr ""
 
@@ -9710,7 +9733,7 @@ msgstr ""
 msgid "QR code updated"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:82
+#: src/components/layouts/OrganizerLayout/index.tsx:63
 #: src/components/routes/organizer/QrCodes/index.tsx:176
 #: src/components/routes/organizer/QrCodes/index.tsx:264
 msgid "QR codes"
@@ -10153,7 +10176,7 @@ msgid "Report not found"
 msgstr "Report non trovato"
 
 #: src/components/layouts/Event/index.tsx:94
-#: src/components/layouts/OrganizerLayout/index.tsx:78
+#: src/components/layouts/OrganizerLayout/index.tsx:59
 #: src/components/routes/event/Reports/index.tsx:58
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -10194,7 +10217,7 @@ msgstr "Reinvia codice"
 msgid "Resend Confirmation"
 msgstr "Reinvia conferma"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:226
+#: src/components/common/OrganizerPageActions/index.tsx:89
 msgid "Resend Confirmation Email"
 msgstr "Invia nuovamente l'email di conferma"
 
@@ -10275,7 +10298,7 @@ msgid "Restore"
 msgstr "Ripristina"
 
 #: src/components/common/EventCard/index.tsx:146
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:71
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:77
 msgid "Restore event"
 msgstr "Ripristina evento"
 
@@ -10297,7 +10320,7 @@ msgstr "Ripristina questo evento per renderlo nuovamente visibile."
 msgid "Restore this organizer and make it active again."
 msgstr "Ripristina questo organizzatore e rendilo nuovamente attivo."
 
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:102
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:114
 msgid "Resume"
 msgstr ""
 
@@ -10523,7 +10546,7 @@ msgstr ""
 #: src/components/modals/ManageOrderModal/index.tsx:175
 #: src/components/routes/admin/Configurations/index.tsx:268
 #: src/components/routes/event/HomepageDesigner/index.tsx:293
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:305
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:312
 msgid "Save Changes"
 msgstr "Salva Modifiche"
 
@@ -10639,6 +10662,7 @@ msgstr ""
 msgid "Search affiliates..."
 msgstr "Cerca affiliati..."
 
+#: src/components/routes/organizer/Events/index.tsx:60
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:97
 msgid "Search an event…"
 msgstr ""
@@ -10652,7 +10676,7 @@ msgstr "Cerca per nome account o e-mail..."
 #~ msgstr "Cerca per nome partecipante, email o numero ordine..."
 
 #: src/components/routes/events/Dashboard/index.tsx:149
-#: src/components/routes/organizer/Events/index.tsx:46
+#: src/components/routes/organizer/Events/index.tsx:75
 msgid "Search by event name..."
 msgstr "Cerca per nome evento..."
 
@@ -10716,7 +10740,7 @@ msgstr "Cerca ordini"
 #~ msgid "Search products"
 #~ msgstr "Cerca prodotti"
 
-#: src/components/common/SearchBar/index.tsx:36
+#: src/components/common/SearchBar/index.tsx:38
 msgid "Search..."
 msgstr "Cerca..."
 
@@ -11017,6 +11041,10 @@ msgstr ""
 msgid "Send your first message"
 msgstr "Invia il tuo primo messaggio"
 
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:31
+msgid "Send your orders and attendees automatically to another tool (CRM, spreadsheet, automation)."
+msgstr "Invia automaticamente ordini e partecipanti a un altro strumento (CRM, foglio di calcolo, automazione)."
+
 #: src/components/routes/auth/ForgotPassword/index.tsx:70
 msgid "Sending..."
 msgstr "Invio in corso..."
@@ -11046,7 +11074,7 @@ msgstr "Inviato ai clienti quando effettuano un ordine"
 msgid "Sent to each attendee with their ticket details"
 msgstr "Inviato a ogni partecipante con i dettagli del biglietto"
 
-#: src/components/routes/organizer/Settings/index.tsx:61
+#: src/components/routes/organizer/Settings/index.tsx:62
 msgid "SEO"
 msgstr "SEO"
 
@@ -11147,7 +11175,7 @@ msgstr "Impostazione aggiornata"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
 #: src/components/layouts/Kiosk/index.tsx:65
-#: src/components/layouts/OrganizerLayout/index.tsx:135
+#: src/components/layouts/OrganizerLayout/index.tsx:71
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/event/Settings/index.tsx:95
 #: src/components/routes/kiosk/Settings/index.tsx:59
@@ -11171,6 +11199,11 @@ msgstr ""
 #: src/components/common/QuestionsTable/index.tsx:70
 msgid "Several choices"
 msgstr ""
+
+#: src/components/common/OrganizerPageActions/index.tsx:68
+msgctxt "organizer page"
+msgid "Share"
+msgstr "Condividi"
 
 #: src/components/common/ShareIcon/index.tsx:30
 #: src/components/layouts/EventHomepage/index.tsx:318
@@ -11200,7 +11233,7 @@ msgstr "Condividi link affiliato"
 msgid "Share Event"
 msgstr "Condividi Evento"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:200
+#: src/components/common/OrganizerPageActions/index.tsx:76
 msgid "Share Organizer Page"
 msgstr "Condividi pagina dell'organizzatore"
 
@@ -11209,8 +11242,8 @@ msgid "Share the event"
 msgstr ""
 
 #: src/components/layouts/OrganizerLayout/index.tsx:127
-msgid "Share the page"
-msgstr ""
+#~ msgid "Share the page"
+#~ msgstr ""
 
 #: src/components/routes/event/CapacityAssignments/index.tsx:34
 msgid "Shared Capacity Management"
@@ -11346,7 +11379,7 @@ msgstr "Smith"
 msgid "Snapchat"
 msgstr "Snapchat"
 
-#: src/components/routes/organizer/Settings/index.tsx:55
+#: src/components/routes/organizer/Settings/index.tsx:56
 msgid "Social Links"
 msgstr "Link social"
 
@@ -11442,8 +11475,8 @@ msgstr "Qualcosa è andato storto."
 msgid "Something went wrong. Please try again later."
 msgstr "Qualcosa è andato storto. Riprova più tardi."
 
+#: src/components/common/OrganizerPageActions/index.tsx:51
 #: src/components/layouts/Event/index.tsx:81
-#: src/components/layouts/OrganizerLayout/index.tsx:94
 #: src/components/routes/auth/Login/index.tsx:72
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:42
 #: src/components/routes/my-tickets/index.tsx:145
@@ -11763,7 +11796,7 @@ msgid "Successfully Updated Event Defaults"
 msgstr "Impostazioni predefinite dell'evento aggiornate correttamente"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:104
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:95
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:96
 msgid "Successfully Updated Homepage Design"
 msgstr "Design Homepage Aggiornato con Successo"
 
@@ -12283,7 +12316,7 @@ msgid "The Zebra printer did not respond."
 msgstr "La stampante Zebra non ha risposto."
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:207
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:238
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:245
 msgid "Theme & Colors"
 msgstr "Tema e colori"
 
@@ -12930,7 +12963,7 @@ msgstr "Traccia la crescita e le prestazioni dell'account per fonte di attribuzi
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "Tieni traccia delle vendite, dei ricavi e delle presenze con report dettagliati"
 
-#: src/components/routes/organizer/Settings/index.tsx:73
+#: src/components/routes/organizer/Settings/index.tsx:74
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
 msgid "Tracking & Analytics"
 msgstr "Monitoraggio & Analytics"
@@ -13004,7 +13037,7 @@ msgid "Type of ticket"
 msgstr "Tipo di biglietto"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:248
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:280
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:287
 msgid "Typography"
 msgstr "Tipografia"
 
@@ -13178,6 +13211,7 @@ msgstr "Non attendibile"
 #: src/components/common/EventsDashboardStatusButtons/index.tsx:20
 #: src/components/common/EventStatusBadge/index.tsx:16
 #: src/components/layouts/OrganizerHomepage/index.tsx:284
+#: src/components/routes/organizer/Events/index.tsx:43
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:68
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:33
 msgid "Upcoming"
@@ -13291,7 +13325,7 @@ msgid "Use <0>Liquid templating</0> to personalize your emails"
 msgstr "Usa <0>i template Liquid</0> per personalizzare le tue email"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:225
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:257
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:264
 msgid "Use a blurred version of the cover image as the background"
 msgstr "Usa una versione sfocata dell'immagine di copertina come sfondo"
 
@@ -13305,7 +13339,7 @@ msgid "Use cases"
 msgstr "Casi d'uso"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:223
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:255
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:262
 msgid "Use cover image"
 msgstr "Usa immagine di copertina"
 
@@ -13546,7 +13580,7 @@ msgid "View Event"
 msgstr "Visualizza evento"
 
 #: src/components/common/EventCard/index.tsx:131
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:67
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:73
 msgid "View event page"
 msgstr "Visualizza pagina evento"
 
@@ -13738,11 +13772,11 @@ msgid "We recommend a square logo with minimum dimensions of 200x200px"
 msgstr "Consigliamo un logo quadrato con dimensioni minime di 200x200px"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:184
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:194
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:201
 msgid "We recommend dimensions of 1950px by 650px, a ratio of 3:1, and a maximum file size of 5MB"
 msgstr "Consigliamo dimensioni di 2160px per 1080px e una dimensione massima del file di 5MB"
 
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:215
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:222
 msgid "We recommend dimensions of 400px by 400px, and a maximum file size of 5MB"
 msgstr "Si consigliano dimensioni di 400px per 400px e una dimensione massima del file di 5MB"
 
@@ -13827,10 +13861,10 @@ msgid "Webhook will send notifications"
 msgstr "Il webhook invierà notifiche"
 
 #: src/components/layouts/Event/index.tsx:128
-#: src/components/layouts/OrganizerLayout/index.tsx:134
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
-#: src/components/routes/organizer/Webhooks/index.tsx:30
+#: src/components/routes/organizer/Settings/index.tsx:86
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -14312,7 +14346,7 @@ msgstr "Devi creare un biglietto prima di poter aggiungere manualmente un partec
 msgid "You must have at least one price tier"
 msgstr "Devi avere almeno un livello di prezzo"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:215
+#: src/components/common/OrganizerPageActions/index.tsx:85
 msgid "You must verify your email address before you can update the organizer status."
 msgstr "Devi verificare il tuo indirizzo email prima di poter aggiornare lo stato dell'organizzatore."
 
