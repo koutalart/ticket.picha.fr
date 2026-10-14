@@ -1,7 +1,9 @@
 import {PageTitle} from "../../../common/PageTitle";
 import {t} from "@lingui/macro";
 import {PageBody} from "../../../common/PageBody";
-import {IconChartBar, IconChevronRight, IconReportMoney} from "@tabler/icons-react";
+import {IconChartBar, IconChevronRight, IconReportMoney, IconTicket} from "@tabler/icons-react";
+import {useGetEvent} from "../../../../queries/useGetEvent.ts";
+import {isFreeEvent} from "../../../../utilites/eventPricing.ts";
 import classes from './Reports.module.scss';
 import {Card} from "../../../common/Card";
 import {Avatar, UnstyledButton} from "@mantine/core";
@@ -10,8 +12,23 @@ import {ReportTypes} from "../../../../types.ts";
 
 const Reports = () => {
     const {eventId} = useParams();
+    const {data: event} = useGetEvent(eventId);
+    const isFree = isFreeEvent(event);
 
-    const reports = [
+    const reports = isFree ? [
+        {
+            id: ReportTypes.ProductSales,
+            title: t`Registrations per ticket`,
+            description: t`Number of registrations for each ticket type`,
+            icon: <Avatar size={40} color={'#831781'}><IconTicket/></Avatar>
+        },
+        {
+            id: ReportTypes.DailySales,
+            title: t`Daily registrations`,
+            description: t`Registrations day by day`,
+            icon: <Avatar size={40} color={'#00a3e0'}><IconChartBar/></Avatar>
+        },
+    ] : [
         {
             id: ReportTypes.ProductSales,
             title: t`Product Sales`,
@@ -35,7 +52,9 @@ const Reports = () => {
     return (
         <PageBody>
             <PageTitle
-                subheading={t`Download sales, attendee, and financial reports for all completed orders.`}>
+                subheading={isFree
+                    ? t`Download registration and attendee reports.`
+                    : t`Download sales, attendee, and financial reports for all completed orders.`}>
                 {t`Reports`}
             </PageTitle>
 
