@@ -4,6 +4,7 @@ import {
     GenericDataResponse,
     IdParam,
     MetaConversionsApiTestResult,
+    QrCampaign,
     QrLink,
     QrLinkDesign,
     QrLinkDestinationType,
@@ -18,6 +19,7 @@ export interface QrLinkRequest {
     destination_type: QrLinkDestinationType;
     destination_url?: string | null;
     event_id?: IdParam | null;
+    qr_campaign_id?: IdParam | null;
     title?: string | null;
     description?: string | null;
     social_links?: QrLinkSocialLink[];
@@ -50,7 +52,22 @@ export const qrLinkClient = {
         );
         return response.data;
     },
-    poster: async (organizerId: IdParam, qrLinkId: IdParam) => {
+    campaigns: async (organizerId: IdParam) => {
+        const response = await api.get<GenericDataResponse<QrCampaign[]>>(`organizers/${organizerId}/qr-campaigns`);
+        return response.data;
+    },
+    createCampaign: async (organizerId: IdParam, name: string) => {
+        const response = await api.post<GenericDataResponse<QrCampaign>>(`organizers/${organizerId}/qr-campaigns`, {name});
+        return response.data;
+    },
+    renameCampaign: async (organizerId: IdParam, campaignId: IdParam, name: string) => {
+        const response = await api.put<GenericDataResponse<QrCampaign>>(`organizers/${organizerId}/qr-campaigns/${campaignId}`, {name});
+        return response.data;
+    },
+    deleteCampaign: async (organizerId: IdParam, campaignId: IdParam) => {
+        await api.delete(`organizers/${organizerId}/qr-campaigns/${campaignId}`);
+    },
+        poster: async (organizerId: IdParam, qrLinkId: IdParam) => {
         const response = await api.get<Blob>(`organizers/${organizerId}/qr-links/${qrLinkId}/poster`, {responseType: 'blob'});
         return response.data;
     },

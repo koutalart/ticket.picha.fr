@@ -493,7 +493,7 @@ msgstr "Απαιτείται έγκυρος αριθμός τηλεφώνου"
 msgid "A welcome without queues"
 msgstr "Υποδοχή χωρίς ουρές"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:146
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:152
 msgid "A4 poster"
 msgstr ""
 
@@ -625,7 +625,7 @@ msgstr "Απαιτείται Ενέργεια: Χρειάζονται Στοιχ
 #: src/components/common/WaitlistTable/index.tsx:55
 #: src/components/common/WaitlistTable/index.tsx:210
 #: src/components/routes/admin/FailedJobs/index.tsx:167
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:74
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:108
 msgid "Actions"
 msgstr "Ενέργειες"
 
@@ -647,6 +647,7 @@ msgstr "Ημερομηνία ενεργοποίησης"
 #: src/components/modals/EditUserModal/index.tsx:110
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:105
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:116
+#: src/components/routes/organizer/QrCodes/index.tsx:283
 msgid "Active"
 msgstr "Ενεργό"
 
@@ -675,7 +676,7 @@ msgstr ""
 msgid "Add a figure"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:315
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:341
 msgid "Add a network"
 msgstr ""
 
@@ -963,6 +964,11 @@ msgctxt "events tab"
 msgid "All"
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/index.tsx:282
+msgctxt "qr status filter"
+msgid "All"
+msgstr ""
+
 #: src/components/routes/events/Dashboard/index.tsx:76
 msgid "All Archived Events"
 msgstr "Όλες οι Αρχειοθετημένες Εκδηλώσεις"
@@ -1007,6 +1013,12 @@ msgstr "Όλες οι εργασίες τέθηκαν σε ουρά για επ�
 #: src/components/common/PromoCodeTable/index.tsx:131
 msgid "All Products"
 msgstr "Όλα τα Προϊόντα"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:159
+#: src/components/routes/organizer/QrCodes/index.tsx:164
+#: src/components/routes/organizer/QrCodes/index.tsx:205
+msgid "All QR codes"
+msgstr ""
 
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:64
 msgid "All Statuses"
@@ -1157,7 +1169,7 @@ msgstr "Παρουσιάστηκε μη αναμενόμενο σφάλμα. Π�
 msgid "Annual Convention"
 msgstr "Ετήσιο Συνέδριο"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:253
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:279
 msgid "Another link"
 msgstr ""
 
@@ -1318,11 +1330,11 @@ msgstr "Είστε σίγουροι ότι θέλετε να κάνετε αυτ
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "Είστε σίγουροι ότι θέλετε να δημοσιεύσετε αυτή την εκδήλωση; Αυτό θα την κάνει ορατή στο κοινό"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:106
+#: src/components/layouts/OrganizerLayout/index.tsx:107
 msgid "Are you sure you want to make this organizer draft? This will make the organizer page invisible to the public"
 msgstr "Είστε σίγουροι ότι θέλετε να κάνετε αυτόν τον διοργανωτή πρόχειρο; Αυτό θα κάνει τη σελίδα του αόρατη στο κοινό"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:107
+#: src/components/layouts/OrganizerLayout/index.tsx:108
 msgid "Are you sure you want to make this organizer public? This will make the organizer page visible to the public"
 msgstr "Είστε σίγουροι ότι θέλετε να δημοσιεύσετε αυτόν τον διοργανωτή; Αυτό θα κάνει τη σελίδα του ορατή στο κοινό"
 
@@ -1725,7 +1737,7 @@ msgstr "Επιστροφή στα μηνύματα"
 msgid "Back to Reports"
 msgstr "Επιστροφή στις Αναφορές"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:427
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:453
 msgid "Background"
 msgstr ""
 
@@ -1734,7 +1746,7 @@ msgstr ""
 msgid "Background Color"
 msgstr "Χρώμα Φόντου"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:349
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:375
 msgid "Background image"
 msgstr ""
 
@@ -1940,8 +1952,36 @@ msgid "Camera Scanner"
 msgstr "Σαρωτής Κάμερας"
 
 #: src/components/routes/admin/Attribution/index.tsx:107
+#: src/components/routes/organizer/QrCodes/index.tsx:161
+#: src/components/routes/organizer/QrCodes/index.tsx:238
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:260
 msgid "Campaign"
 msgstr "Καμπάνια"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:245
+msgid "Campaign actions"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:28
+msgid "Campaign created"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:152
+msgid "Campaign deleted"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:44
+msgid "Campaign name"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:28
+msgid "Campaign renamed"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:201
+#: src/components/routes/organizer/QrCodes/index.tsx:209
+msgid "Campaigns"
+msgstr ""
 
 #: src/components/organizerTemplates/Poster/faq.ts:17
 msgid "Can I get a refund?"
@@ -1967,7 +2007,8 @@ msgstr "Μπορούμε να χρησιμοποιήσουμε την πλατφ
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:323
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:436
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:462
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:85
@@ -2302,7 +2343,7 @@ msgid "Choose an account"
 msgstr "Επιλέξτε λογαριασμό"
 
 #: src/components/routes/kiosk/SelectEvent/index.tsx:41
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:276
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:302
 msgid "Choose an event"
 msgstr "Επιλέξτε εκδήλωση"
 
@@ -2439,7 +2480,7 @@ msgstr "Ο κωδικός πρέπει να έχει μεταξύ 3 και 50 χ
 msgid "Code must be no more than 20 characters"
 msgstr "Ο κωδικός δεν μπορεί να υπερβαίνει τους 20 χαρακτήρες"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:141
+#: src/components/layouts/OrganizerLayout/index.tsx:142
 msgid "Collaborate with your team to create amazing events together."
 msgstr "Συνεργαστείτε με την ομάδα σας για να δημιουργήσετε εκπληκτικές εκδηλώσεις μαζί."
 
@@ -2466,7 +2507,7 @@ msgstr ""
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:426
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:452
 msgid "Color"
 msgstr "Χρώμα"
 
@@ -2702,7 +2743,7 @@ msgstr "Επιβεβαίωση Κωδικού"
 msgid "Confirm your email to access all features."
 msgstr "Επιβεβαιώστε το email σας για πρόσβαση σε όλες τις λειτουργίες."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:229
+#: src/components/layouts/OrganizerLayout/index.tsx:230
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "Στάλθηκε email επιβεβαίωσης! Παρακαλώ ελέγξτε τα εισερχόμενά σας."
 
@@ -2740,8 +2781,8 @@ msgstr "Τεκμηρίωση Σύνδεσης"
 #~ msgid "Connect payment processing"
 #~ msgstr "Σύνδεση επεξεργασίας πληρωμών"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:154
-#: src/components/layouts/OrganizerLayout/index.tsx:162
+#: src/components/layouts/OrganizerLayout/index.tsx:155
+#: src/components/layouts/OrganizerLayout/index.tsx:163
 #: src/components/routes/event/GettingStarted/index.tsx:120
 msgid "Connect Stripe"
 msgstr "Σύνδεση Stripe"
@@ -2769,7 +2810,7 @@ msgstr ""
 msgid "Connect with Stripe"
 msgstr "Σύνδεση με Stripe"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:155
+#: src/components/layouts/OrganizerLayout/index.tsx:156
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "Συνδέστε τον λογαριασμό Stripe για να δέχεστε πληρωμές για εισιτήρια και προϊόντα."
 
@@ -2923,6 +2964,7 @@ msgstr "Cookies"
 #: src/components/modals/CheckInListSuccessModal/index.tsx:42
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:75
 #: src/components/modals/ShareModal/index.tsx:255
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:118
 msgid "Copied"
 msgstr "Αντιγράφηκε"
 
@@ -2989,6 +3031,10 @@ msgstr "Αντιγραφή Συνδέσμου"
 msgid "Copy my details to:"
 msgstr "Αντιγραφή στοιχείων μου σε:"
 
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:118
+msgid "Copy the link"
+msgstr ""
+
 #: src/components/modals/ShareModal/index.tsx:264
 msgid "Copy this link to share it anywhere"
 msgstr "Αντιγράψτε αυτό τον σύνδεσμο για κοινοποίηση οπουδήποτε"
@@ -3044,6 +3090,7 @@ msgid "Cover image will be displayed at the top of your organizer page"
 msgstr "Η εικόνα εξωφύλλου θα εμφανίζεται στην κορυφή της σελίδας διοργανωτή"
 
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:146
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:48
 msgid "Create"
 msgstr "Δημιουργία"
 
@@ -3054,6 +3101,10 @@ msgstr "Δημιουργία {0}"
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:108
 msgid "Create {0} Template"
 msgstr "Δημιουργία Προτύπου {0}"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:221
+msgid "Create a campaign to group the QR codes of one operation."
+msgstr ""
 
 #: src/components/common/WidgetEditor/index.tsx:161
 msgid "Create a custom widget to sell tickets on your site."
@@ -3072,8 +3123,8 @@ msgid "Create a Promo Code"
 msgstr "Δημιουργία Κωδικού Προσφοράς"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:85
-msgid "Create a QR code for each medium (poster, flyer, screen...) and see how many people scan it, from which device, and how many tickets it sells. You can change where a QR code leads at any time without reprinting it."
-msgstr ""
+#~ msgid "Create a QR code for each medium (poster, flyer, screen...) and see how many people scan it, from which device, and how many tickets it sells. You can change where a QR code leads at any time without reprinting it."
+#~ msgstr ""
 
 #: src/components/modals/CreateCheckInListModal/index.tsx:64
 msgid "Create a Ticket"
@@ -3153,15 +3204,15 @@ msgid "Create discounts, access codes for hidden tickets, and special offers."
 msgstr "Δημιουργία εκπτώσεων, κωδικών πρόσβασης για κρυφά εισιτήρια και ειδικές προσφορές."
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:179
+#: src/components/layouts/OrganizerLayout/index.tsx:180
 #: src/components/routes/organizer/Events/index.tsx:61
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:183
 msgid "Create Event"
 msgstr "Δημιουργία Εκδήλωσης"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:109
-msgid "Create my first QR code"
-msgstr ""
+#~ msgid "Create my first QR code"
+#~ msgstr ""
 
 #: src/components/routes/events/Dashboard/index.tsx:171
 msgid "Create new"
@@ -3201,8 +3252,12 @@ msgstr "Δημιουργία Φόρου ή Τέλους"
 msgid "Create the event"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:437
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:463
 msgid "Create the QR code"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:329
+msgid "Create the QR codes of this campaign: poster, flyer, story..."
 msgstr ""
 
 #: src/components/modals/CreateProductModal/index.tsx:83
@@ -3413,7 +3468,7 @@ msgstr "Προσαρμογή διάταξης, χρωμάτων και επων�
 msgid "Customize the miscellaneous settings for this event"
 msgstr "Προσαρμογή διαφόρων ρυθμίσεων για αυτή την εκδήλωση"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:132
+#: src/components/layouts/OrganizerLayout/index.tsx:133
 msgid "Customize the page"
 msgstr ""
 
@@ -3576,7 +3631,7 @@ msgstr "Θα χρησιμοποιηθεί το προεπιλεγμένο πρό
 msgid "Default ticket language"
 msgstr "Προεπιλεγμένη γλώσσα εισιτηρίου"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:283
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:309
 msgid "Defaults to the event or organizer name"
 msgstr ""
 
@@ -3590,7 +3645,7 @@ msgstr "διαγραφή"
 #: src/components/common/QuestionsTable/index.tsx:153
 #: src/components/common/TaxAndFeeList/index.tsx:78
 #: src/components/routes/admin/FailedJobs/index.tsx:209
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:83
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:141
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -3641,7 +3696,15 @@ msgstr "Διαγραφή Διοργανωτή"
 msgid "Delete Template"
 msgstr "Διαγραφή Προτύπου"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:70
+#: src/components/routes/organizer/QrCodes/index.tsx:256
+msgid "Delete the campaign"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:148
+msgid "Delete the campaign \"{0}\"? Its QR codes are kept and keep working, they just move to \"No campaign\"."
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:139
 msgid "Delete this QR code? Printed copies will stop working and its statistics will be lost."
 msgstr ""
 
@@ -3705,7 +3768,7 @@ msgstr "Δεν λάβατε τον κωδικό;"
 msgid "Digital attendance sheet"
 msgstr "Ψηφιακό παρουσιολόγιο"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:56
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:47
 msgid "Direct link"
 msgstr ""
 
@@ -3829,6 +3892,10 @@ msgstr "Λήψη τιμολογίου"
 msgid "Download Invoice"
 msgstr "Λήψη Τιμολογίου"
 
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:129
+msgid "Download PNG (QR only)"
+msgstr ""
+
 #: src/components/modals/ShareModal/index.tsx:228
 msgid "Download QR Code"
 msgstr "Λήψη QR Code"
@@ -3841,7 +3908,7 @@ msgstr ""
 msgid "Download sales, attendee, and financial reports for all completed orders."
 msgstr "Λήψη αναφορών πωλήσεων, συμμετεχόντων και οικονομικών για όλες τις ολοκληρωμένες παραγγελίες."
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:77
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:133
 msgid "Download SVG (print)"
 msgstr ""
 
@@ -3849,13 +3916,13 @@ msgstr ""
 msgid "Download the press kit"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:326
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:352
 msgid "Download the QR code alone, or a ready-to-share visual with the QR code on it."
 msgstr ""
 
 #: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:111
-msgid "Download the visual"
-msgstr ""
+#~ msgid "Download the visual"
+#~ msgstr ""
 
 #: src/components/common/OrdersTable/index.tsx:99
 #: src/components/layouts/Checkout/index.tsx:87
@@ -3981,7 +4048,8 @@ msgstr "Πρώιμη αγορά"
 #: src/components/modals/ManageOrderModal/index.tsx:203
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:358
 #: src/components/routes/event/GettingStarted/index.tsx:76
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:76
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:64
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:113
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:236
 msgid "Edit"
 msgstr "Επεξεργασία"
@@ -4067,7 +4135,7 @@ msgstr "Επεξεργασία Κατηγορίας Προϊόντος"
 msgid "Edit Promo Code"
 msgstr "Επεξεργασία Κωδικού Προσφοράς"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:235
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:242
 msgid "Edit QR code"
 msgstr ""
 
@@ -4208,7 +4276,7 @@ msgid "Email confirmation resent"
 msgstr "Επαναποστολή επιβεβαίωσης email"
 
 #: src/components/layouts/Event/index.tsx:77
-#: src/components/layouts/OrganizerLayout/index.tsx:89
+#: src/components/layouts/OrganizerLayout/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
 msgstr "Η επιβεβαίωση email εστάλη ξανά επιτυχώς"
@@ -4236,7 +4304,7 @@ msgstr "Προεπισκόπηση Email"
 msgid "Email Templates"
 msgstr "Πρότυπα Email"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:208
+#: src/components/layouts/OrganizerLayout/index.tsx:209
 msgid "Email Verification Required"
 msgstr "Απαιτείται Επαλήθευση Email"
 
@@ -4524,7 +4592,7 @@ msgstr "EUR"
 #: src/components/routes/event/EventDashboard/index.tsx:233
 #: src/components/routes/events/Dashboard/index.tsx:183
 #: src/components/routes/kiosk/Settings/index.tsx:218
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:274
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:300
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:19
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:41
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:43
@@ -4658,8 +4726,8 @@ msgctxt "event menu"
 msgid "Event page"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:55
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:251
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:277
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:46
 msgid "Event page"
 msgstr ""
 
@@ -4750,7 +4818,7 @@ msgstr "Χώρος Εκδήλωσης"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:74
+#: src/components/layouts/OrganizerLayout/index.tsx:75
 #: src/components/organizerTemplates/Poster/index.tsx:73
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:184
 #: src/components/routes/admin/Attribution/index.tsx:133
@@ -5607,6 +5675,10 @@ msgstr "Μεικτές πωλήσεις"
 msgid "Gross Sales"
 msgstr "Μεικτές Πωλήσεις"
 
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:41
+msgid "Group the QR codes of one operation (poster, flyer, story, screen...) to follow its total results."
+msgstr ""
+
 #: src/components/layouts/Event/index.tsx:137
 #~ msgid "Guest Management"
 #~ msgstr "Διαχείριση Επισκεπτών"
@@ -5757,7 +5829,7 @@ msgstr "Αναδειγμένο"
 msgid "Highlighted products will have a different background color to make them stand out on the event page."
 msgstr "Τα αναδειγμένα προϊόντα θα έχουν διαφορετικό χρώμα φόντου για να ξεχωρίζουν στη σελίδα εκδήλωσης."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:73
+#: src/components/layouts/OrganizerLayout/index.tsx:74
 #: src/components/organizerTemplates/Poster/index.tsx:72
 msgid "Home"
 msgstr ""
@@ -6061,7 +6133,7 @@ msgstr "Εισαγωγή Μεταβλητής"
 msgid "Instagram"
 msgstr "Instagram"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:254
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:280
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
@@ -6183,7 +6255,7 @@ msgstr "Προσκαλέστε κάποιον να πουλήσει εισιτή
 msgid "Invite Team Member"
 msgstr "Πρόσκληση Μέλους Ομάδας"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:143
+#: src/components/layouts/OrganizerLayout/index.tsx:144
 msgid "Invite Team Members"
 msgstr "Πρόσκληση Μελών Ομάδας"
 
@@ -6195,7 +6267,7 @@ msgstr "Πρόσκληση απεριόριστων μελών ομάδας με
 msgid "Invite User"
 msgstr "Πρόσκληση Χρήστη"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:140
+#: src/components/layouts/OrganizerLayout/index.tsx:141
 msgid "Invite Your Team"
 msgstr "Προσκαλέστε την Ομάδα σας"
 
@@ -6341,7 +6413,7 @@ msgstr "Αναζητάτε μόνο τα εισιτήριά σας;"
 msgid "Keep"
 msgstr "Διατήρηση"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:430
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:456
 msgid "Keep a dark color on a light background so every phone can scan it."
 msgstr ""
 
@@ -6510,7 +6582,7 @@ msgstr "Αφήστε κενό για χρήση της προεπιλεγμέν�
 msgid "Leave empty for no limit, put 0 if you don't sell that way."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:289
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:315
 msgid "Leave empty to use the links from your organizer settings."
 msgstr ""
 
@@ -6542,7 +6614,7 @@ msgstr "Περιορισμένη διατήρηση"
 msgid "Line-up & archives."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:262
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:288
 msgid "Link"
 msgstr ""
 
@@ -6550,11 +6622,11 @@ msgstr ""
 msgid "Link Expired or Invalid"
 msgstr "Ο Σύνδεσμος Έληξε ή Δεν Είναι Έγκυρος"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:54
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:45
 msgid "Link page"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:249
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:275
 msgid "Link page (recommended)"
 msgstr ""
 
@@ -6821,7 +6893,7 @@ msgstr "Χειροκίνητη Προσθήκη Συμμετέχοντα"
 msgid "Mark as paid"
 msgstr "Σήμανση ως πληρωμένο"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:244
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:251
 msgid "Market poster"
 msgstr ""
 
@@ -7025,6 +7097,22 @@ msgstr "Περισσότεροι από 1.000"
 msgid "Most popular"
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/index.tsx:289
+msgid "Most recent"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:291
+msgid "Most registrations"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:291
+msgid "Most sales"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:290
+msgid "Most scanned"
+msgstr ""
+
 #: src/components/routes/admin/Dashboard/index.tsx:294
 msgid "Most Viewed Events (Last 14 Days)"
 msgstr "Εκδηλώσεις με Περισσότερες Προβολές (Τελευταίες 14 Ημέρες)"
@@ -7078,7 +7166,7 @@ msgstr "Ο τίτλος της εκδήλωσής μου..."
 msgid "My events"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:150
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:156
 msgid "My image"
 msgstr ""
 
@@ -7121,6 +7209,10 @@ msgstr "Παράδειγμα κειμένου..."
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:231
 msgid "Name"
 msgstr "Όνομα"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:292
+msgid "Name (A-Z)"
+msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:436
 msgid "Name and email of each attendee."
@@ -7171,6 +7263,12 @@ msgstr ""
 msgid "Never"
 msgstr "Ποτέ"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:184
+#: src/components/routes/organizer/QrCodes/index.tsx:231
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:37
+msgid "New campaign"
+msgstr ""
+
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:87
 msgid "New dates are coming soon. Follow us so you don't miss the on-sale date."
 msgstr ""
@@ -7180,8 +7278,9 @@ msgstr ""
 msgid "New Password"
 msgstr "Νέος Κωδικός"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:89
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:235
+#: src/components/routes/organizer/QrCodes/index.tsx:188
+#: src/components/routes/organizer/QrCodes/index.tsx:333
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:242
 msgid "New QR code"
 msgstr ""
 
@@ -7251,6 +7350,13 @@ msgstr ""
 #: src/components/routes/admin/Attribution/index.tsx:121
 msgid "No attribution data found"
 msgstr "Δεν βρέθηκαν δεδομένα απόδοσης"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:160
+#: src/components/routes/organizer/QrCodes/index.tsx:166
+#: src/components/routes/organizer/QrCodes/index.tsx:227
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:264
+msgid "No campaign"
+msgstr ""
 
 #: src/components/modals/OfferWaitlistModal/index.tsx:187
 msgid "No capacity"
@@ -7481,9 +7587,17 @@ msgstr "Δεν υπάρχουν Προϊόντα ακόμα"
 msgid "No Promo Codes to show"
 msgstr "Δεν υπάρχουν Κωδικοί Προσφοράς για εμφάνιση"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:105
-msgid "No QR codes yet"
+#: src/components/routes/organizer/QrCodes/index.tsx:323
+msgid "No QR code matches these filters"
 msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:323
+msgid "No QR codes here yet"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:105
+#~ msgid "No QR codes yet"
+#~ msgstr ""
 
 #: src/components/modals/ManageAttendeeModal/index.tsx:192
 msgid "No questions answered by this attendee."
@@ -7827,7 +7941,11 @@ msgstr "Μόλις ξεκινήσετε να συλλέγετε δεδομένα
 msgid "One platform for every type of event"
 msgstr "Μία πλατφόρμα για κάθε τύπο εκδήλωσης"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:243
+#: src/components/routes/organizer/QrCodes/index.tsx:178
+msgid "One QR code per medium (poster, flyer, screen...), grouped by campaign. Change where a QR code leads at any time without reprinting it."
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:250
 msgid "One QR code per medium lets you compare them: poster, flyer, screen, stand..."
 msgstr ""
 
@@ -7912,7 +8030,7 @@ msgstr ""
 #~ msgid "Only visible with promo code"
 #~ msgstr "Ορατό μόνο με κωδικό προσφοράς"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:125
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:124
 msgid "Open"
 msgstr ""
 
@@ -7920,6 +8038,10 @@ msgstr ""
 #: src/components/modals/CheckInListSuccessModal/index.tsx:56
 msgid "Open Check-In Page"
 msgstr "Άνοιγμα Σελίδας Check-In"
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:44
+msgid "Open day 2026"
+msgstr ""
 
 #: src/components/routes/landing/index.tsx:203
 msgid "Open days, seminars, internal events."
@@ -7953,7 +8075,7 @@ msgstr "Άνοιγμα εισιτηρίων ως PDF"
 msgid "Opened from"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:252
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:278
 msgid "Opens the ticketing page directly. Sales are attributed to this QR code."
 msgstr ""
 
@@ -8219,7 +8341,8 @@ msgstr "Η παραγγελία ακυρώθηκε"
 #: src/components/routes/event/EventDashboard/index.tsx:102
 #: src/components/routes/event/orders.tsx:116
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:89
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:62
+#: src/components/routes/organizer/QrCodes/index.tsx:269
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:83
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:73
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
@@ -8322,7 +8445,7 @@ msgstr "Όνομα Διοργανωτή"
 msgid "Organizer Not Found"
 msgstr "Διοργανωτής Δεν Βρέθηκε"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:125
+#: src/components/layouts/OrganizerLayout/index.tsx:126
 msgid "Organizer page"
 msgstr ""
 
@@ -8339,12 +8462,12 @@ msgstr "Ρυθμίσεις Διοργανωτή"
 #~ msgstr "Τα στατιστικά διοργανωτή δεν είναι διαθέσιμα για το επιλεγμένο νόμισμα ή παρουσιάστηκε σφάλμα."
 
 #: src/components/common/StatusToggle/index.tsx:64
-#: src/components/layouts/OrganizerLayout/index.tsx:118
+#: src/components/layouts/OrganizerLayout/index.tsx:119
 msgid "Organizer status update failed. Please try again later"
 msgstr "Η ενημέρωση κατάστασης διοργανωτή απέτυχε. Δοκιμάστε ξανά αργότερα"
 
 #: src/components/common/StatusToggle/index.tsx:56
-#: src/components/layouts/OrganizerLayout/index.tsx:115
+#: src/components/layouts/OrganizerLayout/index.tsx:116
 msgid "Organizer status updated"
 msgstr "Η κατάσταση διοργανωτή ενημερώθηκε"
 
@@ -8446,11 +8569,11 @@ msgstr "Η σελίδα δεν είναι πλέον διαθέσιμη"
 msgid "Page not found"
 msgstr "Η σελίδα δεν βρέθηκε"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:128
+#: src/components/layouts/OrganizerLayout/index.tsx:129
 msgid "Page online"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:282
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:308
 msgid "Page title"
 msgstr ""
 
@@ -8605,7 +8728,7 @@ msgstr "Παναγιώτης"
 msgid "patrick@acme.com"
 msgstr "panagiotis@papademos.gr"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:79
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:138
 msgid "Pause"
 msgstr ""
 
@@ -8617,7 +8740,8 @@ msgstr ""
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:110
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:128
 #: src/components/forms/WebhookForm/index.tsx:28
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:89
+#: src/components/routes/organizer/QrCodes/index.tsx:284
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:74
 msgid "Paused"
 msgstr "Σε Παύση"
 
@@ -8959,7 +9083,11 @@ msgstr "Εισαγάγετε τον οργανισμό σας"
 msgid "Please enter your VAT number"
 msgstr "Παρακαλώ εισάγετε τον αριθμό ΦΠΑ σας"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:124
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:22
+msgid "Please give the campaign a name"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:130
 msgid "Please give this QR code a name"
 msgstr ""
 
@@ -8997,7 +9125,7 @@ msgstr "Παρακαλώ επιλέξτε τουλάχιστον ένα προϊ
 msgid "Please try again."
 msgstr "Παρακαλώ δοκιμάστε ξανά."
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:201
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:207
 msgid "Please upload a background image"
 msgstr ""
 
@@ -9027,7 +9155,7 @@ msgstr "Παρακαλώ περιμένετε ενώ προετοιμάζουμ�
 msgid "Please wait while we prepare your orders for export..."
 msgstr "Παρακαλώ περιμένετε ενώ προετοιμάζουμε τις παραγγελίες σας για εξαγωγή..."
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:118
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:98
 msgid "PNG"
 msgstr ""
 
@@ -9445,7 +9573,7 @@ msgstr "Δημοσίευση"
 msgid "Publish the event"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:128
+#: src/components/layouts/OrganizerLayout/index.tsx:129
 msgid "Publish the page"
 msgstr ""
 
@@ -9471,27 +9599,27 @@ msgstr "Έλεγχος πρόσβασης με QR code"
 msgid "QR Code Check-in"
 msgstr "Check-in με QR Code"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:221
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:228
 msgid "QR code created"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:72
+#: src/components/routes/organizer/QrCodes/index.tsx:141
 msgid "QR code deleted"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:380
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:406
 msgid "QR code height"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:64
+#: src/components/routes/organizer/QrCodes/index.tsx:133
 msgid "QR code paused"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:64
+#: src/components/routes/organizer/QrCodes/index.tsx:133
 msgid "QR code reactivated"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:385
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:411
 msgid "QR code size"
 msgstr ""
 
@@ -9503,16 +9631,17 @@ msgstr "Εισιτήρια με QR code"
 msgid "QR code unavailable"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:221
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:228
 msgid "QR code updated"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:81
-#: src/components/routes/organizer/QrCodes/index.tsx:80
+#: src/components/layouts/OrganizerLayout/index.tsx:82
+#: src/components/routes/organizer/QrCodes/index.tsx:176
+#: src/components/routes/organizer/QrCodes/index.tsx:264
 msgid "QR codes"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:144
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:150
 msgid "QR only"
 msgstr ""
 
@@ -9611,7 +9740,7 @@ msgstr "Νέα Προσφορά Θέσης"
 msgid "Reach an engaged audience"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:79
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:138
 msgid "Reactivate"
 msgstr ""
 
@@ -9835,6 +9964,8 @@ msgstr ""
 
 #: src/components/routes/event/EventDashboard/index.tsx:88
 #: src/components/routes/event/EventDashboard/index.tsx:250
+#: src/components/routes/organizer/QrCodes/index.tsx:269
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:83
 msgid "Registrations"
 msgstr ""
 
@@ -9883,7 +10014,7 @@ msgstr "αφαίρεση"
 #: src/components/common/WaitlistTable/index.tsx:78
 #: src/components/common/WaitlistTable/index.tsx:111
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:186
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:305
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:331
 #: src/components/routes/product-widget/SelectProducts/index.tsx:574
 msgid "Remove"
 msgstr "Αφαίρεση"
@@ -9914,6 +10045,14 @@ msgstr ""
 msgid "Remove ticket"
 msgstr "Αφαίρεση εισιτηρίου"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:252
+msgid "Rename"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:37
+msgid "Rename the campaign"
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:484
 msgid "Rent equipment online"
 msgstr "Ενοικίαση εξοπλισμού online"
@@ -9940,7 +10079,7 @@ msgid "Report not found"
 msgstr "Η αναφορά δεν βρέθηκε"
 
 #: src/components/layouts/Event/index.tsx:94
-#: src/components/layouts/OrganizerLayout/index.tsx:77
+#: src/components/layouts/OrganizerLayout/index.tsx:78
 #: src/components/routes/event/Reports/index.tsx:58
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -9981,7 +10120,7 @@ msgstr "Επαναποστολή κωδικού"
 msgid "Resend Confirmation"
 msgstr "Επαναποστολή Επιβεβαίωσης"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:225
+#: src/components/layouts/OrganizerLayout/index.tsx:226
 msgid "Resend Confirmation Email"
 msgstr "Επαναποστολή Email Επιβεβαίωσης"
 
@@ -10118,7 +10257,8 @@ msgstr "Επιστροφή στη Σελίδα Εκδήλωσης"
 #: src/components/common/AffiliateTable/index.tsx:157
 #: src/components/common/EventCard/index.tsx:235
 #: src/components/routes/admin/Attribution/index.tsx:137
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:63
+#: src/components/routes/organizer/QrCodes/index.tsx:272
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:85
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:74
 msgid "Revenue"
 msgstr "Έσοδα"
@@ -10283,7 +10423,8 @@ msgstr "Σαν Φρανσίσκο"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:265
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:102
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:76
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:437
+#: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:48
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:463
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:116
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:132
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
@@ -10349,12 +10490,13 @@ msgstr ""
 msgid "Scan failed"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:178
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:395
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:184
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:421
 msgid "Scan me"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:60
+#: src/components/routes/organizer/QrCodes/index.tsx:265
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:81
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:70
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:129
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:146
@@ -10404,6 +10546,10 @@ msgstr "Προγραμματισμένη ώρα"
 #: src/components/routes/event/attendees.tsx:137
 #: src/components/routes/event/orders.tsx:168
 msgid "Search a name, an email or an order number…"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:278
+msgid "Search a QR code or an event…"
 msgstr ""
 
 #: src/components/routes/event/products.tsx:78
@@ -10923,7 +11069,7 @@ msgstr "Η ρύθμιση ενημερώθηκε"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
 #: src/components/layouts/Kiosk/index.tsx:65
-#: src/components/layouts/OrganizerLayout/index.tsx:134
+#: src/components/layouts/OrganizerLayout/index.tsx:135
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/kiosk/Settings/index.tsx:59
 msgid "Settings"
@@ -10975,7 +11121,7 @@ msgstr "Κοινοποίηση Συνδέσμου Συνεργάτη"
 msgid "Share Event"
 msgstr "Κοινοποίηση Εκδήλωσης"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:199
+#: src/components/layouts/OrganizerLayout/index.tsx:200
 msgid "Share Organizer Page"
 msgstr "Κοινοποίηση Σελίδας Διοργανωτή"
 
@@ -10983,7 +11129,7 @@ msgstr "Κοινοποίηση Σελίδας Διοργανωτή"
 msgid "Share the event"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:126
+#: src/components/layouts/OrganizerLayout/index.tsx:127
 msgid "Share the page"
 msgstr ""
 
@@ -10997,7 +11143,7 @@ msgid "Shop"
 msgstr "Κατάστημα"
 
 #: src/components/common/QuestionsTable/index.tsx:68
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:284
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:310
 msgid "Short text"
 msgstr ""
 
@@ -11129,7 +11275,7 @@ msgstr "Κοινωνικοί Σύνδεσμοι"
 msgid "Social Links & Website"
 msgstr "Κοινωνικοί Σύνδεσμοι & Ιστοσελίδα"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:287
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:313
 msgid "Social networks"
 msgstr ""
 
@@ -11217,7 +11363,7 @@ msgid "Something went wrong. Please try again later."
 msgstr "Κάτι πήγε στραβά. Παρακαλώ δοκιμάστε ξανά αργότερα."
 
 #: src/components/layouts/Event/index.tsx:81
-#: src/components/layouts/OrganizerLayout/index.tsx:93
+#: src/components/layouts/OrganizerLayout/index.tsx:94
 #: src/components/routes/auth/Login/index.tsx:72
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:42
 #: src/components/routes/my-tickets/index.tsx:145
@@ -11233,6 +11379,10 @@ msgstr "Κάτι πήγε στραβά. Παρακαλώ δοκιμάστε ξα
 #: src/components/routes/product-widget/SelectProducts/index.tsx:299
 msgid "Sorry, this promo code is not recognized"
 msgstr "Λυπούμαστε, αυτός ο κωδικός προσφοράς δεν αναγνωρίζεται"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:294
+msgid "Sort"
+msgstr ""
 
 #: src/components/routes/admin/Attribution/index.tsx:106
 msgid "Source"
@@ -11263,7 +11413,7 @@ msgstr ""
 msgid "Sports"
 msgstr "Αθλητισμός"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:147
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:153
 msgid "Square"
 msgstr ""
 
@@ -11299,7 +11449,7 @@ msgstr "Η ημερομηνία έναρξης είναι υποχρεωτική
 msgid "Start time of the event"
 msgstr "Ώρα έναρξης εκδήλωσης"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:107
+#: src/components/routes/organizer/QrCodes/index.tsx:330
 msgid "Start with the poster for your next event."
 msgstr ""
 
@@ -11331,7 +11481,8 @@ msgid "Station name"
 msgstr "Όνομα θέσης"
 
 #: src/components/common/AdminEventsTable/index.tsx:110
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:121
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:101
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:102
 msgid "Statistics"
 msgstr "Στατιστικά"
 
@@ -11372,7 +11523,7 @@ msgstr "Ακόμα διαχείριση επιστροφών για τις πα�
 msgid "Stop Impersonating"
 msgstr "Διακοπή Υποκατάστασης"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:145
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:151
 msgid "Story"
 msgstr ""
 
@@ -11820,7 +11971,7 @@ msgstr ""
 msgid "Test the connection"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:397
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:423
 msgid "Text color"
 msgstr ""
 
@@ -11828,7 +11979,7 @@ msgstr ""
 msgid "Text may be hard to read"
 msgstr "Το κείμενο μπορεί να είναι δύσκολο να διαβαστεί"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:394
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:420
 msgid "Text under the QR code"
 msgstr ""
 
@@ -12248,7 +12399,7 @@ msgstr "Αυτή η παραγγελία εγκαταλείφθηκε. Μπορ�
 msgid "This order was cancelled. You can start a new order anytime."
 msgstr "Αυτή η παραγγελία ακυρώθηκε. Μπορείτε να ξεκινήσετε νέα παραγγελία ανά πάσα στιγμή."
 
-#: src/components/routes/organizer/QrCodes/index.tsx:96
+#: src/components/routes/organizer/QrCodes/index.tsx:195
 msgid "This organizer could not be found. Choose your organizer from the menu, then open QR codes again."
 msgstr ""
 
@@ -12340,7 +12491,7 @@ msgstr "Εισιτήριο"
 #~ msgid "Ticket added"
 #~ msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:274
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:300
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:22
 msgid "Ticket button"
 msgstr ""
@@ -12789,7 +12940,11 @@ msgstr "Αδύνατη δημιουργία προϊόντος. Ελέγξτε �
 msgid "Unable to create question. Please check the your details"
 msgstr "Αδύνατη δημιουργία ερώτησης. Ελέγξτε τα στοιχεία σας"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:73
+#: src/components/routes/organizer/QrCodes/index.tsx:154
+msgid "Unable to delete the campaign"
+msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:142
 msgid "Unable to delete the QR code"
 msgstr ""
 
@@ -12801,7 +12956,7 @@ msgstr "Αδύνατη αντιγραφή προϊόντος. Ελέγξτε τ�
 msgid "Unable to fetch attendee"
 msgstr "Αδύνατη φόρτωση συμμετέχοντα"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:49
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:58
 msgid "Unable to generate the visual"
 msgstr ""
 
@@ -12821,11 +12976,11 @@ msgstr ""
 msgid "Unable to update question. Please check the your details"
 msgstr "Αδύνατη ενημέρωση ερώτησης. Ελέγξτε τα στοιχεία σας"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:65
+#: src/components/routes/organizer/QrCodes/index.tsx:134
 msgid "Unable to update the QR code"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:195
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:201
 msgid "Unable to upload the image"
 msgstr ""
 
@@ -12833,7 +12988,7 @@ msgstr ""
 msgid "Unattributed Accounts"
 msgstr "Μη Αποδιδόμενοι Λογαριασμοί"
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:61
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:82
 msgid "Unique"
 msgstr ""
 
@@ -12845,6 +13000,7 @@ msgstr "Μοναδικοί Πελάτες"
 msgid "Unique order reference"
 msgstr "Μοναδική αναφορά παραγγελίας"
 
+#: src/components/routes/organizer/QrCodes/index.tsx:266
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:71
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:130
 msgid "Unique visitors"
@@ -12970,7 +13126,7 @@ msgstr ""
 msgid "Upgrade Available"
 msgstr "Διαθέσιμη Αναβάθμιση"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:370
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:396
 msgid "Upload"
 msgstr ""
 
@@ -13073,7 +13229,7 @@ msgstr "Χρήση στοιχείων παραγγελίας για όλους �
 #~ msgid "Use the buyer's details for all attendees"
 #~ msgstr "Χρήση στοιχείων αγοραστή για όλους τους συμμετέχοντες"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:362
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:388
 msgid "Use this background"
 msgstr ""
 
@@ -13394,11 +13550,12 @@ msgstr "Ορατότητα"
 msgid "Visible to check-in staff only. Helps identify this list during check-in."
 msgstr "Ορατό μόνο στο προσωπικό check-in. Βοηθά στην αναγνώριση της λίστας."
 
-#: src/components/routes/organizer/QrCodes/QrLinkCard.tsx:46
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:55
 msgid "visual"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:324
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:350
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:93
 msgid "Visual"
 msgstr ""
 
@@ -13582,7 +13739,7 @@ msgid "Webhook will send notifications"
 msgstr "Το webhook θα στέλνει ειδοποιήσεις"
 
 #: src/components/layouts/Event/index.tsx:128
-#: src/components/layouts/OrganizerLayout/index.tsx:133
+#: src/components/layouts/OrganizerLayout/index.tsx:134
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
 #: src/components/routes/organizer/Webhooks/index.tsx:30
@@ -13649,7 +13806,7 @@ msgstr "Καλώς ήρθατε στο {0}, εδώ είναι η λίστα όλ
 msgid "What are Tiered Products?"
 msgstr "Τι είναι τα Προϊόντα με Βαθμίδες;"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:247
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:273
 msgid "What does it open?"
 msgstr ""
 
@@ -13821,7 +13978,7 @@ msgstr ""
 msgid "Where we are going."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:242
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:249
 msgid "Where will this QR code be displayed?"
 msgstr ""
 
@@ -13861,11 +14018,11 @@ msgstr "Προεπισκόπηση Widget"
 msgid "Widget Settings"
 msgstr "Ρυθμίσεις Widget"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:405
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:431
 msgid "With a direct link, visitors leave immediately: your Meta pixel cannot record them. Choose the link page to build retargeting audiences."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:275
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:301
 msgid "Without an event, the button opens your organizer page."
 msgstr ""
 
@@ -14067,7 +14224,7 @@ msgstr "Πρέπει να δημιουργήσετε εισιτήριο πριν
 msgid "You must have at least one price tier"
 msgstr "Πρέπει να έχετε τουλάχιστον μία βαθμίδα τιμής"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:214
+#: src/components/layouts/OrganizerLayout/index.tsx:215
 msgid "You must verify your email address before you can update the organizer status."
 msgstr "Πρέπει να επαληθεύσετε τη διεύθυνση email πριν ενημερώσετε την κατάσταση διοργανωτή."
 
@@ -14282,7 +14439,7 @@ msgstr ""
 msgid "Your organizer address"
 msgstr "Η διεύθυνση του διοργανωτή σας"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:351
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:377
 msgid "Your own design (JPG, PNG or WebP, up to 8 MB). Leave an empty area where the QR code goes."
 msgstr ""
 
@@ -14327,7 +14484,7 @@ msgstr "Η επιστροφή σας επεξεργάζεται."
 msgid "Your registration"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:250
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:276
 msgid "Your social networks and a ticket button, on a page where your pixel can measure visits."
 msgstr ""
 

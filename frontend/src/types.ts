@@ -523,6 +523,7 @@ export interface QrLink {
     destination_url: string | null;
     event_id: IdParam | null;
     event_title: string | null;
+    qr_campaign_id: IdParam | null;
     title: string | null;
     description: string | null;
     social_links: QrLinkSocialLink[];
@@ -535,6 +536,12 @@ export interface QrLink {
     revenue_gross: number;
     created_at: string;
     updated_at: string;
+}
+
+export interface QrCampaign {
+    id: IdParam;
+    name: string;
+    created_at: string;
 }
 
 export interface QrLinkPublic {

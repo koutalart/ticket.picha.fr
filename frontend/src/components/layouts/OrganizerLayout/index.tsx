@@ -67,6 +67,7 @@ const OrganizerLayout = () => {
 
     const statusToggleMutation = useUpdateOrganizerStatus();
 
+    const isQrCodesPage = /\/qr-codes\/?$/.test(location.pathname);
     const isDashboard = (isActive: boolean) => isActive || /\/manage\/organizer\/[^/]+\/?$/.test(location.pathname);
 
     const navItems: NavItem[] = [
@@ -173,7 +174,7 @@ const OrganizerLayout = () => {
                 navItems={navItems}
                 bottomItems={bottomItems}
                 mobileTabs={navItems}
-                headerActions={(
+                headerActions={isQrCodesPage ? undefined : (
                     <Button radius="md" size="md" leftSection={<IconPlus size={18}/>}
                             onClick={() => navigate(`/manage/new-event?organizer=${organizerId}`)}>
                         {t`Create Event`}

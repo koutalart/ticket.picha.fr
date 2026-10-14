@@ -1,63 +1,327 @@
-.intro {
+.page {
+  container-type: inline-size;
+}
+
+.rows {
+  container-type: inline-size;
+}
+
+.pageHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 16px;
-}
-
-.qrCard {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-bottom: 0;
-}
-
-.qrCardTop {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-}
-
-.qrCardInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.qrName {
+.pageTitle {
+  margin: 0 0 4px;
+  font-size: 28px;
   font-weight: 700;
-  font-size: 16px;
-  overflow-wrap: anywhere;
 }
 
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 10px 0;
-  border-top: 1px solid var(--mantine-color-gray-2);
-  border-bottom: 1px solid var(--mantine-color-gray-2);
-}
-
-.metricValue {
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 1.2;
-}
-
-.metricLabel {
-  font-size: 11px;
+.pageIntro {
+  margin: 0;
+  max-width: 620px;
+  font-size: 14px;
   color: var(--mantine-color-dimmed);
 }
 
-.paused {
-  opacity: 0.6;
+.pageActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+
+  @container (max-width: 780px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.campaigns {
+  position: sticky;
+  top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--mantine-color-gray-0);
+
+  @container (max-width: 780px) {
+    display: none;
+  }
+}
+
+.campaignsLabel {
+  margin: 12px 10px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mantine-color-dimmed);
+}
+
+.campaignItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mantine-color-gray-1);
+  }
+
+  &[data-active='true'] {
+    background: var(--mantine-color-primary-0);
+    color: var(--mantine-color-primary-8);
+    font-weight: 600;
+  }
+}
+
+.campaignName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.campaignCount {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--mantine-color-dimmed);
+}
+
+.campaignAdd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px dashed var(--mantine-color-gray-4);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mantine-color-primary-7);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.content {
+  min-width: 0;
+}
+
+.scopeSelect {
+  display: none;
+  margin-bottom: 12px;
+
+  @container (max-width: 780px) {
+    display: block;
+  }
+}
+
+.scopeHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.scopeTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--mantine-color-gray-0);
+  }
+
+  strong {
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  span {
+    font-size: 12px;
+    color: var(--mantine-color-dimmed);
+  }
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.toolbarSearch {
+  flex: 1 1 220px;
+}
+
+.toolbarSort {
+  width: 190px;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--mantine-color-body);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &:hover {
+    background: var(--mantine-color-gray-0);
+  }
+
+  &[data-paused='true'] .rowQr,
+  &[data-paused='true'] .rowNumbers {
+    opacity: 0.5;
+  }
+
+  @container (max-width: 680px) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    row-gap: 10px;
+
+    .rowNumbers {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      padding-left: 64px;
+    }
+  }
+}
+
+.rowQr {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  > div {
+    padding: 4px !important;
+    border: 1px solid var(--mantine-color-gray-2);
+  }
+}
+
+.rowMain {
+  min-width: 0;
+}
+
+.rowName {
+  display: block;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.rowMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.rowMetaText {
+  font-size: 12px;
+  color: var(--mantine-color-dimmed);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+
+  &::before {
+    content: '·';
+    margin-right: 6px;
+  }
+}
+
+.rowNumbers {
+  display: flex;
+  gap: 20px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    min-width: 54px;
+  }
+
+  strong {
+    font-size: 15px;
+  }
+
+  span {
+    font-size: 11px;
+    color: var(--mantine-color-dimmed);
+  }
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 16px;
+  border: 1px dashed var(--mantine-color-gray-3);
+  border-radius: 12px;
 }
 
 .formLayout {
@@ -115,10 +379,6 @@
   text-align: right;
 }
 
-.emptyState {
-  text-align: center;
-  padding: 32px 16px;
-}
 
 .poster {
   position: relative;

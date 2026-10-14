@@ -17,6 +17,7 @@ class UpsertQrLinkDTO extends BaseDataObject
         public QrLinkDestinationType $destinationType,
         public QrLinkStatus $status,
         public ?int $eventId = null,
+        public ?int $qrCampaignId = null,
         public ?string $destinationUrl = null,
         public ?string $title = null,
         public ?string $description = null,
