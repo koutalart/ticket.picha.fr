@@ -17,6 +17,7 @@ import {timezones} from "../../../../../../../data/timezones.ts";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
 import {EventCategories} from "../../../../../../constants/eventCategories.ts";
 import {DateTimeInput} from "../../../../../common/DateTimeInput";
+import {MoreOptions} from "../../../../../common/MoreOptions";
 
 export const EventDetailsForm = () => {
     const {eventId} = useParams();
@@ -78,25 +79,6 @@ export const EventDetailsForm = () => {
                         required
                     />
                     
-                    <Select
-                        {...form.getInputProps('category')}
-                        label={t`Category`}
-                        placeholder={t`Select a category`}
-                        data={EventCategories.map((category) => ({
-                            value: category.id,
-                            label: `${category.emoji} ${category.name}`,
-                        }))}
-                        searchable
-                        clearable
-                    />
-
-                    <Editor
-                        label={t`Description`}
-                        value={form.values.description || ''}
-                        onChange={(value) => form.setFieldValue('description', value)}
-                        error={form.errors?.description as string}
-                    />
-
                     <InputGroup>
                         <DateTimeInput
                                    {...form.getInputProps('start_date')}
@@ -108,24 +90,46 @@ export const EventDetailsForm = () => {
                                    label={t`End Date`}
                         />
                     </InputGroup>
-                    <InputGroup>
+                    <Editor
+                        label={t`Description`}
+                        value={form.values.description || ''}
+                        onChange={(value) => form.setFieldValue('description', value)}
+                        error={form.errors?.description as string}
+                    />
+
+                    <MoreOptions label={t`More options (category, currency, timezone)`}>
                         <Select
+                            {...form.getInputProps('category')}
+                            label={t`Category`}
+                            placeholder={t`Select a category`}
+                            data={EventCategories.map((category) => ({
+                                value: category.id,
+                                label: `${category.emoji} ${category.name}`,
+                            }))}
                             searchable
-                            data={currenciesMap}
-                            {...form.getInputProps('currency')}
-                            label={t`Currency`}
-                            placeholder={t`EUR`}
-                            disabled
+                            clearable
                         />
 
-                        <Select
-                            searchable
-                            data={timezones}
-                            {...form.getInputProps('timezone')}
-                            label={t`Timezone`}
-                            placeholder={t`UTC`}
-                        />
-                    </InputGroup>
+                        <InputGroup>
+                            <Select
+                                searchable
+                                data={currenciesMap}
+                                {...form.getInputProps('currency')}
+                                label={t`Currency`}
+                                placeholder={t`EUR`}
+                                disabled
+                            />
+
+                            <Select
+                                searchable
+                                data={timezones}
+                                {...form.getInputProps('timezone')}
+                                label={t`Timezone`}
+                                placeholder={t`UTC`}
+                            />
+                        </InputGroup>
+                    </MoreOptions>
+
                     <Button loading={updateMutation.isPending} type={'submit'}>
                         {t`Save`}
                     </Button>

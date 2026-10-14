@@ -14,6 +14,7 @@ import {InputGroup} from "../../../../../common/InputGroup";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
 import {Editor} from "../../../../../common/Editor";
 import {isEmptyHtml} from "../../../../../../utilites/helpers.ts";
+import {MoreOptions} from "../../../../../common/MoreOptions";
 
 export const LocationSettings = () => {
     const {eventId} = useParams();
@@ -119,20 +120,21 @@ export const LocationSettings = () => {
                             <InputGroup>
                                 <TextInput
                                     {...form.getInputProps('location_details.address_line_1')}
-                                    label={t`Address Line 1`}
+                                    label={t`Address`}
                                     placeholder={t`123 Main Street`}
                                 />
-                                <TextInput
-                                    {...form.getInputProps('location_details.address_line_2')}
-                                    label={t`Address Line 2`}
-                                    placeholder={t`Suite 100`}
-                                />
-                            </InputGroup>
-                            <InputGroup>
                                 <TextInput
                                     {...form.getInputProps('location_details.city')}
                                     label={t`City`}
                                     placeholder={t`San Francisco`}
+                                />
+                            </InputGroup>
+                            <MoreOptions label={t`More details (full address, map link)`}>
+                            <InputGroup>
+                                <TextInput
+                                    {...form.getInputProps('location_details.address_line_2')}
+                                    label={t`Address Line 2`}
+                                    placeholder={t`Suite 100`}
                                 />
                                 <TextInput
                                     {...form.getInputProps('location_details.state_or_region')}
@@ -159,6 +161,7 @@ export const LocationSettings = () => {
                                 label={t`Custom Maps URL`}
                                 placeholder={t`https://example-maps-service.com/...`}
                             />
+                            </MoreOptions>
                         </>
                     )}
 

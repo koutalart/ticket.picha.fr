@@ -1,20 +1,81 @@
-.container {
+$ink: #14121c;
+$muted: #6b6b78;
+$line: #e7e5ee;
+$violet: #5b2bb5;
+
+.page {
+  max-width: 860px;
+  color: $ink;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.kicker {
+  display: block;
+  margin-bottom: 6px;
+  color: $muted;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.tabs {
   display: flex;
-  flex-direction: row;
-  position: relative;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid $line;
+  overflow-x: auto;
+  scrollbar-width: none;
 
-  .setting {
-    flex: 1;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tab {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 10px 16px 12px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  background: none;
+  color: $muted;
+  font-size: 16px;
+  cursor: pointer;
+
+  @media (max-width: 480px) {
+    padding: 10px 10px 12px;
+    font-size: 15px;
   }
 
-  .preview {
-    overflow: hidden;
-    //position: sticky;
-
-    div:first-child{
-      transform: scale(0.4);
-      overflow: hidden;
-      transform-origin: 0 0;
-    }
+  &:hover {
+    color: $ink;
   }
+}
+
+.tabActive {
+  @extend .tab;
+  border-bottom-color: $violet;
+  color: $violet;
+  font-weight: 600;
+
+  &:hover {
+    color: $violet;
+  }
+}
+
+.section {
+  scroll-margin-top: 20px;
 }
