@@ -144,7 +144,7 @@ const QrLinkPage = () => {
     const accent = qrLink.design?.foreground || getConfig('VITE_APP_PRIMARY_COLOR', '#40296C');
     const logo = organizer?.images?.find(image => image.type === 'ORGANIZER_LOGO');
     const title = qrLink.title || qrLink.event_title || organizer?.name || qrLink.name;
-    const organizerUrl = organizer?.slug
+    const organizerUrl = organizer?.slug && organizer.status === 'LIVE'
         ? `/events/${organizer.id}/${organizer.slug}?qr=${qrLink.short_id}`
         : null;
     const ticketUrl = qrLink.ticket_url || organizerUrl;
