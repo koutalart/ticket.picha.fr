@@ -26,6 +26,18 @@ class UpsertQrLinkRequest extends BaseRequest
                 'url:http,https',
                 'max:2048',
             ],
+            'app_store_url' => [
+                'nullable',
+                'required_if:destination_type,'.QrLinkDestinationType::APP->value,
+                'url:https',
+                'max:2048',
+            ],
+            'play_store_url' => [
+                'nullable',
+                'required_if:destination_type,'.QrLinkDestinationType::APP->value,
+                'url:https',
+                'max:2048',
+            ],
             'event_id' => [
                 'nullable',
                 'required_if:destination_type,'.QrLinkDestinationType::EVENT->value,
@@ -55,6 +67,8 @@ class UpsertQrLinkRequest extends BaseRequest
         return [
             'destination_url.required_if' => __('Please enter the link the QR code should open.'),
             'event_id.required_if' => __('Please choose an event.'),
+            'app_store_url.required_if' => __('Please enter the App Store link.'),
+            'play_store_url.required_if' => __('Please enter the Google Play link.'),
             'design.foreground.regex' => __('Colors must be in the #RRGGBB format.'),
             'design.background.regex' => __('Colors must be in the #RRGGBB format.'),
             'design.caption_color.regex' => __('Colors must be in the #RRGGBB format.'),

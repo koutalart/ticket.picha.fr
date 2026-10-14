@@ -18,6 +18,8 @@ export interface QrLinkRequest {
     name: string;
     destination_type: QrLinkDestinationType;
     destination_url?: string | null;
+    app_store_url?: string | null;
+    play_store_url?: string | null;
     event_id?: IdParam | null;
     qr_campaign_id?: IdParam | null;
     title?: string | null;

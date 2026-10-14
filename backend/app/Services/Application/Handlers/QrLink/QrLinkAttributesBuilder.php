@@ -35,11 +35,14 @@ class QrLinkAttributesBuilder
         $this->assertCampaignBelongsToOrganizer($dto->qrCampaignId, $dto->organizerId);
 
         $isUrl = $dto->destinationType === QrLinkDestinationType::URL;
+        $isApp = $dto->destinationType === QrLinkDestinationType::APP;
 
         return [
             'name' => $this->plainText($dto->name),
             'destination_type' => $dto->destinationType->value,
-            'destination_url' => $isUrl ? $dto->destinationUrl : null,
+            'destination_url' => $isUrl || $isApp ? $dto->destinationUrl : null,
+            'app_store_url' => $isApp ? $dto->appStoreUrl : null,
+            'play_store_url' => $isApp ? $dto->playStoreUrl : null,
             'event_id' => $dto->eventId,
             'qr_campaign_id' => $dto->qrCampaignId,
             'title' => $this->plainText($dto->title),

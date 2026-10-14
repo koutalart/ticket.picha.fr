@@ -30,6 +30,8 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
     final public const DELETED_AT = 'deleted_at';
+    final public const APP_STORE_URL = 'app_store_url';
+    final public const PLAY_STORE_URL = 'play_store_url';
 
     protected int $id;
     protected int $account_id;
@@ -51,6 +53,8 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
     protected ?string $deleted_at = null;
+    protected ?string $app_store_url = null;
+    protected ?string $play_store_url = null;
 
     public function toArray(): array
     {
@@ -75,6 +79,8 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
                     'deleted_at' => $this->deleted_at ?? null,
+                    'app_store_url' => $this->app_store_url ?? null,
+                    'play_store_url' => $this->play_store_url ?? null,
                 ];
     }
 
@@ -296,5 +302,27 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
     public function getDeletedAt(): ?string
     {
         return $this->deleted_at;
+    }
+
+    public function setAppStoreUrl(?string $app_store_url): self
+    {
+        $this->app_store_url = $app_store_url;
+        return $this;
+    }
+
+    public function getAppStoreUrl(): ?string
+    {
+        return $this->app_store_url;
+    }
+
+    public function setPlayStoreUrl(?string $play_store_url): self
+    {
+        $this->play_store_url = $play_store_url;
+        return $this;
+    }
+
+    public function getPlayStoreUrl(): ?string
+    {
+        return $this->play_store_url;
     }
 }

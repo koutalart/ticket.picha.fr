@@ -51,6 +51,8 @@ interface FormValues {
     qr_campaign_id: string | null;
     destination_type: QrLinkDestinationType;
     destination_url: string;
+    app_store_url: string;
+    play_store_url: string;
     event_id: string | null;
     title: string;
     description: string;
@@ -106,6 +108,8 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
                 : (defaultCampaignId ? String(defaultCampaignId) : null),
             destination_type: qrLink?.destination_type || 'LINK_PAGE',
             destination_url: qrLink?.destination_url || '',
+            app_store_url: qrLink?.app_store_url || '',
+            play_store_url: qrLink?.play_store_url || '',
             event_id: qrLink?.event_id ? String(qrLink.event_id) : null,
             title: qrLink?.title || '',
             description: qrLink?.description || '',
@@ -212,8 +216,10 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
             name: values.name.trim(),
             qr_campaign_id: values.qr_campaign_id ? Number(values.qr_campaign_id) : null,
             destination_type: values.destination_type,
-            destination_url: values.destination_type === 'URL' ? values.destination_url.trim() : null,
-            event_id: values.destination_type === 'URL' ? null : (values.event_id ? Number(values.event_id) : null),
+            destination_url: ['URL', 'APP'].includes(values.destination_type) ? values.destination_url.trim() || null : null,
+            app_store_url: values.destination_type === 'APP' ? values.app_store_url.trim() : null,
+            play_store_url: values.destination_type === 'APP' ? values.play_store_url.trim() : null,
+            event_id: ['URL', 'APP'].includes(values.destination_type) ? null : (values.event_id ? Number(values.event_id) : null),
             title: values.destination_type === 'LINK_PAGE' ? values.title.trim() || null : null,
             description: values.destination_type === 'LINK_PAGE' ? values.description.trim() || null : null,
             social_links: values.destination_type === 'LINK_PAGE'
@@ -278,6 +284,8 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
                                        description={t`Opens the ticketing page directly. Sales are attributed to this QR code.`}/>
                                 <Radio value="URL" label={t`Another link`}
                                        description={t`Instagram profile, video, website... Scans are counted, but no pixel can be triggered.`}/>
+                                <Radio value="APP" label={t`Mobile app`}
+                                       description={t`One QR code for both stores: iPhones open the App Store, Android phones open Google Play.`}/>
                             </Stack>
                         </Radio.Group>
 
@@ -290,7 +298,30 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
                             />
                         )}
 
-                        {type !== 'URL' && (
+                        {type === 'APP' && (
+                            <>
+                                <TextInput
+                                    {...form.getInputProps('app_store_url')}
+                                    required
+                                    label={t`App Store link (iPhone, iPad)`}
+                                    placeholder="https://apps.apple.com/app/..."
+                                />
+                                <TextInput
+                                    {...form.getInputProps('play_store_url')}
+                                    required
+                                    label={t`Google Play link (Android)`}
+                                    placeholder="https://play.google.com/store/apps/details?id=..."
+                                />
+                                <TextInput
+                                    {...form.getInputProps('destination_url')}
+                                    label={t`Link for computers (optional)`}
+                                    description={t`Opened when the QR code is scanned from another device. By default: the App Store page.`}
+                                    placeholder="https://..."
+                                />
+                            </>
+                        )}
+
+                        {type !== 'URL' && type !== 'APP' && (
                             <Select
                                 {...form.getInputProps('event_id')}
                                 required={type === 'EVENT'}
@@ -426,7 +457,7 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
                             </Group>
                         )}
 
-                        {type === 'URL' && (
+                        {(type === 'URL' || type === 'APP') && (
                             <Alert color="yellow" variant="light">
                                 {t`With a direct link, visitors leave immediately: your Meta pixel cannot record them. Choose the link page to build retargeting audiences.`}
                             </Alert>

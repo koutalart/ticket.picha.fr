@@ -131,6 +131,26 @@ class QrLinkAttributesBuilderTest extends TestCase
         $this->assertSame(9, $attributes['qr_campaign_id']);
     }
 
+    public function test_app_destination_keeps_both_store_links_and_fallback(): void
+    {
+        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), Mockery::mock(ImageRepositoryInterface::class), Mockery::mock(QrCampaignRepositoryInterface::class)))
+            ->build(new UpsertQrLinkDTO(
+                accountId: 1,
+                organizerId: 4,
+                name: 'Appli',
+                destinationType: QrLinkDestinationType::APP,
+                status: QrLinkStatus::ACTIVE,
+                destinationUrl: 'https://la1ere.franceinfo.fr/mayotte/',
+                appStoreUrl: 'https://apps.apple.com/app/id885421673',
+                playStoreUrl: 'https://play.google.com/store/apps/details?id=fr.francetv.outremer',
+            ));
+
+        $this->assertSame('APP', $attributes['destination_type']);
+        $this->assertSame('https://la1ere.franceinfo.fr/mayotte/', $attributes['destination_url']);
+        $this->assertSame('https://apps.apple.com/app/id885421673', $attributes['app_store_url']);
+        $this->assertSame('https://play.google.com/store/apps/details?id=fr.francetv.outremer', $attributes['play_store_url']);
+    }
+
     private function dto(
         QrLinkDestinationType $destinationType = QrLinkDestinationType::LINK_PAGE,
         ?int $eventId = null,

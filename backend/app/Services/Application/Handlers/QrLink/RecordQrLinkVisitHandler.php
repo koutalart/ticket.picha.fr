@@ -15,6 +15,7 @@ use HiEvents\Services\Application\Handlers\QrLink\DTO\QrLinkVisitResultDTO;
 use HiEvents\Services\Domain\QrLink\DTO\QrLinkVisitContextDTO;
 use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
 use HiEvents\Services\Domain\QrLink\QrLinkVisitRecorder;
+use HiEvents\Services\Domain\QrLink\UserAgentParser;
 
 class RecordQrLinkVisitHandler
 {
@@ -22,6 +23,7 @@ class RecordQrLinkVisitHandler
         private readonly QrLinkRepositoryInterface $qrLinkRepository,
         private readonly QrLinkVisitRecorder $visitRecorder,
         private readonly QrLinkUrlService $urlService,
+        private readonly UserAgentParser $userAgentParser,
     ) {}
 
     /**
@@ -45,7 +47,11 @@ class RecordQrLinkVisitHandler
 
         return new QrLinkVisitResultDTO(
             destination_type: $qrLink->getDestinationType(),
-            redirect_url: $this->urlService->getRedirectUrl($qrLink, $qrLink->getEvent()),
+            redirect_url: $this->urlService->getRedirectUrl(
+                $qrLink,
+                $qrLink->getEvent(),
+                $this->userAgentParser->parse($context->userAgent)->os,
+            ),
             recorded: $recorded,
         );
     }
