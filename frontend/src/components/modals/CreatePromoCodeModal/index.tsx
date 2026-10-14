@@ -19,7 +19,7 @@ export const CreatePromoCodeModal = ({onClose}: GenericModalProps) => {
             discount: undefined,
             applicable_product_ids: [],
             expiry_date: undefined,
-            discount_type: PromoCodeDiscountType.None,
+            discount_type: PromoCodeDiscountType.Percentage,
             max_allowed_usages: undefined,
         },
         validate: {

@@ -1,41 +1,147 @@
-.promoCodes {
-  width: 100%;
-  border-collapse: collapse;
-}
+$ink: #14121c;
+$muted: #6b6b78;
+$line: #e7e5ee;
+$violet: #5b2bb5;
+$lavender: #efe9fb;
 
-.items {
-  width: 100%;
-}
-
-.itemRow {
+.list {
   display: flex;
-  justify-content: space-between;
-  padding: 1em;
-  border-bottom: 1px solid #eee;
+  flex-direction: column;
+  border-top: 1px solid $line;
 }
 
-.itemName {
-  flex: 1;
-  font-weight: bold;
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) 110px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid $line;
+  color: $ink;
+
+  @media (max-width: 767px) {
+    grid-template-columns: minmax(0, 1fr) auto 32px;
+    grid-template-areas:
+      "main discount more"
+      "usage usage usage";
+    gap: 8px 12px;
+
+    .main { grid-area: main; }
+    .discount { grid-area: discount; }
+    .usage { grid-area: usage; }
+    .more { grid-area: more; }
+  }
 }
 
-.itemValue {
-  flex: 1;
-  text-align: right;
+.rowInactive {
+  opacity: 0.55;
 }
 
-.itemUsage {
-  flex: 1;
-  text-align: right;
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
 }
 
-.itemExpiry {
-  flex: 1;
-  text-align: right;
+.code {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: $lavender;
+  color: $violet;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
 }
 
-.noCodes {
-  padding: 1em;
-  text-align: center;
-  color: #999;
+.meta {
+  color: $muted;
+  font-size: 13px;
+}
+
+.discount {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.accessBadge, .statusBadge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.accessBadge {
+  background: #e1f5ee;
+  color: #085041;
+}
+
+.statusBadge {
+  align-self: flex-start;
+  background: #f1f0f5;
+  color: $muted;
+}
+
+.usage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.bar {
+  display: block;
+  height: 4px;
+  max-width: 180px;
+  border-radius: 2px;
+  background: $line;
+
+  span {
+    display: block;
+    height: 4px;
+    border-radius: 2px;
+    background: $violet;
+  }
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: $muted;
+  cursor: pointer;
+
+  &:hover {
+    background: #f4f2f9;
+    color: $ink;
+  }
+}
+
+.empty {
+  padding: 32px 0;
+  color: $ink;
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0 0 16px;
+    color: $muted;
+  }
 }
