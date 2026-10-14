@@ -69,13 +69,17 @@ msgid "{0} <0>checked out</0> successfully"
 msgstr "{0} <0>签退</0>成功"
 
 #: src/components/routes/event/Webhooks/index.tsx:24
-#: src/components/routes/organizer/Webhooks/index.tsx:25
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:24
 msgid "{0} Active Webhooks"
 msgstr "{0} 个活动的 Webhook"
 
 #: src/components/routes/kiosk/Orders/index.tsx:88
 msgid "{0} already entered at {1}"
 msgstr "{0} 已于 {1} 入场"
+
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:106
+msgid "{0} attendees"
+msgstr ""
 
 #: src/components/routes/product-widget/SelectProducts/index.tsx:481
 msgid "{0} available"
@@ -305,9 +309,13 @@ msgid "0 minutes and 0 seconds"
 msgstr "0 分 0 秒"
 
 #: src/components/routes/event/Webhooks/index.tsx:23
-#: src/components/routes/organizer/Webhooks/index.tsx:24
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:23
 msgid "1 Active Webhook"
 msgstr "1 个活动的 Webhook"
+
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:106
+msgid "1 attendee"
+msgstr ""
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:881
 msgid "1 box office ticket is paused and hidden here."
@@ -831,7 +839,7 @@ msgstr ""
 #: src/components/common/OrganizerWebhookTable/index.tsx:223
 #: src/components/common/WebhookTable/index.tsx:223
 #: src/components/routes/event/Webhooks/index.tsx:37
-#: src/components/routes/organizer/Webhooks/index.tsx:35
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:35
 msgid "Add Webhook"
 msgstr "添加 Webhook"
 
@@ -858,7 +866,7 @@ msgstr "附加信息"
 #: src/components/common/OrderDetails/index.tsx:99
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:131
-#: src/components/routes/organizer/Settings/index.tsx:43
+#: src/components/routes/organizer/Settings/index.tsx:44
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
 msgstr "地址"
@@ -1248,7 +1256,7 @@ msgid "Archive"
 msgstr "归档"
 
 #: src/components/common/EventCard/index.tsx:146
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:71
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:77
 msgid "Archive event"
 msgstr "归档活动"
 
@@ -1272,7 +1280,8 @@ msgstr "归档此主办方。这也将归档属于此主办方的所有活动。
 
 #: src/components/common/EventCard/index.tsx:78
 #: src/components/common/EventsDashboardStatusButtons/index.tsx:32
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:24
+#: src/components/routes/organizer/Events/index.tsx:45
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:26
 msgid "Archived"
 msgstr "已归档"
 
@@ -1286,7 +1295,7 @@ msgid "Are you sure you want to activate this attendee?"
 msgstr "您确定要激活该与会者吗？"
 
 #: src/components/common/EventCard/index.tsx:58
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:50
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:56
 msgid "Are you sure you want to archive this event?"
 msgstr "您确定要归档此活动吗?"
 
@@ -1350,11 +1359,11 @@ msgstr "您确定要将此活动设为草稿吗？这将使公众无法看到该
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "您确定要将此事件公开吗？这将使事件对公众可见"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:107
+#: src/components/common/OrganizerPageActions/index.tsx:31
 msgid "Are you sure you want to make this organizer draft? This will make the organizer page invisible to the public"
 msgstr "您确定要将此组织者设为草稿吗？这样将使组织者页面对公众不可见。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:108
+#: src/components/common/OrganizerPageActions/index.tsx:32
 msgid "Are you sure you want to make this organizer public? This will make the organizer page visible to the public"
 msgstr "您确定要将此组织者设为公开吗？这样将使组织者页面对公众可见。"
 
@@ -1387,7 +1396,7 @@ msgid "Are you sure you want to restore this event?"
 msgstr "您确定要恢复此活动吗？"
 
 #: src/components/common/EventCard/index.tsx:59
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:51
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:57
 msgid "Are you sure you want to restore this event? It will be restored as a draft event."
 msgstr "您确定要恢复此活动吗？它将作为草稿恢复。"
 
@@ -1771,7 +1780,7 @@ msgid "Background image"
 msgstr ""
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:229
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:261
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:268
 msgid "Background Type"
 msgstr "背景类型"
 
@@ -1783,7 +1792,7 @@ msgstr "胸牌 + 入场"
 msgid "Badge printing…"
 msgstr "正在打印胸卡…"
 
-#: src/components/routes/organizer/Settings/index.tsx:31
+#: src/components/routes/organizer/Settings/index.tsx:32
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
 msgstr "基本信息"
@@ -2341,7 +2350,7 @@ msgid "Chinese (Traditional)"
 msgstr "中文（繁体）"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:219
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:251
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:258
 msgid "Choose a color for your background"
 msgstr "选择背景颜色"
 
@@ -2422,7 +2431,7 @@ msgstr ""
 msgid "Classic"
 msgstr "经典"
 
-#: src/components/common/SearchBar/index.tsx:75
+#: src/components/common/SearchBar/index.tsx:77
 msgid "Clear Search Text"
 msgstr "清除搜索文本"
 
@@ -2470,6 +2479,10 @@ msgstr "关闭菜单"
 msgid "Close modal"
 msgstr "关闭弹窗"
 
+#: src/components/routes/organizer/Events/index.tsx:60
+msgid "Close search"
+msgstr ""
+
 #: src/components/layouts/AppLayout/Sidebar/index.tsx:98
 msgid "Close sidebar"
 msgstr "关闭侧边栏"
@@ -2503,7 +2516,7 @@ msgstr "代码长度必须在 3 至 50 个字符之间"
 msgid "Code must be no more than 20 characters"
 msgstr "代码不能超过20个字符"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:142
+#: src/components/layouts/OrganizerLayout/index.tsx:78
 msgid "Collaborate with your team to create amazing events together."
 msgstr "与您的团队协作，共同创建精彩的活动。"
 
@@ -2533,7 +2546,7 @@ msgid "Collected"
 msgstr ""
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:217
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:249
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:256
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:452
 msgid "Color"
 msgstr "颜色"
@@ -2602,7 +2615,7 @@ msgstr "完成付款"
 msgid "Complete Stripe Setup"
 msgstr "完成 Stripe 设置"
 
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:113
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:125
 msgid "Complete the details before publishing your event."
 msgstr ""
 
@@ -2770,7 +2783,7 @@ msgstr "确认密码"
 msgid "Confirm your email to access all features."
 msgstr "请确认您的邮箱以访问所有功能。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:230
+#: src/components/common/OrganizerPageActions/index.tsx:92
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "确认邮件已发送！请检查您的收件箱。"
 
@@ -2808,8 +2821,8 @@ msgstr "连接文档"
 #~ msgid "Connect payment processing"
 #~ msgstr "连接支付处理"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:155
-#: src/components/layouts/OrganizerLayout/index.tsx:163
+#: src/components/layouts/OrganizerLayout/index.tsx:91
+#: src/components/layouts/OrganizerLayout/index.tsx:99
 #: src/components/routes/event/GettingStarted/index.tsx:120
 msgid "Connect Stripe"
 msgstr "连接条纹"
@@ -2837,7 +2850,7 @@ msgstr ""
 msgid "Connect with Stripe"
 msgstr "与 Stripe 连接"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:156
+#: src/components/layouts/OrganizerLayout/index.tsx:92
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "连接您的 Stripe 账户以接受门票和产品付款。"
 
@@ -3104,7 +3117,7 @@ msgid "Cover"
 msgstr "封面"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:182
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:192
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:199
 msgid "Cover Image"
 msgstr "封面图像"
 
@@ -3112,7 +3125,7 @@ msgstr "封面图像"
 msgid "Cover image will be displayed at the top of your event page"
 msgstr "封面图片将显示在活动页面顶部"
 
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:207
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:214
 msgid "Cover image will be displayed at the top of your organizer page"
 msgstr "封面图像将显示在您的组织者页面顶部"
 
@@ -3231,8 +3244,8 @@ msgid "Create discounts, access codes for hidden tickets, and special offers."
 msgstr "创建折扣、隐藏门票的访问码和特别优惠。"
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:180
-#: src/components/routes/organizer/Events/index.tsx:61
+#: src/components/layouts/OrganizerLayout/index.tsx:116
+#: src/components/routes/organizer/Events/index.tsx:66
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:183
 msgid "Create Event"
 msgstr "创建活动"
@@ -3476,6 +3489,10 @@ msgstr "客户"
 msgid "Customize"
 msgstr ""
 
+#: src/components/layouts/OrganizerLayout/index.tsx:70
+msgid "Customize my page"
+msgstr ""
+
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:56
 msgid "Customize the email and notification settings for this event"
 msgstr "自定义此事件的电子邮件和通知设置"
@@ -3497,8 +3514,8 @@ msgid "Customize the miscellaneous settings for this event"
 msgstr "自定义此事件的其他设置"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:133
-msgid "Customize the page"
-msgstr ""
+#~ msgid "Customize the page"
+#~ msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:411
 #~ msgid "Customize the questions asked during checkout to gather important information from your attendees."
@@ -3525,7 +3542,7 @@ msgstr "使用Liquid模板自定义您的邮件模板"
 #~ msgid "Customize your event page to match your brand and style."
 #~ msgstr "定制您的活动页面，以符合您的品牌和风格。"
 
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:174
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:175
 msgid "Customize your organizer page appearance"
 msgstr "自定义主办方页面外观"
 
@@ -3559,7 +3576,7 @@ msgstr "危险区"
 #: src/components/common/AttendeeTable/index.tsx:372
 #: src/components/common/DangerZone/index.tsx:30
 #: src/components/routes/event/Settings/index.tsx:88
-#: src/components/routes/organizer/Settings/index.tsx:85
+#: src/components/routes/organizer/Settings/index.tsx:92
 msgid "Danger Zone"
 msgstr "危险区"
 
@@ -3961,7 +3978,7 @@ msgstr "正在下载发票"
 #: src/components/common/EventCard/index.tsx:84
 #: src/components/routes/event/EventDashboard/index.tsx:130
 #: src/components/routes/event/GettingStarted/index.tsx:164
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:26
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:28
 msgid "Draft"
 msgstr "草稿"
 
@@ -4000,7 +4017,7 @@ msgid "Duplicate"
 msgstr "复制"
 
 #: src/components/common/EventCard/index.tsx:141
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:69
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:75
 msgid "Duplicate event"
 msgstr "复制活动"
 
@@ -4301,8 +4318,8 @@ msgstr "电子邮件更改待定"
 msgid "Email confirmation resent"
 msgstr "重新发送电子邮件确认"
 
+#: src/components/common/OrganizerPageActions/index.tsx:48
 #: src/components/layouts/Event/index.tsx:77
-#: src/components/layouts/OrganizerLayout/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
 msgstr "成功重新发送电子邮件确认"
@@ -4326,11 +4343,11 @@ msgid "Email Preview"
 msgstr "邮件预览"
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:336
-#: src/components/routes/organizer/Settings/index.tsx:67
+#: src/components/routes/organizer/Settings/index.tsx:68
 msgid "Email Templates"
 msgstr "邮件模板"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:209
+#: src/components/common/OrganizerPageActions/index.tsx:82
 msgid "Email Verification Required"
 msgstr "需要验证邮箱"
 
@@ -4429,7 +4446,8 @@ msgstr "结束时间（可选）"
 #: src/components/common/EventsDashboardStatusButtons/index.tsx:26
 #: src/components/common/EventStatusBadge/index.tsx:14
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:119
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:25
+#: src/components/routes/organizer/Events/index.tsx:44
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:27
 msgid "Ended"
 msgstr "完工"
 
@@ -4665,7 +4683,7 @@ msgid "Event date display"
 msgstr "活动日期显示"
 
 #: src/components/routes/account/ManageAccount/sections/EventDefaultsSettings/index.tsx:5
-#: src/components/routes/organizer/Settings/index.tsx:37
+#: src/components/routes/organizer/Settings/index.tsx:38
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:73
 msgid "Event Defaults"
 msgstr "事件默认值"
@@ -4788,7 +4806,7 @@ msgstr "面向地方政府的活动软件"
 #: src/components/common/StatusToggle/index.tsx:63
 #: src/components/layouts/Event/index.tsx:160
 #: src/components/routes/event/GettingStarted/index.tsx:149
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:59
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:65
 msgid "Event status update failed. Please try again later"
 msgstr "活动状态更新失败。请稍后再试"
 
@@ -4796,7 +4814,7 @@ msgstr "活动状态更新失败。请稍后再试"
 #: src/components/common/StatusToggle/index.tsx:55
 #: src/components/layouts/Event/index.tsx:156
 #: src/components/routes/event/GettingStarted/index.tsx:147
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:58
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:64
 msgid "Event status updated"
 msgstr "事件状态已更新"
 
@@ -4846,13 +4864,13 @@ msgstr "活动场地"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:75
+#: src/components/layouts/OrganizerLayout/index.tsx:56
 #: src/components/organizerTemplates/Poster/index.tsx:73
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:184
 #: src/components/routes/admin/Attribution/index.tsx:133
 #: src/components/routes/admin/Dashboard/index.tsx:403
 #: src/components/routes/admin/Events/index.tsx:77
-#: src/components/routes/organizer/Events/index.tsx:42
+#: src/components/routes/organizer/Events/index.tsx:52
 msgid "Events"
 msgstr "活动"
 
@@ -5864,13 +5882,13 @@ msgstr "已突出显示"
 msgid "Highlighted products will have a different background color to make them stand out on the event page."
 msgstr "突出显示的产品将具有不同的背景色，使其在活动页面上脱颖而出。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:74
+#: src/components/layouts/OrganizerLayout/index.tsx:55
 #: src/components/organizerTemplates/Poster/index.tsx:72
 msgid "Home"
 msgstr ""
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:163
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:173
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:174
 msgid "Homepage Design"
 msgstr "主页设计"
 
@@ -5879,7 +5897,7 @@ msgstr "主页设计"
 #~ msgstr "主页设计器"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:299
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:311
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:318
 msgid "Homepage Preview"
 msgstr "主页预览"
 
@@ -6033,7 +6051,7 @@ msgid "Image URL"
 msgstr "图片网址"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:176
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:186
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:193
 msgid "Images"
 msgstr "图片"
 
@@ -6290,7 +6308,7 @@ msgstr "邀请他人在门口售票。他们会收到设置密码的邮件，然
 msgid "Invite Team Member"
 msgstr "邀请团队成员"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:144
+#: src/components/layouts/OrganizerLayout/index.tsx:80
 msgid "Invite Team Members"
 msgstr "邀请团队成员"
 
@@ -6302,7 +6320,7 @@ msgstr "邀请无限团队成员并自定义角色"
 msgid "Invite User"
 msgstr "邀请用户"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:141
+#: src/components/layouts/OrganizerLayout/index.tsx:77
 msgid "Invite Your Team"
 msgstr "邀请您的团队"
 
@@ -6698,7 +6716,7 @@ msgid "Live"
 msgstr "上线"
 
 #: src/components/routes/event/EventDashboard/index.tsx:126
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:27
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:29
 msgctxt "ongoing event"
 msgid "Live"
 msgstr ""
@@ -6742,7 +6760,7 @@ msgid "Loading webhook logs..."
 msgstr ""
 
 #: src/components/routes/event/Webhooks/index.tsx:21
-#: src/components/routes/organizer/Webhooks/index.tsx:22
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:21
 msgid "Loading Webhooks"
 msgstr "正在加载 Webhook"
 
@@ -6781,7 +6799,7 @@ msgstr "登录"
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:306
 #: src/components/routes/event/TicketDesigner/index.tsx:138
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:214
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:221
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:26
 msgid "Logo"
 msgstr "标志"
@@ -6794,7 +6812,7 @@ msgstr "标志和封面"
 msgid "Logo and cover image for your organizer"
 msgstr "您的组织者的标志和封面图像"
 
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:228
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:235
 msgid "Logo will be displayed in the header"
 msgstr "标志将显示在页面头部"
 
@@ -6849,7 +6867,7 @@ msgstr "将此问题作为必答题"
 #: src/components/common/OrganizerWebhookTable/index.tsx:96
 #: src/components/common/PromoCodeTable/index.tsx:167
 #: src/components/routes/event/EventDashboard/index.tsx:167
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:102
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:114
 msgid "Manage"
 msgstr "管理"
 
@@ -6859,7 +6877,7 @@ msgid "Manage attendee"
 msgstr "管理与会者"
 
 #: src/components/common/EventCard/index.tsx:136
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:68
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:74
 msgid "Manage event"
 msgstr "管理活动"
 
@@ -7044,7 +7062,7 @@ msgstr "消息级别"
 msgid "Messaging tier updated successfully"
 msgstr "消息级别更新成功"
 
-#: src/components/routes/organizer/Settings/index.tsx:79
+#: src/components/routes/organizer/Settings/index.tsx:80
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:89
 msgid "Meta Conversions API"
 msgstr ""
@@ -7123,7 +7141,7 @@ msgstr ""
 #: src/components/common/QuestionsTable/index.tsx:136
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:128
 #: src/components/routes/event/OrdersPage/OrderList.tsx:97
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:105
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:117
 msgid "More actions"
 msgstr ""
 
@@ -7213,6 +7231,10 @@ msgstr ""
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:156
 msgid "My image"
+msgstr ""
+
+#: src/components/layouts/OrganizerLayout/index.tsx:69
+msgid "My organizer page"
 msgstr ""
 
 #: src/components/common/GlobalMenu/index.tsx:40
@@ -7355,7 +7377,7 @@ msgid "No accounts found"
 msgstr "未找到账户"
 
 #: src/components/routes/event/Webhooks/index.tsx:22
-#: src/components/routes/organizer/Webhooks/index.tsx:23
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:22
 msgid "No Active Webhooks"
 msgstr "没有活动的 Webhook"
 
@@ -7471,6 +7493,7 @@ msgstr "没有可显示的已结束活动。"
 msgid "No event assigned"
 msgstr "未分配活动"
 
+#: src/components/routes/organizer/Events/index.tsx:96
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:178
 msgid "No event matches your search."
 msgstr ""
@@ -7936,7 +7959,7 @@ msgstr "线下支付设置"
 #: src/components/common/EventCard/index.tsx:89
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:123
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:127
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:28
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:30
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:32
 msgid "On Sale"
 msgstr "销售中"
@@ -8020,7 +8043,7 @@ msgstr "持续进行"
 #: src/components/routes/event/OrdersPage/OrderList.tsx:174
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:248
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:45
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:47
 #: src/components/routes/product-widget/Payment/index.tsx:136
 msgid "Online"
 msgstr "在线"
@@ -8501,14 +8524,14 @@ msgid "Organizer Not Found"
 msgstr "未找到组织者"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:126
-msgid "Organizer page"
-msgstr ""
+#~ msgid "Organizer page"
+#~ msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:61
 msgid "Organizer restored successfully"
 msgstr "主办方已成功恢复"
 
-#: src/components/routes/organizer/Settings/index.tsx:138
+#: src/components/routes/organizer/Settings/index.tsx:153
 msgid "Organizer Settings"
 msgstr "组织者设置"
 
@@ -8516,13 +8539,13 @@ msgstr "组织者设置"
 #~ msgid "Organizer statistics are not available for the selected currency or an error occurred."
 #~ msgstr "所选货币无法获取组织者统计信息，或发生错误。"
 
+#: src/components/common/OrganizerPageActions/index.tsx:40
 #: src/components/common/StatusToggle/index.tsx:64
-#: src/components/layouts/OrganizerLayout/index.tsx:119
 msgid "Organizer status update failed. Please try again later"
 msgstr "组织者状态更新失败。请稍后再试"
 
+#: src/components/common/OrganizerPageActions/index.tsx:39
 #: src/components/common/StatusToggle/index.tsx:56
-#: src/components/layouts/OrganizerLayout/index.tsx:116
 msgid "Organizer status updated"
 msgstr "组织者状态已更新"
 
@@ -8624,7 +8647,7 @@ msgstr "页面不再可用"
 msgid "Page not found"
 msgstr "页面未找到"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:129
+#: src/components/common/OrganizerPageActions/index.tsx:65
 msgid "Page online"
 msgstr ""
 
@@ -9038,7 +9061,7 @@ msgstr "从您的付款中扣除 {0} 的平台费用"
 #: src/components/routes/event/Settings/index.tsx:98
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
-#: src/components/routes/organizer/Settings/index.tsx:95
+#: src/components/routes/organizer/Settings/index.tsx:102
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:42
 msgid "Platform Fees"
 msgstr "平台费用"
@@ -9625,7 +9648,7 @@ msgstr "发布"
 msgid "Publish the event"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:129
+#: src/components/common/OrganizerPageActions/index.tsx:65
 msgid "Publish the page"
 msgstr ""
 
@@ -9687,7 +9710,7 @@ msgstr ""
 msgid "QR code updated"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:82
+#: src/components/layouts/OrganizerLayout/index.tsx:63
 #: src/components/routes/organizer/QrCodes/index.tsx:176
 #: src/components/routes/organizer/QrCodes/index.tsx:264
 msgid "QR codes"
@@ -10130,7 +10153,7 @@ msgid "Report not found"
 msgstr "未找到报告"
 
 #: src/components/layouts/Event/index.tsx:94
-#: src/components/layouts/OrganizerLayout/index.tsx:78
+#: src/components/layouts/OrganizerLayout/index.tsx:59
 #: src/components/routes/event/Reports/index.tsx:58
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -10171,7 +10194,7 @@ msgstr "重新发送验证码"
 msgid "Resend Confirmation"
 msgstr "重新发送确认"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:226
+#: src/components/common/OrganizerPageActions/index.tsx:89
 msgid "Resend Confirmation Email"
 msgstr "重新发送确认邮件"
 
@@ -10252,7 +10275,7 @@ msgid "Restore"
 msgstr "恢复"
 
 #: src/components/common/EventCard/index.tsx:146
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:71
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:77
 msgid "Restore event"
 msgstr "恢复活动"
 
@@ -10274,7 +10297,7 @@ msgstr "恢复此活动以使其重新可见。"
 msgid "Restore this organizer and make it active again."
 msgstr "恢复此主办方并使其重新活跃。"
 
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:102
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:114
 msgid "Resume"
 msgstr ""
 
@@ -10495,7 +10518,7 @@ msgstr ""
 #: src/components/modals/ManageOrderModal/index.tsx:175
 #: src/components/routes/admin/Configurations/index.tsx:268
 #: src/components/routes/event/HomepageDesigner/index.tsx:293
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:305
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:312
 msgid "Save Changes"
 msgstr "保存更改"
 
@@ -10611,6 +10634,7 @@ msgstr ""
 msgid "Search affiliates..."
 msgstr "搜索推广员..."
 
+#: src/components/routes/organizer/Events/index.tsx:60
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:97
 msgid "Search an event…"
 msgstr ""
@@ -10624,7 +10648,7 @@ msgstr "按账户名称或电子邮件搜索..."
 #~ msgstr "按与会者姓名、电子邮件或订单号搜索..."
 
 #: src/components/routes/events/Dashboard/index.tsx:149
-#: src/components/routes/organizer/Events/index.tsx:46
+#: src/components/routes/organizer/Events/index.tsx:75
 msgid "Search by event name..."
 msgstr "按活动名称搜索..."
 
@@ -10688,7 +10712,7 @@ msgstr "搜索订单"
 #~ msgid "Search products"
 #~ msgstr "搜索产品"
 
-#: src/components/common/SearchBar/index.tsx:36
+#: src/components/common/SearchBar/index.tsx:38
 msgid "Search..."
 msgstr "搜索..."
 
@@ -10989,6 +11013,10 @@ msgstr ""
 msgid "Send your first message"
 msgstr "发送您的第一条消息"
 
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:31
+msgid "Send your orders and attendees automatically to another tool (CRM, spreadsheet, automation)."
+msgstr ""
+
 #: src/components/routes/auth/ForgotPassword/index.tsx:70
 msgid "Sending..."
 msgstr "正在发送..."
@@ -11019,7 +11047,7 @@ msgid "Sent to each attendee with their ticket details"
 msgstr "发送给每位参会者及其门票详情"
 
 #: src/components/routes/event/Settings/index.tsx:58
-#: src/components/routes/organizer/Settings/index.tsx:61
+#: src/components/routes/organizer/Settings/index.tsx:62
 msgid "SEO"
 msgstr "SEO"
 
@@ -11120,7 +11148,7 @@ msgstr "设置已更新"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
 #: src/components/layouts/Kiosk/index.tsx:65
-#: src/components/layouts/OrganizerLayout/index.tsx:135
+#: src/components/layouts/OrganizerLayout/index.tsx:71
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/kiosk/Settings/index.tsx:59
 msgid "Settings"
@@ -11142,6 +11170,11 @@ msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:70
 msgid "Several choices"
+msgstr ""
+
+#: src/components/common/OrganizerPageActions/index.tsx:68
+msgctxt "organizer page"
+msgid "Share"
 msgstr ""
 
 #: src/components/common/ShareIcon/index.tsx:30
@@ -11172,7 +11205,7 @@ msgstr "分享推广链接"
 msgid "Share Event"
 msgstr "分享活动"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:200
+#: src/components/common/OrganizerPageActions/index.tsx:76
 msgid "Share Organizer Page"
 msgstr "分享组织者页面"
 
@@ -11181,8 +11214,8 @@ msgid "Share the event"
 msgstr ""
 
 #: src/components/layouts/OrganizerLayout/index.tsx:127
-msgid "Share the page"
-msgstr ""
+#~ msgid "Share the page"
+#~ msgstr ""
 
 #: src/components/routes/event/CapacityAssignments/index.tsx:34
 msgid "Shared Capacity Management"
@@ -11318,7 +11351,7 @@ msgstr "史密斯"
 msgid "Snapchat"
 msgstr "Snapchat"
 
-#: src/components/routes/organizer/Settings/index.tsx:55
+#: src/components/routes/organizer/Settings/index.tsx:56
 msgid "Social Links"
 msgstr "社交链接"
 
@@ -11414,8 +11447,8 @@ msgstr "出问题了"
 msgid "Something went wrong. Please try again later."
 msgstr "出了点问题。请稍后再试。"
 
+#: src/components/common/OrganizerPageActions/index.tsx:51
 #: src/components/layouts/Event/index.tsx:81
-#: src/components/layouts/OrganizerLayout/index.tsx:94
 #: src/components/routes/auth/Login/index.tsx:72
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:42
 #: src/components/routes/my-tickets/index.tsx:145
@@ -11735,7 +11768,7 @@ msgid "Successfully Updated Event Defaults"
 msgstr "成功更新活动默认设置"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:104
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:95
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:96
 msgid "Successfully Updated Homepage Design"
 msgstr "成功更新主页设计"
 
@@ -12255,7 +12288,7 @@ msgid "The Zebra printer did not respond."
 msgstr "Zebra 打印机无响应。"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:207
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:238
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:245
 msgid "Theme & Colors"
 msgstr "主题与颜色"
 
@@ -12902,7 +12935,7 @@ msgstr "按归因来源跟踪账户增长和表现"
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "通过详细报告跟踪销售、收入和出席情况"
 
-#: src/components/routes/organizer/Settings/index.tsx:73
+#: src/components/routes/organizer/Settings/index.tsx:74
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
 msgid "Tracking & Analytics"
 msgstr ""
@@ -12976,7 +13009,7 @@ msgid "Type of ticket"
 msgstr "门票类型"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:248
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:280
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:287
 msgid "Typography"
 msgstr "排版"
 
@@ -13150,6 +13183,7 @@ msgstr "不受信任"
 #: src/components/common/EventsDashboardStatusButtons/index.tsx:20
 #: src/components/common/EventStatusBadge/index.tsx:16
 #: src/components/layouts/OrganizerHomepage/index.tsx:284
+#: src/components/routes/organizer/Events/index.tsx:43
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:68
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:33
 msgid "Upcoming"
@@ -13263,7 +13297,7 @@ msgid "Use <0>Liquid templating</0> to personalize your emails"
 msgstr "使用 <0>Liquid 模板</0> 个性化您的邮件"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:225
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:257
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:264
 msgid "Use a blurred version of the cover image as the background"
 msgstr "使用封面图片的模糊版本作为背景"
 
@@ -13277,7 +13311,7 @@ msgid "Use cases"
 msgstr "应用场景"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:223
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:255
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:262
 msgid "Use cover image"
 msgstr "使用封面图片"
 
@@ -13518,7 +13552,7 @@ msgid "View Event"
 msgstr "查看活动"
 
 #: src/components/common/EventCard/index.tsx:131
-#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:67
+#: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:73
 msgid "View event page"
 msgstr "查看活动页面"
 
@@ -13711,11 +13745,11 @@ msgid "We recommend a square logo with minimum dimensions of 200x200px"
 msgstr "我们建议使用最小尺寸为200x200像素的方形标志"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:184
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:194
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:201
 msgid "We recommend dimensions of 1950px by 650px, a ratio of 3:1, and a maximum file size of 5MB"
 msgstr "我们建议尺寸为 2160px x 1080px，文件大小不超过 5MB"
 
-#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:215
+#: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:222
 msgid "We recommend dimensions of 400px by 400px, and a maximum file size of 5MB"
 msgstr "建议尺寸为 400x400 像素，文件大小不超过 5MB"
 
@@ -13800,10 +13834,10 @@ msgid "Webhook will send notifications"
 msgstr "Webhook 将发送通知"
 
 #: src/components/layouts/Event/index.tsx:128
-#: src/components/layouts/OrganizerLayout/index.tsx:134
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
-#: src/components/routes/organizer/Webhooks/index.tsx:30
+#: src/components/routes/organizer/Settings/index.tsx:86
+#: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -14285,7 +14319,7 @@ msgstr "必须先创建机票，然后才能手动添加与会者。"
 msgid "You must have at least one price tier"
 msgstr "您必须至少有一个价格等级"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:215
+#: src/components/common/OrganizerPageActions/index.tsx:85
 msgid "You must verify your email address before you can update the organizer status."
 msgstr "您必须先验证电子邮箱地址，才能更新组织者状态。"
 

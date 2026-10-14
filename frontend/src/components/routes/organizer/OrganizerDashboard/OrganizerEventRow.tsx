@@ -11,6 +11,8 @@ import {useUpdateEventStatus} from "../../../../mutations/useUpdateEventStatus.t
 import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {eventHomepagePath} from "../../../../utilites/urlHelper.ts";
+import {formatCurrency} from "../../../../utilites/currency.ts";
+import {formatNumber} from "../../../../utilites/helpers.ts";
 import classes from "./OrganizerDashboard.module.scss";
 
 const initialsOf = (title: string) => title
@@ -44,6 +46,10 @@ export const OrganizerEventRow = ({event}: { event: Event }) => {
     const place = event.settings?.is_online_event
         ? t`Online`
         : event.settings?.location_details?.venue_name || event.settings?.location_details?.city;
+
+    const attendees = event.statistics?.attendees_registered ?? 0;
+    const revenue = event.statistics?.sales_total_gross ?? 0;
+    const showFigures = !isDraft && (attendees > 0 || revenue > 0);
 
     const toggleArchive = () => {
         const message = event.status !== 'ARCHIVED'
@@ -95,6 +101,12 @@ export const OrganizerEventRow = ({event}: { event: Event }) => {
                         {formatEventDate(event)}
                         {place && <><span className={classes.metaSeparator}>•</span>{place}</>}
                     </span>
+                    {showFigures && (
+                        <span className={classes.eventFigures}>
+                            {attendees === 1 ? t`1 attendee` : t`${formatNumber(attendees)} attendees`}
+                            {revenue > 0 && <><span className={classes.metaSeparator}>•</span>{formatCurrency(revenue, event.currency)}</>}
+                        </span>
+                    )}
                 </div>
 
                 <div className={classes.eventActions}>

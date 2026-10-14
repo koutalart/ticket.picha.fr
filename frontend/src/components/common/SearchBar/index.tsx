@@ -17,11 +17,13 @@ interface SearchBarWrapperProps {
     setSearchParams: (updates: Partial<QueryFilters>) => void,
     searchParams: Partial<QueryFilters>,
     pagination?: PaginationData,
+    autoFocus?: boolean,
 }
 
-export const SearchBarWrapper = ({setSearchParams, searchParams, pagination, placeholder}: SearchBarWrapperProps) => {
+export const SearchBarWrapper = ({setSearchParams, searchParams, pagination, placeholder, autoFocus}: SearchBarWrapperProps) => {
     return (
         <SearchBar
+            autoFocus={autoFocus}
             value={searchParams.query}
             onChange={(event) => {
                 setSearchParams({

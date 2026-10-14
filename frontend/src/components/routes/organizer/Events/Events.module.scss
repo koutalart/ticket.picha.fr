@@ -1,0 +1,56 @@
+$ink: #14121c;
+$muted: #6b6b78;
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+  color: $ink;
+
+  @media (max-width: 767px) {
+    margin-bottom: 16px;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(30px, 6vw, 44px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.createMobile {
+  display: none !important;
+
+  @media (max-width: 767px) {
+    display: inline-flex !important;
+  }
+}
+
+.search {
+  margin-bottom: 16px;
+
+  @media (max-width: 767px) {
+    > div {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    > div > * {
+      width: 100%;
+    }
+  }
+}
+
+.muted {
+  color: $muted;
+}
