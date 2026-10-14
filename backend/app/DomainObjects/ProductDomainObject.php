@@ -144,6 +144,17 @@ class ProductDomainObject extends Generated\ProductDomainObjectAbstract implemen
         );
     }
 
+    public function isAvailableAtBoxOffice(): bool
+    {
+        if ($this->getType() === ProductPriceType::TIERED->name && $this->getProductPrices()?->isEmpty()) {
+            return false;
+        }
+
+        return !$this->isSoldOut()
+            && !$this->isBeforeSaleStartDate()
+            && !$this->isAfterSaleEndDate();
+    }
+
     public function isAvailable(): bool
     {
         // If all prices are hidden, it's not available
