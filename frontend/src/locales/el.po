@@ -333,7 +333,7 @@ msgstr "1 εβδομάδα πριν την εκδήλωση"
 msgid "1. Choose a ticket"
 msgstr ""
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:124
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:81
 msgid "123 Main Street"
 msgstr "Οδός Βασιλέως 123"
@@ -367,7 +367,7 @@ msgstr "50 έως 150"
 msgid "500 to 1,000"
 msgstr "500 έως 1.000"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:147
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:149
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:105
 msgid "94103"
 msgstr "10431"
@@ -840,6 +840,7 @@ msgstr "Πρόσθετες Πληροφορίες"
 #: src/components/common/OrderDetails/index.tsx:99
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:131
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
 #: src/components/routes/organizer/Settings/index.tsx:43
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
@@ -849,7 +850,6 @@ msgstr "Διεύθυνση"
 msgid "Address line 1"
 msgstr "Διεύθυνση γραμμή 1"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:122
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:80
 #: src/components/routes/product-widget/CollectInformation/index.tsx:558
 #: src/components/routes/product-widget/CollectInformation/index.tsx:559
@@ -862,7 +862,7 @@ msgstr "Διεύθυνση Γραμμή 1"
 msgid "Address line 2"
 msgstr "Διεύθυνση γραμμή 2"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:127
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:136
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:85
 #: src/components/routes/product-widget/CollectInformation/index.tsx:563
 #: src/components/routes/product-widget/CollectInformation/index.tsx:564
@@ -893,6 +893,11 @@ msgstr "Πίνακας Διαχείρισης"
 #: src/components/modals/InviteUserModal/index.tsx:43
 msgid "Admin users have full access to events and account settings."
 msgstr "Οι χρήστες διαχειριστές έχουν πλήρη πρόσβαση σε εκδηλώσεις και ρυθμίσεις λογαριασμού."
+
+#: src/components/routes/event/Settings/index.tsx:62
+msgctxt "event settings tab"
+msgid "Advanced"
+msgstr ""
 
 #: src/components/common/AffiliateTable/index.tsx:82
 msgid "Affiliate"
@@ -1922,7 +1927,7 @@ msgstr "Παράκαμψη Χρεώσεων Εφαρμογής"
 msgid "Calculation Type"
 msgstr "Τύπος Υπολογισμού"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:140
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:142
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:98
 msgid "California"
 msgstr "Καλιφόρνια"
@@ -2105,7 +2110,7 @@ msgstr "Οι κατηγορίες αναδιατάχθηκαν επιτυχώς.
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:305
 #: src/components/routes/event/products.tsx:60
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:83
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:103
 msgid "Category"
 msgstr "Κατηγορία"
 
@@ -2260,8 +2265,8 @@ msgid "Checked In"
 msgstr "Εισήλθε"
 
 #: src/components/routes/event/Settings/index.tsx:52
-msgid "Checkout"
-msgstr "Ολοκλήρωση Αγοράς"
+#~ msgid "Checkout"
+#~ msgstr "Ολοκλήρωση Αγοράς"
 
 #: src/components/routes/event/Settings/Sections/HomepageAndCheckoutSettings/index.tsx:84
 msgid "Checkout Settings"
@@ -2341,7 +2346,7 @@ msgstr "Επιλέξτε…"
 
 #: src/components/common/CheckoutQuestion/index.tsx:181
 #: src/components/common/QuestionsTable/index.tsx:365
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:134
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:128
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:92
 #: src/components/routes/product-widget/CollectInformation/index.tsx:572
 #: src/components/routes/product-widget/CollectInformation/index.tsx:573
@@ -2605,7 +2610,7 @@ msgstr "Συναυλίες, πάρτι, αθλητικές και πολιτισ
 msgid "Conference"
 msgstr "Συνέδριο"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:117
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:118
 msgid "Conference Center"
 msgstr "Συνεδριακό Κέντρο"
 
@@ -2639,8 +2644,8 @@ msgid "Configurations"
 msgstr "Ρυθμίσεις"
 
 #: src/components/routes/event/Settings/index.tsx:158
-msgid "Configure event details, location, checkout options, and email notifications."
-msgstr "Ρύθμιση λεπτομερειών εκδήλωσης, τοποθεσίας, επιλογών ολοκλήρωσης αγοράς και ειδοποιήσεων email."
+#~ msgid "Configure event details, location, checkout options, and email notifications."
+#~ msgstr "Ρύθμιση λεπτομερειών εκδήλωσης, τοποθεσίας, επιλογών ολοκλήρωσης αγοράς και ειδοποιήσεων email."
 
 #: src/components/common/QuestionsTable/index.tsx:417
 #~ msgid "Configure how attendee details are collected during checkout"
@@ -2803,7 +2808,7 @@ msgstr "Συνδεδεμένο με Stripe"
 msgid "Connected welcome staff on site"
 msgstr "Συνδεδεμένο προσωπικό υποδοχής επί τόπου"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:98
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:99
 msgid "Connection Details"
 msgstr "Λεπτομέρειες Σύνδεσης"
 
@@ -3012,7 +3017,7 @@ msgid "Countries"
 msgstr ""
 
 #: src/components/common/CheckoutQuestion/index.tsx:193
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:152
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:154
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:110
 #: src/components/routes/product-widget/CollectInformation/index.tsx:593
 #: src/components/routes/product-widget/CollectInformation/index.tsx:749
@@ -3277,7 +3282,7 @@ msgstr "Πολιτισμός"
 #: src/components/forms/OrganizerForm/index.tsx:50
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:73
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:174
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:116
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:118
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:51
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:99
 #: src/components/routes/organizer/Reports/TaxSummaryReport/index.tsx:33
@@ -3325,7 +3330,7 @@ msgstr "Ο προσαρμοσμένος τομέας αφαιρέθηκε"
 msgid "Custom domain saved"
 msgstr "Ο προσαρμοσμένος τομέας αποθηκεύτηκε"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:159
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:161
 msgid "Custom Maps URL"
 msgstr "Προσαρμοσμένο URL Χάρτη"
 
@@ -3462,7 +3467,6 @@ msgstr "Επικίνδυνη ζώνη"
 
 #: src/components/common/AttendeeTable/index.tsx:372
 #: src/components/common/DangerZone/index.tsx:30
-#: src/components/routes/event/Settings/index.tsx:88
 #: src/components/routes/organizer/Settings/index.tsx:85
 msgid "Danger Zone"
 msgstr "Επικίνδυνη Ζώνη"
@@ -4143,8 +4147,8 @@ msgid "Email & Notification Settings"
 msgstr "Ρυθμίσεις Email & Ειδοποιήσεων"
 
 #: src/components/routes/event/Settings/index.tsx:64
-msgid "Email & Templates"
-msgstr "Email & Πρότυπα"
+#~ msgid "Email & Templates"
+#~ msgstr "Email & Πρότυπα"
 
 #: src/components/modals/CreateAttendeeModal/index.tsx:113
 #: src/components/modals/ManageAttendeeModal/index.tsx:115
@@ -4226,6 +4230,11 @@ msgstr "Απαιτείται Επαλήθευση Email"
 msgid "Email verified successfully!"
 msgstr "Το email επαληθεύτηκε επιτυχώς!"
 
+#: src/components/routes/event/Settings/index.tsx:55
+msgctxt "event settings tab"
+msgid "Emails"
+msgstr ""
+
 #: src/components/common/WidgetEditor/index.tsx:246
 #: src/components/common/WidgetEditor/index.tsx:275
 msgid "Embed Code"
@@ -4283,7 +4292,7 @@ msgstr "Κρυπτογραφημένες συνδέσεις (HTTPS), πρόσβ�
 
 #: src/components/common/AdminEventsTable/index.tsx:107
 #: src/components/modals/DuplicateEventModal/index.tsx:130
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:108
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:90
 msgid "End Date"
 msgstr "Ημερομηνία Λήξης"
 
@@ -4469,6 +4478,11 @@ msgstr "Σφάλμα επιβεβαίωσης αλλαγής email"
 msgid "Error loading logs"
 msgstr "Σφάλμα φόρτωσης αρχείων καταγραφής"
 
+#: src/components/routes/event/Settings/index.tsx:38
+msgctxt "event settings tab"
+msgid "Essentials"
+msgstr ""
+
 #: src/components/routes/landing/DemoRequestForm/index.tsx:158
 msgid "Estimated date"
 msgstr "Εκτιμώμενη ημερομηνία"
@@ -4479,7 +4493,7 @@ msgid "EU VAT-registered businesses: Reverse charge mechanism applies (0% - Arti
 msgstr "Επιχειρήσεις εγγεγραμμένες για ΦΠΑ στην ΕΕ: Εφαρμόζεται μηχανισμός αντίστροφης χρέωσης (0% - Άρθρο 196 Οδηγίας ΦΠΑ 2006/112/ΕΚ)"
 
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:74
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:117
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:119
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:117
 msgid "EUR"
 msgstr "EUR"
@@ -4573,8 +4587,7 @@ msgstr "Περιγραφή Εκδήλωσης"
 msgid "Event details"
 msgstr "Λεπτομέρειες εκδήλωσης"
 
-#: src/components/routes/event/Settings/index.tsx:40
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:69
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:70
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:610
 msgid "Event Details"
 msgstr "Λεπτομέρειες Εκδήλωσης"
@@ -4595,7 +4608,7 @@ msgstr "Αρχική Σελίδα Εκδήλωσης"
 msgid "Event Location"
 msgstr "Τοποθεσία Εκδήλωσης"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:85
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:86
 msgid "Event location & venue details"
 msgstr "Τοποθεσία εκδήλωσης & λεπτομέρειες χώρου"
 
@@ -4661,9 +4674,9 @@ msgstr "Η εκδήλωση αποκαταστάθηκε επιτυχώς"
 msgid "Event set-up with your teams"
 msgstr "Ρύθμιση της εκδήλωσης με τις ομάδες σας"
 
-#: src/components/routes/event/Settings/index.tsx:159
-msgid "Event Settings"
-msgstr "Ρυθμίσεις Εκδήλωσης"
+#: src/components/routes/event/Settings/index.tsx:96
+#~ msgid "Event Settings"
+#~ msgstr "Ρυθμίσεις Εκδήλωσης"
 
 #: src/components/routes/landing/index.tsx:208
 #: src/components/routes/landing/MarketingFooter/index.tsx:15
@@ -5824,7 +5837,7 @@ msgstr "Υπερβάθηκε το όριο χαρακτήρων HTML: {htmlLengt
 msgid "https://awesome-events.com"
 msgstr "https://events.haroldpoi.click"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:160
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:162
 msgid "https://example-maps-service.com/..."
 msgstr "https://maps.google.com/..."
 
@@ -5864,7 +5877,7 @@ msgstr ""
 msgid "If a new tab did not open automatically, please click the button below to continue to checkout."
 msgstr "Εάν δεν άνοιξε αυτόματα νέα καρτέλα, κάντε κλικ στο κουμπί παρακάτω για να συνεχίσετε στην ολοκλήρωση αγοράς."
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:158
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:160
 msgid "If blank, the address will be used to generate a Google Maps link"
 msgstr "Εάν είναι κενό, η διεύθυνση θα χρησιμοποιηθεί για τη δημιουργία συνδέσμου Google Maps"
 
@@ -5979,7 +5992,7 @@ msgstr "Ανενεργό"
 msgid "Inactive users cannot log in."
 msgstr "Οι ανενεργοί χρήστες δεν μπορούν να συνδεθούν."
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:102
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:103
 msgid "Include connection details for your online event. These details will be shown on the order summary page and attendee ticket page."
 msgstr "Συμπεριλάβετε στοιχεία σύνδεσης για την διαδικτυακή εκδήλωση. Τα στοιχεία αυτά θα εμφανίζονται στη σελίδα σύνοψης παραγγελίας και στη σελίδα εισιτηρίου συμμετέχοντα."
 
@@ -6623,8 +6636,7 @@ msgid "Local number without the leading 0."
 msgstr "Τοπικός αριθμός χωρίς το αρχικό 0."
 
 #: src/components/layouts/EventHomepage/index.tsx:425
-#: src/components/routes/event/Settings/index.tsx:46
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:84
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:85
 #: src/components/routes/my-tickets/index.tsx:73
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:313
 msgid "Location"
@@ -6929,8 +6941,8 @@ msgid "minutes"
 msgstr "λεπτά"
 
 #: src/components/routes/event/Settings/index.tsx:70
-msgid "Miscellaneous"
-msgstr "Διάφορα"
+#~ msgid "Miscellaneous"
+#~ msgstr "Διάφορα"
 
 #: src/components/routes/event/Settings/Sections/MiscSettings/index.tsx:72
 msgid "Miscellaneous Settings"
@@ -6987,9 +6999,17 @@ msgstr ""
 msgid "More actions"
 msgstr ""
 
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:132
+msgid "More details (full address, map link)"
+msgstr ""
+
 #: src/components/routes/event/QuickAddTicket.tsx:74
 #~ msgid "More options"
 #~ msgstr ""
+
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:100
+msgid "More options (category, currency, timezone)"
+msgstr ""
 
 #: src/components/routes/landing/DemoRequestForm/index.tsx:78
 msgid "More than 1,000"
@@ -7091,7 +7111,7 @@ msgstr "Παράδειγμα κειμένου..."
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:63
 #: src/components/routes/admin/Configurations/index.tsx:219
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:98
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:76
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:77
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:231
 msgid "Name"
 msgstr "Όνομα"
@@ -8593,8 +8613,8 @@ msgid "Payment"
 msgstr "Πληρωμή"
 
 #: src/components/routes/event/Settings/index.tsx:82
-msgid "Payment & Invoicing"
-msgstr "Πληρωμή & Τιμολόγηση"
+#~ msgid "Payment & Invoicing"
+#~ msgstr "Πληρωμή & Τιμολόγηση"
 
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:98
 msgid "Payment & Invoicing Settings"
@@ -8811,7 +8831,6 @@ msgid "Platform fee of {0} deducted from your payout"
 msgstr "Τέλος πλατφόρμας {0} αφαιρείται από την πληρωμή σας"
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:248
-#: src/components/routes/event/Settings/index.tsx:98
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
 #: src/components/routes/organizer/Settings/index.tsx:95
@@ -10136,6 +10155,11 @@ msgctxt "event menu"
 msgid "Sales"
 msgstr ""
 
+#: src/components/routes/event/Settings/index.tsx:46
+msgctxt "event settings tab"
+msgid "Sales"
+msgstr ""
+
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:137
 msgid "Sales are paused"
 msgstr "Οι πωλήσεις είναι σε παύση"
@@ -10187,7 +10211,7 @@ msgstr "Δείγμα τιμής εισιτηρίου"
 msgid "Sample Venue"
 msgstr "Δείγμα Χώρου"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:135
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:129
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:93
 msgid "San Francisco"
 msgstr "Σαν Φρανσίσκο"
@@ -10198,9 +10222,9 @@ msgstr "Σαν Φρανσίσκο"
 #: src/components/modals/EditOrganizerCustomDomainModal/index.tsx:74
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:324
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:81
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:130
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:134
 #: src/components/routes/event/Settings/Sections/HomepageAndCheckoutSettings/index.tsx:141
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:166
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:169
 #: src/components/routes/event/Settings/Sections/MiscSettings/index.tsx:102
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:265
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:102
@@ -10485,7 +10509,7 @@ msgid "Select {0}"
 msgstr "Επιλογή {0}"
 
 #: src/components/modals/CreateEventModal/index.tsx:187
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:84
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:104
 msgid "Select a category"
 msgstr "Επιλογή κατηγορίας"
 
@@ -10743,7 +10767,6 @@ msgstr "Αποστέλλεται στους πελάτες όταν κάνουν
 msgid "Sent to each attendee with their ticket details"
 msgstr "Αποστέλλεται σε κάθε συμμετέχοντα με τα στοιχεία εισιτηρίου"
 
-#: src/components/routes/event/Settings/index.tsx:58
 #: src/components/routes/organizer/Settings/index.tsx:61
 msgid "SEO"
 msgstr "SEO"
@@ -10843,6 +10866,7 @@ msgstr "Η ρύθμιση ενημερώθηκε"
 #: src/components/layouts/Kiosk/index.tsx:65
 #: src/components/layouts/OrganizerLayout/index.tsx:134
 #: src/components/modals/DuplicateEventModal/index.tsx:27
+#: src/components/routes/event/Settings/index.tsx:95
 #: src/components/routes/kiosk/Settings/index.tsx:59
 msgid "Settings"
 msgstr "Ρυθμίσεις"
@@ -11196,7 +11220,7 @@ msgstr "Τυπικό προϊόν με σταθερή τιμή"
 
 #: src/components/common/AdminEventsTable/index.tsx:96
 #: src/components/modals/DuplicateEventModal/index.tsx:125
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:103
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:85
 msgid "Start Date"
 msgstr "Ημερομηνία Έναρξης"
 
@@ -11234,7 +11258,7 @@ msgid "Starts"
 msgstr ""
 
 #: src/components/common/CheckoutQuestion/index.tsx:184
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:139
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:141
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:97
 #: src/components/routes/product-widget/CollectInformation/index.tsx:578
 #: src/components/routes/product-widget/CollectInformation/index.tsx:579
@@ -11437,7 +11461,7 @@ msgstr "Επιτυχής ενημέρωση Λίστας Check-In"
 msgid "Successfully Updated Email Settings"
 msgstr "Επιτυχής Ενημέρωση Ρυθμίσεων Email"
 
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:58
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:59
 msgid "Successfully Updated Event"
 msgstr "Επιτυχής Ενημέρωση Εκδήλωσης"
 
@@ -11454,7 +11478,7 @@ msgstr "Επιτυχής Ενημέρωση Σχεδιασμού Αρχικής"
 msgid "Successfully Updated Homepage Settings"
 msgstr "Επιτυχής Ενημέρωση Ρυθμίσεων Αρχικής"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:73
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:74
 msgid "Successfully Updated Location"
 msgstr "Επιτυχής Ενημέρωση Τοποθεσίας"
 
@@ -11515,7 +11539,7 @@ msgstr "Επιτυχής Ενημέρωση Ρυθμίσεων Παρακολο�
 msgid "Successfully updated Webhook"
 msgstr "Επιτυχής ενημέρωση Webhook"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:128
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:137
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:86
 msgid "Suite 100"
 msgstr "Διαμέρισμα 100"
@@ -11527,7 +11551,7 @@ msgstr "Σύνοψη"
 
 #: src/components/modals/CreateEventModal/index.tsx:178
 #: src/components/modals/DuplicateEventModal/index.tsx:111
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:77
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:78
 msgid "Summer Music Festival {0}"
 msgstr "Καλοκαιρινό Μουσικό Φεστιβάλ {0}"
 
@@ -11999,7 +12023,7 @@ msgstr "Παρουσιάστηκε σφάλμα κατά την επεξεργα
 msgid "There was an error sending your message"
 msgstr "Παρουσιάστηκε σφάλμα κατά την αποστολή του μηνύματός σας"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:105
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:106
 msgid "These details will only be shown if order is completed successfully. Orders awaiting payment will not show this message."
 msgstr "Αυτές οι λεπτομέρειες θα εμφανίζονται μόνο εάν η παραγγελία ολοκληρωθεί επιτυχώς. Παραγγελίες αναμονής πληρωμής δεν θα εμφανίζουν αυτό το μήνυμα."
 
@@ -12091,7 +12115,7 @@ msgstr "Αυτές οι πληροφορίες θα εμφανίζονται σ�
 msgid "This is a general product, like a t-shirt or a mug. No ticket will be issued"
 msgstr "Πρόκειται για γενικό προϊόν, όπως μπλούζα ή κούπα. Δεν θα εκδοθεί εισιτήριο"
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:91
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:92
 msgid "This is an online event"
 msgstr "Πρόκειται για διαδικτυακή εκδήλωση"
 
@@ -12474,7 +12498,7 @@ msgstr "Φορές Χρήσης"
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:82
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:165
 #: src/components/routes/auth/AcceptInvitation/index.tsx:119
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:125
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:127
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:125
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:327
 #: src/components/routes/profile/ManageProfile/index.tsx:187
@@ -12764,7 +12788,7 @@ msgstr "Μοναδική αναφορά παραγγελίας"
 msgid "Unique visitors"
 msgstr ""
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:153
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:155
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:111
 msgid "United States"
 msgstr "Ηνωμένες Πολιτείες"
@@ -12864,7 +12888,7 @@ msgstr "Ενημέρωση {0}"
 msgid "Update Affiliate"
 msgstr "Ενημέρωση Συνεργάτη"
 
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:70
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:71
 msgid "Update event name, description and dates"
 msgstr "Ενημέρωση ονόματος εκδήλωσης, περιγραφής και ημερομηνιών"
 
@@ -13016,7 +13040,7 @@ msgid "Users can change their email in <0>Profile Settings</0>"
 msgstr "Οι χρήστες μπορούν να αλλάξουν email στις <0>Ρυθμίσεις Προφίλ</0>"
 
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:83
-#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:126
+#: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:128
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:126
 #: src/components/routes/profile/ManageProfile/index.tsx:188
 msgid "UTC"
@@ -13150,7 +13174,7 @@ msgstr "Η υπηρεσία επαλήθευσης ΦΠΑ δεν είναι πρ
 msgid "Venue"
 msgstr ""
 
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:116
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:117
 msgid "Venue Name"
 msgstr "Όνομα Χώρου"
 
@@ -13324,7 +13348,6 @@ msgid "Waiting for payment"
 msgstr "Αναμονή πληρωμής"
 
 #: src/components/layouts/Event/index.tsx:121
-#: src/components/routes/event/Settings/index.tsx:76
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:51
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:49
 msgid "Waitlist"
@@ -14292,7 +14315,7 @@ msgid "ZIP / Postal Code"
 msgstr "ΤΚ / Ταχυδρομικός Κωδικός"
 
 #: src/components/common/CheckoutQuestion/index.tsx:189
-#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:146
+#: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:148
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:104
 msgid "Zip or Postal Code"
 msgstr "ΤΚ ή Ταχυδρομικός Κωδικός"

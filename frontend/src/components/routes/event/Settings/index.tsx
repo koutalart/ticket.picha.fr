@@ -1,177 +1,121 @@
-import {PageBody} from "../../../common/PageBody";
+import {useParams} from "react-router";
+import {Skeleton} from "@mantine/core";
+import {t} from "@lingui/macro";
+import {ComponentType, useEffect, useMemo, useState} from "react";
 import {EventDetailsForm} from "./Sections/EventDetailsForm";
 import {LocationSettings} from "./Sections/LocationSettings";
 import {HomepageAndCheckoutSettings} from "./Sections/HomepageAndCheckoutSettings";
 import {EmailSettings} from "./Sections/EmailSettings";
-import {PageTitle} from "../../../common/PageTitle";
-import {t} from "@lingui/macro";
 import {SeoSettings} from "./Sections/SeoSettings";
 import {MiscSettings} from "./Sections/MiscSettings";
-import {Box, Group, NavLink as MantineNavLink, Stack} from "@mantine/core";
-import {
-    IconAdjustments,
-    IconAlertTriangle,
-    IconAt,
-    IconBrandGoogleAnalytics,
-    IconBuildingStore,
-    IconCreditCard,
-    IconHome,
-    IconListCheck,
-    IconMapPin,
-    IconPercentage,
-} from "@tabler/icons-react";
-import {useMediaQuery} from "@mantine/hooks";
-import {useEffect, useMemo, useState} from "react";
-import {Card} from "../../../common/Card";
 import {PaymentAndInvoicingSettings} from "./Sections/PaymentSettings";
 import {PlatformFeesSettings} from "./Sections/PlatformFeesSettings";
 import {WaitlistSettings} from "./Sections/WaitlistSettings";
 import {DangerZoneSettings} from "./Sections/DangerZoneSettings";
 import {useGetAccount} from "../../../../queries/useGetAccount.ts";
+import {useGetEvent} from "../../../../queries/useGetEvent.ts";
+import classes from "./Settings.module.scss";
+
+type TabId = 'essentials' | 'sales' | 'emails' | 'advanced';
+
+interface Section {
+    id: string;
+    component: ComponentType;
+}
+
+const tabOfSection = (tabs: { id: TabId, sections: Section[] }[], sectionId: string) =>
+    tabs.find((tab) => tab.id === sectionId || tab.sections.some((section) => section.id === sectionId))?.id;
 
 export const Settings = () => {
+    const {eventId} = useParams();
+    const {data: event} = useGetEvent(eventId);
     const {data: account} = useGetAccount();
     const isSaasMode = account?.is_saas_mode_enabled;
 
-    const SECTIONS = useMemo(() => {
-        const baseSections = [
-            {
-                id: 'event-details',
-                label: t`Event Details`,
-                icon: IconBuildingStore,
-                component: EventDetailsForm
-            },
-            {
-                id: 'location-settings',
-                label: t`Location`,
-                icon: IconMapPin,
-                component: LocationSettings
-            },
-            {
-                id: 'homepage-settings',
-                label: t`Checkout`,
-                icon: IconHome,
-                component: HomepageAndCheckoutSettings
-            },
-            {
-                id: 'seo-settings',
-                label: t`SEO`,
-                icon: IconBrandGoogleAnalytics,
-                component: SeoSettings
-            },
-            {
-                id: 'email-settings',
-                label: t`Email & Templates`,
-                icon: IconAt,
-                component: EmailSettings
-            },
-            {
-                id: 'misc-settings',
-                label: t`Miscellaneous`,
-                icon: IconAdjustments,
-                component: MiscSettings
-            },
-            {
-                id: 'waitlist-settings',
-                label: t`Waitlist`,
-                icon: IconListCheck,
-                component: WaitlistSettings,
-            },
-            {
-                id: 'payment-settings',
-                label: t`Payment & Invoicing`,
-                icon: IconCreditCard,
-                component: PaymentAndInvoicingSettings,
-            },
-            {
-                id: 'danger-zone',
-                label: t`Danger Zone`,
-                icon: IconAlertTriangle,
-                component: DangerZoneSettings,
-                color: 'red',
-            }
-        ];
+    const tabs = useMemo(() => [
+        {
+            id: 'essentials' as TabId,
+            label: t({message: 'Essentials', context: 'event settings tab'}),
+            sections: [
+                {id: 'event-details', component: EventDetailsForm},
+                {id: 'location-settings', component: LocationSettings},
+            ],
+        },
+        {
+            id: 'sales' as TabId,
+            label: t({message: 'Sales', context: 'event settings tab'}),
+            sections: [
+                {id: 'homepage-settings', component: HomepageAndCheckoutSettings},
+                {id: 'payment-settings', component: PaymentAndInvoicingSettings},
+                {id: 'waitlist-settings', component: WaitlistSettings},
+            ],
+        },
+        {
+            id: 'emails' as TabId,
+            label: t({message: 'Emails', context: 'event settings tab'}),
+            sections: [
+                {id: 'email-settings', component: EmailSettings},
+            ],
+        },
+        {
+            id: 'advanced' as TabId,
+            label: t({message: 'Advanced', context: 'event settings tab'}),
+            sections: [
+                {id: 'seo-settings', component: SeoSettings},
+                {id: 'misc-settings', component: MiscSettings},
+                ...(isSaasMode ? [{id: 'platform-fees', component: PlatformFeesSettings}] : []),
+                {id: 'danger-zone', component: DangerZoneSettings},
+            ],
+        },
+    ], [isSaasMode]);
 
-        if (isSaasMode) {
-            baseSections.splice(baseSections.length - 1, 0, {
-                id: 'platform-fees',
-                label: t`Platform Fees`,
-                icon: IconPercentage,
-                component: PlatformFeesSettings,
-            });
-        }
-
-        return baseSections;
-    }, [isSaasMode]);
-
-    const isLargeScreen = useMediaQuery('(min-width: 1200px)', true);
-    const [activeSection, setActiveSection] = useState(() => {
-        if (typeof window === 'undefined') return 'event-details';
-        const hash = window.location.hash.replace('#', '');
-        return hash || 'event-details';
-    });
+    const [activeTab, setActiveTab] = useState<TabId>('essentials');
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
         const hash = window.location.hash.replace('#', '');
-        if (hash) {
-            setActiveSection(hash);
-            setTimeout(() => {
-                document.getElementById(hash)?.scrollIntoView({behavior: 'smooth'});
-            }, 100);
+        const tab = hash ? tabOfSection(tabs, hash) : undefined;
+        if (!tab) return;
+        setActiveTab(tab);
+        if (hash !== tab) {
+            setTimeout(() => document.getElementById(hash)?.scrollIntoView({behavior: 'smooth'}), 150);
         }
-    }, []);
+    }, [tabs]);
 
-    const handleClick = (sectionId: string) => {
-        setActiveSection(sectionId);
-        window.history.replaceState(null, '', `#${sectionId}`);
-        document.getElementById(sectionId)?.scrollIntoView({behavior: 'smooth'});
+    const selectTab = (tab: TabId) => {
+        setActiveTab(tab);
+        window.history.replaceState(null, '', `#${tab}`);
     };
 
-    const sideMenu = (
-        <Card style={{padding: '15px', marginBottom: 0}}>
-            <Stack gap="xs">
-                {SECTIONS.map((section) => (
-                    <MantineNavLink
-                        style={{borderRadius: '5px'}}
-                        key={section.id}
-                        active={activeSection === section.id}
-                        label={section.label}
-                        color={'color' in section ? section.color as string : undefined}
-                        leftSection={<section.icon size={16} stroke={1.5}/>}
-                        onClick={() => handleClick(section.id)}
-                    />
-                ))}
-            </Stack>
-        </Card>
-    );
-
-    const content = SECTIONS.map(({id, component: Component}) => (
-        <div key={id} id={id} style={{scrollMarginTop: '20px'}}>
-            <Component/>
-        </div>
-    ));
+    const current = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
 
     return (
-        <PageBody>
-            <PageTitle
-                subheading={t`Configure event details, location, checkout options, and email notifications.`}
-            >{t`Event Settings`}</PageTitle>
+        <div className={classes.page}>
+            <header className={classes.header}>
+                <span className={classes.kicker}>{t`Settings`}</span>
+                {event
+                    ? <h1 className={classes.title}>{event.title}</h1>
+                    : <Skeleton height={40} width={260} radius="sm"/>}
+            </header>
 
-            {isLargeScreen ? (
-                <Group align="flex-start" gap="md">
-                    <Box w={240} style={{position: 'sticky', top: 20}}>
-                        {sideMenu}
-                    </Box>
-                    <Box style={{flex: 1}}>{content}</Box>
-                </Group>
-            ) : (
-                <Stack>
-                    {sideMenu}
-                    {content}
-                </Stack>
-            )}
-        </PageBody>
+            <div className={classes.tabs} role="tablist">
+                {tabs.map((tab) => (
+                    <button key={tab.id} type="button" role="tab" aria-selected={tab.id === activeTab}
+                            className={tab.id === activeTab ? classes.tabActive : classes.tab}
+                            onClick={() => selectTab(tab.id)}>
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            <div role="tabpanel">
+                {current.sections.map(({id, component: Component}) => (
+                    <div key={id} id={id} className={classes.section}>
+                        <Component/>
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 };
 
