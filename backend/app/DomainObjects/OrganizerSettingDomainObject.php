@@ -3,6 +3,7 @@
 namespace HiEvents\DomainObjects;
 
 use BackedEnum;
+use HiEvents\DomainObjects\Enums\TrackingPixelProvider;
 use UnitEnum;
 
 class OrganizerSettingDomainObject extends Generated\OrganizerSettingDomainObjectAbstract
@@ -25,5 +26,23 @@ class OrganizerSettingDomainObject extends Generated\OrganizerSettingDomainObjec
         }
 
         return $settings[$key] ?? $default;
+    }
+
+    public function getEnabledFacebookPixelId(): ?string
+    {
+        foreach ($this->getTrackingPixels() ?? [] as $pixel) {
+            if (($pixel['provider'] ?? null) === TrackingPixelProvider::FACEBOOK_PIXEL->value
+                && ! empty($pixel['enabled'])
+                && ! empty($pixel['pixel_id'])) {
+                return (string) $pixel['pixel_id'];
+            }
+        }
+
+        return null;
+    }
+
+    public function isMetaConversionsApiConfigured(): bool
+    {
+        return ! empty($this->getMetaConversionsApiToken()) && $this->getEnabledFacebookPixelId() !== null;
     }
 }

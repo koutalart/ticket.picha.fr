@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\Enums\EventCategory;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Exceptions\OrganizerNotFoundException;
 use HiEvents\Services\Application\Handlers\Event\DTO\CreateEventDTO;
+use HiEvents\Services\Domain\CheckInList\DefaultCheckInListService;
 use HiEvents\Services\Domain\Event\CreateEventService;
 use HiEvents\Services\Domain\ProductCategory\CreateProductCategoryService;
 use HiEvents\Services\Domain\Organizer\OrganizerFetchService;
@@ -23,6 +24,7 @@ class CreateEventHandler
         private readonly OrganizerFetchService        $organizerFetchService,
         private readonly CreateProductCategoryService $createProductCategoryService,
         private readonly DatabaseManager              $databaseManager,
+        private readonly DefaultCheckInListService    $defaultCheckInListService,
     )
     {
     }
@@ -66,6 +68,7 @@ class CreateEventHandler
         $newEvent = $this->createEventService->createEvent($event);
 
         $this->createProductCategoryService->createDefaultProductCategory($newEvent);
+        $this->defaultCheckInListService->createForEvent($newEvent->getId());
 
         DispatchEventWebhookJob::dispatch(
             $newEvent->getId(),

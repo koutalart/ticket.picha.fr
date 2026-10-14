@@ -38,6 +38,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     final public const HIGHLIGHT_MESSAGE = 'highlight_message';
     final public const WAITLIST_ENABLED = 'waitlist_enabled';
     final public const IS_VISIBLE_AT_BOX_OFFICE = 'is_visible_at_box_office';
+    final public const IS_SALES_PAUSED = 'is_sales_paused';
 
     protected int $id;
     protected int $event_id;
@@ -67,6 +68,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     protected ?string $highlight_message = null;
     protected ?bool $waitlist_enabled = null;
     protected bool $is_visible_at_box_office = true;
+    protected bool $is_sales_paused = false;
 
     public function toArray(): array
     {
@@ -99,6 +101,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
                     'highlight_message' => $this->highlight_message ?? null,
                     'waitlist_enabled' => $this->waitlist_enabled ?? null,
                     'is_visible_at_box_office' => $this->is_visible_at_box_office ?? null,
+                    'is_sales_paused' => $this->is_sales_paused ?? null,
                 ];
     }
 
@@ -408,5 +411,16 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     public function getIsVisibleAtBoxOffice(): bool
     {
         return $this->is_visible_at_box_office;
+    }
+
+    public function setIsSalesPaused(bool $is_sales_paused): self
+    {
+        $this->is_sales_paused = $is_sales_paused;
+        return $this;
+    }
+
+    public function getIsSalesPaused(): bool
+    {
+        return $this->is_sales_paused;
     }
 }

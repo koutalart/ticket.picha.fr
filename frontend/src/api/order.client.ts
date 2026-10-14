@@ -48,7 +48,16 @@ export interface ProductFormPayload {
     products?: ProductFormValue[],
     promo_code: string | null,
     affiliate_code?: string | null,
+    qr_link_code?: string | null,
+    tracking_context?: OrderTrackingContext | null,
     session_identifier?: string,
+}
+
+export interface OrderTrackingContext {
+    consent: true,
+    fbp?: string | null,
+    fbc?: string | null,
+    event_source_url?: string,
 }
 
 export interface RefundOrderPayload {

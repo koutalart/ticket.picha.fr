@@ -77,6 +77,7 @@ readonly class EventStatsFetchService
             total_refunded: $totalsResult->total_refunded ?? 0,
             total_awaiting_payment: (float) $awaitingPayment->total,
             orders_awaiting_payment: (int) $awaitingPayment->orders,
+            check_in_stats: $this->getCheckedInStats($eventId),
         );
     }
 
@@ -187,15 +188,20 @@ readonly class EventStatsFetchService
         $query = <<<SQL
             SELECT
                 COUNT(*) AS total_count,
-                SUM(CASE WHEN attendees.checked_in_at IS NOT NULL THEN 1 ELSE 0 END) AS checked_in_count
+                SUM(CASE WHEN attendees.checked_in_at IS NOT NULL OR EXISTS (
+                    SELECT 1 FROM attendee_check_ins
+                    WHERE attendee_check_ins.attendee_id = attendees.id
+                      AND attendee_check_ins.deleted_at IS NULL
+                ) THEN 1 ELSE 0 END) AS checked_in_count
             FROM attendees
             INNER JOIN orders ON orders.id = attendees.order_id
-            WHERE orders.event_id = {$eventId}
+            WHERE orders.event_id = :eventId
               AND orders.status = 'COMPLETED'
-              AND attendees.status = 'ACTIVE';
+              AND attendees.status = 'ACTIVE'
+              AND attendees.deleted_at IS NULL;
         SQL;
 
-        $result = $this->db->select($query)[0];
+        $result = $this->db->select($query, ['eventId' => $eventId])[0];
 
         return new EventCheckInStatsResponseDTO(
             total_checked_in_attendees: $result->checked_in_count ?? 0,

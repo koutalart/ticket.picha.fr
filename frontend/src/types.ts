@@ -187,7 +187,7 @@ export interface Image {
     lqip_base64?: string | null;
 }
 
-export type ImageType = 'EVENT_COVER' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_IMAGE' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
+export type ImageType = 'EVENT_COVER' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
 
 export type PaymentProvider = 'STRIPE' | 'OFFLINE';
 
@@ -476,12 +476,117 @@ export interface OrganizerSettings {
     allow_search_engine_indexing?: boolean;
     tracking_pixels?: TrackingPixelConfig[];
     tracking_consent_acknowledged?: boolean;
+    meta_conversions_api_configured?: boolean;
+    meta_test_event_code?: string | null;
+    meta_conversions_api_token?: string | null;
 }
 
 export interface TrackingPixelConfig {
     provider: string;
     pixel_id: string;
     enabled: boolean;
+}
+
+export type QrLinkDestinationType = 'LINK_PAGE' | 'EVENT' | 'URL';
+
+export type QrLinkStatus = 'ACTIVE' | 'PAUSED';
+
+export type QrLinkSocialPlatform = 'instagram' | 'facebook' | 'tiktok' | 'whatsapp' | 'snapchat' | 'youtube' | 'x' | 'linkedin' | 'telegram' | 'website';
+
+export interface QrLinkSocialLink {
+    platform: QrLinkSocialPlatform;
+    url: string;
+}
+
+export type QrPosterTemplate = 'none' | 'story' | 'poster' | 'square' | 'custom';
+
+export interface QrLinkDesign {
+    foreground?: string;
+    background?: string;
+    template?: QrPosterTemplate;
+    background_image_id?: IdParam | null;
+    background_image_url?: string;
+    background_width?: number;
+    background_height?: number;
+    qr_position?: number;
+    qr_scale?: number;
+    caption?: string;
+    caption_color?: string;
+}
+
+export interface QrLink {
+    id: IdParam;
+    short_id: string;
+    public_url: string;
+    name: string;
+    destination_type: QrLinkDestinationType;
+    destination_url: string | null;
+    event_id: IdParam | null;
+    event_title: string | null;
+    qr_campaign_id: IdParam | null;
+    title: string | null;
+    description: string | null;
+    social_links: QrLinkSocialLink[];
+    design: QrLinkDesign;
+    status: QrLinkStatus;
+    scans_count: number;
+    unique_scans_count: number;
+    clicks_count: number;
+    orders_count: number;
+    revenue_gross: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface QrCampaign {
+    id: IdParam;
+    name: string;
+    created_at: string;
+}
+
+export interface QrLinkPublic {
+    short_id: string;
+    name: string;
+    organizer_id: IdParam;
+    event_id: IdParam | null;
+    event_title: string | null;
+    ticket_url: string | null;
+    destination_type: QrLinkDestinationType;
+    title: string | null;
+    description: string | null;
+    social_links: QrLinkSocialLink[];
+    design: QrLinkDesign;
+}
+
+export interface QrLinkBreakdownItem {
+    key: string | null;
+    count: number;
+}
+
+export interface QrLinkStats {
+    qr_link_id: IdParam;
+    days: number | null;
+    timezone: string;
+    scans: number;
+    unique_scans: number;
+    clicks: number;
+    orders: number;
+    revenue_gross: number;
+    conversion_rate: number | null;
+    daily: { date: string; scans: number; unique_scans: number; clicks: number }[];
+    hours: { hour: number; count: number }[];
+    devices: QrLinkBreakdownItem[];
+    operating_systems: QrLinkBreakdownItem[];
+    browsers: QrLinkBreakdownItem[];
+    countries: QrLinkBreakdownItem[];
+    referrers: QrLinkBreakdownItem[];
+    clicks_by_target: QrLinkBreakdownItem[];
+}
+
+export interface MetaConversionsApiTestResult {
+    pixel_id: string;
+    pixel_name: string | null;
+    test_event_sent: boolean;
 }
 
 export interface SortDirectionLabel {
@@ -581,6 +686,7 @@ export interface Product {
     is_available?: boolean;
     is_hidden_without_promo_code?: boolean;
     is_visible_at_box_office?: boolean;
+    is_sales_paused?: boolean;
     is_before_sale_start_date?: boolean;
     is_after_sale_end_date?: boolean;
     taxes?: TaxAndFee[];

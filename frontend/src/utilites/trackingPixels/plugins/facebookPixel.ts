@@ -59,7 +59,7 @@ export const facebookPixelPlugin: TrackingPixelPlugin = {
             currency: data.currency || 'USD',
             content_name: data.contentName,
             content_ids: data.contentId ? [String(data.contentId)] : undefined,
-        });
+        }, data.eventId ? {eventID: data.eventId} : undefined);
     },
 
     cleanup() {

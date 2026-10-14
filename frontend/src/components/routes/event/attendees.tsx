@@ -1,224 +1,182 @@
+import {useState} from "react";
 import {useParams} from "react-router";
+import {Button, Skeleton} from "@mantine/core";
+import {useDisclosure} from "@mantine/hooks";
+import {IconDownload, IconPlus} from "@tabler/icons-react";
+import {t, Trans} from "@lingui/macro";
 import {useGetAttendees} from "../../../queries/useGetAttendees.ts";
-import {PageTitle} from "../../common/PageTitle";
-import {PageBody} from "../../common/PageBody";
-import {AttendeeTable} from "../../common/AttendeeTable";
+import {useGetEvent} from "../../../queries/useGetEvent.ts";
+import {useGetEventStats} from "../../../queries/useGetEventStats.ts";
+import {useFilterQueryParamSync} from "../../../hooks/useFilterQueryParamSync.ts";
 import {SearchBarWrapper} from "../../common/SearchBar";
 import {Pagination} from "../../common/Pagination";
-import {Button} from "@mantine/core";
-import {IconDownload, IconPlus} from "@tabler/icons-react";
-import {ToolBar} from "../../common/ToolBar";
-import {TableSkeleton} from "../../common/TableSkeleton";
-import {useFilterQueryParamSync} from "../../../hooks/useFilterQueryParamSync.ts";
-import {IdParam, ProductType, QueryFilterOperator, QueryFilters} from "../../../types.ts";
-import {useDisclosure} from "@mantine/hooks";
+import {NoResultsSplash} from "../../common/NoResultsSplash";
 import {CreateAttendeeModal} from "../../modals/CreateAttendeeModal";
-import {downloadBinary} from "../../../utilites/download.ts";
+import {IdParam, ProductType, QueryFilterOperator, QueryFilters} from "../../../types.ts";
 import {attendeesClient} from "../../../api/attendee.client.ts";
-import {useState} from "react";
-import {t} from "@lingui/macro";
+import {downloadBinary} from "../../../utilites/download.ts";
 import {withLoadingNotification} from "../../../utilites/withLoadingNotification.tsx";
-import {FilterModal, FilterOption} from "../../common/FilterModal";
-import {useGetEvent} from "../../../queries/useGetEvent.ts";
-import {getProductsFromEvent} from "../../../utilites/helpers.ts";
+import {formatNumber, getProductsFromEvent} from "../../../utilites/helpers.ts";
+import {AttendeeList} from "./AttendeesPage/AttendeeList.tsx";
+import classes from "./AttendeesPage/AttendeesPage.module.scss";
 
-const attendeeStatuses = [
-    {label: t`Active`, value: 'ACTIVE'},
-    {label: t`Cancelled`, value: 'CANCELLED'},
-    {label: t`Awaiting Payment`, value: 'AWAITING_PAYMENT'},
-];
+type StatusTab = 'all' | 'ACTIVE' | 'AWAITING_PAYMENT' | 'CANCELLED';
+
+const countQuery = (status: string): QueryFilters => ({
+    perPage: 1,
+    filterFields: {status: {operator: QueryFilterOperator.Equals, value: status}},
+} as QueryFilters);
 
 const Attendees = () => {
     const {eventId} = useParams();
+    const {data: event} = useGetEvent(eventId);
+    const {data: stats} = useGetEventStats(eventId, 'event');
     const [searchParams, setSearchParams] = useFilterQueryParamSync();
     const attendeesQuery = useGetAttendees(eventId, searchParams as QueryFilters);
-    const attendees = attendeesQuery?.data?.data;
-    const pagination = attendeesQuery?.data?.meta;
-    const [createModalOpen, {open: openCreateModal, close: closeCreateModal}] = useDisclosure(false);
-    const [downloadPending, setDownloadPending] = useState(false);
-    const {data: event} = useGetEvent(eventId);
+    const attendees = attendeesQuery.data?.data;
+    const pagination = attendeesQuery.data?.meta;
+    const [createOpen, create] = useDisclosure(false);
+    const [exporting, setExporting] = useState(false);
 
-    const productOptions = getProductsFromEvent(event)
-        ?.filter(product => product.product_type === ProductType.Ticket)
-        ?.flatMap(product => {
-            const options = [];
+    const activeCount = useGetAttendees(eventId, countQuery('ACTIVE')).data?.meta?.total;
+    const awaitingCount = useGetAttendees(eventId, countQuery('AWAITING_PAYMENT')).data?.meta?.total;
+    const cancelledCount = useGetAttendees(eventId, countQuery('CANCELLED')).data?.meta?.total;
 
-            options.push({
-                label: product.title,
-                value: `product:${product.id}`
-            });
+    const tickets = (getProductsFromEvent(event) ?? []).filter((product) => product.product_type === ProductType.Ticket);
+    const fields = (searchParams.filterFields ?? {}) as Record<string, { value?: unknown }>;
+    const statusTab = (fields.status?.value as StatusTab) ?? 'all';
+    const ticketTab = fields.product_id?.value ? String(fields.product_id.value) : null;
 
-            if (product.type === 'TIERED' && product.prices) {
-                product.prices.forEach(price => {
-                    options.push({
-                        label: `${product.title} - ${price.label}`,
-                        value: `tier:${price.id}`
-                    });
-                });
-            }
-
-            return options;
-        }) || [];
-
-    const filterOptions: FilterOption[] = [
-        {
-            field: 'product_id',
-            label: t`Ticket Type`,
-            type: 'multi-select',
-            options: productOptions
+    const applyFilters = (status: StatusTab, ticketId: string | null) => setSearchParams({
+        ...searchParams,
+        pageNumber: 1,
+        filterFields: {
+            ...(status !== 'all' ? {status: {operator: QueryFilterOperator.Equals, value: status}} : {}),
+            ...(ticketId ? {product_id: {operator: QueryFilterOperator.Equals, value: ticketId}} : {}),
         },
-        {
-            field: 'status',
-            label: t`Attendee Status`,
-            type: 'multi-select',
-            options: attendeeStatuses
-        }
+    } as QueryFilters, true);
+
+    const exportAttendees = (id: IdParam) => withLoadingNotification(async () => {
+        setExporting(true);
+        const blob = await attendeesClient.export(id);
+        downloadBinary(blob, 'participants.xlsx');
+    }, {
+        loading: {title: t`Exporting Attendees`, message: t`Please wait while we prepare your attendees for export...`},
+        success: {title: t`Attendees Exported`, message: t`Your attendees have been exported successfully.`, onRun: () => setExporting(false)},
+        error: {title: t`Failed to export attendees`, message: t`Please try again.`, onRun: () => setExporting(false)},
+    });
+
+    const entered = stats?.check_in_stats?.total_checked_in_attendees ?? 0;
+    const valid = activeCount ?? stats?.check_in_stats?.total_attendees ?? 0;
+    const percent = valid > 0 ? Math.round(entered / valid * 100) : 0;
+
+    const statusTabs: { value: StatusTab, label: string, count?: number }[] = [
+        {value: 'all', label: t({message: 'All', context: 'attendees filter'})},
+        {value: 'ACTIVE', label: t({message: 'Valid', context: 'attendees filter'}), count: activeCount},
+        {value: 'AWAITING_PAYMENT', label: t({message: 'Awaiting payment', context: 'order status'}), count: awaitingCount},
+        {value: 'CANCELLED', label: t({message: 'Cancelled', context: 'attendees filter'}), count: cancelledCount},
     ];
 
-    const handleFilterChange = (values: Record<string, any>) => {
-        const filterFields: any = {};
-
-        if (values.product_id?.length > 0) {
-            const productIds: string[] = [];
-            const tierIds: string[] = [];
-
-            values.product_id.forEach((value: string) => {
-                if (value.startsWith('product:')) {
-                    productIds.push(value.replace('product:', ''));
-                } else if (value.startsWith('tier:')) {
-                    tierIds.push(value.replace('tier:', ''));
-                }
-            });
-
-            if (productIds.length > 0) {
-                filterFields.product_id = {operator: QueryFilterOperator.In, value: productIds};
-            }
-            if (tierIds.length > 0) {
-                filterFields.product_price_id = {operator: QueryFilterOperator.In, value: tierIds};
-            }
-        }
-        if (values.status?.length > 0) {
-            filterFields.status = {operator: QueryFilterOperator.In, value: values.status};
-        }
-
-        setSearchParams({
-            ...searchParams,
-            filterFields,
-            pageNumber: 1
-        } as QueryFilters, true);
-    };
-
-    const handleResetFilters = () => {
-        setSearchParams({
-            ...searchParams,
-            filterFields: {},
-            pageNumber: 1
-        } as QueryFilters, true);
-    };
-
-    const handleExport = async (eventId: IdParam) => {
-        await withLoadingNotification(async () => {
-                setDownloadPending(true);
-                const blob = await attendeesClient.export(eventId);
-                downloadBinary(blob, 'attendees.xlsx');
-            },
-            {
-                loading: {
-                    title: t`Exporting Attendees`,
-                    message: t`Please wait while we prepare your attendees for export...`
-                },
-                success: {
-                    title: t`Attendees Exported`,
-                    message: t`Your attendees have been exported successfully.`,
-                    onRun: () => setDownloadPending(false)
-                },
-                error: {
-                    title: t`Failed to export attendees`,
-                    message: t`Please try again.`,
-                    onRun: () => setDownloadPending(false)
-                }
-            });
-    };
-
-    const getFilterValue = (field: any): string[] => {
-        if (!field) return [];
-        if (Array.isArray(field)) return field;
-        if (Array.isArray(field.value)) return field.value;
-        return field.value ? [field.value] : [];
-    };
-
-    const getProductFilterValues = (): string[] => {
-        const values: string[] = [];
-
-        const productIds = getFilterValue(searchParams.filterFields?.product_id);
-        const tierIds = getFilterValue(searchParams.filterFields?.product_price_id);
-
-        productIds.forEach(id => values.push(`product:${id}`));
-        tierIds.forEach(id => values.push(`tier:${id}`));
-
-        return values;
-    };
-
-    const currentFilters = {
-        product_id: getProductFilterValues(),
-        status: getFilterValue(searchParams.filterFields?.status)
-    };
+    const filtered = Boolean(searchParams.query) || statusTab !== 'all' || ticketTab !== null;
 
     return (
-        <>
-            <PageBody>
-                <PageTitle
-                    subheading={t`View, edit, and export your registered attendees.`}
-                >
-                    {t`Attendees`}
-                </PageTitle>
+        <div className={classes.page}>
+            <header className={classes.header}>
+                <div>
+                    <h1 className={classes.title}><Trans>Attendees</Trans></h1>
+                    <p className={classes.subtitle}><Trans>Everyone who has a ticket for this event.</Trans></p>
+                </div>
+                <div className={classes.headerActions}>
+                    <Button variant="default" radius="md" leftSection={<IconDownload size={16}/>} loading={exporting}
+                            onClick={() => exportAttendees(eventId as IdParam)}>
+                        <Trans>Export</Trans>
+                    </Button>
+                    <Button radius="md" leftSection={<IconPlus size={16}/>} onClick={create.open}>
+                        <Trans>Add an attendee</Trans>
+                    </Button>
+                </div>
+            </header>
 
-                <ToolBar
-                    filterComponent={
-                        <FilterModal
-                            filters={filterOptions}
-                            activeFilters={currentFilters}
-                            onChange={handleFilterChange}
-                            onReset={handleResetFilters}
-                            title={t`Filter Attendees`}
-                        />
-                    }
-                    searchComponent={() => (
-                        <SearchBarWrapper
-                            placeholder={t`Search by attendee name, email or order #...`}
-                            setSearchParams={setSearchParams}
-                            searchParams={searchParams}
-                            pagination={pagination}
-                        />
+            <section className={classes.entries}>
+                {stats ? (
+                    <>
+                        <p className={classes.entriesText}>
+                            <strong>{formatNumber(entered)}</strong>{' '}
+                            <Trans>entered out of {formatNumber(valid)}</Trans>
+                            <span className={classes.entriesPercent}>{percent} %</span>
+                        </p>
+                        <div className={classes.bar}><div style={{width: `${percent}%`}}/></div>
+                        <p className={classes.entriesRemaining}>
+                            <Trans>{formatNumber(Math.max(0, valid - entered))} still to come</Trans>
+                        </p>
+                    </>
+                ) : <Skeleton height={70} radius="md"/>}
+            </section>
+
+            <div className={classes.filters}>
+                <div className={classes.chips}>
+                    {statusTabs.map((tab) => (
+                        <button key={tab.value} type="button"
+                                className={statusTab === tab.value ? classes.chipActive : classes.chip}
+                                onClick={() => applyFilters(tab.value, ticketTab)}>
+                            {tab.label}
+                            {tab.count !== undefined && tab.count > 0 && <span className={classes.chipCount}>{tab.count}</span>}
+                        </button>
+                    ))}
+                    {tickets.length > 1 && <span className={classes.chipDivider}/>}
+                    {tickets.length > 1 && tickets.map((ticket) => (
+                        <button key={ticket.id} type="button"
+                                className={ticketTab === String(ticket.id) ? classes.chipActive : classes.chip}
+                                onClick={() => applyFilters(statusTab, ticketTab === String(ticket.id) ? null : String(ticket.id))}>
+                            {ticket.title}
+                        </button>
+                    ))}
+                </div>
+                <div className={classes.search}>
+                    <SearchBarWrapper
+                        placeholder={t`Search a name, an email or an order number…`}
+                        setSearchParams={setSearchParams}
+                        searchParams={searchParams}
+                        pagination={pagination}
+                    />
+                </div>
+            </div>
+
+            {!attendees && (
+                <div className={classes.skeletons}>
+                    {[...Array(4)].map((_, index) => <Skeleton key={index} height={72} radius="md"/>)}
+                </div>
+            )}
+
+            {attendees && event && attendees.length > 0 && <AttendeeList attendees={attendees} event={event}/>}
+
+            {attendees && attendees.length === 0 && (
+                <NoResultsSplash
+                    imageHref={'/blank-slate/attendees.svg'}
+                    heading={filtered ? t`No attendee matches these filters` : t`No Attendees to show`}
+                    subHeading={(
+                        <>
+                            <p>{t`Your attendees will appear here once they have registered for your event. You can also manually add attendees.`}</p>
+                            {!filtered && (
+                                <Button radius="md" leftSection={<IconPlus size={16}/>} onClick={create.open}>
+                                    <Trans>Add an attendee</Trans>
+                                </Button>
+                            )}
+                        </>
                     )}
-                >
-                    <Button color={'green'} size={'sm'} onClick={openCreateModal} rightSection={<IconPlus/>}>
-                        {t`Create`}
-                    </Button>
+                />
+            )}
 
-                    <Button color={'green'}
-                            size={'sm'}
-                            loading={downloadPending}
-                            onClick={() => handleExport(eventId)}
-                            rightSection={<IconDownload/>}
-                    >
-                        {t`Export`}
-                    </Button>
-                </ToolBar>
+            {!!attendees?.length && Number(pagination?.last_page) > 1 && (
+                <Pagination
+                    value={searchParams.pageNumber}
+                    onChange={(value) => setSearchParams({pageNumber: value})}
+                    total={Number(pagination?.last_page)}
+                />
+            )}
 
-                <TableSkeleton isVisible={!attendees || attendeesQuery.isFetching}/>
-
-                {(!!attendees) && <AttendeeTable openCreateModal={openCreateModal}
-                                                 attendees={attendees}
-                />}
-
-                {!!attendees?.length
-                    && <Pagination value={searchParams.pageNumber}
-                                   onChange={(value) => setSearchParams({pageNumber: value})}
-                                   total={Number(pagination?.last_page)}/>}
-            </PageBody>
-            {createModalOpen && <CreateAttendeeModal onClose={closeCreateModal} isOpen={createModalOpen}/>}
-        </>
+            {createOpen && <CreateAttendeeModal onClose={create.close} isOpen={createOpen}/>}
+        </div>
     );
 };
 

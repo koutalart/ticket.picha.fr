@@ -1,14 +1,12 @@
 import {useParams} from "react-router";
 import {useDisclosure} from "@mantine/hooks";
-import {Button, Menu} from "@mantine/core";
-import {IconCategory, IconChevronDown, IconPlus, IconShoppingCart} from "@tabler/icons-react";
-import {PageTitle} from "../../common/PageTitle";
-import {PageBody} from "../../common/PageBody";
+import {Button} from "@mantine/core";
+import {IconCategory, IconPlus} from "@tabler/icons-react";
 import {CreateProductModal} from "../../modals/CreateProductModal";
 import {ProductCategoryList} from "../../common/ProductsTable";
-import {ToolBar} from "../../common/ToolBar";
 import {TableSkeleton} from "../../common/TableSkeleton";
-import {t} from "@lingui/macro";
+import {t, Trans} from "@lingui/macro";
+import classes from "./ProductsPage.module.scss";
 import {useUrlHash} from "../../../hooks/useUrlHash.ts";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
 import {useGetEventProductCategories} from "../../../queries/useGetProductCategories.ts";
@@ -29,7 +27,7 @@ export const Products = () => {
     const {eventId} = useParams();
     const {data: event} = useGetEvent(eventId);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategoryId, setSelectedCategoryId] = useState<IdParam>(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState<IdParam>(undefined);
 
     const productCategoriesQuery = useGetEventProductCategories(eventId);
     const productCategories = productCategoriesQuery?.data?.data;
@@ -41,65 +39,48 @@ export const Products = () => {
         openCreateProductModal();
     }
 
-    return (
-        <PageBody>
-            <PageTitle
-                subheading={t`Create and configure tickets and merchandise for sale.`}
-            >{t`Tickets & Products`}</PageTitle>
+    const productCount = (productCategories ?? []).reduce((total, category) => total + (category.products?.length ?? 0), 0);
+    const tickets = (productCategories ?? []).flatMap((category) => category.products ?? []);
+    const almostGone = tickets.filter((product) => {
+        const total = Number(product.initial_quantity_available) || 0;
+        const left = total - (Number(product.quantity_sold) || 0);
+        return total > 0 && left > 0 && left <= Math.max(10, total * 0.1);
+    });
 
-            <ToolBar
-                searchComponent={() => (
+    return (
+        <div className={classes.page}>
+            <header className={classes.header}>
+                <div>
+                    <h1 className={classes.title}><Trans>Tickets</Trans></h1>
+                    <p className={classes.subtitle}><Trans>What you sell, at what price and in what quantity.</Trans></p>
+                </div>
+                <div className={classes.headerActions}>
+                    <Button variant="default" radius="md" leftSection={<IconCategory size={16}/>}
+                            onClick={openCreateProductCategoryModal}>
+                        <Trans>Category</Trans>
+                    </Button>
+                    <Button radius="md" leftSection={<IconPlus size={16}/>} onClick={() => openCreateProduct(undefined)}>
+                        <Trans>Add a ticket</Trans>
+                    </Button>
+                </div>
+            </header>
+
+            {almostGone.length > 0 && (
+                <p className={classes.almostGone}>
+                    <Trans>Almost sold out:</Trans> <strong>{almostGone.map((product) => product.title).join(', ')}</strong>
+                </p>
+            )}
+
+            {productCount >= 8 && (
+                <div className={classes.search}>
                     <SearchBar
                         onClear={() => setSearchTerm('')}
-                        placeholder={t`Search products`}
-                        rightSection={<IconChevronDown/>}
+                        placeholder={t`Search a ticket`}
                         value={searchTerm}
                         onChange={(event) => setSearchTerm(event.target.value)}
                     />
-                )}
-            >
-                <Menu
-                    transitionProps={{transition: 'pop-top-right'}}
-                    position="bottom"
-                    width={220}
-                    withinPortal
-                >
-                    <Menu.Target>
-                        <Button
-                            leftSection={<IconPlus/>}
-                            color={'green'}
-                            rightSection={
-                                <IconChevronDown stroke={1.5}/>
-                            }
-                            pr={12}
-                        >
-                            {t`Create`}
-                        </Button>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                        <Menu.Item
-                            leftSection={
-                                <IconShoppingCart
-                                    stroke={1.5}
-                                />
-                            }
-                            onClick={() => openCreateProduct(undefined)}
-                        >
-                            {t`Ticket or Product`}
-                        </Menu.Item>
-                        <Menu.Item
-                            leftSection={
-                                <IconCategory
-                                    stroke={1.5}
-                                />
-                            }
-                            onClick={openCreateProductCategoryModal}
-                        >
-                            {t`Category`}
-                        </Menu.Item>
-                    </Menu.Dropdown>
-                </Menu>
-            </ToolBar>
+                </div>
+            )}
 
             <TableSkeleton isVisible={!productCategories || !event}/>
 
@@ -117,7 +98,7 @@ export const Products = () => {
                                     isOpen={createProductModalOpen}/>}
             {createProductCategoryModalOpen && <CreateProductCategoryModal onClose={closeCreateProductCategoryModal}
                                                                            isOpen={createProductCategoryModalOpen}/>}
-        </PageBody>
+        </div>
     );
 };
 

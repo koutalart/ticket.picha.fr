@@ -9,6 +9,7 @@ import {
     ComboboxItem,
     MultiSelect,
     NumberInput,
+    SegmentedControl,
     Select,
     Switch,
     TextInput
@@ -175,6 +176,9 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
     ];
 
     const {eventId} = useParams();
+    const onlineOnly = !form.values.is_hidden && form.values.is_visible_at_box_office === false;
+    const boxOfficeOnly = Boolean(form.values.is_hidden) && form.values.is_visible_at_box_office !== false;
+    const salesChannel: 'online' | 'box_office' | null = onlineOnly ? 'online' : boxOfficeOnly ? 'box_office' : null;
     const [opened, {toggle}] = useDisclosure(false);
     const [taxFeeModalOpen, {open: openTaxFeeModal, close: closeTaxFeeModal}] = useDisclosure(false);
     const isFreeProduct = form.values.type === 'FREE';
@@ -274,6 +278,28 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                 placeholder={form.values.product_type === 'TICKET' ? t`VIP Ticket` : t`T-shirt`}
                 required
             />
+
+            <div className={classes.salesChannel}>
+                <span className={classes.salesChannelLabel}>{t`Where is it sold?`}</span>
+                <SegmentedControl
+                    fullWidth
+                    radius="md"
+                    value={salesChannel ?? ''}
+                    onChange={(value) => {
+                        form.setFieldValue('is_hidden', value === 'box_office');
+                        form.setFieldValue('is_visible_at_box_office', value === 'box_office');
+                    }}
+                    data={[
+                        {value: 'online', label: t`Online`},
+                        {value: 'box_office', label: t`At the box office`},
+                    ]}
+                />
+                {salesChannel === null && (
+                    <span className={classes.salesChannelHint}>
+                        {t`This ticket is currently sold both online and at the box office. Choose one channel.`}
+                    </span>
+                )}
+            </div>
 
             <Editor
                 label={t`Description`}
@@ -480,16 +506,6 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                                     to={'../promo-codes'}>{t`Promo Code page`}</NavLink></>}
                                 {...form.getInputProps('is_hidden_without_promo_code', {type: 'checkbox'})}
                                 label={t`Hide product unless user has applicable promo code`}
-                            />
-                            <Switch
-                                description={t`This overrides all visibility settings and will hide the product from all customers.`}
-                                {...form.getInputProps(`is_hidden`, {type: 'checkbox'})}
-                                label={t`Hide this product from customers`}
-                            />
-                            <Switch
-                                description={t`Show this ticket on the box office tablet. A ticket hidden from customers can still be sold at the box office.`}
-                                {...form.getInputProps(`is_visible_at_box_office`, {type: 'checkbox'})}
-                                label={t`Visible at the box office`}
                             />
                             <Switch
                                 description={t`Allow customers to join a waitlist when this product is sold out`}

@@ -9,9 +9,11 @@ use HiEvents\DomainObjects\Generated\ProductPriceDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\Services\Application\Handlers\Product\DTO\UpsertProductDTO;
+use HiEvents\Services\Domain\CheckInList\DefaultCheckInListService;
 use HiEvents\Services\Domain\Product\CreateProductService;
 use HiEvents\Services\Domain\Product\DTO\ProductPriceDTO;
 use HiEvents\Services\Domain\ProductCategory\GetProductCategoryService;
+use Illuminate\Database\DatabaseManager;
 use Throwable;
 
 class CreateProductHandler
@@ -19,6 +21,8 @@ class CreateProductHandler
     public function __construct(
         private readonly CreateProductService      $productCreateService,
         private readonly GetProductCategoryService $getProductCategoryService,
+        private readonly DefaultCheckInListService $defaultCheckInListService,
+        private readonly DatabaseManager           $databaseManager,
     )
     {
     }
@@ -27,6 +31,16 @@ class CreateProductHandler
      * @throws Throwable
      */
     public function handle(UpsertProductDTO $productsData): ProductDomainObject
+    {
+        return $this->databaseManager->transaction(function () use ($productsData) {
+            $product = $this->createProduct($productsData);
+            $this->defaultCheckInListService->addTicket($product);
+
+            return $product;
+        });
+    }
+
+    private function createProduct(UpsertProductDTO $productsData): ProductDomainObject
     {
         $productPrices = $productsData->prices->map(fn(ProductPriceDTO $price) => ProductPriceDomainObject::hydrateFromArray([
             ProductPriceDomainObjectAbstract::PRICE => $productsData->type === ProductPriceType::FREE ? 0.00 : $price->price,
@@ -60,6 +74,7 @@ class CreateProductHandler
                 ->setShowQuantityRemaining($productsData->show_quantity_remaining)
                 ->setIsHiddenWithoutPromoCode($productsData->is_hidden_without_promo_code)
                 ->setIsVisibleAtBoxOffice($productsData->is_visible_at_box_office ?? true)
+                ->setIsSalesPaused($productsData->is_sales_paused ?? ($productsData->is_hidden && ($productsData->is_visible_at_box_office ?? true)))
                 ->setIsHighlighted($productsData->is_highlighted ?? false)
                 ->setHighlightMessage($productsData->highlight_message)
                 ->setWaitlistEnabled($productsData->waitlist_enabled)

@@ -20,6 +20,8 @@ class ImageOptimizationService
 
     private const LOGO_MAX_DIMENSION = 800;
 
+    private const POSTER_MAX_DIMENSION = 3000;
+
     private const SKIPPED_MIME_TYPES = ['image/gif', 'image/svg+xml'];
 
     private const LOGO_TYPES = [
@@ -97,6 +99,10 @@ class ImageOptimizationService
     {
         if ($type === ImageType::EVENT_SHARE_IMAGE) {
             return ['jpeg', 'image/jpeg', 'jpg', self::SHARE_MAX_WIDTH, self::SHARE_MAX_WIDTH];
+        }
+
+        if ($type === ImageType::QR_POSTER_BACKGROUND) {
+            return ['webp', 'image/webp', 'webp', self::POSTER_MAX_DIMENSION, self::POSTER_MAX_DIMENSION];
         }
 
         if (in_array($type, self::LOGO_TYPES, true)) {

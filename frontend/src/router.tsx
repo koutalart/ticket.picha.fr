@@ -2,6 +2,7 @@ import { Navigate, RouteObject } from "react-router";
 import ErrorPage from "./error-page.tsx";
 import { publicEventRouteLoader } from "./routeLoaders/publicEventRouteLoader.ts";
 import { publicOrganizerRouteLoader } from "./routeLoaders/publicOrganizerRouteLoader.ts";
+import { qrLinkPageLoader } from "./routeLoaders/qrLinkPageLoader.ts";
 import { organizerPreviewRouteLoader } from "./routeLoaders/organizerPreviewRouteLoader.ts";
 import { SOLUTION_SLUGS } from "./components/routes/solutions/slugs.ts";
 import {
@@ -111,6 +112,23 @@ export const router: RouteObject[] = [
                 async lazy() {
                     const ConfirmEmailAddress = await import("./components/routes/profile/ConfirmEmailAddress");
                     return { Component: ConfirmEmailAddress.default };
+                }
+            },
+        ]
+    },
+    {
+        path: "/manage/new-event",
+        errorElement: <ErrorPage />,
+        async lazy() {
+            const WelcomeLayout = await import("./components/layouts/WelcomeLayout");
+            return { Component: WelcomeLayout.default };
+        },
+        children: [
+            {
+                path: "",
+                async lazy() {
+                    const EventAssistant = await import("./components/routes/organizer/EventAssistant");
+                    return { Component: EventAssistant.default };
                 }
             },
         ]
@@ -314,6 +332,13 @@ export const router: RouteObject[] = [
                 async lazy() {
                     const OrganizerHomepageDesigner = await import("./components/routes/organizer/OrganizerHomepageDesigner");
                     return { Component: OrganizerHomepageDesigner.default };
+                }
+            },
+            {
+                path: "qr-codes",
+                async lazy() {
+                    const QrCodes = await import("./components/routes/organizer/QrCodes");
+                    return { Component: QrCodes.default };
                 }
             },
             {
@@ -539,6 +564,15 @@ export const router: RouteObject[] = [
         },
         errorElement: <ErrorPage />,
     })),
+    {
+        path: "/q/:shortId",
+        loader: qrLinkPageLoader,
+        async lazy() {
+            const QrLinkPage = await import("./components/layouts/QrLinkPage");
+            return {Component: QrLinkPage.default};
+        },
+        errorElement: <ErrorPage/>,
+    },
     {
         path: "/e/:eventId/:eventSlug",
         async lazy() {
