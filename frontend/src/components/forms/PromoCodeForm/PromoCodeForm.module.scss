@@ -1,0 +1,53 @@
+$ink: #14121c;
+$muted: #6b6b78;
+$line: #e7e5ee;
+$violet: #5b2bb5;
+$lavender: #efe9fb;
+
+.question {
+  margin: 0 0 8px;
+  color: $ink;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 14px;
+  border: 1px solid $line;
+  border-radius: 12px;
+  color: $ink;
+}
+
+.choiceActive {
+  @extend .choice;
+  border: 2px solid $violet;
+  background: $lavender;
+}
+
+.choiceIcon {
+  flex-shrink: 0;
+  color: $violet;
+}
+
+.choiceTitle {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.choiceHint {
+  display: block;
+  color: $muted;
+  font-size: 13px;
+}

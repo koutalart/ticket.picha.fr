@@ -1,0 +1,44 @@
+$ink: #14121c;
+$muted: #6b6b78;
+
+.page {
+  max-width: 960px;
+  color: $ink;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+
+  @media (max-width: 575px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.kicker {
+  display: block;
+  margin-bottom: 6px;
+  color: $muted;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.summary {
+  margin: 0 0 16px;
+  color: $muted;
+  font-size: 14px;
+}

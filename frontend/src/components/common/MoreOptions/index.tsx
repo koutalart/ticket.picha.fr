@@ -4,8 +4,8 @@ import {useDisclosure} from "@mantine/hooks";
 import {IconChevronDown, IconChevronUp} from "@tabler/icons-react";
 import classes from "./MoreOptions.module.scss";
 
-export const MoreOptions = ({label, children}: { label: string, children: ReactNode }) => {
-    const [opened, {toggle}] = useDisclosure(false);
+export const MoreOptions = ({label, children, defaultOpened = false}: { label: string, children: ReactNode, defaultOpened?: boolean }) => {
+    const [opened, {toggle}] = useDisclosure(defaultOpened);
 
     return (
         <div className={classes.wrapper}>

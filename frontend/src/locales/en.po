@@ -93,6 +93,14 @@ msgstr "{0} charges platform fees to maintain and improve its services. These fe
 msgid "{0} checked in"
 msgstr "{0} checked in"
 
+#: src/components/routes/event/promo-codes.tsx:41
+msgid "{0} codes"
+msgstr "{0} codes"
+
+#: src/components/common/PromoCodeTable/index.tsx:60
+msgid "{0} copied"
+msgstr "{0} copied"
+
 #: src/components/modals/CreateTaxOrFeeModal/index.tsx:36
 msgid "{0} created successfully"
 msgstr "{0} created successfully"
@@ -145,6 +153,7 @@ msgstr "{0} supports companies, institutions and partners in creating their even
 msgid "{0} supports companies, institutions and partners in creating their events{where}."
 msgstr "{0} supports companies, institutions and partners in creating their events{where}."
 
+#: src/components/common/PromoCodeTable/index.tsx:50
 #: src/components/routes/product-widget/CollectInformation/index.tsx:639
 msgid "{0} tickets"
 msgstr "{0} tickets"
@@ -234,6 +243,18 @@ msgstr "{total, plural, one {# order} other {# orders}}"
 msgid "{totalCount} ticket types"
 msgstr "{totalCount} ticket types"
 
+#: src/components/routes/event/promo-codes.tsx:43
+msgid "{totalUses} uses"
+msgstr "{totalUses} uses"
+
+#: src/components/common/PromoCodeTable/index.tsx:86
+msgid "{uses} / {max} used"
+msgstr "{uses} / {max} used"
+
+#: src/components/common/PromoCodeTable/index.tsx:86
+msgid "{uses} used"
+msgstr "{uses} used"
+
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:92
 msgid "{value} days"
 msgstr "{value} days"
@@ -321,6 +342,10 @@ msgstr "1 attendee"
 msgid "1 box office ticket is paused and hidden here."
 msgstr "1 box office ticket is paused and hidden here."
 
+#: src/components/routes/event/promo-codes.tsx:41
+msgid "1 code"
+msgstr "1 code"
+
 #: src/components/modals/SendMessageModal/index.tsx:120
 msgid "1 day after end date"
 msgstr "1 day after end date"
@@ -344,6 +369,10 @@ msgstr "1 ticket"
 #: src/components/common/EventCard/index.tsx:119
 msgid "1 ticket type"
 msgstr "1 ticket type"
+
+#: src/components/routes/event/promo-codes.tsx:43
+msgid "1 use"
+msgstr "1 use"
 
 #: src/components/modals/SendMessageModal/index.tsx:111
 msgid "1 week before event"
@@ -453,8 +482,8 @@ msgid "A phone number input with basic format validation"
 msgstr "A phone number input with basic format validation"
 
 #: src/components/forms/PromoCodeForm/index.tsx:68
-msgid "A promo code with no discount can be used to reveal hidden products."
-msgstr "A promo code with no discount can be used to reveal hidden products."
+#~ msgid "A promo code with no discount can be used to reveal hidden products."
+#~ msgstr "A promo code with no discount can be used to reveal hidden products."
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:109
 msgid "A purchase is only sent if the buyer accepted cookies on your pages."
@@ -562,6 +591,10 @@ msgstr "Accept invitation"
 #: src/components/routes/auth/AcceptInvitation/index.tsx:166
 msgid "Accept Invitation"
 msgstr "Accept Invitation"
+
+#: src/components/common/PromoCodeTable/index.tsx:79
+msgid "Access"
+msgstr "Access"
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:357
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:608
@@ -1041,8 +1074,8 @@ msgid "All jobs queued for retry"
 msgstr "All jobs queued for retry"
 
 #: src/components/common/PromoCodeTable/index.tsx:131
-msgid "All Products"
-msgstr "All Products"
+#~ msgid "All Products"
+#~ msgstr "All Products"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:159
 #: src/components/routes/organizer/QrCodes/index.tsx:164
@@ -1053,6 +1086,10 @@ msgstr "All QR codes"
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:64
 msgid "All Statuses"
 msgstr "All Statuses"
+
+#: src/components/common/PromoCodeTable/index.tsx:49
+msgid "All tickets"
+msgstr "All tickets"
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:19
 msgid "All upcoming dates by {0}, and a look back at past editions."
@@ -1341,7 +1378,7 @@ msgstr "Are you sure you want to delete this affiliate? This action cannot be un
 msgid "Are you sure you want to delete this configuration? This may affect accounts using it."
 msgstr "Are you sure you want to delete this configuration? This may affect accounts using it."
 
-#: src/components/common/PromoCodeTable/index.tsx:37
+#: src/components/common/PromoCodeTable/index.tsx:117
 msgid "Are you sure you want to delete this promo code?"
 msgstr "Are you sure you want to delete this promo code?"
 
@@ -2042,7 +2079,7 @@ msgstr "Can we use the platform on our own, without support?"
 #: src/components/common/CheckIn/ScannerSelectionModal.tsx:57
 #: src/components/common/ContactOrganizerModal/index.tsx:104
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:121
-#: src/components/common/PromoCodeTable/index.tsx:40
+#: src/components/common/PromoCodeTable/index.tsx:119
 #: src/components/common/QuestionAndAnswerList/index.tsx:149
 #: src/components/common/WaitlistTable/index.tsx:111
 #: src/components/common/WaitlistTable/index.tsx:132
@@ -2449,8 +2486,8 @@ msgid "Clear Search Text"
 msgstr "Clear Search Text"
 
 #: src/components/common/PromoCodeTable/index.tsx:98
-msgid "Click to copy"
-msgstr "Click to copy"
+#~ msgid "Click to copy"
+#~ msgstr "Click to copy"
 
 #: src/components/common/ProductsTable/InlineNumberEdit.tsx:47
 msgid "Click to edit"
@@ -2501,10 +2538,9 @@ msgid "Close sidebar"
 msgstr "Close sidebar"
 
 #: src/components/common/AffiliateTable/index.tsx:81
-#: src/components/common/PromoCodeTable/index.tsx:69
 #: src/components/forms/AffiliateForm/index.tsx:38
 #: src/components/forms/AffiliateForm/index.tsx:72
-#: src/components/forms/PromoCodeForm/index.tsx:43
+#: src/components/forms/PromoCodeForm/index.tsx:98
 msgid "Code"
 msgstr "Code"
 
@@ -3026,8 +3062,8 @@ msgid "Copied from above"
 msgstr "Copied from above"
 
 #: src/components/common/PromoCodeTable/index.tsx:106
-msgid "copied to clipboard"
-msgstr "copied to clipboard"
+#~ msgid "copied to clipboard"
+#~ msgstr "copied to clipboard"
 
 #: src/components/common/AffiliateTable/index.tsx:49
 msgid "Copied to clipboard"
@@ -3084,9 +3120,17 @@ msgstr "Copy Link"
 msgid "Copy my details to:"
 msgstr "Copy my details to:"
 
+#: src/components/common/PromoCodeTable/index.tsx:71
+msgid "Copy the code"
+msgstr "Copy the code"
+
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:119
 msgid "Copy the link"
 msgstr "Copy the link"
+
+#: src/components/common/PromoCodeTable/index.tsx:100
+msgid "Copy the link with the code"
+msgstr "Copy the link with the code"
 
 #: src/components/modals/ShareModal/index.tsx:264
 msgid "Copy this link to share it anywhere"
@@ -3097,7 +3141,6 @@ msgid "Copy to clipboard"
 msgstr "Copy to clipboard"
 
 #: src/components/common/AffiliateTable/index.tsx:106
-#: src/components/common/PromoCodeTable/index.tsx:177
 msgid "Copy URL"
 msgstr "Copy URL"
 
@@ -3159,6 +3202,11 @@ msgstr "Create {0} Template"
 msgid "Create a campaign to group the QR codes of one operation."
 msgstr "Create a campaign to group the QR codes of one operation."
 
+#: src/components/common/PromoCodeTable/index.tsx:129
+#: src/components/routes/event/promo-codes.tsx:35
+msgid "Create a code"
+msgstr "Create a code"
+
 #: src/components/common/WidgetEditor/index.tsx:161
 msgid "Create a custom widget to sell tickets on your site."
 msgstr "Create a custom widget to sell tickets on your site."
@@ -3172,8 +3220,8 @@ msgid "Create a Product"
 msgstr "Create a Product"
 
 #: src/components/common/PromoCodeTable/index.tsx:57
-msgid "Create a Promo Code"
-msgstr "Create a Promo Code"
+#~ msgid "Create a Promo Code"
+#~ msgstr "Create a Promo Code"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:85
 #~ msgid "Create a QR code for each medium (poster, flyer, screen...) and see how many people scan it, from which device, and how many tickets it sells. You can change where a QR code leads at any time without reprinting it."
@@ -3253,8 +3301,8 @@ msgid "Create Custom Template"
 msgstr "Create Custom Template"
 
 #: src/components/routes/event/promo-codes.tsx:32
-msgid "Create discounts, access codes for hidden tickets, and special offers."
-msgstr "Create discounts, access codes for hidden tickets, and special offers."
+#~ msgid "Create discounts, access codes for hidden tickets, and special offers."
+#~ msgstr "Create discounts, access codes for hidden tickets, and special offers."
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
 #: src/components/layouts/OrganizerLayout/index.tsx:116
@@ -3351,6 +3399,10 @@ msgstr "Create your first event"
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:255
 #~ msgid "Create your first event to start selling tickets and managing attendees."
 #~ msgstr "Create your first event to start selling tickets and managing attendees."
+
+#: src/components/common/PromoCodeTable/index.tsx:126
+msgid "Create your first promo code"
+msgstr "Create your first promo code"
 
 #: src/components/layouts/EventHomepage/EventNotAvailable/index.tsx:13
 #: src/components/layouts/PublicOrganizer/OrganizerNotFound/index.tsx:12
@@ -3581,7 +3633,6 @@ msgstr "Daily sales, tax, and fee breakdown"
 #: src/components/common/CheckInListList/index.tsx:174
 #: src/components/common/OrdersTable/index.tsx:190
 #: src/components/common/OrganizerWebhookTable/index.tsx:116
-#: src/components/common/PromoCodeTable/index.tsx:181
 #: src/components/common/WebhookTable/index.tsx:116
 msgid "Danger zone"
 msgstr "Danger zone"
@@ -3698,7 +3749,8 @@ msgid "delete"
 msgstr "delete"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:387
-#: src/components/common/PromoCodeTable/index.tsx:40
+#: src/components/common/PromoCodeTable/index.tsx:101
+#: src/components/common/PromoCodeTable/index.tsx:119
 #: src/components/common/QuestionsTable/index.tsx:153
 #: src/components/common/TaxAndFeeList/index.tsx:78
 #: src/components/routes/admin/FailedJobs/index.tsx:209
@@ -3728,8 +3780,8 @@ msgid "Delete Check-In List"
 msgstr "Delete Check-In List"
 
 #: src/components/common/PromoCodeTable/index.tsx:185
-msgid "Delete code"
-msgstr "Delete code"
+#~ msgid "Delete code"
+#~ msgstr "Delete code"
 
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:83
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:117
@@ -3838,20 +3890,20 @@ msgid "Discord"
 msgstr "Discord"
 
 #: src/components/common/PromoCodeTable/index.tsx:70
-msgid "Discount"
-msgstr "Discount"
+#~ msgid "Discount"
+#~ msgstr "Discount"
 
-#: src/components/forms/PromoCodeForm/index.tsx:94
+#: src/components/forms/PromoCodeForm/index.tsx:119
 msgid "Discount %"
 msgstr "Discount %"
 
-#: src/components/forms/PromoCodeForm/index.tsx:94
+#: src/components/forms/PromoCodeForm/index.tsx:119
 msgid "Discount in {0}"
 msgstr "Discount in {0}"
 
 #: src/components/forms/PromoCodeForm/index.tsx:74
-msgid "Discount Type"
-msgstr "Discount Type"
+#~ msgid "Discount Type"
+#~ msgstr "Discount Type"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:193
 msgid "Discover our services"
@@ -4057,6 +4109,14 @@ msgstr "During the event"
 msgid "Dutch"
 msgstr "Dutch"
 
+#: src/components/forms/PromoCodeForm/index.tsx:45
+msgid "e.g. {0}5 off per ticket"
+msgstr "e.g. {0}5 off per ticket"
+
+#: src/components/forms/PromoCodeForm/index.tsx:39
+msgid "e.g. 10% off the order"
+msgstr "e.g. 10% off the order"
+
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:68
 msgid "e.g. 180 (3 hours)"
 msgstr "e.g. 180 (3 hours)"
@@ -4099,6 +4159,7 @@ msgstr "Early bird"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:363
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:365
+#: src/components/common/PromoCodeTable/index.tsx:99
 #: src/components/common/QuestionsTable/index.tsx:132
 #: src/components/common/TaxAndFeeList/index.tsx:70
 #: src/components/modals/ManageAttendeeModal/index.tsx:224
@@ -4162,8 +4223,8 @@ msgid "Edit Check-In List"
 msgstr "Edit Check-In List"
 
 #: src/components/common/PromoCodeTable/index.tsx:170
-msgid "Edit Code"
-msgstr "Edit Code"
+#~ msgid "Edit Code"
+#~ msgstr "Edit Code"
 
 #: src/components/routes/admin/Configurations/index.tsx:206
 msgid "Edit Configuration"
@@ -4955,18 +5016,23 @@ msgstr "Exception"
 msgid "Expiration date"
 msgstr "Expiration date"
 
+#: src/components/common/PromoCodeTable/index.tsx:83
 #: src/components/common/WaitlistTable/index.tsx:28
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:74
 msgid "Expired"
 msgstr "Expired"
 
+#: src/components/common/PromoCodeTable/index.tsx:54
+msgid "Expired on {0}"
+msgstr "Expired on {0}"
+
 #: src/components/common/PromoCodeTable/index.tsx:73
-msgid "Expires"
-msgstr "Expires"
+#~ msgid "Expires"
+#~ msgstr "Expires"
 
 #: src/components/forms/PromoCodeForm/index.tsx:110
-msgid "Expiry Date"
-msgstr "Expiry Date"
+#~ msgid "Expiry Date"
+#~ msgstr "Expiry Date"
 
 #: src/components/routes/event/Affiliates/index.tsx:81
 #: src/components/routes/event/attendees.tsx:92
@@ -5457,8 +5523,12 @@ msgid "Fixed"
 msgstr "Fixed"
 
 #: src/components/forms/PromoCodeForm/index.tsx:86
-msgid "Fixed amount"
-msgstr "Fixed amount"
+#~ msgid "Fixed amount"
+#~ msgstr "Fixed amount"
+
+#: src/components/forms/PromoCodeForm/index.tsx:44
+msgid "Fixed discount"
+msgstr "Fixed discount"
 
 #: src/components/modals/EditAccountConfigurationModal/index.tsx:89
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:281
@@ -5644,14 +5714,13 @@ msgid "General information about your organizer"
 msgstr "General information about your organizer"
 
 #: src/components/forms/AffiliateForm/index.tsx:57
-#: src/components/forms/PromoCodeForm/index.tsx:57
+#: src/components/forms/PromoCodeForm/index.tsx:105
 msgid "Generate"
 msgstr "Generate"
 
 #: src/components/forms/AffiliateForm/index.tsx:53
 #: src/components/forms/AffiliateForm/index.tsx:60
-#: src/components/forms/PromoCodeForm/index.tsx:53
-#: src/components/forms/PromoCodeForm/index.tsx:60
+#: src/components/forms/PromoCodeForm/index.tsx:103
 msgid "Generate code"
 msgstr "Generate code"
 
@@ -5826,6 +5895,10 @@ msgstr "Hidden from public view"
 msgid "Hidden questions are only visible to the event organizer and not to the customer."
 msgstr "Hidden questions are only visible to the event organizer and not to the customer."
 
+#: src/components/forms/PromoCodeForm/index.tsx:126
+msgid "Hidden ticket(s) unlocked by this code"
+msgstr "Hidden ticket(s) unlocked by this code"
+
 #: src/components/routes/product-widget/SelectProducts/index.tsx:429
 #: src/components/routes/product-widget/SelectProducts/index.tsx:529
 msgid "Hide"
@@ -5977,8 +6050,8 @@ msgid "How many minutes the customer has to complete their order. We recommend a
 msgstr "How many minutes the customer has to complete their order. We recommend at least 15 minutes"
 
 #: src/components/forms/PromoCodeForm/index.tsx:115
-msgid "How many times can this code be used?"
-msgstr "How many times can this code be used?"
+#~ msgid "How many times can this code be used?"
+#~ msgstr "How many times can this code be used?"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:49
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
@@ -6689,6 +6762,10 @@ msgstr "Let's talk."
 msgid "Light"
 msgstr "Light"
 
+#: src/components/forms/PromoCodeForm/index.tsx:128
+msgid "Limit (tickets, date, number of uses)"
+msgstr "Limit (tickets, date, number of uses)"
+
 #: src/components/routes/landing/index.tsx:269
 msgid "Limited retention"
 msgstr "Limited retention"
@@ -6700,6 +6777,10 @@ msgstr "Line-up & archives."
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:296
 msgid "Link"
 msgstr "Link"
+
+#: src/components/common/PromoCodeTable/index.tsx:65
+msgid "Link copied: the code will be applied automatically"
+msgstr "Link copied: the code will be applied automatically"
 
 #: src/components/routes/my-tickets/index.tsx:160
 msgid "Link Expired or Invalid"
@@ -6895,7 +6976,6 @@ msgstr "Make this question mandatory"
 #: src/components/common/CheckInListList/index.tsx:143
 #: src/components/common/OrdersTable/index.tsx:152
 #: src/components/common/OrganizerWebhookTable/index.tsx:96
-#: src/components/common/PromoCodeTable/index.tsx:167
 #: src/components/routes/event/EventDashboard/index.tsx:167
 #: src/components/routes/organizer/OrganizerDashboard/OrganizerEventRow.tsx:114
 msgid "Manage"
@@ -6991,6 +7071,10 @@ msgstr "Max Messages / 24h"
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:332
 msgid "Max Recipients / Message"
 msgstr "Max Recipients / Message"
+
+#: src/components/forms/PromoCodeForm/index.tsx:135
+msgid "Maximum number of uses"
+msgstr "Maximum number of uses"
 
 #: src/components/forms/ProductForm/index.tsx:467
 msgid "Maximum Per Order"
@@ -7172,6 +7256,7 @@ msgid "More"
 msgstr "More"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:369
+#: src/components/common/PromoCodeTable/index.tsx:104
 #: src/components/common/QuestionsTable/index.tsx:136
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:128
 #: src/components/routes/event/OrdersPage/OrderList.tsx:97
@@ -7366,7 +7451,6 @@ msgid "Network error - please try again"
 msgstr "Network error - please try again"
 
 #: src/components/common/OrganizerWebhookTable/index.tsx:266
-#: src/components/common/PromoCodeTable/index.tsx:158
 #: src/components/common/WebhookTable/index.tsx:266
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:101
 msgid "Never"
@@ -7520,10 +7604,11 @@ msgid "No data yet"
 msgstr "No data yet"
 
 #: src/components/forms/PromoCodeForm/index.tsx:78
-msgid "No Discount"
-msgstr "No Discount"
+#~ msgid "No Discount"
+#~ msgstr "No Discount"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:487
+#: src/components/common/PromoCodeTable/index.tsx:56
 msgid "No end date"
 msgstr "No end date"
 
@@ -7698,8 +7783,8 @@ msgid "No Products Yet"
 msgstr "No Products Yet"
 
 #: src/components/common/PromoCodeTable/index.tsx:46
-msgid "No Promo Codes to show"
-msgstr "No Promo Codes to show"
+#~ msgid "No Promo Codes to show"
+#~ msgstr "No Promo Codes to show"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:323
 msgid "No QR code matches these filters"
@@ -7838,7 +7923,6 @@ msgstr "No. The platform works in the browser, on a computer, tablet or smartpho
 msgid "Non-VAT registered businesses or individuals: Irish VAT at 23% applies"
 msgstr "Non-VAT registered businesses or individuals: Irish VAT at 23% applies"
 
-#: src/components/common/PromoCodeTable/index.tsx:82
 #: src/components/routes/product-widget/CollectInformation/index.tsx:538
 msgid "None"
 msgstr "None"
@@ -7923,6 +8007,10 @@ msgstr "of"
 #: src/components/modals/OfferWaitlistModal/index.tsx:221
 msgid "Offer"
 msgstr "Offer"
+
+#: src/components/common/PromoCodeTable/index.tsx:127
+msgid "Offer a discount, or give access to a hidden ticket (VIP, partners)."
+msgstr "Offer a discount, or give access to a hidden ticket (VIP, partners)."
 
 #: src/components/common/WaitlistTable/index.tsx:69
 msgid "Offer Spot"
@@ -9001,7 +9089,6 @@ msgstr "Per order"
 msgid "Per ticket"
 msgstr "Per ticket"
 
-#: src/components/forms/PromoCodeForm/index.tsx:82
 #: src/components/forms/TaxAndFeeForm/index.tsx:27
 msgid "Percentage"
 msgstr "Percentage"
@@ -9009,6 +9096,10 @@ msgstr "Percentage"
 #: src/components/forms/TaxAndFeeForm/index.tsx:71
 msgid "Percentage Amount"
 msgstr "Percentage Amount"
+
+#: src/components/forms/PromoCodeForm/index.tsx:38
+msgid "Percentage discount"
+msgstr "Percentage discount"
 
 #: src/components/modals/EditAccountConfigurationModal/index.tsx:99
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:288
@@ -9589,10 +9680,9 @@ msgid "Product Updated"
 msgstr "Product Updated"
 
 #: src/components/common/PromoCodeTable/index.tsx:148
-msgid "Product(s)"
-msgstr "Product(s)"
+#~ msgid "Product(s)"
+#~ msgstr "Product(s)"
 
-#: src/components/common/PromoCodeTable/index.tsx:72
 #: src/components/modals/DuplicateEventModal/index.tsx:25
 msgid "Products"
 msgstr "Products"
@@ -9649,13 +9739,13 @@ msgid "Promo codes"
 msgstr "Promo codes"
 
 #: src/components/modals/DuplicateEventModal/index.tsx:28
-#: src/components/routes/event/promo-codes.tsx:33
+#: src/components/routes/event/promo-codes.tsx:29
 msgid "Promo Codes"
 msgstr "Promo Codes"
 
 #: src/components/common/PromoCodeTable/index.tsx:51
-msgid "Promo codes can be used to offer discounts, presale access, or provide special access to your event."
-msgstr "Promo codes can be used to offer discounts, presale access, or provide special access to your event."
+#~ msgid "Promo codes can be used to offer discounts, presale access, or provide special access to your event."
+#~ msgstr "Promo codes can be used to offer discounts, presale access, or provide special access to your event."
 
 #: src/components/routes/event/Reports/index.tsx:46
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:95
@@ -10733,8 +10823,8 @@ msgid "Search by name, order #, attendee # or email..."
 msgstr "Search by name, order #, attendee # or email..."
 
 #: src/components/routes/event/promo-codes.tsx:36
-msgid "Search by name..."
-msgstr "Search by name..."
+#~ msgid "Search by name..."
+#~ msgstr "Search by name..."
 
 #: src/components/routes/admin/Orders/index.tsx:47
 msgid "Search by order ID, customer name, or email..."
@@ -10950,6 +11040,7 @@ msgid "Select Ticket"
 msgstr "Select Ticket"
 
 #: src/components/forms/CheckInListForm/index.tsx:44
+#: src/components/forms/PromoCodeForm/index.tsx:69
 #: src/components/modals/SendMessageModal/index.tsx:312
 msgid "Select tickets"
 msgstr "Select tickets"
@@ -12785,6 +12876,10 @@ msgstr "Tickets Available"
 #~ msgid "Tickets can be sold on site, at the box office."
 #~ msgstr "Tickets can be sold on site, at the box office."
 
+#: src/components/forms/PromoCodeForm/index.tsx:129
+msgid "Tickets concerned (all by default)"
+msgstr "Tickets concerned (all by default)"
+
 #: src/components/routes/product-widget/PrintOrder/index.tsx:27
 msgid "Tickets for"
 msgstr "Tickets for"
@@ -12846,8 +12941,8 @@ msgid "Time of scan"
 msgstr "Time of scan"
 
 #: src/components/common/PromoCodeTable/index.tsx:71
-msgid "Times used"
-msgstr "Times used"
+#~ msgid "Times used"
+#~ msgstr "Times used"
 
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:25
 msgid "Times Used"
@@ -12865,8 +12960,8 @@ msgid "Timezone"
 msgstr "Timezone"
 
 #: src/components/forms/PromoCodeForm/index.tsx:67
-msgid "TIP"
-msgstr "TIP"
+#~ msgid "TIP"
+#~ msgstr "TIP"
 
 #: src/components/routes/event/messages.tsx:93
 msgid "To"
@@ -13201,7 +13296,7 @@ msgstr "Unknown bracelet"
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:43
 #: src/components/forms/ProductForm/index.tsx:93
 #: src/components/forms/ProductForm/index.tsx:346
-#: src/components/forms/PromoCodeForm/index.tsx:113
+#: src/components/forms/PromoCodeForm/index.tsx:133
 #: src/components/modals/OfferWaitlistModal/index.tsx:189
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:856
 #: src/components/routes/event/EventDashboard/index.tsx:199
@@ -13217,8 +13312,20 @@ msgid "Unlimited available"
 msgstr "Unlimited available"
 
 #: src/components/common/PromoCodeTable/index.tsx:126
-msgid "Unlimited usages allowed"
-msgstr "Unlimited usages allowed"
+#~ msgid "Unlimited usages allowed"
+#~ msgstr "Unlimited usages allowed"
+
+#: src/components/forms/PromoCodeForm/index.tsx:50
+msgid "Unlock a hidden ticket"
+msgstr "Unlock a hidden ticket"
+
+#: src/components/common/PromoCodeTable/index.tsx:47
+msgid "Unlocks {0}"
+msgstr "Unlocks {0}"
+
+#: src/components/common/PromoCodeTable/index.tsx:47
+msgid "Unlocks hidden tickets"
+msgstr "Unlocks hidden tickets"
 
 #: src/components/common/CheckIn/CheckInOptionsModal.tsx:34
 msgid "Unpaid Order"
@@ -13229,6 +13336,7 @@ msgstr "Unpaid Order"
 #~ msgstr "Unpublish Event"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:69
+#: src/components/common/PromoCodeTable/index.tsx:55
 msgid "Until {0}"
 msgstr "Until {0}"
 
@@ -13316,8 +13424,8 @@ msgid "URL"
 msgstr "URL"
 
 #: src/components/common/PromoCodeTable/index.tsx:175
-msgid "URL copied to clipboard"
-msgstr "URL copied to clipboard"
+#~ msgid "URL copied to clipboard"
+#~ msgstr "URL copied to clipboard"
 
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:29
 #: src/components/modals/CreateWebhookModal/index.tsx:29
@@ -13388,6 +13496,10 @@ msgstr "Use this background"
 msgid "Used by the Poster template. Empty sections are hidden on the website."
 msgstr "Used by the Poster template. Empty sections are hidden on the website."
 
+#: src/components/common/PromoCodeTable/index.tsx:84
+msgid "Used up"
+msgstr "Used up"
+
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:154
 msgid "User"
 msgstr "User"
@@ -13435,6 +13547,10 @@ msgstr "Valid"
 msgctxt "attendees filter"
 msgid "Valid"
 msgstr "Valid"
+
+#: src/components/forms/PromoCodeForm/index.tsx:131
+msgid "Valid until"
+msgstr "Valid until"
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:377
 msgid "Validated"
@@ -13680,6 +13796,10 @@ msgstr "View, refund and resend tickets."
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:103
 msgid "Vimeo"
 msgstr "Vimeo"
+
+#: src/components/forms/PromoCodeForm/index.tsx:51
+msgid "VIP access, partners"
+msgstr "VIP access, partners"
 
 #: src/components/forms/CheckInListForm/index.tsx:39
 msgid "VIP check-in list"
@@ -13973,12 +14093,16 @@ msgid "What products does this code apply to?"
 msgstr "What products does this code apply to?"
 
 #: src/components/forms/PromoCodeForm/index.tsx:99
-msgid "What products does this code apply to? (Applies to all by default)"
-msgstr "What products does this code apply to? (Applies to all by default)"
+#~ msgid "What products does this code apply to? (Applies to all by default)"
+#~ msgstr "What products does this code apply to? (Applies to all by default)"
 
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:48
 msgid "What products should this capacity apply to?"
 msgstr "What products should this capacity apply to?"
+
+#: src/components/forms/PromoCodeForm/index.tsx:79
+msgid "What should this code do?"
+msgstr "What should this code do?"
 
 #: src/components/common/QuestionsTable/index.tsx:446
 msgid "What the buyer fills in when paying."
