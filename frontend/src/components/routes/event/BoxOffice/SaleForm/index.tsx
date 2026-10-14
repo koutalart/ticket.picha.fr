@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {t, Trans} from "@lingui/macro";
-import {Button, Group, NumberInput, Select, TextInput} from "@mantine/core";
+import {ActionIcon, Button, NumberInput, Select, Skeleton, TextInput} from "@mantine/core";
 import {NavLink} from "react-router";
 import {useForm} from "@mantine/form";
 import {
@@ -8,14 +8,14 @@ import {
     IconChevronLeft,
     IconCreditCard,
     IconDeviceMobile,
+    IconMaximize,
     IconMinus,
+    IconPlayerPause,
     IconPlus,
     IconPrinter,
-    IconReceipt2,
     IconTrash,
+    IconUsers,
 } from "@tabler/icons-react";
-import {PageBody} from "../../../../common/PageBody";
-import {PageTitle} from "../../../../common/PageTitle";
 import {TableSkeleton} from "../../../../common/TableSkeleton";
 import {useCreateBoxOfficeSale} from "../../../../../mutations/useCreateBoxOfficeSale.ts";
 import {useKioskTicketPrinter} from "../../../../../hooks/useKioskTicketPrinter.tsx";
@@ -86,6 +86,7 @@ interface SaleFormProps {
     sendConfirmationEmail?: boolean;
     phoneCallingCode?: string;
     onZebraPrinterHostChange?: (host: string) => void;
+    pausedCount?: number;
 }
 
 
@@ -132,6 +133,7 @@ export const SaleForm = ({
     sendConfirmationEmail = false,
     phoneCallingCode = '',
     onZebraPrinterHostChange,
+    pausedCount = 0,
 }: SaleFormProps) => {
     const errorHandler = useFormErrorResponseHandler();
     const isAdmin = useIsCurrentUserAdmin();
@@ -148,13 +150,13 @@ export const SaleForm = ({
 
     const [idempotencyKey, setIdempotencyKey] = useState('');
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
-    const [selectedProductPriceId, setSelectedProductPriceId] = useState<number | null>(null);
     const [lastSale, setLastSale] = useState<BoxOfficeSale | null>(null);
     const [step, setStep] = useState<SaleStep>('tarifs');
     const [basket, setBasket] = useState<BasketLine[]>([]);
     const [cartOpen, setCartOpen] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
     const [lastSaleAttendeeIds, setLastSaleAttendeeIds] = useState<string[]>([]);
+    const [cashReceived, setCashReceived] = useState<number | ''>('');
 
     useEffect(() => {
         setIdempotencyKey(generateIdempotencyKey());
@@ -195,23 +197,8 @@ export const SaleForm = ({
     });
 
     const selectedProduct = products.find((product) => product.id === selectedProductId) ?? null;
-    const selectedPrice: SaleFormPrice | null = selectedProduct?.prices?.find(
-        (price) => price.id === selectedProductPriceId
-    ) ?? null;
-    const selectedPriceRemaining = selectedPrice ? remainingStock(selectedPrice) : null;
 
-    const selectProduct = (product: SaleFormProduct) => {
-        setSelectedProductId(product.id ?? null);
-        const prices = product.prices ?? [];
-        const singlePrice = prices.length === 1 ? prices[0] : null;
-        setSelectedProductPriceId(singlePrice?.id ?? null);
-        form.setFieldValue('amount_collected', singlePrice?.price ?? '');
-    };
 
-    const selectPrice = (price: SaleFormPrice) => {
-        setSelectedProductPriceId(price.id ?? null);
-        form.setFieldValue('amount_collected', price.price);
-    };
 
     const addToBasket = (product: SaleFormProduct, price: SaleFormPrice) => {
         if (!product.id || !price.id) {
@@ -274,12 +261,11 @@ export const SaleForm = ({
             return;
         }
         setSelectedProductId(product.id ?? null);
-        setSelectedProductPriceId(null);
     };
 
     const basketCount = basket.reduce((sum, line) => sum + line.qty, 0);
     const basketTotal = basket.reduce((sum, line) => sum + line.unitPrice * line.qty, 0);
-    const isFreeCart = variant === 'kiosk' && basketCount > 0 && basketTotal === 0;
+    const isFreeCart = basketCount > 0 && basketTotal === 0;
     const lineQty = (productId?: number, productPriceId?: number) => {
         if (!productId || !productPriceId) {
             return 0;
@@ -290,18 +276,15 @@ export const SaleForm = ({
         (product.prices ?? []).reduce((sum, price) => sum + lineQty(product.id, price.id), 0);
 
     useEffect(() => {
-        if (variant !== 'kiosk') {
-            return;
-        }
         form.setFieldValue('amount_collected', basketCount > 0 ? Number(basketTotal.toFixed(2)) : '');
-    }, [basketTotal, basketCount, variant]);
+    }, [basketTotal, basketCount]);
 
     const resetForNextSale = () => {
         setSelectedProductId(null);
-        setSelectedProductPriceId(null);
         setBasket([]);
         setCartOpen(false);
         setStep('tarifs');
+        setCashReceived('');
         form.reset();
         form.setFieldValue('locale', (defaultLocale || getClientLocale()) as SupportedLocales);
         setIdempotencyKey(generateIdempotencyKey());
@@ -378,69 +361,12 @@ export const SaleForm = ({
     };
 
     const handleSubmit = (values: SaleFormValues) => {
-        if (variant === 'kiosk') {
-            void checkoutBasket(values);
-            return;
-        }
-
-        if (!selectedProduct?.id || !selectedPrice?.id || values.amount_collected === '') {
-            return;
-        }
-
-        createSale.mutate({
-            eventId,
-            sale: {
-                product_id: selectedProduct.id,
-                product_price_id: selectedPrice.id,
-                phone: values.phone || undefined,
-                phone_calling_code: callingCodeDigits || undefined,
-                first_name: values.first_name || undefined,
-                last_name: values.last_name || undefined,
-                email: values.email || undefined,
-                locale: values.locale,
-                amount: selectedPrice.price,
-                payment_method: values.payment_method,
-                amount_collected: Number(values.amount_collected),
-                idempotency_key: idempotencyKey,
-            },
-        }, {
-            onSuccess: (response) => {
-                setLastSale(response.data);
-                setLastSaleAttendeeIds([response.data.attendee.public_id]);
-                showSuccess(t`Ticket created — ${response.data.attendee.public_id}`);
-                resetForNextSale();
-                void printTickets([response.data.attendee.public_id]);
-            },
-            onError: (error: any) => {
-                const status = error?.response?.status;
-
-                if (status === 422) {
-                    const priceError = error.response?.data?.errors?.amount;
-                    const callingError = error.response?.data?.errors?.phone_calling_code;
-                    const callingMessage = Array.isArray(callingError) ? callingError[0] : callingError;
-                    const eventError = error.response?.data?.errors?.event_id;
-                    const eventMessage = Array.isArray(eventError) ? eventError[0] : eventError;
-                    showError(eventMessage || callingMessage || priceError || t`The price has changed — please reselect the ticket type.`);
-                    return;
-                }
-
-                if (status === 409) {
-                    showError(error.response?.data?.message || t`This sale could not be completed. Please try again.`);
-                    return;
-                }
-
-                errorHandler(form, error);
-            },
-        });
+        void checkoutBasket(values);
     };
 
     const isSubmitDisabled = variant === 'kiosk'
         ? (isCheckingOut || basketCount === 0 || (isFreeCart ? !hasBadgeName(form.values) : !hasSaleIdentifier(form.values)))
-        : (createSale.isPending
-            || !selectedProduct
-            || !selectedPrice
-            || !hasSaleIdentifier(form.values)
-            || (form.values.payment_method === BoxOfficePaymentMethod.Free && selectedPrice.price > 0));
+        : (isCheckingOut || basketCount === 0 || !hasSaleIdentifier(form.values));
 
     const canContinueFromTarifs = basketCount > 0;
     const footerReady = (step === 'tarifs' && canContinueFromTarifs)
@@ -864,128 +790,121 @@ export const SaleForm = ({
         );
     }
 
+    const cashReceivedValue = typeof cashReceived === 'number' ? cashReceived : null;
+    const changeDue = cashReceivedValue !== null ? cashReceivedValue - basketTotal : null;
+    const isCash = form.values.payment_method === BoxOfficePaymentMethod.Cash;
+
     return (
-        <PageBody>
+        <div className={classes.page}>
             {printerPromptModal}
-            <PageTitle subheading={t`Sell a ticket at the door and print it immediately.`}>
-                {t`Box Office`}
-            </PageTitle>
-
-            {isAdmin && (
-                <Group justify="flex-end" mb="md">
-                    <Button
-                        component={NavLink}
-                        to="operators"
-                        variant="light"
-                    >
-                        {t`Manage kiosk operators`}
+            <header className={classes.header}>
+                <div>
+                    <span className={classes.kicker}>{t`Box Office`}</span>
+                    <h1 className={classes.title}>{eventTitle ?? <Skeleton height={36} width={240} radius="sm"/>}</h1>
+                </div>
+                <div className={classes.headerActions}>
+                    {isAdmin && (
+                        <Button component={NavLink} to="operators" variant="default" radius="md"
+                                leftSection={<IconUsers size={18}/>}>
+                            {t`Operators`}
+                        </Button>
+                    )}
+                    <Button component="a" href={`/kiosk/event/${eventId}/sell`} target="_blank" rel="noopener"
+                            variant="default" radius="md" leftSection={<IconMaximize size={18}/>}>
+                        {t`Full screen`}
                     </Button>
-                </Group>
-            )}
+                </div>
+            </header>
 
-            <TableSkeleton isVisible={isLoading}/>
+            {isLoading && <Skeleton height={260} radius="md"/>}
 
             {!isLoading && (
-                <div className={classes.layout}>
-                    <section className={classes.productSection}>
-                        <h2 className={classes.sectionTitle}>{t`1. Choose a ticket`}</h2>
+                <form className={classes.layout} onSubmit={form.onSubmit(handleSubmit)}>
+                    <div className={classes.mainColumn}>
+                        <section className={classes.card}>
+                            <h2 className={classes.cardTitle}>{t`Tickets on sale at the box office`}</h2>
 
-                        {products.length === 0 && (
-                            <p className={classes.emptyState}>
-                                <Trans>
-                                    No ticket is both active and attached to an active check-in list.
-                                    Attach a product to a check-in list first — otherwise it would not
-                                    be scannable at the door.
-                                </Trans>
-                            </p>
-                        )}
+                            {products.length === 0 && (
+                                <p className={classes.muted}>
+                                    <Trans>
+                                        No box office ticket is on sale. Check on the Tickets page that a ticket is sold
+                                        at the box office, that its sale is turned on, and that it is on a check-in list.
+                                    </Trans>
+                                </p>
+                            )}
 
-                        <div className={classes.productGrid}>
-                            {products.map((product) => (
-                                <button
-                                    key={product.id}
-                                    type="button"
-                                    className={`${classes.productButton} ${selectedProductId === product.id ? classes.productButtonSelected : ''}`}
-                                    onClick={() => selectProduct(product)}
-                                >
-                                    <span className={classes.productButtonTitle}>{product.title}</span>
-                                    {(product.prices?.length ?? 0) === 1 && (
-                                        <span className={classes.productButtonPrice}>
-                                            {formatCurrency(product.prices![0].price, currency)}
-                                        </span>
-                                    )}
-                                    {(product.prices?.length ?? 0) > 1 && (
-                                        <span className={classes.productButtonPrice}>{t`Multiple prices`}</span>
-                                    )}
-                                </button>
-                            ))}
-                        </div>
+                            <div className={classes.tiles}>
+                                {products.flatMap((product) => (product.prices ?? []).map((price) => {
+                                    const qty = lineQty(product.id, price.id);
+                                    const remaining = remainingStock(price);
+                                    const soldOut = remaining !== null && remaining <= 0;
+                                    const hasManyPrices = (product.prices?.length ?? 0) > 1;
 
-                        {selectedProduct && (selectedProduct.prices?.length ?? 0) > 1 && (
-                            <>
-                                <h3 className={classes.sectionSubtitle}>{t`Choose a price`}</h3>
-                                <div className={classes.priceGrid}>
-                                    {selectedProduct.prices!.map((price) => (
-                                        <button
-                                            key={price.id}
-                                            type="button"
-                                            className={`${classes.priceButton} ${selectedProductPriceId === price.id ? classes.priceButtonSelected : ''}`}
-                                            onClick={() => selectPrice(price)}
-                                        >
-                                            <span>{price.label || t`Standard`}</span>
-                                            <span>{formatCurrency(price.price, currency)}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </>
-                        )}
-
-                        {selectedPrice && (
-                            <div className={classes.priceSummary}>
-                                <span className={classes.priceSummaryAmount}>
-                                    {formatCurrency(selectedPrice.price, currency)}
-                                </span>
-                                <span className={classes.priceSummaryStock}>
-                                    {selectedPriceRemaining !== null
-                                        ? t`${selectedPriceRemaining} remaining`
-                                        : t`Unlimited`}
-                                </span>
+                                    return (
+                                        <div key={`${product.id}-${price.id}`}
+                                             className={`${classes.tile} ${qty > 0 ? classes.tileActive : ''} ${soldOut ? classes.tileSoldOut : ''}`}>
+                                            <button type="button" className={classes.tileInfo} disabled={soldOut}
+                                                    onClick={() => addToBasket(product, price)}>
+                                                <span className={classes.tileTitle}>
+                                                    {product.title}{hasManyPrices && <> · {price.label || t`Standard`}</>}
+                                                </span>
+                                                <span className={classes.tileMeta}>
+                                                    {formatCurrency(price.price, currency)}
+                                                    {' · '}
+                                                    {soldOut
+                                                        ? t`Sold out`
+                                                        : remaining !== null ? t`${remaining} remaining` : t`Unlimited`}
+                                                </span>
+                                            </button>
+                                            <div className={classes.stepper}>
+                                                <ActionIcon size={40} radius="md" variant="default" disabled={qty === 0}
+                                                            aria-label={t`Remove ticket`}
+                                                            onClick={() => product.id && price.id && removeFromBasket(product.id, price.id)}>
+                                                    <IconMinus size={18}/>
+                                                </ActionIcon>
+                                                <span className={classes.stepperValue}>{qty}</span>
+                                                <ActionIcon size={40} radius="md" variant="default" disabled={soldOut}
+                                                            aria-label={t`Add ticket`}
+                                                            onClick={() => addToBasket(product, price)}>
+                                                    <IconPlus size={18}/>
+                                                </ActionIcon>
+                                            </div>
+                                        </div>
+                                    );
+                                }))}
                             </div>
-                        )}
-                    </section>
 
-                    <section className={classes.formSection}>
-                        <form onSubmit={form.onSubmit(handleSubmit)}>
-                            <h2 className={classes.sectionTitle}>{t`2. Attendee details`}</h2>
+                            {pausedCount > 0 && (
+                                <p className={classes.pausedNote}>
+                                    <IconPlayerPause size={16}/>
+                                    {pausedCount === 1
+                                        ? t`1 box office ticket is paused and hidden here.`
+                                        : t`${pausedCount} box office tickets are paused and hidden here.`}
+                                    {' '}
+                                    <NavLink to="../products">{t`Manage tickets`}</NavLink>
+                                </p>
+                            )}
+                        </section>
 
-                            <TextInput
-                                label={t`First name`}
-                                {...form.getInputProps('first_name')}
-                                mb="sm"
-                            />
-                            <TextInput
-                                label={t`Last name`}
-                                {...form.getInputProps('last_name')}
-                                mb="sm"
-                            />
-                            <TextInput
-                                label={t`Phone number`}
-                                type="tel"
-                                inputMode="tel"
-                                leftSection={callingCodeDigits ? `+${callingCodeDigits}` : undefined}
-                                leftSectionPointerEvents="none"
-                                description={callingCodeDigits
-                                    ? t`Local number without the leading 0.`
-                                    : t`Missing phone calling code — set it in station settings.`}
-                                {...form.getInputProps('phone')}
-                                mb="sm"
-                            />
-                            <TextInput
-                                label={t`Email`}
-                                type="email"
-                                {...form.getInputProps('email')}
-                                mb="sm"
-                            />
+                        <section className={classes.card}>
+                            <h2 className={classes.cardTitle}>{t`Customer`}</h2>
+                            <p className={classes.muted}>{t`Enter at least a first name, an email, or a phone number.`}</p>
+                            <div className={classes.fieldGrid}>
+                                <TextInput label={t`First name`} {...form.getInputProps('first_name')}/>
+                                <TextInput label={t`Last name`} {...form.getInputProps('last_name')}/>
+                                <TextInput
+                                    label={t`Phone number`}
+                                    type="tel"
+                                    inputMode="tel"
+                                    leftSection={callingCodeDigits ? `+${callingCodeDigits}` : undefined}
+                                    leftSectionPointerEvents="none"
+                                    description={callingCodeDigits
+                                        ? t`Local number without the leading 0.`
+                                        : t`Start with the country code, e.g. +262 639…`}
+                                    {...form.getInputProps('phone')}
+                                />
+                                <TextInput label={t`Email`} type="email" {...form.getInputProps('email')}/>
+                            </div>
                             <Select
                                 label={t`Ticket language`}
                                 data={availableLocales.map((locale) => ({
@@ -993,74 +912,95 @@ export const SaleForm = ({
                                     label: getLocaleName(locale as SupportedLocales),
                                 }))}
                                 {...form.getInputProps('locale')}
-                                mb="md"
+                                mt="sm"
+                                maw={260}
                             />
+                        </section>
+                    </div>
 
-                            <h2 className={classes.sectionTitle}>{t`3. Payment method`}</h2>
-                            <div className={classes.paymentGrid}>
-                                {[
-                                    {value: BoxOfficePaymentMethod.Cash, label: t`Cash`},
-                                    {value: BoxOfficePaymentMethod.Card, label: t`Card`},
-                                    {value: BoxOfficePaymentMethod.Free, label: t`Free`},
-                                ].map((option) => {
-                                    const disabled = option.value === BoxOfficePaymentMethod.Free
-                                        && !!selectedPrice && selectedPrice.price > 0;
+                    <aside className={classes.checkout}>
+                        <h2 className={classes.cardTitle}>{t`To collect`}</h2>
 
-                                    return (
-                                        <button
-                                            key={option.value}
-                                            type="button"
-                                            disabled={disabled}
-                                            title={disabled ? t`Free can only be used for a ticket priced at 0` : undefined}
-                                            className={`${classes.paymentButton} ${form.values.payment_method === option.value ? classes.paymentButtonSelected : ''}`}
-                                            onClick={() => form.setFieldValue('payment_method', option.value)}
-                                        >
-                                            {option.label}
-                                        </button>
-                                    );
-                                })}
+                        {basket.length === 0 && <p className={classes.muted}>{t`Add tickets with the + buttons.`}</p>}
+
+                        {basket.map((line) => (
+                            <div key={lineKey(line.productId, line.productPriceId)} className={classes.checkoutLine}>
+                                <span>{line.qty} × {line.title}{line.priceLabel ? ` · ${line.priceLabel}` : ''}</span>
+                                <span>{formatCurrency(line.unitPrice * line.qty, currency)}</span>
                             </div>
+                        ))}
 
-                            <NumberInput
-                                label={t`Amount collected`}
-                                required
-                                min={0}
-                                decimalScale={2}
-                                fixedDecimalScale
-                                {...form.getInputProps('amount_collected')}
-                                mt="md"
-                                mb="md"
-                            />
+                        <div className={classes.total}>{formatCurrency(basketTotal, currency)}</div>
 
-                            <Button
-                                type="submit"
-                                size="lg"
-                                fullWidth
-                                leftSection={<IconReceipt2/>}
-                                disabled={isSubmitDisabled}
-                            >
-                                {createSale.isPending ? t`Processing…` : t`Take Payment & Create Ticket`}
+                        {isFreeCart ? (
+                            <p className={classes.muted}>{t`Free tickets: nothing to collect.`}</p>
+                        ) : (
+                            <>
+                                <div className={classes.methods}>
+                                    {[
+                                        {value: BoxOfficePaymentMethod.Cash, label: t`Cash`, icon: IconCash},
+                                        {value: BoxOfficePaymentMethod.Card, label: t`Card`, icon: IconCreditCard},
+                                    ].map((option) => (
+                                        <button key={option.value} type="button"
+                                                className={`${classes.method} ${form.values.payment_method === option.value ? classes.methodActive : ''}`}
+                                                onClick={() => form.setFieldValue('payment_method', option.value)}>
+                                            <option.icon size={18}/>{option.label}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {isCash && basketCount > 0 && (
+                                    <>
+                                        <NumberInput
+                                            label={t`Amount received`}
+                                            value={cashReceived}
+                                            onChange={(value) => setCashReceived(typeof value === 'number' ? value : '')}
+                                            min={0}
+                                            decimalScale={2}
+                                            hideControls
+                                            mt="md"
+                                        />
+                                        {changeDue !== null && (
+                                            <p className={changeDue < 0 ? classes.changeMissing : classes.change}>
+                                                {changeDue < 0
+                                                    ? t`Missing: ${formatCurrency(-changeDue, currency)}`
+                                                    : t`Change to give back: ${formatCurrency(changeDue, currency)}`}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
+                            </>
+                        )}
+
+                        <Button type="submit" size="lg" radius="md" fullWidth mt="md"
+                                leftSection={<IconPrinter/>}
+                                loading={isCheckingOut}
+                                disabled={isSubmitDisabled}>
+                            {t`Collect ${formatCurrency(basketTotal, currency)}`}
+                        </Button>
+
+                        {basketCount > 0 && (
+                            <Button variant="subtle" color="gray" fullWidth mt="xs" leftSection={<IconTrash size={16}/>}
+                                    onClick={clearBasket}>
+                                {t`Empty basket`}
                             </Button>
-                        </form>
+                        )}
 
                         {lastSale && (
                             <div className={classes.lastSale}>
-                                <p>
-                                    <Trans>Last ticket: <strong>{lastSale.attendee.public_id}</strong></Trans>
-                                </p>
-                                <Button
-                                    variant="light"
-                                    leftSection={<IconPrinter/>}
-                                    loading={isReprinting}
-                                    onClick={() => handleReprint(lastSaleAttendeeIds)}
-                                >
+                                <span>
+                                    <Trans>Last sale: <strong>{lastSale.attendee.public_id}</strong></Trans>
+                                </span>
+                                <Button variant="light" size="xs" leftSection={<IconPrinter size={16}/>}
+                                        loading={isReprinting}
+                                        onClick={() => handleReprint(lastSaleAttendeeIds)}>
                                     {t`Reprint`}
                                 </Button>
                             </div>
                         )}
-                    </section>
-                </div>
+                    </aside>
+                </form>
             )}
-        </PageBody>
+        </div>
     );
 };
