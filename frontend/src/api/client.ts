@@ -31,6 +31,7 @@ const ALLOWED_UNAUTHENTICATED_PATHS = [
     'kiosk/login',
     '/legal/',
     '/cas-clients',
+    '/q/',
     ...SOLUTION_SLUGS.map((slug) => `/${slug}`),
 ];
 
