@@ -491,7 +491,7 @@ export type QrLinkDestinationType = 'LINK_PAGE' | 'EVENT' | 'URL' | 'APP';
 
 export type QrLinkStatus = 'ACTIVE' | 'PAUSED';
 
-export type QrLinkSocialPlatform = 'instagram' | 'facebook' | 'tiktok' | 'whatsapp' | 'snapchat' | 'youtube' | 'x' | 'linkedin' | 'telegram' | 'website';
+export type QrLinkSocialPlatform = 'instagram' | 'facebook' | 'tiktok' | 'whatsapp' | 'snapchat' | 'youtube' | 'x' | 'linkedin' | 'telegram' | 'threads' | 'website';
 
 export interface QrLinkSocialLink {
     platform: QrLinkSocialPlatform;

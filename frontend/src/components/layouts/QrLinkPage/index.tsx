@@ -8,6 +8,7 @@ import {
     IconBrandLinkedin,
     IconBrandSnapchat,
     IconBrandTelegram,
+    IconBrandThreads,
     IconBrandTiktok,
     IconBrandWhatsapp,
     IconBrandX,
@@ -37,6 +38,7 @@ const PLATFORM_ICONS: Record<QrLinkSocialPlatform, typeof IconWorld> = {
     x: IconBrandX,
     linkedin: IconBrandLinkedin,
     telegram: IconBrandTelegram,
+    threads: IconBrandThreads,
     website: IconWorld,
 };
 
@@ -50,6 +52,7 @@ const PLATFORM_LABELS: Record<QrLinkSocialPlatform, string> = {
     x: 'X',
     linkedin: 'LinkedIn',
     telegram: 'Telegram',
+    threads: 'Threads',
     website: 'Website',
 };
 
