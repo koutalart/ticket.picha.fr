@@ -80,7 +80,7 @@ export const QrLinkRow = ({qrLink, currency, campaignName, showRevenue, onEdit, 
             <div className={classes.rowNumbers}>
                 <div><strong>{formatNumber(qrLink.scans_count)}</strong><span>{t`Scans`}</span></div>
                 <div><strong>{formatNumber(qrLink.unique_scans_count)}</strong><span>{t`Unique`}</span></div>
-                <div><strong>{formatNumber(qrLink.orders_count)}</strong><span>{showRevenue ? t`Orders` : t`Registrations`}</span></div>
+                <div><strong>{formatNumber(qrLink.orders_count)}</strong><span>{t`Orders`}</span></div>
                 {showRevenue && (
                     <div><strong>{formatCurrency(qrLink.revenue_gross, currency)}</strong><span>{t`Revenue`}</span></div>
                 )}

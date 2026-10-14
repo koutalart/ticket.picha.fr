@@ -42,7 +42,7 @@ export const DailySalesReport = () => {
         },
         {
             key: 'orders_created' as const,
-            label: isFree ? t`Confirmed registrations` : t`Completed orders`,
+            label: isFree ? t`Orders` : t`Completed orders`,
             sortable: true
         },
         ...(isFree ? [] : [

@@ -78,7 +78,7 @@ export const OrganizerDashboard = () => {
 
     const statItems = onlyFreeRegistrations ? [
         {label: t`Registered people`, value: formatNumber(stats.total_attendees_registered)},
-        {label: t`Confirmed registrations`, value: formatNumber(stats.total_orders)},
+        {label: t`Orders`, value: formatNumber(stats.total_orders)},
     ] : [
         {
             label: t`Gross sales`,

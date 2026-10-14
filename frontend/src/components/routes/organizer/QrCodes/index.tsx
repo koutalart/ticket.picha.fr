@@ -266,7 +266,7 @@ const QrCodes = () => {
                                 <div><strong>{formatNumber(totals.unique)}</strong><span>{t`Unique visitors`}</span></div>
                                 <div>
                                     <strong>{formatNumber(totals.orders)}</strong>
-                                    <span>{showRevenue ? t`Orders` : t`Registrations`}</span>
+                                    <span>{t`Orders`}</span>
                                 </div>
                                 {showRevenue && (
                                     <div><strong>{formatCurrency(totals.revenue, currency)}</strong><span>{t`Revenue`}</span></div>
@@ -288,7 +288,7 @@ const QrCodes = () => {
                                         data={[
                                             {value: 'recent', label: t`Most recent`},
                                             {value: 'scans', label: t`Most scanned`},
-                                            {value: 'orders', label: showRevenue ? t`Most sales` : t`Most registrations`},
+                                            {value: 'orders', label: showRevenue ? t`Most sales` : t`Most orders`},
                                             {value: 'name', label: t`Name (A-Z)`},
                                         ]}
                                         aria-label={t`Sort`}/>

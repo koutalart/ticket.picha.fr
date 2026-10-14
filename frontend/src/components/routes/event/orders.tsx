@@ -82,7 +82,7 @@ export const Orders: React.FC = () => {
     const isFree = isFreeEvent(event);
 
     const figures: { key: StatusTab | 'gross' | 'registered', label: string, value?: string, highlight?: boolean }[] = isFree ? [
-        {key: 'completed', label: t`Confirmed registrations`, value: completedCount !== undefined ? String(formatNumber(completedCount)) : undefined},
+        {key: 'completed', label: t`Orders`, value: completedCount !== undefined ? String(formatNumber(completedCount)) : undefined},
         {key: 'registered', label: t`Registered people`, value: stats ? String(formatNumber(stats.total_attendees_registered)) : undefined},
     ] : [
         {key: 'gross', label: t`Collected`, value: stats ? formatCurrency(stats.total_gross_sales - stats.total_refunded, event?.currency) : undefined},
