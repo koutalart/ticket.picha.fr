@@ -5,10 +5,12 @@ namespace Tests\Unit\Services\Application\Handlers\QrLink;
 use HiEvents\DomainObjects\Enums\QrLinkDestinationType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\ImageDomainObject;
+use HiEvents\DomainObjects\QrCampaignDomainObject;
 use HiEvents\DomainObjects\Status\QrLinkStatus;
-use HiEvents\Exceptions\ResourceNotFoundException;
+use HiEvents\Exceptions\QrLinkReferenceException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
+use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
 use HiEvents\Services\Application\Handlers\QrLink\DTO\UpsertQrLinkDTO;
 use HiEvents\Services\Application\Handlers\QrLink\QrLinkAttributesBuilder;
 use Mockery;
@@ -23,9 +25,9 @@ class QrLinkAttributesBuilderTest extends TestCase
             ->with(['id' => 99, 'organizer_id' => 4])
             ->andReturnNull();
 
-        $this->expectException(ResourceNotFoundException::class);
+        $this->expectException(QrLinkReferenceException::class);
 
-        (new QrLinkAttributesBuilder($eventRepository, Mockery::mock(ImageRepositoryInterface::class)))->build($this->dto(eventId: 99));
+        (new QrLinkAttributesBuilder($eventRepository, Mockery::mock(ImageRepositoryInterface::class), Mockery::mock(QrCampaignRepositoryInterface::class)))->build($this->dto(eventId: 99));
     }
 
     public function test_cleans_text_and_drops_url_for_link_page(): void
@@ -33,7 +35,7 @@ class QrLinkAttributesBuilderTest extends TestCase
         $eventRepository = Mockery::mock(EventRepositoryInterface::class);
         $eventRepository->shouldReceive('findFirstWhere')->andReturn(new EventDomainObject);
 
-        $attributes = (new QrLinkAttributesBuilder($eventRepository, Mockery::mock(ImageRepositoryInterface::class)))->build($this->dto(
+        $attributes = (new QrLinkAttributesBuilder($eventRepository, Mockery::mock(ImageRepositoryInterface::class), Mockery::mock(QrCampaignRepositoryInterface::class)))->build($this->dto(
             eventId: 7,
             title: ' <b>Festival</b> ',
             description: '<script>x</script>',
@@ -50,7 +52,7 @@ class QrLinkAttributesBuilderTest extends TestCase
 
     public function test_keeps_url_for_url_destination(): void
     {
-        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), Mockery::mock(ImageRepositoryInterface::class)))->build($this->dto(
+        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), Mockery::mock(ImageRepositoryInterface::class), Mockery::mock(QrCampaignRepositoryInterface::class)))->build($this->dto(
             destinationType: QrLinkDestinationType::URL,
             destinationUrl: 'https://instagram.com/picha',
         ));
@@ -66,9 +68,9 @@ class QrLinkAttributesBuilderTest extends TestCase
             ->with(['id' => 55, 'account_id' => 1])
             ->andReturnNull();
 
-        $this->expectException(ResourceNotFoundException::class);
+        $this->expectException(QrLinkReferenceException::class);
 
-        (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), $imageRepository))
+        (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), $imageRepository, Mockery::mock(QrCampaignRepositoryInterface::class)))
             ->build($this->dto(design: ['template' => 'custom', 'background_image_id' => 55]));
     }
 
@@ -79,7 +81,7 @@ class QrLinkAttributesBuilderTest extends TestCase
             (new ImageDomainObject)->setId(55)->setPath('qr_poster_background/story.webp')->setWidth(1067)->setHeight(2000)
         );
 
-        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), $imageRepository))
+        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), $imageRepository, Mockery::mock(QrCampaignRepositoryInterface::class)))
             ->build($this->dto(design: [
                 'template' => 'custom',
                 'background_image_id' => 55,
@@ -98,10 +100,35 @@ class QrLinkAttributesBuilderTest extends TestCase
 
     public function test_preset_template_ignores_background_image(): void
     {
-        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), Mockery::mock(ImageRepositoryInterface::class)))
+        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), Mockery::mock(ImageRepositoryInterface::class), Mockery::mock(QrCampaignRepositoryInterface::class)))
             ->build($this->dto(design: ['template' => 'story', 'background_image_id' => 55]));
 
         $this->assertSame(['template' => 'story'], $attributes['design']);
+    }
+
+    public function test_campaign_must_belong_to_the_organizer(): void
+    {
+        $campaigns = Mockery::mock(QrCampaignRepositoryInterface::class);
+        $campaigns->shouldReceive('findFirstWhere')->with(['id' => 9, 'organizer_id' => 4])->andReturnNull();
+
+        try {
+            (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), Mockery::mock(ImageRepositoryInterface::class), $campaigns))
+                ->build($this->dto(qrCampaignId: 9));
+            $this->fail('Expected exception');
+        } catch (QrLinkReferenceException $exception) {
+            $this->assertSame('qr_campaign_id', $exception->getField());
+        }
+    }
+
+    public function test_campaign_is_stored(): void
+    {
+        $campaigns = Mockery::mock(QrCampaignRepositoryInterface::class);
+        $campaigns->shouldReceive('findFirstWhere')->andReturn((new QrCampaignDomainObject)->setId(9));
+
+        $attributes = (new QrLinkAttributesBuilder(Mockery::mock(EventRepositoryInterface::class), Mockery::mock(ImageRepositoryInterface::class), $campaigns))
+            ->build($this->dto(qrCampaignId: 9));
+
+        $this->assertSame(9, $attributes['qr_campaign_id']);
     }
 
     private function dto(
@@ -112,6 +139,7 @@ class QrLinkAttributesBuilderTest extends TestCase
         ?string $destinationUrl = null,
         ?array $socialLinks = null,
         ?array $design = null,
+        ?int $qrCampaignId = null,
     ): UpsertQrLinkDTO {
         return new UpsertQrLinkDTO(
             accountId: 1,
@@ -120,6 +148,7 @@ class QrLinkAttributesBuilderTest extends TestCase
             destinationType: $destinationType,
             status: QrLinkStatus::ACTIVE,
             eventId: $eventId,
+            qrCampaignId: $qrCampaignId,
             destinationUrl: $destinationUrl,
             title: $title,
             description: $description,

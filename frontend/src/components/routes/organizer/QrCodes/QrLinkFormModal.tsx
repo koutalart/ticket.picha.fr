@@ -20,7 +20,7 @@ import {
 } from "@mantine/core";
 import {IconPhoto, IconPlus, IconQrcode, IconTrash, IconUpload} from "@tabler/icons-react";
 import {Modal} from "../../../common/Modal";
-import {QrLink, QrLinkDesign, QrLinkDestinationType, QrLinkSocialLink, QrLinkSocialPlatform, QrPosterTemplate} from "../../../../types.ts";
+import {IdParam, QrCampaign, QrLink, QrLinkDesign, QrLinkDestinationType, QrLinkSocialLink, QrLinkSocialPlatform, QrPosterTemplate} from "../../../../types.ts";
 import {imageClient} from "../../../../api/image.client.ts";
 import {showError} from "../../../../utilites/notifications.tsx";
 import {QrPosterPreview} from "./QrPosterPreview.tsx";
@@ -48,6 +48,7 @@ const PLATFORMS: { value: QrLinkSocialPlatform, label: string }[] = [
 
 interface FormValues {
     name: string;
+    qr_campaign_id: string | null;
     destination_type: QrLinkDestinationType;
     destination_url: string;
     event_id: string | null;
@@ -73,12 +74,14 @@ export interface QrPosterBackground {
 
 interface QrLinkFormModalProps {
     qrLink?: QrLink;
+    campaigns: QrCampaign[];
+    defaultCampaignId?: IdParam;
     backgrounds: QrPosterBackground[];
     organizerName?: string;
     onClose: () => void;
 }
 
-export const QrLinkFormModal = ({qrLink, backgrounds, organizerName, onClose}: QrLinkFormModalProps) => {
+export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgrounds, organizerName, onClose}: QrLinkFormModalProps) => {
     const [isUploading, setIsUploading] = useState(false);
     const {organizerId} = useParams();
     const createMutation = useCreateQrLink();
@@ -98,6 +101,9 @@ export const QrLinkFormModal = ({qrLink, backgrounds, organizerName, onClose}: Q
     const form = useForm<FormValues>({
         initialValues: {
             name: qrLink?.name || '',
+            qr_campaign_id: qrLink
+                ? (qrLink.qr_campaign_id ? String(qrLink.qr_campaign_id) : null)
+                : (defaultCampaignId ? String(defaultCampaignId) : null),
             destination_type: qrLink?.destination_type || 'LINK_PAGE',
             destination_url: qrLink?.destination_url || '',
             event_id: qrLink?.event_id ? String(qrLink.event_id) : null,
@@ -204,6 +210,7 @@ export const QrLinkFormModal = ({qrLink, backgrounds, organizerName, onClose}: Q
 
         const payload: QrLinkRequest = {
             name: values.name.trim(),
+            qr_campaign_id: values.qr_campaign_id ? Number(values.qr_campaign_id) : null,
             destination_type: values.destination_type,
             destination_url: values.destination_type === 'URL' ? values.destination_url.trim() : null,
             event_id: values.destination_type === 'URL' ? null : (values.event_id ? Number(values.event_id) : null),
@@ -243,6 +250,25 @@ export const QrLinkFormModal = ({qrLink, backgrounds, organizerName, onClose}: Q
                             description={t`One QR code per medium lets you compare them: poster, flyer, screen, stand...`}
                             placeholder={t`Market poster`}
                         />
+
+                        {campaigns.length > 0 && (
+
+                            <Select
+
+                                {...form.getInputProps('qr_campaign_id')}
+
+                                label={t`Campaign`}
+
+                                data={campaigns.map(campaign => ({value: String(campaign.id), label: campaign.name}))}
+
+                                placeholder={t`No campaign`}
+
+                                clearable
+
+                            />
+
+                        )}
+
 
                         <Radio.Group {...form.getInputProps('destination_type')} label={t`What does it open?`}>
                             <Stack gap="xs" mt="xs">

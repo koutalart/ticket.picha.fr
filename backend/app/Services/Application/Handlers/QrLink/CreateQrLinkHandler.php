@@ -6,7 +6,7 @@ namespace HiEvents\Services\Application\Handlers\QrLink;
 
 use HiEvents\DomainObjects\Generated\QrLinkDomainObjectAbstract;
 use HiEvents\DomainObjects\QrLinkDomainObject;
-use HiEvents\Exceptions\ResourceNotFoundException;
+use HiEvents\Exceptions\QrLinkReferenceException;
 use HiEvents\Exceptions\UniqueIdGenerationFailedException;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Services\Application\Handlers\QrLink\DTO\UpsertQrLinkDTO;
@@ -24,7 +24,7 @@ class CreateQrLinkHandler
     ) {}
 
     /**
-     * @throws ResourceNotFoundException
+     * @throws QrLinkReferenceException
      * @throws UniqueIdGenerationFailedException
      */
     public function handle(UpsertQrLinkDTO $dto): QrLinkDomainObject

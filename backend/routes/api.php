@@ -20,6 +20,10 @@ use HiEvents\Http\Actions\Attendees\ExportAttendeesAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeActionPublic;
 use HiEvents\Http\Actions\Organizers\Settings\TestMetaConversionsApiAction;
+use HiEvents\Http\Actions\QrCampaigns\CreateQrCampaignAction;
+use HiEvents\Http\Actions\QrCampaigns\DeleteQrCampaignAction;
+use HiEvents\Http\Actions\QrCampaigns\GetQrCampaignsAction;
+use HiEvents\Http\Actions\QrCampaigns\UpdateQrCampaignAction;
 use HiEvents\Http\Actions\QrLinks\CreateQrLinkAction;
 use HiEvents\Http\Actions\QrLinks\DeleteQrLinkAction;
 use HiEvents\Http\Actions\QrLinks\GetQrLinksAction;
@@ -327,6 +331,10 @@ $router->middleware(['auth:api'])->group(
         $router->patch('/organizers/{organizer_id}/settings', PartialUpdateOrganizerSettingsAction::class);
         $router->post('/organizers/{organizer_id}/settings/meta-conversions-api/test', TestMetaConversionsApiAction::class)
             ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/qr-campaigns', GetQrCampaignsAction::class);
+        $router->post('/organizers/{organizer_id}/qr-campaigns', CreateQrCampaignAction::class);
+        $router->put('/organizers/{organizer_id}/qr-campaigns/{qr_campaign_id}', UpdateQrCampaignAction::class);
+        $router->delete('/organizers/{organizer_id}/qr-campaigns/{qr_campaign_id}', DeleteQrCampaignAction::class);
         $router->get('/organizers/{organizer_id}/qr-links', GetQrLinksAction::class);
         $router->post('/organizers/{organizer_id}/qr-links', CreateQrLinkAction::class);
         $router->put('/organizers/{organizer_id}/qr-links/{qr_link_id}', UpdateQrLinkAction::class);

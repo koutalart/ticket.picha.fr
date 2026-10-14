@@ -9,11 +9,13 @@ use HiEvents\DomainObjects\Enums\QrPosterTemplate;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\ImageDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\QrCampaignDomainObjectAbstract;
 use HiEvents\DomainObjects\ImageDomainObject;
-use HiEvents\Exceptions\ResourceNotFoundException;
+use HiEvents\Exceptions\QrLinkReferenceException;
 use HiEvents\Helper\Url;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
+use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
 use HiEvents\Services\Application\Handlers\QrLink\DTO\UpsertQrLinkDTO;
 
 class QrLinkAttributesBuilder
@@ -21,14 +23,16 @@ class QrLinkAttributesBuilder
     public function __construct(
         private readonly EventRepositoryInterface $eventRepository,
         private readonly ImageRepositoryInterface $imageRepository,
+        private readonly QrCampaignRepositoryInterface $qrCampaignRepository,
     ) {}
 
     /**
-     * @throws ResourceNotFoundException
+     * @throws QrLinkReferenceException
      */
     public function build(UpsertQrLinkDTO $dto): array
     {
         $this->assertEventBelongsToOrganizer($dto->eventId, $dto->organizerId);
+        $this->assertCampaignBelongsToOrganizer($dto->qrCampaignId, $dto->organizerId);
 
         $isUrl = $dto->destinationType === QrLinkDestinationType::URL;
 
@@ -37,6 +41,7 @@ class QrLinkAttributesBuilder
             'destination_type' => $dto->destinationType->value,
             'destination_url' => $isUrl ? $dto->destinationUrl : null,
             'event_id' => $dto->eventId,
+            'qr_campaign_id' => $dto->qrCampaignId,
             'title' => $this->plainText($dto->title),
             'description' => $this->plainText($dto->description),
             'social_links' => $this->socialLinks($dto->socialLinks),
@@ -46,7 +51,7 @@ class QrLinkAttributesBuilder
     }
 
     /**
-     * @throws ResourceNotFoundException
+     * @throws QrLinkReferenceException
      */
     private function assertEventBelongsToOrganizer(?int $eventId, int $organizerId): void
     {
@@ -60,7 +65,26 @@ class QrLinkAttributesBuilder
         ]);
 
         if (! $event instanceof EventDomainObject) {
-            throw new ResourceNotFoundException(__('Event not found'));
+            throw new QrLinkReferenceException('event_id', __('Event not found'));
+        }
+    }
+
+    /**
+     * @throws QrLinkReferenceException
+     */
+    private function assertCampaignBelongsToOrganizer(?int $campaignId, int $organizerId): void
+    {
+        if ($campaignId === null) {
+            return;
+        }
+
+        $campaign = $this->qrCampaignRepository->findFirstWhere([
+            QrCampaignDomainObjectAbstract::ID => $campaignId,
+            QrCampaignDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+        ]);
+
+        if ($campaign === null) {
+            throw new QrLinkReferenceException('qr_campaign_id', __('Campaign not found'));
         }
     }
 
@@ -77,7 +101,7 @@ class QrLinkAttributesBuilder
     }
 
     /**
-     * @throws ResourceNotFoundException
+     * @throws QrLinkReferenceException
      */
     private function design(?array $design, int $accountId): ?array
     {
@@ -106,7 +130,7 @@ class QrLinkAttributesBuilder
     }
 
     /**
-     * @throws ResourceNotFoundException
+     * @throws QrLinkReferenceException
      */
     private function backgroundImage(int $imageId, int $accountId): ImageDomainObject
     {
@@ -116,7 +140,7 @@ class QrLinkAttributesBuilder
         ]);
 
         if (! $image instanceof ImageDomainObject) {
-            throw new ResourceNotFoundException(__('Background image not found'));
+            throw new QrLinkReferenceException('design.background_image_id', __('Background image not found'));
         }
 
         return $image;
