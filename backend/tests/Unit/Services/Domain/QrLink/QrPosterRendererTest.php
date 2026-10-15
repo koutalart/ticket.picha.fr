@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services\Domain\QrLink;
 
+use HiEvents\Services\Domain\QrLink\DTO\QrPosterLogoDTO;
 use HiEvents\Services\Domain\QrLink\QrPosterRenderer;
 use Imagick;
 use ImagickPixel;
@@ -59,6 +60,36 @@ class QrPosterRendererTest extends TestCase
         $image->readImageBlob((new QrPosterRenderer)->render('https://x.test/q/a', ['template' => 'custom'], null, $background->getImageBlob()));
 
         $this->assertSame(2160, $image->getImageWidth());
+    }
+
+    public function test_custom_poster_draws_logo_and_title_above_the_qr_code(): void
+    {
+        $background = new Imagick;
+        $background->newImage(1000, 2000, new ImagickPixel('#ffc800'));
+        $background->setImageFormat('png');
+
+        $icon = file_get_contents(base_path('resources/qr-poster-icons/brand-tiktok.svg'));
+
+        $image = new Imagick;
+        $image->readImageBlob((new QrPosterRenderer)->render('https://ticket.picha.fr/q/abc1234', [
+            'template' => 'custom',
+            'qr_position' => 47,
+            'qr_scale' => 55,
+            'poster_title' => 'TikTok',
+            'caption_color' => '#ffffff',
+        ], null, $background->getImageBlob(), new QrPosterLogoDTO(blob: $icon, isIcon: true)));
+
+        $cardTop = (int) round(2000 * 0.47 - 275);
+        $whitePixels = 0;
+        for ($y = 300; $y < $cardTop - 20; $y += 4) {
+            for ($x = 300; $x < 700; $x += 4) {
+                if ($this->hex($image->getImagePixelColor($x, $y)) === '#ffffff') {
+                    $whitePixels++;
+                }
+            }
+        }
+
+        $this->assertGreaterThan(200, $whitePixels, 'Logo and title should be drawn in white above the QR card');
     }
 
     private function hex(ImagickPixel $pixel): string

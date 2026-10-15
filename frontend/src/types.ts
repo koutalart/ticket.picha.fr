@@ -500,6 +500,8 @@ export interface QrLinkSocialLink {
 
 export type QrPosterTemplate = 'none' | 'story' | 'poster' | 'square' | 'custom';
 
+export type QrPosterLogo = 'organizer' | 'website' | 'video' | 'podcast' | 'app' | 'instagram' | 'facebook' | 'tiktok' | 'whatsapp' | 'youtube' | 'x' | 'threads' | 'snapchat' | 'linkedin' | 'telegram';
+
 export interface QrLinkDesign {
     foreground?: string;
     background?: string;
@@ -512,6 +514,8 @@ export interface QrLinkDesign {
     qr_scale?: number;
     caption?: string;
     caption_color?: string;
+    poster_title?: string;
+    poster_logo?: QrPosterLogo;
 }
 
 export interface QrLink {

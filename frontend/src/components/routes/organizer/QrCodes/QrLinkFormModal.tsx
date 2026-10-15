@@ -20,10 +20,11 @@ import {
 } from "@mantine/core";
 import {IconPhoto, IconPlus, IconQrcode, IconTrash, IconUpload} from "@tabler/icons-react";
 import {Modal} from "../../../common/Modal";
-import {IdParam, QrCampaign, QrLink, QrLinkDesign, QrLinkDestinationType, QrLinkSocialLink, QrLinkSocialPlatform, QrPosterTemplate} from "../../../../types.ts";
+import {IdParam, QrCampaign, QrLink, QrLinkDesign, QrLinkDestinationType, QrLinkSocialLink, QrLinkSocialPlatform, QrPosterLogo, QrPosterTemplate} from "../../../../types.ts";
 import {imageClient} from "../../../../api/image.client.ts";
 import {showError} from "../../../../utilites/notifications.tsx";
 import {QrPosterPreview} from "./QrPosterPreview.tsx";
+import {posterLogoOptions, suggestPosterLogo} from "./posterLogos.tsx";
 import {QrLinkRequest} from "../../../../api/qr-link.client.ts";
 import {useCreateQrLink} from "../../../../mutations/useCreateQrLink.ts";
 import {useUpdateQrLink} from "../../../../mutations/useUpdateQrLink.ts";
@@ -66,6 +67,8 @@ interface FormValues {
     qr_scale: number;
     caption: string;
     caption_color: string;
+    poster_title: string;
+    poster_logo: QrPosterLogo | null;
 }
 
 export interface QrPosterBackground {
@@ -81,10 +84,11 @@ interface QrLinkFormModalProps {
     defaultCampaignId?: IdParam;
     backgrounds: QrPosterBackground[];
     organizerName?: string;
+    organizerLogoUrl?: string;
     onClose: () => void;
 }
 
-export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgrounds, organizerName, onClose}: QrLinkFormModalProps) => {
+export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgrounds, organizerName, organizerLogoUrl, onClose}: QrLinkFormModalProps) => {
     const [isUploading, setIsUploading] = useState(false);
     const {organizerId} = useParams();
     const createMutation = useCreateQrLink();
@@ -130,6 +134,8 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
             qr_scale: qrLink?.design?.qr_scale ?? 45,
             caption: qrLink?.design?.caption || '',
             caption_color: qrLink?.design?.caption_color || '#ffffff',
+            poster_title: qrLink?.design?.poster_title || '',
+            poster_logo: qrLink?.design?.poster_logo || null,
         },
         validate: {
             name: (value) => value.trim() ? null : t`Please give this QR code a name`,
@@ -181,6 +187,8 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
         } : {}),
         ...(values.template !== 'none' && values.caption.trim() ? {caption: values.caption.trim()} : {}),
         ...(values.template === 'custom' ? {caption_color: values.caption_color} : {}),
+        ...(values.template !== 'none' && values.poster_title.trim() ? {poster_title: values.poster_title.trim()} : {}),
+        ...(values.template === 'custom' && values.poster_logo ? {poster_logo: values.poster_logo} : {}),
     });
 
     const chooseTemplate = (template: QrPosterTemplate) => {
@@ -190,6 +198,15 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
         }
         if (template === 'custom' && !form.values.background_image && backgrounds.length) {
             form.setFieldValue('background_image', backgrounds[0]);
+        }
+        if (template === 'custom' && !form.values.poster_logo) {
+            form.setFieldValue('poster_logo', suggestPosterLogo(
+                form.values.destination_type,
+                form.values.destination_type === 'APP' ? form.values.app_store_url : form.values.destination_url,
+            ));
+        }
+        if (template === 'custom' && !form.values.poster_title && form.values.name.trim()) {
+            form.setFieldValue('poster_title', form.values.name.trim().slice(0, 40));
         }
     };
 
@@ -449,6 +466,19 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
 
                         {form.values.template !== 'none' && (
                             <Group grow align="flex-start">
+                                <TextInput {...form.getInputProps('poster_title')}
+                                           label={t`Title above the QR code`}
+                                           description={form.values.template === 'custom' ? undefined : t`Replaces the page title on the visual.`}
+                                           maxLength={40} placeholder={t`E.g. TikTok`}/>
+                                {form.values.template === 'custom' && (
+                                    <Select {...form.getInputProps('poster_logo')} label={t`Logo`}
+                                            data={posterLogoOptions()} placeholder={t`No logo`} clearable searchable/>
+                                )}
+                            </Group>
+                        )}
+
+                        {form.values.template !== 'none' && (
+                            <Group grow align="flex-start">
                                 <TextInput {...form.getInputProps('caption')} label={t`Text under the QR code`}
                                            maxLength={60} placeholder={t`Scan me`}/>
                                 {form.values.template === 'custom' && (
@@ -477,6 +507,7 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
                                 value={previewUrl}
                                 design={buildDesign(form.values)}
                                 title={previewTitle}
+                                organizerLogoUrl={organizerLogoUrl}
                                 width={form.values.template === 'square' ? 190 : 160}
                             />
                         )}
