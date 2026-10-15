@@ -349,6 +349,7 @@ const QrCodes = () => {
                     defaultCampaignId={selectedCampaign?.id}
                     backgrounds={backgrounds}
                     organizerName={organizer?.name}
+                    organizerLogoUrl={organizer?.images?.find(image => image.type === 'ORGANIZER_LOGO')?.url}
                     onClose={() => setFormTarget(null)}
                 />
             )}

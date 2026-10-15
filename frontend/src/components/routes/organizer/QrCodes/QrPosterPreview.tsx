@@ -3,6 +3,7 @@ import QRCode from "react-qr-code";
 import {QrLinkDesign, QrPosterTemplate} from "../../../../types.ts";
 import {DEFAULT_BACKGROUND, DEFAULT_FOREGROUND} from "./QrCodeImage.tsx";
 import classes from "./QrCodes.module.scss";
+import {POSTER_LOGO_ICONS} from "./posterLogos.tsx";
 
 // Mirrors QrPosterRenderer::PRESETS on the backend, which produces the downloadable file.
 export const POSTER_PRESETS: Record<Exclude<QrPosterTemplate, 'none' | 'custom'>, {
@@ -32,10 +33,11 @@ interface QrPosterPreviewProps {
     value: string;
     design: QrLinkDesign;
     title?: string | null;
+    organizerLogoUrl?: string;
     width?: number | string;
 }
 
-export const QrPosterPreview = ({value, design, title, width = '100%'}: QrPosterPreviewProps) => {
+export const QrPosterPreview = ({value, design, title, organizerLogoUrl, width = '100%'}: QrPosterPreviewProps) => {
     const template = design.template && design.template !== 'none' ? design.template : 'story';
     const foreground = design.foreground || DEFAULT_FOREGROUND;
     const isCustom = template === 'custom';
@@ -58,10 +60,19 @@ export const QrPosterPreview = ({value, design, title, width = '100%'}: QrPoster
                 : {background: foreground};
 
     const titleLayout = TITLE_LAYOUT[template];
+    const presetTitle = design.poster_title?.trim() || title;
+
+    // Header above the QR card on custom backgrounds: mirrors QrPosterRenderer::header().
+    const headerTitle = isCustom ? design.poster_title?.trim() : undefined;
+    const headerLogo = isCustom ? design.poster_logo : undefined;
+    const headerTitleSize = (headerTitle?.length ?? 0) > 16 ? 6.8 : 8.5;
+    const headerBaseline = cardTop - 7 * ratio;
+    const logoBottom = headerTitle ? headerBaseline - (headerTitleSize + 4) * ratio : cardTop - 6 * ratio;
+    const LogoIcon = headerLogo && headerLogo !== 'organizer' ? POSTER_LOGO_ICONS[headerLogo] : null;
 
     return (
         <div className={classes.poster} style={{width, aspectRatio: `${canvasWidth} / ${canvasHeight}`, ...background}}>
-            {!isCustom && title && titleLayout && (
+            {!isCustom && presetTitle && titleLayout && (
                 <div
                     className={classes.posterTitle}
                     style={{
@@ -70,8 +81,23 @@ export const QrPosterPreview = ({value, design, title, width = '100%'}: QrPoster
                         WebkitLineClamp: titleLayout.lines,
                     }}
                 >
-                    {title}
+                    {presetTitle}
                 </div>
+            )}
+            {headerTitle && (
+                <div className={classes.posterHeaderTitle}
+                     style={{bottom: `${100 - headerBaseline}%`, fontSize: `${headerTitleSize}cqw`, color: captionColor}}>
+                    {headerTitle}
+                </div>
+            )}
+            {LogoIcon && (
+                <LogoIcon className={classes.posterHeaderIcon} color={captionColor}
+                          style={{bottom: `${100 - logoBottom}%`}}/>
+            )}
+            {headerLogo === 'organizer' && organizerLogoUrl && (
+                <span className={classes.posterHeaderBadge} style={{bottom: `${100 - logoBottom}%`}}>
+                    <img src={organizerLogoUrl} alt=""/>
+                </span>
             )}
             <div
                 className={classes.posterCard}

@@ -16,6 +16,7 @@ use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
+use HiEvents\Services\Domain\QrLink\QrPosterLogoProvider;
 use HiEvents\Services\Domain\QrLink\QrPosterRenderer;
 use Illuminate\Filesystem\FilesystemManager;
 
@@ -27,6 +28,7 @@ class GetQrLinkPosterHandler
         private readonly ImageRepositoryInterface $imageRepository,
         private readonly QrLinkUrlService $urlService,
         private readonly QrPosterRenderer $renderer,
+        private readonly QrPosterLogoProvider $logoProvider,
         private readonly FilesystemManager $filesystemManager,
     ) {}
 
@@ -57,6 +59,7 @@ class GetQrLinkPosterHandler
             design: $design,
             title: $title,
             backgroundBlob: $this->backgroundBlob($design, $qrLink->getAccountId()),
+            logo: $this->logoProvider->get($design['poster_logo'] ?? null, $organizerId),
         );
     }
 

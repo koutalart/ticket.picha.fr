@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Http\Request\QrLink;
 
 use HiEvents\DomainObjects\Enums\QrLinkDestinationType;
+use HiEvents\DomainObjects\Enums\QrPosterLogo;
 use HiEvents\DomainObjects\Enums\QrPosterTemplate;
 use HiEvents\DomainObjects\QrLinkDomainObject;
 use HiEvents\DomainObjects\Status\QrLinkStatus;
@@ -57,6 +58,8 @@ class UpsertQrLinkRequest extends BaseRequest
             'design.qr_position' => ['nullable', 'integer', 'between:10,90'],
             'design.qr_scale' => ['nullable', 'integer', 'between:15,80'],
             'design.caption' => ['nullable', 'string', 'max:60'],
+            'design.poster_title' => ['nullable', 'string', 'max:40'],
+            'design.poster_logo' => ['nullable', Rule::in(QrPosterLogo::valuesArray())],
             'design.caption_color' => ['nullable', self::HEX_COLOR],
             'status' => ['sometimes', Rule::in(QrLinkStatus::valuesArray())],
         ];

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Services\Application\Handlers\QrLink;
 
 use HiEvents\DomainObjects\Enums\QrLinkDestinationType;
+use HiEvents\DomainObjects\Enums\QrPosterLogo;
 use HiEvents\DomainObjects\Enums\QrPosterTemplate;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
@@ -128,6 +129,8 @@ class QrLinkAttributesBuilder
             'qr_position' => isset($design['qr_position']) ? (int) $design['qr_position'] : null,
             'qr_scale' => isset($design['qr_scale']) ? (int) $design['qr_scale'] : null,
             'caption' => $this->plainText($design['caption'] ?? null),
+            'poster_title' => $template === QrPosterTemplate::NONE ? null : $this->plainText($design['poster_title'] ?? null),
+            'poster_logo' => $template === QrPosterTemplate::CUSTOM ? QrPosterLogo::tryFrom((string) ($design['poster_logo'] ?? ''))?->value : null,
             'caption_color' => $design['caption_color'] ?? null,
         ], static fn ($value) => $value !== null);
     }

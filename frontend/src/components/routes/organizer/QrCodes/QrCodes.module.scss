@@ -482,3 +482,43 @@
     border-color: var(--mantine-color-primary-6);
   }
 }
+
+.posterHeaderTitle {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  text-align: center;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateY(18%);
+}
+
+.posterHeaderIcon {
+  position: absolute;
+  left: 50%;
+  width: 15cqw;
+  height: 15cqw;
+  transform: translateX(-50%);
+}
+
+.posterHeaderBadge {
+  position: absolute;
+  left: 50%;
+  width: 22cqw;
+  height: 22cqw;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 86%;
+    height: 86%;
+    object-fit: contain;
+  }
+}

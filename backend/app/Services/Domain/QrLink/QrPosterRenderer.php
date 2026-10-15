@@ -7,6 +7,7 @@ namespace HiEvents\Services\Domain\QrLink;
 use BaconQrCode\Common\ErrorCorrectionLevel;
 use BaconQrCode\Encoder\Encoder;
 use HiEvents\DomainObjects\Enums\QrPosterTemplate;
+use HiEvents\Services\Domain\QrLink\DTO\QrPosterLogoDTO;
 use Imagick;
 use ImagickDraw;
 use ImagickPixel;
@@ -30,8 +31,13 @@ class QrPosterRenderer
         'square' => ['width' => 1080, 'height' => 1080, 'qr_center' => 0.5, 'qr_scale' => 0.5],
     ];
 
-    public function render(string $url, array $design, ?string $title, ?string $backgroundBlob = null): string
-    {
+    public function render(
+        string $url,
+        array $design,
+        ?string $title,
+        ?string $backgroundBlob = null,
+        ?QrPosterLogoDTO $logo = null,
+    ): string {
         $template = QrPosterTemplate::tryFrom($design['template'] ?? '') ?? QrPosterTemplate::NONE;
         $foreground = $design['foreground'] ?? self::DEFAULT_FOREGROUND;
 
@@ -40,6 +46,7 @@ class QrPosterRenderer
             $qrCenter = ($design['qr_position'] ?? 50) / 100;
             $qrScale = ($design['qr_scale'] ?? 45) / 100;
             $title = null;
+            $headerTitle = $this->posterTitle($design);
             $captionColor = $design['caption_color'] ?? '#ffffff';
         } else {
             $preset = self::PRESETS[$template->value] ?? self::PRESETS['story'];
@@ -47,6 +54,9 @@ class QrPosterRenderer
             $qrCenter = $preset['qr_center'];
             $qrScale = $preset['qr_scale'];
             $captionColor = $design['caption_color'] ?? ($template === QrPosterTemplate::POSTER ? $foreground : '#ffffff');
+            $title = $this->posterTitle($design) ?? $title;
+            $headerTitle = null;
+            $logo = null;
         }
 
         $width = $canvas->getImageWidth();
@@ -57,6 +67,10 @@ class QrPosterRenderer
 
         if ($title) {
             $this->title($canvas, $template, $title);
+        }
+
+        if ($headerTitle !== null || $logo !== null) {
+            $this->header($canvas, $cardTop, $headerTitle, $logo, $captionColor);
         }
 
         $this->qrCard(
@@ -81,6 +95,80 @@ class QrPosterRenderer
         $canvas->clear();
 
         return $blob;
+    }
+
+    private function posterTitle(array $design): ?string
+    {
+        $title = trim((string) ($design['poster_title'] ?? ''));
+
+        return $title === '' ? null : $title;
+    }
+
+    /**
+     * Logo and title stacked above the QR card. Mirrored by the dashboard preview (QrPosterPreview).
+     */
+    private function header(Imagick $canvas, int $cardTop, ?string $title, ?QrPosterLogoDTO $logo, string $color): void
+    {
+        $width = $canvas->getImageWidth();
+        $titleSize = $width * (mb_strlen((string) $title) > 16 ? 0.068 : 0.085);
+        $baseline = $cardTop - $width * 0.07;
+
+        if ($title !== null) {
+            $this->centeredText($canvas, $title, $baseline, $titleSize, $color, $width * 0.9, 1);
+        }
+
+        if ($logo === null) {
+            return;
+        }
+
+        $image = $logo->isIcon ? $this->iconImage($logo->blob, $width, $color) : $this->badgeImage($logo->blob, $width);
+        $logoBottom = $title !== null ? $baseline - $titleSize - $width * 0.04 : $cardTop - $width * 0.06;
+        $canvas->compositeImage(
+            $image,
+            Imagick::COMPOSITE_OVER,
+            (int) round(($width - $image->getImageWidth()) / 2),
+            (int) round($logoBottom - $image->getImageHeight()),
+        );
+    }
+
+    private function iconImage(string $svg, int $width, string $color): Imagick
+    {
+        $size = (int) round($width * 0.15);
+        $icon = new Imagick;
+        $icon->setBackgroundColor(new ImagickPixel('transparent'));
+        $icon->setResolution(1200, 1200);
+        $icon->readImageBlob(str_replace('currentColor', $color, $svg));
+        $icon->setImageFormat('png');
+        $icon->resizeImage($size, $size, Imagick::FILTER_LANCZOS, 1, true);
+
+        return $icon;
+    }
+
+    private function badgeImage(string $blob, int $width): Imagick
+    {
+        $size = (int) round($width * 0.22);
+        $badge = new Imagick;
+        $badge->newImage($size, $size, new ImagickPixel('transparent'));
+        $circle = new ImagickDraw;
+        $circle->setFillColor(new ImagickPixel('#ffffff'));
+        $circle->circle($size / 2, $size / 2, $size / 2, 1);
+        $badge->drawImage($circle);
+
+        $logo = new Imagick;
+        $logo->readImageBlob($blob);
+        $logo->setIteratorIndex(0);
+        $logo = $logo->getImage();
+        $inner = (int) round($size * 0.86);
+        $logo->resizeImage($inner, $inner, Imagick::FILTER_LANCZOS, 1, true);
+        $badge->compositeImage(
+            $logo,
+            Imagick::COMPOSITE_OVER,
+            (int) round(($size - $logo->getImageWidth()) / 2),
+            (int) round(($size - $logo->getImageHeight()) / 2),
+        );
+        $badge->setImageFormat('png');
+
+        return $badge;
     }
 
     private function customBackground(string $blob): Imagick
