@@ -16,7 +16,7 @@ export const PlatformFeesSettings = () => {
 
     useEffect(() => {
         if (organizerSettingsQuery?.isFetched && organizerSettingsQuery?.data) {
-            setCurrentValue(organizerSettingsQuery.data.default_pass_platform_fee_to_buyer ?? false);
+            setCurrentValue(organizerSettingsQuery.data.default_pass_platform_fee_to_buyer ?? true);
         }
     }, [organizerSettingsQuery.isFetched, organizerSettingsQuery.data]);
 

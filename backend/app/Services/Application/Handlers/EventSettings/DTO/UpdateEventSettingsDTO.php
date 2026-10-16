@@ -80,7 +80,7 @@ class UpdateEventSettingsDTO extends BaseDTO
         public readonly bool                    $allow_copy_details_to_all_attendees = true,
 
         // Platform fee settings
-        public readonly bool                    $pass_platform_fee_to_buyer = false,
+        public readonly bool                    $pass_platform_fee_to_buyer = true,
 
         // Homepage theme settings
         public readonly ?array                  $homepage_theme_settings = null,
@@ -165,7 +165,7 @@ class UpdateEventSettingsDTO extends BaseDTO
             allow_copy_details_to_all_attendees: true,
 
             // Platform fee defaults
-            pass_platform_fee_to_buyer: false,
+            pass_platform_fee_to_buyer: true,
 
             // Homepage theme defaults (simplified 2-color + mode system)
             homepage_theme_settings: [
