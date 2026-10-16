@@ -138,6 +138,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
     const coverImageData = eventCoverImage(event);
     const coverImage = coverImageData?.url;
+    const coverVideo = event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO')?.url;
     const organizer = event.organizer!;
     const organizerSocials = organizer?.settings?.social_media_handles;
     const organizerLogo = imageUrl('ORGANIZER_LOGO', organizer?.images);
@@ -235,10 +236,12 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         <div className={classes.mainCard}>
                             {/* Hero Section */}
                             <div className={classes.heroSection}>
-                                {coverImage && (
+                                {(coverImage || coverVideo) && (
                                     <div
                                         className={classes.coverWrapper}
-                                        style={(coverImageData?.width && coverImageData?.height) ? {
+                                        style={coverVideo ? {
+                                            '--cover-aspect-ratio': '16 / 9',
+                                        } as React.CSSProperties : (coverImageData?.width && coverImageData?.height) ? {
                                             '--cover-aspect-ratio': `${coverImageData.width} / ${coverImageData.height}`,
                                         } as React.CSSProperties : undefined}
                                     >
@@ -250,11 +253,25 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                 className={classes.coverLqip}
                                             />
                                         )}
-                                        <img
-                                            src={coverImage}
-                                            alt={event.title}
-                                            className={classes.coverImage}
-                                        />
+                                        {coverVideo ? (
+                                            <video
+                                                src={coverVideo}
+                                                poster={coverImage}
+                                                className={classes.coverImage}
+                                                aria-label={event.title}
+                                                autoPlay
+                                                muted
+                                                loop
+                                                playsInline
+                                                preload="metadata"
+                                            />
+                                        ) : (
+                                            <img
+                                                src={coverImage}
+                                                alt={event.title}
+                                                className={classes.coverImage}
+                                            />
+                                        )}
                                         <div className={classes.heroGradient}/>
                                         {statusBadge && (
                                             <div className={classes.statusBadges}>
