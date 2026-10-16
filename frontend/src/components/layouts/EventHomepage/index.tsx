@@ -41,6 +41,7 @@ import {ShareComponent} from "../../common/ShareIcon";
 import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isDateInPast} from "../../../utilites/dates.ts";
+import {RichDescription} from "../../common/RichDescription";
 
 interface EventHomepageProps {
     event?: Event;
@@ -411,10 +412,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     <div className={classes.sectionHeader}>
                                         <h2 className={classes.sectionTitle}>{t`About`}</h2>
                                     </div>
-                                    <div
-                                        className={classes.description}
-                                        dangerouslySetInnerHTML={{__html: event.description}}
-                                    />
+                                    <RichDescription className={classes.description} html={event.description}/>
                                 </div>
                             )}
 
@@ -553,10 +551,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                             </div>
 
                                             {organizer.description && (
-                                                <div
-                                                    className={classes.organizerBio}
-                                                    dangerouslySetInnerHTML={{__html: organizer.description}}
-                                                />
+                                                <RichDescription className={classes.organizerBio} html={organizer.description}/>
                                             )}
 
                                             <div className={classes.organizerActions}>
