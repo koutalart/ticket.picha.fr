@@ -20,7 +20,7 @@ export const PlatformFeesSettings = () => {
 
     useEffect(() => {
         if (eventSettingsQuery?.isFetched && eventSettingsQuery?.data) {
-            setCurrentValue(eventSettingsQuery.data.pass_platform_fee_to_buyer ?? false);
+            setCurrentValue(eventSettingsQuery.data.pass_platform_fee_to_buyer ?? true);
         }
     }, [eventSettingsQuery.isFetched, eventSettingsQuery.data]);
 
