@@ -5,11 +5,11 @@ import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
 import {useUpdateEventSettings} from "../../../../mutations/useUpdateEventSettings.ts";
 import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx";
 import {EventSettings, HomepageThemeSettings, IdParam} from "../../../../types.ts";
-import {showSuccess} from "../../../../utilites/notifications.tsx";
+import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {t} from "@lingui/macro";
 import {useForm} from "@mantine/form";
-import {Button, Group, TextInput, Accordion, Stack, Text} from "@mantine/core";
-import {IconColorPicker, IconHelp, IconPhoto, IconPalette, IconTypography} from "@tabler/icons-react";
+import {Button, FileButton, Group, TextInput, Accordion, Stack, Text} from "@mantine/core";
+import {IconColorPicker, IconHelp, IconPhoto, IconPalette, IconTrash, IconTypography, IconVideo} from "@tabler/icons-react";
 import {Tooltip} from "../../../common/Tooltip";
 import {CustomSelect} from "../../../common/CustomSelect";
 import {GET_EVENT_IMAGES_QUERY_KEY, useGetEventImages} from "../../../../queries/useGetEventImages.ts";
@@ -22,6 +22,11 @@ import {ThemeColorControls} from "../../../common/ThemeColorControls";
 import {ThemeFontControl} from "../../../common/ThemeFontControl";
 import {validateThemeSettings} from "../../../../utilites/themeUtils.ts";
 import {DEFAULT_HOMEPAGE_FONT} from "../../../../constants/homepageFonts.ts";
+import {useUploadEventCoverVideo} from "../../../../mutations/useUploadEventCoverVideo.ts";
+import {useDeleteEventImage} from "../../../../mutations/useDeleteEventImage.ts";
+import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
+
+const MAX_COVER_VIDEO_BYTES = 15 * 1024 * 1024;
 
 interface FormValues {
     homepage_theme_settings: Partial<HomepageThemeSettings>;
@@ -43,6 +48,9 @@ const HomepageDesigner = () => {
     const [accordionValue, setAccordionValue] = useState<string[]>(['images', 'colors', 'typography', 'button']);
 
     const existingCover = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER');
+    const existingCoverVideo = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER_VIDEO');
+    const uploadCoverVideo = useUploadEventCoverVideo();
+    const deleteEventImage = useDeleteEventImage();
 
     const form = useForm<FormValues>({
         initialValues: {
@@ -116,6 +124,38 @@ const HomepageDesigner = () => {
         });
         queryClient.invalidateQueries({
             queryKey: [GET_EVENT_PUBLIC_QUERY_KEY, eventId]
+        });
+    };
+
+    const handleCoverVideo = (file: File | null) => {
+        if (!file) {
+            return;
+        }
+        if (!['video/mp4', 'video/webm'].includes(file.type)) {
+            showError(t`The video must be an MP4 or WebM file.`);
+            return;
+        }
+        if (file.size > MAX_COVER_VIDEO_BYTES) {
+            showError(t`The video must not be larger than 15 MB.`);
+            return;
+        }
+        uploadCoverVideo.mutate({eventId, video: file}, {
+            onSuccess: () => showSuccess(t`Cover video saved`),
+            onError: (error: any) => showError(error?.response?.data?.errors?.video?.[0]
+                || error?.response?.data?.message
+                || t`The video could not be saved. Please try again.`),
+        });
+    };
+
+    const removeCoverVideo = () => {
+        if (!existingCoverVideo?.id) {
+            return;
+        }
+        confirmationDialog(t`Remove the cover video? The cover image will be shown instead.`, () => {
+            deleteEventImage.mutate({eventId, imageId: existingCoverVideo.id}, {
+                onSuccess: () => showSuccess(t`Cover video removed`),
+                onError: () => showError(t`Something went wrong. Please try again.`),
+            });
         });
     };
 
@@ -197,6 +237,38 @@ const HomepageDesigner = () => {
                                             helpText={t`Cover image will be displayed at the top of your event page`}
                                             displayMode="compact"
                                         />
+                                    </div>
+
+                                    <div>
+                                        <Group justify={'space-between'} mb="xs">
+                                            <Text fw={500} size="sm">{t`Cover video`}</Text>
+                                            <Tooltip label={t`A short, silent loop (10 to 20 seconds) played at the top of the page. MP4 or WebM, 15 MB maximum. The cover image stays for thumbnails and sharing.`}>
+                                                <IconHelp size={16} style={{color: 'var(--mantine-color-gray-6)'}}/>
+                                            </Tooltip>
+                                        </Group>
+                                        {existingCoverVideo?.url && (
+                                            <video className={classes.coverVideoPreview} src={existingCoverVideo.url}
+                                                   muted loop playsInline autoPlay/>
+                                        )}
+                                        <Group gap="xs">
+                                            <FileButton onChange={handleCoverVideo} accept="video/mp4,video/webm">
+                                                {(props) => (
+                                                    <Button {...props} variant="light" leftSection={<IconVideo size={16}/>}
+                                                            loading={uploadCoverVideo.isPending}>
+                                                        {existingCoverVideo ? t`Replace the video` : t`Add a video`}
+                                                    </Button>
+                                                )}
+                                            </FileButton>
+                                            {existingCoverVideo && (
+                                                <Button variant="subtle" color="red" leftSection={<IconTrash size={16}/>}
+                                                        loading={deleteEventImage.isPending} onClick={removeCoverVideo}>
+                                                    {t`Remove`}
+                                                </Button>
+                                            )}
+                                        </Group>
+                                        <Text size="xs" c="dimmed" mt={6}>
+                                            {t`Optional. Replaces the cover image at the top of the page, without sound.`}
+                                        </Text>
                                     </div>
                                 </Stack>
                             </Accordion.Panel>

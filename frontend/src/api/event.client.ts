@@ -65,6 +65,17 @@ export const eventsClient = {
         return response.data;
     },
 
+    uploadEventCoverVideo: async (eventId: IdParam, video: File) => {
+        const formData = new FormData();
+        formData.append('video', video);
+        const response = await api.post<GenericDataResponse<Image>>('events/' + eventId + '/cover-video', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data;
+    },
+
     deleteEventImage: async (eventId: IdParam, imageId: IdParam) => {
         const response = await api.delete<GenericDataResponse<Image>>('events/' + eventId + '/images/' + imageId);
         return response.data;

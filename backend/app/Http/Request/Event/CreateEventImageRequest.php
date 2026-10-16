@@ -16,7 +16,7 @@ class CreateEventImageRequest extends FormRequest
     {
         return [
             'image' => RulesHelper::IMAGE_RULES,
-            'type' => Rule::in(ImageType::eventImageTypes()),
+            'type' => Rule::in(array_filter(ImageType::eventImageTypes(), fn (ImageType $type) => $type !== ImageType::EVENT_COVER_VIDEO)),
         ];
     }
 

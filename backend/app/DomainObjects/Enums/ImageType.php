@@ -18,6 +18,7 @@ enum ImageType
     case TICKET_LOGO;
     case TICKET_SPONSOR_LOGO;
     case EVENT_SHARE_IMAGE;
+    case EVENT_COVER_VIDEO;
 
     // Organizer images
     case ORGANIZER_LOGO;
@@ -31,6 +32,7 @@ enum ImageType
             self::TICKET_LOGO,
             self::TICKET_SPONSOR_LOGO,
             self::EVENT_SHARE_IMAGE,
+            self::EVENT_COVER_VIDEO,
         ];
     }
 
