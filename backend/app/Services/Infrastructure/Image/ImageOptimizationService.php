@@ -20,6 +20,8 @@ class ImageOptimizationService
 
     private const LOGO_MAX_DIMENSION = 800;
 
+    private const ORGANIZER_LOGO_MAX_DIMENSION = 400;
+
     private const POSTER_MAX_DIMENSION = 3000;
 
     private const SKIPPED_MIME_TYPES = ['image/gif', 'image/svg+xml'];
@@ -106,9 +108,11 @@ class ImageOptimizationService
         }
 
         if (in_array($type, self::LOGO_TYPES, true)) {
+            $max = $type === ImageType::ORGANIZER_LOGO ? self::ORGANIZER_LOGO_MAX_DIMENSION : self::LOGO_MAX_DIMENSION;
+
             return $mimeType === 'image/jpeg'
-                ? ['jpeg', 'image/jpeg', 'jpg', self::LOGO_MAX_DIMENSION, self::LOGO_MAX_DIMENSION]
-                : ['png', 'image/png', 'png', self::LOGO_MAX_DIMENSION, self::LOGO_MAX_DIMENSION];
+                ? ['jpeg', 'image/jpeg', 'jpg', $max, $max]
+                : ['png', 'image/png', 'png', $max, $max];
         }
 
         return ['webp', 'image/webp', 'webp', self::PHOTO_MAX_DIMENSION, self::PHOTO_MAX_DIMENSION];

@@ -5,7 +5,7 @@ import {t} from "@lingui/macro";
 import classNames from "classnames";
 import {Event, Order} from "../../../types.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
-import {prettyDate} from "../../../utilites/dates.ts";
+import {formatEventDateRange} from "../../../utilites/dates.ts";
 import classes from './InlineOrderSummary.module.scss';
 
 interface InlineOrderSummaryProps {
@@ -81,7 +81,7 @@ export const InlineOrderSummary = ({
                         <div className={classes.eventDetails}>
                             <div className={classes.eventTitle}>{event.title}</div>
                             <div className={classes.eventMeta}>
-                                {prettyDate(event.start_date, event.timezone, false)}
+                                {formatEventDateRange(event.start_date, event.end_date, event.timezone)}
                             </div>
                             {location && (
                                 <div className={classes.eventMeta}>{location}</div>

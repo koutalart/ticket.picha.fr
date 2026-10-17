@@ -61,6 +61,17 @@ class UpdateOrganizerSiteContentAction extends BaseAction
             'press_email' => 'nullable|email|max:200',
             'press_phone' => 'nullable|string|max:40',
             'press_kit_url' => self::URL_RULE,
+            'intro_title' => 'nullable|string|max:120',
+            'intro_text' => 'nullable|string|max:600',
+            'upcoming_note' => 'nullable|string|max:200',
+            'notify_url' => self::URL_RULE,
+            'videos' => 'nullable|array|max:20',
+            'videos.*.youtube_id' => ['required', 'string', 'regex:/^[A-Za-z0-9_-]{11}$/'],
+            'videos.*.title' => 'required|string|max:100',
+            'videos.*.subtitle' => 'nullable|string|max:100',
+            'practical' => 'nullable|array|max:6',
+            'practical.*.title' => 'required|string|max:80',
+            'practical.*.text' => 'nullable|string|max:400',
         ]);
 
         try {

@@ -4,6 +4,7 @@ import {
     GenericDataResponse,
     GenericPaginatedResponse,
     IdParam,
+    Image,
     Order,
     Organizer,
     OrganizerSettings,
@@ -31,6 +32,17 @@ export const organizerClient = {
 
     findByID: async (organizerId: IdParam) => {
         const response = await api.get<GenericDataResponse<Organizer>>('organizers/' + organizerId);
+        return response.data;
+    },
+
+    uploadCoverVideo: async (organizerId: IdParam, video: File) => {
+        const formData = new FormData();
+        formData.append('video', video);
+        const response = await api.post<GenericDataResponse<Image>>('organizers/' + organizerId + '/cover-video', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
         return response.data;
     },
 
