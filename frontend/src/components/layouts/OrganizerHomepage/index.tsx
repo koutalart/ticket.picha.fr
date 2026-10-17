@@ -12,13 +12,13 @@ import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
 import {formatAddress, getShortLocationDisplay} from "../../../utilites/addressUtilities.ts";
 import {organizerHomepagePath} from "../../../utilites/urlHelper.ts";
-import {removeTransparency} from "../../../utilites/colorHelper.ts";
 import {StatusToggle} from "../../common/StatusToggle";
 import {Pagination} from "../../common/Pagination";
 import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
 import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
+import {ssrLoaderCss} from "../../../utilites/ssrLoader.ts";
 
 interface OrganizerHomepageProps {
     organizer?: Organizer;
@@ -129,11 +129,13 @@ export const OrganizerHomepage = ({
             {organizer && <OrganizerDocumentHead organizer={organizer}/>}
             <main className={classes.pageWrapper} style={themeStyles} data-mode={themeSettings.mode}>
                 <style>
-                    {`
-                        body, .ssr-loader {
-                            background-color: ${removeTransparency(themeSettings.background)} !important;
-                        }
-                    `}
+                    {ssrLoaderCss({
+                        background: themeSettings.background,
+                        accent: themeSettings.accent,
+                        mode: themeSettings.mode,
+                        backgroundType,
+                        logoUrl: organizerLogo?.url,
+                    })}
                 </style>
 
                 {/* Background */}
