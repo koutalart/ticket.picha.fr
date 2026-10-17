@@ -5,13 +5,14 @@ S, slug, FOND, OUT = sys.argv[1:5]
 W, H, FPS, DUREE = 1280, 720, 30, 25
 
 VILLES = {
-    "marseille": ("MARSEILLE", "SAMEDI 7 NOVEMBRE", "FLORIDA PALACE", "162-164 bd Mireille Lauze, 13010 Marseille", (240, 244, 60)),
-    "colmar": ("COLMAR", "SAMEDI 14 NOVEMBRE", "GOXWILLER", "1A rue du Vignoble, 67210 Goxwiller", (255, 176, 46)),
-    "toulouse": ("TOULOUSE", "SAMEDI 21 NOVEMBRE", "SALLE AMIRA", "9 rue Jean Moulin, 31830 Plaisance-du-Touch", (80, 240, 140)),
-    "lyon": ("LYON", "VENDREDI 27 NOVEMBRE", "LE GOLD RÉCEPTION", "7 route des Troques, 69630 Chaponost", (90, 200, 255)),
+    "marseille": ("MARSEILLE", "SAMEDI 7 NOVEMBRE", "FLORIDA PALACE", "162-164 bd Mireille Lauze, 13010 Marseille", (180, 124, 255)),
+    "colmar": ("COLMAR", "SAMEDI 14 NOVEMBRE", "GOXWILLER", "1A rue du Vignoble, 67210 Goxwiller", (255, 79, 139)),
+    "toulouse": ("TOULOUSE", "SAMEDI 21 NOVEMBRE", "SALLE AMIRA", "9 rue Jean Moulin, 31830 Plaisance-du-Touch", (92, 227, 110)),
+    "lyon": ("LYON", "VENDREDI 27 NOVEMBRE", "LE GOLD RÉCEPTION", "7 route des Troques, 69630 Chaponost", (255, 90, 46)),
 }
 TOURNEE = [("MARSEILLE", "07.11"), ("COLMAR", "14.11"), ("TOULOUSE", "21.11"), ("LYON", "27.11"), ("LIMOGES", "28.11")]
 VILLE, DATE, SALLE, ADRESSE, ACC = VILLES[slug]
+ACC_CLAIR = tuple(int(c + (255 - c) * 0.35) for c in ACC)
 
 
 def unb(s, w=900):
@@ -76,13 +77,15 @@ def ombre(layer):
 voile = Image.new("L", (W, H), 0); ImageDraw.Draw(voile).ellipse((W * 0.18, H * 0.22, W * 0.82, H * 0.80), fill=255)
 voile = voile.filter(ImageFilter.GaussianBlur(120))
 
-f_o_wawa = unb(36, 900); f_o_date = unb(26, 600); f_o_salle = unb(19, 500)
-_t = ImageDraw.Draw(Image.new("RGBA", (10, 10))); _s = 104
-while sum(_t.textlength(c, font=unb(_s, 900)) for c in VILLE) + 3 * (len(VILLE) - 1) > 760: _s -= 2
+f_o_wawa = unb(46, 900); f_o_date = unb(40, 700); f_o_salle = unb(28, 500)
+_t = ImageDraw.Draw(Image.new("RGBA", (10, 10))); _s = 124
+while sum(_t.textlength(c, font=unb(_s, 900)) for c in VILLE) + 3 * (len(VILLE) - 1) > 900: _s -= 2
 f_o_ville = unb(_s, 900)
 f_kick = unb(17, 500); f_wawa = unb(70, 900); f_ville = unb(40, 700); f_info = unb(22, 500)
-f_tour = unb(14, 500); f_bar = unb(15, 400); f_mid = unb(46, 800); f_midk = unb(18, 500)
-f_cta = unb(22, 800); f_site = unb(26, 800)
+_ligne = "  ·  ".join(f"{v} {dt}" for v, dt in TOURNEE); _st = 24
+while sum(_t.textlength(c, font=unb(_st, 600)) for c in _ligne) + 2 * len(_ligne) > W - 90: _st -= 1
+f_tour = unb(_st, 600); f_bar = unb(15, 400); f_mid = unb(56, 800); f_midk = unb(26, 600)
+f_cta = unb(28, 800); f_site = unb(34, 800)
 
 tmp = ImageDraw.Draw(Image.new("RGBA", (10, 10)))
 
@@ -93,22 +96,22 @@ def tournee(layer, t):
     p_in = out_cubic((t - 8.3) / 0.8); p_out = in_cubic((t - 18.4) / 0.5)
     a = p_in * (1 - p_out)
     if a <= 0: return
-    d = ImageDraw.Draw(layer); sep = "   ·   "
+    d = ImageDraw.Draw(layer); sep = "  ·  "
     morceaux = []
     for i, (v, dt) in enumerate(TOURNEE):
         actif = v == VILLE
-        morceaux.append((f"{v} {dt}", ACC if actif else (255, 255, 255), 255 if actif else 150))
-        if i < len(TOURNEE) - 1: morceaux.append((sep, (255, 255, 255), 90))
-    total = sum(largeur(d, m, f_tour, 3) + 3 for m, _, _ in morceaux)
-    x = (W - total) / 2; y = H - 46 + (1 - p_in) * 8
+        morceaux.append((f"{v} {dt}", ACC_CLAIR if actif else (255, 255, 255), 255 if actif else 215))
+        if i < len(TOURNEE) - 1: morceaux.append((sep, (255, 255, 255), 140))
+    total = sum(largeur(d, m, f_tour, 2) + 2 for m, _, _ in morceaux)
+    x = (W - total) / 2; y = H - 58 + (1 - p_in) * 8
     for m, coul, al in morceaux:
         for c in m:
-            d.text((x, y), c, font=f_tour, fill=coul + (int(al * a),)); x += d.textlength(c, font=f_tour) + 3
+            d.text((x, y), c, font=f_tour, fill=coul + (int(al * a),)); x += d.textlength(c, font=f_tour) + 2
 
 
 CTA_A, CTA_B = "ACHÈTE TA PRÉVENTE EN LIGNE", "wawasalegy.com"
 _d = ImageDraw.Draw(Image.new("RGBA", (10, 10)))
-WA = int(largeur(_d, CTA_A, f_cta, 2)) + 76; WB = int(largeur(_d, CTA_B, f_site, 1)) + 76; BH2 = 64
+WA = int(largeur(_d, CTA_A, f_cta, 2)) + 76; WB = int(largeur(_d, CTA_B, f_site, 1)) + 90; BH2 = 78
 CY = 352
 FLECHE = [(0, 0), (0, 26), (7, 20), (12, 31), (16, 29), (11, 18), (20, 18)]
 
@@ -200,7 +203,7 @@ for n in range(FPS * DUREE):
     if t < 7.2:
         bloc = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         vl = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        y = 232
+        y = 214
         h = mot(bloc, t, "WAWA", f_o_wawa, y, (255, 255, 255, 255), 12, 0.3, 0.08, 0.7)
         y += h + 4
         h = mot(vl, t, VILLE, f_o_ville, y, ACC + (255,), 3, 0.6, 0.05, 0.8)
@@ -218,9 +221,9 @@ for n in range(FPS * DUREE):
     geant(cadre, t)
     if 12.6 < t < 18.6:
         bloc = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        y = 290
-        ligne(bloc, t, f"WAWA AU GRAND COMPLET À {VILLE}", f_midk, y, ACC + (255,), 12.8, 14, 6)
-        mot(bloc, t, DATE, f_mid, y + 36, (255, 255, 255, 255), 3, 13.1, 0.03, 0.6)
+        y = 278
+        ligne(bloc, t, f"WAWA AU GRAND COMPLET À {VILLE}", f_midk, y, ACC_CLAIR + (255,), 12.8, 14, 6)
+        mot(bloc, t, DATE, f_mid, y + 46, (255, 255, 255, 255), 3, 13.1, 0.03, 0.6)
         bloc, dy = sortie(bloc, t, 17.8)
         cadre.alpha_composite(ombre(bloc), (0, dy)); cadre.alpha_composite(bloc, (0, dy))
 
