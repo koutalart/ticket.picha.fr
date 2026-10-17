@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\OrganizerSettingDomainObject;
+use HiEvents\DomainObjects\Enums\PriceDisplayMode;
 use HiEvents\Exceptions\OrganizerNotFoundException;
 use HiEvents\Helper\DateHelper;
 use HiEvents\Helper\IdHelper;
@@ -228,7 +229,8 @@ class CreateEventService
             'show_marketing_opt_in' => $organizerSettings->getDefaultShowMarketingOptIn(),
             'allow_copy_details_to_all_attendees' => true,
             'pass_platform_fee_to_buyer' => $organizerSettings->getDefaultPassPlatformFeeToBuyer(),
-            'allow_attendee_self_edit' => $organizerSettings->getDefaultAllowAttendeeSelfEdit() ?? false,
+            'allow_attendee_self_edit' => $organizerSettings->getDefaultAllowAttendeeSelfEdit() ?? true,
+            'price_display_mode' => PriceDisplayMode::EXCLUSIVE->name,
             'ticket_design_settings' => [
                 'accent_color' => $homepageThemeSettings['accent'] ?? '#333',
             ],
