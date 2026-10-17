@@ -35,13 +35,14 @@ import {computeThemeVariables, validateThemeSettings} from "../../../utilites/th
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
-import {removeTransparency} from "../../../utilites/colorHelper.ts";
 import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
 import {ShareComponent} from "../../common/ShareIcon";
 import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isDateInPast} from "../../../utilites/dates.ts";
 import {RichDescription} from "../../common/RichDescription";
+import {ssrLoaderCss} from "../../../utilites/ssrLoader.ts";
+import {useDeferredCoverVideo} from "../../../hooks/useDeferredCoverVideo.ts";
 
 interface EventHomepageProps {
     event?: Event;
@@ -139,6 +140,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const coverImageData = eventCoverImage(event);
     const coverImage = coverImageData?.url;
     const coverVideo = event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO')?.url;
+    const videoAllowed = useDeferredCoverVideo(coverVideo);
     const flyer = event?.images?.find((image) => image.type === 'EVENT_FLYER')?.url;
     const organizer = event.organizer!;
     const organizerSocials = organizer?.settings?.social_media_handles;
@@ -203,11 +205,13 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                 data-mode={themeSettings.mode}
             >
                 <style>
-                    {`
-                        body, .ssr-loader {
-                            background-color: ${removeTransparency(themeSettings.background)} !important;
-                        }
-                    `}
+                    {ssrLoaderCss({
+                        background: themeSettings.background,
+                        accent: themeSettings.accent,
+                        mode: themeSettings.mode,
+                        backgroundType,
+                        logoUrl: organizerLogo,
+                    })}
                 </style>
 
                 {event && <EventDocumentHead event={event}/>}
@@ -254,7 +258,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                 className={classes.coverLqip}
                                             />
                                         )}
-                                        {coverVideo ? (
+                                        {coverVideo && videoAllowed ? (
                                             <video
                                                 src={coverVideo}
                                                 poster={coverImage}
@@ -266,13 +270,13 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                 playsInline
                                                 preload="metadata"
                                             />
-                                        ) : (
+                                        ) : coverImage ? (
                                             <img
                                                 src={coverImage}
                                                 alt={event.title}
                                                 className={classes.coverImage}
                                             />
-                                        )}
+                                        ) : null}
                                         <div className={classes.heroGradient}/>
                                         {statusBadge && (
                                             <div className={classes.statusBadges}>
