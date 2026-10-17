@@ -79,6 +79,43 @@ export const prettyDate = (date: string, tz: string, showTimezoneOffset: boolean
 };
 
 /**
+ * Readable event date range, in the event timezone:
+ * "samedi 7 novembre · 21:00 - 05:00" when the event ends the same day or during the following night,
+ * "samedi 7 novembre · 21:00 - dimanche 8 novembre · 18:00" over several days.
+ * The year is only shown when it is not the current one.
+ */
+export const formatEventDateRange = (
+    startDate: string,
+    endDate: string | null | undefined,
+    tz: string,
+    locale?: SupportedLocales | string
+): string => {
+    const safeLocale = getSafeLocale(locale || getClientLocale());
+    const formats = localeFormats[safeLocale];
+    const currentYear = dayjs().tz(tz).year();
+    const start = dayjs.utc(startDate).tz(tz).locale(safeLocale);
+
+    const day = (date: dayjs.Dayjs) => date.year() === currentYear
+        ? date.format(formats.dayName)
+        : `${date.format(formats.dayName)} ${date.format('YYYY')}`;
+    const time = (date: dayjs.Dayjs) => date.format(formats.timeOnly);
+
+    if (!endDate) {
+        return `${day(start)} · ${time(start)}`;
+    }
+
+    const end = dayjs.utc(endDate).tz(tz).locale(safeLocale);
+    const sameDay = end.isSame(start, 'day');
+    const endsDuringTheNight = end.isSame(start.add(1, 'day'), 'day') && end.hour() < 12;
+
+    if (sameDay || endsDuringTheNight) {
+        return `${day(start)} · ${time(start)} - ${time(end)}`;
+    }
+
+    return `${day(start)} · ${time(start)} - ${day(end)} · ${time(end)}`;
+};
+
+/**
  * We don't explicitly convert to the event timezone here as we want to
  * display the 'ago' time in the user's timezone.
  *
