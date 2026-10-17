@@ -8,4 +8,5 @@ enum OrganizerHomepageTemplate: string
 
     case DEFAULT = 'DEFAULT';
     case POSTER = 'POSTER';
+    case TOUR = 'TOUR';
 }
