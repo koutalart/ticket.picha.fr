@@ -83,7 +83,7 @@ _t = ImageDraw.Draw(Image.new("RGBA", (10, 10))); _s = 124
 while sum(_t.textlength(c, font=unb(_s, 900)) for c in VILLE) + 3 * (len(VILLE) - 1) > 900: _s -= 2
 f_o_ville = unb(_s, 900)
 f_kick = unb(17, 500); f_wawa = unb(70, 900); f_ville = unb(40, 700); f_info = unb(22, 500)
-_ligne = "  ·  ".join(f"{v} {dt}" for v, dt in TOURNEE); _st = 24
+_ligne = "      ".join(f"{v} {dt}" for v, dt in TOURNEE); _st = 24
 while sum(_t.textlength(c, font=unb(_st, 600)) for c in _ligne) + 2 * len(_ligne) > W - 90: _st -= 1
 f_tour = unb(_st, 600); f_bar = unb(15, 400); f_mid = unb(56, 800); f_midk = unb(26, 600)
 f_cta = unb(28, 800); f_site = unb(34, 800)
@@ -97,7 +97,7 @@ def tournee(layer, t):
     p_in = out_cubic((t - 8.3) / 0.8); p_out = in_cubic((t - 18.4) / 0.5)
     a = p_in * (1 - p_out)
     if a <= 0: return
-    d = ImageDraw.Draw(layer); sep = "  ·  "
+    d = ImageDraw.Draw(layer); sep = "      "
     morceaux = []
     for i, (v, dt) in enumerate(TOURNEE):
         actif = v == VILLE
