@@ -187,7 +187,7 @@ export interface Image {
     lqip_base64?: string | null;
 }
 
-export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_FLYER' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
+export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_FLYER' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_COVER_VIDEO' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
 
 export type PaymentProvider = 'STRIPE' | 'OFFLINE';
 
@@ -419,6 +419,12 @@ export interface OrganizerSiteContent {
     press_email?: string | null;
     press_phone?: string | null;
     press_kit_url?: string | null;
+    intro_title?: string | null;
+    intro_text?: string | null;
+    upcoming_note?: string | null;
+    notify_url?: string | null;
+    videos?: { youtube_id: string; title: string; subtitle?: string | null }[] | null;
+    practical?: { title: string; text?: string | null }[] | null;
 }
 
 export interface Organizer {
