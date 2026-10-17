@@ -67,11 +67,19 @@ class ImageOptimizationServiceTest extends TestCase
 
     public function test_logo_keeps_png_and_is_downscaled(): void
     {
-        $result = $this->service->optimize($this->image(2000, 1000, 'png', 'transparent'), 'image/png', 'ORGANIZER_LOGO');
+        $result = $this->service->optimize($this->image(2000, 1000, 'png', 'transparent'), 'image/png', 'TICKET_LOGO');
 
         $this->assertSame('image/png', $result->mimeType);
         $this->assertSame(800, $result->width);
         $this->assertSame(400, $result->height);
+    }
+
+    public function test_organizer_logo_is_reduced_to_its_display_size(): void
+    {
+        $result = $this->service->optimize($this->image(800, 800, 'png', 'transparent'), 'image/png', 'ORGANIZER_LOGO');
+
+        $this->assertSame('image/png', $result->mimeType);
+        $this->assertSame([400, 400], [$result->width, $result->height]);
     }
 
     public function test_small_logo_is_never_upscaled_nor_made_heavier(): void
