@@ -22,7 +22,7 @@ export const MiscSettings = () => {
         initialValues: {
             price_display_mode: 'EXCLUSIVE',
             hide_getting_started_page: false,
-            allow_attendee_self_edit: false,
+            allow_attendee_self_edit: true,
         }
     });
     const formErrorHandle = useFormErrorResponseHandler();
@@ -32,7 +32,7 @@ export const MiscSettings = () => {
             form.setValues({
                 price_display_mode: eventSettingsQuery.data.price_display_mode,
                 hide_getting_started_page: eventSettingsQuery.data.hide_getting_started_page,
-                allow_attendee_self_edit: eventSettingsQuery.data.allow_attendee_self_edit ?? false,
+                allow_attendee_self_edit: eventSettingsQuery.data.allow_attendee_self_edit ?? true,
             });
         }
     }, [eventSettingsQuery.isFetched]);

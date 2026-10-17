@@ -22,7 +22,7 @@ export const EventDefaults = () => {
         initialValues: {
             default_attendee_details_collection_method: 'PER_TICKET' as 'PER_TICKET' | 'PER_ORDER',
             default_show_marketing_opt_in: true,
-            default_allow_attendee_self_edit: false,
+            default_allow_attendee_self_edit: true,
         }
     });
 
@@ -48,7 +48,7 @@ export const EventDefaults = () => {
             form.setValues({
                 default_attendee_details_collection_method: organizerSettingsQuery.data.default_attendee_details_collection_method || 'PER_TICKET',
                 default_show_marketing_opt_in: organizerSettingsQuery.data.default_show_marketing_opt_in ?? true,
-                default_allow_attendee_self_edit: organizerSettingsQuery.data.default_allow_attendee_self_edit ?? false,
+                default_allow_attendee_self_edit: organizerSettingsQuery.data.default_allow_attendee_self_edit ?? true,
             });
         }
     }, [organizerSettingsQuery.isFetched]);

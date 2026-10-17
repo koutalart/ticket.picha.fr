@@ -49,7 +49,7 @@ class UpdateEventSettingsDTO extends BaseDTO
 
         public readonly ?bool                   $notify_organizer_of_new_orders = null,
 
-        public readonly ?PriceDisplayMode       $price_display_mode = PriceDisplayMode::INCLUSIVE,
+        public readonly ?PriceDisplayMode       $price_display_mode = PriceDisplayMode::EXCLUSIVE,
 
         public readonly ?bool                   $hide_getting_started_page = false,
 
@@ -86,7 +86,7 @@ class UpdateEventSettingsDTO extends BaseDTO
         public readonly ?array                  $homepage_theme_settings = null,
 
         // Self-service settings
-        public readonly bool                    $allow_attendee_self_edit = false,
+        public readonly bool                    $allow_attendee_self_edit = true,
 
         // Waitlist settings
         public readonly ?bool                   $waitlist_auto_process = null,
@@ -129,7 +129,7 @@ class UpdateEventSettingsDTO extends BaseDTO
             online_event_connection_details: null,
             allow_search_engine_indexing: true,
             notify_organizer_of_new_orders: null,
-            price_display_mode: PriceDisplayMode::INCLUSIVE,
+            price_display_mode: PriceDisplayMode::EXCLUSIVE,
             hide_getting_started_page: false,
 
             // Payment defaults
@@ -176,7 +176,7 @@ class UpdateEventSettingsDTO extends BaseDTO
             ],
 
             // Self-service defaults
-            allow_attendee_self_edit: false,
+            allow_attendee_self_edit: true,
         );
     }
 }

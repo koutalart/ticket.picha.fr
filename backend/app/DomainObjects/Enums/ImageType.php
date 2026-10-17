@@ -24,6 +24,7 @@ enum ImageType
     // Organizer images
     case ORGANIZER_LOGO;
     case ORGANIZER_COVER;
+    case ORGANIZER_COVER_VIDEO;
     case QR_POSTER_BACKGROUND;
 
     public static function eventImageTypes(): array
@@ -43,6 +44,7 @@ enum ImageType
         return [
             self::ORGANIZER_LOGO,
             self::ORGANIZER_COVER,
+            self::ORGANIZER_COVER_VIDEO,
             self::QR_POSTER_BACKGROUND,
         ];
     }

@@ -421,7 +421,7 @@ export const OrderSummaryAndProducts = () => {
     const resendAttendeeTicketMutation = useResendAttendeeTicketPublic();
     const resendOrderConfirmationMutation = useResendOrderConfirmationPublic();
 
-    const allowSelfEdit = event?.settings?.allow_attendee_self_edit ?? false;
+    const allowSelfEdit = event?.settings?.allow_attendee_self_edit ?? true;
     // Keep the financial summary collapsed for free events; paid orders keep the existing behavior.
     const isFreeOrder = !order?.is_payment_required
         && (order?.order_items?.length ?? 0) > 0
