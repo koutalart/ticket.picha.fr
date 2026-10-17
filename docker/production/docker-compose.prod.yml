@@ -40,6 +40,10 @@ services:
     restart: unless-stopped
     mem_limit: 512m
     env_file: ../../backend/.env.production
+    environment:
+      # Laravel caches (config, routes, events, views) rebuilt at each start; migrations stay manual
+      AUTORUN_ENABLED: "true"
+      AUTORUN_LARAVEL_MIGRATION: "false"
     depends_on:
       postgres:
         condition: service_healthy

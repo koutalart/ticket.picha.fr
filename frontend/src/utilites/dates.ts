@@ -80,8 +80,8 @@ export const prettyDate = (date: string, tz: string, showTimezoneOffset: boolean
 
 /**
  * Readable event date range, in the event timezone:
- * "samedi 7 novembre · 21:00 - 05:00" when the event ends the same day or during the following night,
- * "samedi 7 novembre · 21:00 - dimanche 8 novembre · 18:00" over several days.
+ * "samedi 7 novembre, 21:00 - 05:00" when the event ends the same day or during the following night,
+ * "samedi 7 novembre, 21:00 - dimanche 8 novembre, 18:00" over several days.
  * The year is only shown when it is not the current one.
  */
 export const formatEventDateRange = (
@@ -101,7 +101,7 @@ export const formatEventDateRange = (
     const time = (date: dayjs.Dayjs) => date.format(formats.timeOnly);
 
     if (!endDate) {
-        return `${day(start)} · ${time(start)}`;
+        return `${day(start)}, ${time(start)}`;
     }
 
     const end = dayjs.utc(endDate).tz(tz).locale(safeLocale);
@@ -109,10 +109,10 @@ export const formatEventDateRange = (
     const endsDuringTheNight = end.isSame(start.add(1, 'day'), 'day') && end.hour() < 12;
 
     if (sameDay || endsDuringTheNight) {
-        return `${day(start)} · ${time(start)} - ${time(end)}`;
+        return `${day(start)}, ${time(start)} - ${time(end)}`;
     }
 
-    return `${day(start)} · ${time(start)} - ${day(end)} · ${time(end)}`;
+    return `${day(start)}, ${time(start)} - ${day(end)}, ${time(end)}`;
 };
 
 /**
