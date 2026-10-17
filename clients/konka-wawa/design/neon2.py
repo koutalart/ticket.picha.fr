@@ -2,10 +2,10 @@ import sys
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 S, K = sys.argv[1], sys.argv[2]
 W, H = 1280, 720
-villes = [("marseille","MARSEILLE","SAMEDI 7 NOVEMBRE","FLORIDA PALACE",(240,244,60)),
-          ("colmar","COLMAR","SAMEDI 14 NOVEMBRE","GOXWILLER",(255,176,46)),
-          ("toulouse","TOULOUSE","SAMEDI 21 NOVEMBRE","SALLE AMIRA",(80,240,140)),
-          ("lyon","LYON","VENDREDI 27 NOVEMBRE","LE GOLD RÉCEPTION",(90,200,255))]
+villes = [("marseille","MARSEILLE","SAMEDI 7 NOVEMBRE","FLORIDA PALACE",(180,124,255)),
+          ("colmar","COLMAR","SAMEDI 14 NOVEMBRE","GOXWILLER",(255,79,139)),
+          ("toulouse","TOULOUSE","SAMEDI 21 NOVEMBRE","SALLE AMIRA",(92,227,110)),
+          ("lyon","LYON","VENDREDI 27 NOVEMBRE","LE GOLD RÉCEPTION",(255,90,46))]
 def unb(s, w=900):
     f = ImageFont.truetype(f"{S}/Unbounded.ttf", s); f.set_variation_by_axes([w]); return f
 def anton(s): return ImageFont.truetype(f"{S}/Anton.ttf", s)
