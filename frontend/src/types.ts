@@ -336,6 +336,7 @@ export interface Event extends EventBase {
     organizer_id?: IdParam;
     location_details?: VenueAddress;
     statistics?: EventStatistics;
+    attributes?: { name: string; value: string; is_public?: boolean }[];
 }
 
 export interface EventStatistics {

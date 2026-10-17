@@ -2,6 +2,7 @@ import {ComponentType} from "react";
 import {t} from "@lingui/macro";
 import OrganizerHomepage from "../layouts/OrganizerHomepage";
 import PosterTemplate from "./Poster";
+import TourTemplate from "./Tour";
 import {Event, GenericPaginatedResponse, Organizer} from "../../types.ts";
 import type {OrganizerSitePage} from "../../routeLoaders/organizerSitePageLoader.ts";
 
@@ -25,6 +26,7 @@ export const DEFAULT_ORGANIZER_TEMPLATE = 'DEFAULT';
 export const ORGANIZER_TEMPLATES: Record<string, OrganizerTemplate> = {
     DEFAULT: {label: () => t`Classic`, component: OrganizerHomepage},
     POSTER: {label: () => t`Poster`, component: PosterTemplate},
+    TOUR: {label: () => t`Tour`, component: TourTemplate},
 };
 
 export const getOrganizerTemplate = (key?: string | null): ComponentType<OrganizerTemplateProps> => {

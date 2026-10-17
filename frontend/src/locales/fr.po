@@ -223,6 +223,10 @@ msgstr "Premier événement de {organizerName}"
 msgid "{pausedCount} box office tickets are paused and hidden here."
 msgstr "{pausedCount} billets guichet sont en pause et masqués ici."
 
+#: src/components/organizerTemplates/Tour/index.tsx:221
+msgid "{place}, from {0}"
+msgstr "{place}, dès {0}"
+
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:856
 msgid "{remaining} remaining"
 msgstr "{remaining} restants"
@@ -492,6 +496,10 @@ msgstr "Un achat n'est envoyé que si l'acheteur a accepté les cookies sur vos 
 #: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:26
 msgid "A question about an event, a booking, a project? The {0} team answers you."
 msgstr "Une question sur un événement, une réservation, un projet ? L'équipe {0} vous répond."
+
+#: src/components/organizerTemplates/Tour/index.tsx:85
+msgid "A question?"
+msgstr "Une question ?"
 
 #: src/components/forms/QuestionForm/index.tsx:121
 msgid "A Radio option has multiple options but only one can be selected."
@@ -1111,6 +1119,10 @@ msgstr "Tous les événements à venir"
 #: src/components/organizerTemplates/Poster/index.tsx:107
 msgid "All upcoming events by {0}{where}, official ticketing and a look back at past editions."
 msgstr "Tous les prochains événements signés {0}{where}, la billetterie officielle et les éditions passées."
+
+#: src/components/organizerTemplates/Tour/index.tsx:367
+msgid "All you need to know before the night"
+msgstr "Tout savoir avant la soirée"
 
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:157
 msgid "Allow attendees associated with unpaid orders to check in"
@@ -2009,6 +2021,10 @@ msgstr "Les acheteurs voient un prix net. Les frais de plateforme sont déduits 
 msgid "By adding tracking pixels, you acknowledge that you and this platform are joint controllers of the data collected. You are responsible for ensuring you have a lawful basis for this processing under applicable privacy laws (GDPR, CCPA, etc.)."
 msgstr "En ajoutant des pixels de suivi, vous reconnaissez que vous et cette plateforme êtes responsables conjoints des données collectées. Il vous appartient de disposer d'une base légale pour ce traitement au regard des lois applicables (RGPD, CCPA, etc.)."
 
+#: src/components/organizerTemplates/Tour/index.tsx:84
+msgid "By card. The final price is shown before payment."
+msgstr "Par carte bancaire. Le prix final est affiché avant le paiement."
+
 #: src/components/routes/product-widget/CollectInformation/index.tsx:794
 #: src/components/routes/product-widget/Payment/index.tsx:165
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
@@ -2454,6 +2470,10 @@ msgstr "Choisir le calendrier"
 msgid "Choose how the event date is shown on the ticket"
 msgstr "Choisissez comment la date de l'événement s'affiche sur le billet"
 
+#: src/components/organizerTemplates/Tour/index.tsx:411
+msgid "Choose my city"
+msgstr "Choisir ma ville"
+
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:45
 msgid "Choose the default setting for new events. This can be overridden for individual events."
 msgstr "Choisissez le paramètre par défaut pour les nouveaux événements. Ceci peut être modifié pour chaque événement."
@@ -2490,7 +2510,7 @@ msgstr "Ville"
 msgid "City or region where the organizer operates. Used in page titles for search engines."
 msgstr "Ville ou région où l'organisateur est actif. Utilisée dans les titres de pages pour les moteurs de recherche."
 
-#: src/components/organizerTemplates/index.ts:26
+#: src/components/organizerTemplates/index.ts:27
 msgid "Classic"
 msgstr "Classique"
 
@@ -2962,6 +2982,7 @@ msgstr "Détails de connexion"
 #: src/components/layouts/OrganizerHomepage/index.tsx:259
 #: src/components/organizerTemplates/Poster/index.tsx:78
 #: src/components/organizerTemplates/Poster/index.tsx:247
+#: src/components/organizerTemplates/Tour/index.tsx:426
 msgid "Contact"
 msgstr "Contact"
 
@@ -3731,6 +3752,11 @@ msgstr "Date à laquelle la commande a été passée"
 msgid "Date, venue and details filled in."
 msgstr "Date, lieu et détails renseignés."
 
+#: src/components/organizerTemplates/Tour/index.tsx:106
+#: src/components/organizerTemplates/Tour/index.tsx:198
+msgid "Dates"
+msgstr "Dates"
+
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:38
 msgid "Day one capacity"
 msgstr "Capacité du premier jour"
@@ -4136,6 +4162,14 @@ msgstr "Pendant l'événement"
 #: src/utilites/localeNames.ts:20
 msgid "Dutch"
 msgstr "Néerlandais"
+
+#: src/components/organizerTemplates/Tour/index.tsx:83
+msgid "E-ticket"
+msgstr "Billet électronique"
+
+#: src/components/organizerTemplates/Tour/index.tsx:201
+msgid "E-tickets and secure payment"
+msgstr "Billets électroniques et paiement sécurisé"
 
 #: src/components/forms/PromoCodeForm/index.tsx:45
 msgid "e.g. {0}5 off per ticket"
@@ -5634,6 +5668,7 @@ msgstr "Formulaire"
 #: src/components/modals/CreateAttendeeModal/index.tsx:144
 #: src/components/organizerTemplates/Poster/eventData.ts:51
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:109
+#: src/components/organizerTemplates/Tour/index.tsx:227
 #: src/components/routes/kiosk/Orders/index.tsx:284
 #: src/components/routes/kiosk/Orders/index.tsx:325
 #: src/components/routes/organizer/EventAssistant/index.tsx:433
@@ -5686,7 +5721,12 @@ msgstr "Questions fréquentes"
 msgid "Frequently asked questions."
 msgstr "Questions fréquentes."
 
+#: src/components/organizerTemplates/Tour/index.tsx:228
+msgid "from"
+msgstr "à partir de"
+
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:64
+#: src/components/organizerTemplates/Tour/index.tsx:221
 msgid "From {0}"
 msgstr "À partir du {0}"
 
@@ -5780,6 +5820,11 @@ msgstr "Itinéraire"
 msgid "Get my ticket"
 msgstr "Prendre ma place"
 
+#: src/components/organizerTemplates/Tour/index.tsx:251
+#: src/components/organizerTemplates/Tour/index.tsx:254
+msgid "Get notified"
+msgstr "Être prévenu"
+
 #: src/components/layouts/AuthLayout/index.tsx:36
 msgid "Get paid immediately via Stripe Connect"
 msgstr "Recevez vos paiements immédiatement via Stripe Connect"
@@ -5795,6 +5840,10 @@ msgstr "Obtenir des billets"
 #: src/components/routes/event/EventDashboard/index.tsx:183
 #~ msgid "Get your event ready"
 #~ msgstr "Préparez votre événement"
+
+#: src/components/organizerTemplates/Tour/index.tsx:409
+msgid "Get your ticket for the tour"
+msgstr "Prends ta place pour la tournée"
 
 #: src/components/layouts/Event/index.tsx:90
 #: src/components/layouts/Event/index.tsx:136
@@ -6292,6 +6341,10 @@ msgstr "Indiquez si vous êtes assujetti à la TVA dans l'UE"
 #: src/components/common/MessageList/index.tsx:28
 msgid "Individual attendees"
 msgstr "Participants individuels"
+
+#: src/components/organizerTemplates/Tour/index.tsx:109
+msgid "Info"
+msgstr "Infos"
 
 #: src/components/routes/kiosk/Settings/index.tsx:54
 msgid "Information"
@@ -6990,6 +7043,7 @@ msgstr "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam placerat el
 
 #: src/components/organizerTemplates/Poster/index.tsx:233
 #: src/components/organizerTemplates/Poster/index.tsx:260
+#: src/components/organizerTemplates/Tour/index.tsx:147
 msgid "Main menu"
 msgstr "Menu principal"
 
@@ -7306,6 +7360,10 @@ msgstr "Plus"
 msgid "More actions"
 msgstr "Plus d'actions"
 
+#: src/components/organizerTemplates/Tour/index.tsx:245
+msgid "MORE CITIES"
+msgstr "PROCHAINES VILLES"
+
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:132
 msgid "More details (full address, map link)"
 msgstr "Plus de détails (adresse complète, lien de carte)"
@@ -7507,6 +7565,10 @@ msgstr "Nouvelle campagne"
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:87
 msgid "New dates are coming soon. Follow us so you don't miss the on-sale date."
 msgstr "De nouvelles dates arrivent bientôt. Suivez-nous pour ne pas manquer l'ouverture de la billetterie."
+
+#: src/components/organizerTemplates/Tour/index.tsx:204
+msgid "New dates will be announced soon."
+msgstr "De nouvelles dates seront annoncées très bientôt."
 
 #: src/components/routes/auth/ResetPassword/index.tsx:64
 #: src/components/routes/profile/ManageProfile/index.tsx:232
@@ -8187,6 +8249,10 @@ msgstr "Une fois que vous commencerez à collecter des données, elles apparaît
 #: src/components/routes/landing/index.tsx:416
 msgid "One platform for every type of event"
 msgstr "Une plateforme pour chaque type d'événement"
+
+#: src/components/organizerTemplates/Tour/index.tsx:348
+msgid "One poster per date"
+msgstr "Une affiche par date"
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:306
 msgid "One QR code for both stores: iPhones open the App Store, Android phones open Google Play."
@@ -8924,6 +8990,7 @@ msgstr "Participants"
 #: src/components/organizerTemplates/Poster/index.tsx:77
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:227
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:26
+#: src/components/organizerTemplates/Tour/index.tsx:386
 msgid "Partners"
 msgstr "Partenaires"
 
@@ -9284,6 +9351,10 @@ msgstr "Rapport des frais de plateforme"
 msgid "Platform Revenue"
 msgstr "Revenus de la plateforme"
 
+#: src/components/organizerTemplates/Tour/index.tsx:326
+msgid "Play {0}"
+msgstr "Lire {0}"
+
 #: src/components/common/RichDescription/index.tsx:24
 msgid "Play the video"
 msgstr "Lire la vidéo"
@@ -9472,7 +9543,7 @@ msgstr "Message après le paiement"
 msgid "Post Checkout Message"
 msgstr "Message Post-Commande"
 
-#: src/components/organizerTemplates/index.ts:27
+#: src/components/organizerTemplates/index.ts:28
 msgid "Poster"
 msgstr "Affiche"
 
@@ -9484,12 +9555,17 @@ msgstr "Affiche de {0}"
 msgid "Poster or flyer"
 msgstr "Affiche ou flyer"
 
+#: src/components/organizerTemplates/Tour/index.tsx:347
+msgid "Posters"
+msgstr "Affiches"
+
 #: src/components/common/PoweredByFooter/index.tsx:14
 #: src/components/layouts/QrLinkPage/index.tsx:199
 msgid "Powered by"
 msgstr "Propulsé par"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:131
+#: src/components/organizerTemplates/Tour/index.tsx:366
 msgid "Practical info"
 msgstr "Infos pratiques"
 
@@ -10969,6 +11045,7 @@ msgid "Secure Checkout"
 msgstr "Paiement sécurisé"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:68
+#: src/components/organizerTemplates/Tour/index.tsx:84
 msgid "Secure payment"
 msgstr "Paiement sécurisé"
 
@@ -10999,6 +11076,10 @@ msgstr "Voir nos événements"
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:62
 msgid "See prices"
 msgstr "Voir les tarifs"
+
+#: src/components/organizerTemplates/Tour/index.tsx:173
+msgid "See the dates and book"
+msgstr "Voir les dates et réserver"
 
 #: src/components/organizerTemplates/Poster/shared.tsx:55
 msgid "See the event"
@@ -11274,6 +11355,10 @@ msgstr "Envoyé"
 #: src/components/routes/admin/Messages/index.tsx:305
 msgid "Sent By"
 msgstr "Envoyé par"
+
+#: src/components/organizerTemplates/Tour/index.tsx:83
+msgid "Sent by email right after purchase, to show on your phone or printed at the entrance."
+msgstr "Reçu par e-mail juste après l'achat, à présenter sur téléphone ou imprimé à l'entrée."
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:205
 msgid "Sent to customers when they place an order"
@@ -11630,6 +11715,7 @@ msgstr "Vendu uniquement au guichet"
 #: src/components/common/ProductPriceAvailability/index.tsx:50
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:436
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:112
+#: src/components/organizerTemplates/Tour/index.tsx:235
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:855
 #: src/components/routes/event/EventDashboard/index.tsx:195
 msgid "Sold out"
@@ -12491,6 +12577,11 @@ msgstr "L'heure programmée est requise"
 msgid "The scheduled time must be in the future"
 msgstr "L'heure programmée doit être dans le futur"
 
+#: src/components/organizerTemplates/Tour/index.tsx:107
+#: src/components/organizerTemplates/Tour/index.tsx:267
+msgid "The show"
+msgstr "Le show"
+
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:65
 msgid "The team"
 msgstr "L'équipe"
@@ -12599,6 +12690,10 @@ msgstr "Ces modèles remplaceront les paramètres par défaut de l'organisateur 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:227
 msgid "They make it happen."
 msgstr "Ils rendent tout cela possible."
+
+#: src/components/organizerTemplates/Tour/index.tsx:387
+msgid "They make the tour happen"
+msgstr "Ils font la tournée"
 
 #: src/components/routes/landing/index.tsx:442
 msgid "They trusted us with their events"
@@ -12954,6 +13049,8 @@ msgstr "Billets"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:102
 #: src/components/organizerTemplates/Poster/shared.tsx:55
+#: src/components/organizerTemplates/Tour/index.tsx:150
+#: src/components/organizerTemplates/Tour/index.tsx:235
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:473
 #: src/components/routes/event/EventDashboard/index.tsx:226
 #: src/components/routes/event/GettingStarted/index.tsx:83
@@ -13188,6 +13285,14 @@ msgstr "Utilisateurs Totaux"
 #: src/components/routes/admin/Dashboard/index.tsx:307
 msgid "Total Views"
 msgstr "Vues totales"
+
+#: src/components/organizerTemplates/index.ts:29
+msgid "Tour"
+msgstr "Tournée"
+
+#: src/components/organizerTemplates/Tour/index.tsx:101
+msgid "Tour dates and tickets for {0}."
+msgstr "Dates de la tournée et billets pour {0}."
 
 #: src/components/routes/admin/Attribution/index.tsx:32
 msgid "Track account growth and performance by attribution source"
@@ -13464,6 +13569,10 @@ msgstr "Non fiable"
 msgid "Upcoming"
 msgstr "À venir"
 
+#: src/components/organizerTemplates/Tour/index.tsx:199
+msgid "Upcoming dates"
+msgstr "Les prochaines dates"
+
 #: src/components/layouts/OrganizerHomepage/index.tsx:279
 msgid "Upcoming Events"
 msgstr "Événements à venir"
@@ -13598,6 +13707,10 @@ msgstr "Utiliser les détails de commande pour tous les participants. Les noms e
 #: src/components/common/QuestionsTable/index.tsx:389
 #~ msgid "Use the buyer's details for all attendees"
 #~ msgstr "Utiliser les informations de l'acheteur pour tous les participants"
+
+#: src/components/organizerTemplates/Tour/index.tsx:85
+msgid "Use the Contact button on this page, we will get back to you quickly."
+msgstr "Utilise le bouton Contact de cette page, on te répond rapidement."
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:437
 msgid "Use this background"
@@ -13803,6 +13916,11 @@ msgstr "Vérification..."
 msgid "Video"
 msgstr "Vidéo"
 
+#: src/components/organizerTemplates/Tour/index.tsx:108
+#: src/components/organizerTemplates/Tour/index.tsx:300
+msgid "Videos"
+msgstr "Clips"
+
 #: src/utilites/localeNames.ts:30
 msgid "Vietnamese"
 msgstr "Vietnamien"
@@ -13977,6 +14095,11 @@ msgstr "Offre de liste d'attente expirée"
 #: src/components/routes/admin/Configurations/index.tsx:212
 msgid "Warning: This is the system default configuration. Changes will affect all accounts that don't have a specific configuration assigned."
 msgstr "Attention : Il s'agit de la configuration par défaut du système. Les modifications affecteront tous les comptes auxquels aucune configuration spécifique n'est assignée."
+
+#: src/components/organizerTemplates/Tour/index.tsx:175
+#: src/components/organizerTemplates/Tour/index.tsx:301
+msgid "Watch the videos"
+msgstr "Regarder les clips"
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:197
 msgid "We accept JPG, PNG, WebP and HEIC images."
@@ -14926,6 +15049,10 @@ msgstr "Votre offre de liste d'attente a expiré et nous n'avons pas pu finalise
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:67
 msgid "YouTube"
 msgstr "YouTube"
+
+#: src/components/organizerTemplates/Tour/index.tsx:305
+msgid "YouTube channel"
+msgstr "Chaîne YouTube"
 
 #: src/components/common/RichDescription/index.tsx:15
 msgid "YouTube video"
