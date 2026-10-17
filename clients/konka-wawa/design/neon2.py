@@ -5,7 +5,8 @@ W, H = 1280, 720
 villes = [("marseille","MARSEILLE","SAMEDI 7 NOVEMBRE","FLORIDA PALACE",(180,124,255)),
           ("colmar","COLMAR","SAMEDI 14 NOVEMBRE","GOXWILLER",(255,79,139)),
           ("toulouse","TOULOUSE","SAMEDI 21 NOVEMBRE","SALLE AMIRA",(92,227,110)),
-          ("lyon","LYON","VENDREDI 27 NOVEMBRE","LE GOLD RÉCEPTION",(255,90,46))]
+          ("lyon","LYON","VENDREDI 27 NOVEMBRE","LE GOLD RÉCEPTION",(255,90,46)),
+          ("limoges","LIMOGES","SAMEDI 28 NOVEMBRE","PAVILLON DE BUXEROLLES",(111,211,255))]
 def unb(s, w=900):
     f = ImageFont.truetype(f"{S}/Unbounded.ttf", s); f.set_variation_by_axes([w]); return f
 def anton(s): return ImageFont.truetype(f"{S}/Anton.ttf", s)
