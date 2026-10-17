@@ -139,6 +139,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const coverImageData = eventCoverImage(event);
     const coverImage = coverImageData?.url;
     const coverVideo = event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO')?.url;
+    const flyer = event?.images?.find((image) => image.type === 'EVENT_FLYER')?.url;
     const organizer = event.organizer!;
     const organizerSocials = organizer?.settings?.social_media_handles;
     const organizerLogo = imageUrl('ORGANIZER_LOGO', organizer?.images);
@@ -525,6 +526,16 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     showPoweredBy={false}
                                 />
                             </div>
+
+                            {coverVideo && flyer && (
+                                <div className={`${classes.section} ${classes.flyerSection}`} id="flyer">
+                                    <a href={flyer} target="_blank" rel="noopener noreferrer" className={classes.flyerLink}
+                                       aria-label={t`Open the event flyer`}>
+                                        <img src={flyer} alt={t`Flyer: ${event.title}`} loading="lazy"
+                                             className={classes.flyerImage}/>
+                                    </a>
+                                </div>
+                            )}
 
                             {/* Organizer Section */}
                             {organizer && organizer.status === OrganizerStatus.LIVE && (
