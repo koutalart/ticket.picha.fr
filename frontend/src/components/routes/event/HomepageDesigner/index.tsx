@@ -49,6 +49,7 @@ const HomepageDesigner = () => {
 
     const existingCover = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER');
     const existingCoverVideo = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER_VIDEO');
+    const existingFlyer = eventImagesQuery.data?.find((image) => image.type === 'EVENT_FLYER');
     const uploadCoverVideo = useUploadEventCoverVideo();
     const deleteEventImage = useDeleteEventImage();
 
@@ -269,6 +270,33 @@ const HomepageDesigner = () => {
                                         <Text size="xs" c="dimmed" mt={6}>
                                             {t`Optional. Replaces the cover image at the top of the page, without sound.`}
                                         </Text>
+                                    </div>
+
+                                    <div>
+                                        <Group justify={'space-between'} mb="xs">
+                                            <Text fw={500} size="sm">{t`Event flyer`}</Text>
+                                            <Tooltip label={t`Your poster in portrait format, shown on the page between Tickets and Organizer. It is separate from the cover image, which is still used for thumbnails and sharing.`}>
+                                                <IconHelp size={16} style={{color: 'var(--mantine-color-gray-6)'}}/>
+                                            </Tooltip>
+                                        </Group>
+                                        {existingCoverVideo ? (
+                                            <ImageUploadDropzone
+                                                imageType="EVENT_FLYER"
+                                                entityId={eventId}
+                                                onUploadSuccess={handleImageChange}
+                                                onDeleteSuccess={handleImageChange}
+                                                existingImageData={{
+                                                    url: existingFlyer?.url,
+                                                    id: existingFlyer?.id,
+                                                }}
+                                                helpText={t`Optional. Shown between the Tickets and Organizer sections.`}
+                                                displayMode="compact"
+                                            />
+                                        ) : (
+                                            <Text size="xs" c="dimmed">
+                                                {t`Available once a cover video has been added.`}
+                                            </Text>
+                                        )}
                                     </div>
                                 </Stack>
                             </Accordion.Panel>
