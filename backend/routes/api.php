@@ -89,6 +89,7 @@ use HiEvents\Http\Actions\Events\GetEventAction;
 use HiEvents\Http\Actions\Events\GetEventPublicAction;
 use HiEvents\Http\Actions\Events\GetEventsAction;
 use HiEvents\Http\Actions\Events\GetOrganizerEventsPublicAction;
+use HiEvents\Http\Actions\Organizers\CoverVideo\UploadOrganizerCoverVideoAction;
 use HiEvents\Http\Actions\Events\CoverVideo\UploadEventCoverVideoAction;
 use HiEvents\Http\Actions\Events\Images\CreateEventImageAction;
 use HiEvents\Http\Actions\Events\Images\DeleteEventImageAction;
@@ -320,6 +321,7 @@ $router->middleware(['auth:api'])->group(
         $router->post('/organizers', CreateOrganizerAction::class);
         // This is POST instead of PUT because you can't upload files via PUT in PHP (at least not easily)
         $router->post('/organizers/{organizer_id}', EditOrganizerAction::class);
+        $router->post('/organizers/{organizer_id}/cover-video', UploadOrganizerCoverVideoAction::class);
         $router->put('/organizers/{organizer_id}/status', UpdateOrganizerStatusAction::class);
         $router->delete('/organizers/{organizer_id}', DeleteOrganizerAction::class);
         $router->get('/organizers/{organizer_id}/deletion-status', GetOrganizerDeletionStatusAction::class);
