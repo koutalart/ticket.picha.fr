@@ -9,6 +9,7 @@ VILLES = {
     "colmar": ("COLMAR", "SAMEDI 14 NOVEMBRE", "GOXWILLER", "1A rue du Vignoble, 67210 Goxwiller", (255, 79, 139)),
     "toulouse": ("TOULOUSE", "SAMEDI 21 NOVEMBRE", "SALLE AMIRA", "9 rue Jean Moulin, 31830 Plaisance-du-Touch", (92, 227, 110)),
     "lyon": ("LYON", "VENDREDI 27 NOVEMBRE", "LE GOLD RÉCEPTION", "7 route des Troques, 69630 Chaponost", (255, 90, 46)),
+    "limoges": ("LIMOGES", "SAMEDI 28 NOVEMBRE", "PAVILLON DE BUXEROLLES", "20 rue Arthur Groussier, 87100 Limoges", (111, 211, 255)),
 }
 TOURNEE = [("MARSEILLE", "07.11"), ("COLMAR", "14.11"), ("TOULOUSE", "21.11"), ("LYON", "27.11"), ("LIMOGES", "28.11")]
 VILLE, DATE, SALLE, ADRESSE, ACC = VILLES[slug]
