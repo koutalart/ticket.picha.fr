@@ -97,9 +97,6 @@ const generateIdempotencyKey = (): string => {
     return window.crypto.randomUUID();
 };
 
-const hasBadgeName = (values: Pick<SaleFormValues, 'first_name' | 'last_name'>): boolean =>
-    values.first_name.trim().length > 0 && values.last_name.trim().length > 0;
-
 const hasSaleIdentifier = (values: Pick<SaleFormValues, 'first_name' | 'email' | 'phone'>): boolean => {
     const digits = values.phone.replace(/\D/g, '');
     return values.first_name.trim().length > 0
@@ -175,7 +172,7 @@ export const SaleForm = ({
         validate: {
             phone: (value) => {
                 const digits = value.replace(/\D/g, '');
-                if (digits.length === 0) {
+                if (digits.length === 0 || variant === 'kiosk') {
                     return null;
                 }
                 if (!callingCodeDigits && !value.trim().startsWith('+')) {
@@ -185,7 +182,7 @@ export const SaleForm = ({
             },
             first_name: () => null,
             email: (value) => {
-                if (value.trim().length === 0) {
+                if (value.trim().length === 0 || variant === 'kiosk') {
                     return null;
                 }
                 return /^\S+@\S+\.\S+$/.test(value)
@@ -315,11 +312,11 @@ export const SaleForm = ({
                         product_price_id: line.productPriceId,
                         quantity: line.qty,
                     })),
-                    phone: values.phone || undefined,
+                    phone: usablePhone(values.phone) || undefined,
                     phone_calling_code: callingCodeDigits || undefined,
                     first_name: values.first_name || undefined,
                     last_name: values.last_name || undefined,
-                    email: values.email || undefined,
+                    email: usableEmail(values.email) || undefined,
                     locale: values.locale,
                     amount: Number(basketTotal.toFixed(2)),
                     payment_method: isFreeCart ? BoxOfficePaymentMethod.Free : values.payment_method,
@@ -360,12 +357,25 @@ export const SaleForm = ({
         }
     };
 
+    const usablePhone = (value: string): string => {
+        if (variant !== 'kiosk') {
+            return value;
+        }
+        const digits = value.replace(/\D/g, '');
+        const hasCallingCode = Boolean(callingCodeDigits) || value.trim().startsWith('+');
+        return digits.length >= 8 && hasCallingCode ? value : '';
+    };
+
+    const usableEmail = (value: string): string => (
+        variant !== 'kiosk' || /^\S+@\S+\.\S+$/.test(value.trim()) ? value : ''
+    );
+
     const handleSubmit = (values: SaleFormValues) => {
         void checkoutBasket(values);
     };
 
     const isSubmitDisabled = variant === 'kiosk'
-        ? (isCheckingOut || basketCount === 0 || (isFreeCart ? !hasBadgeName(form.values) : !hasSaleIdentifier(form.values)))
+        ? (isCheckingOut || basketCount === 0)
         : (isCheckingOut || basketCount === 0 || !hasSaleIdentifier(form.values));
 
     const canContinueFromTarifs = basketCount > 0;
@@ -387,22 +397,9 @@ export const SaleForm = ({
                 return;
             }
             if (isFreeCart) {
-                if (!form.values.first_name.trim()) {
-                    form.setFieldError('first_name', t`First and last name are required to print the badge.`);
-                }
-                if (!form.values.last_name.trim()) {
-                    form.setFieldError('last_name', t`First and last name are required to print the badge.`);
-                }
-                if (!hasBadgeName(form.values)) {
-                    return;
-                }
                 if (!isSubmitDisabled) {
                     form.onSubmit(handleSubmit)();
                 }
-                return;
-            }
-            if (!hasSaleIdentifier(form.values)) {
-                form.setFieldError('email', t`Enter at least a first name, an email, or a phone number.`);
                 return;
             }
             setStep('paiement');
