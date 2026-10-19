@@ -216,7 +216,7 @@ const SelectProducts = (props: SelectProductsProps) => {
     });
 
     const productCategories = event?.product_categories || [];
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const requestedCategory = PRODUCT_CATEGORY_QUERY_PARAMS.map(param => searchParams.get(param)).find(Boolean);
     const visibleCategories = filterProductCategories(productCategories, requestedCategory);
     const isCategoryFiltered = visibleCategories.length < productCategories.length;
@@ -233,21 +233,18 @@ const SelectProducts = (props: SelectProductsProps) => {
             quantities: productValue.quantities.map(quantityValue => ({...quantityValue, quantity: 0})),
         })));
     };
-    const scrollToTickets = () => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-        window.requestAnimationFrame(() => {
-            document.getElementById('tickets')?.scrollIntoView({behavior: 'smooth', block: 'start'});
-        });
+    // The app scroll manager scrolls to the top on every navigation without a hash:
+    // keeping #tickets in the URL makes it scroll to the ticket section instead.
+    const goToTickets = (next: URLSearchParams, replace = false) => {
+        const search = next.toString();
+        navigate({search: search ? `?${search}` : '', hash: '#tickets'}, {replace, preventScrollReset: true});
     };
     const selectCategory = (category: ProductCategory) => {
         const next = new URLSearchParams(searchParams);
         PRODUCT_CATEGORY_QUERY_PARAMS.forEach(param => next.delete(param));
         next.set(PRODUCT_CATEGORY_QUERY_PARAMS[0], categorySlug(category.name));
         clearSelectedQuantities();
-        setSearchParams(next, {preventScrollReset: true});
-        scrollToTickets();
+        goToTickets(next);
     };
     const showAllCategories = () => {
         const next = new URLSearchParams(searchParams);
@@ -255,10 +252,7 @@ const SelectProducts = (props: SelectProductsProps) => {
         if (categoryChoiceEnabled) {
             clearSelectedQuantities();
         }
-        setSearchParams(next, {replace: true, preventScrollReset: true});
-        if (categoryChoiceEnabled) {
-            scrollToTickets();
-        }
+        goToTickets(next, true);
     };
     const productAreAvailable = productCategories && productCategories.some(category => !!category?.products?.length);
     const products: Product[] = productCategories.reduce((acc: Product[], category) => acc.concat(category.products ?? []), []);
