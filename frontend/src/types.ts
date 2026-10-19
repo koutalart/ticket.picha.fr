@@ -264,6 +264,8 @@ export interface EventSettings {
 
     single_product_per_order?: boolean;
 
+    choose_category_first?: boolean;
+
     // Simplified homepage theme settings (new 2-color + mode system)
     homepage_theme_settings?: HomepageThemeSettings;
 
@@ -728,6 +730,7 @@ export interface ProductCategory {
     event_id?: number;
     is_hidden?: boolean;
     no_products_message?: string;
+    selection_label?: string | null;
 }
 
 export interface Attendee {

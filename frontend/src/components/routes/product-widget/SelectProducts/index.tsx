@@ -31,8 +31,12 @@ import classNames from 'classnames';
 import '../../../../styles/widget/default.scss';
 import {ProductAvailabilityMessage} from "../../../common/ProductPriceAvailability";
 import {PoweredByFooter} from "../../../common/PoweredByFooter";
-import {Event, Product} from "../../../../types.ts";
-import {filterProductCategories, PRODUCT_CATEGORY_QUERY_PARAMS} from "../../../../utilites/productCategoryFilter.ts";
+import {Event, Product, ProductCategory} from "../../../../types.ts";
+import {
+    categorySlug,
+    filterProductCategories,
+    PRODUCT_CATEGORY_QUERY_PARAMS
+} from "../../../../utilites/productCategoryFilter.ts";
 import {eventsClientPublic} from "../../../../api/event.client.ts";
 import {promoCodeClientPublic} from "../../../../api/promo-code.client.ts";
 import {IconChevronRight, IconX} from "@tabler/icons-react"
@@ -216,10 +220,45 @@ const SelectProducts = (props: SelectProductsProps) => {
     const requestedCategory = PRODUCT_CATEGORY_QUERY_PARAMS.map(param => searchParams.get(param)).find(Boolean);
     const visibleCategories = filterProductCategories(productCategories, requestedCategory);
     const isCategoryFiltered = visibleCategories.length < productCategories.length;
+    const chooseCategoryFirst = !!event?.settings?.choose_category_first;
+    const choosableCategories = productCategories.filter(category => (category.products?.length ?? 0) > 0);
+    const categoryChoiceEnabled = chooseCategoryFirst && choosableCategories.length >= 2;
+    const showCategoryChoice = categoryChoiceEnabled && !isCategoryFiltered;
+    const clearSelectedQuantities = () => {
+        if (!form.values.products?.length) {
+            return;
+        }
+        form.setFieldValue('products', form.values.products.map(productValue => ({
+            ...productValue,
+            quantities: productValue.quantities.map(quantityValue => ({...quantityValue, quantity: 0})),
+        })));
+    };
+    const scrollToTickets = () => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+        window.requestAnimationFrame(() => {
+            document.getElementById('tickets')?.scrollIntoView({behavior: 'smooth', block: 'start'});
+        });
+    };
+    const selectCategory = (category: ProductCategory) => {
+        const next = new URLSearchParams(searchParams);
+        PRODUCT_CATEGORY_QUERY_PARAMS.forEach(param => next.delete(param));
+        next.set(PRODUCT_CATEGORY_QUERY_PARAMS[0], categorySlug(category.name));
+        clearSelectedQuantities();
+        setSearchParams(next, {preventScrollReset: true});
+        scrollToTickets();
+    };
     const showAllCategories = () => {
         const next = new URLSearchParams(searchParams);
         PRODUCT_CATEGORY_QUERY_PARAMS.forEach(param => next.delete(param));
+        if (categoryChoiceEnabled) {
+            clearSelectedQuantities();
+        }
         setSearchParams(next, {replace: true, preventScrollReset: true});
+        if (categoryChoiceEnabled) {
+            scrollToTickets();
+        }
     };
     const productAreAvailable = productCategories && productCategories.some(category => !!category?.products?.length);
     const products: Product[] = productCategories.reduce((acc: Product[], category) => acc.concat(category.products ?? []), []);
@@ -449,13 +488,27 @@ const SelectProducts = (props: SelectProductsProps) => {
                     </div>
                 </Modal>
             )}
-            {(event && productAreAvailable) && (
+            {(event && productAreAvailable && showCategoryChoice) && (
+                <div className={'hi-category-choice'}>
+                    {choosableCategories.map((category) => (
+                        <button
+                            type="button"
+                            key={category.id}
+                            className={'hi-category-choice-button'}
+                            onClick={() => selectCategory(category)}
+                        >
+                            {category.selection_label || t`Register: ${category.name}`}
+                        </button>
+                    ))}
+                </div>
+            )}
+            {(event && productAreAvailable && !showCategoryChoice) && (
                 <form target={'__blank'} onSubmit={form.onSubmit(handleProductSelection as any)}>
                     <Input type={'hidden'} {...form.getInputProps('promo_code')} />
                     <Input type={'hidden'} {...form.getInputProps('affiliate_code')} />
                     {isCategoryFiltered && (
                         <button type="button" className={'hi-product-category-show-all'} onClick={showAllCategories}>
-                            {t`See all tickets`}
+                            {categoryChoiceEnabled ? t`Change path` : t`See all tickets`}
                         </button>
                     )}
                     <div className={'hi-product-category-rows'}>

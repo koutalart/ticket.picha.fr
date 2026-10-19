@@ -110,6 +110,7 @@ class UpdateEventSettingsRequest extends BaseRequest
             // Self-service settings
             'allow_attendee_self_edit' => ['boolean'],
             'single_product_per_order' => ['boolean'],
+            'choose_category_first' => ['boolean'],
 
             // Waitlist settings
             'waitlist_auto_process' => ['boolean'],

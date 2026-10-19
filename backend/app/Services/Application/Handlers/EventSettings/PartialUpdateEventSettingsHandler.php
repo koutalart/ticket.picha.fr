@@ -142,6 +142,7 @@ class PartialUpdateEventSettingsHandler
                 'allow_attendee_self_edit' => $eventSettingsDTO->settings['allow_attendee_self_edit'] ?? $existingSettings->getAllowAttendeeSelfEdit(),
 
                 'single_product_per_order' => $eventSettingsDTO->settings['single_product_per_order'] ?? $existingSettings->getSingleProductPerOrder(),
+                'choose_category_first' => $eventSettingsDTO->settings['choose_category_first'] ?? $existingSettings->getChooseCategoryFirst(),
 
                 // Waitlist settings
                 'waitlist_auto_process' => $eventSettingsDTO->settings['waitlist_auto_process'] ?? $existingSettings->getWaitlistAutoProcess(),

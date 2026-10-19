@@ -20,6 +20,7 @@ class ProductCategoryResourcePublic extends JsonResource
             'is_hidden' => $this->getIsHidden(),
             'order' => $this->getOrder(),
             'no_products_message' => $this->getNoProductsMessage(),
+            'selection_label' => $this->getSelectionLabel(),
             $this->mergeWhen((bool)$this->getProducts(), fn() => [
                 'products' => ProductResourcePublic::collection($this->getProducts()),
             ]),
