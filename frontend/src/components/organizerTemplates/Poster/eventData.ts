@@ -68,6 +68,8 @@ export const getVenue = (event: Event) => {
 
 export const getCoverUrl = (event: Event) => event.images?.find(image => image.type === 'EVENT_COVER')?.url;
 
+export const getCoverVideoUrl = (event: Event) => event.images?.find(image => image.type === 'EVENT_COVER_VIDEO')?.url;
+
 const toIso = (date?: string) => date ? `${date.replace(' ', 'T')}${date.endsWith('Z') ? '' : 'Z'}` : undefined;
 
 export const buildEventJsonLd = (event: Event, url: string, organizerName: string) => {

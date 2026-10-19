@@ -6,6 +6,7 @@ use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Exceptions\OrganizerNotFoundException;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Admin\DTO\UpdateOrganizerSiteContentDTO;
+use HiEvents\Services\Domain\Organizer\CustomDomainCurrentEventService;
 use HiEvents\Services\Infrastructure\HtmlPurifier\HtmlPurifierService;
 
 class UpdateOrganizerSiteContentHandler
@@ -34,6 +35,12 @@ class UpdateOrganizerSiteContentHandler
         }
 
         $content = $dto->siteContent;
+
+        $flag = CustomDomainCurrentEventService::SITE_CONTENT_FLAG;
+        $existing = $organizer->getSiteContent();
+        if (!array_key_exists($flag, $content) && is_array($existing) && array_key_exists($flag, $existing)) {
+            $content[$flag] = $existing[$flag];
+        }
 
         foreach (self::HTML_FIELDS as $field) {
             if (isset($content[$field])) {

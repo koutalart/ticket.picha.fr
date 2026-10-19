@@ -268,13 +268,20 @@ Sitemap: ${frontendUrl}/sitemap.xml
 
             const [pathname, search] = req.originalUrl.split('?');
             if (new RegExp(`^/events/${customDomain.id}/[^/]+/?$`).test(pathname)) {
-                res.redirect(302, `/${search ? `?${search}` : ''}`);
+                const homeSearch = customDomain.current_event ? ['accueil', search].filter(Boolean).join('&') : search;
+                res.redirect(302, `/${homeSearch ? `?${homeSearch}` : ''}`);
                 return;
             }
 
             const sitePageMatch = pathname.match(new RegExp(`^/events/${customDomain.id}/[^/]+/(a-propos|evenements|services|partenaires|contact)/?$`));
             if (sitePageMatch) {
                 res.redirect(302, `/${sitePageMatch[1]}${search ? `?${search}` : ''}`);
+                return;
+            }
+
+            if (pathname === '/' && customDomain.current_event && !new URLSearchParams(search || '').has('accueil')) {
+                res.setHeader('Cache-Control', 'no-store');
+                res.redirect(302, `/event/${customDomain.current_event.id}/${customDomain.current_event.slug}${search ? `?${search}` : ''}`);
                 return;
             }
 
