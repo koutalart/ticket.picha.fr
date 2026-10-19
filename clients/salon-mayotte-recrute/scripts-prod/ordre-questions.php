@@ -11,9 +11,12 @@ $titres = ['Téléphone', 'Secteur d\'activité principal', 'Mode de participati
     'Entreprise ou organisme', 'Fonction du contact', 'Téléphone du contact', 'Secteur d\'activité de l\'entreprise',
     'Nombre de recruteurs présents', 'Postes ou métiers proposés', 'Droit à l\'image'];
 $questions = DB::table('questions')->where('event_id', 13)->whereNull('deleted_at')->get(['id', 'title']);
+$exposant = DB::table('product_questions')->where('product_id', 26)->whereNull('deleted_at')->pluck('question_id')->all();
+$modeExposant = $questions->where('title', 'Mode de participation')->whereIn('id', $exposant)->pluck('id')->all();
 $ordre = [];
 foreach ($titres as $t) {
-    foreach ($questions->where('title', $t)->sortBy('id') as $q) $ordre[] = $q->id;
+    foreach ($questions->where('title', $t)->whereNotIn('id', $t === 'Mode de participation' ? $modeExposant : [])->sortBy('id') as $q) $ordre[] = $q->id;
+    if ($t === 'Secteur d\'activité de l\'entreprise') array_push($ordre, ...$modeExposant);
 }
 $ordre = array_values(array_unique(array_merge($ordre, $questions->pluck('id')->sort()->all())));
 auth()->setUser(\HiEvents\Models\User::findOrFail(11));
