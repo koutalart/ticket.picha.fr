@@ -122,6 +122,17 @@
       .hi-price-tier-row {
         margin-bottom: 15px;
 
+        &.hi-price-tier-selectable {
+          padding: 10px 12px;
+          border: 1px solid var(--widget-secondary-color, #dee2e6);
+          border-radius: 8px;
+        }
+
+        &.hi-price-tier-selected {
+          border-width: 2px;
+          padding: 9px 11px;
+        }
+
         .hi-price-tier {
           .hi-price-tier-label {
             font-weight: bold;

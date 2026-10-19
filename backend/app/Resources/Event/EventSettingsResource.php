@@ -82,6 +82,7 @@ class EventSettingsResource extends JsonResource
 
             // Self-service settings
             'allow_attendee_self_edit' => $this->getAllowAttendeeSelfEdit(),
+            'single_product_per_order' => $this->getSingleProductPerOrder(),
 
             // Waitlist settings
             'waitlist_auto_process' => $this->getWaitlistAutoProcess(),

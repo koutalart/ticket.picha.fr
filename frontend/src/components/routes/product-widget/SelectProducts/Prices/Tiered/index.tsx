@@ -1,6 +1,6 @@
 import {Currency, ProductPriceDisplay} from "../../../../../common/Currency";
 import {Event, Product} from "../../../../../../types.ts";
-import {Group, TextInput} from "@mantine/core";
+import {Group, Radio, TextInput} from "@mantine/core";
 import {NumberSelector} from "../../../../../common/NumberSelector";
 import {UseFormReturnType} from "@mantine/form";
 import {t} from "@lingui/macro";
@@ -12,14 +12,27 @@ interface TieredPricingProps {
     product: Product;
     form: UseFormReturnType<any>;
     productIndex: number;
+    singleSelection?: boolean;
+    onSelectPrice?: (priceIndex: number) => void;
 }
 
-export const TieredPricing = ({product, event, form, productIndex}: TieredPricingProps) => {
+export const TieredPricing = ({product, event, form, productIndex, singleSelection, onSelectPrice}: TieredPricingProps) => {
     return (
         <>
             {product?.prices?.map((price, index) => {
+                const isSelectable = !!(product.is_available && price.is_available);
+                const isSelected = Number(form.values.products?.[productIndex]?.quantities?.[index]?.quantity) > 0;
+                const selectPrice = () => {
+                    if (singleSelection && isSelectable && onSelectPrice) {
+                        onSelectPrice(index);
+                    }
+                };
+
                 return (
-                    <div key={index} className={'hi-price-tier-row'}>
+                    <div key={index}
+                         className={'hi-price-tier-row' + (singleSelection && isSelectable ? ' hi-price-tier-selectable' : '') + (singleSelection && isSelected ? ' hi-price-tier-selected' : '')}
+                         onClick={singleSelection ? selectPrice : undefined}
+                         style={singleSelection && isSelectable ? {cursor: 'pointer'} : undefined}>
                         <Group justify={'space-between'} wrap={'nowrap'}>
                             <div className={'hi-price-tier'}>
                                 <div className={'hi-price-tier-label'}>{price.label}</div>
@@ -57,7 +70,15 @@ export const TieredPricing = ({product, event, form, productIndex}: TieredPricin
                                 </div>
                             </div>
                             <div className={'hi-product-quantity-selector'}>
-                                {(product.is_available && price.is_available) && (
+                                {(isSelectable && singleSelection) && (
+                                    <Radio
+                                        className={'hi-price-tier-radio'}
+                                        checked={isSelected}
+                                        onChange={selectPrice}
+                                        aria-label={price.label || product.title}
+                                    />
+                                )}
+                                {(isSelectable && !singleSelection) && (
                                     <>
                                         <NumberSelector
                                             className={'hi-product-quantity-selector'}

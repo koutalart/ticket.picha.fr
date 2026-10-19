@@ -262,6 +262,8 @@ export interface EventSettings {
     // Self-service settings
     allow_attendee_self_edit?: boolean;
 
+    single_product_per_order?: boolean;
+
     // Simplified homepage theme settings (new 2-color + mode system)
     homepage_theme_settings?: HomepageThemeSettings;
 

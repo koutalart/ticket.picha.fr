@@ -6,6 +6,7 @@ use Exception;
 use HiEvents\DomainObjects\CapacityAssignmentDomainObject;
 use HiEvents\DomainObjects\Enums\ProductPriceType;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\PromoCodeDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
@@ -42,9 +43,12 @@ class OrderCreateRequestValidationService
     {
         $this->validateTypes($data);
 
-        $event = $this->eventRepository->findById($eventId);
+        $event = $this->eventRepository
+            ->loadRelation(EventSettingDomainObject::class)
+            ->findById($eventId);
         $this->validatePromoCode($eventId, $data);
         $this->validateProductSelection($data);
+        $this->validateSingleProductPerOrder($event, $data);
 
         $this->availableProductQuantities = $this->fetchAvailableProductQuantitiesService
             ->getAvailableProductQuantities(
@@ -103,6 +107,25 @@ class OrderCreateRequestValidationService
         if ($productData->isEmpty() || $productData->sum(fn($product) => collect($product['quantities'])->sum('quantity')) === 0) {
             throw ValidationException::withMessages([
                 'products' => __('You haven\'t selected any products')
+            ]);
+        }
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function validateSingleProductPerOrder(EventDomainObject $event, array $data): void
+    {
+        if (!$event->getEventSettings()?->getSingleProductPerOrder()) {
+            return;
+        }
+
+        $totalQuantity = collect($data['products'])
+            ->sum(fn($product) => collect($product['quantities'])->sum('quantity'));
+
+        if ($totalQuantity > 1) {
+            throw ValidationException::withMessages([
+                'products' => __('Only one registration per order is allowed for this event.'),
             ]);
         }
     }

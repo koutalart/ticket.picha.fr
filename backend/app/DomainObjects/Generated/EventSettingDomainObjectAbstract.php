@@ -68,6 +68,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const WAITLIST_ENABLED = 'waitlist_enabled';
     final public const WAITLIST_AUTO_PROCESS = 'waitlist_auto_process';
     final public const WAITLIST_OFFER_TIMEOUT_MINUTES = 'waitlist_offer_timeout_minutes';
+    final public const SINGLE_PRODUCT_PER_ORDER = 'single_product_per_order';
 
     protected int $id;
     protected int $event_id;
@@ -127,6 +128,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected bool $waitlist_enabled = false;
     protected bool $waitlist_auto_process = false;
     protected ?int $waitlist_offer_timeout_minutes = null;
+    protected bool $single_product_per_order = false;
 
     public function toArray(): array
     {
@@ -189,6 +191,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'waitlist_enabled' => $this->waitlist_enabled ?? null,
                     'waitlist_auto_process' => $this->waitlist_auto_process ?? null,
                     'waitlist_offer_timeout_minutes' => $this->waitlist_offer_timeout_minutes ?? null,
+                    'single_product_per_order' => $this->single_product_per_order ?? null,
                 ];
     }
 
@@ -829,5 +832,16 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getWaitlistOfferTimeoutMinutes(): ?int
     {
         return $this->waitlist_offer_timeout_minutes;
+    }
+
+    public function setSingleProductPerOrder(bool $single_product_per_order): self
+    {
+        $this->single_product_per_order = $single_product_per_order;
+        return $this;
+    }
+
+    public function getSingleProductPerOrder(): bool
+    {
+        return $this->single_product_per_order;
     }
 }
