@@ -38,11 +38,22 @@ jobs:
         run: |
           set -eu
           STATS_FILE="$RUNNER_TEMP/case-study-stats.json"
+          API="https://ticket.picha.fr/api/public/case-study-stats"
           ids=$(grep -oE 'ticketingEventId: [0-9]+' "$CASE_STUDIES_FILE" | grep -oE '[0-9]+' | paste -sd, -)
-          if [ -z "$ids" ]; then echo "Aucun cas client relié à un événement."; exit 0; fi
+          echo '{"data":[]}' > "$STATS_FILE.known"
+          if [ -n "$ids" ]; then
+            curl -fsS --retry 3 -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
+              "$API?event_ids=$ids" -o "$STATS_FILE.known"
+          fi
+          since=$(TZ=Indian/Mayotte date -d "-7 days" +%F)
           curl -fsS --retry 3 -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
-            "https://ticket.picha.fr/api/public/case-study-stats?event_ids=$ids" -o "$STATS_FILE"
-          jq -e '.data | length > 0' "$STATS_FILE" > /dev/null
+            "$API?ended_since=$since" -o "$STATS_FILE.ended"
+          known_ids=$(jq -c '[.data[].id]' "$STATS_FILE.known")
+          jq -n --slurpfile k "$STATS_FILE.known" --slurpfile e "$STATS_FILE.ended" --argjson ids "$known_ids" \
+            '{data: $k[0].data, candidates: [$e[0].data[] | select(.id as $i | $ids | index($i) | not)]}' > "$STATS_FILE"
+          if jq -e '(.data | length) + (.candidates | length) == 0' "$STATS_FILE" > /dev/null; then
+            echo "Aucun événement à traiter."; exit 0
+          fi
           mkdir -p .case-study-stats && cp "$STATS_FILE" .case-study-stats/stats.json
           echo "TODAY=$(TZ=Indian/Mayotte date +%F)" >> "$GITHUB_ENV"
           echo "TODAY_SHORT=$(TZ=Indian/Mayotte date +%d/%m)" >> "$GITHUB_ENV"
@@ -64,12 +75,16 @@ jobs:
                Si les chiffres publiés sont déjà à jour, ne modifie rien.
                Sinon, mets à jour attendees, results, headline, summary (160 caractères maximum, vérifie en comptant), challenge ou solution si nécessaire,
                et updatedAt = "${{ env.TODAY }}". Après la fin d'un événement, rédige dayOf à partir des scans et passe date et attendees au passé.
-            4. Interdits : chiffre d'affaires ou montant, donnée personnelle, citation sans approved: true, chiffre absent des données,
-               modification d'un autre fichier.
-            5. Termine par un court résumé en français : cas clients modifiés, chiffres avant et après.
+            4. Nouveaux événements (champ candidates : événements terminés depuis 7 jours, sans cas client) : applique la section
+               « Nouveaux événements » du README. Pour chaque événement qui atteint le seuil, ajoute un cas client en brouillon
+               (draft: true) à la fin du tableau caseStudies, avec ticketingEventId, publishedAt et updatedAt = "${{ env.TODAY }}".
+               N'ajoute jamais un événement déjà présent (même ticketingEventId) ni un brouillon déjà créé.
+            5. Interdits : chiffre d'affaires ou montant, donnée personnelle, citation sans approved: true, chiffre absent des données,
+               modification d'un autre fichier, passage d'un brouillon en draft: false.
+            6. Termine par un court résumé en français : cas clients modifiés, chiffres avant et après, brouillons ajoutés.
           claude_args: |
             --model claude-sonnet-5-5
-            --max-turns 25
+            --max-turns 35
             --allowedTools "Read,Edit,Glob,Grep"
 
       - name: Contrôler le fichier modifié
