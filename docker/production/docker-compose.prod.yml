@@ -38,7 +38,7 @@ services:
       context: ../../backend
       dockerfile: Dockerfile
     restart: unless-stopped
-    mem_limit: 512m
+    mem_limit: 768m
     env_file: ../../backend/.env.production
     environment:
       # Laravel caches (config, routes, events, views) rebuilt at each start; migrations stay manual
