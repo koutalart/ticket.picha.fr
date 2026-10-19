@@ -268,7 +268,8 @@ Sitemap: ${frontendUrl}/sitemap.xml
 
             const [pathname, search] = req.originalUrl.split('?');
             if (new RegExp(`^/events/${customDomain.id}/[^/]+/?$`).test(pathname)) {
-                res.redirect(302, `/${search ? `?${search}` : ''}`);
+                const homeSearch = customDomain.current_event ? ['accueil', search].filter(Boolean).join('&') : search;
+                res.redirect(302, `/${homeSearch ? `?${homeSearch}` : ''}`);
                 return;
             }
 
