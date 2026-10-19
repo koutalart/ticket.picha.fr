@@ -433,6 +433,10 @@ msgstr "从第一位报名者到最后一张胸卡，打造<0>无可挑剔</0>�
 msgid "A cancellation notice has been sent to"
 msgstr "取消通知已发送至"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:77
+msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
+msgstr "场地网络中的一台电脑运行 PICHA 打印中继。它会获取从本工作站打印的门票并发送到 Zebra 打印机。"
+
 #: src/components/forms/QuestionForm/index.tsx:145
 msgid "A date input. Perfect for asking for a date of birth etc."
 msgstr "日期输入字段。非常适合询问出生日期等。"
@@ -504,6 +508,10 @@ msgstr "有疑问？"
 #: src/components/forms/QuestionForm/index.tsx:121
 msgid "A Radio option has multiple options but only one can be selected."
 msgstr "单选题有多个选项，但只能选择一个。"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:64
+msgid "A relay token already exists. The new token will replace it and the relay running with the old one will stop printing. Continue?"
+msgstr "已存在中继令牌。新令牌将替换它，使用旧令牌运行的中继将停止打印。是否继续？"
 
 #: src/components/routes/kiosk/Orders/index.tsx:408
 msgid "A reprinted ticket keeps the same QR code: only the first copy scanned at the door will be accepted."
@@ -2668,6 +2676,10 @@ msgstr ""
 msgid "Comma seperated keywords that describe the event. These will be used by search engines to help categorize and index the event"
 msgstr "以逗号分隔的描述活动的关键字。搜索引擎将使用这些关键字来帮助对活动进行分类和索引"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:107
+msgid "Command to run on the venue computer"
+msgstr "在场地电脑上运行的命令"
+
 #: src/components/routes/profile/ManageProfile/index.tsx:204
 msgid "Communication Preferences"
 msgstr "通信偏好"
@@ -3170,6 +3182,10 @@ msgstr ""
 msgid "Copy this link to share it anywhere"
 msgstr "复制此链接，在任意位置分享"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:104
+msgid "Copy this token now, it will not be shown again."
+msgstr "请立即复制此令牌，它将不会再次显示。"
+
 #: src/components/modals/ShareModal/index.tsx:248
 msgid "Copy to clipboard"
 msgstr "复制到剪贴板"
@@ -3182,6 +3198,10 @@ msgstr "复制 URL"
 msgid "Corporate events"
 msgstr ""
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:56
+msgid "Could not generate the relay token."
+msgstr "无法生成中继令牌。"
+
 #: src/hooks/useKioskTicketPrinter.tsx:82
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr ""
@@ -3189,6 +3209,11 @@ msgstr ""
 #: src/hooks/useKioskTicketPrinter.tsx:92
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
+
+#: src/hooks/useKioskTicketPrinter.tsx:123
+#: src/hooks/useKioskTicketPrinter.tsx:153
+msgid "Could not send the tickets to the print queue."
+msgstr "无法将门票发送到打印队列。"
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:155
 msgid "Countries"
@@ -5795,6 +5820,14 @@ msgstr "您组织者的基本信息"
 msgid "Generate"
 msgstr "生成"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a new relay token"
+msgstr "生成新的中继令牌"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a relay token"
+msgstr "生成中继令牌"
+
 #: src/components/forms/AffiliateForm/index.tsx:53
 #: src/components/forms/AffiliateForm/index.tsx:60
 #: src/components/forms/PromoCodeForm/index.tsx:103
@@ -8328,6 +8361,10 @@ msgstr "只有账户管理员可以删除或归档活动。请联系您的账户
 msgid "Only account administrators can delete or archive organizers. Contact your account admin for assistance."
 msgstr "只有账户管理员可以删除或归档主办方。请联系您的账户管理员寻求帮助。"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:53
+msgid "Only an organizer of this event can generate a relay token."
+msgstr "只有此活动的组织者才能生成中继令牌。"
+
 #: src/components/modals/SendMessageModal/index.tsx:331
 msgid "Only send to orders with these statuses"
 msgstr "仅发送给具有这些状态的订单"
@@ -9697,6 +9734,10 @@ msgstr "打印所有门票"
 msgid "Print Preview"
 msgstr "打印预览"
 
+#: src/hooks/useKioskTicketPrinter.tsx:196
+msgid "Print queue not reachable"
+msgstr "无法连接打印队列"
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:114
 msgid "Print Ticket"
 msgstr "打印门票"
@@ -10352,6 +10393,15 @@ msgstr ""
 #: src/pages/digit/ScannerDevicePage.tsx:52
 msgid "Rejected"
 msgstr ""
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:85
+msgid "Relay last seen"
+msgstr "中继最后在线"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:81
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:106
+msgid "Relay token"
+msgstr "中继令牌"
 
 #: src/components/routes/landing/index.tsx:140
 msgid "Reliable figures, immediately"
@@ -12594,6 +12644,10 @@ msgstr "模板正文包含无效的Liquid语法。请更正后再试。"
 #~ msgid "The ticket could not be added. Please try again."
 #~ msgstr ""
 
+#: src/hooks/useKioskTicketPrinter.tsx:202
+msgid "The tickets could not be added to the print queue. Retry, or open the tickets as PDF."
+msgstr "无法将门票加入打印队列。请重试，或以 PDF 打开门票。"
+
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:69
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:63
 msgid "The title of the event that will be displayed in search engine results and when sharing on social media. By default, the event title will be used"
@@ -13109,6 +13163,10 @@ msgstr "已售票数"
 #: src/components/modals/RefundOrderModal/index.tsx:127
 msgid "Tickets to refund"
 msgstr "要退款的门票"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:89
+msgid "Tickets waiting"
+msgstr "等待中的门票"
 
 #: src/components/forms/ProductForm/index.tsx:76
 msgid "Tier {0}"
@@ -15056,6 +15114,10 @@ msgstr "YouTube 频道"
 #: src/components/common/RichDescription/index.tsx:15
 msgid "YouTube video"
 msgstr ""
+
+#: src/components/routes/kiosk/Settings/index.tsx:103
+msgid "Zebra via relay (computer)"
+msgstr "通过中继的 Zebra（电脑）"
 
 #: src/components/routes/kiosk/Settings/index.tsx:94
 msgid "Zebra ZD621 (silent)"

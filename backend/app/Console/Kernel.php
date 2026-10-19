@@ -12,6 +12,7 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
+        $schedule->command('kiosk:purge-print-jobs')->hourly()->withoutOverlapping();
         $schedule->job(new SendScheduledMessagesJob)->everyMinute()->withoutOverlapping();
         $schedule->job(new ProcessExpiredWaitlistOffersJob)->everyMinute()->withoutOverlapping();
         $schedule->command(PurgeQuestionAnswerFilesCommand::class)->hourly()->withoutOverlapping();

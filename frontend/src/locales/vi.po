@@ -433,6 +433,10 @@ msgstr "Đón tiếp <0>hoàn hảo</0>, từ người đăng ký đầu tiên �
 msgid "A cancellation notice has been sent to"
 msgstr "Thông báo hủy đã được gửi đến"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:77
+msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
+msgstr "Một máy tính trong mạng của địa điểm chạy bộ chuyển tiếp in PICHA. Nó nhận các vé được in từ quầy này và gửi đến máy Zebra."
+
 #: src/components/forms/QuestionForm/index.tsx:145
 msgid "A date input. Perfect for asking for a date of birth etc."
 msgstr "Trường nhập ngày. Hoàn hảo để hỏi ngày sinh, v.v."
@@ -504,6 +508,10 @@ msgstr "Có câu hỏi?"
 #: src/components/forms/QuestionForm/index.tsx:121
 msgid "A Radio option has multiple options but only one can be selected."
 msgstr "Tùy chọn radio có nhiều tùy chọn nhưng chỉ có thể chọn một tùy chọn."
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:64
+msgid "A relay token already exists. The new token will replace it and the relay running with the old one will stop printing. Continue?"
+msgstr "Đã có mã chuyển tiếp. Mã mới sẽ thay thế mã cũ và bộ chuyển tiếp đang chạy với mã cũ sẽ ngừng in. Tiếp tục?"
 
 #: src/components/routes/kiosk/Orders/index.tsx:408
 msgid "A reprinted ticket keeps the same QR code: only the first copy scanned at the door will be accepted."
@@ -2668,6 +2676,10 @@ msgstr ""
 msgid "Comma seperated keywords that describe the event. These will be used by search engines to help categorize and index the event"
 msgstr "Các từ khóa mô tả sự kiện, được phân tách bằng dấu phẩy. Chúng sẽ được công cụ tìm kiếm sử dụng để phân loại và lập chỉ mục sự kiện."
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:107
+msgid "Command to run on the venue computer"
+msgstr "Lệnh chạy trên máy tính tại địa điểm"
+
 #: src/components/routes/profile/ManageProfile/index.tsx:204
 msgid "Communication Preferences"
 msgstr "Tùy chọn liên lạc"
@@ -3170,6 +3182,10 @@ msgstr ""
 msgid "Copy this link to share it anywhere"
 msgstr "Sao chép liên kết này để chia sẻ ở bất kỳ đâu"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:104
+msgid "Copy this token now, it will not be shown again."
+msgstr "Hãy sao chép mã này ngay, mã sẽ không được hiển thị lại."
+
 #: src/components/modals/ShareModal/index.tsx:248
 msgid "Copy to clipboard"
 msgstr "Sao chép vào bộ nhớ tạm"
@@ -3182,6 +3198,10 @@ msgstr "Sao chép URL"
 msgid "Corporate events"
 msgstr ""
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:56
+msgid "Could not generate the relay token."
+msgstr "Không thể tạo mã chuyển tiếp."
+
 #: src/hooks/useKioskTicketPrinter.tsx:82
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr ""
@@ -3189,6 +3209,11 @@ msgstr ""
 #: src/hooks/useKioskTicketPrinter.tsx:92
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
+
+#: src/hooks/useKioskTicketPrinter.tsx:123
+#: src/hooks/useKioskTicketPrinter.tsx:153
+msgid "Could not send the tickets to the print queue."
+msgstr "Không thể gửi vé vào hàng đợi in."
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:155
 msgid "Countries"
@@ -5795,6 +5820,14 @@ msgstr "Thông tin chung về nhà tổ chức của bạn"
 msgid "Generate"
 msgstr "Tạo"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a new relay token"
+msgstr "Tạo mã chuyển tiếp mới"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a relay token"
+msgstr "Tạo mã chuyển tiếp"
+
 #: src/components/forms/AffiliateForm/index.tsx:53
 #: src/components/forms/AffiliateForm/index.tsx:60
 #: src/components/forms/PromoCodeForm/index.tsx:103
@@ -8328,6 +8361,10 @@ msgstr "Chỉ quản trị viên tài khoản mới có thể xóa hoặc lưu t
 msgid "Only account administrators can delete or archive organizers. Contact your account admin for assistance."
 msgstr "Chỉ quản trị viên tài khoản mới có thể xóa hoặc lưu trữ ban tổ chức. Liên hệ quản trị viên tài khoản của bạn để được hỗ trợ."
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:53
+msgid "Only an organizer of this event can generate a relay token."
+msgstr "Chỉ ban tổ chức sự kiện này mới có thể tạo mã chuyển tiếp."
+
 #: src/components/modals/SendMessageModal/index.tsx:331
 msgid "Only send to orders with these statuses"
 msgstr "Chỉ gửi đến các đơn hàng có trạng thái này"
@@ -9697,6 +9734,10 @@ msgstr "In tất cả vé"
 msgid "Print Preview"
 msgstr "Xem trước khi in"
 
+#: src/hooks/useKioskTicketPrinter.tsx:196
+msgid "Print queue not reachable"
+msgstr "Không thể kết nối hàng đợi in"
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:114
 msgid "Print Ticket"
 msgstr "In vé"
@@ -10352,6 +10393,15 @@ msgstr ""
 #: src/pages/digit/ScannerDevicePage.tsx:52
 msgid "Rejected"
 msgstr ""
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:85
+msgid "Relay last seen"
+msgstr "Bộ chuyển tiếp hoạt động lần cuối"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:81
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:106
+msgid "Relay token"
+msgstr "Mã chuyển tiếp"
 
 #: src/components/routes/landing/index.tsx:140
 msgid "Reliable figures, immediately"
@@ -12594,6 +12644,10 @@ msgstr "Nội dung template chứa cú pháp Liquid không hợp lệ. Vui lòng
 #~ msgid "The ticket could not be added. Please try again."
 #~ msgstr ""
 
+#: src/hooks/useKioskTicketPrinter.tsx:202
+msgid "The tickets could not be added to the print queue. Retry, or open the tickets as PDF."
+msgstr "Không thể thêm vé vào hàng đợi in. Hãy thử lại hoặc mở vé dưới dạng PDF."
+
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:69
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:63
 msgid "The title of the event that will be displayed in search engine results and when sharing on social media. By default, the event title will be used"
@@ -13109,6 +13163,10 @@ msgstr "Vé Đã Bán"
 #: src/components/modals/RefundOrderModal/index.tsx:127
 msgid "Tickets to refund"
 msgstr "Vé cần hoàn tiền"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:89
+msgid "Tickets waiting"
+msgstr "Vé đang chờ"
 
 #: src/components/forms/ProductForm/index.tsx:76
 msgid "Tier {0}"
@@ -15056,6 +15114,10 @@ msgstr "Kênh YouTube"
 #: src/components/common/RichDescription/index.tsx:15
 msgid "YouTube video"
 msgstr ""
+
+#: src/components/routes/kiosk/Settings/index.tsx:103
+msgid "Zebra via relay (computer)"
+msgstr "Zebra qua bộ chuyển tiếp (máy tính)"
 
 #: src/components/routes/kiosk/Settings/index.tsx:94
 msgid "Zebra ZD621 (silent)"

@@ -433,6 +433,10 @@ msgstr "Ett <0>felfritt</0> mottagande, från första anmälan till sista namnbr
 msgid "A cancellation notice has been sent to"
 msgstr "Ett avbokningsmeddelande har skickats till"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:77
+msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
+msgstr "En dator i platsens nätverk kör PICHA-utskriftsreläet. Det hämtar biljetterna som skrivs ut från den här stationen och skickar dem till Zebra-skrivaren."
+
 #: src/components/forms/QuestionForm/index.tsx:145
 msgid "A date input. Perfect for asking for a date of birth etc."
 msgstr "Ett datumfält. Perfekt för att fråga efter födelsedatum osv."
@@ -504,6 +508,10 @@ msgstr "En fråga?"
 #: src/components/forms/QuestionForm/index.tsx:121
 msgid "A Radio option has multiple options but only one can be selected."
 msgstr "Ett radioval har flera alternativ men endast ett kan väljas."
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:64
+msgid "A relay token already exists. The new token will replace it and the relay running with the old one will stop printing. Continue?"
+msgstr "En relätoken finns redan. Den nya token ersätter den och reläet som körs med den gamla slutar skriva ut. Fortsätta?"
 
 #: src/components/routes/kiosk/Orders/index.tsx:408
 msgid "A reprinted ticket keeps the same QR code: only the first copy scanned at the door will be accepted."
@@ -2668,6 +2676,10 @@ msgstr ""
 msgid "Comma seperated keywords that describe the event. These will be used by search engines to help categorize and index the event"
 msgstr "Kommaseparerade nyckelord som beskriver evenemanget. Dessa används av sökmotorer för att kategorisera och indexera evenemanget."
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:107
+msgid "Command to run on the venue computer"
+msgstr "Kommando att köra på datorn på plats"
+
 #: src/components/routes/profile/ManageProfile/index.tsx:204
 msgid "Communication Preferences"
 msgstr "Kommunikationspreferens"
@@ -3170,6 +3182,10 @@ msgstr ""
 msgid "Copy this link to share it anywhere"
 msgstr "Kopiera denna länk för att dela den var som helst"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:104
+msgid "Copy this token now, it will not be shown again."
+msgstr "Kopiera denna token nu, den visas inte igen."
+
 #: src/components/modals/ShareModal/index.tsx:248
 msgid "Copy to clipboard"
 msgstr "Kopiera till urklipp"
@@ -3182,6 +3198,10 @@ msgstr "Kopiera URL"
 msgid "Corporate events"
 msgstr ""
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:56
+msgid "Could not generate the relay token."
+msgstr "Kunde inte skapa relätoken."
+
 #: src/hooks/useKioskTicketPrinter.tsx:82
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr ""
@@ -3189,6 +3209,11 @@ msgstr ""
 #: src/hooks/useKioskTicketPrinter.tsx:92
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
+
+#: src/hooks/useKioskTicketPrinter.tsx:123
+#: src/hooks/useKioskTicketPrinter.tsx:153
+msgid "Could not send the tickets to the print queue."
+msgstr "Kunde inte skicka biljetterna till utskriftskön."
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:155
 msgid "Countries"
@@ -5795,6 +5820,14 @@ msgstr "Allmän information om din arrangör"
 msgid "Generate"
 msgstr "Generera"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a new relay token"
+msgstr "Skapa en ny relätoken"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a relay token"
+msgstr "Skapa en relätoken"
+
 #: src/components/forms/AffiliateForm/index.tsx:53
 #: src/components/forms/AffiliateForm/index.tsx:60
 #: src/components/forms/PromoCodeForm/index.tsx:103
@@ -8328,6 +8361,10 @@ msgstr "Endast kontoadministratörer kan ta bort eller arkivera evenemang. Konta
 msgid "Only account administrators can delete or archive organizers. Contact your account admin for assistance."
 msgstr "Endast kontoadministratörer kan ta bort eller arkivera arrangörer. Kontakta din kontoadministratör för hjälp."
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:53
+msgid "Only an organizer of this event can generate a relay token."
+msgstr "Endast en arrangör av detta evenemang kan skapa en relätoken."
+
 #: src/components/modals/SendMessageModal/index.tsx:331
 msgid "Only send to orders with these statuses"
 msgstr "Skicka endast till ordrar med dessa statusar"
@@ -9697,6 +9734,10 @@ msgstr "Skriv ut alla biljetter"
 msgid "Print Preview"
 msgstr "Utskriftsförhandsgranskning"
 
+#: src/hooks/useKioskTicketPrinter.tsx:196
+msgid "Print queue not reachable"
+msgstr "Utskriftskön kan inte nås"
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:114
 msgid "Print Ticket"
 msgstr "Skriv ut biljett"
@@ -10352,6 +10393,15 @@ msgstr ""
 #: src/pages/digit/ScannerDevicePage.tsx:52
 msgid "Rejected"
 msgstr ""
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:85
+msgid "Relay last seen"
+msgstr "Relä senast sett"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:81
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:106
+msgid "Relay token"
+msgstr "Relätoken"
 
 #: src/components/routes/landing/index.tsx:140
 msgid "Reliable figures, immediately"
@@ -12594,6 +12644,10 @@ msgstr "Mallens brödtext innehåller ogiltig Liquid-syntax. Rätta den och för
 #~ msgid "The ticket could not be added. Please try again."
 #~ msgstr ""
 
+#: src/hooks/useKioskTicketPrinter.tsx:202
+msgid "The tickets could not be added to the print queue. Retry, or open the tickets as PDF."
+msgstr "Biljetterna kunde inte läggas till i utskriftskön. Försök igen eller öppna biljetterna som PDF."
+
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:69
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:63
 msgid "The title of the event that will be displayed in search engine results and when sharing on social media. By default, the event title will be used"
@@ -13109,6 +13163,10 @@ msgstr "Sålda biljetter"
 #: src/components/modals/RefundOrderModal/index.tsx:127
 msgid "Tickets to refund"
 msgstr "Biljetter att återbetala"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:89
+msgid "Tickets waiting"
+msgstr "Väntande biljetter"
 
 #: src/components/forms/ProductForm/index.tsx:76
 msgid "Tier {0}"
@@ -15056,6 +15114,10 @@ msgstr "YouTube-kanal"
 #: src/components/common/RichDescription/index.tsx:15
 msgid "YouTube video"
 msgstr ""
+
+#: src/components/routes/kiosk/Settings/index.tsx:103
+msgid "Zebra via relay (computer)"
+msgstr "Zebra via relä (dator)"
 
 #: src/components/routes/kiosk/Settings/index.tsx:94
 msgid "Zebra ZD621 (silent)"

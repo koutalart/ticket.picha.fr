@@ -1265,3 +1265,18 @@ export interface WaitlistStats {
     expired: number;
     products: WaitlistProductStats[];
 }
+
+export interface KioskPrintRelayStatus {
+    configured: boolean;
+    last_seen_at: string | null;
+    pending_jobs: number;
+}
+
+export interface KioskPrintRelayToken {
+    relay_token: string;
+    last_seen_at: string | null;
+}
+
+export interface EnqueueKioskPrintJobsResponse {
+    job_ids: number[];
+}

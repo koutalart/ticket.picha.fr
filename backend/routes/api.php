@@ -57,6 +57,11 @@ use HiEvents\Http\Actions\BoxOffice\Operators\GetBoxOfficeOperatorsAction;
 use HiEvents\Http\Actions\BoxOffice\Operators\UpdateBoxOfficeOperatorAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeTicketZplAction;
 use HiEvents\Http\Actions\BoxOffice\PrintBoxOfficeZplAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\AcknowledgeKioskPrintJobAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\EnqueueKioskPrintJobsAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\GenerateKioskPrintRelayTokenAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\GetKioskPrintRelayStatusAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\GetPendingKioskPrintJobsAction;
 use HiEvents\Http\Actions\BoxOffice\ReprintBoxOfficeTicketAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeOrderAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeOrdersAction;
@@ -444,6 +449,11 @@ $router->middleware(['auth:api'])->group(
         $router->post('/events/{event_id}/box-office/operators', CreateBoxOfficeOperatorAction::class);
         $router->patch('/events/{event_id}/box-office/operators/{user_id}', UpdateBoxOfficeOperatorAction::class);
 
+        // Box Office print queue, pulled by the relay on a venue computer
+        $router->post('/events/{event_id}/box-office/print-jobs', EnqueueKioskPrintJobsAction::class);
+        $router->get('/events/{event_id}/box-office/print-relay', GetKioskPrintRelayStatusAction::class);
+        $router->post('/events/{event_id}/box-office/print-relay/token', GenerateKioskPrintRelayTokenAction::class);
+
         // Orders
         $router->get('/events/{event_id}/orders', GetOrdersAction::class);
         $router->get('/events/{event_id}/orders/{order_id}', GetOrderAction::class);
@@ -578,6 +588,16 @@ $router->prefix('/admin')->middleware(['auth:api'])->group(
 
         // System Info
         $router->get('/system-info', GetSystemInfoAction::class);
+    }
+);
+
+/**
+ * Kiosk print relay (venue computer, authenticated by its relay bearer token)
+ */
+$router->prefix('/print-relay')->middleware('throttle:kiosk-print-relay')->group(
+    function (Router $router): void {
+        $router->get('/jobs', GetPendingKioskPrintJobsAction::class);
+        $router->post('/jobs/{job_id}/ack', AcknowledgeKioskPrintJobAction::class)->where('job_id', '[0-9]+');
     }
 );
 

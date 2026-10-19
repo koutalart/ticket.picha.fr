@@ -433,6 +433,10 @@ msgstr "Un accueil d'événement <0>impeccable</0>, du premier inscrit au dernie
 msgid "A cancellation notice has been sent to"
 msgstr "Un avis d'annulation a été envoyé à"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:77
+msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
+msgstr "Un ordinateur branché sur le réseau du lieu fait tourner le relais d'impression PICHA. Il récupère les billets imprimés depuis ce poste et les envoie à la Zebra."
+
 #: src/components/forms/QuestionForm/index.tsx:145
 msgid "A date input. Perfect for asking for a date of birth etc."
 msgstr "Un champ de date. Parfait pour demander une date de naissance, etc."
@@ -504,6 +508,10 @@ msgstr "Une question ?"
 #: src/components/forms/QuestionForm/index.tsx:121
 msgid "A Radio option has multiple options but only one can be selected."
 msgstr "Une option Radio comporte plusieurs options, mais une seule peut être sélectionnée."
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:64
+msgid "A relay token already exists. The new token will replace it and the relay running with the old one will stop printing. Continue?"
+msgstr "Un jeton de relais existe déjà. Le nouveau jeton va le remplacer et le relais lancé avec l'ancien n'imprimera plus. Continuer ?"
 
 #: src/components/routes/kiosk/Orders/index.tsx:408
 msgid "A reprinted ticket keeps the same QR code: only the first copy scanned at the door will be accepted."
@@ -2668,6 +2676,10 @@ msgstr "À venir"
 msgid "Comma seperated keywords that describe the event. These will be used by search engines to help categorize and index the event"
 msgstr "Mots-clés séparés par des virgules qui décrivent l'événement. Ceux-ci seront utilisés par les moteurs de recherche pour aider à catégoriser et indexer l'événement."
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:107
+msgid "Command to run on the venue computer"
+msgstr "Commande à lancer sur l'ordinateur du lieu"
+
 #: src/components/routes/profile/ManageProfile/index.tsx:204
 msgid "Communication Preferences"
 msgstr "Préférences de communication"
@@ -3170,6 +3182,10 @@ msgstr "Copier le lien avec le code"
 msgid "Copy this link to share it anywhere"
 msgstr "Copiez ce lien pour le partager n'importe où"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:104
+msgid "Copy this token now, it will not be shown again."
+msgstr "Copiez ce jeton maintenant, il ne sera plus affiché."
+
 #: src/components/modals/ShareModal/index.tsx:248
 msgid "Copy to clipboard"
 msgstr "Copier dans le presse-papiers"
@@ -3182,6 +3198,10 @@ msgstr "Copier le lien"
 msgid "Corporate events"
 msgstr "Événements d'entreprise"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:56
+msgid "Could not generate the relay token."
+msgstr "Impossible de générer le jeton du relais."
+
 #: src/hooks/useKioskTicketPrinter.tsx:82
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr "Impossible d'ouvrir le PDF du billet. Utilisez le bouton de réimpression pour réessayer."
@@ -3189,6 +3209,11 @@ msgstr "Impossible d'ouvrir le PDF du billet. Utilisez le bouton de réimpressio
 #: src/hooks/useKioskTicketPrinter.tsx:92
 msgid "Could not reprint the ticket. Please try again."
 msgstr "Impossible de réimprimer le billet. Veuillez réessayer."
+
+#: src/hooks/useKioskTicketPrinter.tsx:123
+#: src/hooks/useKioskTicketPrinter.tsx:153
+msgid "Could not send the tickets to the print queue."
+msgstr "Impossible d'envoyer les billets dans la file d'impression."
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:155
 msgid "Countries"
@@ -5797,6 +5822,14 @@ msgstr "Informations générales sur votre organisateur"
 msgid "Generate"
 msgstr "Générer"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a new relay token"
+msgstr "Générer un nouveau jeton de relais"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a relay token"
+msgstr "Générer un jeton de relais"
+
 #: src/components/forms/AffiliateForm/index.tsx:53
 #: src/components/forms/AffiliateForm/index.tsx:60
 #: src/components/forms/PromoCodeForm/index.tsx:103
@@ -8330,6 +8363,10 @@ msgstr "Seuls les administrateurs de compte peuvent supprimer ou archiver des é
 msgid "Only account administrators can delete or archive organizers. Contact your account admin for assistance."
 msgstr "Seuls les administrateurs de compte peuvent supprimer ou archiver des organisateurs. Contactez votre administrateur de compte pour obtenir de l'aide."
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:53
+msgid "Only an organizer of this event can generate a relay token."
+msgstr "Seul un organisateur de cet événement peut générer un jeton de relais."
+
 #: src/components/modals/SendMessageModal/index.tsx:331
 msgid "Only send to orders with these statuses"
 msgstr "Envoyer uniquement aux commandes avec ces statuts"
@@ -9699,6 +9736,10 @@ msgstr "Imprimer tous les billets"
 msgid "Print Preview"
 msgstr "Aperçu avant Impression"
 
+#: src/hooks/useKioskTicketPrinter.tsx:196
+msgid "Print queue not reachable"
+msgstr "File d'impression injoignable"
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:114
 msgid "Print Ticket"
 msgstr "Imprimer le billet"
@@ -10356,6 +10397,15 @@ msgstr "Les inscriptions apparaîtront ici dès que des personnes s'inscriront."
 #: src/pages/digit/ScannerDevicePage.tsx:52
 msgid "Rejected"
 msgstr "Refusé"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:85
+msgid "Relay last seen"
+msgstr "Dernière connexion du relais"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:81
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:106
+msgid "Relay token"
+msgstr "Jeton du relais"
 
 #: src/components/routes/landing/index.tsx:140
 msgid "Reliable figures, immediately"
@@ -12598,6 +12648,10 @@ msgstr "Le corps du modèle contient une syntaxe Liquid invalide. Veuillez la co
 #~ msgid "The ticket could not be added. Please try again."
 #~ msgstr "Le billet n'a pas pu être ajouté. Veuillez réessayer."
 
+#: src/hooks/useKioskTicketPrinter.tsx:202
+msgid "The tickets could not be added to the print queue. Retry, or open the tickets as PDF."
+msgstr "Les billets n'ont pas pu être ajoutés à la file d'impression. Réessayez, ou ouvrez les billets en PDF."
+
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:69
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:63
 msgid "The title of the event that will be displayed in search engine results and when sharing on social media. By default, the event title will be used"
@@ -13113,6 +13167,10 @@ msgstr "Billets vendus"
 #: src/components/modals/RefundOrderModal/index.tsx:127
 msgid "Tickets to refund"
 msgstr "Billets à rembourser"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:89
+msgid "Tickets waiting"
+msgstr "Billets en attente"
 
 #: src/components/forms/ProductForm/index.tsx:76
 msgid "Tier {0}"
@@ -15060,6 +15118,10 @@ msgstr "Chaîne YouTube"
 #: src/components/common/RichDescription/index.tsx:15
 msgid "YouTube video"
 msgstr "Vidéo YouTube"
+
+#: src/components/routes/kiosk/Settings/index.tsx:103
+msgid "Zebra via relay (computer)"
+msgstr "Zebra via relais (ordinateur)"
 
 #: src/components/routes/kiosk/Settings/index.tsx:94
 msgid "Zebra ZD621 (silent)"
