@@ -24,6 +24,7 @@ class EditProductCategoryHandler
                 'is_hidden' => $dto->is_hidden,
                 'description' => $this->purifier->purify($dto->description),
                 'no_products_message' => $dto->no_products_message ?? __('There are no products available in this category'),
+                'selection_label' => $this->normalizeSelectionLabel($dto->selection_label),
             ],
             where: [
                 'id' => $dto->product_category_id,
@@ -35,5 +36,12 @@ class EditProductCategoryHandler
             'id' => $dto->product_category_id,
             'event_id' => $dto->event_id,
         ]);
+    }
+
+    private function normalizeSelectionLabel(?string $label): ?string
+    {
+        $label = trim(strip_tags((string)$label));
+
+        return $label === '' ? null : $label;
     }
 }

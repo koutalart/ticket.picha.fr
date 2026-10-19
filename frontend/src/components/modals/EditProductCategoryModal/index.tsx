@@ -39,6 +39,7 @@ export const EditProductCategoryModal = ({onClose, productCategoryId}: GenericMo
             description: productCategory.description,
             is_hidden: productCategory.is_hidden,
             no_products_message: productCategory.no_products_message,
+            selection_label: productCategory.selection_label ?? '',
         });
     }, [isFetched]);
 

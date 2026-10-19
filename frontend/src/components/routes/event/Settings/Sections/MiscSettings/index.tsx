@@ -24,6 +24,7 @@ export const MiscSettings = () => {
             hide_getting_started_page: false,
             allow_attendee_self_edit: true,
             single_product_per_order: false,
+            choose_category_first: false,
         }
     });
     const formErrorHandle = useFormErrorResponseHandler();
@@ -35,6 +36,7 @@ export const MiscSettings = () => {
                 hide_getting_started_page: eventSettingsQuery.data.hide_getting_started_page,
                 allow_attendee_self_edit: eventSettingsQuery.data.allow_attendee_self_edit ?? true,
                 single_product_per_order: eventSettingsQuery.data.single_product_per_order ?? false,
+                choose_category_first: eventSettingsQuery.data.choose_category_first ?? false,
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -101,6 +103,13 @@ export const MiscSettings = () => {
                         {...form.getInputProps('single_product_per_order', {type: 'checkbox'})}
                         label={t`Single registration per order`}
                         description={t`Visitors choose a single ticket instead of quantities. Ideal for free registrations such as a candidate or exhibitor sign-up.`}
+                    />
+
+                    <Switch
+                        mb={'md'}
+                        {...form.getInputProps('choose_category_first', {type: 'checkbox'})}
+                        label={t`Choose a category first`}
+                        description={t`Visitors first pick a path (one big button per ticket category) before seeing its tickets.`}
                     />
 
                     <SelfServiceSettings
