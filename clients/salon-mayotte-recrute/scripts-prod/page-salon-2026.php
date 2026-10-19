@@ -30,7 +30,9 @@ use HiEvents\Services\Application\Handlers\ProductCategory\DTO\UpsertProductCate
 use HiEvents\Services\Application\Handlers\ProductCategory\EditProductCategoryHandler;
 use HiEvents\Services\Application\Handlers\Question\CreateQuestionHandler;
 use HiEvents\Services\Application\Handlers\Question\DTO\UpsertQuestionDTO;
+use HiEvents\Services\Domain\Product\DTO\ProductPriceDTO;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 const ACCOUNT_ID = 7;
@@ -52,7 +54,8 @@ if (!$organizer || !$event || !$user || $user->email !== 'mourchid@mayotterecrut
     || !in_array($event->title, ['Salon de l\'Emploi - Mayotte Recrute', 'Salon Mayotte Recrute 2026'], true)) {
     throw new RuntimeException('Compte inattendu : rien n\'est modifié');
 }
-if (DB::table('orders')->where('event_id', EVENT_ID)->exists()) {
+if (DB::table('attendees')->where('event_id', EVENT_ID)->exists()
+    || DB::table('orders')->where('event_id', EVENT_ID)->whereIn('status', ['COMPLETED', 'AWAITING_OFFLINE_PAYMENT'])->exists()) {
     throw new RuntimeException('L\'événement a déjà des inscriptions : à revoir avant de modifier les entrées');
 }
 $images = ['logo-mayotte-recrute.png', 'couverture-organisateur.jpg', 'salon-mayotte-recrute-2026.jpg', 'salon-mayotte-recrute-couverture.mp4'];
@@ -187,6 +190,7 @@ try {
         title: $titre,
         type: ProductPriceType::FREE,
         product_type: ProductType::TICKET,
+        prices: new Collection([new ProductPriceDTO(price: 0.00, initial_quantity_available: $jauge)]),
         price: 0.00,
         order: $ordre,
         initial_quantity_available: $jauge,
