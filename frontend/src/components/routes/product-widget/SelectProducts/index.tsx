@@ -290,6 +290,36 @@ const SelectProducts = (props: SelectProductsProps) => {
 
     useEffect(populateFormValue, [productCategories]);
 
+    const singleSelection = !!event?.settings?.single_product_per_order;
+
+    const formIndexOfProduct = (productId: number | undefined) => products.findIndex(p => p.id === productId);
+
+    const selectSinglePrice = (productFormIndex: number, priceIndex: number) => {
+        const nextProducts = (form.values.products ?? []).map((productValue, pIndex) => ({
+            ...productValue,
+            quantities: productValue.quantities.map((quantityValue, qIndex) => ({
+                ...quantityValue,
+                quantity: pIndex === productFormIndex && qIndex === priceIndex ? 1 : 0,
+            })),
+        }));
+        form.setFieldValue('products', nextProducts);
+    };
+
+    const visibleProducts: Product[] = visibleCategories.reduce((acc: Product[], category) => acc.concat(category.products ?? []), []);
+    const selectableOptions = visibleProducts.flatMap(product => (product.is_available && !product.is_sold_out)
+        ? (product.prices ?? [])
+            .map((price, priceIndex) => ({product, price, priceIndex}))
+            .filter(({price}) => price.is_available)
+        : []);
+
+    useEffect(() => {
+        if (!singleSelection || !form.values.products?.length || selectedProductQuantitySum > 0 || selectableOptions.length !== 1) {
+            return;
+        }
+        const [only] = selectableOptions;
+        selectSinglePrice(formIndexOfProduct(only.product.id), only.priceIndex);
+    }, [singleSelection, form.values.products?.length, selectableOptions.length, requestedCategory]);
+
     const handleProductSelection = (values: Omit<ProductFormPayload, "session_identifier">) => {
         if (values && selectedProductQuantitySum > 0) {
             productMutation.mutate({
@@ -315,7 +345,6 @@ const SelectProducts = (props: SelectProductsProps) => {
         || selectedProductQuantitySum === 0
         || props.widgetMode === 'preview'
         || products?.every(product => product.is_sold_out);
-
 
     return (
         <div className={classNames('hi-product-widget-container', {'hi-has-sticky-footer': props.widgetMode !== 'embedded'})}
@@ -455,7 +484,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                                         )}
 
                                         {(category.products) && category.products.map((product) => {
-                                            const currentProductIndex = products.findIndex(item => item.id === product.id);
+                                            const currentProductIndex = formIndexOfProduct(product.id);
                                             const quantityRange = range(product.min_per_order || 1, product.max_per_order || 25)
                                                 .map((n) => n.toString());
                                             quantityRange.unshift("0");
@@ -519,6 +548,8 @@ const SelectProducts = (props: SelectProductsProps) => {
                                                                 event={event}
                                                                 product={product}
                                                                 form={form}
+                                                                singleSelection={singleSelection}
+                                                                onSelectPrice={(priceIndex) => selectSinglePrice(currentProductIndex, priceIndex)}
                                                             />
                                                         </div>
 
