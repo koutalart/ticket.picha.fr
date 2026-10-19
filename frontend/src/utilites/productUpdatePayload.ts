@@ -26,6 +26,7 @@ export const productUpdatePayload = (product: Product, timezone: string, overrid
     is_highlighted: product.is_highlighted,
     highlight_message: product.highlight_message,
     waitlist_enabled: product.waitlist_enabled ?? null,
+    unlock_after_product_id: product.unlock_after_product_id ?? null,
     product_type: product.product_type,
     product_category_id: product.product_category_id,
     prices: product.prices?.map((price) => ({

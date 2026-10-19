@@ -11,11 +11,14 @@ use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\Repository\Interfaces\AccountRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
+use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\Order\OrderPlatformFeePassThroughService;
 use HiEvents\Services\Domain\Product\AvailableProductQuantitiesFetchService;
+use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesDTO;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesResponseDTO;
 use HiEvents\Services\Domain\Product\ProductFilterService;
 use HiEvents\Services\Domain\Product\ProductPriceService;
+use HiEvents\Services\Domain\Product\ProductUnlockService;
 use HiEvents\Services\Domain\Tax\TaxAndFeeCalculationService;
 use Illuminate\Support\Collection;
 use Mockery as m;
@@ -43,6 +46,7 @@ class ProductFilterServiceTest extends TestCase
             m::mock(OrderPlatformFeePassThroughService::class),
             $this->accountRepository,
             $this->eventRepository,
+            new ProductUnlockService(m::mock(ProductRepositoryInterface::class), $this->quantitiesService),
         );
     }
 
@@ -94,7 +98,73 @@ class ProductFilterServiceTest extends TestCase
         self::assertSame(1, $result->first()->getProducts()->first()->getId());
     }
 
-    private function stubEventLevelCollaborators(int $eventId): void
+    public function test_locked_product_is_hidden_publicly_while_source_product_is_available(): void
+    {
+        $this->stubEventLevelCollaborators(eventId: 42, productQuantities: new Collection([
+            $this->makeQuantityRow(productId: 1, priceId: 10, available: 3),
+            $this->makeQuantityRow(productId: 2, priceId: 20, available: 50),
+        ]));
+
+        $result = $this->service->filterProductList(new Collection([
+            $this->makeFreeProduct(id: 1, eventId: 42, categoryId: 7),
+            $this->makeFreeProduct(id: 2, eventId: 42, categoryId: 7)->setUnlockAfterProductId(1),
+        ]));
+
+        self::assertSame([1], $result->map(fn(ProductDomainObject $p) => $p->getId())->values()->all());
+    }
+
+    public function test_locked_product_stays_listed_for_the_organizer_but_unavailable(): void
+    {
+        $this->stubEventLevelCollaborators(eventId: 42, productQuantities: new Collection([
+            $this->makeQuantityRow(productId: 1, priceId: 10, available: 3),
+            $this->makeQuantityRow(productId: 2, priceId: 20, available: 50),
+        ]));
+
+        $result = $this->service->filterProductList(new Collection([
+            $this->makeFreeProduct(id: 1, eventId: 42, categoryId: 7),
+            $this->makeFreeProduct(id: 2, eventId: 42, categoryId: 7)->setUnlockAfterProductId(1),
+        ]), hideSoldOutProducts: false);
+
+        /** @var ProductDomainObject $locked */
+        $locked = $result->first(fn(ProductDomainObject $p) => $p->getId() === 2);
+        self::assertNotNull($locked);
+        self::assertSame(__('This ticket opens when another ticket is sold out'), $locked->getOffSaleReason());
+        self::assertFalse($locked->getProductPrices()->first()->isAvailable());
+    }
+
+    public function test_locked_product_appears_once_source_product_is_sold_out(): void
+    {
+        $this->stubEventLevelCollaborators(eventId: 42, productQuantities: new Collection([
+            $this->makeQuantityRow(productId: 1, priceId: 10, available: 0),
+            $this->makeQuantityRow(productId: 2, priceId: 20, available: 50),
+        ]));
+
+        $result = $this->service->filterProductList(new Collection([
+            $this->makeFreeProduct(id: 1, eventId: 42, categoryId: 7),
+            $this->makeFreeProduct(id: 2, eventId: 42, categoryId: 7)->setUnlockAfterProductId(1),
+        ]));
+
+        /** @var ProductDomainObject $unlocked */
+        $unlocked = $result->first(fn(ProductDomainObject $p) => $p->getId() === 2);
+        self::assertNotNull($unlocked);
+        self::assertTrue($unlocked->getProductPrices()->first()->isAvailable());
+    }
+
+    private function makeQuantityRow(int $productId, int $priceId, int $available): AvailableProductQuantitiesDTO
+    {
+        return AvailableProductQuantitiesDTO::fromArray([
+            'product_id' => $productId,
+            'price_id' => $priceId,
+            'product_title' => 'Product ' . $productId,
+            'price_label' => null,
+            'quantity_available' => $available,
+            'quantity_reserved' => 0,
+            'initial_quantity_available' => 100,
+            'capacities' => new Collection(),
+        ]);
+    }
+
+    private function stubEventLevelCollaborators(int $eventId, ?Collection $productQuantities = null): void
     {
         $account = m::mock(AccountDomainObject::class);
         $account->shouldReceive('getConfiguration')->andReturnNull();
@@ -112,7 +182,7 @@ class ProductFilterServiceTest extends TestCase
         $this->quantitiesService
             ->shouldReceive('getAvailableProductQuantities')
             ->with($eventId)
-            ->andReturn(new AvailableProductQuantitiesResponseDTO(productQuantities: new Collection()));
+            ->andReturn(new AvailableProductQuantitiesResponseDTO(productQuantities: $productQuantities ?? new Collection()));
     }
 
     private function makeFreeProduct(int $id, int $eventId, int $categoryId): ProductDomainObject

@@ -17,6 +17,7 @@ use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\Product\AvailableProductQuantitiesFetchService;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesDTO;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesResponseDTO;
+use HiEvents\Services\Domain\Product\ProductUnlockService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -26,11 +27,15 @@ class OrderCreateRequestValidationService
 {
     private AvailableProductQuantitiesResponseDTO $availableProductQuantities;
 
+    /** @var int[] */
+    private array $lockedProductIds = [];
+
     public function __construct(
         readonly private ProductRepositoryInterface             $productRepository,
         readonly private PromoCodeRepositoryInterface           $promoCodeRepository,
         readonly private EventRepositoryInterface               $eventRepository,
         readonly private AvailableProductQuantitiesFetchService $fetchAvailableProductQuantitiesService,
+        readonly private ProductUnlockService                   $productUnlockService,
     )
     {
     }
@@ -148,6 +153,11 @@ class OrderCreateRequestValidationService
     private function validateProductDetails(EventDomainObject $event, array $data): void
     {
         $products = $this->getProducts($data);
+
+        $this->lockedProductIds = $this->productUnlockService->getLockedProductIds(
+            $products,
+            $this->availableProductQuantities,
+        );
 
         foreach ($data['products'] as $productIndex => $productAndQuantities) {
             $this->validateSingleProductDetails($event, $productIndex, $productAndQuantities, $products);
@@ -296,6 +306,12 @@ class OrderCreateRequestValidationService
         if ($product->getIsSalesPaused()) {
             throw ValidationException::withMessages([
                 "products.$productIndex" => __('Sales of :product are paused', ['product' => $product->getTitle()]),
+            ]);
+        }
+
+        if (in_array($product->getId(), $this->lockedProductIds, true)) {
+            throw ValidationException::withMessages([
+                "products.$productIndex" => __(':product is not on sale yet', ['product' => $product->getTitle()]),
             ]);
         }
 

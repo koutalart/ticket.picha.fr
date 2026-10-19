@@ -16,6 +16,7 @@ use HiEvents\Services\Domain\Order\OrderCreateRequestValidationService;
 use HiEvents\Services\Domain\Product\AvailableProductQuantitiesFetchService;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesDTO;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesResponseDTO;
+use HiEvents\Services\Domain\Product\ProductUnlockService;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Mockery;
@@ -44,6 +45,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
             $this->promoCodeRepository,
             $this->eventRepository,
             $this->availabilityService,
+            new ProductUnlockService($this->productRepository, $this->availabilityService),
         );
     }
 
@@ -186,6 +188,67 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $this->service->validateRequestData($eventId, $data);
     }
 
+    public function testLockedProductIsRejectedWhileSourceProductIsAvailable(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 10,
+            priceIds: [101],
+            priceLabels: [null],
+            availabilities: [
+                ['price_id' => 101, 'quantity_available' => 50, 'quantity_reserved' => 0],
+            ],
+            extraAvailabilities: [
+                ['product_id' => 20, 'price_id' => 201, 'quantity_available' => 1, 'quantity_reserved' => 0],
+            ],
+            unlockAfterProductId: 20,
+        );
+
+        try {
+            $this->service->validateRequestData(1, $this->singleProductOrder(10, 101));
+            $this->fail('A locked product must be rejected');
+        } catch (ValidationException $e) {
+            $this->assertSame(
+                __(':product is not on sale yet', ['product' => 'Test Product']),
+                $e->errors()['products.0'][0],
+            );
+        }
+    }
+
+    public function testLockedProductIsAcceptedOnceSourceProductIsSoldOut(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 10,
+            priceIds: [101],
+            priceLabels: [null],
+            availabilities: [
+                ['price_id' => 101, 'quantity_available' => 50, 'quantity_reserved' => 0],
+            ],
+            extraAvailabilities: [
+                ['product_id' => 20, 'price_id' => 201, 'quantity_available' => 0, 'quantity_reserved' => 3],
+            ],
+            unlockAfterProductId: 20,
+        );
+
+        $this->service->validateRequestData(1, $this->singleProductOrder(10, 101));
+        $this->assertTrue(true);
+    }
+
+    private function singleProductOrder(int $productId, int $priceId): array
+    {
+        return [
+            'products' => [
+                [
+                    'product_id' => $productId,
+                    'quantities' => [
+                        ['price_id' => $priceId, 'quantity' => 1],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function testUnrelatedOverReservedCapacityDoesNotBlockSelectedProduct(): void
     {
         $eventId = 1;
@@ -319,6 +382,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $secondProductPrice->shouldReceive('getLabel')->andReturn(null);
 
         $secondProduct = Mockery::mock(ProductDomainObject::class);
+        $secondProduct->shouldReceive('getUnlockAfterProductId')->andReturn(null);
         $secondProduct->shouldReceive('getId')->andReturn(20);
         $secondProduct->shouldReceive('getEventId')->andReturn(1);
         $secondProduct->shouldReceive('getTitle')->andReturn('Exposant');
@@ -363,6 +427,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         array $extraAvailabilities = [],
         bool  $singleProductPerOrder = false,
         ?Collection $extraProducts = null,
+        ?int $unlockAfterProductId = null,
     ): void
     {
         $event = Mockery::mock(EventDomainObject::class);
@@ -392,6 +457,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $product->shouldReceive('getMinPerOrder')->andReturn(1);
         $product->shouldReceive('isSoldOut')->andReturn(false);
         $product->shouldReceive('getIsSalesPaused')->andReturn(false);
+        $product->shouldReceive('getUnlockAfterProductId')->andReturn($unlockAfterProductId);
         $product->shouldReceive('getIsHidden')->andReturn(false);
         $product->shouldReceive('getType')->andReturn(ProductPriceType::TIERED->name);
         $product->shouldReceive('getProductPrices')->andReturn($productPrices);

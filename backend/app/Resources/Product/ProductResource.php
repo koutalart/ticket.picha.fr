@@ -66,6 +66,7 @@ class ProductResource extends JsonResource
             'is_highlighted' => $this->getIsHighlighted(),
             'highlight_message' => $this->getHighlightMessage(),
             'waitlist_enabled' => $this->getWaitlistEnabled(),
+            'unlock_after_product_id' => $this->getUnlockAfterProductId(),
         ];
     }
 }

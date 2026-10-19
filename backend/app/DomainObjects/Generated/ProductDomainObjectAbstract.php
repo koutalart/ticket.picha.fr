@@ -13,6 +13,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     final public const ID = 'id';
     final public const EVENT_ID = 'event_id';
     final public const PRODUCT_CATEGORY_ID = 'product_category_id';
+    final public const UNLOCK_AFTER_PRODUCT_ID = 'unlock_after_product_id';
     final public const TITLE = 'title';
     final public const SALE_START_DATE = 'sale_start_date';
     final public const SALE_END_DATE = 'sale_end_date';
@@ -43,6 +44,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     protected int $id;
     protected int $event_id;
     protected ?int $product_category_id = null;
+    protected ?int $unlock_after_product_id = null;
     protected string $title;
     protected ?string $sale_start_date = null;
     protected ?string $sale_end_date = null;
@@ -76,6 +78,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
                     'id' => $this->id ?? null,
                     'event_id' => $this->event_id ?? null,
                     'product_category_id' => $this->product_category_id ?? null,
+                    'unlock_after_product_id' => $this->unlock_after_product_id ?? null,
                     'title' => $this->title ?? null,
                     'sale_start_date' => $this->sale_start_date ?? null,
                     'sale_end_date' => $this->sale_end_date ?? null,
@@ -136,6 +139,17 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     public function getProductCategoryId(): ?int
     {
         return $this->product_category_id;
+    }
+
+    public function setUnlockAfterProductId(?int $unlock_after_product_id): self
+    {
+        $this->unlock_after_product_id = $unlock_after_product_id;
+        return $this;
+    }
+
+    public function getUnlockAfterProductId(): ?int
+    {
+        return $this->unlock_after_product_id;
     }
 
     public function setTitle(string $title): self
