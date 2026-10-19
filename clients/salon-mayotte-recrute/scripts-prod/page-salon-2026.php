@@ -10,6 +10,8 @@ use HiEvents\DomainObjects\Enums\ProductPriceType;
 use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\DomainObjects\Enums\QuestionBelongsTo;
 use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
+use HiEvents\Services\Application\Handlers\Event\CoverVideo\DTO\UploadEventCoverVideoDTO;
+use HiEvents\Services\Application\Handlers\Event\CoverVideo\UploadEventCoverVideoHandler;
 use HiEvents\Services\Application\Handlers\Event\DTO\UpdateEventDTO;
 use HiEvents\Services\Application\Handlers\Event\UpdateEventHandler;
 use HiEvents\Services\Application\Handlers\EventSettings\DTO\PartialUpdateEventSettingsDTO;
@@ -53,7 +55,7 @@ if (!$organizer || !$event || !$user || $user->email !== 'mourchid@mayotterecrut
 if (DB::table('orders')->where('event_id', EVENT_ID)->exists()) {
     throw new RuntimeException('L\'événement a déjà des inscriptions : à revoir avant de modifier les entrées');
 }
-$images = ['logo-mayotte-recrute.png', 'couverture-organisateur.jpg', 'salon-mayotte-recrute-2026.jpg'];
+$images = ['logo-mayotte-recrute.png', 'couverture-organisateur.jpg', 'salon-mayotte-recrute-2026.jpg', 'salon-mayotte-recrute-couverture.mp4'];
 if (!$essai) {
     foreach ($images as $f) {
         if (!is_readable(DOSSIER.'/'.$f)) {
@@ -269,6 +271,12 @@ foreach ([
         entityId: $entite,
     ));
 }
+
+app(UploadEventCoverVideoHandler::class)->handle(new UploadEventCoverVideoDTO(
+    eventId: EVENT_ID,
+    accountId: ACCOUNT_ID,
+    video: new UploadedFile(DOSSIER.'/salon-mayotte-recrute-couverture.mp4', 'salon-mayotte-recrute-couverture.mp4', 'video/mp4', null, true),
+));
 
 $o = DB::table('organizers')->where('id', ORGANIZER_ID)->first(['name', 'status']);
 $e = DB::table('events')->where('id', EVENT_ID)->first(['title', 'status', 'start_date', 'end_date']);

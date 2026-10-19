@@ -146,13 +146,12 @@ proc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "
                          "-movflags", "+faststart", OUT], stdin=subprocess.PIPE)
 
 SEQ = [(0.0, 5.6), (6.0, 10.4), (10.8, 15.2), (15.6, 19.9), (20.3, 24.4)]
-for n in range(FPS * DUREE):
-    t = n / FPS
-    cadre = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    k = max((out_cubic((t - a) / 0.6) * (1 - in_cubic((t - b + 0.5) / 0.7)) for a, b in SEQ), default=0)
-    v = teinte.copy(); v.putalpha(voile.point(lambda x: int(x * (0.25 + 0.5 * k)))); cadre.alpha_composite(v)
-    bloc = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+MESURE = [4.5, 9.0, 13.8, 17.1, 21.75]
 
+
+def contenu(t):
+    """Bloc de texte de la séquence en cours (sans sortie), et l'heure de sortie."""
+    bloc = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     if t < 5.6:
         p = out_expo((t - 0.3) / 0.9)
         if p > 0:
@@ -161,25 +160,44 @@ for n in range(FPS * DUREE):
         ligne(bloc, t, "SALON DE L'EMPLOI, DES MÉTIERS ET DE L'ATTRACTIVITÉ", f_sous, 170 + logo.height + 28, BLANC + (230,), 0.9, 8, 1.5)
         mot(bloc, t, "23 & 24 OCTOBRE 2026", f_date, 170 + logo.height + 80, JAUNE + (255,), 3, 1.4, 0.03, 0.6)
         ligne(bloc, t, "Kawéni, Mamoudzou   et en ligne", f_lieu, 170 + logo.height + 146, BLANC + (235,), 2.0, 6, 1.5)
-        poser(cadre, bloc, t, 5.1)
-    elif t < 10.4:
+        return bloc, 5.1
+    if t < 10.4:
         programme(bloc, t, "VENDREDI 23 OCTOBRE", [("13h30", "Cérémonie d'ouverture"), ("14h30", "Reconstruire Mayotte : les emplois arrivent"), ("", "Job dating sans CV avec France Travail")], 6.0)
-        poser(cadre, bloc, t, 9.9)
-    elif t < 15.2:
+        return bloc, 9.9
+    if t < 15.2:
         programme(bloc, t, "SAMEDI 24 OCTOBRE", [("9h00", "Atelier pitch face aux recruteurs"), ("13h30", "Job dating inversé"), ("14h30", "En direct avec la diaspora")], 10.8)
-        poser(cadre, bloc, t, 14.7)
-    elif t < 19.9:
+        return bloc, 14.7
+    if t < 19.9:
         pastille(bloc, t, "CANDIDATS", f_kick, 196, 15.6)
         mot(bloc, t, "Rencontrez 40 recruteurs", f_titre, 262, BLANC + (255,), 2, 15.9, 0.02, 0.6)
         ligne(bloc, t, "Bar à CV, entretiens individuels, ateliers et conférences", f_txt, 338, BLANC + (230,), 16.4, 4, 0.5)
         bouton(bloc, t, "JE M'INSCRIS GRATUITEMENT", 400, 16.7, 18.3)
-        poser(cadre, bloc, t, 19.4)
-    elif t < 24.4:
+        return bloc, 19.4
+    if t < 24.4:
         pastille(bloc, t, "EXPOSANTS", f_kick, 196, 20.3)
         mot(bloc, t, "1 000 talents à rencontrer", f_titre, 262, BLANC + (255,), 2, 20.6, 0.02, 0.6)
         ligne(bloc, t, "500 sur place, 500 en ligne, de l'île et de la diaspora", f_txt, 338, BLANC + (230,), 21.1, 4, 0.5)
         bouton(bloc, t, "RÉSERVER MON STAND", 400, 21.4, 22.9)
-        poser(cadre, bloc, t, 23.9)
+        return bloc, 23.9
+    return None, None
+
+
+# décalage vertical de chaque séquence pour que son texte, une fois complet, soit centré sur l'image
+DECALAGE = []
+for m in MESURE:
+    bb = contenu(m)[0].split()[3].getbbox()
+    DECALAGE.append(int(H / 2 - (bb[1] + bb[3]) / 2))
+
+for n in range(FPS * DUREE):
+    t = n / FPS
+    cadre = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    k = max((out_cubic((t - a) / 0.6) * (1 - in_cubic((t - b + 0.5) / 0.7)) for a, b in SEQ), default=0)
+    v = teinte.copy(); v.putalpha(voile.point(lambda x: int(x * (0.25 + 0.5 * k)))); cadre.alpha_composite(v)
+    bloc, fin = contenu(t)
+    if bloc is not None:
+        i = next(j for j, (a, b) in enumerate(SEQ) if t < b)
+        bloc, dy = sortie(bloc, t, fin)
+        cadre.alpha_composite(ombre(bloc), (0, dy + DECALAGE[i])); cadre.alpha_composite(bloc, (0, dy + DECALAGE[i]))
 
     proc.stdin.write(cadre.tobytes())
 
