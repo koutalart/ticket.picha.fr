@@ -44,6 +44,10 @@ class EditQuestionAnswerService
             throw new ResourceNotFoundException('Question answer does not belong to the event');
         }
 
+        if ($question->isFileQuestion()) {
+            throw new InvalidAnswerException(__('File answers cannot be edited.'));
+        }
+
         if (!$question->isAnswerValid($answer)) {
             $this->logger->error('Invalid answer', [
                 'question_id' => $question->getId(),

@@ -71,6 +71,7 @@ const questionTypeLabel = (type?: string) => ({
     RADIO: t`Single choice`,
     DROPDOWN: t`Drop-down list`,
     DATE: t`Date`,
+    FILE: t`File (PDF)`,
 } as Record<string, string>)[type ?? ''] ?? type ?? '';
 
 const SortableQuestion = ({

@@ -47,6 +47,7 @@ use HiEvents\Repository\Eloquent\QrCampaignRepository;
 use HiEvents\Repository\Eloquent\QrLinkRepository;
 use HiEvents\Repository\Eloquent\QrLinkVisitRepository;
 use HiEvents\Repository\Eloquent\QuestionAndAnswerViewRepository;
+use HiEvents\Repository\Eloquent\QuestionAnswerFileRepository;
 use HiEvents\Repository\Eloquent\QuestionAnswerRepository;
 use HiEvents\Repository\Eloquent\QuestionRepository;
 use HiEvents\Repository\Eloquent\StripeCustomerRepository;
@@ -103,6 +104,7 @@ use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkVisitRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionAndAnswerViewRepositoryInterface;
+use HiEvents\Repository\Interfaces\QuestionAnswerFileRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionAnswerRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
 use HiEvents\Repository\Interfaces\StripeCustomerRepositoryInterface;
@@ -136,6 +138,7 @@ class RepositoryServiceProvider extends ServiceProvider
         OrderItemRepositoryInterface::class => OrderItemRepository::class,
         QuestionRepositoryInterface::class => QuestionRepository::class,
         QuestionAnswerRepositoryInterface::class => QuestionAnswerRepository::class,
+        QuestionAnswerFileRepositoryInterface::class => QuestionAnswerFileRepository::class,
         StripePaymentsRepositoryInterface::class => StripePaymentsRepository::class,
         PromoCodeRepositoryInterface::class => PromoCodeRepository::class,
         MessageRepositoryInterface::class => MessageRepository::class,
