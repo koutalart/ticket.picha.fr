@@ -433,6 +433,10 @@ msgstr "İlk kayıttan son yaka kartına kadar <0>kusursuz</0> bir karşılama."
 msgid "A cancellation notice has been sent to"
 msgstr "İptal bildirimi gönderildi:"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:77
+msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
+msgstr "Mekan ağındaki bir bilgisayar PICHA yazdırma rölesini çalıştırır. Bu istasyondan yazdırılan biletleri alır ve Zebra'ya gönderir."
+
 #: src/components/forms/QuestionForm/index.tsx:145
 msgid "A date input. Perfect for asking for a date of birth etc."
 msgstr "Tarih girişi. Doğum tarihi sormak gibi durumlar için mükemmel."
@@ -504,6 +508,10 @@ msgstr "Bir sorun mu var?"
 #: src/components/forms/QuestionForm/index.tsx:121
 msgid "A Radio option has multiple options but only one can be selected."
 msgstr "Radyo seçeneği birden fazla seçenek sunar ancak sadece biri seçilebilir."
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:64
+msgid "A relay token already exists. The new token will replace it and the relay running with the old one will stop printing. Continue?"
+msgstr "Bir röle anahtarı zaten var. Yeni anahtar onun yerini alacak ve eski anahtarla çalışan röle yazdırmayı durduracak. Devam edilsin mi?"
 
 #: src/components/routes/kiosk/Orders/index.tsx:408
 msgid "A reprinted ticket keeps the same QR code: only the first copy scanned at the door will be accepted."
@@ -2668,6 +2676,10 @@ msgstr ""
 msgid "Comma seperated keywords that describe the event. These will be used by search engines to help categorize and index the event"
 msgstr "Etkinliği tanımlayan virgülle ayrılmış anahtar kelimeler. Bunlar arama motorları tarafından etkinliği kategorize etmek ve indekslemek için kullanılacaktır"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:107
+msgid "Command to run on the venue computer"
+msgstr "Mekandaki bilgisayarda çalıştırılacak komut"
+
 #: src/components/routes/profile/ManageProfile/index.tsx:204
 msgid "Communication Preferences"
 msgstr "İletişim Tercihleri"
@@ -3170,6 +3182,10 @@ msgstr ""
 msgid "Copy this link to share it anywhere"
 msgstr "Her yerde paylaşmak için bu bağlantıyı kopyalayın"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:104
+msgid "Copy this token now, it will not be shown again."
+msgstr "Bu anahtarı şimdi kopyalayın, tekrar gösterilmeyecek."
+
 #: src/components/modals/ShareModal/index.tsx:248
 msgid "Copy to clipboard"
 msgstr "Panoya kopyala"
@@ -3182,6 +3198,10 @@ msgstr "URL'yi Kopyala"
 msgid "Corporate events"
 msgstr ""
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:56
+msgid "Could not generate the relay token."
+msgstr "Röle anahtarı oluşturulamadı."
+
 #: src/hooks/useKioskTicketPrinter.tsx:82
 msgid "Could not open the ticket PDF. Use the reprint button to try again."
 msgstr ""
@@ -3189,6 +3209,11 @@ msgstr ""
 #: src/hooks/useKioskTicketPrinter.tsx:92
 msgid "Could not reprint the ticket. Please try again."
 msgstr ""
+
+#: src/hooks/useKioskTicketPrinter.tsx:123
+#: src/hooks/useKioskTicketPrinter.tsx:153
+msgid "Could not send the tickets to the print queue."
+msgstr "Biletler yazdırma kuyruğuna gönderilemedi."
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:155
 msgid "Countries"
@@ -5795,6 +5820,14 @@ msgstr "Organizatörünüz hakkında genel bilgiler"
 msgid "Generate"
 msgstr "Oluştur"
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a new relay token"
+msgstr "Yeni bir röle anahtarı oluştur"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
+msgid "Generate a relay token"
+msgstr "Röle anahtarı oluştur"
+
 #: src/components/forms/AffiliateForm/index.tsx:53
 #: src/components/forms/AffiliateForm/index.tsx:60
 #: src/components/forms/PromoCodeForm/index.tsx:103
@@ -8328,6 +8361,10 @@ msgstr "Yalnızca hesap yöneticileri etkinlikleri silebilir veya arşivleyebili
 msgid "Only account administrators can delete or archive organizers. Contact your account admin for assistance."
 msgstr "Yalnızca hesap yöneticileri organizatörleri silebilir veya arşivleyebilir. Yardım için hesap yöneticinizle iletişime geçin."
 
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:53
+msgid "Only an organizer of this event can generate a relay token."
+msgstr "Yalnızca bu etkinliğin organizatörü röle anahtarı oluşturabilir."
+
 #: src/components/modals/SendMessageModal/index.tsx:331
 msgid "Only send to orders with these statuses"
 msgstr "Yalnızca bu durumlara sahip siparişlere gönder"
@@ -9697,6 +9734,10 @@ msgstr "Tüm Biletleri Yazdır"
 msgid "Print Preview"
 msgstr "Yazdırma Önizlemesi"
 
+#: src/hooks/useKioskTicketPrinter.tsx:196
+msgid "Print queue not reachable"
+msgstr "Yazdırma kuyruğuna ulaşılamıyor"
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:114
 msgid "Print Ticket"
 msgstr "Bileti Yazdır"
@@ -10352,6 +10393,15 @@ msgstr ""
 #: src/pages/digit/ScannerDevicePage.tsx:52
 msgid "Rejected"
 msgstr ""
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:85
+msgid "Relay last seen"
+msgstr "Röle son görülme"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:81
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:106
+msgid "Relay token"
+msgstr "Röle anahtarı"
 
 #: src/components/routes/landing/index.tsx:140
 msgid "Reliable figures, immediately"
@@ -12594,6 +12644,10 @@ msgstr "Şablon gövdesi geçersiz Liquid sözdizimi içeriyor. Lütfen düzelti
 #~ msgid "The ticket could not be added. Please try again."
 #~ msgstr ""
 
+#: src/hooks/useKioskTicketPrinter.tsx:202
+msgid "The tickets could not be added to the print queue. Retry, or open the tickets as PDF."
+msgstr "Biletler yazdırma kuyruğuna eklenemedi. Yeniden deneyin veya biletleri PDF olarak açın."
+
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:69
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:63
 msgid "The title of the event that will be displayed in search engine results and when sharing on social media. By default, the event title will be used"
@@ -13109,6 +13163,10 @@ msgstr "Satılan Biletler"
 #: src/components/modals/RefundOrderModal/index.tsx:127
 msgid "Tickets to refund"
 msgstr "İade edilecek biletler"
+
+#: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:89
+msgid "Tickets waiting"
+msgstr "Bekleyen biletler"
 
 #: src/components/forms/ProductForm/index.tsx:76
 msgid "Tier {0}"
@@ -15056,6 +15114,10 @@ msgstr "YouTube kanalı"
 #: src/components/common/RichDescription/index.tsx:15
 msgid "YouTube video"
 msgstr ""
+
+#: src/components/routes/kiosk/Settings/index.tsx:103
+msgid "Zebra via relay (computer)"
+msgstr "Röle üzerinden Zebra (bilgisayar)"
 
 #: src/components/routes/kiosk/Settings/index.tsx:94
 msgid "Zebra ZD621 (silent)"

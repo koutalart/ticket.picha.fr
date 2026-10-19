@@ -38,6 +38,8 @@ use HiEvents\Repository\Eloquent\OutgoingMessageRepository;
 use HiEvents\Repository\Eloquent\PasswordResetRepository;
 use HiEvents\Repository\Eloquent\PasswordResetTokenRepository;
 use HiEvents\Repository\Eloquent\BoxOfficePrinterPreferenceRepository;
+use HiEvents\Repository\Eloquent\KioskPrintJobRepository;
+use HiEvents\Repository\Eloquent\KioskPrintRelayRepository;
 use HiEvents\Repository\Eloquent\PrintJobRepository;
 use HiEvents\Repository\Eloquent\ProductCategoryRepository;
 use HiEvents\Repository\Eloquent\ProductPriceRepository;
@@ -95,6 +97,8 @@ use HiEvents\Repository\Interfaces\OutgoingMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\PasswordResetRepositoryInterface;
 use HiEvents\Repository\Interfaces\PasswordResetTokenRepositoryInterface;
 use HiEvents\Repository\Interfaces\BoxOfficePrinterPreferenceRepositoryInterface;
+use HiEvents\Repository\Interfaces\KioskPrintJobRepositoryInterface;
+use HiEvents\Repository\Interfaces\KioskPrintRelayRepositoryInterface;
 use HiEvents\Repository\Interfaces\PrintJobRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductCategoryRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
@@ -179,6 +183,8 @@ class RepositoryServiceProvider extends ServiceProvider
         EventBoxOfficeOperatorRepositoryInterface::class => EventBoxOfficeOperatorRepository::class,
         PrintJobRepositoryInterface::class => PrintJobRepository::class,
         BoxOfficePrinterPreferenceRepositoryInterface::class => BoxOfficePrinterPreferenceRepository::class,
+        KioskPrintJobRepositoryInterface::class => KioskPrintJobRepository::class,
+        KioskPrintRelayRepositoryInterface::class => KioskPrintRelayRepository::class,
         CaseStudyStatsRepositoryInterface::class => CaseStudyStatsRepository::class,
     ];
 

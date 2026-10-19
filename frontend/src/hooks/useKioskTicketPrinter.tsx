@@ -4,6 +4,7 @@ import {Button, Group, Modal, Stack, TextInput} from "@mantine/core";
 import {IconPrinter} from "@tabler/icons-react";
 import {boxOfficeClient} from "../api/box-office.client.ts";
 import {useReprintBoxOfficeTicket} from "../mutations/useReprintBoxOfficeTicket.ts";
+import {useEnqueueKioskPrintJobs} from "../mutations/useEnqueueKioskPrintJobs.ts";
 import {showError} from "../utilites/notifications.tsx";
 import {IdParam} from "../types.ts";
 import {DEFAULT_ZEBRA_LABEL_FORMAT, KioskPrintOutput, ZebraLabelFormat} from "./useKioskSettings.ts";
@@ -14,6 +15,7 @@ interface PrinterPrompt {
     attendeePublicIds: string[];
     host: string;
     isReprint: boolean;
+    viaRelay?: boolean;
 }
 
 interface UseKioskTicketPrinterOptions {
@@ -39,7 +41,8 @@ const openPdfBlobInNewTab = (blob: Blob) => {
  * Prints box office tickets or badges: Zebra (ZPL) with a "printer not
  * reachable" prompt (new IP + retry, or PDF fallback), or PDF directly.
  * In the iOS app the ZPL goes from the iPad to the Zebra over the venue
- * Wi-Fi, and PDFs go through AirPrint (D19d).
+ * Wi-Fi, and PDFs go through AirPrint (D19d). In relay mode the tickets are
+ * queued on the server and printed by the relay running on a venue computer.
  */
 export const useKioskTicketPrinter = ({
     eventId,
@@ -50,6 +53,7 @@ export const useKioskTicketPrinter = ({
     onZebraPrinterHostChange,
 }: UseKioskTicketPrinterOptions) => {
     const reprintTicket = useReprintBoxOfficeTicket();
+    const enqueuePrintJobs = useEnqueueKioskPrintJobs();
     const [printerPrompt, setPrinterPrompt] = useState<PrinterPrompt | null>(null);
     const [isRetryingPrint, setIsRetryingPrint] = useState(false);
 
@@ -72,6 +76,15 @@ export const useKioskTicketPrinter = ({
             }
         }
         return failed;
+    };
+
+    const queueForRelay = async (attendeePublicIds: string[]): Promise<boolean> => {
+        try {
+            await enqueuePrintJobs.mutateAsync({eventId, attendeePublicIds, labelFormat: zebraLabelFormat});
+            return true;
+        } catch {
+            return false;
+        }
     };
 
     const openTicketPdf = async (attendeePublicId: string) => {
@@ -103,6 +116,15 @@ export const useKioskTicketPrinter = ({
             return true;
         }
 
+        if (printMode === 'zebra-relay') {
+            if (await queueForRelay(attendeePublicIds)) {
+                return true;
+            }
+            showError(t`Could not send the tickets to the print queue.`);
+            setPrinterPrompt({attendeePublicIds, host: '', isReprint, viaRelay: true});
+            return false;
+        }
+
         if (printMode !== 'zebra') {
             await openTicketPdfs(attendeePublicIds, isReprint);
             return true;
@@ -119,6 +141,19 @@ export const useKioskTicketPrinter = ({
 
     const retryPrinterPrompt = async () => {
         if (!printerPrompt) {
+            return;
+        }
+        if (printerPrompt.viaRelay) {
+            setIsRetryingPrint(true);
+            try {
+                if (await queueForRelay(printerPrompt.attendeePublicIds)) {
+                    setPrinterPrompt(null);
+                    return;
+                }
+                showError(t`Could not send the tickets to the print queue.`);
+            } finally {
+                setIsRetryingPrint(false);
+            }
             return;
         }
         const host = printerPrompt.host.trim();
@@ -158,16 +193,18 @@ export const useKioskTicketPrinter = ({
         <Modal
             opened={printerPrompt !== null}
             onClose={() => setPrinterPrompt(null)}
-            title={t`Printer not reachable`}
+            title={printerPrompt?.viaRelay ? t`Print queue not reachable` : t`Printer not reachable`}
             centered
         >
             <Stack>
                 <p>
-                    {printerPrompt?.host
+                    {printerPrompt?.viaRelay
+                        ? t`The tickets could not be added to the print queue. Retry, or open the tickets as PDF.`
+                        : printerPrompt?.host
                         ? t`The Zebra printer at ${printerPrompt.host} did not respond. Enter its current IP address to try again, or open the tickets as PDF.`
                         : t`No Zebra printer IP is set for this station. Enter it to print, or open the tickets as PDF.`}
                 </p>
-                <TextInput
+                {!printerPrompt?.viaRelay && <TextInput
                     label={t`Printer IP address`}
                     placeholder="192.168.1.50"
                     value={printerPrompt?.host ?? ''}
@@ -176,7 +213,7 @@ export const useKioskTicketPrinter = ({
                         setPrinterPrompt((current) => current ? {...current, host} : current);
                     }}
                     data-autofocus
-                />
+                />}
                 <Group justify="flex-end">
                     <Button variant="default" onClick={() => void openPrinterPromptPdfs()}>
                         {t`Open tickets as PDF`}
@@ -184,7 +221,7 @@ export const useKioskTicketPrinter = ({
                     <Button
                         leftSection={<IconPrinter/>}
                         loading={isRetryingPrint}
-                        disabled={!printerPrompt?.host}
+                        disabled={!printerPrompt?.viaRelay && !printerPrompt?.host}
                         onClick={() => void retryPrinterPrompt()}
                     >
                         {t`Retry`}
