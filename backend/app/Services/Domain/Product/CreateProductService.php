@@ -96,6 +96,7 @@ class CreateProductService
             'is_highlighted' => $productsData->getIsHighlighted(),
             'highlight_message' => $productsData->getHighlightMessage(),
             'waitlist_enabled' => $productsData->getWaitlistEnabled(),
+            'unlock_after_product_id' => $productsData->getUnlockAfterProductId(),
         ]);
     }
 

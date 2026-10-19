@@ -262,6 +262,10 @@ export interface EventSettings {
     // Self-service settings
     allow_attendee_self_edit?: boolean;
 
+    single_product_per_order?: boolean;
+
+    choose_category_first?: boolean;
+
     // Simplified homepage theme settings (new 2-color + mode system)
     homepage_theme_settings?: HomepageThemeSettings;
 
@@ -713,6 +717,7 @@ export interface Product {
     is_highlighted?: boolean;
     highlight_message?: string;
     waitlist_enabled?: boolean | null;
+    unlock_after_product_id?: number | null;
     has_waiting_entries?: boolean;
     waitlist_entry_count?: number;
 }
@@ -725,6 +730,7 @@ export interface ProductCategory {
     event_id?: number;
     is_hidden?: boolean;
     no_products_message?: string;
+    selection_label?: string | null;
 }
 
 export interface Attendee {
