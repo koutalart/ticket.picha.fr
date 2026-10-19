@@ -13,6 +13,10 @@ Branche `client/shelby`. Tout ce qui est propre à ce client : habillage, visuel
 | Événements | aucun pour l'instant |
 | Frais de plateforme | payés par l'acheteur (0,99 €/billet), règle commune sans exception |
 
+## Conversation
+
+Conversation Claude dédiée : « Shelby » (`local_2317903a-d2c0-46f7-b756-aba32989cd64`), rattachée au noyau « Picha / Dashboard ». Registre tenu dans la mémoire du projet (`registre-conversations-clients`).
+
 ## Contenu
 
 - `scripts-prod/` : scripts tinker passés en production pour ce compte. Chacun vérifie les identifiants avant d'écrire et peut être relancé. Sauvegarde avant toute écriture en base.
