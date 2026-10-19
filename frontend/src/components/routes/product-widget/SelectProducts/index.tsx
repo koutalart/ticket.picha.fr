@@ -316,7 +316,6 @@ const SelectProducts = (props: SelectProductsProps) => {
         || props.widgetMode === 'preview'
         || products?.every(product => product.is_sold_out);
 
-    let productIndex = 0;
 
     return (
         <div className={classNames('hi-product-widget-container', {'hi-has-sticky-footer': props.widgetMode !== 'embedded'})}
@@ -456,7 +455,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                                         )}
 
                                         {(category.products) && category.products.map((product) => {
-                                            const currentProductIndex = productIndex;
+                                            const currentProductIndex = products.findIndex(item => item.id === product.id);
                                             const quantityRange = range(product.min_per_order || 1, product.max_per_order || 25)
                                                 .map((n) => n.toString());
                                             quantityRange.unshift("0");
@@ -516,7 +515,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                                                               className={'hi-product-content'} hidden={isProductCollapsed}>
                                                         <div className={'hi-price-tiers-rows'}>
                                                             <TieredPricing
-                                                                productIndex={productIndex++}
+                                                                productIndex={currentProductIndex}
                                                                 event={event}
                                                                 product={product}
                                                                 form={form}
