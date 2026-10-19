@@ -31,6 +31,22 @@ Pour chaque cas client relié à un événement, comparer avec les chiffres publ
 - après l'événement : personnes scannées à l'entrée, taux de présence, heure de pointe,
   ventes sur place, puis rédiger `dayOf` à partir des scans par heure.
 
+## Nouveaux événements
+
+Chaque matin, le workflow demande aussi les événements en ligne terminés depuis 7 jours (`?ended_since=AAAA-MM-JJ`)
+qui n'ont pas encore de cas client (champ `candidates`).
+
+- Seuil : au moins 100 billets payés ou inscrits (hors invitations `GRATUIT` pour une billetterie payante),
+  ou au moins 20 % de la jauge totale. En dessous, ne rien créer.
+- Au-dessus du seuil : ajouter un cas client **en brouillon** (`draft: true`) : il n'est ni affiché, ni listé, ni dans le sitemap
+  tant que l'équipe ne l'a pas validé (accord du client) et passé à `draft: false`.
+- `slug` : organisateur puis événement, en minuscules sans accents (ex. `innocent-event-halloween`) ; `client` = organisateur,
+  `eventName` = nom de l'événement ; `sector` d'après la catégorie ; `date`, `location`, `eventStartDate`, `eventEndDate`
+  (heure locale avec décalage, ex. `+03:00` à Mayotte, `+01:00` à Paris en hiver), `eventLocality`, `eventCountryCode` ;
+  `services` d'après les canaux réellement utilisés (billetterie en ligne, préventes, vente sur place, inscriptions, contrôle d'accès si scans) ;
+  `results` (2 à 4 chiffres), `dayOf` à partir des scans par heure, `headline` et `summary` selon les règles ci-dessous.
+- Ne rien inventer sur le contexte : `challenge` décrit seulement l'événement (date, lieu, type, canaux de vente) d'après les données.
+
 ## Règles de rédaction (SEO)
 
 - Français, ton expert et factuel ; chaque chiffre vient de `event-stats.sh`.
