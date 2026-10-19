@@ -14,7 +14,7 @@ Branche `client/innocent-event`. Tout ce qui est propre à ce client : habillage
 
 ## Règles du client
 
-1. innocent976.yt doit rediriger vers l'événement en cours, basculer sur chaque nouvel événement, et revenir à la page principale entre deux événements (demandé au noyau, code commun).
+1. innocent976.yt redirige vers l'événement en cours, bascule sur chaque nouvel événement, et revient à la page principale entre deux événements (PR #131, option `site_content.redirect_to_current_event` activée le 19/10 ; `/?accueil` montre la page principale).
 2. Vente flash d'abord : l'entrée normale reste masquée en ligne et au guichet tant que la vente flash n'est pas épuisée.
 3. Pas de code promo sur la vente flash : « tinemada » ne vaut que sur l'entrée simple (produit 10).
 4. Vidéo de couverture qui pousse à acheter, avec des arguments vrais uniquement.
@@ -32,10 +32,10 @@ Les vidéos (sources YouTube et 14 rendus) ne sont pas versionnées : elles sont
 
 ## Pilote automatique Halloween
 
-Sur le serveur, dossier `/home/ubuntu/picha-clients/innocent-event/halloween/` (hors du code de la plateforme), lancé par cron toutes les 5 minutes (utilisateur `ubuntu`) :
+Sur le serveur, dossier `/home/ubuntu/picha-clients/innocent-event/halloween/` (hors du code de la plateforme), lancé par cron une fois par heure, à la minute 1 (utilisateur `ubuntu`) :
 
 - calcule la clé attendue : jour en heure de Mayotte (`base` jusqu'au 25/10, puis `J-5` … `CE-SOIR`) et tarif (`15`, ou `20` dès que les 100 places flash sont vendues) ;
-- si la clé change : sauvegarde de la base (sinon rien n'est modifié), puis mise en ligne de la vidéo `videos/halloween-<clé>.mp4`, de la première phrase du jour (description et message avant paiement) et, à 20 €, réouverture de l'entrée simple en ligne et au guichet ;
+- si la clé change : sauvegarde de la base (sinon rien n'est modifié), puis mise en ligne de la vidéo `videos/halloween-<clé>.mp4`, de la première phrase du jour (description et message avant paiement) et, à 20 €, le texte « vente flash épuisée » ; l'entrée simple s'ouvre d'elle-même dès l'épuisement de la vente flash (règle `unlock_after_product_id = 20`, PR #130) ;
 - journal : `pilote.log` ; état : `etat.txt` ;
 - après la soirée (01/11 06:00, heure de Mayotte), il retire lui-même sa ligne cron.
 
