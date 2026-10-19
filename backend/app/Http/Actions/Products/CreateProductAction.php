@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Http\Actions\Products;
 
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\Exceptions\InvalidProductUnlockRuleException;
 use HiEvents\Exceptions\InvalidTaxOrFeeIdException;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\Request\Product\UpsertProductRequest;
@@ -42,6 +43,10 @@ class CreateProductAction extends BaseAction
         } catch (InvalidTaxOrFeeIdException $e) {
             throw ValidationException::withMessages([
                 'tax_and_fee_ids' => $e->getMessage(),
+            ]);
+        } catch (InvalidProductUnlockRuleException $e) {
+            throw ValidationException::withMessages([
+                'unlock_after_product_id' => $e->getMessage(),
             ]);
         }
 

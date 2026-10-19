@@ -715,6 +715,7 @@ export interface Product {
     is_highlighted?: boolean;
     highlight_message?: string;
     waitlist_enabled?: boolean | null;
+    unlock_after_product_id?: number | null;
     has_waiting_entries?: boolean;
     waitlist_entry_count?: number;
 }
