@@ -11,7 +11,7 @@ import {
     TextInput,
     UnstyledButton
 } from "@mantine/core";
-import {useNavigate, useParams} from "react-router";
+import {useNavigate, useParams, useSearchParams} from "react-router";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {notifications} from "@mantine/notifications";
 import {
@@ -32,6 +32,7 @@ import '../../../../styles/widget/default.scss';
 import {ProductAvailabilityMessage} from "../../../common/ProductPriceAvailability";
 import {PoweredByFooter} from "../../../common/PoweredByFooter";
 import {Event, Product} from "../../../../types.ts";
+import {filterProductCategories, PRODUCT_CATEGORY_QUERY_PARAMS} from "../../../../utilites/productCategoryFilter.ts";
 import {eventsClientPublic} from "../../../../api/event.client.ts";
 import {promoCodeClientPublic} from "../../../../api/promo-code.client.ts";
 import {IconChevronRight, IconX} from "@tabler/icons-react"
@@ -211,6 +212,15 @@ const SelectProducts = (props: SelectProductsProps) => {
     });
 
     const productCategories = event?.product_categories || [];
+    const [searchParams, setSearchParams] = useSearchParams();
+    const requestedCategory = PRODUCT_CATEGORY_QUERY_PARAMS.map(param => searchParams.get(param)).find(Boolean);
+    const visibleCategories = filterProductCategories(productCategories, requestedCategory);
+    const isCategoryFiltered = visibleCategories.length < productCategories.length;
+    const showAllCategories = () => {
+        const next = new URLSearchParams(searchParams);
+        PRODUCT_CATEGORY_QUERY_PARAMS.forEach(param => next.delete(param));
+        setSearchParams(next, {replace: true, preventScrollReset: true});
+    };
     const productAreAvailable = productCategories && productCategories.some(category => !!category?.products?.length);
     const products: Product[] = productCategories.reduce((acc: Product[], category) => acc.concat(category.products ?? []), []);
 
@@ -415,8 +425,13 @@ const SelectProducts = (props: SelectProductsProps) => {
                 <form target={'__blank'} onSubmit={form.onSubmit(handleProductSelection as any)}>
                     <Input type={'hidden'} {...form.getInputProps('promo_code')} />
                     <Input type={'hidden'} {...form.getInputProps('affiliate_code')} />
+                    {isCategoryFiltered && (
+                        <button type="button" className={'hi-product-category-show-all'} onClick={showAllCategories}>
+                            {t`See all tickets`}
+                        </button>
+                    )}
                     <div className={'hi-product-category-rows'}>
-                        {productCategories && productCategories.map((category) => {
+                        {visibleCategories.map((category) => {
                             return (
                                 <div className={'hi-product-category-row'} key={category.id}>
                                     <h2 className={'hi-product-category-title'} style={category.description ? {
