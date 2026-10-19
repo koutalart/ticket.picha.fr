@@ -278,6 +278,12 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 return;
             }
 
+            if (pathname === '/' && customDomain.current_event && !new URLSearchParams(search || '').has('accueil')) {
+                res.setHeader('Cache-Control', 'no-store');
+                res.redirect(302, `/event/${customDomain.current_event.id}/${customDomain.current_event.slug}${search ? `?${search}` : ''}`);
+                return;
+            }
+
             if (!req.cookies?.locale && !req.headers['accept-language']) {
                 req.headers['accept-language'] = 'fr';
             }
