@@ -952,6 +952,7 @@ export enum QuestionType {
     RADIO = 'RADIO',
     DROPDOWN = 'DROPDOWN',
     DATE = 'DATE',
+    FILE = 'FILE',
 }
 
 export enum QuestionBelongsToType {
@@ -1082,6 +1083,19 @@ export interface QuestionAnswer {
     question_description?: string;
     question_required?: boolean;
     question_options?: string[];
+    file_url?: string | null;
+}
+
+export interface QuestionFileAnswer {
+    file_id: IdParam;
+    name: string;
+}
+
+export interface QuestionAnswerFileUpload {
+    id: IdParam;
+    question_id: IdParam;
+    original_filename: string;
+    size: number;
 }
 
 export enum ReportTypes {

@@ -4,6 +4,7 @@ namespace HiEvents\Resources\Question;
 
 use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
 use HiEvents\DomainObjects\QuestionAndAnswerViewDomainObject;
+use HiEvents\Services\Domain\Question\File\QuestionAnswerFileUrlGenerator;
 use HiEvents\Services\Domain\Question\QuestionAnswerFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -25,7 +26,15 @@ class QuestionAnswerViewResource extends JsonResource
             'answer' => $this->getAnswer(),
             'text_answer' => app(QuestionAnswerFormatter::class)->getAnswerAsText(
                 $this->getAnswer(),
-                QuestionTypeEnum::fromName($this->getQuestionType())
+                QuestionTypeEnum::fromName($this->getQuestionType()),
+                includeFileUrl: false,
+            ),
+            'file_url' => $this->when(
+                $this->getQuestionType() === QuestionTypeEnum::FILE->name,
+                fn() => app(QuestionAnswerFileUrlGenerator::class)->getDownloadUrlFromAnswer(
+                    $this->getAnswer(),
+                    now()->addHour(),
+                ),
             ),
             'order_id' => $this->getOrderId(),
             'belongs_to' => $this->getBelongsTo(),

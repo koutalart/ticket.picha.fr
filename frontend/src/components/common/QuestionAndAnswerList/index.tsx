@@ -1,9 +1,10 @@
-import {IdParam, QuestionAnswer} from "../../../types.ts";
-import {ActionIcon, Button, Group, Text, Tooltip} from '@mantine/core';
+import {IdParam, QuestionAnswer, QuestionType} from "../../../types.ts";
+import {ActionIcon, Anchor, Button, Group, Text, Tooltip} from '@mantine/core';
 import {t} from "@lingui/macro";
 import {
     IconEdit,
     IconExternalLink,
+    IconFileTypePdf,
     IconPackage,
     IconShoppingCart,
     IconUser
@@ -46,10 +47,34 @@ interface QuestionItemProps {
     hideAttendeeInfo?: boolean;
 }
 
+const FileAnswer = ({qa}: { qa: QuestionAnswer }) => {
+    const fileName = qa.text_answer || t`Download file`;
+
+    if (!qa.file_url) {
+        return <Text size="sm" className={classes.answer}>{fileName}</Text>;
+    }
+
+    return (
+        <Anchor
+            href={qa.file_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            size="sm"
+            className={classes.answer}
+        >
+            <Group gap={6} wrap="nowrap" component="span">
+                <IconFileTypePdf size={16}/>
+                <span>{fileName}</span>
+            </Group>
+        </Anchor>
+    );
+};
+
 // Separated QuestionItem component to isolate form initialization
 const QuestionItem = ({ qa, isEditing, toggleEditMode, onEditAnswer, compact = false, eventId, hideAttendeeInfo = false }: QuestionItemProps) => {
     const errorHandler = useFormErrorResponseHandler();
     const updateAnswerMutation = useEditQuestionAnswer();
+    const isFileAnswer = qa.question_type === QuestionType.FILE;
 
     // Form initialization is now isolated in this component
     const initialValues = qa.question_type === 'ADDRESS' ? {
@@ -153,19 +178,25 @@ const QuestionItem = ({ qa, isEditing, toggleEditMode, onEditAnswer, compact = f
                 </form>
             ) : (
                 <div className={classes.answerContainer}>
-                    <Text size="sm" className={classes.answer} style={{whiteSpace: 'pre-line'}}>
-                        {formatAnswer(qa.answer)}
-                    </Text>
-                    <Tooltip label={t`Edit Answer`} position="bottom" withArrow>
-                        <ActionIcon
-                            variant="subtle"
-                            radius="xl"
-                            size="sm"
-                            onClick={() => toggleEditMode(qa.question_id)}
-                        >
-                            <IconEdit size={16}/>
-                        </ActionIcon>
-                    </Tooltip>
+                    {isFileAnswer ? (
+                        <FileAnswer qa={qa}/>
+                    ) : (
+                        <Text size="sm" className={classes.answer} style={{whiteSpace: 'pre-line'}}>
+                            {formatAnswer(qa.answer)}
+                        </Text>
+                    )}
+                    {!isFileAnswer && (
+                        <Tooltip label={t`Edit Answer`} position="bottom" withArrow>
+                            <ActionIcon
+                                variant="subtle"
+                                radius="xl"
+                                size="sm"
+                                onClick={() => toggleEditMode(qa.question_id)}
+                            >
+                                <IconEdit size={16}/>
+                            </ActionIcon>
+                        </Tooltip>
+                    )}
                 </div>
             )}
 

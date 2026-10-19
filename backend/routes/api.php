@@ -90,6 +90,9 @@ use HiEvents\Http\Actions\Events\GetEventPublicAction;
 use HiEvents\Http\Actions\Events\GetEventsAction;
 use HiEvents\Http\Actions\Events\GetOrganizerEventsPublicAction;
 use HiEvents\Http\Actions\Organizers\CoverVideo\UploadOrganizerCoverVideoAction;
+use HiEvents\Http\Actions\Questions\Files\DownloadQuestionAnswerFileAction;
+use HiEvents\Http\Actions\Questions\Public\UploadQuestionAnswerFilePublicAction;
+use HiEvents\Services\Domain\Question\File\QuestionAnswerFileUrlGenerator;
 use HiEvents\Http\Actions\Events\CoverVideo\UploadEventCoverVideoAction;
 use HiEvents\Http\Actions\Events\Images\CreateEventImageAction;
 use HiEvents\Http\Actions\Events\Images\DeleteEventImageAction;
@@ -618,6 +621,8 @@ $router->prefix('/public')->group(
         $router->post('/events/{event_id}/order/{order_short_id}/abandon', AbandonOrderActionPublic::class);
         $router->post('/events/{event_id}/order/{order_short_id}/await-offline-payment', TransitionOrderToOfflinePaymentPublicAction::class);
         $router->get('/events/{event_id}/order/{order_short_id}/invoice', DownloadOrderInvoicePublicAction::class);
+        $router->post('/events/{event_id}/order/{order_short_id}/question-files', UploadQuestionAnswerFilePublicAction::class)
+            ->middleware('throttle:20,1');
 
         // Attendees
         $router->get('/events/{event_id}/attendees/{attendee_short_id}', GetAttendeeActionPublic::class);
@@ -673,5 +678,10 @@ $router->prefix('/public')->group(
         $router->get('/sitemap-organizers-{page}.xml', GetSitemapOrganizersAction::class)->where('page', '[0-9]+');
     }
 );
+
+$router->get('/question-files/{file_id}/download', DownloadQuestionAnswerFileAction::class)
+    ->where('file_id', '[0-9]+')
+    ->middleware(['signed:relative', 'throttle:60,1'])
+    ->name(QuestionAnswerFileUrlGenerator::DOWNLOAD_ROUTE_NAME);
 
 include_once __DIR__ . '/mail.php';
