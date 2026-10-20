@@ -63,6 +63,22 @@ def post_artiste(nom, crop, titre, sous):
     e.convert("RGB").save(f"{SORTIE}/{nom}.jpg", quality=92)
 
 
+def post_le_d():
+    ph = Image.open(f"{S}/photo-le-d.jpg").convert("RGB")
+    h = int(ph.width * 1350 / 1080)
+    y0 = min(int(ph.height * 0.02), ph.height - h)
+    ph = ph.crop((0, y0, ph.width, y0 + h)).resize((1080, 1350), Image.LANCZOS)
+    e = ph.convert("RGBA")
+    degrade(e, 640)
+    degrade(e, 220, top=True, force=180)
+    y = 920
+    y += texte(e, y, "LE D", unb(190, 900), BLANC, 6, glow=ROUGE) + 20
+    y += texte(e, y, "EN LIVE", unb(60, 800), ACC, 10) + 40
+    texte(e, y, "SAMEDI 31 OCTOBRE AU 5/5", unb(34, 600), BLANC, 4)
+    e.alpha_composite(logo_blanc(80), (60, 60))
+    e.convert("RGB").save(f"{SORTIE}/04-post-le-d.jpg", quality=92)
+
+
 def story_team():
     h = fond(1080, 1920, blur=40, dark=0.42)
     h.alpha_composite(logo_blanc(130), (int((1080 - logo_blanc(130).width) / 2), 180))
@@ -79,7 +95,7 @@ def story_team():
 post_annonce()
 story_annonce()
 post_vente_flash()
-post_artiste("04-post-le-d", (760, 280, 1180, 1000), "LE D", "EN LIVE")
+post_le_d()
 post_artiste("05-post-jah-d-one", (455, 340, 860, 830), "JAH D ONE", "EN LIVE")
 story_team()
 print("ok")

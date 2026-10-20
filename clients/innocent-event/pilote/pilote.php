@@ -2,7 +2,8 @@
 // Innocent Event (compte 3, organisateur 4) : pilote automatique de la page Halloween (événement 7).
 // PILOTE_MODE=verifier : affiche la clé attendue « <jour>-<prix> » (ex. J-3-15) ou FIN après la soirée.
 // PILOTE_MODE=appliquer + PILOTE_CLE : met en ligne la vidéo /tmp/innocent-pilote/halloween-<clé>.mp4,
-// la première phrase du jour (description + message avant paiement) et, à 20 €, rouvre l'entrée simple.
+// la première phrase du jour (description + message avant paiement) et, à 20 €, le texte « vente flash épuisée ».
+// L'entrée simple s'ouvre d'elle-même à l'épuisement de la vente flash (unlock_after_product_id, PR #130).
 
 use Carbon\Carbon;
 use HiEvents\Services\Application\Handlers\Event\CoverVideo\DTO\UploadEventCoverVideoDTO;
@@ -76,16 +77,13 @@ function pilote(): void
 
     auth()->setUser(\HiEvents\Models\User::findOrFail(USER_ID));
 
-    DB::transaction(function () use ($description, $avant, $epuise) {
+    DB::transaction(function () use ($description, $avant) {
         DB::table('events')->where('id', EVENT_ID)->update(['description' => $description, 'updated_at' => now()]);
         app(PartialUpdateEventSettingsHandler::class)->handle(new PartialUpdateEventSettingsDTO(
             account_id: ACCOUNT_ID,
             event_id: EVENT_ID,
             settings: ['pre_checkout_message' => $avant],
         ));
-        if ($epuise) {
-            DB::table('products')->where('id', ENTREE)->where('event_id', EVENT_ID)->update(['is_hidden' => false, 'is_visible_at_box_office' => true, 'updated_at' => now()]);
-        }
     });
 
     app(UploadEventCoverVideoHandler::class)->handle(new UploadEventCoverVideoDTO(
@@ -95,7 +93,7 @@ function pilote(): void
     ));
 
     $entree = DB::table('products')->where('id', ENTREE)->first();
-    echo 'APPLIQUE='.$cle.' | entrée simple '.($entree->is_hidden ? 'masquée' : 'en vente').' | vidéos actives '
+    echo 'APPLIQUE='.$cle.' | entrée simple '.($entree->unlock_after_product_id ? 'ouverture auto après la vente flash' : 'règle absente').' | vidéos actives '
         .DB::table('images')->where('entity_id', EVENT_ID)->where('type', 'EVENT_COVER_VIDEO')->whereNull('deleted_at')->count()."\n";
 }
 
