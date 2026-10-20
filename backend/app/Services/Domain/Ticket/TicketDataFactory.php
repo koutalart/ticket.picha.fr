@@ -7,6 +7,7 @@ namespace HiEvents\Services\Domain\Ticket;
 use Carbon\Carbon;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\Enums\ImageType;
+use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
@@ -58,7 +59,10 @@ class TicketDataFactory
     public function forPreview(int $eventId): TicketDataDTO
     {
         [$event, $organizer] = $this->loadEvent($eventId);
-        $product = $this->productRepository->findFirstWhere(['event_id' => $eventId]);
+        $product = $this->productRepository->findFirstWhere([
+            'event_id' => $eventId,
+            'product_type' => ProductType::TICKET->name,
+        ]);
 
         return $this->build(
             event: $event,
