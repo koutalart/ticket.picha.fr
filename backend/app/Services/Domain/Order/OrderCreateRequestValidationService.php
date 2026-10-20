@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\Enums\ProductPriceType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\PromoCodeDomainObjectAbstract;
+use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\Helper\Currency;
@@ -161,6 +162,43 @@ class OrderCreateRequestValidationService
 
         foreach ($data['products'] as $productIndex => $productAndQuantities) {
             $this->validateSingleProductDetails($event, $productIndex, $productAndQuantities, $products);
+        }
+
+        $this->validateOptionsComeWithATicket($event, $data, $products);
+    }
+
+    /**
+     * An option (non-ticket product, e.g. an insurance) cannot be ordered alone
+     * when the event sells tickets.
+     *
+     * @throws ValidationException
+     */
+    private function validateOptionsComeWithATicket(EventDomainObject $event, array $data, Collection $products): void
+    {
+        $quantityByType = ['ticket' => 0, 'option' => 0];
+
+        foreach ($data['products'] as $productAndQuantities) {
+            $product = $products->first(fn (ProductDomainObject $item) => $item->getId() === (int) $productAndQuantities['product_id']);
+            $quantity = collect($productAndQuantities['quantities'] ?? [])->sum('quantity');
+            if ($product === null || $quantity <= 0) {
+                continue;
+            }
+            $quantityByType[$product->getProductType() === ProductType::TICKET->name ? 'ticket' : 'option'] += $quantity;
+        }
+
+        if ($quantityByType['option'] === 0 || $quantityByType['ticket'] > 0) {
+            return;
+        }
+
+        $eventSellsTickets = $this->productRepository->findFirstWhere([
+            'event_id' => $event->getId(),
+            'product_type' => ProductType::TICKET->name,
+        ]) !== null;
+
+        if ($eventSellsTickets) {
+            throw ValidationException::withMessages([
+                'products' => __('This option can only be ordered together with a ticket.'),
+            ]);
         }
     }
 
