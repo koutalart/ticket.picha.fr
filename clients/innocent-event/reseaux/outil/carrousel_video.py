@@ -91,6 +91,13 @@ def diapo_artiste(detoure, clip, debut_clip, nom, crop_clip):
     p = p.crop(p.getbbox())
     h = 960
     p = p.resize((int(p.width * h / p.height), h), Image.LANCZOS)
+    # fondu du bas de l'artiste : opaque jusqu'à 55 % de sa hauteur, puis disparaît progressivement
+    fondu = Image.new("L", (1, h))
+    for i in range(h):
+        r = i / h
+        fondu.putpixel((0, i), 255 if r < 0.55 else int(255 * max(0.0, 1 - (r - 0.55) / 0.40) ** 1.6))
+    a = Image.composite(p.split()[3], Image.new("L", p.size, 0), fondu.resize(p.size))
+    p.putalpha(a)
     lueur = Image.new("RGBA", p.size, ROUGE + (0,))
     lueur.putalpha(p.split()[3].filter(ImageFilter.GaussianBlur(40)).point(lambda v: int(v * 0.55)))
     calque = Image.new("RGBA", (p.width + 80, p.height + 40), (0, 0, 0, 0))
