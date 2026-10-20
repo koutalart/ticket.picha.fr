@@ -7,7 +7,7 @@ PRIX = sys.argv[6] if len(sys.argv) > 6 else "15"
 ACCROCHES = {
     "": ("HALLOWEEN AU 5/5", "UNE SEULE NUIT", ""),
     "J-5": ("HALLOWEEN AU 5/5", "J-5", "SORS TON COSTUME"),
-    "J-4": ("HALLOWEEN AU 5/5", "J-4", "LE D x JAH D ONE EN LIVE"),
+    "J-4": ("HALLOWEEN AU 5/5", "J-4", "LE D x JAH D ONE EN SHOWCASE"),
     "J-3": ("HALLOWEEN AU 5/5", "J-3", "VIENS DÉGUISÉ(E)"),
     "J-2": ("HALLOWEEN AU 5/5", "J-2", "RAMÈNE TA TEAM"),
     "DEMAIN": ("HALLOWEEN AU 5/5", "DEMAIN SOIR", "DERNIÈRE LIGNE DROITE"),

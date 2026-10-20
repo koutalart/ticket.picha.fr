@@ -17,7 +17,7 @@ _LOGO = Image.open(f"{S}/logo-innocent.png").convert("RGBA")
 
 ACCROCHES = {
     "J-5": ("J-5", "SORS TON COSTUME"),
-    "J-4": ("J-4", "LE D x JAH D ONE EN LIVE"),
+    "J-4": ("J-4", "LE D x JAH D ONE EN SHOWCASE"),
     "J-3": ("J-3", "VIENS DÉGUISÉ(E)"),
     "J-2": ("J-2", "RAMÈNE TA TEAM"),
     "DEMAIN": ("DEMAIN SOIR", "DERNIÈRE LIGNE DROITE"),

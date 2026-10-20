@@ -18,7 +18,7 @@ Les messages aux acheteurs (4, 6 et 8) partent de la messagerie de la billetteri
 >
 > Le samedi 31 octobre, Innocent Event te donne rendez-vous au 5/5 pour une nuit d'Halloween terrifiante.
 >
-> **LE D x JAH D ONE** en live, avec DJ SWEETY, ASSKABOY et DJ BVNG'Z aux platines.
+> **LE D x JAH D ONE** en showcase, avec DJ SWEETY, ASSKABOY et DJ BVNG'Z aux platines.
 > Afrobeats, amapiano, afro-caribéen, hip-hop, R&B et kompa toute la nuit.
 >
 > Vampires, zombies, sorcières, démons : viens déguisé(e) et ramène ta team 👻
@@ -41,7 +41,7 @@ Les messages aux acheteurs (4, 6 et 8) partent de la messagerie de la billetteri
 
 **Pour qui :** ceux qui n'ont pas encore acheté (exclure la liste des acheteurs Halloween).
 **Objet :** Tu as vu qui vient le 31 ? 🔥
-**Pré-en-tête :** Le D et Jah D One en live au 5/5
+**Pré-en-tête :** Le D et Jah D One en showcase au 5/5
 **Image :** `entete-le-d.jpg` puis `entete-jah-d-one.jpg`
 
 > Le 31 octobre, ils seront sur scène au 5/5.
@@ -69,7 +69,7 @@ Les messages aux acheteurs (4, 6 et 8) partent de la messagerie de la billetteri
 >
 > Besoin d'idées ? Vampire, zombie, sorcière, démon, personnage de film d'horreur… Le plus original sera repéré 😉
 >
-> Le D x Jah D One en live, DJ SWEETY, ASSKABOY et DJ BVNG'Z aux platines.
+> Le D x Jah D One en showcase, DJ SWEETY, ASSKABOY et DJ BVNG'Z aux platines.
 >
 > {{ vente flash en cours }} **Dernières places à 15 €.**
 > {{ vente flash épuisée }} Entrées à 20 € en ligne, 25 € sur place.

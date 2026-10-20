@@ -36,7 +36,7 @@ def elements():
     els.append(plage(el_texte(1640, "SHOWCASE", unb(70, 800), ACC, 12, debut=4.3), 8.2))
     # 8,5 à 12,5 s : Jah D One
     els.append(plage(el_texte(1400, "JAH D ONE", ajuste("JAH D ONE", 170, 900, 6, 1000), BLANC, 6, glow=ROUGE, debut=8.8, mode="pop"), 12.2))
-    els.append(plage(el_texte(1640, "EN LIVE", unb(70, 800), ACC, 12, debut=9.3), 12.2))
+    els.append(plage(el_texte(1640, "SHOWCASE", unb(70, 800), ACC, 12, debut=9.3), 12.2))
     # 12,5 à 16 s : les DJ
     els.append(plage(el_texte(1300, "AUX PLATINES", unb(44, 700), ACC, 10, debut=12.7), 15.7))
     y = 1390
