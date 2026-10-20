@@ -59,7 +59,7 @@ def post_artiste(nom, crop, titre, sous):
     y += texte(e, y, titre, ajuste(titre, 190, 900, 6, 1000), BLANC, 6, glow=ROUGE) + 20
     y += texte(e, y, sous, unb(60, 800), ACC, 10) + 40
     texte(e, y, "SAMEDI 31 OCTOBRE AU 5/5", unb(34, 600), BLANC, 4)
-    e.alpha_composite(logo_blanc(80), (60, 60))
+    e.alpha_composite(logo_blanc(130), (int((1080 - logo_blanc(130).width) / 2), 45))
     e.convert("RGB").save(f"{SORTIE}/{nom}.jpg", quality=92)
 
 
@@ -75,7 +75,7 @@ def post_le_d():
     y += texte(e, y, "LE D", unb(190, 900), BLANC, 6, glow=ROUGE) + 20
     y += texte(e, y, "SHOWCASE", unb(60, 800), ACC, 10) + 40
     texte(e, y, "SAMEDI 31 OCTOBRE AU 5/5", unb(34, 600), BLANC, 4)
-    e.alpha_composite(logo_blanc(80), (60, 60))
+    e.alpha_composite(logo_blanc(130), (int((1080 - logo_blanc(130).width) / 2), 45))
     e.convert("RGB").save(f"{SORTIE}/04-post-le-d.jpg", quality=92)
 
 
