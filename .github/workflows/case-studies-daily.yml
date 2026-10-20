@@ -73,6 +73,7 @@ jobs:
                Dates et heures déjà en heure locale (start_local, end_local, tickets_by_day, check_ins_by_hour) ; first_sale_utc est en UTC.
             3. Modifie uniquement ${{ env.CASE_STUDIES_FILE }}, et uniquement les cas clients dont le ticketingEventId figure dans les données.
                Si les chiffres publiés sont déjà à jour, ne modifie rien.
+               Ne modifie jamais un cas client marqué lockedFigures: true : ses chiffres viennent de l'organisateur.
                Sinon, mets à jour attendees, results, headline, summary (160 caractères maximum, vérifie en comptant), challenge ou solution si nécessaire,
                et updatedAt = "${{ env.TODAY }}". Après la fin d'un événement, rédige dayOf à partir des scans et passe date et attendees au passé.
             4. Nouveaux événements (champ candidates : événements terminés depuis 7 jours, sans cas client) : applique la section
