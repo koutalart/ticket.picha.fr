@@ -211,6 +211,7 @@ use HiEvents\Http\Actions\TaxesAndFees\DeleteTaxOrFeeAction;
 use HiEvents\Http\Actions\TaxesAndFees\EditTaxOrFeeAction;
 use HiEvents\Http\Actions\TaxesAndFees\GetTaxOrFeeAction;
 use HiEvents\Http\Actions\Users\CancelEmailChangeAction;
+use HiEvents\Http\Actions\Auth\ConfirmEmailAddressFromLinkAction;
 use HiEvents\Http\Actions\Users\ConfirmEmailAddressAction;
 use HiEvents\Http\Actions\Users\ConfirmEmailChangeAction;
 use HiEvents\Http\Actions\Users\ConfirmEmailWithCodeAction;
@@ -280,6 +281,9 @@ $router->prefix('/auth')->group(
         $router->post('/logout', LogoutAction::class)->name('auth.logout');
         $router->post('/register', CreateAccountAction::class)->name('auth.register');
         $router->post('/forgot-password', ForgotPasswordAction::class)->name('auth.forgot-password');
+        $router->post('/confirm-email/{token}', ConfirmEmailAddressFromLinkAction::class)
+            ->middleware('throttle:10,1')
+            ->name('auth.confirm-email');
 
         // Invitations
         $router->get('/invitation/{invite_token}', GetUserInvitationAction::class)->name('auth.invitation');

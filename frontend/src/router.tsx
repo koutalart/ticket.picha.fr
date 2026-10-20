@@ -14,6 +14,14 @@ import {
 
 export const router: RouteObject[] = [
     {
+        path: "manage/profile/confirm-email-address/:token",
+        errorElement: <ErrorPage />,
+        async lazy() {
+            const ConfirmEmailAddress = await import("./components/routes/profile/ConfirmEmailAddress");
+            return { Component: ConfirmEmailAddress.default };
+        }
+    },
+    {
         path: "",
         loader: customDomainHomeLoader,
         async lazy() {
@@ -105,13 +113,6 @@ export const router: RouteObject[] = [
                 async lazy() {
                     const ConfirmEmailChange = await import("./components/routes/profile/ConfirmEmailChange");
                     return { Component: ConfirmEmailChange.default };
-                }
-            },
-            {
-                path: "profile/confirm-email-address/:token",
-                async lazy() {
-                    const ConfirmEmailAddress = await import("./components/routes/profile/ConfirmEmailAddress");
-                    return { Component: ConfirmEmailAddress.default };
                 }
             },
         ]
