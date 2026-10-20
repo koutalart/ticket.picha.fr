@@ -78,11 +78,10 @@ def el_logo_centre(debut=0.1):
 
 
 def diapo_accroche():
-    els = [el_degrade(560, force=235)]
-    e, _ = el_texte(940, "TU VIENS ?", unb(140, 900), BLANC, 4, glow=ROUGE, debut=0.8, mode="pop"); els.append(e)
-    fond = (f"[0:v]crop=720:900:0:0,scale=1350:1688,zoompan=z='1.02+0.02*sin(2*PI*on/{int(FPS * D)})':"
-            f"x='iw/2-(iw/zoom/2)':y='ih/3-(ih/zoom/3)':d=1:s={W}x{H}:fps={FPS},setsar=1,format=yuv420p[bg]")
-    return els, ["-loop", "1", "-framerate", str(FPS), "-t", str(D), "-i", f"{S}/visuel-vertical.jpg"], fond
+    """Première page : le visuel 16:9 du client recadré en portrait (agrandi par IA), zoom lent, sans texte ajouté."""
+    fond = (f"[0:v]scale=1350:1688,zoompan=z='1.0+0.0008*on':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+            f"d={int(FPS * D)}:s={W}x{H}:fps={FPS},setsar=1,format=yuv420p[bg]")
+    return [], ["-loop", "1", "-framerate", str(FPS), "-t", str(D), "-i", f"{S}/premiere-page.jpg"], fond
 
 
 def diapo_artiste(detoure, clip, debut_clip, nom, crop_clip):
