@@ -21,7 +21,12 @@ import classes from './OrganizerDashboard.module.scss';
 type EventsTab = 'all' | 'upcoming' | 'ended' | 'drafts';
 
 const eventFilters = (tab: EventsTab, organizerId: string | undefined, query: string): QueryFilters => {
-    const base: QueryFilters = {perPage: 20, query: query || undefined};
+    const base: QueryFilters = {
+        perPage: 20,
+        query: query || undefined,
+        sortBy: 'start_date',
+        sortDirection: tab === 'upcoming' ? 'asc' : 'desc',
+    };
 
     if (tab === 'upcoming' || tab === 'ended') {
         return getEventQueryFiltersWithParams(base, tab, organizerId) as QueryFilters;
