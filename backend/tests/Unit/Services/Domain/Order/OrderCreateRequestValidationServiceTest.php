@@ -384,6 +384,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $secondProduct = Mockery::mock(ProductDomainObject::class);
         $secondProduct->shouldReceive('getUnlockAfterProductId')->andReturn(null);
         $secondProduct->shouldReceive('getId')->andReturn(20);
+        $secondProduct->shouldReceive('getProductType')->andReturn('TICKET');
         $secondProduct->shouldReceive('getEventId')->andReturn(1);
         $secondProduct->shouldReceive('getTitle')->andReturn('Exposant');
         $secondProduct->shouldReceive('getMaxPerOrder')->andReturn(100);
@@ -417,6 +418,56 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testOptionAloneIsRejectedWhenTheEventSellsTickets(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 13,
+            priceIds: [131],
+            priceLabels: [null],
+            availabilities: [
+                ['price_id' => 131, 'quantity_available' => 50, 'quantity_reserved' => 0],
+            ],
+            productType: 'GENERAL',
+        );
+        $this->productRepository->shouldReceive('findFirstWhere')
+            ->with(['event_id' => 1, 'product_type' => 'TICKET'])
+            ->andReturn(Mockery::mock(ProductDomainObject::class));
+
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('This option can only be ordered together with a ticket.');
+
+        $this->service->validateRequestData(1, [
+            'products' => [
+                ['product_id' => 13, 'quantities' => [['price_id' => 131, 'quantity' => 1]]],
+            ],
+        ]);
+    }
+
+    public function testOptionAloneIsAllowedWhenTheEventSellsNoTickets(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 13,
+            priceIds: [131],
+            priceLabels: [null],
+            availabilities: [
+                ['price_id' => 131, 'quantity_available' => 50, 'quantity_reserved' => 0],
+            ],
+            productType: 'GENERAL',
+        );
+        $this->productRepository->shouldReceive('findFirstWhere')
+            ->with(['event_id' => 1, 'product_type' => 'TICKET'])
+            ->andReturnNull();
+
+        $this->service->validateRequestData(1, [
+            'products' => [
+                ['product_id' => 13, 'quantities' => [['price_id' => 131, 'quantity' => 1]]],
+            ],
+        ]);
+        $this->assertTrue(true);
+    }
+
     private function setupMocks(
         int   $eventId,
         int   $productId,
@@ -428,6 +479,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         bool  $singleProductPerOrder = false,
         ?Collection $extraProducts = null,
         ?int $unlockAfterProductId = null,
+        string $productType = 'TICKET',
     ): void
     {
         $event = Mockery::mock(EventDomainObject::class);
@@ -459,6 +511,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $product->shouldReceive('getIsSalesPaused')->andReturn(false);
         $product->shouldReceive('getUnlockAfterProductId')->andReturn($unlockAfterProductId);
         $product->shouldReceive('getIsHidden')->andReturn(false);
+        $product->shouldReceive('getProductType')->andReturn($productType);
         $product->shouldReceive('getType')->andReturn(ProductPriceType::TIERED->name);
         $product->shouldReceive('getProductPrices')->andReturn($productPrices);
 
