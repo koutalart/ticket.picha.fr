@@ -25,6 +25,9 @@ jauges, personnes scannées et scans par heure. Aucun montant encaissé, aucune 
 
 ## Mise à jour d'un cas client
 
+Un cas client marqué `lockedFigures: true` porte des chiffres fournis par l'organisateur (ex. visiteurs comptés sur place,
+inscriptions manuelles) : ne jamais le modifier, même si la billetterie donne d'autres chiffres.
+
 Pour chaque cas client relié à un événement, comparer avec les chiffres publiés. S'ils ont changé :
 - mettre à jour `attendees`, `results`, `headline`, `summary` et `updatedAt` (date du jour) ;
 - avant l'événement : ventes ou inscriptions, rythme de vente, offres épuisées ;
