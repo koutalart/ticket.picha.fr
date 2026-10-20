@@ -10,7 +10,8 @@ ROUGE = (220, 30, 30)
 BLANC = (255, 255, 255)
 NOIR = (20, 8, 8)
 
-VISUEL = Image.open(f"{S}/visuel-client.webp").convert("RGB")
+VISUEL_16_9 = Image.open(f"{S}/visuel-client.webp").convert("RGB")
+VISUEL = Image.open(f"{S}/visuel-vertical.jpg").convert("RGB")
 FLYER = Image.open(f"{S}/flyer-halloween.jpg").convert("RGB")
 _LOGO = Image.open(f"{S}/logo-innocent.png").convert("RGBA")
 

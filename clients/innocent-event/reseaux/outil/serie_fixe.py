@@ -4,7 +4,7 @@ from commun import *
 
 def story_compte(cle, nom):
     titre, sous = ACCROCHES[cle]
-    g = fond(1080, 1920, blur=8, dark=0.62, cx={"J-5": 0.0, "J-4": 1.0, "J-3": 0.0, "J-2": 1.0, "DEMAIN": 0.0, "CE-SOIR": 1.0}[cle])
+    g = fond(1080, 1920, blur=40, dark=0.45)
     g.alpha_composite(logo_blanc(130), (int((1080 - logo_blanc(130).width) / 2), 180))
     y = 560
     y += texte(g, y, "HALLOWEEN AU 5/5", unb(40, 600), ACC, 10) + 40
@@ -16,7 +16,7 @@ def story_compte(cle, nom):
 
 
 def post_djs(nom):
-    p = fond(1080, 1350, blur=10, dark=0.45)
+    p = fond(1080, 1350, blur=40, dark=0.42)
     p.alpha_composite(logo_blanc(90), (int((1080 - logo_blanc(90).width) / 2), 90))
     y = 270
     y += texte(p, y, "AUX PLATINES", unb(40, 600), ACC, 12) + 60
@@ -30,7 +30,7 @@ def post_djs(nom):
 
 
 def flash_epuisee(nom, W, H):
-    p = fond(W, H, blur=18, dark=0.35)
+    p = fond(W, H, blur=40, dark=0.35)
     p.alpha_composite(logo_blanc(110), (int((W - logo_blanc(110).width) / 2), 120 if H < 1500 else 180))
     y = 330 if H < 1500 else 560
     y += badge(p, y, "VENTE FLASH ÉPUISÉE", unb(34, 800)) + 70
@@ -43,9 +43,9 @@ def flash_epuisee(nom, W, H):
 
 
 def post_jour(nom, titre, sous):
-    p = Image.new("RGBA", (1080, 1350), (10, 3, 3, 255))
-    carte(p, VISUEL.resize((1020, 574), Image.LANCZOS), 60)
-    y = 720
+    p = fond(1080, 1350, dark=0.3)
+    carte(p, VISUEL.crop((0, 0, 720, 840)).resize((560, 653), Image.LANCZOS), 50)
+    y = 760
     y += texte(p, y, titre, ajuste(titre, 160, 900, 6, 1000), ACC, 6, glow=ROUGE) + 40
     y += texte(p, y, sous, ajuste(sous, 54, 800, 4, 980), BLANC, 4) + 60
     y += texte(p, y, "SAMEDI 31 OCTOBRE AU 5/5, MAMOUDZOU", ajuste("SAMEDI 31 OCTOBRE AU 5/5, MAMOUDZOU", 32, 600, 3, 980), BLANC, 3) + 70
@@ -54,7 +54,7 @@ def post_jour(nom, titre, sous):
 
 
 def post_merci(nom):
-    p = fond(1080, 1350, blur=22, dark=0.42)
+    p = fond(1080, 1350, blur=40, dark=0.42)
     p.alpha_composite(logo_blanc(120), (int((1080 - logo_blanc(120).width) / 2), 160))
     y = 470
     y += texte(p, y, "MERCI", unb(230, 900), BLANC, 6, glow=ROUGE) + 40

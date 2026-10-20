@@ -89,15 +89,13 @@ def story_compte(cle):
 
 
 def story_annonce():
-    els = [el_logo(170, 140, 0.1)]
-    y = 420
-    e, h = el_texte(y, "HALLOWEEN AU 5/5", unb(46, 700), ACC, 10, debut=0.3); els.append(e); y += h + 50
-    els.append(Element(calque(lambda c: carte(c, VISUEL.crop((280, 0, 1000, 720)).resize((900, 900), Image.LANCZOS), y)), 0.5, "monte", duree=0.9))
-    y += 900 + 80
-    e, h = el_badge(y, "VENTE FLASH", unb(30, 800), debut=1.4); els.append(e); y += h + 30
-    e, h = el_texte(y, "15 €", unb(150, 900), BLANC, 4, glow=ACC, debut=1.7, mode="pop"); els.append(e); y += h + 24
-    e, h = el_texte(y, "100 PLACES SEULEMENT", unb(36, 700), ACC, 4, debut=2.1); els.append(e); y += h + 40
-    e, _ = el_texte(y, "LIEN EN BIO", unb(30, 600), BLANC, 10, debut=2.4, mode="pop", pulse=True); els.append(e)
+    from serie_base import bande_basse
+    els = [Element(calque(lambda c: bande_basse(c, 1530, h_fondu=60)), 0.3, "monte", duree=0.8)]
+    y = 1545
+    e, h = el_badge(y, "VENTE FLASH", unb(28, 800), debut=0.8); els.append(e); y += h + 20
+    e, h = el_texte(y, "15 €", unb(118, 900), BLANC, 4, glow=ACC, debut=1.1, mode="pop"); els.append(e); y += h + 20
+    e, h = el_texte(y, "100 PLACES SEULEMENT", unb(34, 700), ACC, 4, debut=1.5); els.append(e); y += h + 26
+    e, _ = el_texte(y, "LIEN EN BIO", unb(28, 600), BLANC, 10, debut=1.8, mode="pop", pulse=True); els.append(e)
     return els
 
 
@@ -129,13 +127,14 @@ def story_epuisee():
     return els
 
 
-def rendre(els, sortie, cx):
+def rendre(els, sortie, cx, net=False):
     # fond : visuel du client recadré à la verticale, zoom qui respire (aller-retour), assombri ; boucle sans coupure
-    zp = (f"[0:v]scale=-2:2400,crop=1350:2400:(iw-1350)*{cx}:0,boxblur=18:2,eq=brightness=-0.36:saturation=1.1,"
-          f"zoompan=z='1.05+0.04*sin(2*PI*on/{int(FPS * D)})':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps={FPS},"
+    traitement = "eq=saturation=1.05" if net else "boxblur=30:2,eq=brightness=-0.40:saturation=1.1"
+    zp = (f"[0:v]scale=1350:2400,{traitement},"
+          f"zoompan=z='{"1.03+0.02" if net else "1.05+0.04"}*sin(2*PI*on/{int(FPS * D)})':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps={FPS},"
           f"vignette=PI/4,format=yuv420p[bg];[bg][1:v]overlay=shortest=1,format=yuv420p[o]")
     proc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-                             "-loop", "1", "-framerate", str(FPS), "-t", str(D), "-i", f"{S}/visuel-client.webp",
+                             "-loop", "1", "-framerate", str(FPS), "-t", str(D), "-i", f"{S}/visuel-vertical.jpg",
                              "-f", "rawvideo", "-pix_fmt", "rgba", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                              "-filter_complex", zp, "-map", "[o]", "-an", "-t", str(D),
                              "-c:v", "libx264", "-preset", "slow", "-crf", "23", "-profile:v", "high", "-pix_fmt", "yuv420p",
@@ -166,5 +165,5 @@ STORIES = {
 if __name__ == "__main__":
     nom = sys.argv[1]
     fn, cx = STORIES[nom]
-    rendre(fn(), f"{SORTIE}/motion/{nom}.mp4", cx)
+    rendre(fn(), f"{SORTIE}/motion/{nom}.mp4", cx, net=(nom == "02-story-annonce"))
     print("ok", nom)
