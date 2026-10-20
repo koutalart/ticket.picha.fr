@@ -73,7 +73,7 @@ def post_le_d():
     degrade(e, 220, top=True, force=180)
     y = 920
     y += texte(e, y, "LE D", unb(190, 900), BLANC, 6, glow=ROUGE) + 20
-    y += texte(e, y, "EN LIVE", unb(60, 800), ACC, 10) + 40
+    y += texte(e, y, "SHOWCASE", unb(60, 800), ACC, 10) + 40
     texte(e, y, "SAMEDI 31 OCTOBRE AU 5/5", unb(34, 600), BLANC, 4)
     e.alpha_composite(logo_blanc(80), (60, 60))
     e.convert("RGB").save(f"{SORTIE}/04-post-le-d.jpg", quality=92)
