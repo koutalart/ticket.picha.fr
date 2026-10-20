@@ -79,6 +79,22 @@ def post_le_d():
     e.convert("RGB").save(f"{SORTIE}/04-post-le-d.jpg", quality=92)
 
 
+def post_jah():
+    ph = Image.open(f"{S}/photo-jah.jpg").convert("RGB")
+    h = int(ph.width * 1350 / 1080)
+    y0 = ph.height - h
+    ph = ph.crop((0, y0, ph.width, y0 + h)).resize((1080, 1350), Image.LANCZOS)
+    e = ph.convert("RGBA")
+    degrade(e, 640)
+    degrade(e, 220, top=True, force=150)
+    y = 920
+    y += texte(e, y, "JAH D ONE", ajuste("JAH D ONE", 190, 900, 6, 1000), BLANC, 6, glow=ROUGE) + 20
+    y += texte(e, y, "SHOWCASE", unb(60, 800), ACC, 10) + 40
+    texte(e, y, "SAMEDI 31 OCTOBRE AU 5/5", unb(34, 600), BLANC, 4)
+    e.alpha_composite(logo_blanc(130), (int((1080 - logo_blanc(130).width) / 2), 45))
+    e.convert("RGB").save(f"{SORTIE}/05-post-jah-d-one.jpg", quality=92)
+
+
 def story_team():
     h = fond(1080, 1920, blur=40, dark=0.42)
     h.alpha_composite(logo_blanc(130), (int((1080 - logo_blanc(130).width) / 2), 180))
@@ -96,6 +112,6 @@ post_annonce()
 story_annonce()
 post_vente_flash()
 post_le_d()
-post_artiste("05-post-jah-d-one", (455, 340, 860, 830), "JAH D ONE", "SHOWCASE")
+post_jah()
 story_team()
 print("ok")
