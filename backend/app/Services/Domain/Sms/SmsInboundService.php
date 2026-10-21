@@ -84,6 +84,11 @@ class SmsInboundService
     }
 
     /**
+     * Updates the status of the message the event is about, looked up only among the given organizers
+     * (the organizers of the line, the settings organizer by default). Unknown messages are stored for the settings organizer.
+     *
+     * @param  array<int, int>|null  $organizerIds
+     *
      * @throws InvalidSmsPhoneNumberException
      * @throws Throwable
      */
@@ -91,9 +96,16 @@ class SmsInboundService
         OrganizerSmsSettingDomainObject $settings,
         OutboundSmsEventDTO $event,
         bool $fromHistory = false,
-    ): SmsMessageDomainObject {
-        $existing = $this->findByProviderId($event->providerMessageId)
-            ?? $this->findByRequestId($settings->getOrganizerId(), $event->requestId);
+        ?array $organizerIds = null,
+    ): ?SmsMessageDomainObject {
+        $organizerIds ??= [$settings->getOrganizerId()];
+
+        $byProviderId = $this->findByProviderId($event->providerMessageId);
+        if ($byProviderId !== null && ! in_array($byProviderId->getOrganizerId(), $organizerIds, true)) {
+            return null;
+        }
+
+        $existing = $byProviderId ?? $this->findByRequestId($organizerIds, $event->requestId);
 
         if ($existing !== null) {
             return $this->updateStatus($existing, $event);
@@ -181,16 +193,23 @@ class SmsInboundService
         ]);
     }
 
-    private function findByRequestId(int $organizerId, ?string $requestId): ?SmsMessageDomainObject
+    private function findByRequestId(array $organizerIds, ?string $requestId): ?SmsMessageDomainObject
     {
         if ($requestId === null || ! str_starts_with($requestId, SmsSendService::REQUEST_ID_PREFIX)) {
             return null;
         }
 
-        return $this->messageRepository->findFirstWhere([
-            SmsMessageDomainObjectAbstract::ORGANIZER_ID => $organizerId,
-            SmsMessageDomainObjectAbstract::REQUEST_ID => $requestId,
-        ]);
+        $organizerIds = array_values($organizerIds);
+
+        return $this->messageRepository->findFirstWhere(count($organizerIds) === 1
+            ? [
+                SmsMessageDomainObjectAbstract::ORGANIZER_ID => $organizerIds[0],
+                SmsMessageDomainObjectAbstract::REQUEST_ID => $requestId,
+            ]
+            : [
+                [SmsMessageDomainObjectAbstract::ORGANIZER_ID, 'in', $organizerIds],
+                SmsMessageDomainObjectAbstract::REQUEST_ID => $requestId,
+            ]);
     }
 
     /**

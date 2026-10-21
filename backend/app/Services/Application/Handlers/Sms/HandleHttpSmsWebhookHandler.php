@@ -17,11 +17,14 @@ use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
-use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
 use HiEvents\Services\Domain\Sms\SmsAlertService;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
+use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
+use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
+use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
+use Illuminate\Support\Collection;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -55,6 +58,8 @@ class HandleHttpSmsWebhookHandler
         private readonly SmsCampaignDeliveryService $campaignDeliveryService,
         private readonly SmsAlertService $alertService,
         private readonly SmsAssistantService $assistantService,
+        private readonly SmsLineService $lineService,
+        private readonly SmsUnattributedSmsService $unattributedService,
         private readonly LoggerInterface $logger,
     ) {}
 
@@ -67,6 +72,14 @@ class HandleHttpSmsWebhookHandler
         $settings = $this->settingsService->findByWebhookToken($dto->webhookToken);
         if ($settings === null) {
             throw new SmsWebhookUnauthorizedException('Unknown webhook');
+        }
+
+        if ($settings->getSharedLineSettingsId() !== null) {
+            $this->logger->warning('httpSMS webhook rejected: the organizer uses a shared line, only the line webhook is accepted', [
+                'organizer_id' => $settings->getOrganizerId(),
+            ]);
+
+            throw new SmsWebhookUnauthorizedException('Webhook of a shared line member');
         }
 
         $this->signatureVerifier->verify($dto->bearerToken, (string) $settings->getWebhookSigningKey());
@@ -130,16 +143,24 @@ class HandleHttpSmsWebhookHandler
                 return;
             }
 
-            $message = $this->inboundService->recordInbound($settings, new InboundSmsDTO(
+            $sms = new InboundSmsDTO(
                 providerMessageId: $messageId,
                 contact: $data['contact'],
                 content: (string) ($data['content'] ?? ''),
                 timestamp: $data['timestamp'] ?? null,
-            ));
+            );
+
+            $members = $this->lineService->members($settings);
+            $target = $members->count() > 1 ? $this->attributeInbound($settings, $members, $sms) : $settings;
+            if ($target === null) {
+                return;
+            }
+
+            $message = $this->inboundService->recordInbound($target, $sms);
 
             if ($message !== null) {
-                $this->alertService->notifyInbound($settings, $message);
-                $this->assistantService->queueDraftIfEligible($settings, $message);
+                $this->alertService->notifyInbound($target, $message);
+                $this->assistantService->queueDraftIfEligible($target, $message);
             }
 
             return;
@@ -155,15 +176,18 @@ class HandleHttpSmsWebhookHandler
             return;
         }
 
+        $members = $this->lineService->members($settings);
+        $organizerIds = $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all();
+
         $this->campaignDeliveryService->applyProviderStatus(
-            organizerId: $settings->getOrganizerId(),
+            organizerIds: $organizerIds,
             providerMessageId: $messageId,
             status: SmsCampaignRecipientStatus::from($status->value),
             failureReason: $data['error_message'] ?? null,
             timestamp: $data['timestamp'] ?? null,
         );
 
-        $this->inboundService->recordOutboundEvent($settings, new OutboundSmsEventDTO(
+        $this->inboundService->recordOutboundEvent($this->outboundOwner($settings, $members, $messageId), new OutboundSmsEventDTO(
             status: $status,
             providerMessageId: $messageId,
             contact: $data['contact'],
@@ -171,7 +195,63 @@ class HandleHttpSmsWebhookHandler
             requestId: isset($data['request_id']) && $data['request_id'] !== '' ? (string) $data['request_id'] : null,
             errorMessage: $data['error_message'] ?? null,
             timestamp: $data['timestamp'] ?? null,
-        ));
+        ), organizerIds: $organizerIds);
+    }
+
+    /**
+     * On a line shared by several organizers, the SMS goes to the organizer who wrote last to the number.
+     * When nobody did within the attribution window, it is kept for the platform and no organizer sees it.
+     *
+     * @param  Collection<int, OrganizerSmsSettingDomainObject>  $members
+     *
+     * @throws InvalidSmsPhoneNumberException
+     * @throws Throwable
+     */
+    private function attributeInbound(OrganizerSmsSettingDomainObject $line, Collection $members, InboundSmsDTO $sms): ?OrganizerSmsSettingDomainObject
+    {
+        if ($this->unattributedService->isKnown($sms->providerMessageId)) {
+            return null;
+        }
+
+        $phone = SmsPhoneNormalizer::normalize($sms->contact);
+        if ($phone === null) {
+            throw new InvalidSmsPhoneNumberException(__('Invalid phone number'));
+        }
+
+        $target = $this->lineService->attributeInbound($members, $phone);
+        if ($target !== null) {
+            return $target;
+        }
+
+        $unattributed = $this->unattributedService->record($line, $members, $sms, $phone);
+        if ($unattributed !== null) {
+            $this->logger->info('httpSMS inbound SMS kept unattributed on a shared line', [
+                'line_settings_id' => $line->getId(),
+                'sms_unattributed_message_id' => $unattributed->getId(),
+                'opt_out_applied_to_all_organizers' => $unattributed->getOptOutApplied(),
+            ]);
+        }
+
+        return null;
+    }
+
+    /**
+     * The organizer a message unknown to PICHA is stored for: the organizer of the campaign that sent it, otherwise the line owner.
+     *
+     * @param  Collection<int, OrganizerSmsSettingDomainObject>  $members
+     */
+    private function outboundOwner(OrganizerSmsSettingDomainObject $line, Collection $members, string $providerMessageId): OrganizerSmsSettingDomainObject
+    {
+        if ($members->count() <= 1) {
+            return $line;
+        }
+
+        $organizerId = $this->campaignDeliveryService->findCampaignOrganizerId(
+            $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all(),
+            $providerMessageId,
+        );
+
+        return $members->first(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId() === $organizerId) ?? $line;
     }
 
     private function ownerMatches(OrganizerSmsSettingDomainObject $settings, mixed $owner): bool

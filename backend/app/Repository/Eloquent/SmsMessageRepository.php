@@ -7,6 +7,7 @@ namespace HiEvents\Repository\Eloquent;
 use HiEvents\DomainObjects\Enums\SmsMessageDirection;
 use HiEvents\DomainObjects\Generated\SmsMessageDomainObjectAbstract;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
+use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\Models\SmsMessage;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use Illuminate\Support\Collection;
@@ -47,5 +48,28 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->get();
 
         return $this->handleResults($messages)->reverse()->values();
+    }
+
+    public function findLastOutboundOrganizerId(array $organizerIds, string $phone, string $since): ?int
+    {
+        if ($organizerIds === []) {
+            return null;
+        }
+
+        $sentAt = 'COALESCE(sms_messages.provider_timestamp, sms_messages.created_at)';
+
+        $organizerId = SmsMessage::query()
+            ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
+            ->whereIn('sms_messages.organizer_id', $organizerIds)
+            ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
+            ->where('sms_conversations.phone', $phone)
+            ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+            ->whereNotIn('sms_messages.status', [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name])
+            ->whereRaw($sentAt.' >= ?', [$since])
+            ->orderByRaw($sentAt.' DESC')
+            ->orderByDesc('sms_messages.id')
+            ->value('sms_messages.organizer_id');
+
+        return $organizerId === null ? null : (int) $organizerId;
     }
 }

@@ -15,6 +15,7 @@ use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\SmsHistoryImportService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
+use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Infrastructure\HttpSms\HttpSmsClient;
 use Mockery;
 use Mockery\MockInterface;
@@ -31,6 +32,8 @@ class SmsHistoryImportServiceTest extends TestCase
 
     private OrganizerSmsSettingRepositoryInterface|MockInterface $settingsRepository;
 
+    private SmsLineService|MockInterface $lineService;
+
     private SmsHistoryImportService $service;
 
     protected function setUp(): void
@@ -41,12 +44,15 @@ class SmsHistoryImportServiceTest extends TestCase
         $this->inboundService = Mockery::mock(SmsInboundService::class);
         $this->messageRepository = Mockery::mock(SmsMessageRepositoryInterface::class);
         $this->settingsRepository = Mockery::mock(OrganizerSmsSettingRepositoryInterface::class);
+        $this->lineService = Mockery::mock(SmsLineService::class);
+        $this->lineService->shouldReceive('isShared')->andReturnFalse()->byDefault();
 
         $this->service = new SmsHistoryImportService(
             $this->client,
             $this->inboundService,
             $this->messageRepository,
             $this->settingsRepository,
+            $this->lineService,
             new NullLogger,
         );
     }
@@ -57,6 +63,15 @@ class SmsHistoryImportServiceTest extends TestCase
         $this->settingsRepository->shouldNotReceive('updateFromArray');
 
         $this->service->markStarted((new OrganizerSmsSettingDomainObject)->setId(1)->setApiKey('uk_key'));
+    }
+
+    public function test_mark_started_refuses_a_shared_line(): void
+    {
+        $this->lineService->shouldReceive('isShared')->andReturnTrue();
+        $this->settingsRepository->shouldNotReceive('updateFromArray');
+
+        $this->expectException(ResourceConflictException::class);
+        $this->service->markStarted($this->settings());
     }
 
     public function test_mark_started_refuses_a_running_import(): void

@@ -114,8 +114,8 @@ class SmsCampaignStatsTest extends TestCase
         $this->import();
         $service = app(SmsCampaignDeliveryService::class);
 
-        self::assertFalse($service->applyProviderStatus($this->event->organizer_id + 1, 'prov-3', SmsCampaignRecipientStatus::DELIVERED));
-        self::assertTrue($service->applyProviderStatus($this->event->organizer_id, 'prov-3', SmsCampaignRecipientStatus::DELIVERED, null, '2026-10-21T09:00:00Z'));
+        self::assertFalse($service->applyProviderStatus([$this->event->organizer_id + 1], 'prov-3', SmsCampaignRecipientStatus::DELIVERED));
+        self::assertTrue($service->applyProviderStatus([$this->event->organizer_id], 'prov-3', SmsCampaignRecipientStatus::DELIVERED, null, '2026-10-21T09:00:00Z'));
 
         $recipient = SmsCampaignRecipient::where('provider_message_id', 'prov-3')->first();
         self::assertSame('DELIVERED', $recipient->status);
