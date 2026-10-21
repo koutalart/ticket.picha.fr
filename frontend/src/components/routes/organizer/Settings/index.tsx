@@ -86,7 +86,7 @@ const Settings = () => {
             },
             {
                 id: 'sms',
-                label: t`SMS (httpSMS)`,
+                label: t`PICHA SMS`,
                 icon: IconMessage,
                 component: SmsSettings,
             },

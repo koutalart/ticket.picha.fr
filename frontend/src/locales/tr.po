@@ -32,7 +32,7 @@ msgstr "—"
 msgid "'There\\'s nothing to show yet'"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:221
 msgid "(emoji or special characters: 70 characters per SMS)"
 msgstr "(emoji veya özel karakterler: SMS başına 70 karakter)"
 
@@ -89,7 +89,8 @@ msgstr ""
 msgid "{0} available"
 msgstr "{0} mevcut"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:164
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:118
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:220
 msgid "{0} characters, {1} SMS"
 msgstr "{0} karakter, {1} SMS"
 
@@ -132,7 +133,7 @@ msgstr ""
 msgid "{0} logo"
 msgstr "{0} logosu"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:56
 msgid "{0} orders, {1} events"
 msgstr "{0} sipariş, {1} etkinlik"
 
@@ -242,6 +243,10 @@ msgstr ""
 #: src/components/organizerTemplates/Tour/index.tsx:221
 msgid "{place}, from {0}"
 msgstr "{place}, {0} itibarıyla"
+
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:41
+msgid "{received} SMS received, {sent} SMS sent"
+msgstr "{received} SMS alındı, {sent} SMS gönderildi"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:853
 msgid "{remaining} remaining"
@@ -453,6 +458,10 @@ msgstr "İptal bildirimi gönderildi:"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "Mekan ağındaki bir bilgisayar PICHA yazdırma rölesini çalıştırır. Bu istasyondan yazdırılan biletleri alır ve Zebra'ya gönderir."
 
+#: src/components/routes/organizer/Sms/index.tsx:81
+msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
+msgstr "STOP yanıtı veren müşteri SMS'lerinizden otomatik olarak çıkarılır."
+
 #: src/components/forms/QuestionForm/index.tsx:146
 msgid "A date input. Perfect for asking for a date of birth etc."
 msgstr "Tarih girişi. Doğum tarihi sormak gibi durumlar için mükemmel."
@@ -485,7 +494,7 @@ msgstr ""
 msgid "A fixed amount per product. E.g, $0.50 per product"
 msgstr "Ürün başına sabit miktar. Örn. ürün başına 0,50 $"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:161
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:186
 msgid "A key is saved. Paste a new one to replace it."
 msgstr "Bir anahtar kayıtlı. Değiştirmek için yenisini yapıştırın."
 
@@ -590,7 +599,7 @@ msgstr ""
 msgid "Abandoned"
 msgstr "Terk edildi"
 
-#: src/components/layouts/EventHomepage/index.tsx:435
+#: src/components/layouts/EventHomepage/index.tsx:433
 msgid "About"
 msgstr "Hakkında"
 
@@ -781,6 +790,10 @@ msgstr ""
 msgid "Add a photo"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:96
+msgid "Add a reply template"
+msgstr "Hazır yanıt ekle"
+
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:276
 msgid "Add a service"
 msgstr ""
@@ -880,6 +893,10 @@ msgstr "Soru Ekle"
 msgid "Add Tax or Fee"
 msgstr "Vergi veya Ücret Ekle"
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:71
+msgid "Add the number"
+msgstr "Numarayı ekle"
+
 #: src/components/common/AddToCalendarCTA/index.tsx:20
 msgid "Add this event to your calendar"
 msgstr "Bu etkinliği takviminize ekleyin"
@@ -906,7 +923,7 @@ msgstr "Kademe ekle"
 
 #: src/components/common/AddEventToCalendarButton/index.tsx:14
 #: src/components/common/AddToCalendarCTA/index.tsx:24
-#: src/components/layouts/EventHomepage/index.tsx:368
+#: src/components/layouts/EventHomepage/index.tsx:366
 msgid "Add to Calendar"
 msgstr "Takvime Ekle"
 
@@ -921,9 +938,9 @@ msgstr ""
 msgid "Add Webhook"
 msgstr "Webhook Ekle"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:137
-msgid "Add your httpSMS API key and sending number in Settings to reply from here."
-msgstr "Buradan yanıt vermek için Ayarlar'a httpSMS API anahtarınızı ve gönderen numaranızı ekleyin."
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:192
+msgid "Add your PICHA SMS API key and sending number in Settings to reply from here."
+msgstr "Buradan yanıt vermek için Ayarlar'a PICHA SMS API anahtarınızı ve gönderen numaranızı ekleyin."
 
 #: src/components/routes/event/GettingStarted/index.tsx:102
 msgid "Add your poster to make the page more attractive."
@@ -932,6 +949,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:185
 msgid "Add your social media handles and website URL. These will be displayed on your public organizer page."
 msgstr "Sosyal medya hesaplarınızı ve web sitesi URL'nizi ekleyin. Bunlar herkese açık organizatör sayfanızda görüntülenecektir."
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
+msgid "Added by hand"
+msgstr "Elle eklendi"
 
 #: src/components/routes/kiosk/Orders/index.tsx:211
 msgid "Added manually"
@@ -949,7 +970,7 @@ msgstr "Ek Bilgiler"
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:132
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
-#: src/components/routes/organizer/Settings/index.tsx:45
+#: src/components/routes/organizer/Settings/index.tsx:47
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
 msgstr "Adres"
@@ -1069,7 +1090,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
-#: src/components/routes/organizer/Sms/ConversationList.tsx:45
+#: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
 msgstr "Tümü"
 
@@ -1310,7 +1331,7 @@ msgstr "Cevap başarıyla güncellendi."
 msgid "Any queries from product holders will be sent to this email address. This will also be used as the \"reply-to\" address for all emails sent from this event"
 msgstr "Ürün sahiplerinden gelen tüm sorular bu e-posta adresine gönderilecektir. Bu aynı zamanda bu etkinlikten gönderilen tüm e-postalar için \"yanıtla\" adresi olarak da kullanılacaktır"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:69
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:86
 msgid "API key removed"
 msgstr "API anahtarı kaldırıldı"
 
@@ -1570,6 +1591,10 @@ msgstr "Atanan Seviye"
 msgid "Assistant"
 msgstr "Asistan"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:58
+msgid "Assistant settings saved"
+msgstr "Asistan ayarları kaydedildi"
+
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:40
 msgid "Associate your brand with our events."
 msgstr ""
@@ -1810,7 +1835,7 @@ msgstr "Çevrimdışı Ödeme Bekleniyor"
 #~ msgid "Awaiting Offline Pmt."
 #~ msgstr "Çevrimdışı Ödeme Bekleniyor"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:62
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:76
 msgid "awaiting payment"
 msgstr "ödeme bekleniyor"
 
@@ -1854,7 +1879,7 @@ msgstr "Harika Organizatör Ltd."
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:433
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:83
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:133
 msgid "Back"
 msgstr "Geri"
 
@@ -1914,7 +1939,7 @@ msgstr "Yaka kartı + giriş"
 msgid "Badge printing…"
 msgstr "Yaka kartı basılıyor…"
 
-#: src/components/routes/organizer/Settings/index.tsx:33
+#: src/components/routes/organizer/Settings/index.tsx:35
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
 msgstr "Temel Bilgiler"
@@ -2144,7 +2169,7 @@ msgstr ""
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
-#: src/components/routes/organizer/Sms/index.tsx:97
+#: src/components/routes/organizer/Sms/index.tsx:108
 msgid "Campaigns"
 msgstr ""
 
@@ -2214,7 +2239,7 @@ msgstr "İptal etmek, bu siparişle ilişkili tüm katılımcıları iptal edece
 msgid "Cancellation and refund conditions are set by the organizer. Contact them before the event for any request."
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:61
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:75
 msgid "cancelled"
 msgstr "iptal edildi"
 
@@ -2906,7 +2931,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:96
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:145
 msgid "Configured"
 msgstr "Yapılandırıldı"
 
@@ -2987,13 +3012,13 @@ msgstr "Bağlan ve Yükselt"
 msgid "Connect Documentation"
 msgstr "Dokümantasyonu Bağla"
 
-#: src/components/routes/organizer/Sms/index.tsx:71
-msgid "Connect httpSMS in Settings"
-msgstr "httpSMS'i Ayarlar'dan bağlayın"
-
 #: src/components/routes/event/EventDashboard/index.tsx:250
 #~ msgid "Connect payment processing"
 #~ msgstr "Ödeme işlemeyi bağla"
+
+#: src/components/routes/organizer/Sms/index.tsx:89
+msgid "Connect PICHA SMS in Settings"
+msgstr "PICHA SMS'i Ayarlar'dan bağlayın"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:95
 #: src/components/layouts/OrganizerLayout/index.tsx:103
@@ -3048,17 +3073,17 @@ msgstr "Ödeme almaya başlamak için Stripe hesabınızı bağlayın."
 msgid "Connected at"
 msgstr "Bağlantı saati"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:103
-msgid "Connected to httpSMS, but no phone is registered. Install the httpSMS app on your Android phone."
-msgstr "httpSMS'e bağlanıldı ancak kayıtlı telefon yok. Android telefonunuza httpSMS uygulamasını yükleyin."
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+msgid "Connected to PICHA SMS, but no phone is registered. Install the PICHA SMS app on your Android phone."
+msgstr "PICHA SMS'e bağlanıldı ancak kayıtlı telefon yok. Android telefonunuza PICHA SMS uygulamasını yükleyin."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:101
-msgid "Connected to httpSMS, but your sending number is not one of your phones: {phones}"
-msgstr "httpSMS'e bağlanıldı ancak gönderen numaranız telefonlarınız arasında değil: {phones}"
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:118
+msgid "Connected to PICHA SMS, but your sending number is not one of your phones: {phones}"
+msgstr "PICHA SMS'e bağlanıldı ancak gönderen numaranız telefonlarınız arasında değil: {phones}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:99
-msgid "Connected to httpSMS. Your sending number is registered."
-msgstr "httpSMS'e bağlanıldı. Gönderen numaranız kayıtlı."
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:116
+msgid "Connected to PICHA SMS. Your sending number is registered."
+msgstr "PICHA SMS'e bağlanıldı. Gönderen numaranız kayıtlı."
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:80
 msgid "Connected to pixel {pixel}."
@@ -3082,8 +3107,8 @@ msgid "Connection Details"
 msgstr "Bağlantı Detayları"
 
 #: src/components/common/WaitlistTable/index.tsx:149
-#: src/components/layouts/EventHomepage/index.tsx:633
-#: src/components/layouts/OrganizerHomepage/index.tsx:259
+#: src/components/layouts/EventHomepage/index.tsx:631
+#: src/components/layouts/OrganizerHomepage/index.tsx:257
 #: src/components/organizerTemplates/Poster/index.tsx:78
 #: src/components/organizerTemplates/Poster/index.tsx:247
 #: src/components/organizerTemplates/Tour/index.tsx:426
@@ -3174,7 +3199,7 @@ msgstr "Ödemeye Devam Et"
 msgid "Control how platform fees are handled for this event"
 msgstr "Bu etkinlik için platform ücretlerinin nasıl ele alınacağını kontrol edin"
 
-#: src/components/routes/organizer/Sms/index.tsx:96
+#: src/components/routes/organizer/Sms/index.tsx:107
 msgid "Conversations"
 msgstr ""
 
@@ -3292,9 +3317,9 @@ msgstr "Panoya kopyala"
 msgid "Copy URL"
 msgstr "URL'yi Kopyala"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:151
-msgid "Copy your API key from the httpSMS settings page and paste it below, with the phone number of the SIM used to send."
-msgstr "API anahtarınızı httpSMS ayarlar sayfasından kopyalayıp aşağıya, gönderim yapan SIM'in numarasıyla birlikte yapıştırın."
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:176
+msgid "Copy your API key from the PICHA SMS settings page and paste it below, with the phone number of the SIM used to send."
+msgstr "API anahtarınızı PICHA SMS ayarlar sayfasından kopyalayıp aşağıya, gönderim yapan SIM'in numarasıyla birlikte yapıştırın."
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:277
 msgid "Corporate events"
@@ -3701,10 +3726,18 @@ msgstr "Özel şablon"
 msgid "Customer"
 msgstr "Müşteri"
 
+#: src/components/routes/organizer/Sms/index.tsx:149
+msgid "Customer file"
+msgstr "Müşteri kartı"
+
 #: src/components/common/OrdersTable/index.tsx:160
 #: src/components/routes/event/OrdersPage/OrderList.tsx:111
 msgid "Customer link copied to clipboard"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:25
+msgid "Customer of {0}, no ticket for an upcoming event yet"
+msgstr "{0} müşterisi, yaklaşan bir etkinlik için henüz bileti yok"
 
 #: src/components/modals/RefundOrderModal/index.tsx:166
 msgid "Customer will receive an email confirming the refund"
@@ -3815,7 +3848,7 @@ msgstr "Tehlike bölgesi"
 
 #: src/components/common/AttendeeTable/index.tsx:372
 #: src/components/common/DangerZone/index.tsx:30
-#: src/components/routes/organizer/Settings/index.tsx:99
+#: src/components/routes/organizer/Settings/index.tsx:113
 msgid "Danger Zone"
 msgstr "Tehlike Bölgesi"
 
@@ -3936,6 +3969,7 @@ msgstr "sil"
 #: src/components/common/TaxAndFeeList/index.tsx:78
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
 msgstr "Sil"
 
@@ -3993,6 +4027,10 @@ msgstr ""
 #: src/components/routes/organizer/QrCodes/index.tsx:148
 msgid "Delete the campaign \"{0}\"? Its QR codes are kept and keep working, they just move to \"No campaign\"."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:56
+msgid "Delete the reply template \"{0}\"?"
+msgstr "\"{0}\" hazır yanıtı silinsin mi?"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:139
 msgid "Delete this QR code? Printed copies will stop working and its statistics will be lost."
@@ -4369,6 +4407,7 @@ msgstr "Erken kuş"
 #: src/components/routes/event/GettingStarted/index.tsx:76
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:65
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:114
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:84
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:236
 msgid "Edit"
 msgstr "Düzenle"
@@ -4462,6 +4501,10 @@ msgstr ""
 #: src/components/modals/EditQuestionModal/index.tsx:101
 msgid "Edit Question"
 msgstr "Soruyu Düzenle"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:103
+msgid "Edit reply template"
+msgstr "Hazır yanıtı düzenle"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:409
 msgid "Edit the price"
@@ -4578,11 +4621,11 @@ msgstr "E-posta adresi panoya kopyalandı"
 msgid "Email addresses do not match"
 msgstr "E-posta adresleri eşleşmiyor"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:106
 msgid "Email alerts disabled"
 msgstr "E-posta uyarıları kapatıldı"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:106
 msgid "Email alerts enabled"
 msgstr "E-posta uyarıları açıldı"
 
@@ -4622,7 +4665,7 @@ msgstr "E-posta alt bilgi mesajı"
 msgid "Email is required"
 msgstr "E-posta gerekli"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:196
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:221
 msgid "Email me when a new SMS arrives"
 msgstr "Yeni SMS geldiğinde bana e-posta gönder"
 
@@ -4635,7 +4678,7 @@ msgid "Email Preview"
 msgstr "E-posta Önizlemesi"
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:336
-#: src/components/routes/organizer/Settings/index.tsx:69
+#: src/components/routes/organizer/Settings/index.tsx:71
 msgid "Email Templates"
 msgstr "E-posta Şablonları"
 
@@ -4984,7 +5027,7 @@ msgid "Event date display"
 msgstr "Etkinlik tarihi gösterimi"
 
 #: src/components/routes/account/ManageAccount/sections/EventDefaultsSettings/index.tsx:5
-#: src/components/routes/organizer/Settings/index.tsx:39
+#: src/components/routes/organizer/Settings/index.tsx:41
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:73
 msgid "Event Defaults"
 msgstr "Etkinlik Varsayılanları"
@@ -5706,6 +5749,10 @@ msgstr ""
 msgid "First attendee"
 msgstr "İlk katılımcı"
 
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
+msgid "first exchange {0}"
+msgstr "ilk iletişim {0}"
+
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:206
 msgid "First Invoice Number"
 msgstr "İlk Fatura Numarası"
@@ -5794,7 +5841,7 @@ msgstr "Bu cihazda flaş mevcut değil"
 msgid "Flexible Ticketing"
 msgstr "Esnek Biletleme"
 
-#: src/components/layouts/EventHomepage/index.tsx:538
+#: src/components/layouts/EventHomepage/index.tsx:536
 msgid "Flyer: {0}"
 msgstr "Afiş: {0}"
 
@@ -5968,13 +6015,13 @@ msgstr "Oluştur"
 msgid "Generate a new relay token"
 msgstr "Yeni bir röle anahtarı oluştur"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:225
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:250
 msgid "Generate a new signing key"
 msgstr "Yeni imzalama anahtarı oluştur"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:76
-msgid "Generate a new signing key? You will need to paste it into your httpSMS webhook, otherwise incoming SMS will be rejected."
-msgstr "Yeni imzalama anahtarı oluşturulsun mu? Anahtarı httpSMS webhook'unuza yapıştırmanız gerekir, aksi halde gelen SMS'ler reddedilir."
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:93
+msgid "Generate a new signing key? You will need to paste it into your PICHA SMS webhook, otherwise incoming SMS will be rejected."
+msgstr "Yeni imzalama anahtarı oluşturulsun mu? Anahtarı PICHA SMS webhook'unuza yapıştırmanız gerekir, aksi halde gelen SMS'ler reddedilir."
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
 msgid "Generate a relay token"
@@ -5994,7 +6041,7 @@ msgstr "Almanca"
 msgid "Get directions"
 msgstr ""
 
-#: src/components/layouts/EventHomepage/index.tsx:463
+#: src/components/layouts/EventHomepage/index.tsx:461
 msgid "Get Directions"
 msgstr "Yol Tarifi Al"
 
@@ -6015,7 +6062,7 @@ msgstr "Stripe Connect üzerinden anında ödeme alın"
 msgid "Get started"
 msgstr "Başlayın"
 
-#: src/components/layouts/EventHomepage/index.tsx:655
+#: src/components/layouts/EventHomepage/index.tsx:653
 msgid "Get Tickets"
 msgstr "Bilet Al"
 
@@ -6112,6 +6159,14 @@ msgstr ""
 msgid "Guests"
 msgstr "Misafirler"
 
+#: src/components/routes/organizer/Sms/customerSummary.ts:23
+msgid "Has a ticket for {0}"
+msgstr "{0} için bileti var"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:39
+msgid "Has not replied yet"
+msgstr "Henüz yanıt vermedi"
+
 #: src/components/routes/product-widget/SelectProducts/index.tsx:656
 msgid "Have a promo code?"
 msgstr "Promosyon kodunuz var mı?"
@@ -6119,6 +6174,15 @@ msgstr "Promosyon kodunuz var mı?"
 #: src/components/routes/admin/Dashboard/index.tsx:74
 msgid "Hello {0}, manage your platform from here."
 msgstr "Merhaba {0}, platformunuzu buradan yönetin."
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:117
+msgid "Hello {SMS_FIRST_NAME_VARIABLE}, doors open at 7pm."
+msgstr "Merhaba {SMS_FIRST_NAME_VARIABLE}, kapılar saat 19:00'da açılıyor."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:65
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:129
+msgid "Hello, how much is the entry and where is the party?"
+msgstr "Merhaba, giriş ne kadar ve parti nerede?"
 
 #: src/components/forms/OrganizerForm/index.tsx:36
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:81
@@ -6329,7 +6393,7 @@ msgstr "Müşterinin siparişini tamamlamak için kaç dakikası var. En az 15 d
 #~ msgid "How many times can this code be used?"
 #~ msgstr "Bu kod kaç kez kullanılabilir?"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:169
 msgid "How to connect"
 msgstr "Nasıl bağlanır"
 
@@ -6357,10 +6421,6 @@ msgstr "https://ornek-harita-servisi.com/..."
 #: src/components/forms/WebhookForm/index.tsx:139
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://webhook-domain.com/webhook"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:160
-msgid "httpSMS API key"
-msgstr "httpSMS API anahtarı"
 
 #: src/utilites/localeNames.ts:8
 msgid "Hungarian"
@@ -6463,6 +6523,14 @@ msgstr "Taklit başlatıldı"
 msgid "Impersonation stopped"
 msgstr "Taklit durduruldu"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:275
+msgid "Import in progress: {0} messages retrieved"
+msgstr "İçe aktarma sürüyor: {0} mesaj alındı"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:129
+msgid "Import started. Messages will appear in SMS messages within a few minutes."
+msgstr "İçe aktarma başladı. Mesajlar birkaç dakika içinde SMS mesajlarında görünecek."
+
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:114
 msgid "Important Notice"
 msgstr "Önemli Uyarı"
@@ -6491,17 +6559,17 @@ msgstr "{diffHours} saat içinde"
 msgid "In {diffMinutes} minutes"
 msgstr "{diffMinutes} dakika içinde"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:130
-msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events."
-msgstr "httpSMS'te aşağıdaki URL ve imzalama anahtarıyla bir webhook oluşturun ve message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed ve message.send.expired olaylarını işaretleyin."
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:152
-msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events."
-msgstr "httpSMS'te aşağıdaki URL ve imzalama anahtarıyla bir webhook oluşturun ve message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline ile phone.heartbeat.online olaylarını işaretleyin."
-
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:122
 msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:130
+#~ msgid "In PICHA SMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events."
+#~ msgstr "PICHA SMS'te aşağıdaki URL ve imzalama anahtarıyla bir webhook oluşturun ve message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed ve message.send.expired olaylarını işaretleyin."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:177
+msgid "In PICHA SMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events."
+msgstr "PICHA SMS'te aşağıdaki URL ve imzalama anahtarıyla bir webhook oluşturun ve message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline ile phone.heartbeat.online olaylarını işaretleyin."
 
 #: src/components/routes/organizer/Sms/labels.ts:11
 msgid "In progress"
@@ -6590,9 +6658,9 @@ msgstr "Instagram"
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:147
-msgid "Install the httpSMS app on your Android phone and sign in on <0>httpsms.com</0>."
-msgstr "Android telefonunuza httpSMS uygulamasını yükleyin ve <0>httpsms.com</0> adresinde oturum açın."
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:172
+msgid "Install the PICHA SMS app on your Android phone and sign in on <0>sms.picha.fr</0>."
+msgstr "Android telefonunuza PICHA SMS uygulamasını yükleyin ve <0>sms.picha.fr</0> adresinde oturum açın."
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:72
 msgid "Instant e-ticket"
@@ -6605,6 +6673,10 @@ msgstr "Anında Ödemeler"
 #: src/components/routes/landing/index.tsx:212
 msgid "Institutions and local authorities"
 msgstr "Kurumlar ve yerel yönetimler"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:107
+msgid "Instructions for the assistant"
+msgstr "Asistan için talimatlar"
 
 #: src/components/layouts/Event/index.tsx:145
 #~ msgid "Integrations"
@@ -6836,7 +6908,7 @@ msgstr "John"
 msgid "Johnson"
 msgstr "Johnson"
 
-#: src/components/layouts/EventHomepage/index.tsx:394
+#: src/components/layouts/EventHomepage/index.tsx:392
 msgid "Join from anywhere"
 msgstr "Her yerden katılın"
 
@@ -6959,9 +7031,17 @@ msgstr "Son 7 gün"
 msgid "Last 90 days"
 msgstr "Son 90 gün"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:281
+msgid "Last import {0}: {1} new messages"
+msgstr "Son içe aktarma {0}: {1} yeni mesaj"
+
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:156
 msgid "Last login"
 msgstr "Son giriş"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:41
+msgid "Last message sent {0}"
+msgstr "Son mesaj gönderildi: {0}"
 
 #: src/components/modals/CreateAttendeeModal/index.tsx:106
 #: src/components/modals/ManageAttendeeModal/index.tsx:112
@@ -7007,7 +7087,7 @@ msgstr "Son satış: <0>{0} bilet</0>"
 msgid "Last sale: <0>{0}</0>"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:130
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:155
 msgid "Last SMS event received {0}"
 msgstr "Son SMS olayı alındı: {0}"
 
@@ -7200,7 +7280,7 @@ msgstr "Yükleniyor..."
 msgid "Local number without the leading 0."
 msgstr "Baştaki 0 olmadan yerel numara."
 
-#: src/components/layouts/EventHomepage/index.tsx:445
+#: src/components/layouts/EventHomepage/index.tsx:443
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:85
 #: src/components/routes/my-tickets/index.tsx:73
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:313
@@ -7325,6 +7405,10 @@ msgstr "Profili Yönet"
 #: src/components/routes/landing/index.tsx:54
 msgid "Manage registrations, welcome, digital check-in and badge printing for your professional and institutional events with {appName}."
 msgstr "Profesyonel ve kurumsal etkinliklerinizin kayıtlarını, karşılamasını, katılım kontrolünü ve yaka kartı basımını {appName} ile yönetin."
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:256
+msgid "Manage reply templates"
+msgstr "Hazır yanıtları yönet"
 
 #: src/components/routes/account/ManageAccount/sections/TaxSettings/index.tsx:17
 msgid "Manage taxes and fees which can be applied to your products"
@@ -7490,7 +7574,7 @@ msgstr "Mesajlaşma Seviyesi"
 msgid "Messaging tier updated successfully"
 msgstr "Mesajlaşma seviyesi başarıyla güncellendi"
 
-#: src/components/routes/organizer/Settings/index.tsx:81
+#: src/components/routes/organizer/Settings/index.tsx:83
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:89
 msgid "Meta Conversions API"
 msgstr ""
@@ -7719,6 +7803,7 @@ msgstr "Nam placerat elementum..."
 #: src/components/routes/admin/Configurations/index.tsx:219
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:98
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:77
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:108
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:231
 msgid "Name"
 msgstr "Ad"
@@ -7747,7 +7832,7 @@ msgstr "İsim 255 karakterden az olmalıdır"
 msgid "Name of the event"
 msgstr "Etkinlik adı"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:36
+#: src/components/routes/organizer/Sms/ConversationList.tsx:61
 msgid "Name or number"
 msgstr "Ad veya numara"
 
@@ -7805,7 +7890,11 @@ msgstr "Yeni Şifre"
 msgid "New QR code"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:78
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:103
+msgid "New reply template"
+msgstr "Yeni hazır yanıt"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:95
 msgid "New signing key generated"
 msgstr "Yeni imzalama anahtarı oluşturuldu"
 
@@ -7813,9 +7902,9 @@ msgstr "Yeni imzalama anahtarı oluşturuldu"
 msgid "New Signups"
 msgstr "Yeni Kayıtlar"
 
-#: src/components/routes/organizer/Sms/index.tsx:80
-msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the httpSMS app is running."
-msgstr "Yeni SMS'ler buraya gelmeyecek ve yanıtlarınız gönderilmeyecek. Telefonun açık, internete bağlı ve httpSMS uygulamasının çalışır durumda olduğunu kontrol edin."
+#: src/components/routes/organizer/Sms/index.tsx:98
+msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
+msgstr "Yeni SMS'ler buraya gelmeyecek ve yanıtlarınız gönderilmeyecek. Telefonun açık, internete bağlı ve PICHA SMS uygulamasının çalışır durumda olduğunu kontrol edin."
 
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:88
 msgid "Next steps"
@@ -7920,7 +8009,7 @@ msgstr "Taahhüt yok"
 msgid "No configurations found"
 msgstr "Yapılandırma bulunamadı"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:57
+#: src/components/routes/organizer/Sms/ConversationList.tsx:90
 msgid "No conversation yet. Replies to your SMS will appear here."
 msgstr "Henüz konuşma yok. SMS'lerinize gelen yanıtlar burada görünecek."
 
@@ -8040,7 +8129,15 @@ msgstr "Bu fiyat için bilet kalmadı."
 msgid "No name"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:37
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:89
+msgid "No number in the opt-out list."
+msgstr "Engelleme listesinde numara yok."
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:89
+msgid "No number matches your search."
+msgstr "Aramanızla eşleşen numara yok."
+
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:51
 msgid "No order found with this number. The number is matched with the phone answers of your order forms and box office sales."
 msgstr "Bu numarayla sipariş bulunamadı. Numara, sipariş formlarınızdaki ve gişe satışlarınızdaki telefonlarla eşleştirilir."
 
@@ -8055,6 +8152,10 @@ msgstr ""
 #: src/components/common/QuestionsTable/index.tsx:489
 #~ msgid "No order questions yet"
 #~ msgstr "Henüz sipariş sorusu yok"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:27
+msgid "No order with this number"
+msgstr "Bu numarayla sipariş yok"
 
 #: src/components/common/AdminOrdersTable/index.tsx:20
 msgid "No orders found"
@@ -8090,7 +8191,7 @@ msgstr "Başka organizatör mevcut değil"
 msgid "No Paid Orders"
 msgstr "Ücretli Sipariş Yok"
 
-#: src/components/layouts/OrganizerHomepage/index.tsx:300
+#: src/components/layouts/OrganizerHomepage/index.tsx:298
 msgid "No past events"
 msgstr "Geçmiş etkinlik yok"
 
@@ -8187,6 +8288,14 @@ msgstr ""
 msgid "No registrations yet."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:242
+msgid "No reply template yet"
+msgstr "Henüz hazır yanıt yok"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:75
+msgid "No reply template yet."
+msgstr "Henüz hazır yanıt yok."
+
 #: src/components/common/OrganizerWebhookTable/index.tsx:174
 #: src/components/common/WebhookTable/index.tsx:174
 msgid "No response"
@@ -8237,7 +8346,7 @@ msgstr "Bilet Bulunamadı"
 msgid "No tickets yet."
 msgstr ""
 
-#: src/components/layouts/OrganizerHomepage/index.tsx:300
+#: src/components/layouts/OrganizerHomepage/index.tsx:298
 msgid "No upcoming events"
 msgstr "Yaklaşan etkinlik yok"
 
@@ -8301,7 +8410,7 @@ msgstr "Giriş Yapılmadı"
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:97
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:121
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:146
 msgid "Not configured"
 msgstr "Yapılandırılmadı"
 
@@ -8352,6 +8461,14 @@ msgstr "Bildirim Ayarları"
 msgid "Notify organizer of new orders"
 msgstr "Organizatörü yeni siparişler hakkında bilgilendir"
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:96
+msgid "Number"
+msgstr "Numara"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:39
+msgid "Number added to the opt-out list"
+msgstr "Numara engelleme listesine eklendi"
+
 #: src/components/routes/landing/DemoRequestForm/index.tsx:164
 msgid "Number of attendees"
 msgstr "Katılımcı sayısı"
@@ -8371,6 +8488,14 @@ msgstr ""
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:199
 msgid "Number Prefix"
 msgstr "Numara Öneki"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:48
+msgid "Number removed from the opt-out list"
+msgstr "Numara engelleme listesinden çıkarıldı"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:58
+msgid "Numbers that replied STOP or that you added by hand. They no longer receive any SMS from you. A number that replies START is removed automatically."
+msgstr "STOP yanıtı veren veya elle eklediğiniz numaralar. Artık sizden SMS almazlar. START yanıtı veren numara otomatik olarak çıkarılır."
 
 #: src/components/common/OrganizerReportTable/index.tsx:356
 msgid "of"
@@ -8571,7 +8696,7 @@ msgstr ""
 msgid "Online event"
 msgstr ""
 
-#: src/components/layouts/EventHomepage/index.tsx:392
+#: src/components/layouts/EventHomepage/index.tsx:390
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:163
 msgid "Online Event"
 msgstr "Çevrimiçi Etkinlik"
@@ -8657,7 +8782,11 @@ msgstr "Kenar çubuğunu aç"
 msgid "Open Stripe Dashboard"
 msgstr "Stripe Panosunu Aç"
 
-#: src/components/layouts/EventHomepage/index.tsx:537
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:136
+msgid "Open the customer file"
+msgstr "Müşteri kartını aç"
+
+#: src/components/layouts/EventHomepage/index.tsx:535
 msgid "Open the event flyer"
 msgstr "Etkinlik afişini aç"
 
@@ -8676,6 +8805,10 @@ msgstr ""
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:336
 msgid "Opened when the QR code is scanned from another device. By default: the App Store page."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:109
+msgid "Opening hours"
+msgstr "Açılış saatleri"
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:302
 msgid "Opens the ticketing page directly. Sales are attributed to this QR code."
@@ -9023,7 +9156,7 @@ msgid "Organized by"
 msgstr ""
 
 #: src/components/common/AdminEventsTable/index.tsx:87
-#: src/components/layouts/EventHomepage/index.tsx:548
+#: src/components/layouts/EventHomepage/index.tsx:546
 #: src/components/modals/EditUserModal/index.tsx:55
 #: src/components/modals/InviteUserModal/index.tsx:47
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:96
@@ -9084,7 +9217,7 @@ msgstr "Organizatör Bulunamadı"
 msgid "Organizer restored successfully"
 msgstr "Organizatör başarıyla geri yüklendi"
 
-#: src/components/routes/organizer/Settings/index.tsx:160
+#: src/components/routes/organizer/Settings/index.tsx:174
 msgid "Organizer Settings"
 msgstr "Organizatör Ayarları"
 
@@ -9322,7 +9455,7 @@ msgstr "Şifre başarıyla sıfırlandı. Lütfen yeni şifrenizle giriş yapın
 msgid "Passwords are not the same"
 msgstr "Şifreler aynı değil"
 
-#: src/components/layouts/OrganizerHomepage/index.tsx:292
+#: src/components/layouts/OrganizerHomepage/index.tsx:290
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:30
 msgid "Past"
 msgstr "Geçmiş"
@@ -9332,7 +9465,7 @@ msgctxt "events tab"
 msgid "Past"
 msgstr ""
 
-#: src/components/layouts/OrganizerHomepage/index.tsx:279
+#: src/components/layouts/OrganizerHomepage/index.tsx:277
 msgid "Past Events"
 msgstr "Geçmiş Etkinlikler"
 
@@ -9340,9 +9473,9 @@ msgstr "Geçmiş Etkinlikler"
 msgid "Past events."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:212
-msgid "Paste it into the signing key field of your httpSMS webhook. Keep it private."
-msgstr "httpSMS webhook'unuzun imzalama anahtarı alanına yapıştırın. Gizli tutun."
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:237
+msgid "Paste it into the signing key field of your PICHA SMS webhook. Keep it private."
+msgstr "PICHA SMS webhook'unuzun imzalama anahtarı alanına yapıştırın. Gizli tutun."
 
 #: src/pages/digit/DeviceTokenGate.tsx:56
 msgid "Paste the device token given by your event organizer. This is a one-time setup per device - it will be remembered for future scans."
@@ -9584,6 +9717,7 @@ msgstr "Ülke kodu"
 #: src/components/common/QuestionsTable/index.tsx:365
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:596
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:893
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:66
 msgid "Phone number"
 msgstr "Telefon numarası"
 
@@ -9591,11 +9725,11 @@ msgstr "Telefon numarası"
 msgid "Phone Number"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:126
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:151
 msgid "Phone offline"
 msgstr "Telefon çevrimdışı"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:148
 msgid "Phone online"
 msgstr "Telefon çevrimiçi"
 
@@ -9607,6 +9741,15 @@ msgstr ""
 #: src/components/routes/organizer/EventAssistant/index.tsx:457
 msgid "Physical presales"
 msgstr ""
+
+#: src/components/routes/organizer/Settings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:138
+msgid "PICHA SMS"
+msgstr "PICHA SMS"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:185
+msgid "PICHA SMS API key"
+msgstr "PICHA SMS API anahtarı"
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:82
 msgid "Pinterest"
@@ -9633,7 +9776,7 @@ msgstr "Ödemenizden {0} platform ücreti düşülür"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:248
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
-#: src/components/routes/organizer/Settings/index.tsx:109
+#: src/components/routes/organizer/Settings/index.tsx:123
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:42
 msgid "Platform Fees"
 msgstr "Platform Ücretleri"
@@ -9927,6 +10070,8 @@ msgstr "Birden fazla bilet türünde stok paylaşarak aşırı satışı önleyi
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:139
 #: src/components/routes/event/TicketDesigner/index.tsx:219
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:121
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:141
 msgid "Preview"
 msgstr "Önizleme"
 
@@ -10592,6 +10737,14 @@ msgstr "İade edildi: {0}"
 msgid "Refunds"
 msgstr "İadeler"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:93
+msgid "Refunds, complaints, unusual requests and questions it cannot answer from your data are marked \"To handle\" with the reason, without a suggestion."
+msgstr "İadeler, şikayetler, olağan dışı talepler ve verilerinizden yanıtlanamayan sorular gerekçesiyle \"İşlenecek\" olarak işaretlenir, öneri sunulmaz."
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:231
+msgid "Regenerate the suggestion"
+msgstr "Öneriyi yeniden oluştur"
+
 #: src/components/routes/profile/ManageProfile/index.tsx:178
 msgid "Regional Settings"
 msgstr "Bölgesel Ayarlar"
@@ -10702,9 +10855,14 @@ msgstr "kaldır"
 #: src/components/routes/event/HomepageDesigner/index.tsx:266
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:380
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:112
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:118
 #: src/components/routes/product-widget/SelectProducts/index.tsx:666
 msgid "Remove"
 msgstr "Kaldır"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:46
+msgid "Remove {0} from the opt-out list? Only do this if the person asked to receive your SMS again."
+msgstr "{0} engelleme listesinden çıkarılsın mı? Bunu yalnızca kişi SMS'lerinizi yeniden almak istediyse yapın."
 
 #: src/components/modals/EditOrganizerCustomDomainModal/index.tsx:70
 msgid "Remove domain"
@@ -10728,13 +10886,13 @@ msgstr ""
 msgid "Remove the end time"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:64
-msgid "Remove the httpSMS API key? You will no longer be able to send SMS from PICHA."
-msgstr "httpSMS API anahtarı kaldırılsın mı? Artık PICHA'dan SMS gönderemezsiniz."
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:186
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:211
 msgid "Remove the key"
 msgstr "Anahtarı kaldır"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:81
+msgid "Remove the PICHA SMS API key? You will no longer be able to send SMS from PICHA."
+msgstr "PICHA SMS API anahtarı kaldırılsın mı? Artık PICHA'dan SMS gönderemezsiniz."
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:338
 msgid "Remove the poster"
@@ -10780,9 +10938,21 @@ msgstr ""
 msgid "Replaces the page title on the visual."
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
+msgid "Replied STOP"
+msgstr "STOP yanıtı verdi"
+
 #: src/components/routes/organizer/Sms/index.tsx:63
-msgid "Replies from your customers to your SMS, sent from your httpSMS phone. A customer who replies STOP is automatically unsubscribed from your SMS."
-msgstr "Müşterilerinizin, httpSMS telefonunuzdan gönderilen SMS'lerinize yanıtları. STOP yanıtı veren müşteri SMS'lerinizden otomatik olarak çıkarılır."
+#~ msgid "Replies from your customers to your SMS, sent from your PICHA SMS phone. A customer who replies STOP is automatically unsubscribed from your SMS."
+#~ msgstr "Müşterilerinizin, PICHA SMS telefonunuzdan gönderilen SMS'lerinize yanıtları. STOP yanıtı veren müşteri SMS'lerinizden otomatik olarak çıkarılır."
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:58
+msgid "Reply template deleted"
+msgstr "Hazır yanıt silindi"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:49
+msgid "Reply template saved"
+msgstr "Hazır yanıt kaydedildi"
 
 #: src/components/routes/landing/index.tsx:350
 #: src/components/routes/landing/MarketingDemoSection/index.tsx:21
@@ -10950,6 +11120,14 @@ msgstr ""
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:329
 #~ msgid "Resume sales"
 #~ msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:269
+msgid "Retrieve PICHA SMS history"
+msgstr "PICHA SMS geçmişini al"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:259
+msgid "Retrieve the SMS sent and received with your PICHA SMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread."
+msgstr "Webhook bağlanmadan önce PICHA SMS numaranızla gönderilen ve alınan SMS'leri alın, örneğin bir betikle gönderilen kampanya. Zaten var olan mesajlar çoğaltılmaz ve okunmamış olarak işaretlenmez."
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
 #: src/hooks/useKioskTicketPrinter.tsx:227
@@ -11155,7 +11333,9 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:174
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:199
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:116
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:88
@@ -11193,6 +11373,10 @@ msgstr "Sosyal Bağlantıları Kaydet"
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:200
 msgid "Save Template"
 msgstr "Şablonu Kaydet"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:70
+msgid "Save the answers you send often (opening hours, access, refunds) and insert them in one click when replying to an SMS. Write {SMS_FIRST_NAME_VARIABLE} to insert the customer's first name."
+msgstr "Sık gönderdiğiniz yanıtları (saatler, ulaşım, iadeler) kaydedin ve bir SMS'i yanıtlarken tek tıkla ekleyin. Müşterinin adını eklemek için {SMS_FIRST_NAME_VARIABLE} yazın."
 
 #: src/components/routes/event/TicketDesigner/index.tsx:209
 msgid "Save Ticket Design"
@@ -11337,6 +11521,10 @@ msgstr "Ad, sipariş #, katılımcı # veya e-postaya göre ara..."
 #~ msgid "Search by name..."
 #~ msgstr "Ada göre ara..."
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:82
+msgid "Search by number or name"
+msgstr "Numara veya ada göre ara"
+
 #: src/components/routes/admin/Orders/index.tsx:47
 msgid "Search by order ID, customer name, or email..."
 msgstr "Sipariş kimliği, müşteri adı veya e-posta ile arayın..."
@@ -11462,7 +11650,7 @@ msgstr "Bir kategori seçin"
 msgid "Select a configuration"
 msgstr "Bir yapılandırma seçin"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:45
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:65
 msgid "Select a conversation"
 msgstr "Bir konuşma seçin"
 
@@ -11623,7 +11811,7 @@ msgstr "Seminer"
 
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:173
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:266
 msgid "Send"
 msgstr "Gönder"
 
@@ -11632,9 +11820,9 @@ msgstr "Gönder"
 msgid "Send a message"
 msgstr "Mesaj gönder"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:114
-msgid "Send and receive SMS with your customers from your own Android phone, using the httpSMS app. Replies appear in SMS messages."
-msgstr "httpSMS uygulamasıyla kendi Android telefonunuzdan müşterilerinizle SMS alıp gönderin. Yanıtlar SMS mesajları bölümünde görünür."
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:139
+msgid "Send and receive SMS with your customers from your own Android phone, using the PICHA SMS app. Replies appear in SMS messages."
+msgstr "PICHA SMS uygulamasıyla kendi Android telefonunuzdan müşterilerinizle SMS alıp gönderin. Yanıtlar SMS mesajları bölümünde görünür."
 
 #: src/components/modals/SendMessageModal/index.tsx:468
 msgid "Send as test"
@@ -11701,7 +11889,7 @@ msgstr ""
 msgid "Sending"
 msgstr "Gönderiliyor"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:168
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:193
 msgid "Sending number"
 msgstr "Gönderen numara"
 
@@ -11740,11 +11928,11 @@ msgstr "Müşterilere sipariş verdiklerinde gönderilir"
 msgid "Sent to each attendee with their ticket details"
 msgstr "Her katılımcıya bilet detaylarıyla birlikte gönderilir"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:197
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:222
 msgid "Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline."
 msgstr "Organizatörün e-posta adresine gönderilir. Her konuşma için 15 dakikada en fazla bir e-posta. Telefon çevrimdışı olduğunda her zaman e-postayla bilgilendirilirsiniz."
 
-#: src/components/routes/organizer/Settings/index.tsx:63
+#: src/components/routes/organizer/Settings/index.tsx:65
 msgid "SEO"
 msgstr "SEO"
 
@@ -11876,7 +12064,7 @@ msgid "Share"
 msgstr ""
 
 #: src/components/common/ShareIcon/index.tsx:30
-#: src/components/layouts/EventHomepage/index.tsx:341
+#: src/components/layouts/EventHomepage/index.tsx:339
 #: src/components/modals/ShareModal/index.tsx:37
 #: src/components/modals/ShareModal/index.tsx:165
 #: src/components/modals/ShareModal/index.tsx:186
@@ -12011,6 +12199,10 @@ msgstr "Kayıt Tarihi"
 msgid "Simpson"
 msgstr "Simpson"
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:98
+msgid "Since"
+msgstr "Başlangıç"
+
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:92
 msgid "Since creation"
 msgstr ""
@@ -12058,20 +12250,33 @@ msgstr "Smith"
 msgid "SMS"
 msgstr "SMS"
 
-#: src/components/routes/organizer/Settings/index.tsx:87
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:113
-msgid "SMS (httpSMS)"
-msgstr "SMS (httpSMS)"
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:81
+msgid "SMS assistant"
+msgstr "SMS asistanı"
 
-#: src/components/routes/organizer/Sms/index.tsx:84
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:257
+msgid "SMS history"
+msgstr "SMS geçmişi"
+
+#: src/components/routes/organizer/Sms/index.tsx:87
 msgid "SMS is not connected yet."
 msgstr "SMS henüz bağlanmadı."
 
-#: src/components/routes/organizer/Sms/index.tsx:61
+#: src/components/routes/organizer/Sms/index.tsx:79
 msgid "SMS messages"
 msgstr "SMS mesajları"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:57
+#: src/components/routes/organizer/Settings/index.tsx:101
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:57
+msgid "SMS opt-out list"
+msgstr "SMS engelleme listesi"
+
+#: src/components/routes/organizer/Settings/index.tsx:95
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:69
+msgid "SMS reply templates"
+msgstr "SMS hazır yanıtları"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:74
 msgid "SMS settings saved"
 msgstr "SMS ayarları kaydedildi"
 
@@ -12079,7 +12284,7 @@ msgstr "SMS ayarları kaydedildi"
 msgid "Snapchat"
 msgstr "Snapchat"
 
-#: src/components/routes/organizer/Settings/index.tsx:57
+#: src/components/routes/organizer/Settings/index.tsx:59
 msgid "Social Links"
 msgstr "Sosyal Bağlantılar"
 
@@ -12201,6 +12406,7 @@ msgid "Sort"
 msgstr ""
 
 #: src/components/routes/admin/Attribution/index.tsx:106
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:97
 msgid "Source"
 msgstr "Kaynak"
 
@@ -12343,7 +12549,7 @@ msgstr "Eski işlemleriniz için hala iadeleri işliyoruz."
 msgid "Stop Impersonating"
 msgstr "Taklidi Durdur"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:162
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:187
 msgid "Stored encrypted. It is never displayed again."
 msgstr "Şifreli olarak saklanır. Bir daha gösterilmez."
 
@@ -12572,7 +12778,15 @@ msgstr ""
 msgid "Successfully updated Webhook"
 msgstr "Webhook Başarıyla Güncellendi"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:143
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:101
+msgid "Suggest replies to my customers' SMS"
+msgstr "Müşterilerimin SMS'lerine yanıt öner"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:147
+msgid "Suggested reply"
+msgstr "Önerilen yanıt"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:198
 msgid "Suggested reply, check it before sending"
 msgstr "Önerilen yanıt, göndermeden önce kontrol edin"
 
@@ -12783,6 +12997,10 @@ msgstr "Şablon başarıyla silindi"
 msgid "Template saved successfully"
 msgstr "Şablon başarıyla kaydedildi"
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:237
+msgid "Templates"
+msgstr "Şablonlar"
+
 #: src/components/common/PoweredByFooter/index.tsx:22
 msgid "Terms of sale"
 msgstr "Satış koşulları"
@@ -12796,9 +13014,13 @@ msgid "Test event code (optional)"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:146
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:182
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:207
 msgid "Test the connection"
 msgstr "Bağlantıyı test et"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:116
+msgid "Text"
+msgstr "Metin"
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:485
 msgid "Text color"
@@ -12832,6 +13054,11 @@ msgstr ""
 #: src/components/routes/organizer/EventAssistant/index.tsx:533
 msgid "The AI is looking up your event and writing the description…"
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:74
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:97
+msgid "The assistant could not suggest a reply. Please try again."
+msgstr "Asistan bir yanıt öneremedi. Lütfen tekrar deneyin."
 
 #: src/components/common/ThemeColorControls/index.tsx:62
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
@@ -12923,6 +13150,10 @@ msgstr "Tam sipariş tutarı müşterinin orijinal ödeme yöntemine iade edilec
 msgid "The image could not be uploaded"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:287
+msgid "The import failed: {importError}. You can start it again, messages already imported are kept."
+msgstr "İçe aktarma başarısız oldu: {importError}. Yeniden başlatabilirsiniz, içe aktarılan mesajlar korunur."
+
 #: src/components/modals/CreateAttendeeModal/index.tsx:127
 msgid "The language the attendee will receive emails in."
 msgstr "Katılımcının e-postaları alacağı dil."
@@ -12943,9 +13174,9 @@ msgstr "Müşterinin dili"
 msgid "The maximum number of products for {0}is {1}"
 msgstr "{0} için maksimum ürün sayısı {1}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:169
-msgid "The number of the SIM card in the httpSMS phone, for example +262639123456."
-msgstr "httpSMS telefonundaki SIM kartın numarası, örneğin +262639123456."
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:194
+msgid "The number of the SIM card in the PICHA SMS phone, for example +262639123456."
+msgstr "PICHA SMS telefonundaki SIM kartın numarası, örneğin +262639123456."
 
 #: src/components/layouts/QrLinkPage/index.tsx:138
 msgid "The organizer has paused or removed it."
@@ -12968,9 +13199,9 @@ msgstr "Aradığınız sayfa mevcut değil"
 msgid "The people behind the events."
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:79
-msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the httpSMS app is running."
-msgstr "Telefon {0} çevrimdışı oldu. Yeni SMS'ler buraya gelmeyecek ve yanıtlarınız gönderilmeyecek. Telefonun açık, internete bağlı ve httpSMS uygulamasının çalışır durumda olduğunu kontrol edin."
+#: src/components/routes/organizer/Sms/index.tsx:97
+msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
+msgstr "Telefon {0} çevrimdışı oldu. Yeni SMS'ler buraya gelmeyecek ve yanıtlarınız gönderilmeyecek. Telefonun açık, internete bağlı ve PICHA SMS uygulamasının çalışır durumda olduğunu kontrol edin."
 
 #: src/components/common/PlatformFeesSettings/index.tsx:212
 msgid "The platform fee is added to the ticket price. Buyers pay more, but you receive the full ticket price."
@@ -13017,7 +13248,11 @@ msgstr "Zamanlanmış saat gelecekte olmalıdır"
 msgid "The show"
 msgstr "Gösteri"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:64
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:87
+msgid "The SMS assistant is not available on this platform yet."
+msgstr "SMS asistanı bu platformda henüz kullanılamıyor."
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:85
 msgid "The SMS could not be sent"
 msgstr "SMS gönderilemedi"
 
@@ -13186,7 +13421,7 @@ msgstr "Bu kod satışları izlemek için kullanılacaktır. Yalnızca harfler, 
 msgid "This color combination may be hard to read for some users"
 msgstr "Bu renk kombinasyonu bazı kullanıcılar için okunması zor olabilir"
 
-#: src/components/layouts/EventHomepage/index.tsx:380
+#: src/components/layouts/EventHomepage/index.tsx:378
 msgid "This event has ended"
 msgstr "Bu etkinlik sona erdi"
 
@@ -13243,7 +13478,7 @@ msgstr "Bu mesaj sadece sipariş başarılı bir şekilde tamamlandığında gö
 msgid "This name is visible to end users"
 msgstr "Bu isim son kullanıcılara görünür"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:133
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:188
 msgid "This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again."
 msgstr "Bu numara STOP yanıtı verdi: artık SMS'lerinizi alamaz. START yanıtı verirse yeniden yazabilirsiniz."
 
@@ -13639,10 +13874,16 @@ msgstr "Tamamlanacak"
 msgid "To edit configurations, go to the Configurations section in the admin menu."
 msgstr "Yapılandırmaları düzenlemek için yönetici menüsündeki Yapılandırmalar bölümüne gidin."
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:47
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:152
+#: src/components/routes/organizer/Sms/ConversationList.tsx:72
+#: src/components/routes/organizer/Sms/customerSummary.ts:19
 #: src/components/routes/organizer/Sms/labels.ts:7
 msgid "To handle"
 msgstr "İşlenecek"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:183
+msgid "To handle by your team: {needsHumanReason}"
+msgstr "Ekibinizin ilgilenmesi gerekiyor: {needsHumanReason}"
 
 #: src/components/modals/SendMessageModal/index.tsx:260
 msgid "To increase your limits, contact us at"
@@ -13659,6 +13900,10 @@ msgstr ""
 #: src/components/common/ColumnVisibilityToggle/index.tsx:26
 msgid "Toggle columns"
 msgstr "Sütunları değiştir"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:108
+msgid "Tone, what to say or never say, useful information. For example: use \"tu\", stay short and friendly, doors open at 10pm."
+msgstr "Üslup, söylenmesi veya asla söylenmemesi gerekenler, faydalı bilgiler. Örneğin: samimi hitap, kısa ve güler yüzlü olmak, kapılar 22:00'de açılır."
 
 #: src/components/layouts/OrganizerLayout/index.tsx:94
 #~ msgid "Tools"
@@ -13758,7 +14003,7 @@ msgstr "Atıf kaynağına göre hesap büyümesini ve performansını takip edin
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "Detaylı raporlarla satışları, gelirleri ve katılımı takip edin"
 
-#: src/components/routes/organizer/Settings/index.tsx:75
+#: src/components/routes/organizer/Settings/index.tsx:77
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
 msgid "Tracking & Analytics"
 msgstr ""
@@ -13801,6 +14046,10 @@ msgstr "Sesi aç"
 #: src/components/routes/event/products.tsx:88
 #~ msgid "Turned off: box office tickets are greyed out and cannot be sold."
 #~ msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:102
+msgid "Turned on by default. You can turn it off at any time."
+msgstr "Varsayılan olarak açık. İstediğiniz zaman kapatabilirsiniz."
 
 #: src/components/routes/landing/index.tsx:233
 msgid "Turnkey"
@@ -13865,6 +14114,10 @@ msgstr ""
 msgid "Unable to delete the QR code"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:59
+msgid "Unable to delete the reply template"
+msgstr "Hazır yanıt silinemedi"
+
 #: src/components/modals/DuplicateProductModal/index.tsx:111
 msgid "Unable to duplicate product. Please check the your details"
 msgstr "Ürün çoğaltılamıyor. Lütfen bilgilerinizi kontrol edin"
@@ -13873,7 +14126,7 @@ msgstr "Ürün çoğaltılamıyor. Lütfen bilgilerinizi kontrol edin"
 msgid "Unable to fetch attendee"
 msgstr "Katılımcı getirilemedi"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:79
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:96
 msgid "Unable to generate a new signing key"
 msgstr "Yeni imzalama anahtarı oluşturulamadı"
 
@@ -13885,23 +14138,31 @@ msgstr ""
 msgid "Unable to join waitlist"
 msgstr "Bekleme listesine katılınamadı"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:106
-msgid "Unable to reach httpSMS. Please try again."
-msgstr "httpSMS'e ulaşılamadı. Lütfen tekrar deneyin."
-
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:82
 msgid "Unable to reach Meta. Please try again."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
+msgid "Unable to reach PICHA SMS. Please try again."
+msgstr "PICHA SMS'e ulaşılamadı. Lütfen tekrar deneyin."
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:69
 msgid "Unable to remove the access token"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:70
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:87
 msgid "Unable to remove the API key"
 msgstr "API anahtarı kaldırılamadı"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:90
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:49
+msgid "Unable to remove the number"
+msgstr "Numara çıkarılamadı"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:130
+msgid "Unable to start the import"
+msgstr "İçe aktarma başlatılamadı"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:107
 msgid "Unable to update email alerts"
 msgstr "E-posta uyarıları güncellenemedi"
 
@@ -13909,7 +14170,7 @@ msgstr "E-posta uyarıları güncellenemedi"
 msgid "Unable to update question. Please check the your details"
 msgstr "Soru güncellenemedi. Lütfen bilgilerinizi kontrol edin"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:76
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:126
 msgid "Unable to update the conversation"
 msgstr "Konuşma güncellenemedi"
 
@@ -13977,9 +14238,13 @@ msgstr "Bilinmeyen Katılımcı"
 msgid "Unknown bracelet"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:27
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:35
 msgid "Unknown customer"
 msgstr "Bilinmeyen müşteri"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:36
+msgid "unknown error"
+msgstr "bilinmeyen hata"
 
 #: src/components/routes/event/products.tsx:82
 #~ msgid "unlimited"
@@ -14031,11 +14296,12 @@ msgstr "Ödenmemiş Sipariş"
 #~ msgid "Unpublish Event"
 #~ msgstr "Etkinliği Yayından Kaldır"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:46
+#: src/components/routes/organizer/Sms/ConversationList.tsx:71
 msgid "Unread"
 msgstr "Okunmamış"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:32
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:46
+#: src/components/routes/organizer/Sms/customerSummary.ts:35
 msgid "Unsubscribed (STOP)"
 msgstr "Abonelikten çıktı (STOP)"
 
@@ -14054,7 +14320,7 @@ msgstr "Güvenilmez"
 
 #: src/components/common/EventsDashboardStatusButtons/index.tsx:20
 #: src/components/common/EventStatusBadge/index.tsx:16
-#: src/components/layouts/OrganizerHomepage/index.tsx:286
+#: src/components/layouts/OrganizerHomepage/index.tsx:284
 #: src/components/routes/organizer/Events/index.tsx:43
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:73
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:33
@@ -14065,7 +14331,7 @@ msgstr "Yaklaşan"
 msgid "Upcoming dates"
 msgstr "Yaklaşan tarihler"
 
-#: src/components/layouts/OrganizerHomepage/index.tsx:279
+#: src/components/layouts/OrganizerHomepage/index.tsx:277
 msgid "Upcoming Events"
 msgstr "Yaklaşan Etkinlikler"
 
@@ -14466,7 +14732,7 @@ msgstr "Etkinlik sayfasını görüntüle"
 msgid "View logs"
 msgstr "Günlükleri görüntüle"
 
-#: src/components/layouts/EventHomepage/index.tsx:504
+#: src/components/layouts/EventHomepage/index.tsx:502
 msgid "View Map"
 msgstr "Haritayı Görüntüle"
 
@@ -14474,7 +14740,7 @@ msgstr "Haritayı Görüntüle"
 msgid "View Message"
 msgstr "Mesajı görüntüle"
 
-#: src/components/layouts/EventHomepage/index.tsx:420
+#: src/components/layouts/EventHomepage/index.tsx:418
 msgid "View on Google Maps"
 msgstr "Google Haritalar'da görüntüle"
 
@@ -14586,6 +14852,10 @@ msgstr "Bekliyor"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:378
 msgid "Waiting for payment"
 msgstr "Ödeme bekleniyor"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:37
+msgid "Waiting for your reply since {0}"
+msgstr "{0} beri yanıtınızı bekliyor"
 
 #: src/components/layouts/Event/index.tsx:123
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:51
@@ -14738,7 +15008,7 @@ msgstr "Webhook başarıyla silindi"
 msgid "Webhook Logs"
 msgstr "Webhook Günlükleri"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:211
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:236
 msgid "Webhook signing key"
 msgstr "Webhook imzalama anahtarı"
 
@@ -14748,7 +15018,7 @@ msgid "Webhook Signing Secret"
 msgstr "Webhook İmzalama Anahtarı"
 
 #: src/components/forms/WebhookForm/index.tsx:138
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:204
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:229
 msgid "Webhook URL"
 msgstr "Webhook URL'si"
 
@@ -14763,7 +15033,7 @@ msgstr "Webhook bildirim gönderecek"
 #: src/components/layouts/Event/index.tsx:128
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
-#: src/components/routes/organizer/Settings/index.tsx:93
+#: src/components/routes/organizer/Settings/index.tsx:107
 #: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhook'lar"
@@ -14892,6 +15162,10 @@ msgstr "WhatsApp"
 #: src/components/forms/WebhookForm/index.tsx:129
 msgid "When a check-in is deleted"
 msgstr "Bir giriş silindiğinde"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:82
+msgid "When a customer writes to you, the assistant prepares a suggested reply from your events, prices and the customer's orders. Nothing is sent automatically: you read the suggestion and click Send."
+msgstr "Bir müşteri size yazdığında asistan etkinliklerinize, fiyatlarınıza ve müşterinin siparişlerine göre bir yanıt önerisi hazırlar. Hiçbir şey otomatik gönderilmez: öneriyi okur ve Gönder'e tıklarsınız."
 
 #: src/components/forms/WebhookForm/index.tsx:105
 msgid "When a new attendee is created"
@@ -15087,6 +15361,10 @@ msgstr "Çalışıyor..."
 msgid "Workshop"
 msgstr "Atölye"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:123
+msgid "Write a message as if you were a customer to see what the assistant would suggest with the instructions above."
+msgstr "Asistanın yukarıdaki talimatlarla ne önereceğini görmek için müşteriymiş gibi bir mesaj yazın."
+
 #: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:33
 msgid "Write to us"
 msgstr ""
@@ -15095,7 +15373,7 @@ msgstr ""
 msgid "Write your message here..."
 msgstr "Mesajınızı buraya yazın..."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:149
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:205
 msgid "Write your reply"
 msgstr "Yanıtınızı yazın"
 
@@ -15142,7 +15420,7 @@ msgstr ""
 msgid "Yes. Your teams can run the welcome themselves and only rent the equipment you need."
 msgstr "Evet. Ekipleriniz karşılamayı kendileri yürütür, siz yalnızca ihtiyaç duyduğunuz ekipmanı kiralarsınız."
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:78
+#: src/components/routes/organizer/Sms/ConversationList.tsx:111
 msgid "You"
 msgstr "Siz"
 
@@ -15417,18 +15695,6 @@ msgstr ""
 msgid "Your events"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:77
-msgid "Your httpSMS phone is offline"
-msgstr "httpSMS telefonunuz çevrimdışı"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:139
-msgid "Your httpSMS phone is offline. Check that it is switched on, connected to the internet and that the httpSMS app is running."
-msgstr "httpSMS telefonunuz çevrimdışı. Açık, internete bağlı ve httpSMS uygulamasının çalışır durumda olduğunu kontrol edin."
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:138
-msgid "Your httpSMS phone went offline {0}. Check that it is switched on, connected to the internet and that the httpSMS app is running."
-msgstr "httpSMS telefonunuz {0} çevrimdışı oldu. Açık, internete bağlı ve httpSMS uygulamasının çalışır durumda olduğunu kontrol edin."
-
 #: src/components/layouts/AuthLayout/index.tsx:46
 msgid "Your logo, colors, and style on every page"
 msgstr "Her sayfada logonuz, renkleriniz ve tarzınız"
@@ -15515,6 +15781,18 @@ msgstr "Ödemeniz başarısız oldu, lütfen tekrar deneyin."
 #: src/components/forms/StripeCheckoutForm/index.tsx:129
 msgid "Your payment was unsuccessful. Please try again."
 msgstr "Ödemeniz başarısız oldu. Lütfen tekrar deneyin."
+
+#: src/components/routes/organizer/Sms/index.tsx:95
+msgid "Your PICHA SMS phone is offline"
+msgstr "PICHA SMS telefonunuz çevrimdışı"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:164
+msgid "Your PICHA SMS phone is offline. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
+msgstr "PICHA SMS telefonunuz çevrimdışı. Açık, internete bağlı ve PICHA SMS uygulamasının çalışır durumda olduğunu kontrol edin."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:163
+msgid "Your PICHA SMS phone went offline {0}. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
+msgstr "PICHA SMS telefonunuz {0} çevrimdışı oldu. Açık, internete bağlı ve PICHA SMS uygulamasının çalışır durumda olduğunu kontrol edin."
 
 #: src/components/common/PlatformFeesSettings/index.tsx:149
 msgid "Your Plan"
@@ -15620,267 +15898,3 @@ msgstr "Posta Kodu"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:752
 msgid "ZIP or Postal Code"
 msgstr "Posta Kodu"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:58
-msgid "Assistant settings saved"
-msgstr "Asistan ayarları kaydedildi"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:65
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:129
-msgid "Hello, how much is the entry and where is the party?"
-msgstr "Merhaba, giriş ne kadar ve parti nerede?"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:107
-msgid "Instructions for the assistant"
-msgstr "Asistan için talimatlar"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:93
-msgid "Refunds, complaints, unusual requests and questions it cannot answer from your data are marked \"To handle\" with the reason, without a suggestion."
-msgstr "İadeler, şikayetler, olağan dışı talepler ve verilerinizden yanıtlanamayan sorular gerekçesiyle \"İşlenecek\" olarak işaretlenir, öneri sunulmaz."
-
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:205
-msgid "Regenerate the suggestion"
-msgstr "Öneriyi yeniden oluştur"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:81
-msgid "SMS assistant"
-msgstr "SMS asistanı"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:101
-msgid "Suggest replies to my customers' SMS"
-msgstr "Müşterilerimin SMS'lerine yanıt öner"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:147
-msgid "Suggested reply"
-msgstr "Önerilen yanıt"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:74
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:90
-msgid "The assistant could not suggest a reply. Please try again."
-msgstr "Asistan bir yanıt öneremedi. Lütfen tekrar deneyin."
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:87
-msgid "The SMS assistant is not available on this platform yet."
-msgstr "SMS asistanı bu platformda henüz kullanılamıyor."
-
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:158
-msgid "To handle by your team: {needsHumanReason}"
-msgstr "Ekibinizin ilgilenmesi gerekiyor: {needsHumanReason}"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:108
-msgid "Tone, what to say or never say, useful information. For example: use \"tu\", stay short and friendly, doors open at 10pm."
-msgstr "Üslup, söylenmesi veya asla söylenmemesi gerekenler, faydalı bilgiler. Örneğin: samimi hitap, kısa ve güler yüzlü olmak, kapılar 22:00'de açılır."
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:102
-msgid "Turned on by default. You can turn it off at any time."
-msgstr "Varsayılan olarak açık. İstediğiniz zaman kapatabilirsiniz."
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:82
-msgid "When a customer writes to you, the assistant prepares a suggested reply from your events, prices and the customer's orders. Nothing is sent automatically: you read the suggestion and click Send."
-msgstr "Bir müşteri size yazdığında asistan etkinliklerinize, fiyatlarınıza ve müşterinin siparişlerine göre bir yanıt önerisi hazırlar. Hiçbir şey otomatik gönderilmez: öneriyi okur ve Gönder'e tıklarsınız."
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:123
-msgid "Write a message as if you were a customer to see what the assistant would suggest with the instructions above."
-msgstr "Asistanın yukarıdaki talimatlarla ne önereceğini görmek için müşteriymiş gibi bir mesaj yazın."
-
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:41
-msgid "{received} SMS received, {sent} SMS sent"
-msgstr "{received} SMS alındı, {sent} SMS gönderildi"
-
-#: src/components/routes/organizer/Sms/index.tsx:63
-msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
-msgstr "STOP yanıtı veren müşteri SMS'lerinizden otomatik olarak çıkarılır."
-
-#: src/components/routes/organizer/Sms/index.tsx:108
-msgid "Customer file"
-msgstr "Müşteri kartı"
-
-#: src/components/routes/organizer/Sms/customerSummary.ts:25
-msgid "Customer of {0}, no ticket for an upcoming event yet"
-msgstr "{0} müşterisi, yaklaşan bir etkinlik için henüz bileti yok"
-
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
-msgid "first exchange {0}"
-msgstr "ilk iletişim {0}"
-
-#: src/components/routes/organizer/Sms/customerSummary.ts:23
-msgid "Has a ticket for {0}"
-msgstr "{0} için bileti var"
-
-#: src/components/routes/organizer/Sms/customerSummary.ts:39
-msgid "Has not replied yet"
-msgstr "Henüz yanıt vermedi"
-
-#: src/components/routes/organizer/Sms/customerSummary.ts:41
-msgid "Last message sent {0}"
-msgstr "Son mesaj gönderildi: {0}"
-
-#: src/components/routes/organizer/Sms/customerSummary.ts:27
-msgid "No order with this number"
-msgstr "Bu numarayla sipariş yok"
-
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:87
-msgid "Open the customer file"
-msgstr "Müşteri kartını aç"
-
-#: src/components/routes/organizer/Sms/customerSummary.ts:37
-msgid "Waiting for your reply since {0}"
-msgstr "{0} beri yanıtınızı bekliyor"
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:96
-msgid "Add a reply template"
-msgstr "Hazır yanıt ekle"
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:71
-msgid "Add the number"
-msgstr "Numarayı ekle"
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
-msgid "Added by hand"
-msgstr "Elle eklendi"
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:56
-msgid "Delete the reply template \"{0}\"?"
-msgstr "\"{0}\" hazır yanıtı silinsin mi?"
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:103
-msgid "Edit reply template"
-msgstr "Hazır yanıtı düzenle"
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:117
-msgid "Hello {SMS_FIRST_NAME_VARIABLE}, doors open at 7pm."
-msgstr "Merhaba {SMS_FIRST_NAME_VARIABLE}, kapılar saat 19:00'da açılıyor."
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:241
-msgid "Import in progress: {0} messages retrieved"
-msgstr "İçe aktarma sürüyor: {0} mesaj alındı"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:118
-msgid "Import started. Messages will appear in SMS messages within a few minutes."
-msgstr "İçe aktarma başladı. Mesajlar birkaç dakika içinde SMS mesajlarında görünecek."
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:247
-msgid "Last import {0}: {1} new messages"
-msgstr "Son içe aktarma {0}: {1} yeni mesaj"
-
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:215
-msgid "Manage reply templates"
-msgstr "Hazır yanıtları yönet"
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:103
-msgid "New reply template"
-msgstr "Yeni hazır yanıt"
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:89
-msgid "No number in the opt-out list."
-msgstr "Engelleme listesinde numara yok."
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:89
-msgid "No number matches your search."
-msgstr "Aramanızla eşleşen numara yok."
-
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:201
-msgid "No reply template yet"
-msgstr "Henüz hazır yanıt yok"
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:75
-msgid "No reply template yet."
-msgstr "Henüz hazır yanıt yok."
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:96
-msgid "Number"
-msgstr "Numara"
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:39
-msgid "Number added to the opt-out list"
-msgstr "Numara engelleme listesine eklendi"
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:48
-msgid "Number removed from the opt-out list"
-msgstr "Numara engelleme listesinden çıkarıldı"
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:58
-msgid "Numbers that replied STOP or that you added by hand. They no longer receive any SMS from you. A number that replies START is removed automatically."
-msgstr "STOP yanıtı veren veya elle eklediğiniz numaralar. Artık sizden SMS almazlar. START yanıtı veren numara otomatik olarak çıkarılır."
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:109
-msgid "Opening hours"
-msgstr "Açılış saatleri"
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:46
-msgid "Remove {0} from the opt-out list? Only do this if the person asked to receive your SMS again."
-msgstr "{0} engelleme listesinden çıkarılsın mı? Bunu yalnızca kişi SMS'lerinizi yeniden almak istediyse yapın."
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
-msgid "Replied STOP"
-msgstr "STOP yanıtı verdi"
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:58
-msgid "Reply template deleted"
-msgstr "Hazır yanıt silindi"
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:49
-msgid "Reply template saved"
-msgstr "Hazır yanıt kaydedildi"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:235
-msgid "Retrieve httpSMS history"
-msgstr "httpSMS geçmişini al"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:225
-msgid "Retrieve the SMS sent and received with your httpSMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread."
-msgstr "Webhook bağlanmadan önce httpSMS numaranızla gönderilen ve alınan SMS'leri alın, örneğin bir betikle gönderilen kampanya. Zaten var olan mesajlar çoğaltılmaz ve okunmamış olarak işaretlenmez."
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:70
-msgid "Save the answers you send often (opening hours, access, refunds) and insert them in one click when replying to an SMS. Write {SMS_FIRST_NAME_VARIABLE} to insert the customer's first name."
-msgstr "Sık gönderdiğiniz yanıtları (saatler, ulaşım, iadeler) kaydedin ve bir SMS'i yanıtlarken tek tıkla ekleyin. Müşterinin adını eklemek için {SMS_FIRST_NAME_VARIABLE} yazın."
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:82
-msgid "Search by number or name"
-msgstr "Numara veya ada göre ara"
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:98
-msgid "Since"
-msgstr "Başlangıç"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:223
-msgid "SMS history"
-msgstr "SMS geçmişi"
-
-#: src/components/routes/organizer/Settings/index.tsx:101
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:57
-msgid "SMS opt-out list"
-msgstr "SMS engelleme listesi"
-
-#: src/components/routes/organizer/Settings/index.tsx:95
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:69
-msgid "SMS reply templates"
-msgstr "SMS hazır yanıtları"
-
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:196
-msgid "Templates"
-msgstr "Şablonlar"
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:116
-msgid "Text"
-msgstr "Metin"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:253
-msgid "The import failed: {importError}. You can start it again, messages already imported are kept."
-msgstr "İçe aktarma başarısız oldu: {importError}. Yeniden başlatabilirsiniz, içe aktarılan mesajlar korunur."
-
-#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:59
-msgid "Unable to delete the reply template"
-msgstr "Hazır yanıt silinemedi"
-
-#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:49
-msgid "Unable to remove the number"
-msgstr "Numara çıkarılamadı"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:119
-msgid "Unable to start the import"
-msgstr "İçe aktarma başlatılamadı"
-
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:35
-msgid "unknown error"
-msgstr "bilinmeyen hata"

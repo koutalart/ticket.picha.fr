@@ -26,7 +26,7 @@ class TestSmsConnectionHandler
         $settings = $this->settingsService->getOrCreate($accountId, $organizerId);
 
         if (! $settings->getApiKey()) {
-            throw new SmsGatewayNotConfiguredException(__('Add your httpSMS API key first'));
+            throw new SmsGatewayNotConfiguredException(__('Add your PICHA SMS API key first'));
         }
 
         $phoneNumbers = $this->httpSmsClient->listPhoneNumbers($settings->getApiKey());

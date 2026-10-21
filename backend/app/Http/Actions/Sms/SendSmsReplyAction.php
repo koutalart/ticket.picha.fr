@@ -45,7 +45,7 @@ class SendSmsReplyAction extends BaseAction
             throw ValidationException::withMessages(['content' => $exception->getMessage()]);
         } catch (SmsGatewayException $exception) {
             return $this->errorResponse(
-                __('httpSMS could not send the message: :message', ['message' => $exception->getMessage()]),
+                __('PICHA SMS could not send the message: :message', ['message' => $exception->getMessage()]),
                 ResponseCodes::HTTP_BAD_GATEWAY,
             );
         }

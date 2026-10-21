@@ -86,16 +86,16 @@ const Sms = () => {
                 <Alert color="yellow" variant="light" mb="md">
                     {t`SMS is not connected yet.`}{' '}
                     <Anchor component={NavLink} to={`/manage/organizer/${organizerId}/settings#sms`} size="sm">
-                        {t`Connect httpSMS in Settings`}
+                        {t`Connect PICHA SMS in Settings`}
                     </Anchor>
                 </Alert>
             )}
 
             {canSend && settings?.phone_status === 'OFFLINE' && (
-                <Alert color="red" variant="light" mb="md" title={t`Your httpSMS phone is offline`}>
+                <Alert color="red" variant="light" mb="md" title={t`Your PICHA SMS phone is offline`}>
                     {settings.phone_status_changed_at
-                        ? t`The phone went offline ${relativeDate(settings.phone_status_changed_at)}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the httpSMS app is running.`
-                        : t`New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the httpSMS app is running.`}
+                        ? t`The phone went offline ${relativeDate(settings.phone_status_changed_at)}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running.`
+                        : t`New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running.`}
                 </Alert>
             )}
 

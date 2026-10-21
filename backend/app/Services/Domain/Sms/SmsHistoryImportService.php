@@ -291,7 +291,7 @@ class SmsHistoryImportService
     private function assertConfigured(OrganizerSmsSettingDomainObject $settings): void
     {
         if (! $settings->getApiKey() || ! $settings->getFromNumber()) {
-            throw new SmsGatewayNotConfiguredException(__('Add your httpSMS API key and sending number first'));
+            throw new SmsGatewayNotConfiguredException(__('Add your PICHA SMS API key and sending number first'));
         }
     }
 }
