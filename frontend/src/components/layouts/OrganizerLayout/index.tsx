@@ -9,7 +9,8 @@ import {
     IconPlus,
     IconSettings,
     IconUsersGroup,
-    IconQrcode
+    IconQrcode,
+    IconMessage
 } from "@tabler/icons-react";
 import { t } from "@lingui/macro";
 import { NavItem } from "../AppLayout/types.ts";
@@ -29,6 +30,7 @@ import { useGetAccount } from "../../../queries/useGetAccount.ts";
 import { StripeConnectButton } from "../../common/StripeConnectButton";
 import { useGetMe } from "../../../queries/useGetMe.ts";
 import { isBoxOfficeOperator } from "../../../utilites/kioskAuth.ts";
+import { useGetSmsUnreadCount } from "../../../queries/useGetSmsUnreadCount.ts";
 
 const OrganizerLayout = () => {
     const { organizerId } = useParams();
@@ -42,13 +44,14 @@ const OrganizerLayout = () => {
     const organizers = organizerResposne?.data;
     const { data: account } = useGetAccount();
     const { data: me, isSuccess: isMeSuccess } = useGetMe();
+    const { data: smsUnreadCount } = useGetSmsUnreadCount(organizerId);
 
     if (isMeSuccess && isBoxOfficeOperator(me)) {
         return <Navigate to="/kiosk" replace />;
     }
 
 
-    const isQrCodesPage = /\/qr-codes\/?$/.test(location.pathname);
+    const isQrCodesPage = /\/(qr-codes|sms)\/?$/.test(location.pathname);
     const isDashboard = (isActive: boolean) => isActive || /\/manage\/organizer\/[^/]+\/?$/.test(location.pathname);
 
     const navItems: NavItem[] = [
@@ -61,6 +64,7 @@ const OrganizerLayout = () => {
             isActive: (isActive) => isActive || location.pathname.includes('/report/')
         },
         {link: 'qr-codes', label: t`QR codes`, icon: IconQrcode},
+        {link: 'sms', label: t`SMS`, icon: IconMessage, badge: smsUnreadCount ? smsUnreadCount : undefined},
     ];
 
 

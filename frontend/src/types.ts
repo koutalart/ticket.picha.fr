@@ -1286,3 +1286,72 @@ export interface KioskPrintRelayToken {
 export interface EnqueueKioskPrintJobsResponse {
     job_ids: number[];
 }
+
+export type SmsConversationStatus = 'OPEN' | 'NEEDS_HUMAN' | 'CLOSED';
+export type SmsMessageStatus = 'RECEIVED' | 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED' | 'EXPIRED';
+export type SmsMessageDirection = 'INBOUND' | 'OUTBOUND';
+export type SmsMessageAuthorType = 'CONTACT' | 'HUMAN' | 'AGENT' | 'CAMPAIGN';
+export type SmsConversationFilter = 'all' | 'unread' | 'needs_human';
+
+export interface OrganizerSmsSettings {
+    provider: string;
+    api_key_configured: boolean;
+    from_number: string | null;
+    webhook_url: string;
+    webhook_signing_key: string;
+    last_webhook_received_at: string | null;
+}
+
+export interface SmsConnectionTestResult {
+    phone_numbers: string[];
+    from_number_registered: boolean;
+}
+
+export interface SmsConversation {
+    id: number;
+    phone: string;
+    contact_name: string | null;
+    status: SmsConversationStatus;
+    unread_count: number;
+    last_message_at: string | null;
+    last_message_preview: string | null;
+    last_message_direction: SmsMessageDirection | null;
+    draft_reply: string | null;
+    draft_source: string | null;
+    draft_generated_at: string | null;
+    created_at: string;
+}
+
+export interface SmsMessage {
+    id: number;
+    direction: SmsMessageDirection;
+    author_type: SmsMessageAuthorType;
+    content: string;
+    status: SmsMessageStatus;
+    error_message: string | null;
+    sent_by_user_id: number | null;
+    provider_timestamp: string | null;
+    created_at: string;
+}
+
+export interface SmsCustomerOrder {
+    order_id: number;
+    public_id: string;
+    event_id: number;
+    event_title: string;
+    event_start_date: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    total_gross: number;
+    currency: string;
+    status: string;
+    created_at: string;
+}
+
+export interface SmsConversationDetail {
+    conversation: SmsConversation;
+    messages: SmsMessage[];
+    customer_orders: SmsCustomerOrder[];
+    opted_out: boolean;
+}

@@ -1,5 +1,15 @@
 <?php
 
+use HiEvents\Http\Actions\Sms\GetOrganizerSmsSettingsAction;
+use HiEvents\Http\Actions\Sms\UpdateOrganizerSmsSettingsAction;
+use HiEvents\Http\Actions\Sms\RegenerateSmsWebhookSigningKeyAction;
+use HiEvents\Http\Actions\Sms\TestSmsConnectionAction;
+use HiEvents\Http\Actions\Sms\GetSmsConversationsAction;
+use HiEvents\Http\Actions\Sms\GetSmsUnreadCountAction;
+use HiEvents\Http\Actions\Sms\GetSmsConversationAction;
+use HiEvents\Http\Actions\Sms\UpdateSmsConversationAction;
+use HiEvents\Http\Actions\Sms\SendSmsReplyAction;
+use HiEvents\Http\Actions\Sms\HttpSmsIncomingWebhookAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -346,6 +356,20 @@ $router->middleware(['auth:api'])->group(
         $router->patch('/organizers/{organizer_id}/settings', PartialUpdateOrganizerSettingsAction::class);
         $router->post('/organizers/{organizer_id}/settings/meta-conversions-api/test', TestMetaConversionsApiAction::class)
             ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/sms/settings', GetOrganizerSmsSettingsAction::class);
+        $router->put('/organizers/{organizer_id}/sms/settings', UpdateOrganizerSmsSettingsAction::class);
+        $router->post('/organizers/{organizer_id}/sms/settings/regenerate-signing-key', RegenerateSmsWebhookSigningKeyAction::class);
+        $router->post('/organizers/{organizer_id}/sms/settings/test', TestSmsConnectionAction::class)
+            ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/sms/conversations', GetSmsConversationsAction::class);
+        $router->get('/organizers/{organizer_id}/sms/unread-count', GetSmsUnreadCountAction::class);
+        $router->get('/organizers/{organizer_id}/sms/conversations/{conversation_id}', GetSmsConversationAction::class)
+            ->where('conversation_id', '[0-9]+');
+        $router->patch('/organizers/{organizer_id}/sms/conversations/{conversation_id}', UpdateSmsConversationAction::class)
+            ->where('conversation_id', '[0-9]+');
+        $router->post('/organizers/{organizer_id}/sms/conversations/{conversation_id}/messages', SendSmsReplyAction::class)
+            ->where('conversation_id', '[0-9]+')
+            ->middleware('throttle:30,1');
         $router->get('/organizers/{organizer_id}/qr-campaigns', GetQrCampaignsAction::class);
         $router->post('/organizers/{organizer_id}/qr-campaigns', CreateQrCampaignAction::class);
         $router->put('/organizers/{organizer_id}/qr-campaigns/{qr_campaign_id}', UpdateQrCampaignAction::class);
@@ -671,6 +695,9 @@ $router->prefix('/public')->group(
 
         // Webhooks
         $router->post('/webhooks/stripe', StripeIncomingWebhookAction::class);
+        $router->post('/webhooks/httpsms/{webhook_token}', HttpSmsIncomingWebhookAction::class)
+            ->where('webhook_token', '[A-Za-z0-9]{20,64}')
+            ->middleware('throttle:120,1');
 
         // Check-In
         $router->get('/check-in-lists/{check_in_list_short_id}', GetCheckInListPublicAction::class);

@@ -32,6 +32,10 @@ msgstr "—"
 msgid "'There\\'s nothing to show yet'"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
+msgid "(emoji or special characters: 70 characters per SMS)"
+msgstr "(Emojis oder Sonderzeichen: 70 Zeichen pro SMS)"
+
 #: src/components/routes/admin/Attribution/index.tsx:146
 msgid "(empty)"
 msgstr "(leer)"
@@ -85,6 +89,10 @@ msgstr "{0} Teilnehmer"
 msgid "{0} available"
 msgstr "{0} verfügbar"
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:164
+msgid "{0} characters, {1} SMS"
+msgstr "{0} Zeichen, {1} SMS"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:251
 msgid "{0} charges platform fees to maintain and improve its services. These fees are automatically deducted from each transaction."
 msgstr "{0} erhebt Plattformgebühren, um seine Dienste zu betreiben und zu verbessern. Diese Gebühren werden automatisch von jeder Transaktion abgezogen."
@@ -123,6 +131,10 @@ msgstr ""
 #: src/components/layouts/ManageShell/index.tsx:172
 msgid "{0} logo"
 msgstr "{0} Logo"
+
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
+msgid "{0} orders, {1} events"
+msgstr "{0} Bestellungen, {1} Veranstaltungen"
 
 #: src/components/routes/events/Dashboard/index.tsx:140
 msgid "{0} organizers"
@@ -468,6 +480,10 @@ msgstr ""
 #: src/components/forms/TaxAndFeeForm/index.tsx:35
 msgid "A fixed amount per product. E.g, $0.50 per product"
 msgstr "Ein fester Betrag pro Produkt. Z.B., 0,50 $ pro Produkt"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:137
+msgid "A key is saved. Paste a new one to replace it."
+msgstr "Ein Schlüssel ist gespeichert. Füge einen neuen ein, um ihn zu ersetzen."
 
 #: src/components/forms/ProductCategoryForm/index.tsx:34
 msgid "A message to display when there are no products in this category."
@@ -901,6 +917,10 @@ msgstr ""
 msgid "Add Webhook"
 msgstr "Webhook hinzufügen"
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:137
+msgid "Add your httpSMS API key and sending number in Settings to reply from here."
+msgstr "Füge deinen httpSMS-API-Schlüssel und deine Absendernummer in den Einstellungen hinzu, um von hier aus zu antworten."
+
 #: src/components/routes/event/GettingStarted/index.tsx:102
 msgid "Add your poster to make the page more attractive."
 msgstr ""
@@ -925,7 +945,7 @@ msgstr "Zusätzliche Informationen"
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:132
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
-#: src/components/routes/organizer/Settings/index.tsx:44
+#: src/components/routes/organizer/Settings/index.tsx:45
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
 msgstr "Adresse"
@@ -1044,6 +1064,7 @@ msgid "All"
 msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
+#: src/components/routes/organizer/Sms/ConversationList.tsx:45
 msgid "All"
 msgstr "Alle"
 
@@ -1283,6 +1304,10 @@ msgstr "Antwort erfolgreich aktualisiert."
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:62
 msgid "Any queries from product holders will be sent to this email address. This will also be used as the \"reply-to\" address for all emails sent from this event"
 msgstr "Alle Anfragen von Produktinhabern werden an diese E-Mail-Adresse gesendet. Diese wird auch als „Antwort-an“-Adresse für alle von dieser Veranstaltung gesendeten E-Mails verwendet."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:69
+msgid "API key removed"
+msgstr "API-Schlüssel entfernt"
 
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:48
 msgid "App"
@@ -1536,6 +1561,10 @@ msgstr "Zugewiesene Konfiguration"
 msgid "Assigned Tier"
 msgstr "Zugewiesene Stufe"
 
+#: src/components/routes/organizer/Sms/labels.ts:37
+msgid "Assistant"
+msgstr "Assistent"
+
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:40
 msgid "Associate your brand with our events."
 msgstr ""
@@ -1776,6 +1805,10 @@ msgstr "Warten auf Offline-Zahlung"
 #~ msgid "Awaiting Offline Pmt."
 #~ msgstr "Wartet auf Offline-Zahlung"
 
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:62
+msgid "awaiting payment"
+msgstr "Zahlung ausstehend"
+
 #: src/components/common/CheckIn/AttendeeList.tsx:88
 msgid "Awaiting payment"
 msgstr "Zahlung ausstehend"
@@ -1816,6 +1849,7 @@ msgstr "Awesome Organizer Ltd."
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:433
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:83
 msgid "Back"
 msgstr "Zurück"
 
@@ -1875,7 +1909,7 @@ msgstr "Badge + Einlass"
 msgid "Badge printing…"
 msgstr "Namensschild wird gedruckt…"
 
-#: src/components/routes/organizer/Settings/index.tsx:32
+#: src/components/routes/organizer/Settings/index.tsx:33
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
 msgstr "Grundinformationen"
@@ -2075,6 +2109,7 @@ msgstr "Kamera-Scanner"
 #: src/components/routes/organizer/QrCodes/index.tsx:161
 #: src/components/routes/organizer/QrCodes/index.tsx:238
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:284
+#: src/components/routes/organizer/Sms/labels.ts:35
 msgid "Campaign"
 msgstr "Kampagne"
 
@@ -2168,6 +2203,10 @@ msgstr "Das Stornieren wird alle mit dieser Bestellung verbundenen Teilnehmer st
 #: src/components/organizerTemplates/Poster/faq.ts:18
 msgid "Cancellation and refund conditions are set by the organizer. Contact them before the event for any request."
 msgstr ""
+
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:61
+msgid "cancelled"
+msgstr "storniert"
 
 #: src/components/common/AttendeeStatusBadge/index.tsx:28
 #: src/components/common/AttendeeTable/index.tsx:300
@@ -2594,6 +2633,10 @@ msgstr "Suche schließen"
 msgid "Close sidebar"
 msgstr "Sidebar schließen"
 
+#: src/components/routes/organizer/Sms/labels.ts:9
+msgid "Closed"
+msgstr "Geschlossen"
+
 #: src/components/common/AffiliateTable/index.tsx:81
 #: src/components/forms/AffiliateForm/index.tsx:38
 #: src/components/forms/AffiliateForm/index.tsx:72
@@ -2622,7 +2665,7 @@ msgstr "Der Code muss zwischen 3 und 50 Zeichen lang sein"
 msgid "Code must be no more than 20 characters"
 msgstr "Code darf maximal 20 Zeichen lang sein"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:78
+#: src/components/layouts/OrganizerLayout/index.tsx:82
 msgid "Collaborate with your team to create amazing events together."
 msgstr "Arbeiten Sie mit Ihrem Team zusammen, um gemeinsam großartige Veranstaltungen zu gestalten."
 
@@ -2848,8 +2891,9 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:96
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
 msgid "Configured"
-msgstr ""
+msgstr "Konfiguriert"
 
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:35
 msgid "Configured Discount"
@@ -2928,12 +2972,16 @@ msgstr "Verbinden & Upgraden"
 msgid "Connect Documentation"
 msgstr "Verbindungsdokumentation"
 
+#: src/components/routes/organizer/Sms/index.tsx:70
+msgid "Connect httpSMS in Settings"
+msgstr "httpSMS in den Einstellungen verbinden"
+
 #: src/components/routes/event/EventDashboard/index.tsx:250
 #~ msgid "Connect payment processing"
 #~ msgstr "Zahlungsabwicklung verbinden"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:91
-#: src/components/layouts/OrganizerLayout/index.tsx:99
+#: src/components/layouts/OrganizerLayout/index.tsx:95
+#: src/components/layouts/OrganizerLayout/index.tsx:103
 #: src/components/routes/event/GettingStarted/index.tsx:120
 msgid "Connect Stripe"
 msgstr "Stripe verbinden"
@@ -2961,7 +3009,7 @@ msgstr ""
 msgid "Connect with Stripe"
 msgstr "Mit Stripe verbinden"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:92
+#: src/components/layouts/OrganizerLayout/index.tsx:96
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "Verbinden Sie Ihr Stripe-Konto, um Zahlungen für Tickets und Produkte zu akzeptieren."
 
@@ -2984,6 +3032,18 @@ msgstr "Verbinden Sie Ihr Stripe-Konto, um Zahlungen zu akzeptieren."
 #: src/components/routes/kiosk/Settings/index.tsx:242
 msgid "Connected at"
 msgstr "Angemeldet um"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:93
+msgid "Connected to httpSMS, but no phone is registered. Install the httpSMS app on your Android phone."
+msgstr "Mit httpSMS verbunden, aber kein Telefon ist registriert. Installiere die httpSMS-App auf deinem Android-Telefon."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:91
+msgid "Connected to httpSMS, but your sending number is not one of your phones: {phones}"
+msgstr "Mit httpSMS verbunden, aber deine Absendernummer gehört nicht zu deinen Telefonen: {phones}"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+msgid "Connected to httpSMS. Your sending number is registered."
+msgstr "Mit httpSMS verbunden. Deine Absendernummer ist registriert."
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:80
 msgid "Connected to pixel {pixel}."
@@ -3213,6 +3273,10 @@ msgstr "In die Zwischenablage kopieren"
 msgid "Copy URL"
 msgstr "URL kopieren"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:127
+msgid "Copy your API key from the httpSMS settings page and paste it below, with the phone number of the SIM used to send."
+msgstr "Kopiere deinen API-Schlüssel von der httpSMS-Einstellungsseite und füge ihn unten ein, zusammen mit der Nummer der sendenden SIM."
+
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:277
 msgid "Corporate events"
 msgstr ""
@@ -3398,7 +3462,7 @@ msgstr "Benutzerdefinierte Vorlage erstellen"
 #~ msgstr "Erstellen Sie Rabatte, Zugangscodes für versteckte Tickets und Sonderangebote."
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:116
+#: src/components/layouts/OrganizerLayout/index.tsx:120
 #: src/components/routes/organizer/Events/index.tsx:66
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:188
 msgid "Create Event"
@@ -3647,7 +3711,7 @@ msgstr "Kunden"
 msgid "Customize"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:70
+#: src/components/layouts/OrganizerLayout/index.tsx:74
 msgid "Customize my page"
 msgstr "Meine Seite anpassen"
 
@@ -3732,7 +3796,7 @@ msgstr "Gefahrenzone"
 
 #: src/components/common/AttendeeTable/index.tsx:372
 #: src/components/common/DangerZone/index.tsx:30
-#: src/components/routes/organizer/Settings/index.tsx:92
+#: src/components/routes/organizer/Settings/index.tsx:99
 msgid "Danger Zone"
 msgstr "Gefahrenzone"
 
@@ -3923,6 +3987,10 @@ msgstr "Diese Frage löschen? Dies kann nicht rückgängig gemacht werden."
 #: src/components/common/WebhookTable/index.tsx:127
 msgid "Delete webhook"
 msgstr "Webhook löschen"
+
+#: src/components/routes/organizer/Sms/labels.ts:22
+msgid "Delivered"
+msgstr "Zugestellt"
 
 #: src/components/routes/landing/MarketingDemoSection/index.tsx:22
 msgid "Demo tailored to your event"
@@ -4534,7 +4602,7 @@ msgid "Email Preview"
 msgstr "E-Mail-Vorschau"
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:336
-#: src/components/routes/organizer/Settings/index.tsx:68
+#: src/components/routes/organizer/Settings/index.tsx:69
 msgid "Email Templates"
 msgstr "E-Mail-Vorlagen"
 
@@ -4883,7 +4951,7 @@ msgid "Event date display"
 msgstr "Anzeige des Veranstaltungsdatums"
 
 #: src/components/routes/account/ManageAccount/sections/EventDefaultsSettings/index.tsx:5
-#: src/components/routes/organizer/Settings/index.tsx:38
+#: src/components/routes/organizer/Settings/index.tsx:39
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:73
 msgid "Event Defaults"
 msgstr "Ereignisstandards"
@@ -5067,7 +5135,7 @@ msgstr "Veranstaltungsort"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:56
+#: src/components/layouts/OrganizerLayout/index.tsx:59
 #: src/components/organizerTemplates/Poster/index.tsx:74
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:184
 #: src/components/routes/admin/Attribution/index.tsx:133
@@ -5208,6 +5276,7 @@ msgid "Facebook"
 msgstr "Facebook"
 
 #: src/components/routes/admin/Messages/index.tsx:127
+#: src/components/routes/organizer/Sms/labels.ts:24
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
@@ -5860,6 +5929,14 @@ msgstr "Generieren"
 msgid "Generate a new relay token"
 msgstr "Neues Relais-Token erstellen"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:193
+msgid "Generate a new signing key"
+msgstr "Neuen Signaturschlüssel erzeugen"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:76
+msgid "Generate a new signing key? You will need to paste it into your httpSMS webhook, otherwise incoming SMS will be rejected."
+msgstr "Neuen Signaturschlüssel erzeugen? Du musst ihn in deinen httpSMS-Webhook einfügen, sonst werden eingehende SMS abgelehnt."
+
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:100
 msgid "Generate a relay token"
 msgstr "Relais-Token erstellen"
@@ -6142,7 +6219,7 @@ msgstr "Hervorgehoben"
 msgid "Highlighted products will have a different background color to make them stand out on the event page."
 msgstr "Hervorgehobene Produkte haben eine andere Hintergrundfarbe, um sie auf der Event-Seite hervorzuheben."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:55
+#: src/components/layouts/OrganizerLayout/index.tsx:58
 #: src/components/organizerTemplates/Poster/index.tsx:73
 msgid "Home"
 msgstr ""
@@ -6213,6 +6290,10 @@ msgstr "Wie viele Minuten hat der Kunde Zeit, um seine Bestellung abzuschließen
 #~ msgid "How many times can this code be used?"
 #~ msgstr "Wie oft kann dieser Code verwendet werden?"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+msgid "How to connect"
+msgstr "So verbindest du"
+
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:49
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 msgid "How to pay offline"
@@ -6237,6 +6318,10 @@ msgstr "https://example-maps-service.com/..."
 #: src/components/forms/WebhookForm/index.tsx:139
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://webhook-domain.com/webhook"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:136
+msgid "httpSMS API key"
+msgstr "httpSMS-API-Schlüssel"
 
 #: src/utilites/localeNames.ts:8
 msgid "Hungarian"
@@ -6367,9 +6452,17 @@ msgstr "In {diffHours} Stunden"
 msgid "In {diffMinutes} minutes"
 msgstr "In {diffMinutes} Minuten"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:128
+msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events."
+msgstr "Erstelle in httpSMS einen Webhook mit der URL und dem Signaturschlüssel unten und aktiviere die Ereignisse message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed und message.send.expired."
+
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:122
 msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/labels.ts:11
+msgid "In progress"
+msgstr "In Bearbeitung"
 
 #: src/components/common/AffiliateTable/index.tsx:131
 #: src/components/common/CheckInListList/index.tsx:114
@@ -6453,6 +6546,10 @@ msgstr "Instagram"
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:304
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
+msgid "Install the httpSMS app on your Android phone and sign in on <0>httpsms.com</0>."
+msgstr "Installiere die httpSMS-App auf deinem Android-Telefon und melde dich auf <0>httpsms.com</0> an."
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:72
 msgid "Instant e-ticket"
@@ -6572,7 +6669,7 @@ msgstr "Laden Sie jemanden ein, Tickets an der Tür zu verkaufen. Die Person erh
 msgid "Invite Team Member"
 msgstr "Teammitglied einladen"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:80
+#: src/components/layouts/OrganizerLayout/index.tsx:84
 msgid "Invite Team Members"
 msgstr "Teammitglieder einladen"
 
@@ -6584,7 +6681,7 @@ msgstr "Laden Sie unbegrenzt Teammitglieder mit benutzerdefinierten Rollen ein"
 msgid "Invite User"
 msgstr "Benutzer einladen"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:77
+#: src/components/layouts/OrganizerLayout/index.tsx:81
 msgid "Invite Your Team"
 msgstr "Laden Sie Ihr Team ein"
 
@@ -6866,6 +6963,10 @@ msgstr "Letzter Verkauf: <0>{0} Tickets</0>"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:989
 msgid "Last sale: <0>{0}</0>"
 msgstr "Letzter Verkauf: <0>{0}</0>"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:114
+msgid "Last SMS event received {0}"
+msgstr "Letztes SMS-Ereignis empfangen {0}"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:457
 msgid "Last ticket: <0>{0}</0>"
@@ -7346,7 +7447,7 @@ msgstr "Messaging-Stufe"
 msgid "Messaging tier updated successfully"
 msgstr "Messaging-Stufe erfolgreich aktualisiert"
 
-#: src/components/routes/organizer/Settings/index.tsx:80
+#: src/components/routes/organizer/Settings/index.tsx:81
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:89
 msgid "Meta Conversions API"
 msgstr ""
@@ -7535,7 +7636,7 @@ msgstr ""
 msgid "My image"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:69
+#: src/components/layouts/OrganizerLayout/index.tsx:73
 msgid "My organizer page"
 msgstr "Meine Veranstalterseite"
 
@@ -7603,6 +7704,10 @@ msgstr "Name muss weniger als 255 Zeichen haben"
 msgid "Name of the event"
 msgstr "Name der Veranstaltung"
 
+#: src/components/routes/organizer/Sms/ConversationList.tsx:36
+msgid "Name or number"
+msgstr "Name oder Nummer"
+
 #: src/components/routes/kiosk/Orders/index.tsx:238
 msgid "Name, e-mail, phone, order or ticket number — or scan the QR code"
 msgstr "Name, E-Mail, Telefon, Bestell- oder Ticketnummer — oder QR-Code scannen"
@@ -7656,6 +7761,10 @@ msgstr "Neues Kennwort"
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:266
 msgid "New QR code"
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:78
+msgid "New signing key generated"
+msgstr "Neuer Signaturschlüssel erzeugt"
 
 #: src/components/routes/admin/Dashboard/index.tsx:225
 msgid "New Signups"
@@ -7762,6 +7871,10 @@ msgstr "Unverbindlich"
 #: src/components/routes/admin/Configurations/index.tsx:126
 msgid "No configurations found"
 msgstr "Keine Konfigurationen gefunden"
+
+#: src/components/routes/organizer/Sms/ConversationList.tsx:57
+msgid "No conversation yet. Replies to your SMS will appear here."
+msgstr "Noch keine Unterhaltung. Antworten auf deine SMS erscheinen hier."
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:226
 msgid "No custom domain"
@@ -7874,6 +7987,10 @@ msgstr "Keine Tickets mehr für diesen Preis."
 #: src/components/routes/event/OrdersPage/OrderList.tsx:169
 msgid "No name"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:37
+msgid "No order found with this number. The number is matched with the phone answers of your order forms and box office sales."
+msgstr "Keine Bestellung mit dieser Nummer gefunden. Die Nummer wird mit den Telefonangaben aus deinen Bestellformularen und Kassenverkäufen abgeglichen."
 
 #: src/components/routes/kiosk/Orders/index.tsx:269
 msgid "No order found."
@@ -8124,8 +8241,9 @@ msgstr "Nicht Eingecheckt"
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:97
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:111
 msgid "Not configured"
-msgstr ""
+msgstr "Nicht konfiguriert"
 
 #: src/components/routes/landing/DemoRequestForm/index.tsx:82
 msgid "Not decided yet"
@@ -8147,6 +8265,10 @@ msgstr "Noch nicht eingelassen"
 #: src/components/routes/event/GettingStarted/index.tsx:115
 msgid "Not needed for now: your tickets are free or paid offline."
 msgstr ""
+
+#: src/components/routes/organizer/Sms/labels.ts:26
+msgid "Not sent (phone offline)"
+msgstr "Nicht gesendet (Telefon offline)"
 
 #: src/components/modals/ManageAttendeeModal/index.tsx:131
 #: src/components/modals/ManageOrderModal/index.tsx:164
@@ -8895,7 +9017,7 @@ msgstr "Veranstalter nicht gefunden"
 msgid "Organizer restored successfully"
 msgstr "Veranstalter erfolgreich wiederhergestellt"
 
-#: src/components/routes/organizer/Settings/index.tsx:153
+#: src/components/routes/organizer/Settings/index.tsx:160
 msgid "Organizer Settings"
 msgstr "Veranstaltereinstellungen"
 
@@ -9150,6 +9272,10 @@ msgstr "Vergangene Veranstaltungen"
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:36
 msgid "Past events."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:180
+msgid "Paste it into the signing key field of your httpSMS webhook. Keep it private."
+msgstr "Füge ihn in das Feld für den Signaturschlüssel deines httpSMS-Webhooks ein. Halte ihn geheim."
 
 #: src/pages/digit/DeviceTokenGate.tsx:56
 msgid "Paste the device token given by your event organizer. This is a one-time setup per device - it will be remembered for future scans."
@@ -9428,7 +9554,7 @@ msgstr "Plattformgebühr von {0} wird von Ihrer Auszahlung abgezogen"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:248
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
-#: src/components/routes/organizer/Settings/index.tsx:102
+#: src/components/routes/organizer/Settings/index.tsx:109
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:42
 msgid "Platform Fees"
 msgstr "Plattformgebühren"
@@ -10098,7 +10224,7 @@ msgstr ""
 msgid "QR code updated"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:63
+#: src/components/layouts/OrganizerLayout/index.tsx:66
 #: src/components/routes/organizer/QrCodes/index.tsx:176
 #: src/components/routes/organizer/QrCodes/index.tsx:264
 msgid "QR codes"
@@ -10521,6 +10647,14 @@ msgstr "Titelvideo entfernen? Stattdessen wird das Titelbild angezeigt."
 msgid "Remove the end time"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:64
+msgid "Remove the httpSMS API key? You will no longer be able to send SMS from PICHA."
+msgstr "httpSMS-API-Schlüssel entfernen? Du kannst dann keine SMS mehr aus PICHA senden."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:162
+msgid "Remove the key"
+msgstr "Schlüssel entfernen"
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:338
 msgid "Remove the poster"
 msgstr ""
@@ -10565,6 +10699,10 @@ msgstr "Video ersetzen"
 msgid "Replaces the page title on the visual."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/index.tsx:62
+msgid "Replies from your customers to your SMS, sent from your httpSMS phone. A customer who replies STOP is automatically unsubscribed from your SMS."
+msgstr "Antworten deiner Kunden auf deine SMS, gesendet von deinem httpSMS-Telefon. Wer mit STOP antwortet, wird automatisch von deinen SMS abgemeldet."
+
 #: src/components/routes/landing/index.tsx:350
 #: src/components/routes/landing/MarketingDemoSection/index.tsx:21
 msgid "Reply within 1 business day"
@@ -10579,7 +10717,7 @@ msgid "Report not found"
 msgstr "Bericht nicht gefunden"
 
 #: src/components/layouts/Event/index.tsx:94
-#: src/components/layouts/OrganizerLayout/index.tsx:59
+#: src/components/layouts/OrganizerLayout/index.tsx:62
 #: src/components/routes/event/Reports/index.tsx:58
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -10935,6 +11073,7 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:150
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:88
@@ -11232,6 +11371,10 @@ msgstr "Kategorie auswählen"
 msgid "Select a configuration"
 msgstr "Konfiguration auswählen"
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:45
+msgid "Select a conversation"
+msgstr "Wähle eine Unterhaltung"
+
 #: src/components/routes/event/messages.tsx:340
 msgid "Select a message to view its contents"
 msgstr "Wählen Sie eine Nachricht aus, um ihren Inhalt anzuzeigen"
@@ -11389,6 +11532,7 @@ msgstr "Seminar"
 
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:173
 msgid "Send"
 msgstr "Schicken"
 
@@ -11396,6 +11540,10 @@ msgstr "Schicken"
 #: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:36
 msgid "Send a message"
 msgstr "Eine Nachricht schicken"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:104
+msgid "Send and receive SMS with your customers from your own Android phone, using the httpSMS app. Replies appear in SMS messages."
+msgstr "Sende und empfange SMS mit deinen Kunden über dein eigenes Android-Telefon mit der httpSMS-App. Antworten erscheinen unter SMS-Nachrichten."
 
 #: src/components/modals/SendMessageModal/index.tsx:468
 msgid "Send as test"
@@ -11458,6 +11606,14 @@ msgstr "Senden Sie Ihre erste Nachricht"
 msgid "Send your orders and attendees automatically to another tool (CRM, spreadsheet, automation)."
 msgstr "Senden Sie Bestellungen und Teilnehmer automatisch an ein anderes Tool (CRM, Tabelle, Automatisierung)."
 
+#: src/components/routes/organizer/Sms/labels.ts:18
+msgid "Sending"
+msgstr "Wird gesendet"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
+msgid "Sending number"
+msgstr "Absendernummer"
+
 #: src/components/routes/auth/ForgotPassword/index.tsx:70
 msgid "Sending..."
 msgstr "Wird gesendet..."
@@ -11471,6 +11627,7 @@ msgid "sent"
 msgstr "versendet"
 
 #: src/components/routes/admin/Messages/index.tsx:123
+#: src/components/routes/organizer/Sms/labels.ts:20
 msgid "Sent"
 msgstr "Gesendet"
 
@@ -11491,7 +11648,7 @@ msgstr "An Kunden gesendet, wenn sie eine Bestellung aufgeben"
 msgid "Sent to each attendee with their ticket details"
 msgstr "An jeden Teilnehmer mit seinen Ticketdetails gesendet"
 
-#: src/components/routes/organizer/Settings/index.tsx:62
+#: src/components/routes/organizer/Settings/index.tsx:63
 msgid "SEO"
 msgstr "SEO"
 
@@ -11592,7 +11749,7 @@ msgstr "Einstellung aktualisiert"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
 #: src/components/layouts/Kiosk/index.tsx:65
-#: src/components/layouts/OrganizerLayout/index.tsx:71
+#: src/components/layouts/OrganizerLayout/index.tsx:75
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/event/Settings/index.tsx:95
 #: src/components/routes/kiosk/Settings/index.tsx:60
@@ -11800,11 +11957,32 @@ msgstr "Zum Inhalt springen"
 msgid "Smith"
 msgstr "Schmied"
 
+#: src/components/layouts/OrganizerLayout/index.tsx:67
+msgid "SMS"
+msgstr "SMS"
+
+#: src/components/routes/organizer/Settings/index.tsx:87
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:103
+msgid "SMS (httpSMS)"
+msgstr "SMS (httpSMS)"
+
+#: src/components/routes/organizer/Sms/index.tsx:68
+msgid "SMS is not connected yet."
+msgstr "SMS ist noch nicht verbunden."
+
+#: src/components/routes/organizer/Sms/index.tsx:60
+msgid "SMS messages"
+msgstr "SMS-Nachrichten"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:57
+msgid "SMS settings saved"
+msgstr "SMS-Einstellungen gespeichert"
+
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:73
 msgid "Snapchat"
 msgstr "Snapchat"
 
-#: src/components/routes/organizer/Settings/index.tsx:56
+#: src/components/routes/organizer/Settings/index.tsx:57
 msgid "Social Links"
 msgstr "Social-Media-Links"
 
@@ -12068,6 +12246,10 @@ msgstr "Bearbeitet weiterhin Erstattungen für Ihre älteren Transaktionen."
 msgid "Stop Impersonating"
 msgstr "Identitätswechsel beenden"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:138
+msgid "Stored encrypted. It is never displayed again."
+msgstr "Wird verschlüsselt gespeichert und nie wieder angezeigt."
+
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:162
 msgid "Story"
 msgstr ""
@@ -12293,6 +12475,10 @@ msgstr ""
 msgid "Successfully updated Webhook"
 msgstr "Webhook erfolgreich aktualisiert"
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:143
+msgid "Suggested reply, check it before sending"
+msgstr "Vorgeschlagene Antwort, prüfe sie vor dem Senden"
+
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:137
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:86
 msgid "Suite 100"
@@ -12513,8 +12699,9 @@ msgid "Test event code (optional)"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:146
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:158
 msgid "Test the connection"
-msgstr ""
+msgstr "Verbindung testen"
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:485
 msgid "Text color"
@@ -12659,6 +12846,10 @@ msgstr "Die Sprache des Kunden"
 msgid "The maximum number of products for {0}is {1}"
 msgstr "Die maximale Anzahl an Produkten für {0} ist {1}"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:145
+msgid "The number of the SIM card in the httpSMS phone, for example +262639123456."
+msgstr "Die Nummer der SIM-Karte im httpSMS-Telefon, zum Beispiel +262639123456."
+
 #: src/components/layouts/QrLinkPage/index.tsx:138
 msgid "The organizer has paused or removed it."
 msgstr ""
@@ -12724,6 +12915,10 @@ msgstr "Die geplante Zeit muss in der Zukunft liegen"
 #: src/components/organizerTemplates/Tour/index.tsx:267
 msgid "The show"
 msgstr "Die Show"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:64
+msgid "The SMS could not be sent"
+msgstr "Die SMS konnte nicht gesendet werden"
 
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:65
 msgid "The team"
@@ -12946,6 +13141,10 @@ msgstr "Diese Nachricht wird nur angezeigt, wenn die Bestellung erfolgreich abge
 #: src/components/routes/admin/Configurations/index.tsx:220
 msgid "This name is visible to end users"
 msgstr "Dieser Name ist für Endbenutzer sichtbar"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:133
+msgid "This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again."
+msgstr "Diese Nummer hat mit STOP geantwortet und kann keine SMS mehr von dir erhalten. Antwortet sie mit START, kannst du wieder schreiben."
 
 #: src/components/forms/StripeCheckoutForm/index.tsx:94
 msgid "This order has already been paid."
@@ -13339,6 +13538,11 @@ msgstr "Zu ergänzen"
 msgid "To edit configurations, go to the Configurations section in the admin menu."
 msgstr "Um Konfigurationen zu bearbeiten, gehen Sie zum Bereich Konfigurationen im Admin-Menü."
 
+#: src/components/routes/organizer/Sms/ConversationList.tsx:47
+#: src/components/routes/organizer/Sms/labels.ts:7
+msgid "To handle"
+msgstr "Zu bearbeiten"
+
 #: src/components/modals/SendMessageModal/index.tsx:260
 msgid "To increase your limits, contact us at"
 msgstr "Um Ihre Limits zu erhöhen, kontaktieren Sie uns unter"
@@ -13453,7 +13657,7 @@ msgstr "Verfolgen Sie das Kontowachstum und die Leistung nach Attributionsquelle
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "Verfolgen Sie Verkäufe, Einnahmen und Teilnahme mit detaillierten Berichten"
 
-#: src/components/routes/organizer/Settings/index.tsx:74
+#: src/components/routes/organizer/Settings/index.tsx:75
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
 msgid "Tracking & Analytics"
 msgstr ""
@@ -13568,6 +13772,10 @@ msgstr "Produkt konnte nicht dupliziert werden. Bitte überprüfen Sie Ihre Anga
 msgid "Unable to fetch attendee"
 msgstr "Teilnehmer konnte nicht abgerufen werden"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:79
+msgid "Unable to generate a new signing key"
+msgstr "Neuer Signaturschlüssel konnte nicht erzeugt werden"
+
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:59
 msgid "Unable to generate the visual"
 msgstr ""
@@ -13575,6 +13783,10 @@ msgstr ""
 #: src/components/modals/JoinWaitlistModal/index.tsx:124
 msgid "Unable to join waitlist"
 msgstr "Warteliste konnte nicht beigetreten werden"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:96
+msgid "Unable to reach httpSMS. Please try again."
+msgstr "httpSMS ist nicht erreichbar. Bitte versuche es erneut."
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:82
 msgid "Unable to reach Meta. Please try again."
@@ -13584,9 +13796,17 @@ msgstr ""
 msgid "Unable to remove the access token"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:70
+msgid "Unable to remove the API key"
+msgstr "API-Schlüssel konnte nicht entfernt werden"
+
 #: src/components/modals/EditQuestionModal/index.tsx:84
 msgid "Unable to update question. Please check the your details"
 msgstr "Frage kann nicht aktualisiert werden. Bitte überprüfen Sie Ihre Angaben"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:76
+msgid "Unable to update the conversation"
+msgstr "Unterhaltung konnte nicht aktualisiert werden"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:134
 msgid "Unable to update the QR code"
@@ -13652,6 +13872,10 @@ msgstr "Unbekannter Teilnehmer"
 msgid "Unknown bracelet"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:27
+msgid "Unknown customer"
+msgstr "Unbekannter Kunde"
+
 #: src/components/routes/event/products.tsx:82
 #~ msgid "unlimited"
 #~ msgstr ""
@@ -13701,6 +13925,14 @@ msgstr "Unbezahlte Bestellung"
 #: src/components/routes/event/EventDashboard/index.tsx:228
 #~ msgid "Unpublish Event"
 #~ msgstr "Veranstaltung nicht mehr veröffentlichen"
+
+#: src/components/routes/organizer/Sms/ConversationList.tsx:46
+msgid "Unread"
+msgstr "Ungelesen"
+
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:32
+msgid "Unsubscribed (STOP)"
+msgstr "Abgemeldet (STOP)"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:70
 #: src/components/common/PromoCodeTable/index.tsx:55
@@ -14396,12 +14628,17 @@ msgstr "Webhook erfolgreich gelöscht"
 msgid "Webhook Logs"
 msgstr "Webhook-Protokolle"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:179
+msgid "Webhook signing key"
+msgstr "Webhook-Signaturschlüssel"
+
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:61
 #: src/components/modals/CreateWebhookModal/index.tsx:61
 msgid "Webhook Signing Secret"
 msgstr "Webhook-Signaturgeheimnis"
 
 #: src/components/forms/WebhookForm/index.tsx:138
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:172
 msgid "Webhook URL"
 msgstr "Webhook-URL"
 
@@ -14416,7 +14653,7 @@ msgstr "Webhook sendet Benachrichtigungen"
 #: src/components/layouts/Event/index.tsx:128
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
-#: src/components/routes/organizer/Settings/index.tsx:86
+#: src/components/routes/organizer/Settings/index.tsx:93
 #: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
@@ -14748,6 +14985,10 @@ msgstr ""
 msgid "Write your message here..."
 msgstr "Schreiben Sie Ihre Nachricht hier..."
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:149
+msgid "Write your reply"
+msgstr "Schreibe deine Antwort"
+
 #: src/pages/digit/ScannerDevicePage.tsx:69
 msgid "Wrong event for this device"
 msgstr ""
@@ -14789,6 +15030,10 @@ msgstr ""
 #: src/components/routes/landing/index.tsx:300
 msgid "Yes. Your teams can run the welcome themselves and only rent the equipment you need."
 msgstr "Ja. Ihre Teams übernehmen den Empfang selbst, und Sie mieten nur die benötigten Geräte."
+
+#: src/components/routes/organizer/Sms/ConversationList.tsx:78
+msgid "You"
+msgstr "Du"
 
 #: src/components/common/AttendeeCheckInTable/QrScanner.tsx:92
 msgid "You already scanned this ticket"
