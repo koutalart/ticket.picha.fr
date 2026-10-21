@@ -41,4 +41,9 @@ interface BoxOfficeSaleRepositoryInterface extends RepositoryInterface
      * }
      */
     public function aggregateCompletedForKiosk(int $eventId, ?int $agentUserId): array;
+
+    /**
+     * @return array<int, string> order_id => phone
+     */
+    public function findPhonesByEventId(int $eventId): array;
 }

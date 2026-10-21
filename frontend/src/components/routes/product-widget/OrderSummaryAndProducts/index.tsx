@@ -5,6 +5,7 @@ import {
     IconBuilding,
     IconCalendar,
     IconCalendarEvent,
+    IconCalendarQuestion,
     IconCash,
     IconCheck,
     IconClock,
@@ -82,12 +83,14 @@ const GuestListItem = ({
     attendee,
     event,
     allowSelfEdit,
+    allowAttendanceResponse,
     onEditClick,
     onResendClick,
 }: {
     attendee: Attendee;
     event: Event;
     allowSelfEdit: boolean;
+    allowAttendanceResponse: boolean;
     onEditClick: () => void;
     onResendClick: () => void;
 }) => {
@@ -100,11 +103,26 @@ const GuestListItem = ({
                 <div className={classes.guestName}>
                     {attendee.first_name} {attendee.last_name}
                     {isCancelled && <span className={classes.cancelledBadge}>{t`Cancelled`}</span>}
+                    {!isCancelled && allowAttendanceResponse && attendee.attendance_confirmed_at && (
+                        <span className={classes.confirmedBadge}>{t`Attendance confirmed`}</span>
+                    )}
                 </div>
                 <div className={classes.guestDetails}>
                     <span className={classes.guestEmail}>{attendee.email}</span>
                     <span className={classes.guestProduct}>{productTitle}</span>
                 </div>
+                {!isCancelled && allowAttendanceResponse && attendee.attendance_code && (
+                    <Button
+                        component="a"
+                        href={`/venue/${event.id}/${attendee.short_id}?code=${encodeURIComponent(attendee.attendance_code)}`}
+                        size="xs"
+                        variant="light"
+                        mt={8}
+                        leftSection={<IconCalendarQuestion size={14}/>}
+                    >
+                        {t`Confirm or cancel my attendance`}
+                    </Button>
+                )}
             </div>
             <div className={classes.guestActions}>
                 <Tooltip label={t`View Ticket`}>
@@ -172,14 +190,14 @@ const FullscreenWelcomeHeader = ({order, event, heroTitle, heroSubtitle, fontFam
         ensureHomepageFontLoaded(fontFamily);
     }, [fontFamily]);
 
+    const titleLines = (heroTitle?.trim() || event.title).split('\n').map((line) => line.trim()).filter(Boolean);
+
     return (
     <div className={classes.fullscreenWelcome} style={{fontFamily: buildHomepageFontStack(fontFamily)}}>
         <div className={classes.fullscreenWelcomeEyebrow}>
             {isFree ? t`Registration confirmed` : t`Order confirmed`}
         </div>
-        <h1 className={classes.fullscreenWelcomeTitle}>
-            {(heroTitle?.trim() || event.title).split('\n').map((line, index) => <span key={index}>{line}</span>)}
-        </h1>
+        <h1 className={classes.fullscreenWelcomeTitle}>{titleLines.join(' ')}</h1>
         {heroSubtitle?.trim() && <div className={classes.fullscreenWelcomeSubtitle}>{heroSubtitle}</div>}
         <div className={classes.fullscreenWelcomeDate}><EventDateRange event={event}/></div>
         <div className={classes.fullscreenWelcomeEmail}>
@@ -457,6 +475,7 @@ export const OrderSummaryAndProducts = () => {
     const resendOrderConfirmationMutation = useResendOrderConfirmationPublic();
 
     const allowSelfEdit = event?.settings?.allow_attendee_self_edit ?? true;
+    const allowAttendanceResponse = !!event?.settings?.allow_attendee_attendance_response && order?.status === 'COMPLETED';
     // Keep the financial summary collapsed for free events; paid orders keep the existing behavior.
     const isFreeOrder = !order?.is_payment_required
         && (order?.order_items?.length ?? 0) > 0
@@ -685,6 +704,7 @@ export const OrderSummaryAndProducts = () => {
                                         attendee={attendee}
                                         event={event}
                                         allowSelfEdit={allowSelfEdit}
+                                        allowAttendanceResponse={allowAttendanceResponse}
                                         onEditClick={() => setEditingAttendee(attendee)}
                                         onResendClick={() => handleResendAttendeeTicket(attendee)}
                                     />

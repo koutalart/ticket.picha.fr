@@ -3,6 +3,7 @@
 namespace HiEvents\Console;
 
 use HiEvents\Console\Commands\PurgeQuestionAnswerFilesCommand;
+use HiEvents\Console\Commands\SendDueSmsRemindersCommand;
 use HiEvents\Console\Commands\SyncSmsContactsCommand;
 use HiEvents\Jobs\Message\SendScheduledMessagesJob;
 use HiEvents\Jobs\Waitlist\ProcessExpiredWaitlistOffersJob;
@@ -18,6 +19,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(new ProcessExpiredWaitlistOffersJob)->everyMinute()->withoutOverlapping();
         $schedule->command(PurgeQuestionAnswerFilesCommand::class)->hourly()->withoutOverlapping();
         $schedule->command(SyncSmsContactsCommand::class)->everyFifteenMinutes()->withoutOverlapping();
+        $schedule->command(SendDueSmsRemindersCommand::class)->everyFiveMinutes()->withoutOverlapping(30)->runInBackground();
     }
 
     protected function commands(): void

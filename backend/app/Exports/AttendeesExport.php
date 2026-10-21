@@ -64,6 +64,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
             __('Created Date'),
             __('Last Updated Date'),
             __('Notes'),
+            __('Date of Birth'),
         ], $productQuestionTitles, $orderQuestionsTitles);
     }
 
@@ -134,6 +135,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
             Carbon::parse($attendee->getCreatedAt())->format('Y-m-d H:i:s'),
             Carbon::parse($attendee->getUpdatedAt())->format('Y-m-d H:i:s'),
             $attendee->getNotes(),
+            $attendee->getBirthDate() ? Carbon::parse($attendee->getBirthDate())->format('d/m/Y') : '',
         ], $productAnswers->toArray(), $orderAnswers->toArray());
     }
 

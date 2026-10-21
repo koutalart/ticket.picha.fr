@@ -144,9 +144,15 @@ class PartialUpdateEventSettingsHandler
                 'single_product_per_order' => $eventSettingsDTO->settings['single_product_per_order'] ?? $existingSettings->getSingleProductPerOrder(),
                 'choose_category_first' => $eventSettingsDTO->settings['choose_category_first'] ?? $existingSettings->getChooseCategoryFirst(),
 
+                'age_restriction_rule' => $eventSettingsDTO->settings['age_restriction_rule'] ?? $existingSettings->getAgeRestrictionRule(),
+                'age_restriction_minimum_age' => $eventSettingsDTO->settings['age_restriction_minimum_age'] ?? $existingSettings->getAgeRestrictionMinimumAge(),
+
                 // Waitlist settings
                 'waitlist_auto_process' => $eventSettingsDTO->settings['waitlist_auto_process'] ?? $existingSettings->getWaitlistAutoProcess(),
                 'waitlist_offer_timeout_minutes' => $eventSettingsDTO->settings['waitlist_offer_timeout_minutes'] ?? $existingSettings->getWaitlistOfferTimeoutMinutes(),
+
+                // Attendance response settings
+                'allow_attendee_attendance_response' => $eventSettingsDTO->settings['allow_attendee_attendance_response'] ?? $existingSettings->getAllowAttendeeAttendanceResponse(),
             ]),
         );
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Application\Handlers\Sms;
 
+use HiEvents\DomainObjects\Enums\SmsCampaignType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\SmsCampaignDomainObjectAbstract;
 use HiEvents\DomainObjects\SmsCampaignDomainObject;
@@ -27,7 +28,10 @@ class GetSmsCampaignsHandler
         $campaigns = $this->campaignRepository
             ->loadRelation(new Relationship(EventDomainObject::class, name: 'event'))
             ->findWhere(
-                where: [SmsCampaignDomainObjectAbstract::ORGANIZER_ID => $organizerId],
+                where: [
+                    SmsCampaignDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+                    [SmsCampaignDomainObjectAbstract::TYPE, '!=', SmsCampaignType::REMINDER->value],
+                ],
                 orderAndDirections: [new OrderAndDirection(SmsCampaignDomainObjectAbstract::CREATED_AT, 'desc')],
             );
 

@@ -212,6 +212,11 @@ class LiquidTemplateRenderer
                 'description' => __('Link to view/download the ticket'),
                 'example' => 'https://example.com/ticket/XYZ789',
             ],
+            [
+                'token' => '{{ attendee.attendance_url }}',
+                'description' => __('Personal link to confirm or cancel attendance (when enabled for the event)'),
+                'example' => 'https://example.com/venue/XYZ789',
+            ],
         ];
 
         return match ($type) {

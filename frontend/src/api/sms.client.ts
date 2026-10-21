@@ -14,6 +14,7 @@ import {
     SmsConversationStatus,
     SmsMessage,
     SmsOptOut,
+    SmsReminderPreview,
     SmsReplyTemplate,
 } from "../types";
 
@@ -36,6 +37,13 @@ export interface SmsReplyTemplateRequest {
     content: string;
 }
 
+export interface SmsReminderRequest {
+    event_id: IdParam;
+    message: string;
+    send_at?: string | null;
+    name?: string | null;
+}
+
 export interface SmsOptOutsParams {
     query?: string;
     page?: number;
@@ -50,6 +58,22 @@ export const smsClient = {
         const response = await api.get<GenericDataResponse<SmsCampaignRecipient[]>>(
             `organizers/${organizerId}/sms/campaigns/${campaignId}/recipients`,
         );
+        return response.data;
+    },
+    reminders: async (organizerId: IdParam) => {
+        const response = await api.get<GenericDataResponse<SmsCampaign[]>>(`organizers/${organizerId}/sms/reminders`);
+        return response.data;
+    },
+    previewReminder: async (organizerId: IdParam, reminder: SmsReminderRequest) => {
+        const response = await api.post<GenericDataResponse<SmsReminderPreview>>(`organizers/${organizerId}/sms/reminders/preview`, reminder);
+        return response.data;
+    },
+    scheduleReminder: async (organizerId: IdParam, reminder: SmsReminderRequest) => {
+        const response = await api.post<GenericDataResponse<SmsCampaign>>(`organizers/${organizerId}/sms/reminders`, reminder);
+        return response.data;
+    },
+    cancelReminder: async (organizerId: IdParam, reminderId: IdParam) => {
+        const response = await api.post<GenericDataResponse<SmsCampaign>>(`organizers/${organizerId}/sms/reminders/${reminderId}/cancel`);
         return response.data;
     },
     settings: async (organizerId: IdParam) => {

@@ -270,12 +270,18 @@ export interface EventSettings {
 
     choose_category_first?: boolean;
 
+    // Age restriction settings
+    age_restriction_rule?: AgeRestrictionRule;
+    age_restriction_minimum_age?: number;
+
     // Simplified homepage theme settings (new 2-color + mode system)
     homepage_theme_settings?: HomepageThemeSettings;
 
     // Waitlist settings
     waitlist_auto_process?: boolean;
     waitlist_offer_timeout_minutes?: number | null;
+
+    allow_attendee_attendance_response?: boolean;
 }
 
 export interface VenueAddress {
@@ -370,6 +376,21 @@ export interface EventDailyStats {
     orders_created: number;
 }
 
+export interface QuestionAnswerDistributionOption {
+    label: string;
+    count: number;
+    percentage: number;
+}
+
+export interface QuestionAnswerDistribution {
+    question_id: number;
+    title: string;
+    type: string;
+    belongs_to: 'ORDER' | 'PRODUCT';
+    total_responses: number;
+    options: QuestionAnswerDistributionOption[];
+}
+
 export interface CheckInStats {
     total_checked_in_attendees: number;
     total_attendees: number;
@@ -393,6 +414,8 @@ export interface EventStats {
     total_refunded: number;
     total_awaiting_payment?: number;
     orders_awaiting_payment?: number;
+    total_attendance_confirmed?: number;
+    total_cancelled_by_attendee?: number;
 }
 
 export interface OrganizerStats {
@@ -737,6 +760,8 @@ export interface ProductCategory {
     selection_label?: string | null;
 }
 
+export type AgeRestrictionRule = 'NONE' | 'ACCOMPANIED_MINORS' | 'MINIMUM_AGE';
+
 export interface Attendee {
     id?: number;
     product_id: number;
@@ -748,6 +773,7 @@ export interface Attendee {
     last_name: string;
     email: string | null;
     notes?: string;
+    birth_date?: string | null;
     order?: Order;
     public_id: string;
     short_id: string;
@@ -758,6 +784,21 @@ export interface Attendee {
     locale?: SupportedLocales;
     check_in?: AttendeeCheckIn; // Use in contexts where a single check is expected, like dealing with a check-in list
     check_ins?: AttendeeCheckIn[];
+    attendance_confirmed_at?: string | null;
+    cancelled_by_attendee_at?: string | null;
+    attendance_code?: string;
+}
+
+export interface AttendeeAttendance {
+    short_id: string;
+    first_name: string;
+    last_name: string;
+    status: Attendee['status'];
+    product_title?: string | null;
+    attendance_confirmed_at: string | null;
+    cancelled_by_attendee_at: string | null;
+    can_respond: boolean;
+    blocking_reason: string | null;
 }
 
 export type PublicCheckIn = Pick<AttendeeCheckIn, 'id' | 'order_id' | 'attendee_id' | 'check_in_list_id' | 'product_id' | 'event_id'>;
@@ -1417,6 +1458,30 @@ export interface SmsCampaign {
     orders_count: number;
     revenue_gross: number;
     created_at: string;
+    type: SmsCampaignType;
+    status: SmsCampaignStatus | null;
+    scheduled_at: string | null;
+    started_at: string | null;
+    completed_at: string | null;
+    failure_reason: string | null;
+    event_timezone: string | null;
+}
+
+export type SmsCampaignType = 'IMPORTED' | 'REMINDER';
+
+export type SmsCampaignStatus = 'SCHEDULED' | 'PROCESSING' | 'SENT' | 'FAILED' | 'CANCELLED';
+
+export interface SmsReminderPreview {
+    recipients_count: number;
+    sms_count: number;
+    sample_message: string | null;
+    active_attendees_count: number;
+    without_valid_phone_count: number;
+    opted_out_count: number;
+    shared_phone_count: number;
+    personal_link_available: boolean;
+    event_timezone: string;
+    scheduled_at: string | null;
 }
 
 export interface SmsCampaignRecipient {

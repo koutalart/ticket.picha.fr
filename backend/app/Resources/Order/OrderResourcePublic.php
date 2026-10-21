@@ -3,12 +3,14 @@
 namespace HiEvents\Resources\Order;
 
 use Carbon\Carbon;
+use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Resources\Attendee\AttendeeResourcePublic;
 use HiEvents\Resources\BaseResource;
 use HiEvents\Resources\Event\EventResourcePublic;
 use HiEvents\Resources\Order\Invoice\InvoiceResourcePublic;
+use HiEvents\Services\Domain\Attendee\AttendeeAttendanceLinkGenerator;
 use Illuminate\Http\Request;
 
 /**
@@ -61,7 +63,10 @@ class OrderResourcePublic extends BaseResource
             ),
             'attendees' => $this->when(
                 !is_null($this->getAttendees()),
-                fn() => AttendeeResourcePublic::collection($this->getAttendees())
+                fn() => $this->getAttendees()->map(fn(AttendeeDomainObject $attendee) => array_merge(
+                    (new AttendeeResourcePublic($attendee))->resolve($request),
+                    ['attendance_code' => app(AttendeeAttendanceLinkGenerator::class)->generateCode($attendee)],
+                ))->values()
             ),
             $this->mergeWhen($this->getSessionIdentifier() !== null, fn() => [
                 'session_identifier' => $this->getSessionIdentifier(),

@@ -150,6 +150,15 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
   flex-wrap: wrap;
 }
 
+.confirmedBadge {
+  font-size: 11px;
+  font-weight: 500;
+  color: #15803d;
+  background: rgba(21, 128, 61, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
 .cancelledBadge {
   font-size: 11px;
   font-weight: 500;
@@ -213,10 +222,8 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
 }
 
 .fullscreenWelcomeTitle {
-  display: flex;
-  flex-direction: column;
   margin: 0;
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.6rem, 3.6vw, 2.6rem);
   font-weight: 800;
   line-height: 1.02;
   letter-spacing: -0.025em;
@@ -239,3 +246,4 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
   font-size: 0.9rem;
   opacity: 0.8;
 }
+

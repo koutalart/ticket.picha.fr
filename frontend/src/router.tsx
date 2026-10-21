@@ -683,6 +683,14 @@ export const router: RouteObject[] = [
         errorElement: <ErrorPage />
     },
     {
+        path: "/venue/:eventId/:attendeeShortId",
+        async lazy() {
+            const AttendeeAttendance = await import("./components/routes/product-widget/AttendeeAttendance");
+            return { Component: AttendeeAttendance.default };
+        },
+        errorElement: <ErrorPage />
+    },
+    {
         path: "/product/:eventId/:attendeeShortId/print",
         async lazy() {
             const PrintProduct = await import("./components/routes/product-widget/PrintProduct");

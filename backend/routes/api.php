@@ -22,6 +22,10 @@ use HiEvents\Http\Actions\Sms\DeleteSmsReplyTemplateAction;
 use HiEvents\Http\Actions\Sms\GetSmsOptOutsAction;
 use HiEvents\Http\Actions\Sms\AddSmsOptOutAction;
 use HiEvents\Http\Actions\Sms\RemoveSmsOptOutAction;
+use HiEvents\Http\Actions\Sms\GetSmsRemindersAction;
+use HiEvents\Http\Actions\Sms\ScheduleSmsReminderAction;
+use HiEvents\Http\Actions\Sms\PreviewSmsReminderAction;
+use HiEvents\Http\Actions\Sms\CancelSmsReminderAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -35,10 +39,14 @@ use HiEvents\Http\Actions\Affiliates\ExportAffiliatesAction;
 use HiEvents\Http\Actions\Affiliates\GetAffiliateAction;
 use HiEvents\Http\Actions\Affiliates\GetAffiliatesAction;
 use HiEvents\Http\Actions\Affiliates\UpdateAffiliateAction;
+use HiEvents\Http\Actions\Attendees\Attendance\CancelAttendeeAttendanceActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\ConfirmAttendeeAttendanceActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\GetAttendeeAttendanceActionPublic;
 use HiEvents\Http\Actions\Attendees\CheckInAttendeeAction;
 use HiEvents\Http\Actions\Attendees\CreateAttendeeAction;
 use HiEvents\Http\Actions\Attendees\EditAttendeeAction;
 use HiEvents\Http\Actions\Attendees\ExportAttendeesAction;
+use HiEvents\Http\Actions\Attendees\ExportAttendeeEntryControlListAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeActionPublic;
 use HiEvents\Http\Actions\Organizers\Settings\TestMetaConversionsApiAction;
@@ -220,6 +228,7 @@ use HiEvents\Http\Actions\Questions\EditQuestionAnswerAction;
 use HiEvents\Http\Actions\Questions\ExportQuestionAnswersAction;
 use HiEvents\Http\Actions\Questions\GetQuestionAction;
 use HiEvents\Http\Actions\Questions\GetQuestionsAction;
+use HiEvents\Http\Actions\Questions\GetQuestionAnswerDistributionAction;
 use HiEvents\Http\Actions\Questions\GetQuestionsPublicAction;
 use HiEvents\Http\Actions\Questions\SortQuestionsAction;
 use HiEvents\Http\Actions\Reports\ExportOrganizerReportAction;
@@ -390,6 +399,13 @@ $router->middleware(['auth:api'])->group(
         $router->get('/organizers/{organizer_id}/sms/campaigns', GetSmsCampaignsAction::class);
         $router->get('/organizers/{organizer_id}/sms/campaigns/{campaign_id}/recipients', GetSmsCampaignRecipientsAction::class)
             ->where('campaign_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/sms/reminders', GetSmsRemindersAction::class);
+        $router->post('/organizers/{organizer_id}/sms/reminders', ScheduleSmsReminderAction::class)
+            ->middleware('throttle:20,1');
+        $router->post('/organizers/{organizer_id}/sms/reminders/preview', PreviewSmsReminderAction::class)
+            ->middleware('throttle:60,1');
+        $router->post('/organizers/{organizer_id}/sms/reminders/{reminder_id}/cancel', CancelSmsReminderAction::class)
+            ->where('reminder_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/sms/conversations/{conversation_id}', GetSmsConversationAction::class)
             ->where('conversation_id', '[0-9]+');
         $router->patch('/organizers/{organizer_id}/sms/conversations/{conversation_id}', UpdateSmsConversationAction::class)
@@ -470,6 +486,7 @@ $router->middleware(['auth:api'])->group(
 
         // Stats
         $router->get('/events/{event_id}/stats', GetEventStatsAction::class);
+        $router->get('/events/{event_id}/stats/question-answers', GetQuestionAnswerDistributionAction::class);
 
         // Email Templates - Event level
         $router->get('/events/{eventId}/email-templates', GetEventEmailTemplatesAction::class);
@@ -485,6 +502,7 @@ $router->middleware(['auth:api'])->group(
         $router->put('/events/{event_id}/attendees/{attendee_id}', EditAttendeeAction::class);
         $router->patch('/events/{event_id}/attendees/{attendee_id}', PartialEditAttendeeAction::class);
         $router->post('/events/{event_id}/attendees/export', ExportAttendeesAction::class);
+        $router->post('/events/{event_id}/attendees/export-entry-control', ExportAttendeeEntryControlListAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/resend-ticket', ResendAttendeeTicketAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/check_in', CheckInAttendeeAction::class);
 
@@ -708,6 +726,12 @@ $router->prefix('/public')->group(
         $router->get('/events/{event_id}/attendees/{attendee_short_id}', GetAttendeeActionPublic::class);
         $router->get('/events/{event_id}/attendees/{attendee_short_id}/ticket.png', GetAttendeeTicketImageActionPublic::class)
             ->middleware('throttle:60,1');
+        $router->get('/events/{event_id}/attendees/{attendee_short_id}/attendance', GetAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:30,1');
+        $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/confirm', ConfirmAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/cancel', CancelAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:10,1');
 
         // Waitlist
         $router->post('/events/{event_id}/waitlist', CreateWaitlistEntryActionPublic::class)
