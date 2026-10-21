@@ -53,9 +53,16 @@
 
       .threadColumn {
         display: flex;
-        height: calc(100vh - 200px);
+        height: auto;
+      }
+
+      .messages {
+        flex: none;
+        max-height: 55dvh;
       }
     }
+
+    margin-bottom: calc(88px + env(safe-area-inset-bottom));
   }
 }
 
@@ -275,17 +282,22 @@
 
 .composerFooter {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .composerActions {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
+
+  .composerSend {
+    margin-left: 4px;
+  }
 }
 
 .customerColumn {
