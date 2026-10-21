@@ -12,7 +12,7 @@ import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPix
 import {useDeferredCoverVideo} from "../../../hooks/useDeferredCoverVideo.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
-import {ssrLoaderCss} from "../../../utilites/ssrLoader.ts";
+import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {eventHomepagePath, eventHomepageUrl, organizerHomepagePath} from "../../../utilites/urlHelper.ts";
 import {buildEventJsonLd, getVenue} from "../Poster/eventData.ts";
 import {dateBlock, eventAccent, eventFlyer, TOUR_FALLBACK_ACCENT, tourCity, tourPrice} from "./tourData.ts";
@@ -137,7 +137,7 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                     })}
                 </script>
             </Helmet>
-            <style>{ssrLoaderCss({background: BACKGROUND, accent, logoUrl: logo?.url})}</style>
+            <SsrLoaderStyle background={BACKGROUND} accent={accent} logoUrl={logo?.url}/>
 
             <div ref={rootRef} className={classes.page} style={{'--tour-accent': accent} as React.CSSProperties}>
                 <header className={`${classes.nav} ${scrolled ? classes.navSolid : ''}`}>
