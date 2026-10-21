@@ -55,6 +55,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [contactModalOpen, setContactModalOpen] = useState(false);
     const ticketsSectionRef = useRef<HTMLDivElement>(null);
+    const fullscreenHeroRef = useRef<HTMLElement>(null);
 
     const {consentPending, consentGranted, onConsent} = useOrganizerTrackingPixels(
         event?.organizer?.settings?.tracking_pixels
@@ -102,6 +103,38 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
             clearTimeout(showTimer);
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    useEffect(() => {
+        let frame = 0;
+
+        const updateHeroProgress = () => {
+            frame = 0;
+            const hero = fullscreenHeroRef.current;
+            if (!hero) {
+                return;
+            }
+            const progress = Math.min(1, Math.max(0, window.scrollY / Math.max(1, window.innerHeight)));
+            hero.style.setProperty('--hero-progress', progress.toFixed(3));
+        };
+
+        const handleScroll = () => {
+            if (!frame) {
+                frame = window.requestAnimationFrame(updateHeroProgress);
+            }
+        };
+
+        updateHeroProgress();
+        window.addEventListener('scroll', handleScroll, {passive: true});
+        window.addEventListener('resize', handleScroll);
+
+        return () => {
+            if (frame) {
+                window.cancelAnimationFrame(frame);
+            }
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleScroll);
         };
     }, []);
 
@@ -242,7 +275,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                 <div className={classes.container}>
                     {isFullscreenHero && (
-                        <section className={classes.fullscreenHero}>
+                        <section className={classes.fullscreenHero} ref={fullscreenHeroRef}>
                             {coverVideo && videoAllowed ? (
                                 <video
                                     src={coverVideo}
