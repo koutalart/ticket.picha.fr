@@ -16,12 +16,15 @@ import {ConversationList} from "./ConversationList.tsx";
 import {ConversationThread} from "./ConversationThread.tsx";
 import {CustomerCard} from "./CustomerCard.tsx";
 import {CampaignList} from "./CampaignList.tsx";
+import {ReminderList} from "./ReminderList.tsx";
 import classes from "./Sms.module.scss";
 
 const CONVERSATION_PARAM = 'conversation';
 const VIEW_PARAM = 'view';
 
-type SmsView = 'conversations' | 'campaigns';
+type SmsView = 'conversations' | 'campaigns' | 'reminders';
+
+const VIEWS: SmsView[] = ['conversations', 'campaigns', 'reminders'];
 
 const Sms = () => {
     const {organizerId} = useParams();
@@ -31,7 +34,8 @@ const Sms = () => {
     const [debouncedSearch] = useDebouncedValue(search, 300);
     const [filter, setFilter] = useState<SmsConversationFilter>('all');
     const selectedId = Number(searchParams.get(CONVERSATION_PARAM)) || null;
-    const view: SmsView = searchParams.get(VIEW_PARAM) === 'campaigns' ? 'campaigns' : 'conversations';
+    const requestedView = searchParams.get(VIEW_PARAM) as SmsView | null;
+    const view: SmsView = requestedView && VIEWS.includes(requestedView) ? requestedView : 'conversations';
 
     const {data: organizer} = useGetOrganizer(organizerId);
     const settingsQuery = useGetSmsSettings(organizerId, SMS_POLL_INTERVAL_MS * 4);
@@ -64,7 +68,7 @@ const Sms = () => {
 
     const changeView = (next: SmsView) => {
         const params = new URLSearchParams(searchParams);
-        if (next === 'campaigns') {
+        if (next !== 'conversations') {
             params.set(VIEW_PARAM, next);
             params.delete(CONVERSATION_PARAM);
         } else {
@@ -106,11 +110,21 @@ const Sms = () => {
                 data={[
                     {value: 'conversations', label: t`Conversations`},
                     {value: 'campaigns', label: t`Campaigns`},
+                    {value: 'reminders', label: t`Reminders`},
                 ]}
             />
 
             {view === 'campaigns' && (
                 <CampaignList organizerId={organizerId} defaultCurrency={organizer?.currency || 'EUR'}/>
+            )}
+
+            {view === 'reminders' && (
+                <ReminderList
+                    organizerId={organizerId}
+                    canSend={canSend}
+                    defaultCurrency={organizer?.currency || 'EUR'}
+                    defaultTimezone={organizer?.timezone || 'Indian/Mayotte'}
+                />
             )}
 
             {view === 'conversations' && <div className={classes.inbox} data-has-selection={selectedId ? true : undefined}>
