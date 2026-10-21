@@ -52,8 +52,9 @@ class SmsAssistantReplyGeneratorTest extends TestCase
     public function test_draft_is_cleaned_unsigned_and_logged_without_its_content(): void
     {
         $this->claude->shouldReceive('isConfigured')->andReturnTrue();
-        $this->claude->shouldReceive('askWithUsage')->once()->andReturnUsing(function (string $system, array $content) use (&$sent) {
+        $this->claude->shouldReceive('askWithUsage')->once()->andReturnUsing(function (string $system, array $content) use (&$sent, &$systemPrompt) {
             $sent = $content[0]['text'];
+            $systemPrompt = $system;
 
             return $this->answer([
                 'decision' => 'draft',
@@ -72,6 +73,9 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         self::assertStringEndsWith('https://ticket.picha.fr/event/7/halloween', $result->reply);
         self::assertStringNotContainsString('assistant', $result->reply);
 
+        self::assertStringContainsString('160 caractères', $systemPrompt);
+        self::assertStringContainsString('sans les frais', $systemPrompt);
+        self::assertStringContainsString('Tutoie les clients.', $sent);
         self::assertStringContainsString('Halloween', $sent);
         self::assertStringContainsString('"prix": 15', $sent);
         self::assertStringContainsString('Client : Il reste des places ?', $sent);
