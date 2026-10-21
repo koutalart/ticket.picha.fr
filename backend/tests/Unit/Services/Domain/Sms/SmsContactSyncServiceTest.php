@@ -101,6 +101,35 @@ class SmsContactSyncServiceTest extends TestCase
         $this->assertSame(1, $result->updated);
     }
 
+    public function test_trunk_zero_after_country_code_matches_contact_stored_by_http_sms(): void
+    {
+        $this->givenSettings([[4, 'uk_a']]);
+        $this->givenCustomers(4, [['+330666944031', 'Awa', 'Madi', null]]);
+        $this->client->shouldReceive('listContacts')->andReturn([
+            $this->managedContact('c1', 'Awa Madi', '+33666944031', '4'),
+        ]);
+        $this->client->shouldNotReceive('createContacts');
+        $this->client->shouldNotReceive('updateContact');
+
+        $result = $this->service->syncAll();
+
+        $this->assertSame(1, $result->unchanged);
+        $this->assertSame(0, $result->created);
+    }
+
+    public function test_creates_contact_without_trunk_zero(): void
+    {
+        $this->givenSettings([[4, 'uk_a']]);
+        $this->givenCustomers(4, [['+2620639123456', 'Awa', 'Madi', null]]);
+        $this->client->shouldReceive('listContacts')->andReturn([]);
+
+        $this->client->shouldReceive('createContacts')->once()->with('uk_a', Mockery::on(
+            fn (array $contacts) => $contacts[0]['phone_numbers'] === ['+262639123456']
+        ));
+
+        $this->service->syncAll();
+    }
+
     public function test_never_overrides_a_manually_created_contact(): void
     {
         $this->givenSettings([[4, 'uk_a']]);
