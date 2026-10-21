@@ -4,6 +4,7 @@ import {
     GenericPaginatedResponse,
     IdParam,
     Question,
+    QuestionAnswerDistribution,
     QuestionRequestData,
     SortableItem,
 } from "../types";
@@ -44,6 +45,10 @@ export const questionClient = {
         await api.put(`/events/${eventId}/questions/${questionId}/answers/${answerId}`, {
             'answer': answer,
         });
+    },
+    answerDistribution: async (eventId: IdParam) => {
+        const response = await api.get<GenericDataResponse<QuestionAnswerDistribution[]>>(`events/${eventId}/stats/question-answers`);
+        return response.data;
     },
     exportAnswers: async (eventId: IdParam): Promise<ExportResponse> => {
         const response = await api.post(`events/${eventId}/questions/answers/export`, {});

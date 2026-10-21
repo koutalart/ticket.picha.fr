@@ -16,7 +16,8 @@ import {formatNumber, getProductsFromEvent} from "../../../../utilites/helpers.t
 import {isFreeEvent} from "../../../../utilites/eventPricing.ts";
 import {eventHomepageUrl} from "../../../../utilites/urlHelper.ts";
 import {ShareModal} from "../../../modals/ShareModal";
-import {Event, EventLifecycleStatus, EventStatus, Order, Product} from "../../../../types.ts";
+import {Event, EventLifecycleStatus, EventStatus, IdParam, Order, Product} from "../../../../types.ts";
+import {QuestionBreakdown} from "./QuestionBreakdown.tsx";
 import classes from "./EventDashboard.module.scss";
 
 type ChartMode = 'tickets' | 'revenue';
@@ -253,6 +254,8 @@ export const EventDashboard = () => {
                     ]}
                 />
             </section>
+
+            <QuestionBreakdown eventId={eventId as IdParam}/>
 
             <section className={classes.section}>
                 <div className={classes.sectionHead}>
