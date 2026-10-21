@@ -33,6 +33,13 @@ class SmsCampaignResource extends BaseResource
             'orders_count' => $stats->orders,
             'revenue_gross' => $stats->revenueGross,
             'created_at' => $this->getCreatedAt(),
+            'type' => $this->getType(),
+            'status' => $this->getStatus(),
+            'scheduled_at' => $this->getScheduledAt(),
+            'started_at' => $this->getStartedAt(),
+            'completed_at' => $this->getCompletedAt(),
+            'failure_reason' => $this->getFailureReason(),
+            'event_timezone' => $this->getEvent()?->getTimezone(),
         ];
     }
 }
