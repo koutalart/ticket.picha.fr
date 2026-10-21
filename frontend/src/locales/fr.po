@@ -153,6 +153,10 @@ msgstr "{0} présente"
 msgid "{0} services{1}"
 msgstr "Les services {0}{1}"
 
+#: src/components/routes/organizer/Sms/CampaignList.tsx:89
+msgid "{0} SMS still waiting for a delivery report."
+msgstr "{0} SMS encore en attente d'un accusé de réception."
+
 #: src/components/routes/event/attendees.tsx:110
 msgid "{0} still to come"
 msgstr "{0} restent à entrer"
@@ -1064,6 +1068,7 @@ msgid "All"
 msgstr "Toutes"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:45
 msgid "All"
 msgstr "Toutes"
@@ -1978,6 +1983,10 @@ msgstr "Réserver maintenant"
 msgid "Bookmark this page to manage your order anytime."
 msgstr "Ajoutez cette page à vos favoris pour gérer votre commande à tout moment."
 
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:59
+msgid "Bought"
+msgstr "Ont acheté"
+
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:252
 msgid "Box office"
@@ -2135,6 +2144,7 @@ msgstr "Campagne renommée"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
+#: src/components/routes/organizer/Sms/index.tsx:97
 msgid "Campaigns"
 msgstr "Campagnes"
 
@@ -2597,6 +2607,11 @@ msgstr "Cliquez pour téléverser"
 msgid "Click to view notes"
 msgstr "Cliquez pour voir les notes"
 
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:58
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:83
+msgid "Clicked"
+msgstr "A cliqué"
+
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:72
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:151
 msgid "Clicks on the page"
@@ -2972,7 +2987,7 @@ msgstr "Connecter et mettre à niveau"
 msgid "Connect Documentation"
 msgstr "Documentation de connexion"
 
-#: src/components/routes/organizer/Sms/index.tsx:70
+#: src/components/routes/organizer/Sms/index.tsx:86
 msgid "Connect httpSMS in Settings"
 msgstr "Connecter httpSMS dans les Paramètres"
 
@@ -3158,6 +3173,10 @@ msgstr "Continuer vers le paiement"
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:47
 msgid "Control how platform fees are handled for this event"
 msgstr "Contrôlez comment les frais de plateforme sont gérés pour cet événement"
+
+#: src/components/routes/organizer/Sms/index.tsx:96
+msgid "Conversations"
+msgstr "Conversations"
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:75
 msgid "Conversion"
@@ -3988,7 +4007,9 @@ msgstr "Supprimer cette question ? Cette action est irréversible."
 msgid "Delete webhook"
 msgstr "Supprimer le webhook"
 
+#: src/components/routes/organizer/Sms/CampaignList.tsx:43
 #: src/components/routes/organizer/Sms/labels.ts:22
+#: src/components/routes/organizer/Sms/labels.ts:50
 msgid "Delivered"
 msgstr "Distribué"
 
@@ -5278,7 +5299,9 @@ msgid "Facebook"
 msgstr "Facebook"
 
 #: src/components/routes/admin/Messages/index.tsx:127
+#: src/components/routes/organizer/Sms/CampaignList.tsx:47
 #: src/components/routes/organizer/Sms/labels.ts:24
+#: src/components/routes/organizer/Sms/labels.ts:52
 msgid "Failed"
 msgstr "Échoué"
 
@@ -5772,6 +5795,10 @@ msgstr "Suivez les arrivées minute par minute et récupérez une feuille d'éma
 #: src/components/common/ThemeFontControl/index.tsx:65
 msgid "Font Family"
 msgstr "Police de caractères"
+
+#: src/components/routes/organizer/Sms/CampaignList.tsx:65
+msgid "For {0}"
+msgstr "Pour {0}"
 
 #: src/components/common/QuestionsTable/index.tsx:100
 #: src/components/common/QuestionsTable/index.tsx:436
@@ -7778,6 +7805,7 @@ msgstr "Pour aller plus loin"
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:340
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:367
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:105
 msgid "No"
 msgstr "Non"
 
@@ -7914,6 +7942,10 @@ msgstr "Aucun événement terminé à afficher."
 #: src/components/routes/kiosk/NoEvent/index.tsx:24
 msgid "No event assigned"
 msgstr "Aucun événement assigné"
+
+#: src/components/routes/organizer/Sms/CampaignList.tsx:66
+msgid "No event attached"
+msgstr "Aucun événement associé"
 
 #: src/components/routes/organizer/Events/index.tsx:96
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:183
@@ -8117,6 +8149,10 @@ msgstr "Aucune question pour le moment"
 msgid "No recent account signups"
 msgstr "Aucune inscription récente"
 
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:73
+msgid "No recipient matches this filter."
+msgstr "Aucun destinataire ne correspond à ce filtre."
+
 #: src/components/modals/MessageRecipientsModal/index.tsx:54
 msgid "No recipients found"
 msgstr "Aucun destinataire trouvé"
@@ -8162,6 +8198,10 @@ msgstr "Aucun résultat de recherche"
 #: src/components/common/NoResultsSplash/index.tsx:29
 msgid "No search results."
 msgstr "Aucun résultat trouvé."
+
+#: src/components/routes/organizer/Sms/CampaignList.tsx:31
+msgid "No SMS campaign yet. The statistics of your SMS campaigns (delivery, clicks and ticket sales) will appear here."
+msgstr "Aucune campagne SMS pour l'instant. Les statistiques de vos campagnes SMS (réception, clics et ventes de billets) apparaîtront ici."
 
 #: src/components/common/TaxAndFeeList/index.tsx:105
 msgid "No Taxes or Fees have been added."
@@ -8251,6 +8291,10 @@ msgstr "Non configurée"
 msgid "Not decided yet"
 msgstr "Pas encore fixée"
 
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:60
+msgid "Not delivered"
+msgstr "Non reçus"
+
 #: src/components/common/CheckInStatusModal/index.tsx:118
 msgid "Not Eligible"
 msgstr "Non Éligible"
@@ -8269,6 +8313,7 @@ msgid "Not needed for now: your tickets are free or paid offline."
 msgstr "Pas nécessaire pour l'instant : vos billets sont gratuits ou payés hors ligne."
 
 #: src/components/routes/organizer/Sms/labels.ts:26
+#: src/components/routes/organizer/Sms/labels.ts:54
 msgid "Not sent (phone offline)"
 msgstr "Non envoyé (téléphone hors ligne)"
 
@@ -8909,6 +8954,8 @@ msgstr "La commande a été annulée"
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
 #: src/components/routes/organizer/Reports/TaxSummaryReport/index.tsx:55
+#: src/components/routes/organizer/Sms/CampaignList.tsx:54
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:84
 msgid "Orders"
 msgstr "Commandes"
 
@@ -9429,6 +9476,10 @@ msgstr "Les paiements continueront de fonctionner sans interruption"
 #: src/components/routes/admin/Messages/index.tsx:124
 msgid "Pending Review"
 msgstr "En attente de révision"
+
+#: src/components/routes/organizer/Sms/CampaignList.tsx:49
+msgid "People who clicked"
+msgstr "Personnes ayant cliqué"
 
 #: src/components/common/QuestionsTable/index.tsx:338
 msgid "Per Attendee"
@@ -10400,6 +10451,7 @@ msgid "recipient"
 msgstr "destinataire"
 
 #: src/components/modals/SendMessageModal/index.tsx:61
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:81
 msgid "Recipient"
 msgstr "Destinataire"
 
@@ -10411,6 +10463,7 @@ msgstr "destinataires"
 #: src/components/modals/SendMessageModal/index.tsx:298
 #: src/components/routes/admin/Messages/index.tsx:166
 #: src/components/routes/admin/Messages/index.tsx:299
+#: src/components/routes/organizer/Sms/CampaignList.tsx:41
 msgid "Recipients"
 msgstr "Destinataires"
 
@@ -10703,7 +10756,7 @@ msgstr "Remplacer la vidéo"
 msgid "Replaces the page title on the visual."
 msgstr "Remplace le titre de la page sur le visuel."
 
-#: src/components/routes/organizer/Sms/index.tsx:62
+#: src/components/routes/organizer/Sms/index.tsx:78
 msgid "Replies from your customers to your SMS, sent from your httpSMS phone. A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Les réponses de vos clients à vos SMS, envoyés depuis votre téléphone httpSMS. Un client qui répond STOP est automatiquement désinscrit de vos SMS."
 
@@ -10902,6 +10955,7 @@ msgstr "Retourner à la page de l'événement"
 #: src/components/routes/organizer/QrCodes/index.tsx:272
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:86
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:74
+#: src/components/routes/organizer/Sms/CampaignList.tsx:55
 msgid "Revenue"
 msgstr "Revenu"
 
@@ -11184,12 +11238,17 @@ msgstr "Pas encore en vente"
 
 #: src/components/routes/admin/Messages/index.tsx:125
 #: src/components/routes/event/messages.tsx:62
+#: src/components/routes/organizer/Sms/labels.ts:46
 msgid "Scheduled"
 msgstr "Planifié"
 
 #: src/components/modals/SendMessageModal/index.tsx:411
 msgid "Scheduled time"
 msgstr "Heure programmée"
+
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:65
+msgid "Search a name or a number…"
+msgstr "Rechercher un nom ou un numéro…"
 
 #: src/components/routes/event/attendees.tsx:137
 #: src/components/routes/event/orders.tsx:168
@@ -11356,6 +11415,10 @@ msgstr "Voir l'événement"
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:91
 msgid "See the events"
 msgstr "Voir les événements"
+
+#: src/components/routes/organizer/Sms/CampaignList.tsx:72
+msgid "See the recipients"
+msgstr "Voir les destinataires"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:125
 msgid "Select"
@@ -11632,6 +11695,7 @@ msgstr "envoyées"
 
 #: src/components/routes/admin/Messages/index.tsx:123
 #: src/components/routes/organizer/Sms/labels.ts:20
+#: src/components/routes/organizer/Sms/labels.ts:48
 msgid "Sent"
 msgstr "Envoyé"
 
@@ -11962,6 +12026,7 @@ msgid "Smith"
 msgstr "Dupont"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:67
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:82
 msgid "SMS"
 msgstr "SMS"
 
@@ -11970,11 +12035,11 @@ msgstr "SMS"
 msgid "SMS (httpSMS)"
 msgstr "SMS (httpSMS)"
 
-#: src/components/routes/organizer/Sms/index.tsx:68
+#: src/components/routes/organizer/Sms/index.tsx:84
 msgid "SMS is not connected yet."
 msgstr "Les SMS ne sont pas encore connectés."
 
-#: src/components/routes/organizer/Sms/index.tsx:60
+#: src/components/routes/organizer/Sms/index.tsx:76
 msgid "SMS messages"
 msgstr "Messages SMS"
 
@@ -14457,6 +14522,10 @@ msgstr "Le visiteur choisit un seul billet au lieu de quantités. Idéal pour le
 msgid "Visitors first pick a path (one big button per ticket category) before seeing its tickets."
 msgstr "Les visiteurs choisissent d'abord un parcours (un grand bouton par catégorie de billets) avant de voir ses billets."
 
+#: src/components/routes/organizer/Sms/CampaignList.tsx:53
+msgid "Visits"
+msgstr "Visites"
+
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:56
 msgid "visual"
 msgstr "visuel"
@@ -14474,6 +14543,7 @@ msgstr "VK"
 #: src/components/common/WaitlistTable/index.tsx:24
 #: src/components/modals/OfferWaitlistModal/index.tsx:162
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:71
+#: src/components/routes/organizer/Sms/labels.ts:56
 msgid "Waiting"
 msgstr "En attente"
 
@@ -15008,6 +15078,7 @@ msgstr "Année à ce jour"
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:340
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:367
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:104
 msgid "Yes"
 msgstr "Oui"
 

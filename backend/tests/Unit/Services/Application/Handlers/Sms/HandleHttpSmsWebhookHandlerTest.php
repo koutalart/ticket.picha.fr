@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services\Application\Handlers\Sms;
 
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
+use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\Exceptions\SmsWebhookUnauthorizedException;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
@@ -11,6 +12,7 @@ use HiEvents\Services\Application\Handlers\Sms\HandleHttpSmsWebhookHandler;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
+use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use Mockery;
@@ -28,6 +30,8 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
     private SmsInboundService|MockInterface $inboundService;
 
+    private SmsCampaignDeliveryService|MockInterface $campaignDeliveryService;
+
     private HandleHttpSmsWebhookHandler $handler;
 
     private OrganizerSmsSettingDomainObject $settings;
@@ -40,12 +44,14 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->settingsRepository = Mockery::mock(OrganizerSmsSettingRepositoryInterface::class);
         $this->verifier = Mockery::mock(HttpSmsWebhookSignatureVerifier::class);
         $this->inboundService = Mockery::mock(SmsInboundService::class);
+        $this->campaignDeliveryService = Mockery::mock(SmsCampaignDeliveryService::class);
 
         $this->handler = new HandleHttpSmsWebhookHandler(
             $this->settingsService,
             $this->settingsRepository,
             $this->verifier,
             $this->inboundService,
+            $this->campaignDeliveryService,
             new NullLogger,
         );
 
@@ -103,6 +109,11 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
     public function test_delivered_event_updates_outbound_status(): void
     {
         $this->expectVerified();
+
+        $this->campaignDeliveryService->shouldReceive('applyProviderStatus')
+            ->once()
+            ->with(4, 'prov-1', SmsCampaignRecipientStatus::DELIVERED, null, null)
+            ->andReturnTrue();
 
         $this->inboundService->shouldReceive('recordOutboundEvent')
             ->once()
