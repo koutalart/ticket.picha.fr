@@ -12,6 +12,7 @@ import {PaymentAndInvoicingSettings} from "./Sections/PaymentSettings";
 import {PlatformFeesSettings} from "./Sections/PlatformFeesSettings";
 import {WaitlistSettings} from "./Sections/WaitlistSettings";
 import {AttendanceResponseSettings} from "./Sections/AttendanceResponseSettings";
+import {EmbeddedRegistrationSettings} from "./Sections/EmbeddedRegistrationSettings";
 import {DangerZoneSettings} from "./Sections/DangerZoneSettings";
 import {useGetAccount} from "../../../../queries/useGetAccount.ts";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
@@ -47,6 +48,7 @@ export const Settings = () => {
             label: t({message: 'Sales', context: 'event settings tab'}),
             sections: [
                 {id: 'homepage-settings', component: HomepageAndCheckoutSettings},
+                {id: 'embedded-registration-settings', component: EmbeddedRegistrationSettings},
                 {id: 'payment-settings', component: PaymentAndInvoicingSettings},
                 {id: 'waitlist-settings', component: WaitlistSettings},
                 {id: 'attendance-response-settings', component: AttendanceResponseSettings},

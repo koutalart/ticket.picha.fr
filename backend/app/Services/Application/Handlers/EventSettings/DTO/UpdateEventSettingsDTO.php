@@ -102,6 +102,8 @@ class UpdateEventSettingsDTO extends BaseDTO
 
         // Attendance response settings
         public readonly bool                    $allow_attendee_attendance_response = false,
+
+        public readonly bool                    $embedded_registration_enabled = false,
     )
     {
     }
@@ -195,6 +197,8 @@ class UpdateEventSettingsDTO extends BaseDTO
 
             age_restriction_rule: AgeRestrictionRule::NONE,
             age_restriction_minimum_age: 18,
+
+            embedded_registration_enabled: false,
         );
     }
 }

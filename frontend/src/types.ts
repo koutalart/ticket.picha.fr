@@ -282,6 +282,8 @@ export interface EventSettings {
     waitlist_offer_timeout_minutes?: number | null;
 
     allow_attendee_attendance_response?: boolean;
+
+    embedded_registration_enabled?: boolean;
 }
 
 export interface VenueAddress {
@@ -935,6 +937,7 @@ export interface Question {
     product_ids?: number[];
     belongs_to: string;
     is_hidden: boolean;
+    order?: number;
 }
 
 export interface CapacityAssignment {

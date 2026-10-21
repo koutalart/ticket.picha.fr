@@ -44,6 +44,10 @@ import {isDateInPast} from "../../../utilites/dates.ts";
 import {RichDescription} from "../../common/RichDescription";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
+import {EmbeddedRegistration} from "../../routes/product-widget/EmbeddedRegistration";
+import {isEmbeddedRegistrationEnabled} from "../../../utilites/embeddedRegistration.ts";
+
+const VIDEO_PAUSE_PROGRESS = 0.6;
 
 interface EventHomepageProps {
     event?: Event;
@@ -55,7 +59,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const {event, promoCodeValid, promoCode} = loaderData;
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [contactModalOpen, setContactModalOpen] = useState(false);
-    const ticketsSectionRef = useRef<HTMLDivElement>(null);
+    const ticketsSectionRef = useRef<HTMLElement>(null);
     const fullscreenHeroRef = useRef<HTMLElement>(null);
 
     const {consentPending, consentGranted, onConsent} = useOrganizerTrackingPixels(
@@ -119,6 +123,15 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
             }
             const progress = Math.min(1, Math.max(0, window.scrollY / Math.max(1, window.innerHeight)));
             hero.style.setProperty('--hero-progress', progress.toFixed(3));
+
+            const video = hero.querySelector('video');
+            if (video && hero.dataset.pauseOnScroll === 'true') {
+                if (progress >= VIDEO_PAUSE_PROGRESS && !video.paused) {
+                    video.pause();
+                } else if (progress < VIDEO_PAUSE_PROGRESS && video.paused) {
+                    video.play().catch(() => undefined);
+                }
+            }
         };
 
         const handleScroll = () => {
@@ -227,6 +240,31 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const isFreeEvent = (event.products || event.product_categories?.flatMap(c => c.products || []) || [])
         .every(p => !p.prices?.some(price => Number(price.price) > 0));
 
+    const isEmbeddedRegistration = isFullscreenHero && isEmbeddedRegistrationEnabled(event);
+
+    const renderTicketsSection = () => (
+        <div className={`${classes.section} ${classes.ticketsSection}`}
+             ref={ticketsSectionRef as React.RefObject<HTMLDivElement>}
+             id="tickets">
+            <SelectProducts
+                colors={{
+                    background: "transparent",
+                    primary: "var(--event-primary-color)",
+                    primaryText: "var(--event-primary-text-color)",
+                    secondary: "var(--event-primary-color)",
+                    secondaryText: "var(--event-accent-contrast)",
+                    bodyBackground: "var(--event-bg-color)",
+                }}
+                continueButtonText={event.settings?.continue_button_text}
+                padding={"0px"}
+                event={event}
+                promoCodeValid={promoCodeValid}
+                promoCode={promoCode}
+                showPoweredBy={false}
+            />
+        </div>
+    );
+
     const mapUrl = event.settings?.maps_url || (locationDetails ? getGoogleMapsUrl(locationDetails) : null);
 
     return (
@@ -281,7 +319,11 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                 <div className={classes.container}>
                     {isFullscreenHero && (
-                        <section className={classes.fullscreenHero} ref={fullscreenHeroRef}>
+                        <section
+                            className={classes.fullscreenHero}
+                            ref={fullscreenHeroRef}
+                            data-pause-on-scroll={isEmbeddedRegistration ? 'true' : undefined}
+                        >
                             {coverVideoSource ? (
                                 <video
                                     src={coverVideoSource}
@@ -339,421 +381,441 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             </div>
                         </section>
                     )}
-                    <div className={classes.wrapper}>
-                        {/* Main unified card */}
-                        <div className={classes.mainCard}>
-                            {/* Hero Section */}
-                            <div className={classes.heroSection}>
-                                {(coverImage || coverVideo) && !isFullscreenHero && (
-                                    <div
-                                        className={classes.coverWrapper}
-                                        style={coverVideo ? {
-                                            '--cover-aspect-ratio': '16 / 9',
-                                        } as React.CSSProperties : (coverImageData?.width && coverImageData?.height) ? {
-                                            '--cover-aspect-ratio': `${coverImageData.width} / ${coverImageData.height}`,
-                                        } as React.CSSProperties : undefined}
-                                    >
-                                        {coverImageData?.lqip_base64 && (
-                                            <img
-                                                src={coverImageData.lqip_base64}
-                                                alt=""
-                                                aria-hidden="true"
-                                                className={classes.coverLqip}
-                                            />
+                    {isEmbeddedRegistration && (
+                        <EmbeddedRegistration
+                            event={event}
+                            promoCode={promoCode}
+                            promoCodeValid={promoCodeValid}
+                            sectionRef={ticketsSectionRef}
+                            renderFallback={() => (
+                                <div className={classes.wrapper}>
+                                    <div className={classes.mainCard}>
+                                        {renderTicketsSection()}
+                                    </div>
+                                </div>
+                            )}
+                        />
+                    )}
+                    {isEmbeddedRegistration ? (
+                        <footer className={classes.landingFooter}>
+                            <div className={classes.landingFooterInner}>
+                                {organizer && (
+                                    <div className={classes.landingOrganizer}>
+                                        <h2 className={classes.landingOrganizerName}>{organizer.name}</h2>
+                                        {organizer.description && (
+                                            <RichDescription className={classes.landingOrganizerBio} html={organizer.description}/>
                                         )}
-                                        {coverVideoSource ? (
-                                            <video
-                                                src={coverVideoSource}
-                                                poster={coverImage}
-                                                className={classes.coverImage}
-                                                aria-label={event.title}
-                                                autoPlay
-                                                muted
-                                                loop
-                                                playsInline
-                                                preload="metadata"
-                                            />
-                                        ) : coverImage ? (
-                                            <img
-                                                src={coverImage}
-                                                alt={event.title}
-                                                className={classes.coverImage}
-                                            />
-                                        ) : null}
-                                        <div className={classes.heroGradient}/>
-                                        {statusBadge && (
-                                            <div className={classes.statusBadges}>
-                                                <span className={classes.statusBadge}>
-                                                    <IconTicket/>
-                                                    {statusBadge.text}
-                                                </span>
-                                            </div>
-                                        )}
+                                        <button
+                                            type="button"
+                                            onClick={() => setContactModalOpen(true)}
+                                            className={classes.landingContact}
+                                        >
+                                            <IconMail/>
+                                            {t`Contact`}
+                                        </button>
                                     </div>
                                 )}
-
-                                {/* Event Header */}
-                                <div className={classes.eventHeader}>
-                                    <div className={classes.headerTopRow}>
-                                        {organizer && organizer.status === OrganizerStatus.LIVE ? (
-                                            <a
-                                                href={organizerHomepageUrl(organizer)}
-                                                className={classes.organizerPill}
-                                            >
-                                                {organizerLogo ? (
-                                                    <img
-                                                        src={organizerLogo}
-                                                        alt={organizer.name}
-                                                        className={classes.organizerPillAvatar}
-                                                    />
-                                                ) : (
-                                                    <span className={classes.organizerPillAvatarPlaceholder}>
-                                                        {organizer.name.charAt(0).toUpperCase()}
+                                <PoweredByFooter className={classes.landingPoweredBy}/>
+                            </div>
+                        </footer>
+                    ) : (
+                        <div className={classes.wrapper}>
+                            {/* Main unified card */}
+                            <div className={classes.mainCard}>
+                                {/* Hero Section */}
+                                <div className={classes.heroSection}>
+                                    {(coverImage || coverVideo) && !isFullscreenHero && (
+                                        <div
+                                            className={classes.coverWrapper}
+                                            style={coverVideo ? {
+                                                '--cover-aspect-ratio': '16 / 9',
+                                            } as React.CSSProperties : (coverImageData?.width && coverImageData?.height) ? {
+                                                '--cover-aspect-ratio': `${coverImageData.width} / ${coverImageData.height}`,
+                                            } as React.CSSProperties : undefined}
+                                        >
+                                            {coverImageData?.lqip_base64 && (
+                                                <img
+                                                    src={coverImageData.lqip_base64}
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                    className={classes.coverLqip}
+                                                />
+                                            )}
+                                            {coverVideoSource ? (
+                                                <video
+                                                    src={coverVideoSource}
+                                                    poster={coverImage}
+                                                    className={classes.coverImage}
+                                                    aria-label={event.title}
+                                                    autoPlay
+                                                    muted
+                                                    loop
+                                                    playsInline
+                                                    preload="metadata"
+                                                />
+                                            ) : coverImage ? (
+                                                <img
+                                                    src={coverImage}
+                                                    alt={event.title}
+                                                    className={classes.coverImage}
+                                                />
+                                            ) : null}
+                                            <div className={classes.heroGradient}/>
+                                            {statusBadge && (
+                                                <div className={classes.statusBadges}>
+                                                    <span className={classes.statusBadge}>
+                                                        <IconTicket/>
+                                                        {statusBadge.text}
                                                     </span>
-                                                )}
-                                                <span className={classes.organizerPillName}>
-                                                    {organizer.name}
-                                                </span>
-                                            </a>
-                                        ) : (
-                                            <div className={classes.organizerPill}>
-                                                {organizerLogo ? (
-                                                    <img
-                                                        src={organizerLogo}
-                                                        alt={organizer?.name || ''}
-                                                        className={classes.organizerPillAvatar}
-                                                    />
-                                                ) : (
-                                                    <span className={classes.organizerPillAvatarPlaceholder}>
-                                                        {organizer?.name?.charAt(0).toUpperCase() || '?'}
-                                                    </span>
-                                                )}
-                                                <span className={classes.organizerPillName}>
-                                                    {organizer?.name}
-                                                </span>
-                                            </div>
-                                        )}
-
-                                        <div className={classes.actionButtons}>
-                                            <ShareComponent
-                                                title={'Check out this event: ' + event.title}
-                                                text={'Check out this event: ' + event.title}
-                                                url={eventHomepageUrl(event)}
-                                                imageUrl={coverImage || undefined}
-                                            >
-                                                <button className={classes.actionButton} title={t`Share`}>
-                                                    <IconShare/>
-                                                </button>
-                                            </ShareComponent>
-                                            {/* Future enhancement: Favorite/Heart button */}
-                                            {/* <button className={`${classes.actionButton} ${classes.favoriteButton}`} title={t`Save`}>
-                                                <IconHeart />
-                                            </button> */}
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
-
-                                    {isFullscreenHero ? (
-                                        <h2 className={classes.eventTitle}>{event.title}</h2>
-                                    ) : (
-                                        <h1 className={classes.eventTitle}>{event.title}</h1>
                                     )}
 
-                                    <div className={classes.eventMeta}>
-                                        {/* Date/Time */}
-                                        <div className={classes.metaItem}>
-                                            <div className={classes.metaIconBox}>
-                                                <IconCalendar/>
-                                            </div>
-                                            <div className={classes.metaContent}>
-                                                <div className={classes.metaPrimary}>
-                                                    <EventDateRange event={event}/>
+                                    {/* Event Header */}
+                                    <div className={classes.eventHeader}>
+                                        <div className={classes.headerTopRow}>
+                                            {organizer && organizer.status === OrganizerStatus.LIVE ? (
+                                                <a
+                                                    href={organizerHomepageUrl(organizer)}
+                                                    className={classes.organizerPill}
+                                                >
+                                                    {organizerLogo ? (
+                                                        <img
+                                                            src={organizerLogo}
+                                                            alt={organizer.name}
+                                                            className={classes.organizerPillAvatar}
+                                                        />
+                                                    ) : (
+                                                        <span className={classes.organizerPillAvatarPlaceholder}>
+                                                            {organizer.name.charAt(0).toUpperCase()}
+                                                        </span>
+                                                    )}
+                                                    <span className={classes.organizerPillName}>
+                                                        {organizer.name}
+                                                    </span>
+                                                </a>
+                                            ) : (
+                                                <div className={classes.organizerPill}>
+                                                    {organizerLogo ? (
+                                                        <img
+                                                            src={organizerLogo}
+                                                            alt={organizer?.name || ''}
+                                                            className={classes.organizerPillAvatar}
+                                                        />
+                                                    ) : (
+                                                        <span className={classes.organizerPillAvatarPlaceholder}>
+                                                            {organizer?.name?.charAt(0).toUpperCase() || '?'}
+                                                        </span>
+                                                    )}
+                                                    <span className={classes.organizerPillName}>
+                                                        {organizer?.name}
+                                                    </span>
                                                 </div>
+                                            )}
+
+                                            <div className={classes.actionButtons}>
+                                                <ShareComponent
+                                                    title={'Check out this event: ' + event.title}
+                                                    text={'Check out this event: ' + event.title}
+                                                    url={eventHomepageUrl(event)}
+                                                    imageUrl={coverImage || undefined}
+                                                >
+                                                    <button className={classes.actionButton} title={t`Share`}>
+                                                        <IconShare/>
+                                                    </button>
+                                                </ShareComponent>
+                                                {/* Future enhancement: Favorite/Heart button */}
+                                                {/* <button className={`${classes.actionButton} ${classes.favoriteButton}`} title={t`Save`}>
+                                                    <IconHeart />
+                                                </button> */}
                                             </div>
-                                            <CalendarOptionsPopover event={event}>
-                                                <button className={classes.addToCalendarButton}>
-                                                    <IconCalendarPlus/>
-                                                    {t`Add to Calendar`}
-                                                </button>
-                                            </CalendarOptionsPopover>
                                         </div>
 
-                                        {/* Event Ended */}
-                                        {event.end_date && isDateInPast(event.end_date) && (
-                                            <div className={classes.metaItem}>
-                                                <div className={classes.metaIconBox}>
-                                                    <IconCalendarOff/>
-                                                </div>
-                                                <div className={classes.metaContent}>
-                                                    <div className={classes.metaPrimary}>{t`This event has ended`}</div>
-                                                </div>
-                                            </div>
+                                        {isFullscreenHero ? (
+                                            <h2 className={classes.eventTitle}>{event.title}</h2>
+                                        ) : (
+                                            <h1 className={classes.eventTitle}>{event.title}</h1>
                                         )}
 
-                                        {/* Online Event */}
-                                        {isOnlineEvent && (
+                                        <div className={classes.eventMeta}>
+                                            {/* Date/Time */}
                                             <div className={classes.metaItem}>
                                                 <div className={classes.metaIconBox}>
-                                                    <IconWorld/>
-                                                </div>
-                                                <div className={classes.metaContent}>
-                                                    <div className={classes.metaPrimary}>{t`Online Event`}</div>
-                                                    <div className={classes.metaSecondary}>
-                                                        {t`Join from anywhere`}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Location */}
-                                        {hasLocation && locationDetails && (
-                                            <div className={classes.metaItem}>
-                                                <div className={classes.metaIconBox}>
-                                                    <IconMapPin/>
+                                                    <IconCalendar/>
                                                 </div>
                                                 <div className={classes.metaContent}>
                                                     <div className={classes.metaPrimary}>
-                                                        {locationDetails.venue_name}
+                                                        <EventDateRange event={event}/>
                                                     </div>
-                                                    <div className={classes.metaSecondary}>
-                                                        {formatAddress(locationDetails)}
-                                                    </div>
-                                                    {mapUrl && (
-                                                        <a
-                                                            href={mapUrl}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className={classes.metaLink}
-                                                        >
-                                                            {t`View on Google Maps`}
-                                                            <IconExternalLink/>
-                                                        </a>
-                                                    )}
                                                 </div>
+                                                <CalendarOptionsPopover event={event}>
+                                                    <button className={classes.addToCalendarButton}>
+                                                        <IconCalendarPlus/>
+                                                        {t`Add to Calendar`}
+                                                    </button>
+                                                </CalendarOptionsPopover>
                                             </div>
-                                        )}
+
+                                            {/* Event Ended */}
+                                            {event.end_date && isDateInPast(event.end_date) && (
+                                                <div className={classes.metaItem}>
+                                                    <div className={classes.metaIconBox}>
+                                                        <IconCalendarOff/>
+                                                    </div>
+                                                    <div className={classes.metaContent}>
+                                                        <div className={classes.metaPrimary}>{t`This event has ended`}</div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Online Event */}
+                                            {isOnlineEvent && (
+                                                <div className={classes.metaItem}>
+                                                    <div className={classes.metaIconBox}>
+                                                        <IconWorld/>
+                                                    </div>
+                                                    <div className={classes.metaContent}>
+                                                        <div className={classes.metaPrimary}>{t`Online Event`}</div>
+                                                        <div className={classes.metaSecondary}>
+                                                            {t`Join from anywhere`}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Location */}
+                                            {hasLocation && locationDetails && (
+                                                <div className={classes.metaItem}>
+                                                    <div className={classes.metaIconBox}>
+                                                        <IconMapPin/>
+                                                    </div>
+                                                    <div className={classes.metaContent}>
+                                                        <div className={classes.metaPrimary}>
+                                                            {locationDetails.venue_name}
+                                                        </div>
+                                                        <div className={classes.metaSecondary}>
+                                                            {formatAddress(locationDetails)}
+                                                        </div>
+                                                        {mapUrl && (
+                                                            <a
+                                                                href={mapUrl}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className={classes.metaLink}
+                                                            >
+                                                                {t`View on Google Maps`}
+                                                                <IconExternalLink/>
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* About Section */}
-                            {event?.description && (
-                                <div className={classes.section}>
-                                    <div className={classes.sectionHeader}>
-                                        <h2 className={classes.sectionTitle}>{t`About`}</h2>
+                                {/* About Section */}
+                                {event?.description && (
+                                    <div className={classes.section}>
+                                        <div className={classes.sectionHeader}>
+                                            <h2 className={classes.sectionTitle}>{t`About`}</h2>
+                                        </div>
+                                        <RichDescription className={classes.description} html={event.description}/>
                                     </div>
-                                    <RichDescription className={classes.description} html={event.description}/>
-                                </div>
-                            )}
+                                )}
 
-                            {/* Location Section (with map) */}
-                            {hasLocation && locationDetails && (
-                                <div className={classes.section}>
-                                    <div className={classes.sectionHeader}>
-                                        <h2 className={classes.sectionTitle}>{t`Location`}</h2>
-                                    </div>
-                                    <div className={classes.locationContent}>
-                                        <div className={classes.venueDetails}>
-                                            <div className={classes.venueName}>
-                                                {locationDetails.venue_name}
-                                            </div>
-                                            <div className={classes.venueAddress}>
-                                                {formatAddress(locationDetails)}
+                                {/* Location Section (with map) */}
+                                {hasLocation && locationDetails && (
+                                    <div className={classes.section}>
+                                        <div className={classes.sectionHeader}>
+                                            <h2 className={classes.sectionTitle}>{t`Location`}</h2>
+                                        </div>
+                                        <div className={classes.locationContent}>
+                                            <div className={classes.venueDetails}>
+                                                <div className={classes.venueName}>
+                                                    {locationDetails.venue_name}
+                                                </div>
+                                                <div className={classes.venueAddress}>
+                                                    {formatAddress(locationDetails)}
+                                                </div>
+                                                {mapUrl && (
+                                                    <a
+                                                        href={mapUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className={classes.directionsLink}
+                                                    >
+                                                        <IconArrowUpRight/>
+                                                        {t`Get Directions`}
+                                                    </a>
+                                                )}
                                             </div>
                                             {mapUrl && (
                                                 <a
                                                     href={mapUrl}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className={classes.directionsLink}
+                                                    className={classes.mapContainer}
                                                 >
-                                                    <IconArrowUpRight/>
-                                                    {t`Get Directions`}
+                                                    <svg
+                                                        viewBox="0 0 200 120"
+                                                        preserveAspectRatio="xMidYMid slice"
+                                                        style={{
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            position: 'absolute',
+                                                            inset: 0,
+                                                        }}
+                                                    >
+                                                        <rect width="200" height="120" fill="var(--accent-soft)"/>
+                                                        {/* River */}
+                                                        <path d="M-5 95 Q30 85, 50 90 Q80 100, 110 88 Q140 75, 170 82 Q190 86, 205 80" stroke="var(--border-color)" strokeWidth="2" fill="none" opacity="0.3"/>
+                                                        {/* Main roads */}
+                                                        <line x1="0" y1="50" x2="200" y2="50" stroke="var(--border-color)" strokeWidth="2" opacity="0.2"/>
+                                                        <line x1="100" y1="0" x2="100" y2="120" stroke="var(--border-color)" strokeWidth="2" opacity="0.2"/>
+                                                        {/* Secondary roads */}
+                                                        <line x1="0" y1="25" x2="200" y2="25" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
+                                                        <line x1="0" y1="70" x2="85" y2="70" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
+                                                        <line x1="115" y1="70" x2="200" y2="70" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
+                                                        <line x1="50" y1="0" x2="50" y2="120" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
+                                                        <line x1="150" y1="0" x2="150" y2="75" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
+                                                        {/* Blocks/buildings */}
+                                                        <rect x="110" y="28" width="14" height="10" fill="var(--border-color)" opacity="0.25" rx="1"/>
+                                                        <rect x="20" y="55" width="12" height="10" fill="var(--border-color)" opacity="0.25" rx="1"/>
+                                                    </svg>
+                                                    <IconMapPin size={32} className={classes.mapPin}/>
+                                                    <div className={classes.mapOverlay}>
+                                                        <span className={classes.mapOverlayLabel}>
+                                                            <IconMaximize/>
+                                                            {t`View Map`}
+                                                        </span>
+                                                    </div>
                                                 </a>
                                             )}
                                         </div>
-                                        {mapUrl && (
-                                            <a
-                                                href={mapUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className={classes.mapContainer}
-                                            >
-                                                <svg
-                                                    viewBox="0 0 200 120"
-                                                    preserveAspectRatio="xMidYMid slice"
-                                                    style={{
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        position: 'absolute',
-                                                        inset: 0,
-                                                    }}
-                                                >
-                                                    <rect width="200" height="120" fill="var(--accent-soft)"/>
-                                                    {/* River */}
-                                                    <path d="M-5 95 Q30 85, 50 90 Q80 100, 110 88 Q140 75, 170 82 Q190 86, 205 80" stroke="var(--border-color)" strokeWidth="2" fill="none" opacity="0.3"/>
-                                                    {/* Main roads */}
-                                                    <line x1="0" y1="50" x2="200" y2="50" stroke="var(--border-color)" strokeWidth="2" opacity="0.2"/>
-                                                    <line x1="100" y1="0" x2="100" y2="120" stroke="var(--border-color)" strokeWidth="2" opacity="0.2"/>
-                                                    {/* Secondary roads */}
-                                                    <line x1="0" y1="25" x2="200" y2="25" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                    <line x1="0" y1="70" x2="85" y2="70" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                    <line x1="115" y1="70" x2="200" y2="70" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                    <line x1="50" y1="0" x2="50" y2="120" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                    <line x1="150" y1="0" x2="150" y2="75" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                    {/* Blocks/buildings */}
-                                                    <rect x="110" y="28" width="14" height="10" fill="var(--border-color)" opacity="0.25" rx="1"/>
-                                                    <rect x="20" y="55" width="12" height="10" fill="var(--border-color)" opacity="0.25" rx="1"/>
-                                                </svg>
-                                                <IconMapPin size={32} className={classes.mapPin}/>
-                                                <div className={classes.mapOverlay}>
-                                                    <span className={classes.mapOverlayLabel}>
-                                                        <IconMaximize/>
-                                                        {t`View Map`}
-                                                    </span>
+                                    </div>
+                                )}
+
+                                {renderTicketsSection()}
+
+                                {coverVideo && flyer && (
+                                    <div className={`${classes.section} ${classes.flyerSection}`} id="flyer">
+                                        <a href={flyer} target="_blank" rel="noopener noreferrer" className={classes.flyerLink}
+                                           aria-label={t`Open the event flyer`}>
+                                            <img src={flyer} alt={t`Flyer: ${event.title}`} loading="lazy"
+                                                 className={classes.flyerImage}/>
+                                        </a>
+                                    </div>
+                                )}
+
+                                {/* Organizer Section */}
+                                {organizer && organizer.status === OrganizerStatus.LIVE && (
+                                    <div className={classes.section} id="organizer">
+                                        <div className={classes.sectionHeader}>
+                                            <h2 className={classes.sectionTitle}>{t`Organizer`}</h2>
+                                        </div>
+                                        <div className={classes.organizerCard}>
+                                            {organizerLogo ? (
+                                                <img
+                                                    src={organizerLogo}
+                                                    alt={organizer.name}
+                                                    className={classes.organizerAvatar}
+                                                />
+                                            ) : (
+                                                <div className={classes.organizerAvatarPlaceholder}>
+                                                    {organizer.name.charAt(0).toUpperCase()}
                                                 </div>
-                                            </a>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
+                                            )}
+                                            <div className={classes.organizerContent}>
+                                                <div className={classes.organizerHeader}>
+                                                    <div>
+                                                        <h3 className={classes.organizerName}>
+                                                            <Anchor href={organizerHomepageUrl(organizer)}>
+                                                                {organizer.name}
+                                                            </Anchor>
+                                                        </h3>
+                                                        {getShortLocationDisplay(organizerLocation) && (
+                                                            <div className={classes.organizerLocation}>
+                                                                <IconMapPin/>
+                                                                <a
+                                                                    href={getGoogleMapsUrl(organizerLocation!)}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                >
+                                                                    {getShortLocationDisplay(organizerLocation)}
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
 
-                            {/* Tickets Section */}
-                            <div className={`${classes.section} ${classes.ticketsSection}`} ref={ticketsSectionRef}
-                                 id="tickets">
-                                <SelectProducts
-                                    colors={{
-                                        background: "transparent",
-                                        primary: "var(--event-primary-color)",
-                                        primaryText: "var(--event-primary-text-color)",
-                                        secondary: "var(--event-primary-color)",
-                                        secondaryText: "var(--event-accent-contrast)",
-                                        bodyBackground: "var(--event-bg-color)",
-                                    }}
-                                    continueButtonText={event.settings?.continue_button_text}
-                                    padding={"0px"}
-                                    event={event}
-                                    promoCodeValid={promoCodeValid}
-                                    promoCode={promoCode}
-                                    showPoweredBy={false}
-                                />
-                            </div>
+                                                {organizer.description && (
+                                                    <RichDescription className={classes.organizerBio} html={organizer.description}/>
+                                                )}
 
-                            {coverVideo && flyer && (
-                                <div className={`${classes.section} ${classes.flyerSection}`} id="flyer">
-                                    <a href={flyer} target="_blank" rel="noopener noreferrer" className={classes.flyerLink}
-                                       aria-label={t`Open the event flyer`}>
-                                        <img src={flyer} alt={t`Flyer: ${event.title}`} loading="lazy"
-                                             className={classes.flyerImage}/>
-                                    </a>
-                                </div>
-                            )}
-
-                            {/* Organizer Section */}
-                            {organizer && organizer.status === OrganizerStatus.LIVE && (
-                                <div className={classes.section} id="organizer">
-                                    <div className={classes.sectionHeader}>
-                                        <h2 className={classes.sectionTitle}>{t`Organizer`}</h2>
-                                    </div>
-                                    <div className={classes.organizerCard}>
-                                        {organizerLogo ? (
-                                            <img
-                                                src={organizerLogo}
-                                                alt={organizer.name}
-                                                className={classes.organizerAvatar}
-                                            />
-                                        ) : (
-                                            <div className={classes.organizerAvatarPlaceholder}>
-                                                {organizer.name.charAt(0).toUpperCase()}
-                                            </div>
-                                        )}
-                                        <div className={classes.organizerContent}>
-                                            <div className={classes.organizerHeader}>
-                                                <div>
-                                                    <h3 className={classes.organizerName}>
-                                                        <Anchor href={organizerHomepageUrl(organizer)}>
-                                                            {organizer.name}
-                                                        </Anchor>
-                                                    </h3>
-                                                    {getShortLocationDisplay(organizerLocation) && (
-                                                        <div className={classes.organizerLocation}>
-                                                            <IconMapPin/>
-                                                            <a
-                                                                href={getGoogleMapsUrl(organizerLocation!)}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                            >
-                                                                {getShortLocationDisplay(organizerLocation)}
-                                                            </a>
+                                                <div className={classes.organizerActions}>
+                                                    {socialLinks.length > 0 && (
+                                                        <div className={classes.socialLinks}>
+                                                            {socialLinks.map(({platform, handle, config}) => {
+                                                                const IconComponent = config.icon;
+                                                                const url = config.baseUrl + handle;
+                                                                return (
+                                                                    <a
+                                                                        key={platform}
+                                                                        href={url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className={classes.socialLink}
+                                                                        title={platform}
+                                                                    >
+                                                                        <IconComponent size={18}/>
+                                                                    </a>
+                                                                );
+                                                            })}
                                                         </div>
                                                     )}
-                                                </div>
-                                            </div>
-
-                                            {organizer.description && (
-                                                <RichDescription className={classes.organizerBio} html={organizer.description}/>
-                                            )}
-
-                                            <div className={classes.organizerActions}>
-                                                {socialLinks.length > 0 && (
-                                                    <div className={classes.socialLinks}>
-                                                        {socialLinks.map(({platform, handle, config}) => {
-                                                            const IconComponent = config.icon;
-                                                            const url = config.baseUrl + handle;
+                                                    {websiteUrl && (() => {
+                                                        try {
+                                                            const hostname = new URL(websiteUrl).hostname;
                                                             return (
                                                                 <a
-                                                                    key={platform}
-                                                                    href={url}
+                                                                    href={websiteUrl}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
                                                                     className={classes.socialLink}
-                                                                    title={platform}
+                                                                    title={hostname}
                                                                 >
-                                                                    <IconComponent size={18}/>
+                                                                    <IconWorld size={18}/>
                                                                 </a>
                                                             );
-                                                        })}
-                                                    </div>
-                                                )}
-                                                {websiteUrl && (() => {
-                                                    try {
-                                                        const hostname = new URL(websiteUrl).hostname;
-                                                        return (
-                                                            <a
-                                                                href={websiteUrl}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className={classes.socialLink}
-                                                                title={hostname}
-                                                            >
-                                                                <IconWorld size={18}/>
-                                                            </a>
-                                                        );
-                                                    } catch {
-                                                        return null;
-                                                    }
-                                                })()}
-                                                <button
-                                                    onClick={() => setContactModalOpen(true)}
-                                                    className={classes.contactButton}
-                                                >
-                                                    <IconMail/>
-                                                    {t`Contact`}
-                                                </button>
+                                                        } catch {
+                                                            return null;
+                                                        }
+                                                    })()}
+                                                    <button
+                                                        onClick={() => setContactModalOpen(true)}
+                                                        className={classes.contactButton}
+                                                    >
+                                                        <IconMail/>
+                                                        {t`Contact`}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                        </div>
+                                )}
+                            </div>
 
-                        {/* Footer */}
-                        <div className={classes.footerSection}>
-                            <PoweredByFooter className={classes.poweredByFooter}/>
+                            {/* Footer */}
+                            <div className={classes.footerSection}>
+                                <PoweredByFooter className={classes.poweredByFooter}/>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Floating Scroll Button */}
-                    {showScrollButton && (
+                    {showScrollButton && !isEmbeddedRegistration && (
                         <button
                             className={classes.scrollToTicketsButton}
                             onClick={scrollToTickets}

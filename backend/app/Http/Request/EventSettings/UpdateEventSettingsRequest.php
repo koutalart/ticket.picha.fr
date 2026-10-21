@@ -134,6 +134,8 @@ class UpdateEventSettingsRequest extends BaseRequest
 
             // Attendance response settings
             'allow_attendee_attendance_response' => ['boolean'],
+
+            'embedded_registration_enabled' => ['boolean'],
         ];
     }
 

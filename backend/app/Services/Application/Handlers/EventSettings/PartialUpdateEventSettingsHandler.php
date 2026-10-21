@@ -153,6 +153,8 @@ class PartialUpdateEventSettingsHandler
 
                 // Attendance response settings
                 'allow_attendee_attendance_response' => $eventSettingsDTO->settings['allow_attendee_attendance_response'] ?? $existingSettings->getAllowAttendeeAttendanceResponse(),
+
+                'embedded_registration_enabled' => $eventSettingsDTO->settings['embedded_registration_enabled'] ?? $existingSettings->getEmbeddedRegistrationEnabled(),
             ]),
         );
     }
