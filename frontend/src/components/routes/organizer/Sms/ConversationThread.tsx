@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import {t} from "@lingui/macro";
-import {ActionIcon, Alert, Badge, Button, Loader, Select, Text, Textarea} from "@mantine/core";
+import {ActionIcon, Alert, Badge, Button, Loader, Select, Text, Textarea, UnstyledButton} from "@mantine/core";
 import {IconArrowLeft, IconBan, IconSend, IconSparkles} from "@tabler/icons-react";
 import {IdParam, SmsConversationDetail, SmsConversationStatus} from "../../../../types.ts";
 import {useSendSmsReply} from "../../../../mutations/useSendSmsReply.ts";
@@ -19,9 +19,10 @@ interface ConversationThreadProps {
     isLoading: boolean;
     canSend: boolean;
     onBack: () => void;
+    onOpenCustomer: () => void;
 }
 
-export const ConversationThread = ({organizerId, detail, isLoading, canSend, onBack}: ConversationThreadProps) => {
+export const ConversationThread = ({organizerId, detail, isLoading, canSend, onBack, onOpenCustomer}: ConversationThreadProps) => {
     const [content, setContent] = useState('');
     const [error, setError] = useState<string | null>(null);
     const sendMutation = useSendSmsReply();
@@ -83,10 +84,10 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
                 <ActionIcon variant="subtle" className={classes.backButton} onClick={onBack} aria-label={t`Back`}>
                     <IconArrowLeft size={18}/>
                 </ActionIcon>
-                <div className={classes.threadTitle}>
-                    <strong>{conversation.contact_name || conversation.phone}</strong>
+                <UnstyledButton className={classes.threadTitle} onClick={onOpenCustomer} title={t`Open the customer file`}>
+                    <strong className={classes.threadName}>{conversation.contact_name || conversation.phone}</strong>
                     {conversation.contact_name && <Text size="xs" c="dimmed">{conversation.phone}</Text>}
-                </div>
+                </UnstyledButton>
                 <Select
                     size="xs"
                     w={150}

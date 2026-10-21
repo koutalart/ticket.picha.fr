@@ -32,7 +32,7 @@ msgstr "—"
 msgid "'There\\'s nothing to show yet'"
 msgstr "Δεν υπάρχει τίποτα να εμφανιστεί ακόμα"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:166
 msgid "(emoji or special characters: 70 characters per SMS)"
 msgstr "(emoji ή ειδικοί χαρακτήρες: 70 χαρακτήρες ανά SMS)"
 
@@ -89,7 +89,7 @@ msgstr ""
 msgid "{0} available"
 msgstr "{0} διαθέσιμα"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:164
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
 msgid "{0} characters, {1} SMS"
 msgstr "{0} χαρακτήρες, {1} SMS"
 
@@ -132,7 +132,7 @@ msgstr ""
 msgid "{0} logo"
 msgstr "Λογότυπο {0}"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:56
 msgid "{0} orders, {1} events"
 msgstr "{0} παραγγελίες, {1} εκδηλώσεις"
 
@@ -238,6 +238,10 @@ msgstr ""
 #: src/components/organizerTemplates/Tour/index.tsx:221
 msgid "{place}, from {0}"
 msgstr "{place}, από τις {0}"
+
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:41
+msgid "{received} SMS received, {sent} SMS sent"
+msgstr "{received} SMS ελήφθησαν, {sent} SMS στάλθηκαν"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:853
 msgid "{remaining} remaining"
@@ -449,7 +453,7 @@ msgstr "Μια ειδοποίηση ακύρωσης εστάλη στο"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "Ένας υπολογιστής στο δίκτυο του χώρου εκτελεί το ρελέ εκτύπωσης PICHA. Παραλαμβάνει τα εισιτήρια που εκτυπώνονται από αυτόν τον σταθμό και τα στέλνει στον Zebra."
 
-#: src/components/routes/organizer/Sms/index.tsx:62
+#: src/components/routes/organizer/Sms/index.tsx:63
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Όποιος απαντήσει STOP διαγράφεται αυτόματα από τα SMS σας."
 
@@ -921,7 +925,7 @@ msgstr "Προσθέστε pixels παρακολούθησης στις δημό
 msgid "Add Webhook"
 msgstr "Προσθήκη Webhook"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:137
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:138
 msgid "Add your httpSMS API key and sending number in Settings to reply from here."
 msgstr "Προσθέστε το κλειδί API του httpSMS και τον αριθμό αποστολής στις Ρυθμίσεις για να απαντάτε από εδώ."
 
@@ -1068,7 +1072,7 @@ msgid "All"
 msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
-#: src/components/routes/organizer/Sms/ConversationList.tsx:45
+#: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
 msgstr "Όλες"
 
@@ -1809,7 +1813,7 @@ msgstr "Αναμονή Πληρωμής Εκτός Σύνδεσης"
 #~ msgid "Awaiting Offline Pmt."
 #~ msgstr "Αναμ. Πλ. Εκτ. Σύνδ."
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:62
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:76
 msgid "awaiting payment"
 msgstr "αναμένεται πληρωμή"
 
@@ -1853,7 +1857,7 @@ msgstr "Διοργανωτής Α.Ε."
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:433
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:83
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:84
 msgid "Back"
 msgstr "Πίσω"
 
@@ -2208,7 +2212,7 @@ msgstr "Η ακύρωση θα ακυρώσει όλους τους συμμετ
 msgid "Cancellation and refund conditions are set by the organizer. Contact them before the event for any request."
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:61
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:75
 msgid "cancelled"
 msgstr "ακυρώθηκε"
 
@@ -2976,7 +2980,7 @@ msgstr "Σύνδεση & Αναβάθμιση"
 msgid "Connect Documentation"
 msgstr "Τεκμηρίωση Σύνδεσης"
 
-#: src/components/routes/organizer/Sms/index.tsx:70
+#: src/components/routes/organizer/Sms/index.tsx:71
 msgid "Connect httpSMS in Settings"
 msgstr "Συνδέστε το httpSMS στις Ρυθμίσεις"
 
@@ -3686,10 +3690,18 @@ msgstr "Προσαρμοσμένο πρότυπο"
 msgid "Customer"
 msgstr "Πελάτης"
 
+#: src/components/routes/organizer/Sms/index.tsx:108
+msgid "Customer file"
+msgstr "Καρτέλα πελάτη"
+
 #: src/components/common/OrdersTable/index.tsx:160
 #: src/components/routes/event/OrdersPage/OrderList.tsx:111
 msgid "Customer link copied to clipboard"
 msgstr "Ο σύνδεσμος πελάτη αντιγράφηκε στο πρόχειρο"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:25
+msgid "Customer of {0}, no ticket for an upcoming event yet"
+msgstr "Πελάτης του {0}, χωρίς εισιτήριο ακόμη για επερχόμενη εκδήλωση"
 
 #: src/components/modals/RefundOrderModal/index.tsx:166
 msgid "Customer will receive an email confirming the refund"
@@ -5677,6 +5689,10 @@ msgstr ""
 msgid "First attendee"
 msgstr "Πρώτος συμμετέχων"
 
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
+msgid "first exchange {0}"
+msgstr "πρώτη επικοινωνία {0}"
+
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:206
 msgid "First Invoice Number"
 msgstr "Πρώτος Αριθμός Τιμολογίου"
@@ -6078,6 +6094,14 @@ msgstr ""
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:621
 msgid "Guests"
 msgstr "Επισκέπτες"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:23
+msgid "Has a ticket for {0}"
+msgstr "Έχει εισιτήριο για {0}"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:39
+msgid "Has not replied yet"
+msgstr "Δεν έχει απαντήσει ακόμη"
 
 #: src/components/routes/product-widget/SelectProducts/index.tsx:656
 msgid "Have a promo code?"
@@ -6926,6 +6950,10 @@ msgstr "Τελευταίες 90 ημέρες"
 msgid "Last login"
 msgstr "Τελευταία σύνδεση"
 
+#: src/components/routes/organizer/Sms/customerSummary.ts:41
+msgid "Last message sent {0}"
+msgstr "Τελευταίο μήνυμα στάλθηκε {0}"
+
 #: src/components/modals/CreateAttendeeModal/index.tsx:106
 #: src/components/modals/ManageAttendeeModal/index.tsx:112
 #: src/components/modals/ManageOrderModal/index.tsx:150
@@ -7710,7 +7738,7 @@ msgstr "Το όνομα πρέπει να έχει λιγότερους από 2
 msgid "Name of the event"
 msgstr "Όνομα εκδήλωσης"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:36
+#: src/components/routes/organizer/Sms/ConversationList.tsx:61
 msgid "Name or number"
 msgstr "Όνομα ή αριθμός"
 
@@ -7878,7 +7906,7 @@ msgstr "Χωρίς δέσμευση"
 msgid "No configurations found"
 msgstr "Δεν βρέθηκαν ρυθμίσεις"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:57
+#: src/components/routes/organizer/Sms/ConversationList.tsx:90
 msgid "No conversation yet. Replies to your SMS will appear here."
 msgstr "Δεν υπάρχουν ακόμη συνομιλίες. Οι απαντήσεις στα SMS σας θα εμφανίζονται εδώ."
 
@@ -7994,7 +8022,7 @@ msgstr "Δεν υπάρχουν άλλα εισιτήρια σε αυτή την
 msgid "No name"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:37
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:51
 msgid "No order found with this number. The number is matched with the phone answers of your order forms and box office sales."
 msgstr "Δεν βρέθηκε παραγγελία με αυτόν τον αριθμό. Ο αριθμός συγκρίνεται με τα τηλέφωνα των φορμών παραγγελίας και των πωλήσεων ταμείου."
 
@@ -8009,6 +8037,10 @@ msgstr ""
 #: src/components/common/QuestionsTable/index.tsx:489
 #~ msgid "No order questions yet"
 #~ msgstr "Δεν υπάρχουν ερωτήσεις παραγγελίας ακόμα"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:27
+msgid "No order with this number"
+msgstr "Καμία παραγγελία με αυτόν τον αριθμό"
 
 #: src/components/common/AdminOrdersTable/index.tsx:20
 msgid "No orders found"
@@ -8597,6 +8629,10 @@ msgstr "Άνοιγμα πλαϊνής μπάρας"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:641
 msgid "Open Stripe Dashboard"
 msgstr "Άνοιγμα Πίνακα Stripe"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:87
+msgid "Open the customer file"
+msgstr "Άνοιγμα καρτέλας πελάτη"
 
 #: src/components/layouts/EventHomepage/index.tsx:537
 msgid "Open the event flyer"
@@ -11379,7 +11415,7 @@ msgstr "Επιλογή κατηγορίας"
 msgid "Select a configuration"
 msgstr "Επιλογή ρύθμισης"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:45
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:46
 msgid "Select a conversation"
 msgstr "Επιλέξτε συνομιλία"
 
@@ -11540,7 +11576,7 @@ msgstr "Σεμινάριο"
 
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:173
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:174
 msgid "Send"
 msgstr "Αποστολή"
 
@@ -11974,11 +12010,11 @@ msgstr "SMS"
 msgid "SMS (httpSMS)"
 msgstr "SMS (httpSMS)"
 
-#: src/components/routes/organizer/Sms/index.tsx:68
+#: src/components/routes/organizer/Sms/index.tsx:69
 msgid "SMS is not connected yet."
 msgstr "Τα SMS δεν έχουν συνδεθεί ακόμη."
 
-#: src/components/routes/organizer/Sms/index.tsx:60
+#: src/components/routes/organizer/Sms/index.tsx:61
 msgid "SMS messages"
 msgstr "Μηνύματα SMS"
 
@@ -12483,7 +12519,7 @@ msgstr "Επιτυχής Ενημέρωση Ρυθμίσεων Παρακολο�
 msgid "Successfully updated Webhook"
 msgstr "Επιτυχής ενημέρωση Webhook"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:143
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:144
 msgid "Suggested reply, check it before sending"
 msgstr "Προτεινόμενη απάντηση, ελέγξτε την πριν την αποστολή"
 
@@ -12924,7 +12960,7 @@ msgstr "Η προγραμματισμένη ώρα πρέπει να είναι 
 msgid "The show"
 msgstr "Το σόου"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:64
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:65
 msgid "The SMS could not be sent"
 msgstr "Δεν ήταν δυνατή η αποστολή του SMS"
 
@@ -13150,7 +13186,7 @@ msgstr "Αυτό το μήνυμα θα εμφανίζεται μόνο εάν �
 msgid "This name is visible to end users"
 msgstr "Αυτό το όνομα είναι ορατό στους τελικούς χρήστες"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:133
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:134
 msgid "This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again."
 msgstr "Αυτός ο αριθμός απάντησε STOP: δεν μπορεί πλέον να λαμβάνει τα SMS σας. Αν απαντήσει START, θα μπορείτε να γράψετε ξανά."
 
@@ -13546,7 +13582,8 @@ msgstr "Προς συμπλήρωση"
 msgid "To edit configurations, go to the Configurations section in the admin menu."
 msgstr "Για επεξεργασία ρυθμίσεων, μεταβείτε στην ενότητα Ρυθμίσεις στο μενού διαχειριστή."
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:47
+#: src/components/routes/organizer/Sms/ConversationList.tsx:72
+#: src/components/routes/organizer/Sms/customerSummary.ts:19
 #: src/components/routes/organizer/Sms/labels.ts:7
 msgid "To handle"
 msgstr "Προς χειρισμό"
@@ -13812,7 +13849,7 @@ msgstr "Δεν ήταν δυνατή η αφαίρεση του κλειδιού
 msgid "Unable to update question. Please check the your details"
 msgstr "Αδύνατη ενημέρωση ερώτησης. Ελέγξτε τα στοιχεία σας"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:76
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:77
 msgid "Unable to update the conversation"
 msgstr "Δεν ήταν δυνατή η ενημέρωση της συνομιλίας"
 
@@ -13880,7 +13917,7 @@ msgstr "Άγνωστος Συμμετέχων"
 msgid "Unknown bracelet"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:27
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:35
 msgid "Unknown customer"
 msgstr "Άγνωστος πελάτης"
 
@@ -13934,11 +13971,12 @@ msgstr "Μη Πληρωμένη Παραγγελία"
 #~ msgid "Unpublish Event"
 #~ msgstr "Απόσυρση Εκδήλωσης"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:46
+#: src/components/routes/organizer/Sms/ConversationList.tsx:71
 msgid "Unread"
 msgstr "Μη αναγνωσμένα"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:32
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:46
+#: src/components/routes/organizer/Sms/customerSummary.ts:35
 msgid "Unsubscribed (STOP)"
 msgstr "Διαγράφηκε (STOP)"
 
@@ -14485,6 +14523,10 @@ msgstr "Αναμονή"
 msgid "Waiting for payment"
 msgstr "Αναμονή πληρωμής"
 
+#: src/components/routes/organizer/Sms/customerSummary.ts:37
+msgid "Waiting for your reply since {0}"
+msgstr "Περιμένει απάντηση από {0}"
+
 #: src/components/layouts/Event/index.tsx:123
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:51
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:49
@@ -14993,7 +15035,7 @@ msgstr ""
 msgid "Write your message here..."
 msgstr "Γράψτε το μήνυμά σας εδώ..."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:149
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:150
 msgid "Write your reply"
 msgstr "Γράψτε την απάντησή σας"
 
@@ -15039,7 +15081,7 @@ msgstr ""
 msgid "Yes. Your teams can run the welcome themselves and only rent the equipment you need."
 msgstr "Ναι. Οι ομάδες σας διαχειρίζονται την υποδοχή και νοικιάζετε μόνο τον εξοπλισμό που χρειάζεστε."
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:78
+#: src/components/routes/organizer/Sms/ConversationList.tsx:111
 msgid "You"
 msgstr "Εσείς"
 

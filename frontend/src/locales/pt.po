@@ -32,7 +32,7 @@ msgstr "—"
 msgid "'There\\'s nothing to show yet'"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:166
 msgid "(emoji or special characters: 70 characters per SMS)"
 msgstr "(emojis ou caracteres especiais: 70 caracteres por SMS)"
 
@@ -89,7 +89,7 @@ msgstr "{0} participantes"
 msgid "{0} available"
 msgstr "{0} disponível"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:164
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
 msgid "{0} characters, {1} SMS"
 msgstr "{0} caracteres, {1} SMS"
 
@@ -132,7 +132,7 @@ msgstr ""
 msgid "{0} logo"
 msgstr "Logo {0}"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:56
 msgid "{0} orders, {1} events"
 msgstr "{0} encomendas, {1} eventos"
 
@@ -238,6 +238,10 @@ msgstr "{pausedCount} bilhetes de bilheteira estão em pausa e ocultos aqui."
 #: src/components/organizerTemplates/Tour/index.tsx:221
 msgid "{place}, from {0}"
 msgstr "{place}, a partir das {0}"
+
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:41
+msgid "{received} SMS received, {sent} SMS sent"
+msgstr "{received} SMS recebidos, {sent} SMS enviados"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:853
 msgid "{remaining} remaining"
@@ -449,7 +453,7 @@ msgstr "Um aviso de cancelamento foi enviado para"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "Um computador na rede do local executa o relé de impressão PICHA. Recolhe os bilhetes impressos neste posto e envia-os para a Zebra."
 
-#: src/components/routes/organizer/Sms/index.tsx:62
+#: src/components/routes/organizer/Sms/index.tsx:63
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Um cliente que responda STOP deixa automaticamente de receber os seus SMS."
 
@@ -921,7 +925,7 @@ msgstr ""
 msgid "Add Webhook"
 msgstr "Adicionar Webhook"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:137
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:138
 msgid "Add your httpSMS API key and sending number in Settings to reply from here."
 msgstr "Adicione a sua chave API httpSMS e o número de envio nas Definições para responder a partir daqui."
 
@@ -1068,7 +1072,7 @@ msgid "All"
 msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
-#: src/components/routes/organizer/Sms/ConversationList.tsx:45
+#: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
 msgstr "Todas"
 
@@ -1809,7 +1813,7 @@ msgstr "Aguardando pagamento offline"
 #~ msgid "Awaiting Offline Pmt."
 #~ msgstr "Aguardando pagamento offline"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:62
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:76
 msgid "awaiting payment"
 msgstr "pagamento pendente"
 
@@ -1853,7 +1857,7 @@ msgstr "Impressionante Organizador Ltd."
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:433
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:83
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:84
 msgid "Back"
 msgstr "Voltar"
 
@@ -2208,7 +2212,7 @@ msgstr "Cancelar irá cancelar todos os participantes associados a este pedido e
 msgid "Cancellation and refund conditions are set by the organizer. Contact them before the event for any request."
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:61
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:75
 msgid "cancelled"
 msgstr "cancelada"
 
@@ -2976,7 +2980,7 @@ msgstr "Conectar e atualizar"
 msgid "Connect Documentation"
 msgstr "Documentação de conexão"
 
-#: src/components/routes/organizer/Sms/index.tsx:70
+#: src/components/routes/organizer/Sms/index.tsx:71
 msgid "Connect httpSMS in Settings"
 msgstr "Ligar o httpSMS nas Definições"
 
@@ -3686,10 +3690,18 @@ msgstr "Modelo personalizado"
 msgid "Customer"
 msgstr "Cliente"
 
+#: src/components/routes/organizer/Sms/index.tsx:108
+msgid "Customer file"
+msgstr "Ficha do cliente"
+
 #: src/components/common/OrdersTable/index.tsx:160
 #: src/components/routes/event/OrdersPage/OrderList.tsx:111
 msgid "Customer link copied to clipboard"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:25
+msgid "Customer of {0}, no ticket for an upcoming event yet"
+msgstr "Cliente de {0}, ainda sem bilhete para um próximo evento"
 
 #: src/components/modals/RefundOrderModal/index.tsx:166
 msgid "Customer will receive an email confirming the refund"
@@ -5675,6 +5687,10 @@ msgstr ""
 msgid "First attendee"
 msgstr "Primeiro participante"
 
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
+msgid "first exchange {0}"
+msgstr "primeiro contacto a {0}"
+
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:206
 msgid "First Invoice Number"
 msgstr "Primeiro número da fatura"
@@ -6076,6 +6092,14 @@ msgstr ""
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:621
 msgid "Guests"
 msgstr "Convidados"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:23
+msgid "Has a ticket for {0}"
+msgstr "Tem bilhete para {0}"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:39
+msgid "Has not replied yet"
+msgstr "Ainda não respondeu"
 
 #: src/components/routes/product-widget/SelectProducts/index.tsx:656
 msgid "Have a promo code?"
@@ -6924,6 +6948,10 @@ msgstr "Últimos 90 dias"
 msgid "Last login"
 msgstr "Último Login"
 
+#: src/components/routes/organizer/Sms/customerSummary.ts:41
+msgid "Last message sent {0}"
+msgstr "Última mensagem enviada {0}"
+
 #: src/components/modals/CreateAttendeeModal/index.tsx:106
 #: src/components/modals/ManageAttendeeModal/index.tsx:112
 #: src/components/modals/ManageOrderModal/index.tsx:150
@@ -7708,7 +7736,7 @@ msgstr "O nome deve ter menos de 255 caracteres"
 msgid "Name of the event"
 msgstr "Nome do evento"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:36
+#: src/components/routes/organizer/Sms/ConversationList.tsx:61
 msgid "Name or number"
 msgstr "Nome ou número"
 
@@ -7876,7 +7904,7 @@ msgstr "Sem compromisso"
 msgid "No configurations found"
 msgstr "Nenhuma configuração encontrada"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:57
+#: src/components/routes/organizer/Sms/ConversationList.tsx:90
 msgid "No conversation yet. Replies to your SMS will appear here."
 msgstr "Ainda não há conversas. As respostas aos seus SMS aparecerão aqui."
 
@@ -7992,7 +8020,7 @@ msgstr "Já não há bilhetes para este preço."
 msgid "No name"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:37
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:51
 msgid "No order found with this number. The number is matched with the phone answers of your order forms and box office sales."
 msgstr "Nenhuma encomenda encontrada com este número. O número é comparado com os telefones dos formulários de encomenda e das vendas na bilheteira."
 
@@ -8007,6 +8035,10 @@ msgstr ""
 #: src/components/common/QuestionsTable/index.tsx:489
 #~ msgid "No order questions yet"
 #~ msgstr "Ainda não há perguntas de pedido"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:27
+msgid "No order with this number"
+msgstr "Nenhuma encomenda com este número"
 
 #: src/components/common/AdminOrdersTable/index.tsx:20
 msgid "No orders found"
@@ -8595,6 +8627,10 @@ msgstr "Abrir barra lateral"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:641
 msgid "Open Stripe Dashboard"
 msgstr "Abrir painel do Stripe"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:87
+msgid "Open the customer file"
+msgstr "Abrir a ficha do cliente"
 
 #: src/components/layouts/EventHomepage/index.tsx:537
 msgid "Open the event flyer"
@@ -11375,7 +11411,7 @@ msgstr "Selecione uma categoria"
 msgid "Select a configuration"
 msgstr "Selecione uma configuração"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:45
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:46
 msgid "Select a conversation"
 msgstr "Selecione uma conversa"
 
@@ -11536,7 +11572,7 @@ msgstr "Seminário"
 
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:173
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:174
 msgid "Send"
 msgstr "Enviar"
 
@@ -11970,11 +12006,11 @@ msgstr "SMS"
 msgid "SMS (httpSMS)"
 msgstr "SMS (httpSMS)"
 
-#: src/components/routes/organizer/Sms/index.tsx:68
+#: src/components/routes/organizer/Sms/index.tsx:69
 msgid "SMS is not connected yet."
 msgstr "Os SMS ainda não estão ligados."
 
-#: src/components/routes/organizer/Sms/index.tsx:60
+#: src/components/routes/organizer/Sms/index.tsx:61
 msgid "SMS messages"
 msgstr "Mensagens SMS"
 
@@ -12479,7 +12515,7 @@ msgstr ""
 msgid "Successfully updated Webhook"
 msgstr "Webhook atualizado com sucesso"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:143
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:144
 msgid "Suggested reply, check it before sending"
 msgstr "Resposta sugerida, verifique-a antes de enviar"
 
@@ -12920,7 +12956,7 @@ msgstr "A hora agendada deve ser no futuro"
 msgid "The show"
 msgstr "O espetáculo"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:64
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:65
 msgid "The SMS could not be sent"
 msgstr "Não foi possível enviar o SMS"
 
@@ -13146,7 +13182,7 @@ msgstr "Esta mensagem só será mostrada se o pedido for concluído com sucesso.
 msgid "This name is visible to end users"
 msgstr "Este nome é visível aos utilizadores finais"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:133
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:134
 msgid "This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again."
 msgstr "Este número respondeu STOP: já não pode receber os seus SMS. Se responder START, poderá voltar a escrever-lhe."
 
@@ -13542,7 +13578,8 @@ msgstr "A completar"
 msgid "To edit configurations, go to the Configurations section in the admin menu."
 msgstr "Para editar configurações, aceda à secção Configurações no menu de administração."
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:47
+#: src/components/routes/organizer/Sms/ConversationList.tsx:72
+#: src/components/routes/organizer/Sms/customerSummary.ts:19
 #: src/components/routes/organizer/Sms/labels.ts:7
 msgid "To handle"
 msgstr "Por tratar"
@@ -13808,7 +13845,7 @@ msgstr "Não foi possível remover a chave API"
 msgid "Unable to update question. Please check the your details"
 msgstr "Não foi possível atualizar a pergunta. Por favor verifique os seus dados"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:76
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:77
 msgid "Unable to update the conversation"
 msgstr "Não foi possível atualizar a conversa"
 
@@ -13876,7 +13913,7 @@ msgstr "Participante desconhecido"
 msgid "Unknown bracelet"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:27
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:35
 msgid "Unknown customer"
 msgstr "Cliente desconhecido"
 
@@ -13930,11 +13967,12 @@ msgstr "Pedido não pago"
 #~ msgid "Unpublish Event"
 #~ msgstr "Despublicar Evento"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:46
+#: src/components/routes/organizer/Sms/ConversationList.tsx:71
 msgid "Unread"
 msgstr "Não lidas"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:32
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:46
+#: src/components/routes/organizer/Sms/customerSummary.ts:35
 msgid "Unsubscribed (STOP)"
 msgstr "Cancelou a subscrição (STOP)"
 
@@ -14481,6 +14519,10 @@ msgstr "Em espera"
 msgid "Waiting for payment"
 msgstr "A aguardar pagamento"
 
+#: src/components/routes/organizer/Sms/customerSummary.ts:37
+msgid "Waiting for your reply since {0}"
+msgstr "Aguarda a sua resposta desde {0}"
+
 #: src/components/layouts/Event/index.tsx:123
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:51
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:49
@@ -14989,7 +15031,7 @@ msgstr ""
 msgid "Write your message here..."
 msgstr "Escreva sua mensagem aqui..."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:149
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:150
 msgid "Write your reply"
 msgstr "Escreva a sua resposta"
 
@@ -15035,7 +15077,7 @@ msgstr ""
 msgid "Yes. Your teams can run the welcome themselves and only rent the equipment you need."
 msgstr "Sim. As suas equipas tratam da receção e aluga apenas o equipamento de que precisa."
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:78
+#: src/components/routes/organizer/Sms/ConversationList.tsx:111
 msgid "You"
 msgstr "Você"
 

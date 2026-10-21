@@ -32,7 +32,7 @@ msgstr "—"
 msgid "'There\\'s nothing to show yet'"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:166
 msgid "(emoji or special characters: 70 characters per SMS)"
 msgstr "(emoji vagy speciális karakterek: SMS-enként 70 karakter)"
 
@@ -89,7 +89,7 @@ msgstr ""
 msgid "{0} available"
 msgstr "{0} elérhető"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:164
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
 msgid "{0} characters, {1} SMS"
 msgstr "{0} karakter, {1} SMS"
 
@@ -132,7 +132,7 @@ msgstr ""
 msgid "{0} logo"
 msgstr "{0} logó"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:56
 msgid "{0} orders, {1} events"
 msgstr "{0} rendelés, {1} esemény"
 
@@ -238,6 +238,10 @@ msgstr ""
 #: src/components/organizerTemplates/Tour/index.tsx:221
 msgid "{place}, from {0}"
 msgstr "{place}, {0}-tól"
+
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:41
+msgid "{received} SMS received, {sent} SMS sent"
+msgstr "{received} SMS érkezett, {sent} SMS elküldve"
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:853
 msgid "{remaining} remaining"
@@ -449,7 +453,7 @@ msgstr "Lemondási értesítés elküldve ide:"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "A helyszín hálózatán egy számítógép futtatja a PICHA nyomtatási továbbítót. Átveszi az erről az állomásról nyomtatott jegyeket, és elküldi őket a Zebrának."
 
-#: src/components/routes/organizer/Sms/index.tsx:62
+#: src/components/routes/organizer/Sms/index.tsx:63
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Aki STOP-pal válaszol, automatikusan leiratkozik az SMS-eiről."
 
@@ -921,7 +925,7 @@ msgstr ""
 msgid "Add Webhook"
 msgstr "Webhook hozzáadása"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:137
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:138
 msgid "Add your httpSMS API key and sending number in Settings to reply from here."
 msgstr "Adja meg a httpSMS API-kulcsát és a küldő számot a Beállításokban, hogy innen válaszolhasson."
 
@@ -1068,7 +1072,7 @@ msgid "All"
 msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
-#: src/components/routes/organizer/Sms/ConversationList.tsx:45
+#: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
 msgstr "Összes"
 
@@ -1809,7 +1813,7 @@ msgstr "Offline fizetésre vár"
 #~ msgid "Awaiting Offline Pmt."
 #~ msgstr "Offline fizetésre vár."
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:62
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:76
 msgid "awaiting payment"
 msgstr "fizetésre vár"
 
@@ -1853,7 +1857,7 @@ msgstr "Awesome Organizer Kft."
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:433
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:83
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:84
 msgid "Back"
 msgstr "Vissza"
 
@@ -2208,7 +2212,7 @@ msgstr "A törlés törli az összes ehhez a rendeléshez tartozó résztvevőt,
 msgid "Cancellation and refund conditions are set by the organizer. Contact them before the event for any request."
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:61
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:75
 msgid "cancelled"
 msgstr "törölve"
 
@@ -2976,7 +2980,7 @@ msgstr "Csatlakozás és frissítés"
 msgid "Connect Documentation"
 msgstr "Dokumentáció csatlakoztatása"
 
-#: src/components/routes/organizer/Sms/index.tsx:70
+#: src/components/routes/organizer/Sms/index.tsx:71
 msgid "Connect httpSMS in Settings"
 msgstr "httpSMS csatlakoztatása a Beállításokban"
 
@@ -3686,10 +3690,18 @@ msgstr "Egyedi sablon"
 msgid "Customer"
 msgstr "Ügyfél"
 
+#: src/components/routes/organizer/Sms/index.tsx:108
+msgid "Customer file"
+msgstr "Ügyféladatlap"
+
 #: src/components/common/OrdersTable/index.tsx:160
 #: src/components/routes/event/OrdersPage/OrderList.tsx:111
 msgid "Customer link copied to clipboard"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:25
+msgid "Customer of {0}, no ticket for an upcoming event yet"
+msgstr "{0} ügyfele, még nincs jegye közelgő eseményre"
 
 #: src/components/modals/RefundOrderModal/index.tsx:166
 msgid "Customer will receive an email confirming the refund"
@@ -5675,6 +5687,10 @@ msgstr ""
 msgid "First attendee"
 msgstr "Első résztvevő"
 
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:42
+msgid "first exchange {0}"
+msgstr "első kapcsolat: {0}"
+
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:206
 msgid "First Invoice Number"
 msgstr "Első számla száma"
@@ -6076,6 +6092,14 @@ msgstr ""
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:621
 msgid "Guests"
 msgstr "Résztvevők"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:23
+msgid "Has a ticket for {0}"
+msgstr "Van jegye ide: {0}"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:39
+msgid "Has not replied yet"
+msgstr "Még nem válaszolt"
 
 #: src/components/routes/product-widget/SelectProducts/index.tsx:656
 msgid "Have a promo code?"
@@ -6924,6 +6948,10 @@ msgstr "Utolsó 90 nap"
 msgid "Last login"
 msgstr "Utolsó bejelentkezés"
 
+#: src/components/routes/organizer/Sms/customerSummary.ts:41
+msgid "Last message sent {0}"
+msgstr "Utolsó üzenet elküldve: {0}"
+
 #: src/components/modals/CreateAttendeeModal/index.tsx:106
 #: src/components/modals/ManageAttendeeModal/index.tsx:112
 #: src/components/modals/ManageOrderModal/index.tsx:150
@@ -7708,7 +7736,7 @@ msgstr "A névnek rövidebbnek kell lennie 255 karakternél"
 msgid "Name of the event"
 msgstr "Az esemény neve"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:36
+#: src/components/routes/organizer/Sms/ConversationList.tsx:61
 msgid "Name or number"
 msgstr "Név vagy szám"
 
@@ -7876,7 +7904,7 @@ msgstr "Kötelezettség nélkül"
 msgid "No configurations found"
 msgstr "Nem találhatók konfigurációk"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:57
+#: src/components/routes/organizer/Sms/ConversationList.tsx:90
 msgid "No conversation yet. Replies to your SMS will appear here."
 msgstr "Még nincs beszélgetés. Az SMS-eire érkező válaszok itt jelennek meg."
 
@@ -7992,7 +8020,7 @@ msgstr "Ehhez az árhoz nincs több jegy."
 msgid "No name"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:37
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:51
 msgid "No order found with this number. The number is matched with the phone answers of your order forms and box office sales."
 msgstr "Nem található rendelés ezzel a számmal. A számot a rendelési űrlapok és a pénztári eladások telefonszámaival vetjük össze."
 
@@ -8007,6 +8035,10 @@ msgstr ""
 #: src/components/common/QuestionsTable/index.tsx:489
 #~ msgid "No order questions yet"
 #~ msgstr "Még nincsenek rendelési kérdések"
+
+#: src/components/routes/organizer/Sms/customerSummary.ts:27
+msgid "No order with this number"
+msgstr "Nincs rendelés ezzel a számmal"
 
 #: src/components/common/AdminOrdersTable/index.tsx:20
 msgid "No orders found"
@@ -8595,6 +8627,10 @@ msgstr "Oldalsáv megnyitása"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:641
 msgid "Open Stripe Dashboard"
 msgstr "Stripe irányítópult megnyitása"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:87
+msgid "Open the customer file"
+msgstr "Ügyféladatlap megnyitása"
 
 #: src/components/layouts/EventHomepage/index.tsx:537
 msgid "Open the event flyer"
@@ -11375,7 +11411,7 @@ msgstr "Válasszon egy kategóriát"
 msgid "Select a configuration"
 msgstr "Válasszon konfigurációt"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:45
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:46
 msgid "Select a conversation"
 msgstr "Válasszon beszélgetést"
 
@@ -11536,7 +11572,7 @@ msgstr "Szeminárium"
 
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:173
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:174
 msgid "Send"
 msgstr "Küldés"
 
@@ -11970,11 +12006,11 @@ msgstr "SMS"
 msgid "SMS (httpSMS)"
 msgstr "SMS (httpSMS)"
 
-#: src/components/routes/organizer/Sms/index.tsx:68
+#: src/components/routes/organizer/Sms/index.tsx:69
 msgid "SMS is not connected yet."
 msgstr "Az SMS még nincs csatlakoztatva."
 
-#: src/components/routes/organizer/Sms/index.tsx:60
+#: src/components/routes/organizer/Sms/index.tsx:61
 msgid "SMS messages"
 msgstr "SMS-üzenetek"
 
@@ -12479,7 +12515,7 @@ msgstr ""
 msgid "Successfully updated Webhook"
 msgstr "Webhook sikeresen frissítve"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:143
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:144
 msgid "Suggested reply, check it before sending"
 msgstr "Javasolt válasz, küldés előtt ellenőrizze"
 
@@ -12920,7 +12956,7 @@ msgstr "Az ütemezett időpontnak a jövőben kell lennie"
 msgid "The show"
 msgstr "A show"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:64
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:65
 msgid "The SMS could not be sent"
 msgstr "Az SMS-t nem sikerült elküldeni"
 
@@ -13146,7 +13182,7 @@ msgstr "Ez az üzenet csak akkor jelenik meg, ha a megrendelés sikeresen befeje
 msgid "This name is visible to end users"
 msgstr "Ez a név látható a végfelhasználók számára"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:133
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:134
 msgid "This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again."
 msgstr "Ez a szám STOP-pal válaszolt: többé nem kaphat SMS-t Öntől. Ha START-tal válaszol, újra írhat neki."
 
@@ -13542,7 +13578,8 @@ msgstr "Kiegészítendő"
 msgid "To edit configurations, go to the Configurations section in the admin menu."
 msgstr "A konfigurációk szerkesztéséhez lépjen a Konfigurációk részhez az admin menüben."
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:47
+#: src/components/routes/organizer/Sms/ConversationList.tsx:72
+#: src/components/routes/organizer/Sms/customerSummary.ts:19
 #: src/components/routes/organizer/Sms/labels.ts:7
 msgid "To handle"
 msgstr "Kezelendő"
@@ -13808,7 +13845,7 @@ msgstr "Nem sikerült eltávolítani az API-kulcsot"
 msgid "Unable to update question. Please check the your details"
 msgstr "Nem sikerült frissíteni a kérdést. Kérjük, ellenőrizze adatait."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:76
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:77
 msgid "Unable to update the conversation"
 msgstr "Nem sikerült frissíteni a beszélgetést"
 
@@ -13876,7 +13913,7 @@ msgstr "Ismeretlen résztvevő"
 msgid "Unknown bracelet"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:27
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:35
 msgid "Unknown customer"
 msgstr "Ismeretlen ügyfél"
 
@@ -13930,11 +13967,12 @@ msgstr "Kifizetetlen megrendelés"
 #~ msgid "Unpublish Event"
 #~ msgstr "Esemény visszavonása"
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:46
+#: src/components/routes/organizer/Sms/ConversationList.tsx:71
 msgid "Unread"
 msgstr "Olvasatlan"
 
-#: src/components/routes/organizer/Sms/CustomerCard.tsx:32
+#: src/components/routes/organizer/Sms/CustomerCard.tsx:46
+#: src/components/routes/organizer/Sms/customerSummary.ts:35
 msgid "Unsubscribed (STOP)"
 msgstr "Leiratkozott (STOP)"
 
@@ -14481,6 +14519,10 @@ msgstr "Várakozik"
 msgid "Waiting for payment"
 msgstr "Fizetésre vár"
 
+#: src/components/routes/organizer/Sms/customerSummary.ts:37
+msgid "Waiting for your reply since {0}"
+msgstr "{0} óta vár a válaszára"
+
 #: src/components/layouts/Event/index.tsx:123
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:51
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:49
@@ -14989,7 +15031,7 @@ msgstr ""
 msgid "Write your message here..."
 msgstr "Írja ide üzenetét..."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:149
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:150
 msgid "Write your reply"
 msgstr "Írja meg a válaszát"
 
@@ -15035,7 +15077,7 @@ msgstr ""
 msgid "Yes. Your teams can run the welcome themselves and only rent the equipment you need."
 msgstr "Igen. Csapatai maguk végzik a fogadást, Ön pedig csak a szükséges eszközöket béreli."
 
-#: src/components/routes/organizer/Sms/ConversationList.tsx:78
+#: src/components/routes/organizer/Sms/ConversationList.tsx:111
 msgid "You"
 msgstr "Ön"
 
