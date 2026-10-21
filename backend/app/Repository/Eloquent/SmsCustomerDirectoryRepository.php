@@ -50,4 +50,16 @@ class SmsCustomerDirectoryRepository implements SmsCustomerDirectoryRepositoryIn
                 orderedAt: (string) $row->created_at,
             ));
     }
+
+    public function findConversationNames(int $organizerId): array
+    {
+        return DB::table('sms_conversations')
+            ->where('organizer_id', $organizerId)
+            ->whereNotNull('contact_name')
+            ->where('contact_name', '<>', '')
+            ->pluck('contact_name', 'phone')
+            ->map(fn ($name) => trim((string) $name))
+            ->filter(fn (string $name) => $name !== '')
+            ->all();
+    }
 }
