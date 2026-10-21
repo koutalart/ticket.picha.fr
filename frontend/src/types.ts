@@ -1365,6 +1365,7 @@ export interface OrganizerSmsSettings {
     provider: string;
     api_key_configured: boolean;
     from_number: string | null;
+    shared_line: boolean;
     webhook_url: string;
     webhook_signing_key: string;
     last_webhook_received_at: string | null;
