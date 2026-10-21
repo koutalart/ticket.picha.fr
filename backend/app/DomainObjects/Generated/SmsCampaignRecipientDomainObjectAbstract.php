@@ -23,6 +23,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     final public const DELIVERED_AT = 'delivered_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const ATTENDEE_ID = 'attendee_id';
 
     protected int $id;
     protected int $sms_campaign_id;
@@ -37,6 +38,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     protected ?string $delivered_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?int $attendee_id = null;
 
     public function toArray(): array
     {
@@ -54,6 +56,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
                     'delivered_at' => $this->delivered_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'attendee_id' => $this->attendee_id ?? null,
                 ];
     }
 
@@ -198,5 +201,16 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setAttendeeId(?int $attendee_id): self
+    {
+        $this->attendee_id = $attendee_id;
+        return $this;
+    }
+
+    public function getAttendeeId(): ?int
+    {
+        return $this->attendee_id;
     }
 }
