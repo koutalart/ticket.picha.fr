@@ -1,6 +1,6 @@
 <?php
 // Concert des Générations (compte 5, événement 14) : page d'inscription façon Les Flammes.
-// Thème sombre, accent jaune de la chaîne, description en blocs courts, vidéo de couverture en noir et blanc.
+// Thème sombre, accent jaune de la chaîne, description en blocs courts, vidéo de couverture brute en noir et blanc.
 // Relançable : mêmes valeurs, la vidéo remplace la précédente.
 
 use HiEvents\DataTransferObjects\AddressDTO;
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 const ACCOUNT_ID = 5;
 const EVENT_ID = 14;
 const USER_ID = 8;
-const VIDEO = '/tmp/concert-couverture-video-nb.mp4';
+const VIDEO = '/tmp/concert-couverture-video-brut-nb.mp4';
 
 $description = '<p><strong>Pourquoi le Concert des Générations ?</strong></p>'
     .'<p>Comme un pont entre les générations : les artistes d\'aujourd\'hui reprennent les chansons qui ont fait chanter Mayotte.</p>'
