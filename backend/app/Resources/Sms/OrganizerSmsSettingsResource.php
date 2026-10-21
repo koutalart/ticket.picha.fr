@@ -23,6 +23,13 @@ class OrganizerSmsSettingsResource extends BaseResource
             'webhook_url' => $this->webhookUrl,
             'webhook_signing_key' => $settings->getWebhookSigningKey(),
             'last_webhook_received_at' => $settings->getLastWebhookReceivedAt(),
+            'history_import' => [
+                'status' => $settings->getHistoryImportStatus(),
+                'started_at' => $settings->getHistoryImportStartedAt(),
+                'finished_at' => $settings->getHistoryImportFinishedAt(),
+                'imported_count' => $settings->getHistoryImportCount(),
+                'error' => $settings->getHistoryImportError(),
+            ],
         ];
     }
 }

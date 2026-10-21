@@ -10,6 +10,14 @@ use HiEvents\Http\Actions\Sms\GetSmsConversationAction;
 use HiEvents\Http\Actions\Sms\UpdateSmsConversationAction;
 use HiEvents\Http\Actions\Sms\SendSmsReplyAction;
 use HiEvents\Http\Actions\Sms\HttpSmsIncomingWebhookAction;
+use HiEvents\Http\Actions\Sms\StartSmsHistoryImportAction;
+use HiEvents\Http\Actions\Sms\GetSmsReplyTemplatesAction;
+use HiEvents\Http\Actions\Sms\CreateSmsReplyTemplateAction;
+use HiEvents\Http\Actions\Sms\UpdateSmsReplyTemplateAction;
+use HiEvents\Http\Actions\Sms\DeleteSmsReplyTemplateAction;
+use HiEvents\Http\Actions\Sms\GetSmsOptOutsAction;
+use HiEvents\Http\Actions\Sms\AddSmsOptOutAction;
+use HiEvents\Http\Actions\Sms\RemoveSmsOptOutAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -361,6 +369,18 @@ $router->middleware(['auth:api'])->group(
         $router->post('/organizers/{organizer_id}/sms/settings/regenerate-signing-key', RegenerateSmsWebhookSigningKeyAction::class);
         $router->post('/organizers/{organizer_id}/sms/settings/test', TestSmsConnectionAction::class)
             ->middleware('throttle:10,1');
+        $router->post('/organizers/{organizer_id}/sms/settings/import-history', StartSmsHistoryImportAction::class)
+            ->middleware('throttle:5,1');
+        $router->get('/organizers/{organizer_id}/sms/reply-templates', GetSmsReplyTemplatesAction::class);
+        $router->post('/organizers/{organizer_id}/sms/reply-templates', CreateSmsReplyTemplateAction::class);
+        $router->put('/organizers/{organizer_id}/sms/reply-templates/{template_id}', UpdateSmsReplyTemplateAction::class)
+            ->where('template_id', '[0-9]+');
+        $router->delete('/organizers/{organizer_id}/sms/reply-templates/{template_id}', DeleteSmsReplyTemplateAction::class)
+            ->where('template_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/sms/opt-outs', GetSmsOptOutsAction::class);
+        $router->post('/organizers/{organizer_id}/sms/opt-outs', AddSmsOptOutAction::class);
+        $router->delete('/organizers/{organizer_id}/sms/opt-outs/{opt_out_id}', RemoveSmsOptOutAction::class)
+            ->where('opt_out_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/sms/conversations', GetSmsConversationsAction::class);
         $router->get('/organizers/{organizer_id}/sms/unread-count', GetSmsUnreadCountAction::class);
         $router->get('/organizers/{organizer_id}/sms/conversations/{conversation_id}', GetSmsConversationAction::class)
