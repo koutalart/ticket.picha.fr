@@ -42,6 +42,7 @@ interface Step {
     id: string;
     kind: StepKind;
     questionIndexes: number[];
+    consentIndexes: number[];
 }
 
 interface QuestionAnswerValue {
@@ -78,6 +79,7 @@ interface EmbeddedRegistrationProps {
 }
 
 const AFFILIATE_EXPIRY_DAYS = 30;
+const STEP_TRANSITION_MS = 660;
 
 const readAffiliateCode = (eventId: unknown): string | null => {
     try {
@@ -147,6 +149,8 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
     const pendingFocus = useRef<'step' | 'error' | string | null>(null);
     const codeInputRef = useRef<HTMLInputElement>(null);
     const nextRef = useRef<() => void>(() => undefined);
+    const leaveTimer = useRef<number | undefined>(undefined);
+    const [leaving, setLeaving] = useState<{ step: Step, direction: 'forward' | 'backward' } | null>(null);
 
     useEffect(() => {
         if (codeOpen && hasInteracted.current) {
@@ -237,34 +241,28 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
 
     const steps = useMemo<Step[]>(() => {
         const result: Step[] = [
-            {id: 'name', kind: 'name', questionIndexes: []},
-            {id: 'email', kind: 'email', questionIndexes: []},
+            {id: 'name', kind: 'name', questionIndexes: [], consentIndexes: []},
+            {id: 'email', kind: 'email', questionIndexes: [], consentIndexes: []},
         ];
+        let anchor = result[1];
         const phoneIndex = orderQuestions.findIndex(question => question.type === QuestionType.PHONE);
         if (phoneIndex >= 0) {
-            result.push({id: 'phone', kind: 'phone', questionIndexes: [phoneIndex]});
+            anchor = {id: 'phone', kind: 'phone', questionIndexes: [phoneIndex], consentIndexes: []};
+            result.push(anchor);
         }
-        let consentGroup: number[] = [];
-        const flushConsents = () => {
-            if (consentGroup.length) {
-                result.push({id: `questions-${consentGroup[0]}`, kind: 'questions', questionIndexes: consentGroup});
-                consentGroup = [];
-            }
-        };
         orderQuestions.forEach((question, index) => {
             if (index === phoneIndex) {
                 return;
             }
             if (isSingleConsentQuestion(question)) {
-                consentGroup.push(index);
+                anchor.consentIndexes.push(index);
                 return;
             }
-            flushConsents();
-            result.push({id: `questions-${index}`, kind: 'questions', questionIndexes: [index]});
+            anchor = {id: `questions-${index}`, kind: 'questions', questionIndexes: [index], consentIndexes: []};
+            result.push(anchor);
         });
-        flushConsents();
-        result.push({id: 'participants', kind: 'participants', questionIndexes: []});
-        result.push({id: 'confirm', kind: 'confirm', questionIndexes: []});
+        result.push({id: 'participants', kind: 'participants', questionIndexes: [], consentIndexes: []});
+        result.push({id: 'confirm', kind: 'confirm', questionIndexes: [], consentIndexes: []});
         return result;
     }, [orderQuestions]);
 
@@ -312,10 +310,19 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
 
     const goToStep = (index: number, focus: 'step' | 'error' = 'step') => {
         hasInteracted.current = true;
-        setDirection(index >= safeStepIndex ? 'forward' : 'backward');
-        setStepIndex(Math.max(0, Math.min(index, steps.length - 1)));
+        const target = Math.max(0, Math.min(index, steps.length - 1));
+        const nextDirection = target >= safeStepIndex ? 'forward' : 'backward';
+        if (target !== safeStepIndex && !prefersReducedMotion()) {
+            window.clearTimeout(leaveTimer.current);
+            setLeaving({step, direction: nextDirection});
+            leaveTimer.current = window.setTimeout(() => setLeaving(null), STEP_TRANSITION_MS);
+        }
+        setDirection(nextDirection);
+        setStepIndex(target);
         pendingFocus.current = focus;
     };
+
+    useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
 
     const requiredMessage = t`This field is required`;
 
@@ -352,11 +359,9 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
             }
         }
 
-        if (current.kind === 'phone' || current.kind === 'questions') {
-            current.questionIndexes.forEach(index =>
-                validateQuestion(orderQuestions[index], `order.questions.${index}`, errors)
-            );
-        }
+        [...current.questionIndexes, ...current.consentIndexes].forEach(index =>
+            validateQuestion(orderQuestions[index], `order.questions.${index}`, errors)
+        );
 
         if (current.kind === 'participants') {
             products.forEach((participant, index) => {
@@ -385,7 +390,9 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
         const questionMatch = key.match(/^order\.questions\.(\d+)/);
         if (questionMatch) {
             const questionIndex = Number(questionMatch[1]);
-            const found = steps.findIndex(candidate => candidate.questionIndexes.includes(questionIndex));
+            const found = steps.findIndex(candidate =>
+                candidate.questionIndexes.includes(questionIndex) || candidate.consentIndexes.includes(questionIndex)
+            );
             return found >= 0 ? found : indexOf('confirm');
         }
         if (key.startsWith('products') || key.startsWith('promo_code') || phase === 'create') return indexOf('participants');
@@ -628,7 +635,6 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
     const titleId = `embedded-registration-${step.id}-title`;
     const participantsCount = form.values.products.length;
     const maxParticipants = ticket?.maxParticipants ?? 1;
-    const organizerName = event.organizer?.name || t`this organizer`;
 
     const renderQuestion = (question: Question, path: string, large: boolean, labelId?: string) => {
         const inputProps = form.getInputProps(`${path}.response.answer`);
@@ -707,7 +713,7 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
         </Radio.Group>
     );
 
-    const renderStepContent = () => {
+    const renderStepContent = (step: Step, titleId: string) => {
         switch (step.kind) {
             case 'name':
                 return (
@@ -761,22 +767,8 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
                 );
             case 'phone':
             case 'questions': {
-                if (step.questionIndexes.length === 1) {
-                    const index = step.questionIndexes[0];
-                    return renderQuestion(orderQuestions[index], `order.questions.${index}`, true, titleId);
-                }
-                return (
-                    <>
-                        <h2 className={classes.stepTitle} id={titleId}>{t`A few confirmations`}</h2>
-                        <div className={classes.fieldStack}>
-                            {step.questionIndexes.map(index => (
-                                <div key={index}>
-                                    {renderQuestion(orderQuestions[index], `order.questions.${index}`, false)}
-                                </div>
-                            ))}
-                        </div>
-                    </>
-                );
+                const index = step.questionIndexes[0];
+                return renderQuestion(orderQuestions[index], `order.questions.${index}`, true, titleId);
             }
             case 'participants':
                 return (
@@ -894,15 +886,6 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
                                 </dd>
                             </div>
                         </dl>
-                        {event.settings?.show_marketing_opt_in && (
-                            <Checkbox
-                                {...form.getInputProps('order.opted_into_marketing', {type: 'checkbox'})}
-                                label={t`Keep me updated on news and events from ${organizerName}`}
-                                color="var(--event-primary-color)"
-                                iconColor="var(--event-accent-contrast)"
-                                classNames={{root: classes.optIn, label: classes.optInLabel}}
-                            />
-                        )}
                         {!!event.settings?.pre_checkout_message && (
                             <UserGeneratedContent
                                 className={classes.preCheckout}
@@ -928,7 +911,93 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
         }
     };
 
-    const stepError = stepErrors[step.id];
+    const renderConsents = (current: Step) => current.consentIndexes.length > 0 && (
+        <div className={classes.consents}>
+            {current.consentIndexes.map(index => {
+                const question = orderQuestions[index];
+                const option = question.options?.[0] ?? question.title;
+                const path = `order.questions.${index}.response.answer`;
+                const inputProps = form.getInputProps(path);
+                const checked = Array.isArray(inputProps.value) && inputProps.value.includes(option);
+                return (
+                    <Checkbox
+                        key={question.id}
+                        checked={checked}
+                        onChange={(changeEvent) => form.setFieldValue(path, changeEvent.currentTarget.checked ? [option] : [])}
+                        error={inputProps.error}
+                        required={question.required}
+                        color="var(--event-primary-color)"
+                        iconColor="var(--event-accent-contrast)"
+                        classNames={{
+                            root: classes.consent,
+                            body: classes.consentBody,
+                            label: classes.consentLabel,
+                            input: classes.consentInput,
+                            error: classes.fieldError,
+                        }}
+                        label={(
+                            <>
+                                {option}
+                                {question.required && <span className={classes.fieldRequired} aria-hidden="true"> *</span>}
+                            </>
+                        )}
+                    />
+                );
+            })}
+        </div>
+    );
+
+    const renderStepBody = (current: Step, active: boolean) => {
+        const index = steps.findIndex(candidate => candidate.id === current.id);
+        const isLast = index === steps.length - 1;
+        const currentError = active ? stepErrors[current.id] : '';
+        const currentTitleId = active ? titleId : `${titleId}-leaving`;
+
+        return (
+            <>
+                {renderStepContent(current, currentTitleId)}
+                {renderConsents(current)}
+
+                {!!currentError && (
+                    <div className={classes.stepError} role="alert">
+                        <span>{currentError}</span>
+                        {creationFailed && current.kind === 'participants' && (
+                            <button type="button" className={classes.linkButton} onClick={() => setForceClassic(true)}>
+                                {t`See the other ticket options`}
+                            </button>
+                        )}
+                    </div>
+                )}
+
+                <div className={classes.nav}>
+                    {index > 0 && (
+                        <button
+                            type="button"
+                            className={classes.backButton}
+                            onClick={() => goToStep(index - 1)}
+                            disabled={completeMutation.isPending}
+                        >
+                            <IconArrowLeft size={18} aria-hidden="true"/>
+                            {t`Previous`}
+                        </button>
+                    )}
+                    <Button
+                        type={active ? 'submit' : 'button'}
+                        className={classes.nextButton}
+                        loading={active && completeMutation.isPending}
+                        rightSection={isLast ? <IconCheck size={20}/> : <IconArrowRight size={20}/>}
+                    >
+                        {isLast ? t`Confirm my registration` : t`Next`}
+                    </Button>
+                    {!isLast && (
+                        <span className={classes.enterHint} aria-hidden="true">
+                            {t`or press Enter`} <IconCornerDownLeft size={14}/>
+                        </span>
+                    )}
+                </div>
+            </>
+        );
+    };
 
     return (
         <section className={classes.root} ref={sectionRef} id="tickets" aria-label={t`Registration`}>
@@ -942,7 +1011,6 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
                                 <IconTicket size={16} aria-hidden="true"/>
                                 {t`Free registration`}
                             </span>
-                            <span className={classes.counter} aria-hidden="true">{currentStepNumber} / {totalSteps}</span>
                         </div>
                         <div
                             className={classes.progress}
@@ -960,54 +1028,31 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
                         </p>
 
                         <form noValidate onSubmit={handleSubmit} onKeyDown={handleKeyDown} className={classes.form}>
-                            <div
-                                key={step.id}
-                                ref={stepRef}
-                                className={classes.step}
-                                data-direction={direction}
-                                role="group"
-                                aria-labelledby={titleId}
-                                tabIndex={-1}
-                            >
-                                {renderStepContent()}
-
-                                {!!stepError && (
-                                    <div className={classes.stepError} role="alert">
-                                        <span>{stepError}</span>
-                                        {creationFailed && step.kind === 'participants' && (
-                                            <button type="button" className={classes.linkButton} onClick={() => setForceClassic(true)}>
-                                                {t`See the other ticket options`}
-                                            </button>
-                                        )}
+                            <div className={classes.stage}>
+                                {leaving && (
+                                    <div
+                                        key={`leaving-${leaving.step.id}`}
+                                        className={classes.step}
+                                        data-phase="leave"
+                                        data-direction={leaving.direction}
+                                        aria-hidden="true"
+                                        {...{inert: ''}}
+                                    >
+                                        {renderStepBody(leaving.step, false)}
                                     </div>
                                 )}
-                            </div>
-
-                            <div className={classes.nav}>
-                                {safeStepIndex > 0 && (
-                                    <button
-                                        type="button"
-                                        className={classes.backButton}
-                                        onClick={() => goToStep(safeStepIndex - 1)}
-                                        disabled={completeMutation.isPending}
-                                    >
-                                        <IconArrowLeft size={18} aria-hidden="true"/>
-                                        {t`Previous`}
-                                    </button>
-                                )}
-                                <Button
-                                    type="submit"
-                                    className={classes.nextButton}
-                                    loading={completeMutation.isPending}
-                                    rightSection={isLastStep ? <IconCheck size={20}/> : <IconArrowRight size={20}/>}
+                                <div
+                                    key={step.id}
+                                    ref={stepRef}
+                                    className={classes.step}
+                                    data-phase={leaving ? 'enter' : 'idle'}
+                                    data-direction={direction}
+                                    role="group"
+                                    aria-labelledby={titleId}
+                                    tabIndex={-1}
                                 >
-                                    {isLastStep ? t`Confirm my registration` : t`Next`}
-                                </Button>
-                                {!isLastStep && (
-                                    <span className={classes.enterHint} aria-hidden="true">
-                                        {t`or press Enter`} <IconCornerDownLeft size={14}/>
-                                    </span>
-                                )}
+                                    {renderStepBody(step, true)}
+                                </div>
                             </div>
                         </form>
 

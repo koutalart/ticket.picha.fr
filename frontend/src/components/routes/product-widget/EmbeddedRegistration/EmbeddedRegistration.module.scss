@@ -11,7 +11,7 @@ $error: #ffb4a8;
   z-index: 1;
   color: $text;
   font-family: var(--theme-font-family, inherit);
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.22) 40%, rgba(0, 0, 0, 0.4) 100%);
+  background: rgba(0, 0, 0, 0.42);
 }
 
 .panel {
@@ -19,10 +19,10 @@ $error: #ffb4a8;
   min-height: 100vh;
   min-height: 100svh;
   margin: 0 auto;
-  padding: clamp(40px, 9vh, 96px) 20px clamp(32px, 6vh, 64px);
+  padding: clamp(48px, 14vh, 140px) 20px clamp(28px, 5vh, 56px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   scroll-margin-top: 0;
 }
 
@@ -52,10 +52,6 @@ $error: #ffb4a8;
   svg {
     color: $accent;
   }
-}
-
-.counter {
-  font-variant-numeric: tabular-nums;
 }
 
 .progress {
@@ -88,9 +84,12 @@ $error: #ffb4a8;
 }
 
 .form {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(28px, 5vh, 44px);
+  display: block;
+  margin-bottom: clamp(36px, 7vh, 72px);
+}
+
+.stage {
+  position: relative;
 }
 
 @keyframes stepInForward {
@@ -115,13 +114,117 @@ $error: #ffb4a8;
   }
 }
 
+$step-ease: cubic-bezier(0.45, 0, 0.2, 1);
+$step-leave-duration: 420ms;
+$step-enter-duration: 480ms;
+$step-enter-delay: 160ms;
+$step-shift: 56px;
+
+@keyframes stepLeaveUp {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  55% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, -$step-shift, 0);
+  }
+}
+
+@keyframes stepLeaveDown {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  55% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, $step-shift, 0);
+  }
+}
+
+@keyframes stepEnterFromBelow {
+  from {
+    opacity: 0;
+    transform: translate3d(0, $step-shift, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes stepEnterFromAbove {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -$step-shift, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .step {
   outline: none;
-  animation: stepInForward 0.45s $ease both;
+  display: flex;
+  flex-direction: column;
 
-  &[data-direction="backward"] {
-    animation-name: stepInBackward;
+  &[data-phase="leave"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    animation: stepLeaveUp $step-leave-duration $step-ease both;
   }
+
+  &[data-phase="leave"][data-direction="backward"] {
+    animation-name: stepLeaveDown;
+  }
+
+  &[data-phase="enter"] {
+    animation: stepEnterFromBelow $step-enter-duration $step-ease $step-enter-delay both;
+  }
+
+  &[data-phase="enter"][data-direction="backward"] {
+    animation-name: stepEnterFromAbove;
+  }
+}
+
+.consents {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 22px;
+  max-width: 560px;
+}
+
+.consent {
+  --checkbox-size: 18px;
+}
+
+.consentBody {
+  align-items: flex-start;
+}
+
+.consentInput {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.consentLabel {
+  font-family: var(--theme-font-family, inherit);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: $text-soft;
+  cursor: pointer;
 }
 
 .stepTitle,
@@ -516,6 +619,7 @@ textarea.fieldInput {
 }
 
 .nav {
+  margin-top: clamp(28px, 5vh, 44px);
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -595,9 +699,8 @@ textarea.fieldInput {
 }
 
 .codeRow {
-  margin-top: clamp(28px, 6vh, 56px);
+  margin-top: auto;
   padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
   font-size: 0.95rem;
   color: $text-soft;
 }
@@ -666,8 +769,9 @@ textarea.fieldInput {
 
 @media (prefers-reduced-motion: reduce) {
   .step,
+  .step[data-phase],
   .participant {
-    animation: none;
+    animation: none !important;
   }
 
   .progressBar {
