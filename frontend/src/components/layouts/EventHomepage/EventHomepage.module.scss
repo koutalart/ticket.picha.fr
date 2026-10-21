@@ -1355,3 +1355,192 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 16px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
 }
+
+.fullscreenHero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  min-height: 520px;
+  overflow: hidden;
+  background-color: #000;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.fullscreenMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fullscreenVeil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.28) 0%,
+      rgba(0, 0, 0, 0.12) 35%,
+      rgba(0, 0, 0, 0.18) 60%,
+      rgba(0, 0, 0, 0.78) 100%
+  );
+}
+
+.fullscreenCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+}
+
+
+.fullscreenLockup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  max-width: 92vw;
+}
+
+.fullscreenTitle {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--theme-font-family);
+  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  text-align: left;
+  text-transform: uppercase;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+}
+
+
+
+.fullscreenFooter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 clamp(20px, 4vw, 56px) clamp(22px, 4vw, 44px);
+
+  @media (max-width: 640px) {
+    justify-content: center;
+  }
+}
+
+.fullscreenCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  font-family: var(--theme-font-family);
+  font-size: clamp(1.25rem, 2.4vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover .fullscreenCtaArrow {
+    transform: translateX(6px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 6px;
+  }
+}
+
+.fullscreenCtaArrow {
+  color: var(--event-primary-color);
+  transition: transform 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fullscreenCtaArrow {
+    transition: none;
+  }
+}
+
+.fullscreenTopBar {
+  position: absolute;
+  top: clamp(18px, 3vw, 36px);
+  left: clamp(20px, 4vw, 56px);
+  right: clamp(20px, 4vw, 56px);
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.fullscreenPartnerLogo {
+  display: block;
+  width: auto;
+  height: clamp(26px, 3.4vw, 44px);
+  max-width: 55vw;
+  object-fit: contain;
+}
+
+.fullscreenBrand {
+  display: block;
+  width: clamp(96px, 11vw, 160px);
+  height: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.fullscreenSubtitle {
+  font-size: clamp(0.8rem, 1.3vw, 1.05rem);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  @media (min-width: 768px) {
+    white-space: nowrap;
+  }
+}
+
+.fullscreenDate {
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.fullscreenTagline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: clamp(0.68rem, 1vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.fullscreenSignatureLogo {
+  display: block;
+  width: auto;
+  height: clamp(32px, 4vw, 52px);
+  object-fit: contain;
+}
+
+.fullscreenBrandCustom {
+  display: block;
+  width: auto;
+  height: clamp(30px, 3.6vw, 48px);
+  max-width: 40vw;
+  object-fit: contain;
+}
