@@ -79,7 +79,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                 const rect = ticketsSectionRef.current.getBoundingClientRect();
                 const isBelowFold = rect.top > window.innerHeight;
                 const isAboveView = rect.bottom < 0;
-                const shouldShowButton = isBelowFold || isAboveView;
+                const heroCoversScreen = !!fullscreenHeroRef.current && window.scrollY < window.innerHeight * 0.6;
+                const shouldShowButton = (isBelowFold || isAboveView) && !heroCoversScreen;
                 setShowScrollButton(shouldShowButton);
             }
         };
