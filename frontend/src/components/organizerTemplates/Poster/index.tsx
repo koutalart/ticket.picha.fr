@@ -23,7 +23,7 @@ import {PartnersPage} from "./pages/PartnersPage.tsx";
 import {ServicesPage} from "./pages/ServicesPage.tsx";
 import {ContactPage} from "./pages/ContactPage.tsx";
 import classes from "./Poster.module.scss";
-import {ssrLoaderCss} from "../../../utilites/ssrLoader.ts";
+import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 
 const DEFAULT_POSTER_ACCENT = '#E4173D';
 
@@ -218,7 +218,7 @@ export const PosterTemplate = ({
                     {JSON.stringify({'@context': 'https://schema.org', '@graph': jsonLdGraph})}
                 </script>
             </Helmet>
-            <style>{ssrLoaderCss({background: '#000000', accent, logoUrl: logo?.url})}</style>
+            <SsrLoaderStyle background="#000000" accent={accent} logoUrl={logo?.url}/>
 
             <div className={classes.page} style={{'--poster-accent': accent} as React.CSSProperties}>
                 <a href="#main" className={classes.skipLink}>{t`Skip to content`}</a>

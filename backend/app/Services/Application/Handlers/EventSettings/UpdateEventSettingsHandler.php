@@ -101,6 +101,9 @@ class UpdateEventSettingsHandler
                     // Self-service settings
                     'allow_attendee_self_edit' => $settings->allow_attendee_self_edit,
 
+                    'single_product_per_order' => $settings->single_product_per_order,
+                    'choose_category_first' => $settings->choose_category_first,
+
                     // Waitlist settings
                     'waitlist_auto_process' => $settings->waitlist_auto_process,
                     'waitlist_offer_timeout_minutes' => $settings->waitlist_offer_timeout_minutes,

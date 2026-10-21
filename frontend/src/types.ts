@@ -262,6 +262,10 @@ export interface EventSettings {
     // Self-service settings
     allow_attendee_self_edit?: boolean;
 
+    single_product_per_order?: boolean;
+
+    choose_category_first?: boolean;
+
     // Simplified homepage theme settings (new 2-color + mode system)
     homepage_theme_settings?: HomepageThemeSettings;
 
@@ -713,6 +717,7 @@ export interface Product {
     is_highlighted?: boolean;
     highlight_message?: string;
     waitlist_enabled?: boolean | null;
+    unlock_after_product_id?: number | null;
     has_waiting_entries?: boolean;
     waitlist_entry_count?: number;
 }
@@ -725,6 +730,7 @@ export interface ProductCategory {
     event_id?: number;
     is_hidden?: boolean;
     no_products_message?: string;
+    selection_label?: string | null;
 }
 
 export interface Attendee {
@@ -952,6 +958,7 @@ export enum QuestionType {
     RADIO = 'RADIO',
     DROPDOWN = 'DROPDOWN',
     DATE = 'DATE',
+    FILE = 'FILE',
 }
 
 export enum QuestionBelongsToType {
@@ -1082,6 +1089,19 @@ export interface QuestionAnswer {
     question_description?: string;
     question_required?: boolean;
     question_options?: string[];
+    file_url?: string | null;
+}
+
+export interface QuestionFileAnswer {
+    file_id: IdParam;
+    name: string;
+}
+
+export interface QuestionAnswerFileUpload {
+    id: IdParam;
+    question_id: IdParam;
+    original_filename: string;
+    size: number;
 }
 
 export enum ReportTypes {
@@ -1250,4 +1270,170 @@ export interface WaitlistStats {
     cancelled: number;
     expired: number;
     products: WaitlistProductStats[];
+}
+
+export interface KioskPrintRelayStatus {
+    configured: boolean;
+    last_seen_at: string | null;
+    pending_jobs: number;
+}
+
+export interface KioskPrintRelayToken {
+    relay_token: string;
+    last_seen_at: string | null;
+}
+
+export interface EnqueueKioskPrintJobsResponse {
+    job_ids: number[];
+}
+
+export type SmsConversationStatus = 'OPEN' | 'NEEDS_HUMAN' | 'CLOSED';
+export type SmsMessageStatus = 'RECEIVED' | 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED' | 'EXPIRED';
+export type SmsMessageDirection = 'INBOUND' | 'OUTBOUND';
+export type SmsMessageAuthorType = 'CONTACT' | 'HUMAN' | 'AGENT' | 'CAMPAIGN';
+export type SmsConversationFilter = 'all' | 'unread' | 'needs_human';
+
+export interface OrganizerSmsSettings {
+    provider: string;
+    api_key_configured: boolean;
+    from_number: string | null;
+    webhook_url: string;
+    webhook_signing_key: string;
+    last_webhook_received_at: string | null;
+    notify_on_inbound_sms: boolean;
+    phone_status: SmsPhoneStatus | null;
+    phone_status_changed_at: string | null;
+    assistant_available: boolean;
+    assistant_enabled: boolean;
+    assistant_instructions: string | null;
+    history_import: SmsHistoryImport;
+}
+
+export type SmsHistoryImportStatus = 'RUNNING' | 'COMPLETED' | 'FAILED';
+
+export interface SmsHistoryImport {
+    status: SmsHistoryImportStatus | null;
+    started_at: string | null;
+    finished_at: string | null;
+    imported_count: number | null;
+    error: string | null;
+}
+
+export interface SmsReplyTemplate {
+    id: number;
+    name: string;
+    content: string;
+    updated_at: string;
+}
+
+export type SmsOptOutSource = 'KEYWORD' | 'MANUAL';
+
+export interface SmsOptOut {
+    id: number;
+    phone: string;
+    source: SmsOptOutSource;
+    contact_name: string | null;
+    created_at: string;
+}
+
+export type SmsAssistantOutcome = 'DRAFT' | 'NEEDS_HUMAN';
+
+export interface SmsAssistantPreview {
+    outcome: SmsAssistantOutcome;
+    reply: string | null;
+    reason: string | null;
+}
+
+export type SmsPhoneStatus = 'ONLINE' | 'OFFLINE';
+
+export interface SmsConnectionTestResult {
+    phone_numbers: string[];
+    from_number_registered: boolean;
+}
+
+export interface SmsConversation {
+    id: number;
+    phone: string;
+    contact_name: string | null;
+    status: SmsConversationStatus;
+    needs_human_reason: string | null;
+    unread_count: number;
+    last_message_at: string | null;
+    last_message_preview: string | null;
+    last_message_direction: SmsMessageDirection | null;
+    draft_reply: string | null;
+    draft_source: string | null;
+    draft_generated_at: string | null;
+    created_at: string;
+}
+
+export interface SmsMessage {
+    id: number;
+    direction: SmsMessageDirection;
+    author_type: SmsMessageAuthorType;
+    content: string;
+    status: SmsMessageStatus;
+    error_message: string | null;
+    sent_by_user_id: number | null;
+    provider_timestamp: string | null;
+    created_at: string;
+}
+
+export interface SmsCustomerOrder {
+    order_id: number;
+    public_id: string;
+    event_id: number;
+    event_title: string;
+    event_start_date: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    total_gross: number;
+    currency: string;
+    status: string;
+    created_at: string;
+}
+
+export type SmsCampaignRecipientStatus = 'PENDING' | 'SCHEDULED' | 'SENT' | 'DELIVERED' | 'FAILED' | 'EXPIRED';
+
+export interface SmsCampaign {
+    id: number;
+    name: string;
+    message: string | null;
+    event_id: number | null;
+    event_title: string | null;
+    currency: string | null;
+    recipients_count: number;
+    pending_count: number;
+    sent_count: number;
+    delivered_count: number;
+    failed_count: number;
+    visits_count: number;
+    clickers_count: number;
+    orders_count: number;
+    revenue_gross: number;
+    created_at: string;
+}
+
+export interface SmsCampaignRecipient {
+    id: number;
+    phone: string;
+    contact_name: string | null;
+    status: SmsCampaignRecipientStatus;
+    failure_reason: string | null;
+    scheduled_at: string | null;
+    sent_at: string | null;
+    delivered_at: string | null;
+    short_id: string | null;
+    visits_count: number;
+    has_clicked: boolean;
+    orders_count: number;
+    revenue_gross: number;
+}
+
+export interface SmsConversationDetail {
+    conversation: SmsConversation;
+    messages: SmsMessage[];
+    customer_orders: SmsCustomerOrder[];
+    opted_out: boolean;
 }

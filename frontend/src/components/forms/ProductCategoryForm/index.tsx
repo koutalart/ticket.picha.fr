@@ -9,6 +9,8 @@ interface ProductCategoryFormProps {
 }
 
 export const ProductCategoryForm = ({form}: ProductCategoryFormProps) => {
+    const categoryName = form.values.name;
+
     return (
         <>
             <TextInput
@@ -17,6 +19,14 @@ export const ProductCategoryForm = ({form}: ProductCategoryFormProps) => {
                 description={t`This is the name of the category that will be displayed on the event page.`}
                 required
                 {...form.getInputProps("name")}
+            />
+
+            <TextInput
+                label={t`Button label`}
+                description={t`Shown on the category button when visitors must choose a category first.`}
+                placeholder={categoryName ? t`Register: ${categoryName}` : undefined}
+                maxLength={120}
+                {...form.getInputProps("selection_label")}
             />
 
             <TextInput

@@ -18,7 +18,7 @@ import {computeThemeVariables, validateThemeSettings} from "../../../utilites/th
 import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
-import {ssrLoaderCss} from "../../../utilites/ssrLoader.ts";
+import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 
 interface OrganizerHomepageProps {
     organizer?: Organizer;
@@ -128,15 +128,13 @@ export const OrganizerHomepage = ({
 
             {organizer && <OrganizerDocumentHead organizer={organizer}/>}
             <main className={classes.pageWrapper} style={themeStyles} data-mode={themeSettings.mode}>
-                <style>
-                    {ssrLoaderCss({
-                        background: themeSettings.background,
-                        accent: themeSettings.accent,
-                        mode: themeSettings.mode,
-                        backgroundType,
-                        logoUrl: organizerLogo?.url,
-                    })}
-                </style>
+                <SsrLoaderStyle
+                    background={themeSettings.background}
+                    accent={themeSettings.accent}
+                    mode={themeSettings.mode}
+                    backgroundType={backgroundType}
+                    logoUrl={organizerLogo?.url}
+                />
 
                 {/* Background */}
                 {(organizerCover && backgroundType === 'MIRROR_COVER_IMAGE') ? (

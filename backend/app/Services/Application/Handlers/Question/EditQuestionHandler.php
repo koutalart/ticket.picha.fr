@@ -2,6 +2,7 @@
 
 namespace HiEvents\Services\Application\Handlers\Question;
 
+use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
 use HiEvents\DomainObjects\QuestionDomainObject;
 use HiEvents\Services\Application\Handlers\Question\DTO\UpsertQuestionDTO;
 use HiEvents\Services\Domain\Question\EditQuestionService;
@@ -29,7 +30,7 @@ class EditQuestionHandler
             ->setBelongsTo($createQuestionDTO->belongs_to->name)
             ->setType($createQuestionDTO->type->name)
             ->setRequired($createQuestionDTO->required)
-            ->setOptions($createQuestionDTO->options)
+            ->setOptions($createQuestionDTO->type === QuestionTypeEnum::FILE ? null : $createQuestionDTO->options)
             ->setIsHidden($createQuestionDTO->is_hidden)
             ->setDescription($this->purifier->purify($createQuestionDTO->description));
 

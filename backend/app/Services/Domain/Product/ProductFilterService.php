@@ -26,6 +26,9 @@ class ProductFilterService
     private ?EventSettingDomainObject $eventSettings = null;
     private ?string $eventCurrency = null;
 
+    /** @var int[] */
+    private array $lockedProductIds = [];
+
     public function __construct(
         private readonly TaxAndFeeCalculationService            $taxCalculationService,
         private readonly ProductPriceService                    $productPriceService,
@@ -33,6 +36,7 @@ class ProductFilterService
         private readonly OrderPlatformFeePassThroughService     $platformFeeService,
         private readonly AccountRepositoryInterface             $accountRepository,
         private readonly EventRepositoryInterface               $eventRepository,
+        private readonly ProductUnlockService                   $productUnlockService,
     )
     {
     }
@@ -118,6 +122,8 @@ class ProductFilterService
         $productQuantities = $this
             ->fetchAvailableProductQuantitiesService
             ->getAvailableProductQuantities($eventId);
+
+        $this->lockedProductIds = $this->productUnlockService->getLockedProductIds($products, $productQuantities);
 
         return $products
             ->map(fn(ProductDomainObject $product) => $this->processProduct($product, $productQuantities->productQuantities, $promoCode))
@@ -239,6 +245,11 @@ class ProductFilterService
             $hidden = true;
         }
 
+        if ($this->isLocked($product)) {
+            $product->setOffSaleReason(__('This ticket opens when another ticket is sold out'));
+            $hidden = true;
+        }
+
         return $hidden && $hideSoldOutProducts;
     }
 
@@ -346,8 +357,17 @@ class ProductFilterService
         );
     }
 
+    private function isLocked(ProductDomainObject $product): bool
+    {
+        return in_array($product->getId(), $this->lockedProductIds, true);
+    }
+
     private function getPriceAvailability(ProductPriceDomainObject $price, ProductDomainObject $product): bool
     {
+        if ($this->isLocked($product)) {
+            return false;
+        }
+
         if ($product->isTieredType()) {
             return !$price->isSoldOut()
                 && !$price->isBeforeSaleStartDate()

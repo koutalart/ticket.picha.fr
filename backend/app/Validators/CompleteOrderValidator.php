@@ -6,6 +6,7 @@ namespace HiEvents\Validators;
 
 use HiEvents\DomainObjects\Enums\QuestionBelongsTo;
 use HiEvents\DomainObjects\EventSettingDomainObject;
+use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\QuestionDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductDomainObject;
@@ -13,11 +14,14 @@ use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\QuestionDomainObject;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
+use HiEvents\Services\Domain\Question\File\QuestionAnswerFileService;
 use HiEvents\Validators\Rules\OrderQuestionRule;
 use HiEvents\Validators\Rules\ProductQuestionRule;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Collection;
 
 class CompleteOrderValidator extends BaseValidator
 {
@@ -25,6 +29,8 @@ class CompleteOrderValidator extends BaseValidator
         private readonly QuestionRepositoryInterface      $questionRepository,
         private readonly ProductRepositoryInterface       $productRepository,
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
+        private readonly OrderRepositoryInterface         $orderRepository,
+        private readonly QuestionAnswerFileService        $questionAnswerFileService,
         private readonly Route                            $route
     )
     {
@@ -61,6 +67,8 @@ class CompleteOrderValidator extends BaseValidator
             'event_id' => $this->route->parameter('event_id'),
         ]);
 
+        $uploadedFiles = $this->getUploadedFiles();
+
         $addressRules = $eventSettings->getRequireBillingAddress() ? [
             'order.address' => 'array',
             'order.address.address_line_1' => 'required|string|max:255',
@@ -74,16 +82,31 @@ class CompleteOrderValidator extends BaseValidator
         return [
             'order.first_name' => ['required', 'string', 'max:40'],
             'order.last_name' => ['required', 'string', 'max:40'],
-            'order.questions' => new OrderQuestionRule($orderQuestions, $products),
+            'order.questions' => (new OrderQuestionRule($orderQuestions, $products))
+                ->setUploadedFiles($uploadedFiles),
             'order.email' => 'required|email',
             'order.email_confirmation' => 'required|email|same:order.email',
-            'products' => new ProductQuestionRule(
+            'products' => (new ProductQuestionRule(
                 $productQuestions,
                 $products,
                 $eventSettings->getAttendeeDetailsCollectionMethod(),
-            ),
+            ))->setUploadedFiles($uploadedFiles),
             ...$addressRules
         ];
+    }
+
+    private function getUploadedFiles(): Collection
+    {
+        $order = $this->orderRepository->findFirstWhere([
+            OrderDomainObjectAbstract::SHORT_ID => $this->route->parameter('order_short_id'),
+            OrderDomainObjectAbstract::EVENT_ID => $this->route->parameter('event_id'),
+        ]);
+
+        if ($order === null) {
+            return collect();
+        }
+
+        return $this->questionAnswerFileService->getUnattachedFilesForOrder($order->getId());
     }
 
     public function messages(): array

@@ -12,6 +12,7 @@ import {formatDateForUser, prettyDate} from "../../../../utilites/dates.ts";
 import {isSsr} from "../../../../utilites/helpers.ts";
 import {KIOSK_CONNECTED_AT_KEY} from "../../../../utilites/kioskAuth.ts";
 import classes from "../../../layouts/Kiosk/Kiosk.module.scss";
+import {PrintRelaySettings} from "./PrintRelaySettings.tsx";
 
 type SettingsSection = 'printing' | 'options' | 'information';
 
@@ -93,10 +94,25 @@ const KioskSettings = () => {
                             >
                                 {t`Zebra ZD621 (silent)`}
                             </button>
+                            <button
+                                type="button"
+                                disabled={!isHydrated}
+                                className={`${classes.choiceCard} ${settings.printOutput === 'zebra-relay' ? classes.choiceCardActive : ''}`}
+                                onClick={() => setSettings({...settings, printOutput: 'zebra-relay'})}
+                            >
+                                {t`Zebra via relay (computer)`}
+                            </button>
                         </div>
-                        {settings.printOutput === 'zebra' && (
+                        {settings.printOutput === 'zebra-relay' && eventId && (
+                            <PrintRelaySettings
+                                eventId={eventId}
+                                printerHost={settings.zebraPrinterHost || currentEvent?.last_printer_host || ''}
+                                timezone={timezone}
+                            />
+                        )}
+                        {settings.printOutput !== 'none' && (
                             <>
-                                <TextInput
+                                {settings.printOutput === 'zebra' && <TextInput
                                     label={t`Printer IP address`}
                                     description={t`Private LAN address of the Zebra (port 9100).`}
                                     disabled={!isHydrated}
@@ -106,7 +122,7 @@ const KioskSettings = () => {
                                         ...settings,
                                         zebraPrinterHost: event.currentTarget.value.trim(),
                                     })}
-                                />
+                                />}
                                 <Select
                                     label={t`Printer resolution`}
                                     description={t`Shown on the printer configuration label.`}

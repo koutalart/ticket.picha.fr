@@ -38,15 +38,27 @@ use HiEvents\Repository\Eloquent\OutgoingMessageRepository;
 use HiEvents\Repository\Eloquent\PasswordResetRepository;
 use HiEvents\Repository\Eloquent\PasswordResetTokenRepository;
 use HiEvents\Repository\Eloquent\BoxOfficePrinterPreferenceRepository;
+use HiEvents\Repository\Eloquent\KioskPrintJobRepository;
+use HiEvents\Repository\Eloquent\KioskPrintRelayRepository;
 use HiEvents\Repository\Eloquent\PrintJobRepository;
 use HiEvents\Repository\Eloquent\ProductCategoryRepository;
 use HiEvents\Repository\Eloquent\ProductPriceRepository;
 use HiEvents\Repository\Eloquent\ProductRepository;
 use HiEvents\Repository\Eloquent\PromoCodeRepository;
 use HiEvents\Repository\Eloquent\QrCampaignRepository;
+use HiEvents\Repository\Eloquent\OrganizerSmsSettingRepository;
+use HiEvents\Repository\Eloquent\SmsAssistantCallRepository;
+use HiEvents\Repository\Eloquent\SmsConversationRepository;
+use HiEvents\Repository\Eloquent\SmsCustomerDirectoryRepository;
+use HiEvents\Repository\Eloquent\SmsMessageRepository;
+use HiEvents\Repository\Eloquent\SmsCampaignRecipientRepository;
+use HiEvents\Repository\Eloquent\SmsCampaignRepository;
+use HiEvents\Repository\Eloquent\SmsOptOutRepository;
+use HiEvents\Repository\Eloquent\SmsReplyTemplateRepository;
 use HiEvents\Repository\Eloquent\QrLinkRepository;
 use HiEvents\Repository\Eloquent\QrLinkVisitRepository;
 use HiEvents\Repository\Eloquent\QuestionAndAnswerViewRepository;
+use HiEvents\Repository\Eloquent\QuestionAnswerFileRepository;
 use HiEvents\Repository\Eloquent\QuestionAnswerRepository;
 use HiEvents\Repository\Eloquent\QuestionRepository;
 use HiEvents\Repository\Eloquent\StripeCustomerRepository;
@@ -94,15 +106,27 @@ use HiEvents\Repository\Interfaces\OutgoingMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\PasswordResetRepositoryInterface;
 use HiEvents\Repository\Interfaces\PasswordResetTokenRepositoryInterface;
 use HiEvents\Repository\Interfaces\BoxOfficePrinterPreferenceRepositoryInterface;
+use HiEvents\Repository\Interfaces\KioskPrintJobRepositoryInterface;
+use HiEvents\Repository\Interfaces\KioskPrintRelayRepositoryInterface;
 use HiEvents\Repository\Interfaces\PrintJobRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductCategoryRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsCustomerDirectoryRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsReplyTemplateRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkVisitRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionAndAnswerViewRepositoryInterface;
+use HiEvents\Repository\Interfaces\QuestionAnswerFileRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionAnswerRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
 use HiEvents\Repository\Interfaces\StripeCustomerRepositoryInterface;
@@ -132,10 +156,20 @@ class RepositoryServiceProvider extends ServiceProvider
         AffiliateRepositoryInterface::class => AffiliateRepository::class,
         QrLinkRepositoryInterface::class => QrLinkRepository::class,
         QrCampaignRepositoryInterface::class => QrCampaignRepository::class,
+        OrganizerSmsSettingRepositoryInterface::class => OrganizerSmsSettingRepository::class,
+        SmsConversationRepositoryInterface::class => SmsConversationRepository::class,
+        SmsCustomerDirectoryRepositoryInterface::class => SmsCustomerDirectoryRepository::class,
+        SmsMessageRepositoryInterface::class => SmsMessageRepository::class,
+        SmsOptOutRepositoryInterface::class => SmsOptOutRepository::class,
+        SmsCampaignRepositoryInterface::class => SmsCampaignRepository::class,
+        SmsCampaignRecipientRepositoryInterface::class => SmsCampaignRecipientRepository::class,
+        SmsAssistantCallRepositoryInterface::class => SmsAssistantCallRepository::class,
+        SmsReplyTemplateRepositoryInterface::class => SmsReplyTemplateRepository::class,
         QrLinkVisitRepositoryInterface::class => QrLinkVisitRepository::class,
         OrderItemRepositoryInterface::class => OrderItemRepository::class,
         QuestionRepositoryInterface::class => QuestionRepository::class,
         QuestionAnswerRepositoryInterface::class => QuestionAnswerRepository::class,
+        QuestionAnswerFileRepositoryInterface::class => QuestionAnswerFileRepository::class,
         StripePaymentsRepositoryInterface::class => StripePaymentsRepository::class,
         PromoCodeRepositoryInterface::class => PromoCodeRepository::class,
         MessageRepositoryInterface::class => MessageRepository::class,
@@ -176,6 +210,8 @@ class RepositoryServiceProvider extends ServiceProvider
         EventBoxOfficeOperatorRepositoryInterface::class => EventBoxOfficeOperatorRepository::class,
         PrintJobRepositoryInterface::class => PrintJobRepository::class,
         BoxOfficePrinterPreferenceRepositoryInterface::class => BoxOfficePrinterPreferenceRepository::class,
+        KioskPrintJobRepositoryInterface::class => KioskPrintJobRepository::class,
+        KioskPrintRelayRepositoryInterface::class => KioskPrintRelayRepository::class,
         CaseStudyStatsRepositoryInterface::class => CaseStudyStatsRepository::class,
     ];
 

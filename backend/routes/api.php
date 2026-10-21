@@ -1,5 +1,27 @@
 <?php
 
+use HiEvents\Http\Actions\Sms\GetOrganizerSmsSettingsAction;
+use HiEvents\Http\Actions\Sms\UpdateOrganizerSmsSettingsAction;
+use HiEvents\Http\Actions\Sms\RegenerateSmsWebhookSigningKeyAction;
+use HiEvents\Http\Actions\Sms\TestSmsConnectionAction;
+use HiEvents\Http\Actions\Sms\GetSmsConversationsAction;
+use HiEvents\Http\Actions\Sms\GetSmsUnreadCountAction;
+use HiEvents\Http\Actions\Sms\GetSmsConversationAction;
+use HiEvents\Http\Actions\Sms\UpdateSmsConversationAction;
+use HiEvents\Http\Actions\Sms\SendSmsReplyAction;
+use HiEvents\Http\Actions\Sms\HttpSmsIncomingWebhookAction;
+use HiEvents\Http\Actions\Sms\GetSmsCampaignsAction;
+use HiEvents\Http\Actions\Sms\GetSmsCampaignRecipientsAction;
+use HiEvents\Http\Actions\Sms\RegenerateSmsDraftAction;
+use HiEvents\Http\Actions\Sms\PreviewSmsAssistantAction;
+use HiEvents\Http\Actions\Sms\StartSmsHistoryImportAction;
+use HiEvents\Http\Actions\Sms\GetSmsReplyTemplatesAction;
+use HiEvents\Http\Actions\Sms\CreateSmsReplyTemplateAction;
+use HiEvents\Http\Actions\Sms\UpdateSmsReplyTemplateAction;
+use HiEvents\Http\Actions\Sms\DeleteSmsReplyTemplateAction;
+use HiEvents\Http\Actions\Sms\GetSmsOptOutsAction;
+use HiEvents\Http\Actions\Sms\AddSmsOptOutAction;
+use HiEvents\Http\Actions\Sms\RemoveSmsOptOutAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -57,6 +79,11 @@ use HiEvents\Http\Actions\BoxOffice\Operators\GetBoxOfficeOperatorsAction;
 use HiEvents\Http\Actions\BoxOffice\Operators\UpdateBoxOfficeOperatorAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeTicketZplAction;
 use HiEvents\Http\Actions\BoxOffice\PrintBoxOfficeZplAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\AcknowledgeKioskPrintJobAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\EnqueueKioskPrintJobsAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\GenerateKioskPrintRelayTokenAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\GetKioskPrintRelayStatusAction;
+use HiEvents\Http\Actions\BoxOffice\PrintRelay\GetPendingKioskPrintJobsAction;
 use HiEvents\Http\Actions\BoxOffice\ReprintBoxOfficeTicketAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeOrderAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeOrdersAction;
@@ -90,6 +117,9 @@ use HiEvents\Http\Actions\Events\GetEventPublicAction;
 use HiEvents\Http\Actions\Events\GetEventsAction;
 use HiEvents\Http\Actions\Events\GetOrganizerEventsPublicAction;
 use HiEvents\Http\Actions\Organizers\CoverVideo\UploadOrganizerCoverVideoAction;
+use HiEvents\Http\Actions\Questions\Files\DownloadQuestionAnswerFileAction;
+use HiEvents\Http\Actions\Questions\Public\UploadQuestionAnswerFilePublicAction;
+use HiEvents\Services\Domain\Question\File\QuestionAnswerFileUrlGenerator;
 use HiEvents\Http\Actions\Events\CoverVideo\UploadEventCoverVideoAction;
 use HiEvents\Http\Actions\Events\Images\CreateEventImageAction;
 use HiEvents\Http\Actions\Events\Images\DeleteEventImageAction;
@@ -203,6 +233,7 @@ use HiEvents\Http\Actions\TaxesAndFees\DeleteTaxOrFeeAction;
 use HiEvents\Http\Actions\TaxesAndFees\EditTaxOrFeeAction;
 use HiEvents\Http\Actions\TaxesAndFees\GetTaxOrFeeAction;
 use HiEvents\Http\Actions\Users\CancelEmailChangeAction;
+use HiEvents\Http\Actions\Auth\ConfirmEmailAddressFromLinkAction;
 use HiEvents\Http\Actions\Users\ConfirmEmailAddressAction;
 use HiEvents\Http\Actions\Users\ConfirmEmailChangeAction;
 use HiEvents\Http\Actions\Users\ConfirmEmailWithCodeAction;
@@ -272,6 +303,9 @@ $router->prefix('/auth')->group(
         $router->post('/logout', LogoutAction::class)->name('auth.logout');
         $router->post('/register', CreateAccountAction::class)->name('auth.register');
         $router->post('/forgot-password', ForgotPasswordAction::class)->name('auth.forgot-password');
+        $router->post('/confirm-email/{token}', ConfirmEmailAddressFromLinkAction::class)
+            ->middleware('throttle:10,1')
+            ->name('auth.confirm-email');
 
         // Invitations
         $router->get('/invitation/{invite_token}', GetUserInvitationAction::class)->name('auth.invitation');
@@ -333,6 +367,40 @@ $router->middleware(['auth:api'])->group(
         $router->get('/organizers/{organizer_id}/settings', GetOrganizerSettingsAction::class);
         $router->patch('/organizers/{organizer_id}/settings', PartialUpdateOrganizerSettingsAction::class);
         $router->post('/organizers/{organizer_id}/settings/meta-conversions-api/test', TestMetaConversionsApiAction::class)
+            ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/sms/settings', GetOrganizerSmsSettingsAction::class);
+        $router->put('/organizers/{organizer_id}/sms/settings', UpdateOrganizerSmsSettingsAction::class);
+        $router->post('/organizers/{organizer_id}/sms/settings/regenerate-signing-key', RegenerateSmsWebhookSigningKeyAction::class);
+        $router->post('/organizers/{organizer_id}/sms/settings/test', TestSmsConnectionAction::class)
+            ->middleware('throttle:10,1');
+        $router->post('/organizers/{organizer_id}/sms/settings/import-history', StartSmsHistoryImportAction::class)
+            ->middleware('throttle:5,1');
+        $router->get('/organizers/{organizer_id}/sms/reply-templates', GetSmsReplyTemplatesAction::class);
+        $router->post('/organizers/{organizer_id}/sms/reply-templates', CreateSmsReplyTemplateAction::class);
+        $router->put('/organizers/{organizer_id}/sms/reply-templates/{template_id}', UpdateSmsReplyTemplateAction::class)
+            ->where('template_id', '[0-9]+');
+        $router->delete('/organizers/{organizer_id}/sms/reply-templates/{template_id}', DeleteSmsReplyTemplateAction::class)
+            ->where('template_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/sms/opt-outs', GetSmsOptOutsAction::class);
+        $router->post('/organizers/{organizer_id}/sms/opt-outs', AddSmsOptOutAction::class);
+        $router->delete('/organizers/{organizer_id}/sms/opt-outs/{opt_out_id}', RemoveSmsOptOutAction::class)
+            ->where('opt_out_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/sms/conversations', GetSmsConversationsAction::class);
+        $router->get('/organizers/{organizer_id}/sms/unread-count', GetSmsUnreadCountAction::class);
+        $router->get('/organizers/{organizer_id}/sms/campaigns', GetSmsCampaignsAction::class);
+        $router->get('/organizers/{organizer_id}/sms/campaigns/{campaign_id}/recipients', GetSmsCampaignRecipientsAction::class)
+            ->where('campaign_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/sms/conversations/{conversation_id}', GetSmsConversationAction::class)
+            ->where('conversation_id', '[0-9]+');
+        $router->patch('/organizers/{organizer_id}/sms/conversations/{conversation_id}', UpdateSmsConversationAction::class)
+            ->where('conversation_id', '[0-9]+');
+        $router->post('/organizers/{organizer_id}/sms/conversations/{conversation_id}/messages', SendSmsReplyAction::class)
+            ->where('conversation_id', '[0-9]+')
+            ->middleware('throttle:30,1');
+        $router->post('/organizers/{organizer_id}/sms/conversations/{conversation_id}/draft', RegenerateSmsDraftAction::class)
+            ->where('conversation_id', '[0-9]+')
+            ->middleware('throttle:20,1');
+        $router->post('/organizers/{organizer_id}/sms/assistant/preview', PreviewSmsAssistantAction::class)
             ->middleware('throttle:10,1');
         $router->get('/organizers/{organizer_id}/qr-campaigns', GetQrCampaignsAction::class);
         $router->post('/organizers/{organizer_id}/qr-campaigns', CreateQrCampaignAction::class);
@@ -440,6 +508,11 @@ $router->middleware(['auth:api'])->group(
         $router->get('/events/{event_id}/box-office/operators', GetBoxOfficeOperatorsAction::class);
         $router->post('/events/{event_id}/box-office/operators', CreateBoxOfficeOperatorAction::class);
         $router->patch('/events/{event_id}/box-office/operators/{user_id}', UpdateBoxOfficeOperatorAction::class);
+
+        // Box Office print queue, pulled by the relay on a venue computer
+        $router->post('/events/{event_id}/box-office/print-jobs', EnqueueKioskPrintJobsAction::class);
+        $router->get('/events/{event_id}/box-office/print-relay', GetKioskPrintRelayStatusAction::class);
+        $router->post('/events/{event_id}/box-office/print-relay/token', GenerateKioskPrintRelayTokenAction::class);
 
         // Orders
         $router->get('/events/{event_id}/orders', GetOrdersAction::class);
@@ -579,6 +652,16 @@ $router->prefix('/admin')->middleware(['auth:api'])->group(
 );
 
 /**
+ * Kiosk print relay (venue computer, authenticated by its relay bearer token)
+ */
+$router->prefix('/print-relay')->middleware('throttle:kiosk-print-relay')->group(
+    function (Router $router): void {
+        $router->get('/jobs', GetPendingKioskPrintJobsAction::class);
+        $router->post('/jobs/{job_id}/ack', AcknowledgeKioskPrintJobAction::class)->where('job_id', '[0-9]+');
+    }
+);
+
+/**
  * Public routes
  */
 $router->prefix('/public')->group(
@@ -618,6 +701,8 @@ $router->prefix('/public')->group(
         $router->post('/events/{event_id}/order/{order_short_id}/abandon', AbandonOrderActionPublic::class);
         $router->post('/events/{event_id}/order/{order_short_id}/await-offline-payment', TransitionOrderToOfflinePaymentPublicAction::class);
         $router->get('/events/{event_id}/order/{order_short_id}/invoice', DownloadOrderInvoicePublicAction::class);
+        $router->post('/events/{event_id}/order/{order_short_id}/question-files', UploadQuestionAnswerFilePublicAction::class)
+            ->middleware('throttle:20,1');
 
         // Attendees
         $router->get('/events/{event_id}/attendees/{attendee_short_id}', GetAttendeeActionPublic::class);
@@ -642,6 +727,9 @@ $router->prefix('/public')->group(
 
         // Webhooks
         $router->post('/webhooks/stripe', StripeIncomingWebhookAction::class);
+        $router->post('/webhooks/httpsms/{webhook_token}', HttpSmsIncomingWebhookAction::class)
+            ->where('webhook_token', '[A-Za-z0-9]{20,64}')
+            ->middleware('throttle:120,1');
 
         // Check-In
         $router->get('/check-in-lists/{check_in_list_short_id}', GetCheckInListPublicAction::class);
@@ -673,5 +761,10 @@ $router->prefix('/public')->group(
         $router->get('/sitemap-organizers-{page}.xml', GetSitemapOrganizersAction::class)->where('page', '[0-9]+');
     }
 );
+
+$router->get('/question-files/{file_id}/download', DownloadQuestionAnswerFileAction::class)
+    ->where('file_id', '[0-9]+')
+    ->middleware(['signed:relative', 'throttle:60,1'])
+    ->name(QuestionAnswerFileUrlGenerator::DOWNLOAD_ROUTE_NAME);
 
 include_once __DIR__ . '/mail.php';

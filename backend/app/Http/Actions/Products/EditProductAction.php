@@ -6,6 +6,7 @@ namespace HiEvents\Http\Actions\Products;
 
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Exceptions\CannotChangeProductTypeException;
+use HiEvents\Exceptions\InvalidProductUnlockRuleException;
 use HiEvents\Exceptions\InvalidTaxOrFeeIdException;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\Request\Product\UpsertProductRequest;
@@ -47,6 +48,10 @@ class EditProductAction extends BaseAction
         } catch (CannotChangeProductTypeException $e) {
             throw ValidationException::withMessages([
                 'type' => $e->getMessage(),
+            ]);
+        } catch (InvalidProductUnlockRuleException $e) {
+            throw ValidationException::withMessages([
+                'unlock_after_product_id' => $e->getMessage(),
             ]);
         }
 

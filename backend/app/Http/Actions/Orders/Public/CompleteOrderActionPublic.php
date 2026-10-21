@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Http\Actions\Orders\Public;
 
+use HiEvents\Exceptions\InvalidQuestionAnswerFileException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\Request\Order\CompleteOrderRequest;
@@ -37,6 +38,8 @@ class CompleteOrderActionPublic extends BaseAction
                 'products' => $request->input('products'),
                 'event_id' => $eventId,
             ]));
+        } catch (InvalidQuestionAnswerFileException $e) {
+            return $this->errorResponse($e->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (ResourceConflictException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_CONFLICT);
         }

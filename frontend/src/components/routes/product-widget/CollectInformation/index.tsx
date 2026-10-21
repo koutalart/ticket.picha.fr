@@ -28,7 +28,7 @@ import {getConfig} from "../../../../utilites/config.ts";
 import {HomepageInfoMessage} from "../../../common/HomepageInfoMessage";
 import {InlineOrderSummary} from "../../../common/InlineOrderSummary";
 import {eventCheckoutPath, eventHomepagePath} from "../../../../utilites/urlHelper.ts";
-import {showInfo} from "../../../../utilites/notifications.tsx";
+import {showError, showInfo} from "../../../../utilites/notifications.tsx";
 import countries from "../../../../../data/countries.json";
 import classes from "./CollectInformation.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
@@ -243,6 +243,10 @@ export const CollectInformation = () => {
         onError: (error: any) => {
             if (error?.response?.data?.errors && Object.keys(error?.response?.data?.errors).length > 0) {
                 form.setErrors(error.response.data.errors);
+                const firstError = Object.values(error.response.data.errors).flat()[0];
+                if (firstError) {
+                    showError(String(firstError));
+                }
             } else if (error?.response?.data?.message) {
                 notifications.show({
                     message: error?.response?.data?.message,
@@ -311,7 +315,7 @@ export const CollectInformation = () => {
     }
 
     const handleSubmit = (values: any) => {
-        if (isFreeEvent) {
+        if (isFreeEvent && !isPerOrderCollection) {
             const firstTicketIndex = getFirstTicketAttendeeIndex();
             const firstParticipant = firstTicketIndex >= 0 ? values.products?.[firstTicketIndex] : null;
             if (firstParticipant) {
@@ -457,7 +461,7 @@ export const CollectInformation = () => {
                     <InlineOrderSummary event={event} order={order} defaultExpanded={true}/>
                 )}
 
-                {!isFreeEvent && (
+                {(!isFreeEvent || isPerOrderCollection) && (
                     <>
                 <h2 className={classes.sectionHeading}>
                     {t`Your Details`}

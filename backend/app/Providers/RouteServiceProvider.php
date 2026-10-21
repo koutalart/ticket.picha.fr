@@ -29,6 +29,10 @@ class RouteServiceProvider extends ServiceProvider
                 ->by($request->user()?->id ?: $request->ip());
         });
 
+        RateLimiter::for('kiosk-print-relay', function (Request $request) {
+            return Limit::perMinute(240)->by(sha1($request->bearerToken() ?: $request->ip()));
+        });
+
         RateLimiter::for('self-service-email', function (Request $request) {
             return Limit::perHour(20)->by($request->route('order_short_id') ?? $request->ip());
         });

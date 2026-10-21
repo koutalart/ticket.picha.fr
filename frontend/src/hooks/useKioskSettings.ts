@@ -4,7 +4,9 @@ import {SupportedLocales} from "../locales.ts";
 
 export const KIOSK_SETTINGS_STORAGE_KEY = 'picha_kiosk_settings';
 
-export type KioskPrintOutput = 'none' | 'zebra';
+export type KioskPrintOutput = 'none' | 'zebra' | 'zebra-relay';
+
+const KIOSK_PRINT_OUTPUTS: KioskPrintOutput[] = ['none', 'zebra', 'zebra-relay'];
 
 export const SUPPORTED_PRINTER_DPI = [203, 300, 600] as const;
 
@@ -63,7 +65,9 @@ const readSettings = (): KioskSettings => {
             stationName: typeof parsed.stationName === 'string' ? parsed.stationName : '',
             defaultTicketLocale: parsed.defaultTicketLocale ?? '',
             sendConfirmationEmail: Boolean(parsed.sendConfirmationEmail),
-            printOutput: parsed.printOutput === 'none' ? 'none' : 'zebra',
+            printOutput: KIOSK_PRINT_OUTPUTS.includes(parsed.printOutput as KioskPrintOutput)
+                ? parsed.printOutput as KioskPrintOutput
+                : 'zebra',
             zebraPrinterHost: typeof parsed.zebraPrinterHost === 'string' ? parsed.zebraPrinterHost : '',
             phoneCallingCode: typeof parsed.phoneCallingCode === 'string'
                 ? parsed.phoneCallingCode.replace(/\D/g, '')
