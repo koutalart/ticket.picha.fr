@@ -31,6 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'httpsms' => [
+        'base_url' => env('HTTPSMS_BASE_URL', 'https://api.httpsms.com/v1'),
+        'timeout_seconds' => (int) env('HTTPSMS_TIMEOUT_SECONDS', 15),
+    ],
+
     'meta' => [
         'graph_api_version' => env('META_GRAPH_API_VERSION', 'v24.0'),
         'timeout_seconds' => (int) env('META_CONVERSIONS_API_TIMEOUT', 10),
