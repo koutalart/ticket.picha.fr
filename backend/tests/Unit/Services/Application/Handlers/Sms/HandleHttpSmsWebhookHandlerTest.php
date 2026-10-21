@@ -3,8 +3,9 @@
 namespace Tests\Unit\Services\Application\Handlers\Sms;
 
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
-use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
+use HiEvents\DomainObjects\SmsUnattributedMessageDomainObject;
+use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\DomainObjects\Status\SmsPhoneStatus;
 use HiEvents\Exceptions\SmsWebhookUnauthorizedException;
@@ -14,11 +15,13 @@ use HiEvents\Services\Application\Handlers\Sms\HandleHttpSmsWebhookHandler;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
-use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
 use HiEvents\Services\Domain\Sms\SmsAlertService;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
+use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
+use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
+use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
 use Mockery;
 use Mockery\MockInterface;
 use Psr\Log\NullLogger;
@@ -35,8 +38,16 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
     private SmsInboundService|MockInterface $inboundService;
 
     private SmsCampaignDeliveryService|MockInterface $campaignDeliveryService;
+
     private SmsAlertService|MockInterface $alertService;
+
     private SmsAssistantService|MockInterface $assistantService;
+
+    private SmsLineService|MockInterface $lineService;
+
+    private SmsUnattributedSmsService|MockInterface $unattributedService;
+
+    private OrganizerSmsSettingDomainObject $member;
 
     private HandleHttpSmsWebhookHandler $handler;
 
@@ -56,6 +67,10 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->alertService->shouldReceive('notifyInbound')->byDefault();
         $this->assistantService = Mockery::mock(SmsAssistantService::class);
         $this->assistantService->shouldReceive('queueDraftIfEligible')->byDefault();
+        $this->lineService = Mockery::mock(SmsLineService::class);
+        $this->lineService->shouldReceive('members')->andReturnUsing(fn ($line) => collect([$line]))->byDefault();
+        $this->unattributedService = Mockery::mock(SmsUnattributedSmsService::class);
+        $this->unattributedService->shouldReceive('isKnown')->andReturnFalse()->byDefault();
 
         $this->handler = new HandleHttpSmsWebhookHandler(
             $this->settingsService,
@@ -65,6 +80,8 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             $this->campaignDeliveryService,
             $this->alertService,
             $this->assistantService,
+            $this->lineService,
+            $this->unattributedService,
             new NullLogger,
         );
 
@@ -73,6 +90,12 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             ->setOrganizerId(4)
             ->setFromNumber('+262639000000')
             ->setWebhookSigningKey('key');
+
+        $this->member = (new OrganizerSmsSettingDomainObject)
+            ->setId(2)
+            ->setOrganizerId(8)
+            ->setSharedLineSettingsId(1)
+            ->setWebhookSigningKey('member-key');
     }
 
     public function test_unknown_webhook_token_is_rejected(): void
@@ -137,7 +160,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
         $this->campaignDeliveryService->shouldReceive('applyProviderStatus')
             ->once()
-            ->with(4, 'prov-1', SmsCampaignRecipientStatus::DELIVERED, null, null)
+            ->with([4], 'prov-1', SmsCampaignRecipientStatus::DELIVERED, null, null)
             ->andReturnTrue();
 
         $this->inboundService->shouldReceive('recordOutboundEvent')
@@ -218,6 +241,128 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             'phone_id' => 'phone-1',
             'owner' => '+33600000000',
         ]));
+    }
+
+    public function test_webhook_of_a_shared_line_member_is_rejected(): void
+    {
+        $this->settingsService->shouldReceive('findByWebhookToken')->andReturn($this->member);
+        $this->verifier->shouldNotReceive('verify');
+        $this->inboundService->shouldNotReceive('recordInbound');
+
+        $this->expectException(SmsWebhookUnauthorizedException::class);
+        $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
+    }
+
+    public function test_line_with_a_single_organizer_keeps_everything_for_it(): void
+    {
+        $this->expectVerified();
+        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3);
+
+        $this->lineService->shouldNotReceive('attributeInbound');
+        $this->unattributedService->shouldNotReceive('record');
+        $this->inboundService->shouldReceive('recordInbound')->once()->with($this->settings, Mockery::any())->andReturn($message);
+        $this->alertService->shouldReceive('notifyInbound')->once()->with($this->settings, $message);
+
+        $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
+    }
+
+    public function test_shared_line_inbound_goes_to_the_organizer_who_wrote_last(): void
+    {
+        $this->expectVerified();
+        $this->expectSharedLine();
+        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3)->setOrganizerId(8);
+
+        $this->lineService->shouldReceive('attributeInbound')
+            ->once()
+            ->withArgs(fn ($members, string $phone) => $members->count() === 2 && $phone === '+262639123456')
+            ->andReturn($this->member);
+        $this->unattributedService->shouldNotReceive('record');
+        $this->inboundService->shouldReceive('recordInbound')->once()->with($this->member, Mockery::any())->andReturn($message);
+        $this->alertService->shouldReceive('notifyInbound')->once()->with($this->member, $message);
+        $this->assistantService->shouldReceive('queueDraftIfEligible')->once()->with($this->member, $message);
+
+        $this->handler->handle($this->dto('message.phone.received', [...$this->receivedData(), 'content' => 'Merci']));
+    }
+
+    public function test_shared_line_inbound_without_recent_writer_is_kept_unattributed(): void
+    {
+        $this->expectVerified();
+        $this->expectSharedLine();
+
+        $this->lineService->shouldReceive('attributeInbound')->once()->andReturnNull();
+        $this->unattributedService->shouldReceive('record')
+            ->once()
+            ->withArgs(fn ($line, $members, InboundSmsDTO $sms, string $phone) => $line === $this->settings
+                && $members->count() === 2
+                && $sms->providerMessageId === 'msg-1'
+                && $phone === '+262639123456')
+            ->andReturn((new SmsUnattributedMessageDomainObject)->setId(1)->setOptOutApplied(true));
+        $this->inboundService->shouldNotReceive('recordInbound');
+        $this->alertService->shouldNotReceive('notifyInbound');
+        $this->assistantService->shouldNotReceive('queueDraftIfEligible');
+
+        $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
+    }
+
+    public function test_shared_line_inbound_already_kept_unattributed_is_not_recorded_twice(): void
+    {
+        $this->expectVerified();
+        $this->expectSharedLine();
+
+        $this->unattributedService->shouldReceive('isKnown')->with('msg-1')->andReturnTrue();
+        $this->lineService->shouldNotReceive('attributeInbound');
+        $this->unattributedService->shouldNotReceive('record');
+        $this->inboundService->shouldNotReceive('recordInbound');
+
+        $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
+    }
+
+    public function test_shared_line_status_is_matched_among_all_organizers_of_the_line(): void
+    {
+        $this->expectVerified();
+        $this->expectSharedLine();
+
+        $this->campaignDeliveryService->shouldReceive('applyProviderStatus')
+            ->once()
+            ->with([4, 8], 'prov-1', SmsCampaignRecipientStatus::DELIVERED, null, null)
+            ->andReturnTrue();
+        $this->campaignDeliveryService->shouldReceive('findCampaignOrganizerId')->with([4, 8], 'prov-1')->andReturn(8);
+
+        $this->inboundService->shouldReceive('recordOutboundEvent')
+            ->once()
+            ->withArgs(fn ($owner, OutboundSmsEventDTO $event, bool $fromHistory, ?array $organizerIds) => $owner === $this->member
+                && $event->providerMessageId === 'prov-1'
+                && $organizerIds === [4, 8]);
+
+        $this->handler->handle($this->dto('message.phone.delivered', [
+            'id' => 'prov-1',
+            'contact' => '+262639123456',
+            'owner' => '+262639000000',
+        ]));
+    }
+
+    public function test_shared_line_status_of_a_message_unknown_to_picha_goes_to_the_line_owner(): void
+    {
+        $this->expectVerified();
+        $this->expectSharedLine();
+
+        $this->campaignDeliveryService->shouldReceive('applyProviderStatus')->andReturnFalse();
+        $this->campaignDeliveryService->shouldReceive('findCampaignOrganizerId')->andReturnNull();
+
+        $this->inboundService->shouldReceive('recordOutboundEvent')
+            ->once()
+            ->withArgs(fn ($owner) => $owner === $this->settings);
+
+        $this->handler->handle($this->dto('message.phone.sent', [
+            'id' => 'prov-2',
+            'contact' => '+262639123456',
+            'owner' => '+262639000000',
+        ]));
+    }
+
+    private function expectSharedLine(): void
+    {
+        $this->lineService->shouldReceive('members')->with($this->settings)->andReturn(collect([$this->settings, $this->member]));
     }
 
     private function expectVerified(): void

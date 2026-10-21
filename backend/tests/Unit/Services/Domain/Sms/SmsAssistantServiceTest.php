@@ -181,6 +181,32 @@ class SmsAssistantServiceTest extends TestCase
         $this->service->regenerate($this->conversation());
     }
 
+    public function test_conversation_on_a_shared_line_only_uses_its_own_organizer_data(): void
+    {
+        $this->generator->shouldReceive('isConfigured')->andReturnTrue();
+        $this->conversationRepository->shouldReceive('findFirstWhere')->andReturn($this->conversation()->setOrganizerId(8));
+        $this->settingsRepository->shouldReceive('findFirstWhere')->with(['organizer_id' => 8])->andReturn(
+            (new OrganizerSmsSettingDomainObject)->setId(2)->setOrganizerId(8)->setSharedLineSettingsId(1)->setAssistantInstructions('Vouvoie.')
+        );
+        $this->conversationService->shouldReceive('isOptedOut')->with(8, '+262639123456')->andReturnFalse();
+        $this->conversationRepository->shouldReceive('findOrdersByPhone')->once()->with(8, '+262639123456')->andReturn(collect());
+        $this->catalogService->shouldReceive('getUpcomingEvents')->once()->with(8)->andReturn(collect());
+        $this->personalLinkService->shouldReceive('findForContact')->once()->withArgs(fn (int $organizerId) => $organizerId === 8)->andReturnNull();
+        $this->organizerRepository->shouldReceive('findById')->with(8)->andReturn(
+            (new OrganizerDomainObject)->setId(8)->setName('Mayotte La 1ère')->setTimezone('Indian/Mayotte'),
+        );
+        $this->messageRepository->shouldReceive('findLatestForConversation')->with(3, 20)->andReturn(collect([$this->inbound(9, 'Il reste des places ?')]));
+
+        $this->generator->shouldReceive('generate')->once()
+            ->withArgs(fn (SmsAssistantRequestDTO $request) => $request->organizerId === 8
+                && $request->organizerName === 'Mayotte La 1ère'
+                && $request->instructions === 'Vouvoie.')
+            ->andReturn(new SmsAssistantResultDTO(SmsAssistantOutcome::DRAFT, 'Bonjour, oui.', null));
+        $this->conversationRepository->shouldReceive('updateFromArray')->once();
+
+        $this->service->draftForInboundMessage(3, 9);
+    }
+
     private function expectDraftContext(): void
     {
         $this->generator->shouldReceive('isConfigured')->andReturnTrue();

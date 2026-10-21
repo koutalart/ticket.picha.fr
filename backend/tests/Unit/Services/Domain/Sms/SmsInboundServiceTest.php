@@ -154,6 +154,7 @@ class SmsInboundServiceTest extends TestCase
     {
         $existing = (new SmsMessageDomainObject)
             ->setId(55)
+            ->setOrganizerId(4)
             ->setStatus(SmsMessageStatus::DELIVERED->name)
             ->setProviderMessageId('prov-1');
 
@@ -171,6 +172,7 @@ class SmsInboundServiceTest extends TestCase
     {
         $existing = (new SmsMessageDomainObject)
             ->setId(55)
+            ->setOrganizerId(4)
             ->setStatus(SmsMessageStatus::EXPIRED->name)
             ->setProviderMessageId('prov-1');
 
@@ -256,6 +258,64 @@ class SmsInboundServiceTest extends TestCase
             ),
             fromHistory: true,
         );
+    }
+
+    public function test_outbound_event_for_a_message_of_another_line_is_ignored(): void
+    {
+        $foreign = (new SmsMessageDomainObject)
+            ->setId(80)
+            ->setOrganizerId(99)
+            ->setStatus(SmsMessageStatus::PENDING->name)
+            ->setProviderMessageId('prov-1');
+
+        $this->messageRepository->shouldReceive('findFirstWhere')
+            ->with(['provider_message_id' => 'prov-1'])
+            ->andReturn($foreign);
+        $this->messageRepository->shouldNotReceive('updateFromArray');
+        $this->messageRepository->shouldNotReceive('create');
+
+        $this->assertNull($this->service->recordOutboundEvent($this->settings, $this->outbound(SmsMessageStatus::DELIVERED)));
+    }
+
+    public function test_outbound_status_updates_the_message_of_the_organizer_who_sent_it_on_a_shared_line(): void
+    {
+        $sentByOrganizer8 = (new SmsMessageDomainObject)
+            ->setId(81)
+            ->setOrganizerId(8)
+            ->setStatus(SmsMessageStatus::SENT->name)
+            ->setProviderMessageId('prov-1');
+
+        $this->messageRepository->shouldReceive('findFirstWhere')
+            ->with(['provider_message_id' => 'prov-1'])
+            ->andReturn($sentByOrganizer8);
+        $this->messageRepository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(fn (int $id, array $attributes) => $id === 81
+                && $attributes['status'] === SmsMessageStatus::DELIVERED->name)
+            ->andReturn($sentByOrganizer8);
+        $this->messageRepository->shouldNotReceive('create');
+
+        $this->service->recordOutboundEvent($this->settings, $this->outbound(SmsMessageStatus::DELIVERED), organizerIds: [4, 8]);
+    }
+
+    public function test_request_id_is_looked_up_among_all_organizers_of_the_line(): void
+    {
+        $pending = (new SmsMessageDomainObject)->setId(90)->setOrganizerId(8)->setStatus(SmsMessageStatus::PENDING->name);
+
+        $this->messageRepository->shouldReceive('findFirstWhere')
+            ->with(['provider_message_id' => 'prov-1'])
+            ->andReturnNull();
+        $this->messageRepository->shouldReceive('findFirstWhere')
+            ->with([['organizer_id', 'in', [4, 8]], 'request_id' => 'picha-sms-90'])
+            ->andReturn($pending);
+        $this->messageRepository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(fn (int $id, array $attributes) => $id === 90
+                && $attributes['status'] === SmsMessageStatus::SENT->name
+                && $attributes['provider_message_id'] === 'prov-1')
+            ->andReturn($pending);
+
+        $this->service->recordOutboundEvent($this->settings, $this->outbound(SmsMessageStatus::SENT, 'picha-sms-90'), organizerIds: [4, 8]);
     }
 
     private function expectStoredInbound(): void
