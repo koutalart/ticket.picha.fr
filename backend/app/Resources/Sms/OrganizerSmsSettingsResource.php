@@ -23,6 +23,9 @@ class OrganizerSmsSettingsResource extends BaseResource
             'webhook_url' => $this->webhookUrl,
             'webhook_signing_key' => $settings->getWebhookSigningKey(),
             'last_webhook_received_at' => $settings->getLastWebhookReceivedAt(),
+            'notify_on_inbound_sms' => $settings->getNotifyOnInboundSms(),
+            'phone_status' => $settings->getPhoneStatus(),
+            'phone_status_changed_at' => $settings->getPhoneStatusChangedAt(),
         ];
     }
 }

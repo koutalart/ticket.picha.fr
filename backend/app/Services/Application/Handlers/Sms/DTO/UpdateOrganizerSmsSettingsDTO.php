@@ -14,5 +14,6 @@ class UpdateOrganizerSmsSettingsDTO extends BaseDataObject
         public readonly int $organizerId,
         public readonly string|Optional|null $apiKey,
         public readonly string|Optional|null $fromNumber,
+        public readonly bool|Optional $notifyOnInboundSms = new Optional,
     ) {}
 }

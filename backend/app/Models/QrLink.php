@@ -35,6 +35,11 @@ class QrLink extends BaseModel
         return $this->belongsTo(QrCampaign::class);
     }
 
+    public function sms_campaign(): BelongsTo
+    {
+        return $this->belongsTo(SmsCampaign::class);
+    }
+
     public function qr_link_visits(): HasMany
     {
         return $this->hasMany(QrLinkVisit::class);

@@ -1300,7 +1300,12 @@ export interface OrganizerSmsSettings {
     webhook_url: string;
     webhook_signing_key: string;
     last_webhook_received_at: string | null;
+    notify_on_inbound_sms: boolean;
+    phone_status: SmsPhoneStatus | null;
+    phone_status_changed_at: string | null;
 }
+
+export type SmsPhoneStatus = 'ONLINE' | 'OFFLINE';
 
 export interface SmsConnectionTestResult {
     phone_numbers: string[];
@@ -1347,6 +1352,43 @@ export interface SmsCustomerOrder {
     currency: string;
     status: string;
     created_at: string;
+}
+
+export type SmsCampaignRecipientStatus = 'PENDING' | 'SCHEDULED' | 'SENT' | 'DELIVERED' | 'FAILED' | 'EXPIRED';
+
+export interface SmsCampaign {
+    id: number;
+    name: string;
+    message: string | null;
+    event_id: number | null;
+    event_title: string | null;
+    currency: string | null;
+    recipients_count: number;
+    pending_count: number;
+    sent_count: number;
+    delivered_count: number;
+    failed_count: number;
+    visits_count: number;
+    clickers_count: number;
+    orders_count: number;
+    revenue_gross: number;
+    created_at: string;
+}
+
+export interface SmsCampaignRecipient {
+    id: number;
+    phone: string;
+    contact_name: string | null;
+    status: SmsCampaignRecipientStatus;
+    failure_reason: string | null;
+    scheduled_at: string | null;
+    sent_at: string | null;
+    delivered_at: string | null;
+    short_id: string | null;
+    visits_count: number;
+    has_clicked: boolean;
+    orders_count: number;
+    revenue_gross: number;
 }
 
 export interface SmsConversationDetail {

@@ -79,6 +79,17 @@ class SmsConversationRepository extends BaseRepository implements SmsConversatio
             ->count();
     }
 
+    public function claimInboundNotification(int $conversationId, string $notifiedBefore, string $now): bool
+    {
+        return SmsConversation::query()
+            ->whereKey($conversationId)
+            ->where(function ($query) use ($notifiedBefore) {
+                $query->whereNull(SmsConversationDomainObjectAbstract::INBOUND_NOTIFIED_AT)
+                    ->orWhere(SmsConversationDomainObjectAbstract::INBOUND_NOTIFIED_AT, '<=', $notifiedBefore);
+            })
+            ->update([SmsConversationDomainObjectAbstract::INBOUND_NOTIFIED_AT => $now]) > 0;
+    }
+
     public function findContactNameByPhone(int $organizerId, string $phone): ?string
     {
         $order = $this->findOrdersByPhone($organizerId, $phone)->first();

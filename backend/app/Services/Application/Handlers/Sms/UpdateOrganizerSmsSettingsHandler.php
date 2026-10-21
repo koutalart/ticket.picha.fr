@@ -36,6 +36,10 @@ class UpdateOrganizerSmsSettingsHandler
             $attributes[OrganizerSmsSettingDomainObjectAbstract::FROM_NUMBER] = $this->normalizeFromNumber($dto->fromNumber);
         }
 
+        if ($dto->wasProvided('notifyOnInboundSms')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::NOTIFY_ON_INBOUND_SMS] = $dto->notifyOnInboundSms;
+        }
+
         if ($attributes !== []) {
             $settings = $this->settingsRepository->updateFromArray($settings->getId(), $attributes);
         }

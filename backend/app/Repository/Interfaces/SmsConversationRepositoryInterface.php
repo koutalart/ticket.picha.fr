@@ -19,6 +19,8 @@ interface SmsConversationRepositoryInterface extends RepositoryInterface
 
     public function countUnreadForOrganizer(int $organizerId): int;
 
+    public function claimInboundNotification(int $conversationId, string $notifiedBefore, string $now): bool;
+
     public function findContactNameByPhone(int $organizerId, string $phone): ?string;
 
     /**

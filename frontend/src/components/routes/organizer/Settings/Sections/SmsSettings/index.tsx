@@ -2,7 +2,7 @@ import {useParams} from "react-router";
 import {useForm} from "@mantine/form";
 import {useEffect} from "react";
 import {t, Trans} from "@lingui/macro";
-import {Alert, Anchor, Badge, Button, Group, List, PasswordInput, Text, TextInput} from "@mantine/core";
+import {Alert, Anchor, Badge, Button, Group, List, PasswordInput, Switch, Text, TextInput} from "@mantine/core";
 import {IconCircleCheck, IconMessage, IconPlugConnected, IconRefresh} from "@tabler/icons-react";
 import {Card} from "../../../../../common/Card";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
@@ -81,6 +81,16 @@ export const SmsSettings = () => {
         });
     };
 
+    const toggleInboundAlerts = (enabled: boolean) => {
+        updateMutation.mutate({
+            organizerId: organizerId!,
+            settings: {notify_on_inbound_sms: enabled},
+        }, {
+            onSuccess: () => showSuccess(enabled ? t`Email alerts enabled` : t`Email alerts disabled`),
+            onError: () => showError(t`Unable to update email alerts`),
+        });
+    };
+
     const testConnection = () => {
         testMutation.mutate({organizerId: organizerId!}, {
             onSuccess: ({data}) => {
@@ -109,12 +119,26 @@ export const SmsSettings = () => {
                 {isConfigured
                     ? <Badge color="green" variant="light" leftSection={<IconCircleCheck size={12}/>}>{t`Configured`}</Badge>
                     : <Badge color="gray" variant="light">{t`Not configured`}</Badge>}
+                {settings?.phone_status === 'ONLINE' && (
+                    <Badge color="green" variant="light">{t`Phone online`}</Badge>
+                )}
+                {settings?.phone_status === 'OFFLINE' && (
+                    <Badge color="red" variant="light">{t`Phone offline`}</Badge>
+                )}
                 {settings?.last_webhook_received_at && (
                     <Text size="xs" c="dimmed">
                         {t`Last SMS event received ${relativeDate(settings.last_webhook_received_at)}`}
                     </Text>
                 )}
             </Group>
+
+            {settings?.phone_status === 'OFFLINE' && (
+                <Alert color="red" variant="light" mb="md">
+                    {settings.phone_status_changed_at
+                        ? t`Your httpSMS phone went offline ${relativeDate(settings.phone_status_changed_at)}. Check that it is switched on, connected to the internet and that the httpSMS app is running.`
+                        : t`Your httpSMS phone is offline. Check that it is switched on, connected to the internet and that the httpSMS app is running.`}
+                </Alert>
+            )}
 
             <Alert color="blue" variant="light" mb="md">
                 <Text size="sm" mb={6}>{t`How to connect`}</Text>
@@ -125,7 +149,7 @@ export const SmsSettings = () => {
                         </Trans>
                     </List.Item>
                     <List.Item>{t`Copy your API key from the httpSMS settings page and paste it below, with the phone number of the SIM used to send.`}</List.Item>
-                    <List.Item>{t`In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events.`}</List.Item>
+                    <List.Item>{t`In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events.`}</List.Item>
                 </List>
             </Alert>
 
@@ -168,6 +192,14 @@ export const SmsSettings = () => {
 
             {settings && (
                 <>
+                    <Switch
+                        label={t`Email me when a new SMS arrives`}
+                        description={t`Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline.`}
+                        checked={settings.notify_on_inbound_sms}
+                        onChange={(event) => toggleInboundAlerts(event.currentTarget.checked)}
+                        disabled={updateMutation.isPending}
+                        mb="lg"
+                    />
                     <TextInput
                         label={t`Webhook URL`}
                         value={settings.webhook_url}

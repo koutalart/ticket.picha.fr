@@ -36,6 +36,7 @@ class UpdateOrganizerSmsSettingsAction extends BaseAction
                 organizerId: $organizerId,
                 apiKey: array_key_exists('api_key', $validated) ? $validated['api_key'] : Optional::create(),
                 fromNumber: array_key_exists('from_number', $validated) ? $validated['from_number'] : Optional::create(),
+                notifyOnInboundSms: array_key_exists('notify_on_inbound_sms', $validated) ? (bool) $validated['notify_on_inbound_sms'] : Optional::create(),
             ));
         } catch (InvalidSmsPhoneNumberException $exception) {
             throw ValidationException::withMessages(['from_number' => $exception->getMessage()]);

@@ -153,6 +153,10 @@ msgstr ""
 msgid "{0} services{1}"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/CampaignList.tsx:89
+msgid "{0} SMS still waiting for a delivery report."
+msgstr "{0} 条短信仍在等待送达回执。"
+
 #: src/components/routes/event/attendees.tsx:110
 msgid "{0} still to come"
 msgstr ""
@@ -481,7 +485,7 @@ msgstr ""
 msgid "A fixed amount per product. E.g, $0.50 per product"
 msgstr "每个产品的固定金额。例如，每个产品$0.50"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:137
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:161
 msgid "A key is saved. Paste a new one to replace it."
 msgstr "已保存密钥。粘贴新密钥即可替换。"
 
@@ -1064,6 +1068,7 @@ msgid "All"
 msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:45
 msgid "All"
 msgstr "全部"
@@ -1978,6 +1983,10 @@ msgstr ""
 msgid "Bookmark this page to manage your order anytime."
 msgstr "收藏此页面，随时管理您的订单。"
 
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:59
+msgid "Bought"
+msgstr "已购买"
+
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:252
 msgid "Box office"
@@ -2135,6 +2144,7 @@ msgstr ""
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
+#: src/components/routes/organizer/Sms/index.tsx:97
 msgid "Campaigns"
 msgstr ""
 
@@ -2597,6 +2607,11 @@ msgstr ""
 msgid "Click to view notes"
 msgstr "点击查看备注"
 
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:58
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:83
+msgid "Clicked"
+msgstr "已点击"
+
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:72
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:151
 msgid "Clicks on the page"
@@ -2891,7 +2906,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:96
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
 msgid "Configured"
 msgstr "已配置"
 
@@ -2972,7 +2987,9 @@ msgstr "连接并升级"
 msgid "Connect Documentation"
 msgstr "连接文档"
 
-#: src/components/routes/organizer/Sms/index.tsx:70
+#: src/components/routes/organizer/Sms/index.tsx:86
+
+#: src/components/routes/organizer/Sms/index.tsx:71
 msgid "Connect httpSMS in Settings"
 msgstr "在设置中连接 httpSMS"
 
@@ -3033,15 +3050,15 @@ msgstr "连接您的 Stripe 账户以开始接受付款。"
 msgid "Connected at"
 msgstr "登录时间"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:93
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:103
 msgid "Connected to httpSMS, but no phone is registered. Install the httpSMS app on your Android phone."
 msgstr "已连接 httpSMS，但尚未注册手机。请在 Android 手机上安装 httpSMS 应用。"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:91
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:101
 msgid "Connected to httpSMS, but your sending number is not one of your phones: {phones}"
 msgstr "已连接 httpSMS，但发送号码不在您的手机列表中：{phones}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:99
 msgid "Connected to httpSMS. Your sending number is registered."
 msgstr "已连接 httpSMS。发送号码已注册。"
 
@@ -3159,6 +3176,10 @@ msgstr "继续付款"
 msgid "Control how platform fees are handled for this event"
 msgstr "控制此活动的平台费用如何处理"
 
+#: src/components/routes/organizer/Sms/index.tsx:96
+msgid "Conversations"
+msgstr "对话"
+
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:75
 msgid "Conversion"
 msgstr ""
@@ -3273,7 +3294,7 @@ msgstr "复制到剪贴板"
 msgid "Copy URL"
 msgstr "复制 URL"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:127
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:151
 msgid "Copy your API key from the httpSMS settings page and paste it below, with the phone number of the SIM used to send."
 msgstr "从 httpSMS 设置页面复制 API 密钥并粘贴到下方，同时填写用于发送的 SIM 卡号码。"
 
@@ -3988,7 +4009,9 @@ msgstr "删除此问题？此操作无法撤销。"
 msgid "Delete webhook"
 msgstr "删除 Webhook"
 
+#: src/components/routes/organizer/Sms/CampaignList.tsx:43
 #: src/components/routes/organizer/Sms/labels.ts:22
+#: src/components/routes/organizer/Sms/labels.ts:50
 msgid "Delivered"
 msgstr "已送达"
 
@@ -4557,6 +4580,14 @@ msgstr "邮箱地址已复制到剪贴板"
 msgid "Email addresses do not match"
 msgstr "电子邮件地址不匹配"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+msgid "Email alerts disabled"
+msgstr "已关闭邮件提醒"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+msgid "Email alerts enabled"
+msgstr "已开启邮件提醒"
+
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:110
 msgid "Email and names are hashed (SHA-256) before leaving our servers."
 msgstr ""
@@ -4592,6 +4623,10 @@ msgstr "电子邮件页脚信息"
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:32
 msgid "Email is required"
 msgstr "邮箱为必填项"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:196
+msgid "Email me when a new SMS arrives"
+msgstr "收到新短信时通过邮件通知我"
 
 #: src/components/routes/profile/ManageProfile/index.tsx:159
 msgid "Email not verified"
@@ -5276,7 +5311,9 @@ msgid "Facebook"
 msgstr "Facebook"
 
 #: src/components/routes/admin/Messages/index.tsx:127
+#: src/components/routes/organizer/Sms/CampaignList.tsx:47
 #: src/components/routes/organizer/Sms/labels.ts:24
+#: src/components/routes/organizer/Sms/labels.ts:52
 msgid "Failed"
 msgstr "失败"
 
@@ -5771,6 +5808,10 @@ msgstr "逐分钟跟踪到场情况，活动一结束即可获得可用的签到
 msgid "Font Family"
 msgstr "字体"
 
+#: src/components/routes/organizer/Sms/CampaignList.tsx:65
+msgid "For {0}"
+msgstr "用于 {0}"
+
 #: src/components/common/QuestionsTable/index.tsx:100
 #: src/components/common/QuestionsTable/index.tsx:436
 msgid "For each ticket"
@@ -5929,7 +5970,7 @@ msgstr "生成"
 msgid "Generate a new relay token"
 msgstr "生成新的中继令牌"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:193
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:225
 msgid "Generate a new signing key"
 msgstr "生成新的签名密钥"
 
@@ -6290,7 +6331,7 @@ msgstr "客户有多少分钟来完成订单。我们建议至少 15 分钟"
 #~ msgid "How many times can this code be used?"
 #~ msgstr "这个代码可以使用多少次？"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
 msgid "How to connect"
 msgstr "如何连接"
 
@@ -6319,7 +6360,7 @@ msgstr "https://example-maps-service.com/..."
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://webhook-domain.com/webhook"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:136
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:160
 msgid "httpSMS API key"
 msgstr "httpSMS API 密钥"
 
@@ -6453,8 +6494,12 @@ msgid "In {diffMinutes} minutes"
 msgstr "{diffMinutes}分钟后"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:128
-msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events."
-msgstr "在 httpSMS 中，使用下方的 URL 和签名密钥创建 webhook，并勾选 message.phone.received、message.phone.sent、message.phone.delivered、message.send.failed 和 message.send.expired 事件。"
+#~ msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events."
+#~ msgstr "在 httpSMS 中，使用下方的 URL 和签名密钥创建 webhook，并勾选 message.phone.received、message.phone.sent、message.phone.delivered、message.send.failed 和 message.send.expired 事件。"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:152
+msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events."
+msgstr "在 httpSMS 中，使用下面的 URL 和签名密钥创建一个 webhook，并勾选 message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline 和 phone.heartbeat.online 事件。"
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:122
 msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
@@ -6547,7 +6592,7 @@ msgstr "Instagram"
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:147
 msgid "Install the httpSMS app on your Android phone and sign in on <0>httpsms.com</0>."
 msgstr "在 Android 手机上安装 httpSMS 应用，并登录 <0>httpsms.com</0>。"
 
@@ -6964,7 +7009,7 @@ msgstr "上一笔销售：<0>{0} 张门票</0>"
 msgid "Last sale: <0>{0}</0>"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:114
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:130
 msgid "Last SMS event received {0}"
 msgstr "最近一次收到短信事件：{0}"
 
@@ -7770,12 +7815,17 @@ msgstr "已生成新的签名密钥"
 msgid "New Signups"
 msgstr "新注册"
 
+#: src/components/routes/organizer/Sms/index.tsx:80
+msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the httpSMS app is running."
+msgstr "新短信不会出现在这里，您的回复也不会发出。请检查手机是否开机、已联网，并且 httpSMS 应用正在运行。"
+
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:88
 msgid "Next steps"
 msgstr ""
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:340
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:367
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:105
 msgid "No"
 msgstr "否"
 
@@ -7912,6 +7962,10 @@ msgstr "没有可显示的已结束活动。"
 #: src/components/routes/kiosk/NoEvent/index.tsx:24
 msgid "No event assigned"
 msgstr "未分配活动"
+
+#: src/components/routes/organizer/Sms/CampaignList.tsx:66
+msgid "No event attached"
+msgstr "未关联活动"
 
 #: src/components/routes/organizer/Events/index.tsx:96
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:183
@@ -8115,6 +8169,10 @@ msgstr ""
 msgid "No recent account signups"
 msgstr "没有最近的账户注册"
 
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:73
+msgid "No recipient matches this filter."
+msgstr "没有符合此筛选条件的收件人。"
+
 #: src/components/modals/MessageRecipientsModal/index.tsx:54
 msgid "No recipients found"
 msgstr "未找到收件人"
@@ -8160,6 +8218,10 @@ msgstr "没有搜索结果"
 #: src/components/common/NoResultsSplash/index.tsx:29
 msgid "No search results."
 msgstr "没有搜索结果。"
+
+#: src/components/routes/organizer/Sms/CampaignList.tsx:31
+msgid "No SMS campaign yet. The statistics of your SMS campaigns (delivery, clicks and ticket sales) will appear here."
+msgstr "暂无短信活动。您的短信活动统计（送达、点击和门票销售）将显示在这里。"
 
 #: src/components/common/TaxAndFeeList/index.tsx:105
 msgid "No Taxes or Fees have been added."
@@ -8241,13 +8303,17 @@ msgstr "未签到"
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:97
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:111
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:121
 msgid "Not configured"
 msgstr "未配置"
 
 #: src/components/routes/landing/DemoRequestForm/index.tsx:82
 msgid "Not decided yet"
 msgstr "尚未确定"
+
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:60
+msgid "Not delivered"
+msgstr "未送达"
 
 #: src/components/common/CheckInStatusModal/index.tsx:118
 msgid "Not Eligible"
@@ -8267,6 +8333,7 @@ msgid "Not needed for now: your tickets are free or paid offline."
 msgstr ""
 
 #: src/components/routes/organizer/Sms/labels.ts:26
+#: src/components/routes/organizer/Sms/labels.ts:54
 msgid "Not sent (phone offline)"
 msgstr "未发送（手机离线）"
 
@@ -8907,6 +8974,8 @@ msgstr "订单已被取消"
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
 #: src/components/routes/organizer/Reports/TaxSummaryReport/index.tsx:55
+#: src/components/routes/organizer/Sms/CampaignList.tsx:54
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:84
 msgid "Orders"
 msgstr "订单"
 
@@ -9273,7 +9342,7 @@ msgstr "过去的活动"
 msgid "Past events."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:180
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:212
 msgid "Paste it into the signing key field of your httpSMS webhook. Keep it private."
 msgstr "将其粘贴到 httpSMS webhook 的签名密钥字段中。请妥善保密。"
 
@@ -9428,6 +9497,10 @@ msgstr "付款将继续无中断流转"
 msgid "Pending Review"
 msgstr "待审核"
 
+#: src/components/routes/organizer/Sms/CampaignList.tsx:49
+msgid "People who clicked"
+msgstr "点击人数"
+
 #: src/components/common/QuestionsTable/index.tsx:338
 msgid "Per Attendee"
 msgstr "每位参与者"
@@ -9519,6 +9592,14 @@ msgstr "电话号码"
 #: src/components/forms/QuestionForm/index.tsx:138
 msgid "Phone Number"
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:126
+msgid "Phone offline"
+msgstr "手机离线"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
+msgid "Phone online"
+msgstr "手机在线"
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:287
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:293
@@ -10396,6 +10477,7 @@ msgid "recipient"
 msgstr "位收件人"
 
 #: src/components/modals/SendMessageModal/index.tsx:61
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:81
 msgid "Recipient"
 msgstr "受援国"
 
@@ -10407,6 +10489,7 @@ msgstr "位收件人"
 #: src/components/modals/SendMessageModal/index.tsx:298
 #: src/components/routes/admin/Messages/index.tsx:166
 #: src/components/routes/admin/Messages/index.tsx:299
+#: src/components/routes/organizer/Sms/CampaignList.tsx:41
 msgid "Recipients"
 msgstr "收件人"
 
@@ -10651,7 +10734,7 @@ msgstr ""
 msgid "Remove the httpSMS API key? You will no longer be able to send SMS from PICHA."
 msgstr "删除 httpSMS API 密钥？您将无法再从 PICHA 发送短信。"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:162
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:186
 msgid "Remove the key"
 msgstr "删除密钥"
 
@@ -10699,7 +10782,9 @@ msgstr ""
 msgid "Replaces the page title on the visual."
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:62
+#: src/components/routes/organizer/Sms/index.tsx:78
+
+#: src/components/routes/organizer/Sms/index.tsx:63
 msgid "Replies from your customers to your SMS, sent from your httpSMS phone. A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "客户对您短信的回复，短信由您的 httpSMS 手机发送。回复 STOP 的客户将自动退订您的短信。"
 
@@ -10898,6 +10983,7 @@ msgstr "返回活动页面"
 #: src/components/routes/organizer/QrCodes/index.tsx:272
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:86
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:74
+#: src/components/routes/organizer/Sms/CampaignList.tsx:55
 msgid "Revenue"
 msgstr "收入"
 
@@ -11073,7 +11159,7 @@ msgstr "旧金山"
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:150
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:174
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:88
@@ -11180,12 +11266,17 @@ msgstr ""
 
 #: src/components/routes/admin/Messages/index.tsx:125
 #: src/components/routes/event/messages.tsx:62
+#: src/components/routes/organizer/Sms/labels.ts:46
 msgid "Scheduled"
 msgstr "已安排"
 
 #: src/components/modals/SendMessageModal/index.tsx:411
 msgid "Scheduled time"
 msgstr "定时时间"
+
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:65
+msgid "Search a name or a number…"
+msgstr "搜索姓名或号码…"
 
 #: src/components/routes/event/attendees.tsx:137
 #: src/components/routes/event/orders.tsx:168
@@ -11352,6 +11443,10 @@ msgstr ""
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:91
 msgid "See the events"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/CampaignList.tsx:72
+msgid "See the recipients"
+msgstr "查看收件人"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:125
 msgid "Select"
@@ -11541,7 +11636,7 @@ msgstr "发送"
 msgid "Send a message"
 msgstr "发送信息"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:104
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:114
 msgid "Send and receive SMS with your customers from your own Android phone, using the httpSMS app. Replies appear in SMS messages."
 msgstr "使用 httpSMS 应用，通过您自己的 Android 手机与客户收发短信。回复会显示在短信消息中。"
 
@@ -11610,7 +11705,7 @@ msgstr ""
 msgid "Sending"
 msgstr "发送中"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:168
 msgid "Sending number"
 msgstr "发送号码"
 
@@ -11628,6 +11723,7 @@ msgstr "已发送"
 
 #: src/components/routes/admin/Messages/index.tsx:123
 #: src/components/routes/organizer/Sms/labels.ts:20
+#: src/components/routes/organizer/Sms/labels.ts:48
 msgid "Sent"
 msgstr "已发送"
 
@@ -11647,6 +11743,10 @@ msgstr "客户下单时发送"
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:206
 msgid "Sent to each attendee with their ticket details"
 msgstr "发送给每位参会者及其门票详情"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:197
+msgid "Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline."
+msgstr "发送到主办方的邮箱。每个会话每 15 分钟最多一封邮件。手机离线时您总会收到邮件通知。"
 
 #: src/components/routes/organizer/Settings/index.tsx:63
 msgid "SEO"
@@ -11958,19 +12058,26 @@ msgid "Smith"
 msgstr "史密斯"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:67
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:82
 msgid "SMS"
 msgstr "短信"
 
 #: src/components/routes/organizer/Settings/index.tsx:87
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:103
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:113
 msgid "SMS (httpSMS)"
 msgstr "短信 (httpSMS)"
 
-#: src/components/routes/organizer/Sms/index.tsx:68
+#: src/components/routes/organizer/Sms/index.tsx:84
 msgid "SMS is not connected yet."
 msgstr "短信尚未连接。"
 
-#: src/components/routes/organizer/Sms/index.tsx:60
+#: src/components/routes/organizer/Sms/index.tsx:76
+
+#: src/components/routes/organizer/Sms/index.tsx:69
+msgid "SMS is not connected yet."
+msgstr "短信尚未连接。"
+
+#: src/components/routes/organizer/Sms/index.tsx:61
 msgid "SMS messages"
 msgstr "短信消息"
 
@@ -12246,7 +12353,7 @@ msgstr "仍在处理您旧交易的退款。"
 msgid "Stop Impersonating"
 msgstr "停止模拟"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:138
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:162
 msgid "Stored encrypted. It is never displayed again."
 msgstr "加密存储，之后不会再显示。"
 
@@ -12699,7 +12806,7 @@ msgid "Test event code (optional)"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:146
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:158
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:182
 msgid "Test the connection"
 msgstr "测试连接"
 
@@ -12846,7 +12953,7 @@ msgstr "客户的语言"
 msgid "The maximum number of products for {0}is {1}"
 msgstr "{0}的最大产品数量是{1}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:145
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:169
 msgid "The number of the SIM card in the httpSMS phone, for example +262639123456."
 msgstr "httpSMS 手机中 SIM 卡的号码，例如 +262639123456。"
 
@@ -12870,6 +12977,10 @@ msgstr "您要查找的页面不存在"
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:65
 msgid "The people behind the events."
 msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:79
+msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the httpSMS app is running."
+msgstr "手机已于{0}离线。新短信不会出现在这里，您的回复也不会发出。请检查手机是否开机、已联网，并且 httpSMS 应用正在运行。"
 
 #: src/components/common/PlatformFeesSettings/index.tsx:212
 msgid "The platform fee is added to the ticket price. Buyers pay more, but you receive the full ticket price."
@@ -13784,7 +13895,7 @@ msgstr ""
 msgid "Unable to join waitlist"
 msgstr "无法加入候补名单"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:96
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:106
 msgid "Unable to reach httpSMS. Please try again."
 msgstr "无法连接 httpSMS，请重试。"
 
@@ -13799,6 +13910,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:70
 msgid "Unable to remove the API key"
 msgstr "无法删除 API 密钥"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:90
+msgid "Unable to update email alerts"
+msgstr "无法更新邮件提醒"
 
 #: src/components/modals/EditQuestionModal/index.tsx:84
 msgid "Unable to update question. Please check the your details"
@@ -14453,6 +14568,10 @@ msgstr "访客选择单张门票，而不是数量。适用于免费报名，例
 msgid "Visitors first pick a path (one big button per ticket category) before seeing its tickets."
 msgstr "访客先选择一个路径（每个票务类别一个大按钮），然后再查看其门票。"
 
+#: src/components/routes/organizer/Sms/CampaignList.tsx:53
+msgid "Visits"
+msgstr "访问量"
+
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:56
 msgid "visual"
 msgstr ""
@@ -14470,6 +14589,7 @@ msgstr "VK"
 #: src/components/common/WaitlistTable/index.tsx:24
 #: src/components/modals/OfferWaitlistModal/index.tsx:162
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:71
+#: src/components/routes/organizer/Sms/labels.ts:56
 msgid "Waiting"
 msgstr "等待中"
 
@@ -14628,7 +14748,7 @@ msgstr "Webhook 删除成功"
 msgid "Webhook Logs"
 msgstr "Webhook 日志"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:179
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:211
 msgid "Webhook signing key"
 msgstr "Webhook 签名密钥"
 
@@ -14638,7 +14758,7 @@ msgid "Webhook Signing Secret"
 msgstr "Webhook 签名密钥"
 
 #: src/components/forms/WebhookForm/index.tsx:138
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:172
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:204
 msgid "Webhook URL"
 msgstr "Webhook URL"
 
@@ -15004,6 +15124,7 @@ msgstr "年度至今"
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:340
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:367
+#: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:104
 msgid "Yes"
 msgstr "是"
 
@@ -15305,6 +15426,18 @@ msgstr ""
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:147
 msgid "Your events"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:77
+msgid "Your httpSMS phone is offline"
+msgstr "您的 httpSMS 手机已离线"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:139
+msgid "Your httpSMS phone is offline. Check that it is switched on, connected to the internet and that the httpSMS app is running."
+msgstr "您的 httpSMS 手机已离线。请检查它是否开机、已联网，并且 httpSMS 应用正在运行。"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:138
+msgid "Your httpSMS phone went offline {0}. Check that it is switched on, connected to the internet and that the httpSMS app is running."
+msgstr "您的 httpSMS 手机已于{0}离线。请检查它是否开机、已联网，并且 httpSMS 应用正在运行。"
 
 #: src/components/layouts/AuthLayout/index.tsx:46
 msgid "Your logo, colors, and style on every page"
