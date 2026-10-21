@@ -56,6 +56,7 @@ return [
         'stripe_connect_refresh_url' => '/account/payment',
         'event_homepage' => '/event/%d/%s',
         'attendee_product' => '/product/%d/%s',
+        'attendee_attendance' => '/venue/%d/%s',
         'order_summary' => '/checkout/%d/%s/summary',
         'order_details' => '/checkout/%d/%s/details',
         'organizer_order_summary' => '/manage/event/%d/orders#order-%d',

@@ -147,6 +147,9 @@ class PartialUpdateEventSettingsHandler
                 // Waitlist settings
                 'waitlist_auto_process' => $eventSettingsDTO->settings['waitlist_auto_process'] ?? $existingSettings->getWaitlistAutoProcess(),
                 'waitlist_offer_timeout_minutes' => $eventSettingsDTO->settings['waitlist_offer_timeout_minutes'] ?? $existingSettings->getWaitlistOfferTimeoutMinutes(),
+
+                // Attendance response settings
+                'allow_attendee_attendance_response' => $eventSettingsDTO->settings['allow_attendee_attendance_response'] ?? $existingSettings->getAllowAttendeeAttendanceResponse(),
             ]),
         );
     }

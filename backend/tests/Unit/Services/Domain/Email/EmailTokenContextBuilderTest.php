@@ -89,6 +89,7 @@ class EmailTokenContextBuilderTest extends TestCase
         // Test attendee context
         $this->assertEquals('Jane Smith', $context['attendee']['name']);
         $this->assertEquals('jane@example.com', $context['attendee']['email']);
+        $this->assertSame('', $context['attendee']['attendance_url']);
 
         // Test ticket context
         $this->assertEquals('General Admission', $context['ticket']['name']);
@@ -202,13 +203,27 @@ class EmailTokenContextBuilderTest extends TestCase
         ]);
     }
 
-    private function createMockEventSettings(): EventSettingDomainObject
+    public function test_attendee_ticket_context_includes_attendance_url_when_enabled(): void
+    {
+        $context = $this->contextBuilder->buildAttendeeTicketContext(
+            $this->createMockAttendee(),
+            $this->createMockOrder(),
+            $this->createMockEvent(),
+            $this->createMockOrganizer(),
+            $this->createMockEventSettings(allowAttendanceResponse: true),
+        );
+
+        $this->assertStringContainsString('/venue/9/ATT123?code=', $context['attendee']['attendance_url']);
+    }
+
+    private function createMockEventSettings(bool $allowAttendanceResponse = false): EventSettingDomainObject
     {
         return Mockery::mock(EventSettingDomainObject::class, [
             'getSupportEmail' => 'support@event.com',
             'getOfflinePaymentInstructions' => 'Pay by bank transfer',
             'getPostCheckoutMessage' => 'Thank you for your purchase!',
             'getLocationDetails' => null,
+            'getAllowAttendeeAttendanceResponse' => $allowAttendanceResponse,
         ]);
     }
 
@@ -220,6 +235,8 @@ class EmailTokenContextBuilderTest extends TestCase
             'getEmail' => 'jane@example.com',
             'getProductPriceId' => 123,
             'getShortId' => 'ATT123',
+            'getId' => 77,
+            'getEventId' => 9,
         ]);
     }
 

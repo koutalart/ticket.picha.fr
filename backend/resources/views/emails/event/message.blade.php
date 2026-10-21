@@ -5,7 +5,7 @@
 @php /** @see \HiEvents\Mail\Event\EventMessage */ @endphp
 
 <x-mail::message>
-{!! $messageData->message !!}
+{!! $messageHtml ?? $messageData->message !!}
 
 {!! $eventSettings->getGetEmailFooterHtml() !!}
 

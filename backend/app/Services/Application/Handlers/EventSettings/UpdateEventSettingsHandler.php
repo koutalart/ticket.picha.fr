@@ -107,6 +107,9 @@ class UpdateEventSettingsHandler
                     // Waitlist settings
                     'waitlist_auto_process' => $settings->waitlist_auto_process,
                     'waitlist_offer_timeout_minutes' => $settings->waitlist_offer_timeout_minutes,
+
+                    // Attendance response settings
+                    'allow_attendee_attendance_response' => $settings->allow_attendee_attendance_response,
                 ],
                 where: [
                     'event_id' => $settings->event_id,

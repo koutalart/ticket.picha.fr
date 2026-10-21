@@ -29,6 +29,8 @@ abstract class AttendeeDomainObjectAbstract extends \HiEvents\DomainObjects\Abst
     final public const DELETED_AT = 'deleted_at';
     final public const LOCALE = 'locale';
     final public const NOTES = 'notes';
+    final public const ATTENDANCE_CONFIRMED_AT = 'attendance_confirmed_at';
+    final public const CANCELLED_BY_ATTENDEE_AT = 'cancelled_by_attendee_at';
 
     protected int $id;
     protected int $order_id;
@@ -49,6 +51,8 @@ abstract class AttendeeDomainObjectAbstract extends \HiEvents\DomainObjects\Abst
     protected ?string $deleted_at = null;
     protected string $locale = 'en';
     protected ?string $notes = null;
+    protected ?string $attendance_confirmed_at = null;
+    protected ?string $cancelled_by_attendee_at = null;
 
     public function toArray(): array
     {
@@ -72,6 +76,8 @@ abstract class AttendeeDomainObjectAbstract extends \HiEvents\DomainObjects\Abst
                     'deleted_at' => $this->deleted_at ?? null,
                     'locale' => $this->locale ?? null,
                     'notes' => $this->notes ?? null,
+                    'attendance_confirmed_at' => $this->attendance_confirmed_at ?? null,
+                    'cancelled_by_attendee_at' => $this->cancelled_by_attendee_at ?? null,
                 ];
     }
 
@@ -282,5 +288,27 @@ abstract class AttendeeDomainObjectAbstract extends \HiEvents\DomainObjects\Abst
     public function getNotes(): ?string
     {
         return $this->notes;
+    }
+
+    public function setAttendanceConfirmedAt(?string $attendance_confirmed_at): self
+    {
+        $this->attendance_confirmed_at = $attendance_confirmed_at;
+        return $this;
+    }
+
+    public function getAttendanceConfirmedAt(): ?string
+    {
+        return $this->attendance_confirmed_at;
+    }
+
+    public function setCancelledByAttendeeAt(?string $cancelled_by_attendee_at): self
+    {
+        $this->cancelled_by_attendee_at = $cancelled_by_attendee_at;
+        return $this;
+    }
+
+    public function getCancelledByAttendeeAt(): ?string
+    {
+        return $this->cancelled_by_attendee_at;
     }
 }
