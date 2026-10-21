@@ -41,7 +41,7 @@ import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isDateInPast} from "../../../utilites/dates.ts";
 import {RichDescription} from "../../common/RichDescription";
-import {ssrLoaderCss} from "../../../utilites/ssrLoader.ts";
+import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {useDeferredCoverVideo} from "../../../hooks/useDeferredCoverVideo.ts";
 
 interface EventHomepageProps {
@@ -204,15 +204,13 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                 style={themeStyles}
                 data-mode={themeSettings.mode}
             >
-                <style>
-                    {ssrLoaderCss({
-                        background: themeSettings.background,
-                        accent: themeSettings.accent,
-                        mode: themeSettings.mode,
-                        backgroundType,
-                        logoUrl: organizerLogo,
-                    })}
-                </style>
+                <SsrLoaderStyle
+                    background={themeSettings.background}
+                    accent={themeSettings.accent}
+                    mode={themeSettings.mode}
+                    backgroundType={backgroundType}
+                    logoUrl={organizerLogo}
+                />
 
                 {event && <EventDocumentHead event={event}/>}
 
