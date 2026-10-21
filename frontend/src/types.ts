@@ -374,6 +374,21 @@ export interface EventDailyStats {
     orders_created: number;
 }
 
+export interface QuestionAnswerDistributionOption {
+    label: string;
+    count: number;
+    percentage: number;
+}
+
+export interface QuestionAnswerDistribution {
+    question_id: number;
+    title: string;
+    type: string;
+    belongs_to: 'ORDER' | 'PRODUCT';
+    total_responses: number;
+    options: QuestionAnswerDistributionOption[];
+}
+
 export interface CheckInStats {
     total_checked_in_attendees: number;
     total_attendees: number;

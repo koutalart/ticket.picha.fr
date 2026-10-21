@@ -1,8 +1,8 @@
 import {useState} from "react";
 import {useParams} from "react-router";
-import {Button, Skeleton} from "@mantine/core";
+import {Button, Menu, Skeleton} from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
-import {IconDownload, IconPlus} from "@tabler/icons-react";
+import {IconChevronDown, IconDownload, IconListCheck, IconPlus, IconUsers} from "@tabler/icons-react";
 import {t, Trans} from "@lingui/macro";
 import {useGetAttendees} from "../../../queries/useGetAttendees.ts";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
@@ -66,6 +66,16 @@ const Attendees = () => {
         error: {title: t`Failed to export attendees`, message: t`Please try again.`, onRun: () => setExporting(false)},
     });
 
+    const exportEntryControlList = (id: IdParam) => withLoadingNotification(async () => {
+        setExporting(true);
+        const blob = await attendeesClient.exportEntryControlList(id);
+        downloadBinary(blob, 'liste-controle-entrees.xlsx');
+    }, {
+        loading: {title: t`Exporting the entry control list`, message: t`Please wait while we prepare the file...`},
+        success: {title: t`Entry control list exported`, message: t`The file has been downloaded.`, onRun: () => setExporting(false)},
+        error: {title: t`Failed to export the entry control list`, message: t`Please try again.`, onRun: () => setExporting(false)},
+    });
+
     const entered = stats?.check_in_stats?.total_checked_in_attendees ?? 0;
     const valid = activeCount ?? stats?.check_in_stats?.total_attendees ?? 0;
     const percent = valid > 0 ? Math.round(entered / valid * 100) : 0;
@@ -87,10 +97,22 @@ const Attendees = () => {
                     <p className={classes.subtitle}><Trans>Everyone who has a ticket for this event.</Trans></p>
                 </div>
                 <div className={classes.headerActions}>
-                    <Button variant="default" radius="md" leftSection={<IconDownload size={16}/>} loading={exporting}
-                            onClick={() => exportAttendees(eventId as IdParam)}>
-                        <Trans>Export</Trans>
-                    </Button>
+                    <Menu position="bottom-end" radius="md" shadow="md" width={260}>
+                        <Menu.Target>
+                            <Button variant="default" radius="md" leftSection={<IconDownload size={16}/>}
+                                    rightSection={<IconChevronDown size={14}/>} loading={exporting}>
+                                <Trans>Export</Trans>
+                            </Button>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                            <Menu.Item leftSection={<IconUsers size={16}/>} onClick={() => exportAttendees(eventId as IdParam)}>
+                                <Trans>Attendee list</Trans>
+                            </Menu.Item>
+                            <Menu.Item leftSection={<IconListCheck size={16}/>} onClick={() => exportEntryControlList(eventId as IdParam)}>
+                                <Trans>Entry control list</Trans>
+                            </Menu.Item>
+                        </Menu.Dropdown>
+                    </Menu>
                     <Button radius="md" leftSection={<IconPlus size={16}/>} onClick={create.open}>
                         <Trans>Add an attendee</Trans>
                     </Button>

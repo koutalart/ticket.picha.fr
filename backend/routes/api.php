@@ -39,6 +39,7 @@ use HiEvents\Http\Actions\Attendees\CheckInAttendeeAction;
 use HiEvents\Http\Actions\Attendees\CreateAttendeeAction;
 use HiEvents\Http\Actions\Attendees\EditAttendeeAction;
 use HiEvents\Http\Actions\Attendees\ExportAttendeesAction;
+use HiEvents\Http\Actions\Attendees\ExportAttendeeEntryControlListAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeActionPublic;
 use HiEvents\Http\Actions\Organizers\Settings\TestMetaConversionsApiAction;
@@ -220,6 +221,7 @@ use HiEvents\Http\Actions\Questions\EditQuestionAnswerAction;
 use HiEvents\Http\Actions\Questions\ExportQuestionAnswersAction;
 use HiEvents\Http\Actions\Questions\GetQuestionAction;
 use HiEvents\Http\Actions\Questions\GetQuestionsAction;
+use HiEvents\Http\Actions\Questions\GetQuestionAnswerDistributionAction;
 use HiEvents\Http\Actions\Questions\GetQuestionsPublicAction;
 use HiEvents\Http\Actions\Questions\SortQuestionsAction;
 use HiEvents\Http\Actions\Reports\ExportOrganizerReportAction;
@@ -470,6 +472,7 @@ $router->middleware(['auth:api'])->group(
 
         // Stats
         $router->get('/events/{event_id}/stats', GetEventStatsAction::class);
+        $router->get('/events/{event_id}/stats/question-answers', GetQuestionAnswerDistributionAction::class);
 
         // Email Templates - Event level
         $router->get('/events/{eventId}/email-templates', GetEventEmailTemplatesAction::class);
@@ -485,6 +488,7 @@ $router->middleware(['auth:api'])->group(
         $router->put('/events/{event_id}/attendees/{attendee_id}', EditAttendeeAction::class);
         $router->patch('/events/{event_id}/attendees/{attendee_id}', PartialEditAttendeeAction::class);
         $router->post('/events/{event_id}/attendees/export', ExportAttendeesAction::class);
+        $router->post('/events/{event_id}/attendees/export-entry-control', ExportAttendeeEntryControlListAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/resend-ticket', ResendAttendeeTicketAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/check_in', CheckInAttendeeAction::class);
 
