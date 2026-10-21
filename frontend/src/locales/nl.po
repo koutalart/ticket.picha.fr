@@ -33,7 +33,7 @@ msgstr "—"
 msgid "'There\\'s nothing to show yet'"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:190
 msgid "(emoji or special characters: 70 characters per SMS)"
 msgstr "(emoji of speciale tekens: 70 tekens per sms)"
 
@@ -90,7 +90,8 @@ msgstr "{0} deelnemers"
 msgid "{0} available"
 msgstr "{0} beschikbaar"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:164
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:118
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:189
 msgid "{0} characters, {1} SMS"
 msgstr "{0} tekens, {1} sms"
 
@@ -482,7 +483,7 @@ msgstr ""
 msgid "A fixed amount per product. E.g, $0.50 per product"
 msgstr "Een vast bedrag per product. Bijv. $0,50 per product"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:137
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:160
 msgid "A key is saved. Paste a new one to replace it."
 msgstr "Er is een sleutel opgeslagen. Plak een nieuwe om deze te vervangen."
 
@@ -778,6 +779,10 @@ msgstr ""
 msgid "Add a photo"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:96
+msgid "Add a reply template"
+msgstr "Standaardantwoord toevoegen"
+
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:276
 msgid "Add a service"
 msgstr ""
@@ -877,6 +882,10 @@ msgstr "Vraag toevoegen"
 msgid "Add Tax or Fee"
 msgstr "Belasting of toeslag toevoegen"
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:71
+msgid "Add the number"
+msgstr "Nummer toevoegen"
+
 #: src/components/common/AddToCalendarCTA/index.tsx:20
 msgid "Add this event to your calendar"
 msgstr "Voeg dit evenement toe aan je agenda"
@@ -918,7 +927,7 @@ msgstr ""
 msgid "Add Webhook"
 msgstr "Webhook toevoegen"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:137
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:161
 msgid "Add your httpSMS API key and sending number in Settings to reply from here."
 msgstr "Voeg je httpSMS-API-sleutel en verzendnummer toe in Instellingen om hier te kunnen antwoorden."
 
@@ -929,6 +938,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:185
 msgid "Add your social media handles and website URL. These will be displayed on your public organizer page."
 msgstr "Voeg je sociale media en website-URL toe. Deze worden weergegeven op je openbare organisatorpagina."
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
+msgid "Added by hand"
+msgstr "Handmatig toegevoegd"
 
 #: src/components/routes/kiosk/Orders/index.tsx:211
 msgid "Added manually"
@@ -946,7 +959,7 @@ msgstr "Aanvullende informatie"
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:132
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
-#: src/components/routes/organizer/Settings/index.tsx:45
+#: src/components/routes/organizer/Settings/index.tsx:47
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
 msgstr "Adres"
@@ -1306,7 +1319,7 @@ msgstr "Antwoord succesvol bijgewerkt."
 msgid "Any queries from product holders will be sent to this email address. This will also be used as the \"reply-to\" address for all emails sent from this event"
 msgstr "Vragen van producthouders worden naar dit e-mailadres gestuurd. Dit e-mailadres wordt ook gebruikt als"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:69
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:85
 msgid "API key removed"
 msgstr "API-sleutel verwijderd"
 
@@ -1850,7 +1863,7 @@ msgstr "Awesome Organizer Ltd."
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:433
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:83
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:107
 msgid "Back"
 msgstr "Terug"
 
@@ -1910,7 +1923,7 @@ msgstr "Badge + toegang"
 msgid "Badge printing…"
 msgstr "Badge wordt geprint…"
 
-#: src/components/routes/organizer/Settings/index.tsx:33
+#: src/components/routes/organizer/Settings/index.tsx:35
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
 msgstr "Basisinformatie"
@@ -2892,7 +2905,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:96
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:133
 msgid "Configured"
 msgstr "Geconfigureerd"
 
@@ -3034,15 +3047,15 @@ msgstr "Verbind uw Stripe-account om betalingen te accepteren."
 msgid "Connected at"
 msgstr "Ingelogd om"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:93
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
 msgid "Connected to httpSMS, but no phone is registered. Install the httpSMS app on your Android phone."
 msgstr "Verbonden met httpSMS, maar er is geen telefoon geregistreerd. Installeer de httpSMS-app op je Android-telefoon."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:91
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:107
 msgid "Connected to httpSMS, but your sending number is not one of your phones: {phones}"
 msgstr "Verbonden met httpSMS, maar je verzendnummer hoort niet bij je telefoons: {phones}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:105
 msgid "Connected to httpSMS. Your sending number is registered."
 msgstr "Verbonden met httpSMS. Je verzendnummer is geregistreerd."
 
@@ -3274,7 +3287,7 @@ msgstr "Kopiëren naar klembord"
 msgid "Copy URL"
 msgstr "URL kopiëren"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:127
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:150
 msgid "Copy your API key from the httpSMS settings page and paste it below, with the phone number of the SIM used to send."
 msgstr "Kopieer je API-sleutel van de instellingenpagina van httpSMS en plak hem hieronder, met het nummer van de simkaart die verzendt."
 
@@ -3797,7 +3810,7 @@ msgstr "Gevarenzone"
 
 #: src/components/common/AttendeeTable/index.tsx:372
 #: src/components/common/DangerZone/index.tsx:30
-#: src/components/routes/organizer/Settings/index.tsx:99
+#: src/components/routes/organizer/Settings/index.tsx:113
 msgid "Danger Zone"
 msgstr "Gevarenzone"
 
@@ -3918,6 +3931,7 @@ msgstr "verwijderen"
 #: src/components/common/TaxAndFeeList/index.tsx:78
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
 msgstr "Verwijder"
 
@@ -3975,6 +3989,10 @@ msgstr ""
 #: src/components/routes/organizer/QrCodes/index.tsx:148
 msgid "Delete the campaign \"{0}\"? Its QR codes are kept and keep working, they just move to \"No campaign\"."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:56
+msgid "Delete the reply template \"{0}\"?"
+msgstr "Standaardantwoord \"{0}\" verwijderen?"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:139
 msgid "Delete this QR code? Printed copies will stop working and its statistics will be lost."
@@ -4349,6 +4367,7 @@ msgstr "Vroege vogel"
 #: src/components/routes/event/GettingStarted/index.tsx:76
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:65
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:114
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:84
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:236
 msgid "Edit"
 msgstr "Bewerk"
@@ -4442,6 +4461,10 @@ msgstr ""
 #: src/components/modals/EditQuestionModal/index.tsx:101
 msgid "Edit Question"
 msgstr "Bewerk Vraag"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:103
+msgid "Edit reply template"
+msgstr "Standaardantwoord bewerken"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:409
 msgid "Edit the price"
@@ -4603,7 +4626,7 @@ msgid "Email Preview"
 msgstr "E-mail Voorbeeld"
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:336
-#: src/components/routes/organizer/Settings/index.tsx:69
+#: src/components/routes/organizer/Settings/index.tsx:71
 msgid "Email Templates"
 msgstr "E-mail Sjablonen"
 
@@ -4952,7 +4975,7 @@ msgid "Event date display"
 msgstr "Weergave van de evenementdatum"
 
 #: src/components/routes/account/ManageAccount/sections/EventDefaultsSettings/index.tsx:5
-#: src/components/routes/organizer/Settings/index.tsx:39
+#: src/components/routes/organizer/Settings/index.tsx:41
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:73
 msgid "Event Defaults"
 msgstr "Evenement Standaarden"
@@ -5930,11 +5953,11 @@ msgstr "Genereer"
 msgid "Generate a new relay token"
 msgstr "Nieuw relaytoken genereren"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:193
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:216
 msgid "Generate a new signing key"
 msgstr "Nieuwe ondertekeningssleutel genereren"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:76
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:92
 msgid "Generate a new signing key? You will need to paste it into your httpSMS webhook, otherwise incoming SMS will be rejected."
 msgstr "Nieuwe ondertekeningssleutel genereren? Je moet hem in je httpSMS-webhook plakken, anders worden binnenkomende sms'jes geweigerd."
 
@@ -6081,6 +6104,10 @@ msgstr "Heb je een promotiecode?"
 #: src/components/routes/admin/Dashboard/index.tsx:74
 msgid "Hello {0}, manage your platform from here."
 msgstr "Hallo {0}, beheer je platform vanaf hier."
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:117
+msgid "Hello {SMS_FIRST_NAME_VARIABLE}, doors open at 7pm."
+msgstr "Hallo {SMS_FIRST_NAME_VARIABLE}, de deuren gaan om 19.00 uur open."
 
 #: src/components/forms/OrganizerForm/index.tsx:36
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:81
@@ -6291,7 +6318,7 @@ msgstr "Hoeveel minuten de klant heeft om zijn bestelling af te ronden. We raden
 #~ msgid "How many times can this code be used?"
 #~ msgstr "Hoe vaak kan deze code worden gebruikt?"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:143
 msgid "How to connect"
 msgstr "Zo koppel je"
 
@@ -6320,7 +6347,7 @@ msgstr "https://voorbeeld-maps-service.com/..."
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://webhook-domain.com/webhook"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:136
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:159
 msgid "httpSMS API key"
 msgstr "httpSMS-API-sleutel"
 
@@ -6425,6 +6452,14 @@ msgstr "Imitatie gestart"
 msgid "Impersonation stopped"
 msgstr "Imitatie gestopt"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:241
+msgid "Import in progress: {0} messages retrieved"
+msgstr "Import bezig: {0} berichten opgehaald"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:118
+msgid "Import started. Messages will appear in SMS messages within a few minutes."
+msgstr "Import gestart. De berichten verschijnen binnen enkele minuten in SMS-berichten."
+
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:114
 msgid "Important Notice"
 msgstr "Belangrijke mededeling"
@@ -6453,7 +6488,7 @@ msgstr "Over {diffHours} uur"
 msgid "In {diffMinutes} minutes"
 msgstr "Over {diffMinutes} minuten"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:128
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:151
 msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events."
 msgstr "Maak in httpSMS een webhook aan met de URL en ondertekeningssleutel hieronder, en vink de gebeurtenissen message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed en message.send.expired aan."
 
@@ -6548,7 +6583,7 @@ msgstr "Instagram"
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:146
 msgid "Install the httpSMS app on your Android phone and sign in on <0>httpsms.com</0>."
 msgstr "Installeer de httpSMS-app op je Android-telefoon en log in op <0>httpsms.com</0>."
 
@@ -6917,6 +6952,10 @@ msgstr "Laatste 7 dagen"
 msgid "Last 90 days"
 msgstr "Laatste 90 dagen"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:247
+msgid "Last import {0}: {1} new messages"
+msgstr "Laatste import {0}: {1} nieuwe berichten"
+
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:156
 msgid "Last login"
 msgstr "Laatste login"
@@ -6965,7 +7004,7 @@ msgstr "Laatste verkoop: <0>{0} tickets</0>"
 msgid "Last sale: <0>{0}</0>"
 msgstr "Laatste verkoop: <0>{0}</0>"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:114
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:137
 msgid "Last SMS event received {0}"
 msgstr "Laatste sms-gebeurtenis ontvangen {0}"
 
@@ -7284,6 +7323,10 @@ msgstr "Profiel beheren"
 msgid "Manage registrations, welcome, digital check-in and badge printing for your professional and institutional events with {appName}."
 msgstr "Beheer inschrijvingen, ontvangst, digitale aanwezigheidsregistratie en badgeprinten van uw professionele en institutionele evenementen met {appName}."
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:215
+msgid "Manage reply templates"
+msgstr "Standaardantwoorden beheren"
+
 #: src/components/routes/account/ManageAccount/sections/TaxSettings/index.tsx:17
 msgid "Manage taxes and fees which can be applied to your products"
 msgstr "Belastingen en toeslagen beheren die kunnen worden toegepast op je producten"
@@ -7448,7 +7491,7 @@ msgstr "Berichtenniveau"
 msgid "Messaging tier updated successfully"
 msgstr "Berichtenniveau succesvol bijgewerkt"
 
-#: src/components/routes/organizer/Settings/index.tsx:81
+#: src/components/routes/organizer/Settings/index.tsx:83
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:89
 msgid "Meta Conversions API"
 msgstr ""
@@ -7677,6 +7720,7 @@ msgstr "Nam placerat elementum..."
 #: src/components/routes/admin/Configurations/index.tsx:219
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:98
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:77
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:108
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:231
 msgid "Name"
 msgstr "Naam"
@@ -7763,7 +7807,11 @@ msgstr "Nieuw wachtwoord"
 msgid "New QR code"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:78
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:103
+msgid "New reply template"
+msgstr "Nieuw standaardantwoord"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:94
 msgid "New signing key generated"
 msgstr "Nieuwe ondertekeningssleutel gegenereerd"
 
@@ -7989,6 +8037,14 @@ msgstr "Geen tickets meer voor dit tarief."
 msgid "No name"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:89
+msgid "No number in the opt-out list."
+msgstr "Geen nummers op de afmeldlijst."
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:89
+msgid "No number matches your search."
+msgstr "Geen nummer komt overeen met je zoekopdracht."
+
 #: src/components/routes/organizer/Sms/CustomerCard.tsx:37
 msgid "No order found with this number. The number is matched with the phone answers of your order forms and box office sales."
 msgstr "Geen bestelling gevonden met dit nummer. Het nummer wordt vergeleken met de telefoonnummers uit je bestelformulieren en kassaverkopen."
@@ -8132,6 +8188,14 @@ msgstr ""
 msgid "No registrations yet."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:201
+msgid "No reply template yet"
+msgstr "Nog geen standaardantwoord"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:75
+msgid "No reply template yet."
+msgstr "Nog geen standaardantwoord."
+
 #: src/components/common/OrganizerWebhookTable/index.tsx:174
 #: src/components/common/WebhookTable/index.tsx:174
 msgid "No response"
@@ -8242,7 +8306,7 @@ msgstr "Niet Ingecheckt"
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:97
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:111
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:134
 msgid "Not configured"
 msgstr "Niet geconfigureerd"
 
@@ -8288,6 +8352,14 @@ msgstr "Instellingen meldingen"
 msgid "Notify organizer of new orders"
 msgstr "Organisator op de hoogte stellen van nieuwe bestellingen"
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:96
+msgid "Number"
+msgstr "Nummer"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:39
+msgid "Number added to the opt-out list"
+msgstr "Nummer toegevoegd aan de afmeldlijst"
+
 #: src/components/routes/landing/DemoRequestForm/index.tsx:164
 msgid "Number of attendees"
 msgstr "Aantal deelnemers"
@@ -8307,6 +8379,14 @@ msgstr ""
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:199
 msgid "Number Prefix"
 msgstr "Nummer Voorvoegsel"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:48
+msgid "Number removed from the opt-out list"
+msgstr "Nummer verwijderd van de afmeldlijst"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:58
+msgid "Numbers that replied STOP or that you added by hand. They no longer receive any SMS from you. A number that replies START is removed automatically."
+msgstr "Nummers die STOP hebben geantwoord of die je handmatig hebt toegevoegd. Ze ontvangen geen sms meer van je. Een nummer dat START antwoordt, wordt automatisch verwijderd."
 
 #: src/components/common/OrganizerReportTable/index.tsx:356
 msgid "of"
@@ -8612,6 +8692,10 @@ msgstr ""
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:336
 msgid "Opened when the QR code is scanned from another device. By default: the App Store page."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:109
+msgid "Opening hours"
+msgstr "Openingstijden"
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:302
 msgid "Opens the ticketing page directly. Sales are attributed to this QR code."
@@ -9018,7 +9102,7 @@ msgstr "Organisator niet gevonden"
 msgid "Organizer restored successfully"
 msgstr "Organisator succesvol hersteld"
 
-#: src/components/routes/organizer/Settings/index.tsx:160
+#: src/components/routes/organizer/Settings/index.tsx:174
 msgid "Organizer Settings"
 msgstr "Instellingen van organisator"
 
@@ -9274,7 +9358,7 @@ msgstr "Afgelopen evenementen"
 msgid "Past events."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:180
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:203
 msgid "Paste it into the signing key field of your httpSMS webhook. Keep it private."
 msgstr "Plak hem in het veld ondertekeningssleutel van je httpSMS-webhook. Houd hem geheim."
 
@@ -9514,6 +9598,7 @@ msgstr "Landnummer"
 #: src/components/common/QuestionsTable/index.tsx:365
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:596
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:893
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:66
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
@@ -9555,7 +9640,7 @@ msgstr "Platformkosten van {0} afgetrokken van uw uitbetaling"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:248
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
-#: src/components/routes/organizer/Settings/index.tsx:109
+#: src/components/routes/organizer/Settings/index.tsx:123
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:42
 msgid "Platform Fees"
 msgstr "Platformkosten"
@@ -10622,9 +10707,14 @@ msgstr "verwijderen"
 #: src/components/routes/event/HomepageDesigner/index.tsx:266
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:380
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:112
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:118
 #: src/components/routes/product-widget/SelectProducts/index.tsx:666
 msgid "Remove"
 msgstr "Verwijder"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:46
+msgid "Remove {0} from the opt-out list? Only do this if the person asked to receive your SMS again."
+msgstr "{0} van de afmeldlijst verwijderen? Doe dit alleen als de persoon heeft gevraagd je sms'jes weer te ontvangen."
 
 #: src/components/modals/EditOrganizerCustomDomainModal/index.tsx:70
 msgid "Remove domain"
@@ -10648,11 +10738,11 @@ msgstr "Omslagvideo verwijderen? De omslagafbeelding wordt dan getoond."
 msgid "Remove the end time"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:64
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:80
 msgid "Remove the httpSMS API key? You will no longer be able to send SMS from PICHA."
 msgstr "httpSMS-API-sleutel verwijderen? Je kunt dan geen sms'jes meer versturen vanuit PICHA."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:162
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:185
 msgid "Remove the key"
 msgstr "Sleutel verwijderen"
 
@@ -10700,9 +10790,21 @@ msgstr "Video vervangen"
 msgid "Replaces the page title on the visual."
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
+msgid "Replied STOP"
+msgstr "Heeft STOP geantwoord"
+
 #: src/components/routes/organizer/Sms/index.tsx:62
 msgid "Replies from your customers to your SMS, sent from your httpSMS phone. A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Antwoorden van je klanten op je sms'jes, verzonden vanaf je httpSMS-telefoon. Een klant die STOP antwoordt, wordt automatisch afgemeld voor je sms'jes."
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:58
+msgid "Reply template deleted"
+msgstr "Standaardantwoord verwijderd"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:49
+msgid "Reply template saved"
+msgstr "Standaardantwoord opgeslagen"
 
 #: src/components/routes/landing/index.tsx:350
 #: src/components/routes/landing/MarketingDemoSection/index.tsx:21
@@ -10870,6 +10972,14 @@ msgstr ""
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:329
 #~ msgid "Resume sales"
 #~ msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:235
+msgid "Retrieve httpSMS history"
+msgstr "httpSMS-geschiedenis ophalen"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:225
+msgid "Retrieve the SMS sent and received with your httpSMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread."
+msgstr "Haal de sms'jes op die met je httpSMS-nummer zijn verzonden en ontvangen voordat de webhook was gekoppeld, bijvoorbeeld een campagne die via een script is verstuurd. Berichten die er al zijn, worden niet dubbel opgeslagen en niet als ongelezen gemarkeerd."
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
 #: src/hooks/useKioskTicketPrinter.tsx:227
@@ -11074,7 +11184,8 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:150
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:173
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:88
@@ -11112,6 +11223,10 @@ msgstr "Sociale links opslaan"
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:200
 msgid "Save Template"
 msgstr "Sjabloon Opslaan"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:70
+msgid "Save the answers you send often (opening hours, access, refunds) and insert them in one click when replying to an SMS. Write {SMS_FIRST_NAME_VARIABLE} to insert the customer's first name."
+msgstr "Bewaar antwoorden die je vaak stuurt (openingstijden, bereikbaarheid, terugbetalingen) en voeg ze met één klik in wanneer je op een sms antwoordt. Schrijf {SMS_FIRST_NAME_VARIABLE} om de voornaam van de klant in te voegen."
 
 #: src/components/routes/event/TicketDesigner/index.tsx:209
 msgid "Save Ticket Design"
@@ -11251,6 +11366,10 @@ msgstr "Zoek op naam, ordernummer, aanwezigheidsnummer of e-mail..."
 #~ msgid "Search by name..."
 #~ msgstr "Zoeken op naam..."
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:82
+msgid "Search by number or name"
+msgstr "Zoeken op nummer of naam"
+
 #: src/components/routes/admin/Orders/index.tsx:47
 msgid "Search by order ID, customer name, or email..."
 msgstr "Zoeken op bestelling-ID, klantnaam of e-mail..."
@@ -11372,7 +11491,7 @@ msgstr "Selecteer een categorie"
 msgid "Select a configuration"
 msgstr "Selecteer een configuratie"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:45
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:51
 msgid "Select a conversation"
 msgstr "Selecteer een gesprek"
 
@@ -11533,7 +11652,7 @@ msgstr "Seminar"
 
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:173
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:225
 msgid "Send"
 msgstr "Stuur"
 
@@ -11542,7 +11661,7 @@ msgstr "Stuur"
 msgid "Send a message"
 msgstr "Stuur een bericht"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:104
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:127
 msgid "Send and receive SMS with your customers from your own Android phone, using the httpSMS app. Replies appear in SMS messages."
 msgstr "Verstuur en ontvang sms'jes met je klanten vanaf je eigen Android-telefoon, met de httpSMS-app. Antwoorden verschijnen in Sms-berichten."
 
@@ -11611,7 +11730,7 @@ msgstr "Stuur je bestellingen en deelnemers automatisch naar een andere tool (CR
 msgid "Sending"
 msgstr "Bezig met verzenden"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:167
 msgid "Sending number"
 msgstr "Verzendnummer"
 
@@ -11649,7 +11768,7 @@ msgstr "Verzonden naar klanten wanneer ze een bestelling plaatsen"
 msgid "Sent to each attendee with their ticket details"
 msgstr "Verzonden naar elke deelnemer met hun ticketgegevens"
 
-#: src/components/routes/organizer/Settings/index.tsx:63
+#: src/components/routes/organizer/Settings/index.tsx:65
 msgid "SEO"
 msgstr "SEO"
 
@@ -11916,6 +12035,10 @@ msgstr "Aangemeld"
 msgid "Simpson"
 msgstr "Simpson"
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:98
+msgid "Since"
+msgstr "Sinds"
+
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:92
 msgid "Since creation"
 msgstr ""
@@ -11962,10 +12085,14 @@ msgstr "Jansen"
 msgid "SMS"
 msgstr "Sms"
 
-#: src/components/routes/organizer/Settings/index.tsx:87
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:103
+#: src/components/routes/organizer/Settings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:126
 msgid "SMS (httpSMS)"
 msgstr "Sms (httpSMS)"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:223
+msgid "SMS history"
+msgstr "SMS-geschiedenis"
 
 #: src/components/routes/organizer/Sms/index.tsx:68
 msgid "SMS is not connected yet."
@@ -11975,7 +12102,17 @@ msgstr "Sms is nog niet gekoppeld."
 msgid "SMS messages"
 msgstr "Sms-berichten"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:57
+#: src/components/routes/organizer/Settings/index.tsx:101
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:57
+msgid "SMS opt-out list"
+msgstr "SMS-afmeldlijst"
+
+#: src/components/routes/organizer/Settings/index.tsx:95
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:69
+msgid "SMS reply templates"
+msgstr "SMS-standaardantwoorden"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:73
 msgid "SMS settings saved"
 msgstr "Sms-instellingen opgeslagen"
 
@@ -11983,7 +12120,7 @@ msgstr "Sms-instellingen opgeslagen"
 msgid "Snapchat"
 msgstr "Snapchat"
 
-#: src/components/routes/organizer/Settings/index.tsx:57
+#: src/components/routes/organizer/Settings/index.tsx:59
 msgid "Social Links"
 msgstr "Sociale links"
 
@@ -12105,6 +12242,7 @@ msgid "Sort"
 msgstr ""
 
 #: src/components/routes/admin/Attribution/index.tsx:106
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:97
 msgid "Source"
 msgstr "Bron"
 
@@ -12247,7 +12385,7 @@ msgstr "Behandelt nog steeds terugbetalingen voor uw oudere transacties."
 msgid "Stop Impersonating"
 msgstr "Stop Imiteren"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:138
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:161
 msgid "Stored encrypted. It is never displayed again."
 msgstr "Versleuteld opgeslagen. Wordt nooit meer getoond."
 
@@ -12476,7 +12614,7 @@ msgstr ""
 msgid "Successfully updated Webhook"
 msgstr "Webhook succesvol bijgewerkt"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:143
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:167
 msgid "Suggested reply, check it before sending"
 msgstr "Voorgesteld antwoord, controleer het voor verzending"
 
@@ -12687,6 +12825,10 @@ msgstr "Sjabloon succesvol verwijderd"
 msgid "Template saved successfully"
 msgstr "Sjabloon succesvol opgeslagen"
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:196
+msgid "Templates"
+msgstr "Sjablonen"
+
 #: src/components/common/PoweredByFooter/index.tsx:22
 msgid "Terms of sale"
 msgstr "Verkoopvoorwaarden"
@@ -12700,9 +12842,13 @@ msgid "Test event code (optional)"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:146
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:158
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:181
 msgid "Test the connection"
 msgstr "Verbinding testen"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:116
+msgid "Text"
+msgstr "Tekst"
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:485
 msgid "Text color"
@@ -12827,6 +12973,10 @@ msgstr "Het volledige bestellingsbedrag wordt terugbetaald naar de oorspronkelij
 msgid "The image could not be uploaded"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:253
+msgid "The import failed: {importError}. You can start it again, messages already imported are kept."
+msgstr "De import is mislukt: {importError}. Je kunt hem opnieuw starten, reeds geïmporteerde berichten blijven bewaard."
+
 #: src/components/modals/CreateAttendeeModal/index.tsx:127
 msgid "The language the attendee will receive emails in."
 msgstr "De taal waarin de deelnemer e-mails ontvangt."
@@ -12847,7 +12997,7 @@ msgstr "De taal van de klant"
 msgid "The maximum number of products for {0}is {1}"
 msgstr "Het maximum aantal producten voor {0}is {1}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:145
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:168
 msgid "The number of the SIM card in the httpSMS phone, for example +262639123456."
 msgstr "Het nummer van de simkaart in de httpSMS-telefoon, bijvoorbeeld +262639123456."
 
@@ -12917,7 +13067,7 @@ msgstr "De geplande tijd moet in de toekomst liggen"
 msgid "The show"
 msgstr "De show"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:64
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:70
 msgid "The SMS could not be sent"
 msgstr "De sms kon niet worden verzonden"
 
@@ -13143,7 +13293,7 @@ msgstr "Dit bericht wordt alleen weergegeven als de bestelling succesvol is afge
 msgid "This name is visible to end users"
 msgstr "Deze naam is zichtbaar voor eindgebruikers"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:133
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:157
 msgid "This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again."
 msgstr "Dit nummer antwoordde STOP: het kan geen sms'jes meer van je ontvangen. Als het START antwoordt, kun je weer schrijven."
 
@@ -13658,7 +13808,7 @@ msgstr "Volg accountgroei en prestaties per attributiebron"
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "Volg verkoop, omzet en aanwezigheid met gedetailleerde rapporten"
 
-#: src/components/routes/organizer/Settings/index.tsx:75
+#: src/components/routes/organizer/Settings/index.tsx:77
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
 msgid "Tracking & Analytics"
 msgstr ""
@@ -13765,6 +13915,10 @@ msgstr ""
 msgid "Unable to delete the QR code"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:59
+msgid "Unable to delete the reply template"
+msgstr "Kan het standaardantwoord niet verwijderen"
+
 #: src/components/modals/DuplicateProductModal/index.tsx:111
 msgid "Unable to duplicate product. Please check the your details"
 msgstr "Kan product niet dupliceren. Controleer uw gegevens"
@@ -13773,7 +13927,7 @@ msgstr "Kan product niet dupliceren. Controleer uw gegevens"
 msgid "Unable to fetch attendee"
 msgstr "Kan deelnemer niet ophalen"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:79
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:95
 msgid "Unable to generate a new signing key"
 msgstr "Kan geen nieuwe ondertekeningssleutel genereren"
 
@@ -13785,7 +13939,7 @@ msgstr ""
 msgid "Unable to join waitlist"
 msgstr "Kan niet aan de wachtlijst worden toegevoegd"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:96
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:112
 msgid "Unable to reach httpSMS. Please try again."
 msgstr "Kan httpSMS niet bereiken. Probeer het opnieuw."
 
@@ -13797,15 +13951,23 @@ msgstr ""
 msgid "Unable to remove the access token"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:70
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:86
 msgid "Unable to remove the API key"
 msgstr "Kan de API-sleutel niet verwijderen"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:49
+msgid "Unable to remove the number"
+msgstr "Kan het nummer niet verwijderen"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:119
+msgid "Unable to start the import"
+msgstr "Kan de import niet starten"
 
 #: src/components/modals/EditQuestionModal/index.tsx:84
 msgid "Unable to update question. Please check the your details"
 msgstr "Kan vraag niet bijwerken. Controleer uw gegevens"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:76
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:100
 msgid "Unable to update the conversation"
 msgstr "Kan het gesprek niet bijwerken"
 
@@ -13876,6 +14038,10 @@ msgstr ""
 #: src/components/routes/organizer/Sms/CustomerCard.tsx:27
 msgid "Unknown customer"
 msgstr "Onbekende klant"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:35
+msgid "unknown error"
+msgstr "onbekende fout"
 
 #: src/components/routes/event/products.tsx:82
 #~ msgid "unlimited"
@@ -14629,7 +14795,7 @@ msgstr "Webhook succesvol verwijderd"
 msgid "Webhook Logs"
 msgstr "Webhook logboeken"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:179
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:202
 msgid "Webhook signing key"
 msgstr "Ondertekeningssleutel van de webhook"
 
@@ -14639,7 +14805,7 @@ msgid "Webhook Signing Secret"
 msgstr "Webhook-ondertekeningsgeheim"
 
 #: src/components/forms/WebhookForm/index.tsx:138
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:172
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:195
 msgid "Webhook URL"
 msgstr "Webhook URL"
 
@@ -14654,7 +14820,7 @@ msgstr "Webhook stuurt meldingen"
 #: src/components/layouts/Event/index.tsx:128
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
-#: src/components/routes/organizer/Settings/index.tsx:93
+#: src/components/routes/organizer/Settings/index.tsx:107
 #: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
@@ -14986,7 +15152,7 @@ msgstr ""
 msgid "Write your message here..."
 msgstr "Schrijf hier je bericht..."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:149
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:174
 msgid "Write your reply"
 msgstr "Schrijf je antwoord"
 

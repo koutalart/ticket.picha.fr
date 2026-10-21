@@ -32,7 +32,7 @@ msgstr "—"
 msgid "'There\\'s nothing to show yet'"
 msgstr "Δεν υπάρχει τίποτα να εμφανιστεί ακόμα"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:165
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:190
 msgid "(emoji or special characters: 70 characters per SMS)"
 msgstr "(emoji ή ειδικοί χαρακτήρες: 70 χαρακτήρες ανά SMS)"
 
@@ -89,7 +89,8 @@ msgstr ""
 msgid "{0} available"
 msgstr "{0} διαθέσιμα"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:164
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:118
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:189
 msgid "{0} characters, {1} SMS"
 msgstr "{0} χαρακτήρες, {1} SMS"
 
@@ -481,7 +482,7 @@ msgstr ""
 msgid "A fixed amount per product. E.g, $0.50 per product"
 msgstr "Ένα σταθερό ποσό ανά προϊόν. Π.χ., 0,50€ ανά προϊόν"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:137
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:160
 msgid "A key is saved. Paste a new one to replace it."
 msgstr "Υπάρχει αποθηκευμένο κλειδί. Επικολλήστε νέο για αντικατάσταση."
 
@@ -777,6 +778,10 @@ msgstr ""
 msgid "Add a photo"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:96
+msgid "Add a reply template"
+msgstr "Προσθήκη έτοιμης απάντησης"
+
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:276
 msgid "Add a service"
 msgstr ""
@@ -876,6 +881,10 @@ msgstr "Προσθήκη Ερώτησης"
 msgid "Add Tax or Fee"
 msgstr "Προσθήκη Φόρου ή Τέλους"
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:71
+msgid "Add the number"
+msgstr "Προσθήκη αριθμού"
+
 #: src/components/common/AddToCalendarCTA/index.tsx:20
 msgid "Add this event to your calendar"
 msgstr "Προσθήκη αυτής της εκδήλωσης στο ημερολόγιό σας"
@@ -917,7 +926,7 @@ msgstr "Προσθέστε pixels παρακολούθησης στις δημό
 msgid "Add Webhook"
 msgstr "Προσθήκη Webhook"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:137
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:161
 msgid "Add your httpSMS API key and sending number in Settings to reply from here."
 msgstr "Προσθέστε το κλειδί API του httpSMS και τον αριθμό αποστολής στις Ρυθμίσεις για να απαντάτε από εδώ."
 
@@ -928,6 +937,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:185
 msgid "Add your social media handles and website URL. These will be displayed on your public organizer page."
 msgstr "Προσθέστε τα στοιχεία κοινωνικής δικτύωσης και την ιστοσελίδα σας. Θα εμφανιστούν στη δημόσια σελίδα του διοργανωτή."
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
+msgid "Added by hand"
+msgstr "Προστέθηκε χειροκίνητα"
 
 #: src/components/routes/kiosk/Orders/index.tsx:211
 msgid "Added manually"
@@ -945,7 +958,7 @@ msgstr "Πρόσθετες Πληροφορίες"
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:132
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
-#: src/components/routes/organizer/Settings/index.tsx:45
+#: src/components/routes/organizer/Settings/index.tsx:47
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
 msgstr "Διεύθυνση"
@@ -1305,7 +1318,7 @@ msgstr "Η απάντηση ενημερώθηκε επιτυχώς."
 msgid "Any queries from product holders will be sent to this email address. This will also be used as the \"reply-to\" address for all emails sent from this event"
 msgstr "Τυχόν ερωτήματα από κατόχους προϊόντων θα αποστέλλονται σε αυτή τη διεύθυνση. Θα χρησιμοποιηθεί επίσης ως διεύθυνση \"απάντηση προς\" για όλα τα email αυτής της εκδήλωσης"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:69
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:85
 msgid "API key removed"
 msgstr "Το κλειδί API αφαιρέθηκε"
 
@@ -1849,7 +1862,7 @@ msgstr "Διοργανωτής Α.Ε."
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:433
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:83
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:107
 msgid "Back"
 msgstr "Πίσω"
 
@@ -1909,7 +1922,7 @@ msgstr "Κονκάρδα + είσοδος"
 msgid "Badge printing…"
 msgstr "Εκτύπωση κάρτας…"
 
-#: src/components/routes/organizer/Settings/index.tsx:33
+#: src/components/routes/organizer/Settings/index.tsx:35
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
 msgstr "Βασικές Πληροφορίες"
@@ -2891,7 +2904,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:96
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:133
 msgid "Configured"
 msgstr "Διαμορφώθηκε"
 
@@ -3033,15 +3046,15 @@ msgstr "Συνδέστε τον λογαριασμό Stripe για να ξεκι
 msgid "Connected at"
 msgstr "Ώρα σύνδεσης"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:93
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
 msgid "Connected to httpSMS, but no phone is registered. Install the httpSMS app on your Android phone."
 msgstr "Συνδέθηκε στο httpSMS, αλλά δεν υπάρχει καταχωρισμένο τηλέφωνο. Εγκαταστήστε την εφαρμογή httpSMS στο Android τηλέφωνό σας."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:91
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:107
 msgid "Connected to httpSMS, but your sending number is not one of your phones: {phones}"
 msgstr "Συνδέθηκε στο httpSMS, αλλά ο αριθμός αποστολής δεν είναι ένα από τα τηλέφωνά σας: {phones}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:105
 msgid "Connected to httpSMS. Your sending number is registered."
 msgstr "Συνδέθηκε στο httpSMS. Ο αριθμός αποστολής είναι καταχωρισμένος."
 
@@ -3273,7 +3286,7 @@ msgstr "Αντιγραφή στο πρόχειρο"
 msgid "Copy URL"
 msgstr "Αντιγραφή URL"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:127
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:150
 msgid "Copy your API key from the httpSMS settings page and paste it below, with the phone number of the SIM used to send."
 msgstr "Αντιγράψτε το κλειδί API από τη σελίδα ρυθμίσεων του httpSMS και επικολλήστε το παρακάτω, μαζί με τον αριθμό της SIM αποστολής."
 
@@ -3796,7 +3809,7 @@ msgstr "Επικίνδυνη ζώνη"
 
 #: src/components/common/AttendeeTable/index.tsx:372
 #: src/components/common/DangerZone/index.tsx:30
-#: src/components/routes/organizer/Settings/index.tsx:99
+#: src/components/routes/organizer/Settings/index.tsx:113
 msgid "Danger Zone"
 msgstr "Επικίνδυνη Ζώνη"
 
@@ -3917,6 +3930,7 @@ msgstr "διαγραφή"
 #: src/components/common/TaxAndFeeList/index.tsx:78
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -3974,6 +3988,10 @@ msgstr ""
 #: src/components/routes/organizer/QrCodes/index.tsx:148
 msgid "Delete the campaign \"{0}\"? Its QR codes are kept and keep working, they just move to \"No campaign\"."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:56
+msgid "Delete the reply template \"{0}\"?"
+msgstr "Διαγραφή της έτοιμης απάντησης \"{0}\";"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:139
 msgid "Delete this QR code? Printed copies will stop working and its statistics will be lost."
@@ -4350,6 +4368,7 @@ msgstr "Πρώιμη αγορά"
 #: src/components/routes/event/GettingStarted/index.tsx:76
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:65
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:114
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:84
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:236
 msgid "Edit"
 msgstr "Επεξεργασία"
@@ -4443,6 +4462,10 @@ msgstr ""
 #: src/components/modals/EditQuestionModal/index.tsx:101
 msgid "Edit Question"
 msgstr "Επεξεργασία Ερώτησης"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:103
+msgid "Edit reply template"
+msgstr "Επεξεργασία έτοιμης απάντησης"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:409
 msgid "Edit the price"
@@ -4604,7 +4627,7 @@ msgid "Email Preview"
 msgstr "Προεπισκόπηση Email"
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:336
-#: src/components/routes/organizer/Settings/index.tsx:69
+#: src/components/routes/organizer/Settings/index.tsx:71
 msgid "Email Templates"
 msgstr "Πρότυπα Email"
 
@@ -4953,7 +4976,7 @@ msgid "Event date display"
 msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/EventDefaultsSettings/index.tsx:5
-#: src/components/routes/organizer/Settings/index.tsx:39
+#: src/components/routes/organizer/Settings/index.tsx:41
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:73
 msgid "Event Defaults"
 msgstr "Προεπιλογές Εκδήλωσης"
@@ -5931,11 +5954,11 @@ msgstr "Δημιουργία"
 msgid "Generate a new relay token"
 msgstr "Δημιουργία νέου διακριτικού ρελέ"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:193
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:216
 msgid "Generate a new signing key"
 msgstr "Δημιουργία νέου κλειδιού υπογραφής"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:76
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:92
 msgid "Generate a new signing key? You will need to paste it into your httpSMS webhook, otherwise incoming SMS will be rejected."
 msgstr "Δημιουργία νέου κλειδιού υπογραφής; Θα πρέπει να το επικολλήσετε στο webhook του httpSMS, αλλιώς τα εισερχόμενα SMS θα απορρίπτονται."
 
@@ -6082,6 +6105,10 @@ msgstr "Έχετε κωδικό προσφοράς;"
 #: src/components/routes/admin/Dashboard/index.tsx:74
 msgid "Hello {0}, manage your platform from here."
 msgstr "Γεια σας {0}, διαχειριστείτε την πλατφόρμα σας από εδώ."
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:117
+msgid "Hello {SMS_FIRST_NAME_VARIABLE}, doors open at 7pm."
+msgstr "Γεια σου {SMS_FIRST_NAME_VARIABLE}, οι πόρτες ανοίγουν στις 19:00."
 
 #: src/components/forms/OrganizerForm/index.tsx:36
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:81
@@ -6292,7 +6319,7 @@ msgstr "Πόσα λεπτά έχει ο πελάτης να ολοκληρώσε
 #~ msgid "How many times can this code be used?"
 #~ msgstr "Πόσες φορές μπορεί να χρησιμοποιηθεί αυτός ο κωδικός;"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:143
 msgid "How to connect"
 msgstr "Πώς να συνδεθείτε"
 
@@ -6321,7 +6348,7 @@ msgstr "https://maps.google.com/..."
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://ο-τομεας-σας.gr/webhook"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:136
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:159
 msgid "httpSMS API key"
 msgstr "Κλειδί API httpSMS"
 
@@ -6426,6 +6453,14 @@ msgstr "Η υποκατάσταση ξεκίνησε"
 msgid "Impersonation stopped"
 msgstr "Η υποκατάσταση σταμάτησε"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:241
+msgid "Import in progress: {0} messages retrieved"
+msgstr "Εισαγωγή σε εξέλιξη: ανακτήθηκαν {0} μηνύματα"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:118
+msgid "Import started. Messages will appear in SMS messages within a few minutes."
+msgstr "Η εισαγωγή ξεκίνησε. Τα μηνύματα θα εμφανιστούν στα μηνύματα SMS σε λίγα λεπτά."
+
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:114
 msgid "Important Notice"
 msgstr "Σημαντική Ειδοποίηση"
@@ -6454,7 +6489,7 @@ msgstr "Σε {diffHours} ώρες"
 msgid "In {diffMinutes} minutes"
 msgstr "Σε {diffMinutes} λεπτά"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:128
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:151
 msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events."
 msgstr "Στο httpSMS, δημιουργήστε ένα webhook με το URL και το κλειδί υπογραφής παρακάτω και επιλέξτε τα συμβάντα message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed και message.send.expired."
 
@@ -6549,7 +6584,7 @@ msgstr "Instagram"
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:146
 msgid "Install the httpSMS app on your Android phone and sign in on <0>httpsms.com</0>."
 msgstr "Εγκαταστήστε την εφαρμογή httpSMS στο Android τηλέφωνό σας και συνδεθείτε στο <0>httpsms.com</0>."
 
@@ -6918,6 +6953,10 @@ msgstr "Τελευταίες 7 ημέρες"
 msgid "Last 90 days"
 msgstr "Τελευταίες 90 ημέρες"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:247
+msgid "Last import {0}: {1} new messages"
+msgstr "Τελευταία εισαγωγή {0}: {1} νέα μηνύματα"
+
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:156
 msgid "Last login"
 msgstr "Τελευταία σύνδεση"
@@ -6966,7 +7005,7 @@ msgstr "Τελευταία πώληση: <0>{0} εισιτήρια</0>"
 msgid "Last sale: <0>{0}</0>"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:114
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:137
 msgid "Last SMS event received {0}"
 msgstr "Τελευταίο συμβάν SMS λήφθηκε {0}"
 
@@ -7285,6 +7324,10 @@ msgstr "Διαχείριση Προφίλ"
 msgid "Manage registrations, welcome, digital check-in and badge printing for your professional and institutional events with {appName}."
 msgstr "Διαχειριστείτε εγγραφές, υποδοχή, παρουσιολόγιο και εκτύπωση καρτών για τις επαγγελματικές και θεσμικές εκδηλώσεις σας με το {appName}."
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:215
+msgid "Manage reply templates"
+msgstr "Διαχείριση έτοιμων απαντήσεων"
+
 #: src/components/routes/account/ManageAccount/sections/TaxSettings/index.tsx:17
 msgid "Manage taxes and fees which can be applied to your products"
 msgstr "Διαχείριση φόρων και τελών που μπορούν να εφαρμοστούν στα προϊόντα σας"
@@ -7449,7 +7492,7 @@ msgstr "Βαθμίδα Μηνυμάτων"
 msgid "Messaging tier updated successfully"
 msgstr "Η βαθμίδα μηνυμάτων ενημερώθηκε επιτυχώς"
 
-#: src/components/routes/organizer/Settings/index.tsx:81
+#: src/components/routes/organizer/Settings/index.tsx:83
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:89
 msgid "Meta Conversions API"
 msgstr ""
@@ -7678,6 +7721,7 @@ msgstr "Παράδειγμα κειμένου..."
 #: src/components/routes/admin/Configurations/index.tsx:219
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:98
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:77
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:108
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:231
 msgid "Name"
 msgstr "Όνομα"
@@ -7764,7 +7808,11 @@ msgstr "Νέος Κωδικός"
 msgid "New QR code"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:78
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:103
+msgid "New reply template"
+msgstr "Νέα έτοιμη απάντηση"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:94
 msgid "New signing key generated"
 msgstr "Δημιουργήθηκε νέο κλειδί υπογραφής"
 
@@ -7990,6 +8038,14 @@ msgstr "Δεν υπάρχουν άλλα εισιτήρια σε αυτή την
 msgid "No name"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:89
+msgid "No number in the opt-out list."
+msgstr "Δεν υπάρχουν αριθμοί στη λίστα εξαίρεσης."
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:89
+msgid "No number matches your search."
+msgstr "Κανένας αριθμός δεν ταιριάζει με την αναζήτησή σας."
+
 #: src/components/routes/organizer/Sms/CustomerCard.tsx:37
 msgid "No order found with this number. The number is matched with the phone answers of your order forms and box office sales."
 msgstr "Δεν βρέθηκε παραγγελία με αυτόν τον αριθμό. Ο αριθμός συγκρίνεται με τα τηλέφωνα των φορμών παραγγελίας και των πωλήσεων ταμείου."
@@ -8133,6 +8189,14 @@ msgstr ""
 msgid "No registrations yet."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:201
+msgid "No reply template yet"
+msgstr "Δεν υπάρχουν ακόμη έτοιμες απαντήσεις"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:75
+msgid "No reply template yet."
+msgstr "Δεν υπάρχουν ακόμη έτοιμες απαντήσεις."
+
 #: src/components/common/OrganizerWebhookTable/index.tsx:174
 #: src/components/common/WebhookTable/index.tsx:174
 msgid "No response"
@@ -8243,7 +8307,7 @@ msgstr "Δεν Εισήλθε"
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:97
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:111
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:134
 msgid "Not configured"
 msgstr "Δεν έχει διαμορφωθεί"
 
@@ -8289,6 +8353,14 @@ msgstr "Ρυθμίσεις Ειδοποιήσεων"
 msgid "Notify organizer of new orders"
 msgstr "Ειδοποίηση διοργανωτή για νέες παραγγελίες"
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:96
+msgid "Number"
+msgstr "Αριθμός"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:39
+msgid "Number added to the opt-out list"
+msgstr "Ο αριθμός προστέθηκε στη λίστα εξαίρεσης"
+
 #: src/components/routes/landing/DemoRequestForm/index.tsx:164
 msgid "Number of attendees"
 msgstr "Αριθμός συμμετεχόντων"
@@ -8308,6 +8380,14 @@ msgstr ""
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:199
 msgid "Number Prefix"
 msgstr "Πρόθεμα Αριθμού"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:48
+msgid "Number removed from the opt-out list"
+msgstr "Ο αριθμός αφαιρέθηκε από τη λίστα εξαίρεσης"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:58
+msgid "Numbers that replied STOP or that you added by hand. They no longer receive any SMS from you. A number that replies START is removed automatically."
+msgstr "Αριθμοί που απάντησαν STOP ή που προσθέσατε χειροκίνητα. Δεν λαμβάνουν πλέον κανένα SMS από εσάς. Ένας αριθμός που απαντά START αφαιρείται αυτόματα."
 
 #: src/components/common/OrganizerReportTable/index.tsx:356
 msgid "of"
@@ -8613,6 +8693,10 @@ msgstr ""
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:336
 msgid "Opened when the QR code is scanned from another device. By default: the App Store page."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:109
+msgid "Opening hours"
+msgstr "Ώρες λειτουργίας"
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:302
 msgid "Opens the ticketing page directly. Sales are attributed to this QR code."
@@ -9019,7 +9103,7 @@ msgstr "Διοργανωτής Δεν Βρέθηκε"
 msgid "Organizer restored successfully"
 msgstr "Ο διοργανωτής αποκαταστάθηκε επιτυχώς"
 
-#: src/components/routes/organizer/Settings/index.tsx:160
+#: src/components/routes/organizer/Settings/index.tsx:174
 msgid "Organizer Settings"
 msgstr "Ρυθμίσεις Διοργανωτή"
 
@@ -9275,7 +9359,7 @@ msgstr "Παλαιότερες Εκδηλώσεις"
 msgid "Past events."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:180
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:203
 msgid "Paste it into the signing key field of your httpSMS webhook. Keep it private."
 msgstr "Επικολλήστε το στο πεδίο κλειδιού υπογραφής του webhook του httpSMS. Κρατήστε το ιδιωτικό."
 
@@ -9515,6 +9599,7 @@ msgstr "Διεθνής κωδικός"
 #: src/components/common/QuestionsTable/index.tsx:365
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:596
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:893
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:66
 msgid "Phone number"
 msgstr "Αριθμός τηλεφώνου"
 
@@ -9556,7 +9641,7 @@ msgstr "Τέλος πλατφόρμας {0} αφαιρείται από την �
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:248
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
-#: src/components/routes/organizer/Settings/index.tsx:109
+#: src/components/routes/organizer/Settings/index.tsx:123
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:42
 msgid "Platform Fees"
 msgstr "Τέλη Πλατφόρμας"
@@ -10625,9 +10710,14 @@ msgstr "αφαίρεση"
 #: src/components/routes/event/HomepageDesigner/index.tsx:266
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:380
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:112
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:118
 #: src/components/routes/product-widget/SelectProducts/index.tsx:666
 msgid "Remove"
 msgstr "Αφαίρεση"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:46
+msgid "Remove {0} from the opt-out list? Only do this if the person asked to receive your SMS again."
+msgstr "Αφαίρεση του {0} από τη λίστα εξαίρεσης; Κάντε το μόνο αν το άτομο ζήτησε να λαμβάνει ξανά τα SMS σας."
 
 #: src/components/modals/EditOrganizerCustomDomainModal/index.tsx:70
 msgid "Remove domain"
@@ -10651,11 +10741,11 @@ msgstr ""
 msgid "Remove the end time"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:64
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:80
 msgid "Remove the httpSMS API key? You will no longer be able to send SMS from PICHA."
 msgstr "Αφαίρεση του κλειδιού API του httpSMS; Δεν θα μπορείτε πλέον να στέλνετε SMS από το PICHA."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:162
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:185
 msgid "Remove the key"
 msgstr "Αφαίρεση κλειδιού"
 
@@ -10703,9 +10793,21 @@ msgstr ""
 msgid "Replaces the page title on the visual."
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
+msgid "Replied STOP"
+msgstr "Απάντησε STOP"
+
 #: src/components/routes/organizer/Sms/index.tsx:62
 msgid "Replies from your customers to your SMS, sent from your httpSMS phone. A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Οι απαντήσεις των πελατών σας στα SMS σας, που στάλθηκαν από το τηλέφωνο httpSMS. Όποιος απαντήσει STOP διαγράφεται αυτόματα από τα SMS σας."
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:58
+msgid "Reply template deleted"
+msgstr "Η έτοιμη απάντηση διαγράφηκε"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:49
+msgid "Reply template saved"
+msgstr "Η έτοιμη απάντηση αποθηκεύτηκε"
 
 #: src/components/routes/landing/index.tsx:350
 #: src/components/routes/landing/MarketingDemoSection/index.tsx:21
@@ -10873,6 +10975,14 @@ msgstr ""
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:329
 #~ msgid "Resume sales"
 #~ msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:235
+msgid "Retrieve httpSMS history"
+msgstr "Ανάκτηση ιστορικού httpSMS"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:225
+msgid "Retrieve the SMS sent and received with your httpSMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread."
+msgstr "Ανακτήστε τα SMS που στάλθηκαν και ελήφθησαν με τον αριθμό σας httpSMS πριν συνδεθεί το webhook, για παράδειγμα μια καμπάνια που στάλθηκε με script. Τα μηνύματα που υπάρχουν ήδη δεν διπλασιάζονται και δεν σημειώνονται ως μη αναγνωσμένα."
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
 #: src/hooks/useKioskTicketPrinter.tsx:227
@@ -11077,7 +11187,8 @@ msgstr "Σαν Φρανσίσκο"
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:150
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:173
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:88
@@ -11115,6 +11226,10 @@ msgstr "Αποθήκευση Κοινωνικών Συνδέσμων"
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:200
 msgid "Save Template"
 msgstr "Αποθήκευση Προτύπου"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:70
+msgid "Save the answers you send often (opening hours, access, refunds) and insert them in one click when replying to an SMS. Write {SMS_FIRST_NAME_VARIABLE} to insert the customer's first name."
+msgstr "Αποθηκεύστε τις απαντήσεις που στέλνετε συχνά (ωράριο, πρόσβαση, επιστροφές χρημάτων) και εισαγάγετέ τες με ένα κλικ όταν απαντάτε σε ένα SMS. Γράψτε {SMS_FIRST_NAME_VARIABLE} για να εισαγάγετε το όνομα του πελάτη."
 
 #: src/components/routes/event/TicketDesigner/index.tsx:209
 msgid "Save Ticket Design"
@@ -11254,6 +11369,10 @@ msgstr "Αναζήτηση ανά όνομα, αριθμό παραγγελία�
 #~ msgid "Search by name..."
 #~ msgstr "Αναζήτηση ανά όνομα..."
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:82
+msgid "Search by number or name"
+msgstr "Αναζήτηση με αριθμό ή όνομα"
+
 #: src/components/routes/admin/Orders/index.tsx:47
 msgid "Search by order ID, customer name, or email..."
 msgstr "Αναζήτηση ανά ID παραγγελίας, όνομα πελάτη ή email..."
@@ -11375,7 +11494,7 @@ msgstr "Επιλογή κατηγορίας"
 msgid "Select a configuration"
 msgstr "Επιλογή ρύθμισης"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:45
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:51
 msgid "Select a conversation"
 msgstr "Επιλέξτε συνομιλία"
 
@@ -11536,7 +11655,7 @@ msgstr "Σεμινάριο"
 
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:173
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:225
 msgid "Send"
 msgstr "Αποστολή"
 
@@ -11545,7 +11664,7 @@ msgstr "Αποστολή"
 msgid "Send a message"
 msgstr "Αποστολή μηνύματος"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:104
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:127
 msgid "Send and receive SMS with your customers from your own Android phone, using the httpSMS app. Replies appear in SMS messages."
 msgstr "Στείλτε και λάβετε SMS με τους πελάτες σας από το δικό σας Android τηλέφωνο, με την εφαρμογή httpSMS. Οι απαντήσεις εμφανίζονται στα Μηνύματα SMS."
 
@@ -11614,7 +11733,7 @@ msgstr ""
 msgid "Sending"
 msgstr "Αποστολή"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:167
 msgid "Sending number"
 msgstr "Αριθμός αποστολής"
 
@@ -11652,7 +11771,7 @@ msgstr "Αποστέλλεται στους πελάτες όταν κάνουν
 msgid "Sent to each attendee with their ticket details"
 msgstr "Αποστέλλεται σε κάθε συμμετέχοντα με τα στοιχεία εισιτηρίου"
 
-#: src/components/routes/organizer/Settings/index.tsx:63
+#: src/components/routes/organizer/Settings/index.tsx:65
 msgid "SEO"
 msgstr "SEO"
 
@@ -11919,6 +12038,10 @@ msgstr "Εγγράφηκε"
 msgid "Simpson"
 msgstr "Σίμψον"
 
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:98
+msgid "Since"
+msgstr "Από"
+
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:92
 msgid "Since creation"
 msgstr ""
@@ -11965,10 +12088,14 @@ msgstr "Παπαδόπουλος"
 msgid "SMS"
 msgstr "SMS"
 
-#: src/components/routes/organizer/Settings/index.tsx:87
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:103
+#: src/components/routes/organizer/Settings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:126
 msgid "SMS (httpSMS)"
 msgstr "SMS (httpSMS)"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:223
+msgid "SMS history"
+msgstr "Ιστορικό SMS"
 
 #: src/components/routes/organizer/Sms/index.tsx:68
 msgid "SMS is not connected yet."
@@ -11978,7 +12105,17 @@ msgstr "Τα SMS δεν έχουν συνδεθεί ακόμη."
 msgid "SMS messages"
 msgstr "Μηνύματα SMS"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:57
+#: src/components/routes/organizer/Settings/index.tsx:101
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:57
+msgid "SMS opt-out list"
+msgstr "Λίστα εξαίρεσης SMS"
+
+#: src/components/routes/organizer/Settings/index.tsx:95
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:69
+msgid "SMS reply templates"
+msgstr "Έτοιμες απαντήσεις SMS"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:73
 msgid "SMS settings saved"
 msgstr "Οι ρυθμίσεις SMS αποθηκεύτηκαν"
 
@@ -11986,7 +12123,7 @@ msgstr "Οι ρυθμίσεις SMS αποθηκεύτηκαν"
 msgid "Snapchat"
 msgstr "Snapchat"
 
-#: src/components/routes/organizer/Settings/index.tsx:57
+#: src/components/routes/organizer/Settings/index.tsx:59
 msgid "Social Links"
 msgstr "Κοινωνικοί Σύνδεσμοι"
 
@@ -12108,6 +12245,7 @@ msgid "Sort"
 msgstr ""
 
 #: src/components/routes/admin/Attribution/index.tsx:106
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:97
 msgid "Source"
 msgstr "Πηγή"
 
@@ -12250,7 +12388,7 @@ msgstr "Ακόμα διαχείριση επιστροφών για τις πα�
 msgid "Stop Impersonating"
 msgstr "Διακοπή Υποκατάστασης"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:138
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:161
 msgid "Stored encrypted. It is never displayed again."
 msgstr "Αποθηκεύεται κρυπτογραφημένο. Δεν εμφανίζεται ξανά."
 
@@ -12479,7 +12617,7 @@ msgstr "Επιτυχής Ενημέρωση Ρυθμίσεων Παρακολο�
 msgid "Successfully updated Webhook"
 msgstr "Επιτυχής ενημέρωση Webhook"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:143
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:167
 msgid "Suggested reply, check it before sending"
 msgstr "Προτεινόμενη απάντηση, ελέγξτε την πριν την αποστολή"
 
@@ -12690,6 +12828,10 @@ msgstr "Το πρότυπο διαγράφηκε επιτυχώς"
 msgid "Template saved successfully"
 msgstr "Το πρότυπο αποθηκεύτηκε επιτυχώς"
 
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:196
+msgid "Templates"
+msgstr "Πρότυπα"
+
 #: src/components/common/PoweredByFooter/index.tsx:22
 msgid "Terms of sale"
 msgstr "Όροι πώλησης"
@@ -12703,9 +12845,13 @@ msgid "Test event code (optional)"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:146
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:158
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:181
 msgid "Test the connection"
 msgstr "Δοκιμή σύνδεσης"
+
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:116
+msgid "Text"
+msgstr "Κείμενο"
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:485
 msgid "Text color"
@@ -12830,6 +12976,10 @@ msgstr "Το πλήρες ποσό παραγγελίας θα επιστραφ�
 msgid "The image could not be uploaded"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:253
+msgid "The import failed: {importError}. You can start it again, messages already imported are kept."
+msgstr "Η εισαγωγή απέτυχε: {importError}. Μπορείτε να την ξεκινήσετε ξανά, τα μηνύματα που έχουν ήδη εισαχθεί διατηρούνται."
+
 #: src/components/modals/CreateAttendeeModal/index.tsx:127
 msgid "The language the attendee will receive emails in."
 msgstr "Η γλώσσα στην οποία θα λαμβάνει email ο συμμετέχων."
@@ -12850,7 +13000,7 @@ msgstr "Η τοπική ρύθμιση του πελάτη"
 msgid "The maximum number of products for {0}is {1}"
 msgstr "Ο μέγιστος αριθμός προϊόντων για {0}είναι {1}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:145
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:168
 msgid "The number of the SIM card in the httpSMS phone, for example +262639123456."
 msgstr "Ο αριθμός της κάρτας SIM στο τηλέφωνο httpSMS, για παράδειγμα +262639123456."
 
@@ -12920,7 +13070,7 @@ msgstr "Η προγραμματισμένη ώρα πρέπει να είναι 
 msgid "The show"
 msgstr "Το σόου"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:64
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:70
 msgid "The SMS could not be sent"
 msgstr "Δεν ήταν δυνατή η αποστολή του SMS"
 
@@ -13146,7 +13296,7 @@ msgstr "Αυτό το μήνυμα θα εμφανίζεται μόνο εάν �
 msgid "This name is visible to end users"
 msgstr "Αυτό το όνομα είναι ορατό στους τελικούς χρήστες"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:133
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:157
 msgid "This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again."
 msgstr "Αυτός ο αριθμός απάντησε STOP: δεν μπορεί πλέον να λαμβάνει τα SMS σας. Αν απαντήσει START, θα μπορείτε να γράψετε ξανά."
 
@@ -13661,7 +13811,7 @@ msgstr "Παρακολούθηση ανάπτυξης λογαριασμού κ�
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "Παρακολούθηση πωλήσεων, εσόδων και παρουσίας με αναλυτικές αναφορές"
 
-#: src/components/routes/organizer/Settings/index.tsx:75
+#: src/components/routes/organizer/Settings/index.tsx:77
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
 msgid "Tracking & Analytics"
 msgstr "Παρακολούθηση & Αναλυτικά"
@@ -13768,6 +13918,10 @@ msgstr ""
 msgid "Unable to delete the QR code"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:59
+msgid "Unable to delete the reply template"
+msgstr "Δεν ήταν δυνατή η διαγραφή της έτοιμης απάντησης"
+
 #: src/components/modals/DuplicateProductModal/index.tsx:111
 msgid "Unable to duplicate product. Please check the your details"
 msgstr "Αδύνατη αντιγραφή προϊόντος. Ελέγξτε τα στοιχεία σας"
@@ -13776,7 +13930,7 @@ msgstr "Αδύνατη αντιγραφή προϊόντος. Ελέγξτε τ�
 msgid "Unable to fetch attendee"
 msgstr "Αδύνατη φόρτωση συμμετέχοντα"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:79
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:95
 msgid "Unable to generate a new signing key"
 msgstr "Δεν ήταν δυνατή η δημιουργία νέου κλειδιού υπογραφής"
 
@@ -13788,7 +13942,7 @@ msgstr ""
 msgid "Unable to join waitlist"
 msgstr "Αδύνατη εγγραφή στη λίστα αναμονής"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:96
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:112
 msgid "Unable to reach httpSMS. Please try again."
 msgstr "Δεν ήταν δυνατή η σύνδεση με το httpSMS. Δοκιμάστε ξανά."
 
@@ -13800,15 +13954,23 @@ msgstr ""
 msgid "Unable to remove the access token"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:70
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:86
 msgid "Unable to remove the API key"
 msgstr "Δεν ήταν δυνατή η αφαίρεση του κλειδιού API"
+
+#: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:49
+msgid "Unable to remove the number"
+msgstr "Δεν ήταν δυνατή η αφαίρεση του αριθμού"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:119
+msgid "Unable to start the import"
+msgstr "Δεν ήταν δυνατή η έναρξη της εισαγωγής"
 
 #: src/components/modals/EditQuestionModal/index.tsx:84
 msgid "Unable to update question. Please check the your details"
 msgstr "Αδύνατη ενημέρωση ερώτησης. Ελέγξτε τα στοιχεία σας"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:76
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:100
 msgid "Unable to update the conversation"
 msgstr "Δεν ήταν δυνατή η ενημέρωση της συνομιλίας"
 
@@ -13879,6 +14041,10 @@ msgstr ""
 #: src/components/routes/organizer/Sms/CustomerCard.tsx:27
 msgid "Unknown customer"
 msgstr "Άγνωστος πελάτης"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:35
+msgid "unknown error"
+msgstr "άγνωστο σφάλμα"
 
 #: src/components/routes/event/products.tsx:82
 #~ msgid "unlimited"
@@ -14632,7 +14798,7 @@ msgstr "Το webhook διαγράφηκε επιτυχώς"
 msgid "Webhook Logs"
 msgstr "Αρχεία Webhook"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:179
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:202
 msgid "Webhook signing key"
 msgstr "Κλειδί υπογραφής webhook"
 
@@ -14642,7 +14808,7 @@ msgid "Webhook Signing Secret"
 msgstr "Signing Secret Webhook"
 
 #: src/components/forms/WebhookForm/index.tsx:138
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:172
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:195
 msgid "Webhook URL"
 msgstr "URL Webhook"
 
@@ -14657,7 +14823,7 @@ msgstr "Το webhook θα στέλνει ειδοποιήσεις"
 #: src/components/layouts/Event/index.tsx:128
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
-#: src/components/routes/organizer/Settings/index.tsx:93
+#: src/components/routes/organizer/Settings/index.tsx:107
 #: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
@@ -14989,7 +15155,7 @@ msgstr ""
 msgid "Write your message here..."
 msgstr "Γράψτε το μήνυμά σας εδώ..."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:149
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:174
 msgid "Write your reply"
 msgstr "Γράψτε την απάντησή σας"
 

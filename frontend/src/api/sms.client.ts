@@ -10,6 +10,8 @@ import {
     SmsConversationFilter,
     SmsConversationStatus,
     SmsMessage,
+    SmsOptOut,
+    SmsReplyTemplate,
 } from "../types";
 
 export interface SmsSettingsRequest {
@@ -20,6 +22,16 @@ export interface SmsSettingsRequest {
 export interface SmsConversationsParams {
     query?: string;
     filter?: SmsConversationFilter;
+    page?: number;
+}
+
+export interface SmsReplyTemplateRequest {
+    name: string;
+    content: string;
+}
+
+export interface SmsOptOutsParams {
+    query?: string;
     page?: number;
 }
 
@@ -68,5 +80,35 @@ export const smsClient = {
             {content},
         );
         return response.data;
+    },
+    importHistory: async (organizerId: IdParam) => {
+        const response = await api.post<GenericDataResponse<OrganizerSmsSettings>>(`organizers/${organizerId}/sms/settings/import-history`);
+        return response.data;
+    },
+    replyTemplates: async (organizerId: IdParam) => {
+        const response = await api.get<GenericDataResponse<SmsReplyTemplate[]>>(`organizers/${organizerId}/sms/reply-templates`);
+        return response.data;
+    },
+    createReplyTemplate: async (organizerId: IdParam, template: SmsReplyTemplateRequest) => {
+        const response = await api.post<GenericDataResponse<SmsReplyTemplate>>(`organizers/${organizerId}/sms/reply-templates`, template);
+        return response.data;
+    },
+    updateReplyTemplate: async (organizerId: IdParam, templateId: IdParam, template: SmsReplyTemplateRequest) => {
+        const response = await api.put<GenericDataResponse<SmsReplyTemplate>>(`organizers/${organizerId}/sms/reply-templates/${templateId}`, template);
+        return response.data;
+    },
+    deleteReplyTemplate: async (organizerId: IdParam, templateId: IdParam) => {
+        await api.delete(`organizers/${organizerId}/sms/reply-templates/${templateId}`);
+    },
+    optOuts: async (organizerId: IdParam, params: SmsOptOutsParams) => {
+        const response = await api.get<GenericPaginatedResponse<SmsOptOut>>(`organizers/${organizerId}/sms/opt-outs`, {params});
+        return response.data;
+    },
+    addOptOut: async (organizerId: IdParam, phone: string) => {
+        const response = await api.post<GenericDataResponse<SmsOptOut>>(`organizers/${organizerId}/sms/opt-outs`, {phone});
+        return response.data;
+    },
+    removeOptOut: async (organizerId: IdParam, optOutId: IdParam) => {
+        await api.delete(`organizers/${organizerId}/sms/opt-outs/${optOutId}`);
     },
 };

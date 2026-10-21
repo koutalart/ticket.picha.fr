@@ -1,14 +1,17 @@
 import {useEffect, useRef, useState} from "react";
 import {t} from "@lingui/macro";
-import {ActionIcon, Alert, Badge, Button, Loader, Select, Text, Textarea} from "@mantine/core";
-import {IconArrowLeft, IconBan, IconSend, IconSparkles} from "@tabler/icons-react";
+import {NavLink} from "react-router";
+import {ActionIcon, Alert, Badge, Button, Group, Loader, Menu, Select, Text, Textarea} from "@mantine/core";
+import {IconArrowLeft, IconBan, IconMessageBolt, IconSend, IconSettings, IconSparkles} from "@tabler/icons-react";
 import {IdParam, SmsConversationDetail, SmsConversationStatus} from "../../../../types.ts";
 import {useSendSmsReply} from "../../../../mutations/useSendSmsReply.ts";
 import {useUpdateSmsConversation} from "../../../../mutations/useUpdateSmsConversation.ts";
+import {useGetSmsReplyTemplates} from "../../../../queries/useGetSmsReplyTemplates.ts";
 import {showError} from "../../../../utilites/notifications.tsx";
 import {relativeDate} from "../../../../utilites/dates.ts";
 import {conversationStatusLabel, messageAuthorLabel, messageStatusLabel} from "./labels.ts";
 import {countSmsSegments} from "./smsSegments.ts";
+import {applyReplyTemplate, contactFirstName} from "./replyTemplates.ts";
 import classes from "./Sms.module.scss";
 
 const MAX_LENGTH = 640;
@@ -27,6 +30,9 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
     const sendMutation = useSendSmsReply();
     const updateMutation = useUpdateSmsConversation();
     const bottomRef = useRef<HTMLDivElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const templatesQuery = useGetSmsReplyTemplates(canSend ? organizerId : undefined);
+    const templates = templatesQuery.data ?? [];
     const conversation = detail?.conversation;
     const messageCount = detail?.messages.length ?? 0;
 
@@ -63,6 +69,24 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
                 const response = exception?.response?.data;
                 setError(response?.errors?.content?.[0] || response?.message || t`The SMS could not be sent`);
             },
+        });
+    };
+
+    const insertTemplate = (templateContent: string) => {
+        const text = applyReplyTemplate(templateContent, contactFirstName(detail));
+        const textarea = textareaRef.current;
+        const start = textarea?.selectionStart ?? content.length;
+        const end = textarea?.selectionEnd ?? content.length;
+        const before = content.slice(0, start);
+        const after = content.slice(end);
+        const separator = before && !/\s$/.test(before) ? ' ' : '';
+        const next = (before + separator + text + after).slice(0, MAX_LENGTH);
+
+        setContent(next);
+        requestAnimationFrame(() => {
+            const position = Math.min(next.length, before.length + separator.length + text.length);
+            textarea?.focus();
+            textarea?.setSelectionRange(position, position);
         });
     };
 
@@ -144,6 +168,7 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
                             </Badge>
                         )}
                         <Textarea
+                            ref={textareaRef}
                             value={content}
                             onChange={(event) => setContent(event.currentTarget.value)}
                             placeholder={t`Write your reply`}
@@ -164,14 +189,42 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
                                 {t`${segments.characters} characters, ${segments.segments} SMS`}
                                 {segments.unicode ? ` ${t`(emoji or special characters: 70 characters per SMS)`}` : ''}
                             </Text>
-                            <Button
-                                leftSection={<IconSend size={16}/>}
-                                onClick={send}
-                                loading={sendMutation.isPending}
-                                disabled={!content.trim()}
-                            >
-                                {t`Send`}
-                            </Button>
+                            <Group gap="xs" wrap="nowrap">
+                                <Menu position="top-end" withinPortal shadow="md" width={280}>
+                                    <Menu.Target>
+                                        <Button variant="default" leftSection={<IconMessageBolt size={16}/>}>
+                                            {t`Templates`}
+                                        </Button>
+                                    </Menu.Target>
+                                    <Menu.Dropdown className={classes.templateMenu}>
+                                        {templates.length === 0 && (
+                                            <Menu.Label>{t`No reply template yet`}</Menu.Label>
+                                        )}
+                                        {templates.map(template => (
+                                            <Menu.Item key={template.id} onClick={() => insertTemplate(template.content)}>
+                                                <Text size="sm" fw={600}>{template.name}</Text>
+                                                <Text size="xs" c="dimmed" lineClamp={2}>{template.content}</Text>
+                                            </Menu.Item>
+                                        ))}
+                                        <Menu.Divider/>
+                                        <Menu.Item
+                                            component={NavLink}
+                                            to={`/manage/organizer/${organizerId}/settings#sms-reply-templates`}
+                                            leftSection={<IconSettings size={14}/>}
+                                        >
+                                            {t`Manage reply templates`}
+                                        </Menu.Item>
+                                    </Menu.Dropdown>
+                                </Menu>
+                                <Button
+                                    leftSection={<IconSend size={16}/>}
+                                    onClick={send}
+                                    loading={sendMutation.isPending}
+                                    disabled={!content.trim()}
+                                >
+                                    {t`Send`}
+                                </Button>
+                            </Group>
                         </div>
                     </>
                 )}

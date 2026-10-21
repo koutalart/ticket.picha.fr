@@ -1300,6 +1300,34 @@ export interface OrganizerSmsSettings {
     webhook_url: string;
     webhook_signing_key: string;
     last_webhook_received_at: string | null;
+    history_import: SmsHistoryImport;
+}
+
+export type SmsHistoryImportStatus = 'RUNNING' | 'COMPLETED' | 'FAILED';
+
+export interface SmsHistoryImport {
+    status: SmsHistoryImportStatus | null;
+    started_at: string | null;
+    finished_at: string | null;
+    imported_count: number | null;
+    error: string | null;
+}
+
+export interface SmsReplyTemplate {
+    id: number;
+    name: string;
+    content: string;
+    updated_at: string;
+}
+
+export type SmsOptOutSource = 'KEYWORD' | 'MANUAL';
+
+export interface SmsOptOut {
+    id: number;
+    phone: string;
+    source: SmsOptOutSource;
+    contact_name: string | null;
+    created_at: string;
 }
 
 export interface SmsConnectionTestResult {

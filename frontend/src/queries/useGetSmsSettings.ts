@@ -12,5 +12,6 @@ export const useGetSmsSettings = (organizerId: IdParam) => {
             return data;
         },
         enabled: !!organizerId,
+        refetchInterval: (query) => query.state.data?.history_import?.status === 'RUNNING' ? 3000 : false,
     });
 };
