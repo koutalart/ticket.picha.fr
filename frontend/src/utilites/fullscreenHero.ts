@@ -1,0 +1,21 @@
+import {Event, ImageType} from "../types.ts";
+import {validateThemeSettings} from "./themeUtils.ts";
+
+const findImageUrl = (images: Event['images'], type: ImageType): string | undefined =>
+    images?.find((image) => image.type === type)?.url;
+
+export const getFullscreenHero = (event?: Event) => {
+    const settings = validateThemeSettings(event?.settings?.homepage_theme_settings);
+    const coverVideo = findImageUrl(event?.images, 'EVENT_COVER_VIDEO');
+    const coverImage = findImageUrl(event?.images, 'EVENT_COVER');
+
+    return {
+        enabled: settings.hero_layout === 'FULLSCREEN' && !!(coverVideo || coverImage),
+        settings,
+        coverVideo,
+        coverImage,
+        partnerLogo: findImageUrl(event?.images, 'EVENT_HERO_PARTNER_LOGO'),
+        brandLogo: findImageUrl(event?.images, 'EVENT_HERO_BRAND_LOGO'),
+        organizerLogo: findImageUrl(event?.organizer?.images, 'ORGANIZER_LOGO'),
+    };
+};

@@ -49,6 +49,10 @@ import {useResendOrderConfirmationPublic} from "../../../../mutations/useResendO
 import {Attendee, Event, Order, Product} from "../../../../types.ts";
 import classes from './OrderSummaryAndProducts.module.scss';
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
+import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
+import {getFullscreenHero} from "../../../../utilites/fullscreenHero.ts";
+import {buildHomepageFontStack} from "../../../../constants/homepageFonts.ts";
+import {ensureHomepageFontLoaded} from "../../../../utilites/fontLoader.ts";
 // Purchase tracking is handled by the parent Checkout layout
 
 const PaymentStatus = ({order}: { order: Order }) => {
@@ -155,6 +159,35 @@ const DetailItem = ({icon: Icon, label, value}: { icon: any, label: string, valu
         </Group>
     </div>
 );
+
+const FullscreenWelcomeHeader = ({order, event, heroTitle, heroSubtitle, fontFamily, isFree}: {
+    order: Order;
+    event: Event;
+    heroTitle?: string;
+    heroSubtitle?: string;
+    fontFamily?: string;
+    isFree: boolean;
+}) => {
+    useEffect(() => {
+        ensureHomepageFontLoaded(fontFamily);
+    }, [fontFamily]);
+
+    return (
+    <div className={classes.fullscreenWelcome} style={{fontFamily: buildHomepageFontStack(fontFamily)}}>
+        <div className={classes.fullscreenWelcomeEyebrow}>
+            {isFree ? t`Registration confirmed` : t`Order confirmed`}
+        </div>
+        <h1 className={classes.fullscreenWelcomeTitle}>
+            {(heroTitle?.trim() || event.title).split('\n').map((line, index) => <span key={index}>{line}</span>)}
+        </h1>
+        {heroSubtitle?.trim() && <div className={classes.fullscreenWelcomeSubtitle}>{heroSubtitle}</div>}
+        <div className={classes.fullscreenWelcomeDate}><EventDateRange event={event}/></div>
+        <div className={classes.fullscreenWelcomeEmail}>
+            {t`Confirmation sent to`} <strong>{order.email}</strong>
+        </div>
+    </div>
+    );
+};
 
 const WelcomeHeader = ({order, event, allowSelfEdit}: { order: Order; event: Event; allowSelfEdit: boolean }) => {
     const isCompleted = order.status === 'COMPLETED';
@@ -402,6 +435,8 @@ export const OrderSummaryAndProducts = () => {
     const {eventId, orderShortId} = useParams();
     const location = useLocation();
     const {data: order, isFetched: orderIsFetched, isError} = useGetOrderPublic(eventId, orderShortId, ['event']);
+    const {data: publicEvent} = useGetEventPublic(eventId, !!eventId);
+    const fullscreenHero = getFullscreenHero(publicEvent);
     const event = order?.event;
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -565,7 +600,18 @@ export const OrderSummaryAndProducts = () => {
     return (
         <>
             <CheckoutContent>
-                <WelcomeHeader order={order} event={event} allowSelfEdit={allowSelfEdit}/>
+                {fullscreenHero.enabled && order.status === 'COMPLETED' ? (
+                    <FullscreenWelcomeHeader
+                        order={order}
+                        event={event}
+                        heroTitle={fullscreenHero.settings.hero_title}
+                        heroSubtitle={fullscreenHero.settings.hero_subtitle}
+                        fontFamily={fullscreenHero.settings.font_family}
+                        isFree={!!isFreeOrder}
+                    />
+                ) : (
+                    <WelcomeHeader order={order} event={event} allowSelfEdit={allowSelfEdit}/>
+                )}
 
                 {emailUpdated && (
                     <Alert
