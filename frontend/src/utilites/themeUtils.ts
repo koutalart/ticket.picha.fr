@@ -134,8 +134,20 @@ export function getAccentMuted(accent: string, mode: 'light' | 'dark'): string {
     return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
 }
 
+export function mixWithWhite(hex: string, ratio: number): string | null {
+    const rgb = hexToRgb(hex);
+    if (!rgb) {
+        return null;
+    }
+    const channel = (value: number) => Math.round(value + (255 - value) * ratio).toString(16).padStart(2, '0');
+    return `#${channel(rgb.r)}${channel(rgb.g)}${channel(rgb.b)}`;
+}
+
 export function computeThemeVariables(settings: HomepageThemeSettings): ThemeCSSVariables {
-    const derived = getDerivedColors(settings.mode);
+    const baseDerived = getDerivedColors(settings.mode);
+    const derived = settings.mode === 'dark'
+        ? {...baseDerived, surface: mixWithWhite(settings.background, 0.07) || baseDerived.surface}
+        : baseDerived;
     const accentContrast = getContrastColor(settings.accent);
     const accentSoft = getAccentSoft(settings.accent, settings.mode);
     const accentMuted = getAccentMuted(settings.accent, settings.mode);

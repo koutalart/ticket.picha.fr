@@ -1357,7 +1357,10 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .fullscreenHero {
-  position: relative;
+  --hero-progress: 0;
+  position: sticky;
+  top: 0;
+  z-index: 0;
   width: 100%;
   height: 100vh;
   height: 100svh;
@@ -1374,6 +1377,9 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: blur(calc(var(--hero-progress) * 16px)) brightness(calc(1 - var(--hero-progress) * 0.45));
+  transform: scale(calc(1.02 + var(--hero-progress) * 0.08));
+  will-change: filter, transform;
 }
 
 .fullscreenVeil {
@@ -1391,6 +1397,8 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 .fullscreenCenter {
   position: absolute;
   inset: 0;
+  opacity: calc(1 - var(--hero-progress) * 1.6);
+  transform: translateY(calc(var(--hero-progress) * -18vh));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1423,6 +1431,7 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
 
 .fullscreenFooter {
+  opacity: calc(1 - var(--hero-progress) * 2.5);
   position: absolute;
   left: 0;
   right: 0;
@@ -1473,6 +1482,7 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .fullscreenTopBar {
+  opacity: calc(1 - var(--hero-progress) * 1.8);
   position: absolute;
   top: clamp(18px, 3vw, 36px);
   left: clamp(20px, 4vw, 56px);
@@ -1543,4 +1553,23 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   height: clamp(30px, 3.6vw, 48px);
   max-width: 40vw;
   object-fit: contain;
+}
+
+.fullscreenHero + .wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fullscreenMedia {
+    filter: none;
+    transform: none;
+  }
+
+  .fullscreenTopBar,
+  .fullscreenCenter,
+  .fullscreenFooter {
+    opacity: 1;
+    transform: none;
+  }
 }
