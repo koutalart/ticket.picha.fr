@@ -4,6 +4,7 @@ namespace HiEvents\Validators\Rules;
 
 use Closure;
 use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
+use HiEvents\DomainObjects\QuestionAnswerFileDomainObject;
 use HiEvents\DomainObjects\QuestionDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
@@ -38,6 +39,8 @@ abstract class BaseQuestionRule implements ValidationRule, DataAwareRule, Valida
 
     protected Validator $validator;
 
+    protected Collection $uploadedFiles;
+
     protected array $data = [];
 
     abstract protected function validateRequiredQuestionArePresent(Collection $data): void;
@@ -48,6 +51,17 @@ abstract class BaseQuestionRule implements ValidationRule, DataAwareRule, Valida
     {
         $this->questions = $questions;
         $this->products = $products;
+        $this->uploadedFiles = new Collection();
+    }
+
+    /**
+     * @param Collection<QuestionAnswerFileDomainObject> $uploadedFiles
+     */
+    public function setUploadedFiles(Collection $uploadedFiles): static
+    {
+        $this->uploadedFiles = $uploadedFiles;
+
+        return $this;
     }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -140,6 +154,36 @@ abstract class BaseQuestionRule implements ValidationRule, DataAwareRule, Valida
         if (isset($response['answer']) && !is_array($response['answer']) && strlen($response['answer']) > 255) {
             $validationMessages[$key . '.answer'][] = __('This field must be less than 255 characters.');
         }
+
+        return $validationMessages;
+    }
+
+    protected function validateFileAnswer(
+        QuestionDomainObject $questionDomainObject,
+        mixed                $answer,
+        string               $key,
+        array                $validationMessages,
+        array                &$usedFileIds,
+    ): array
+    {
+        if (!$questionDomainObject->isFileQuestion() || empty($answer)) {
+            return $validationMessages;
+        }
+
+        $fileId = is_int($answer) || (is_string($answer) && ctype_digit($answer)) ? (int)$answer : null;
+
+        $file = $this->uploadedFiles->first(
+            fn(QuestionAnswerFileDomainObject $file) => $file->getId() === $fileId
+                && $file->getQuestionId() === $questionDomainObject->getId()
+        );
+
+        if ($file === null || in_array($fileId, $usedFileIds, true)) {
+            $validationMessages[$key . '.answer'][] = __('The uploaded file is invalid or has expired. Please upload it again.');
+
+            return $validationMessages;
+        }
+
+        $usedFileIds[] = $fileId;
 
         return $validationMessages;
     }

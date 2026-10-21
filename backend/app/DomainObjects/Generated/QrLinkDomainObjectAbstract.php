@@ -15,6 +15,7 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
     final public const ORGANIZER_ID = 'organizer_id';
     final public const EVENT_ID = 'event_id';
     final public const QR_CAMPAIGN_ID = 'qr_campaign_id';
+    final public const SMS_CAMPAIGN_ID = 'sms_campaign_id';
     final public const SHORT_ID = 'short_id';
     final public const NAME = 'name';
     final public const DESTINATION_TYPE = 'destination_type';
@@ -38,6 +39,7 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
     protected int $organizer_id;
     protected ?int $event_id = null;
     protected ?int $qr_campaign_id = null;
+    protected ?int $sms_campaign_id = null;
     protected string $short_id;
     protected string $name;
     protected string $destination_type;
@@ -64,6 +66,7 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
                     'organizer_id' => $this->organizer_id ?? null,
                     'event_id' => $this->event_id ?? null,
                     'qr_campaign_id' => $this->qr_campaign_id ?? null,
+                    'sms_campaign_id' => $this->sms_campaign_id ?? null,
                     'short_id' => $this->short_id ?? null,
                     'name' => $this->name ?? null,
                     'destination_type' => $this->destination_type ?? null,
@@ -137,6 +140,17 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
     public function getQrCampaignId(): ?int
     {
         return $this->qr_campaign_id;
+    }
+
+    public function setSmsCampaignId(?int $sms_campaign_id): self
+    {
+        $this->sms_campaign_id = $sms_campaign_id;
+        return $this;
+    }
+
+    public function getSmsCampaignId(): ?int
+    {
+        return $this->sms_campaign_id;
     }
 
     public function setShortId(string $short_id): self

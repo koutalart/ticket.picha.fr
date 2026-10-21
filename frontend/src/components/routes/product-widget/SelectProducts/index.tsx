@@ -11,7 +11,7 @@ import {
     TextInput,
     UnstyledButton
 } from "@mantine/core";
-import {useNavigate, useParams} from "react-router";
+import {useNavigate, useParams, useSearchParams} from "react-router";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {notifications} from "@mantine/notifications";
 import {
@@ -31,7 +31,12 @@ import classNames from 'classnames';
 import '../../../../styles/widget/default.scss';
 import {ProductAvailabilityMessage} from "../../../common/ProductPriceAvailability";
 import {PoweredByFooter} from "../../../common/PoweredByFooter";
-import {Event, Product} from "../../../../types.ts";
+import {Event, Product, ProductCategory} from "../../../../types.ts";
+import {
+    categorySlug,
+    filterProductCategories,
+    PRODUCT_CATEGORY_QUERY_PARAMS
+} from "../../../../utilites/productCategoryFilter.ts";
 import {eventsClientPublic} from "../../../../api/event.client.ts";
 import {promoCodeClientPublic} from "../../../../api/promo-code.client.ts";
 import {IconChevronRight, IconX} from "@tabler/icons-react"
@@ -211,6 +216,44 @@ const SelectProducts = (props: SelectProductsProps) => {
     });
 
     const productCategories = event?.product_categories || [];
+    const [searchParams] = useSearchParams();
+    const requestedCategory = PRODUCT_CATEGORY_QUERY_PARAMS.map(param => searchParams.get(param)).find(Boolean);
+    const visibleCategories = filterProductCategories(productCategories, requestedCategory);
+    const isCategoryFiltered = visibleCategories.length < productCategories.length;
+    const chooseCategoryFirst = !!event?.settings?.choose_category_first;
+    const choosableCategories = productCategories.filter(category => (category.products?.length ?? 0) > 0);
+    const categoryChoiceEnabled = chooseCategoryFirst && choosableCategories.length >= 2;
+    const showCategoryChoice = categoryChoiceEnabled && !isCategoryFiltered;
+    const clearSelectedQuantities = () => {
+        if (!form.values.products?.length) {
+            return;
+        }
+        form.setFieldValue('products', form.values.products.map(productValue => ({
+            ...productValue,
+            quantities: productValue.quantities.map(quantityValue => ({...quantityValue, quantity: 0})),
+        })));
+    };
+    // The app scroll manager scrolls to the top on every navigation without a hash:
+    // keeping #tickets in the URL makes it scroll to the ticket section instead.
+    const goToTickets = (next: URLSearchParams, replace = false) => {
+        const search = next.toString();
+        navigate({search: search ? `?${search}` : '', hash: '#tickets'}, {replace, preventScrollReset: true});
+    };
+    const selectCategory = (category: ProductCategory) => {
+        const next = new URLSearchParams(searchParams);
+        PRODUCT_CATEGORY_QUERY_PARAMS.forEach(param => next.delete(param));
+        next.set(PRODUCT_CATEGORY_QUERY_PARAMS[0], categorySlug(category.name));
+        clearSelectedQuantities();
+        goToTickets(next);
+    };
+    const showAllCategories = () => {
+        const next = new URLSearchParams(searchParams);
+        PRODUCT_CATEGORY_QUERY_PARAMS.forEach(param => next.delete(param));
+        if (categoryChoiceEnabled) {
+            clearSelectedQuantities();
+        }
+        goToTickets(next, true);
+    };
     const productAreAvailable = productCategories && productCategories.some(category => !!category?.products?.length);
     const products: Product[] = productCategories.reduce((acc: Product[], category) => acc.concat(category.products ?? []), []);
 
@@ -280,6 +323,36 @@ const SelectProducts = (props: SelectProductsProps) => {
 
     useEffect(populateFormValue, [productCategories]);
 
+    const singleSelection = !!event?.settings?.single_product_per_order;
+
+    const formIndexOfProduct = (productId: number | undefined) => products.findIndex(p => p.id === productId);
+
+    const selectSinglePrice = (productFormIndex: number, priceIndex: number) => {
+        const nextProducts = (form.values.products ?? []).map((productValue, pIndex) => ({
+            ...productValue,
+            quantities: productValue.quantities.map((quantityValue, qIndex) => ({
+                ...quantityValue,
+                quantity: pIndex === productFormIndex && qIndex === priceIndex ? 1 : 0,
+            })),
+        }));
+        form.setFieldValue('products', nextProducts);
+    };
+
+    const visibleProducts: Product[] = visibleCategories.reduce((acc: Product[], category) => acc.concat(category.products ?? []), []);
+    const selectableOptions = visibleProducts.flatMap(product => (product.is_available && !product.is_sold_out)
+        ? (product.prices ?? [])
+            .map((price, priceIndex) => ({product, price, priceIndex}))
+            .filter(({price}) => price.is_available)
+        : []);
+
+    useEffect(() => {
+        if (!singleSelection || !form.values.products?.length || selectedProductQuantitySum > 0 || selectableOptions.length !== 1) {
+            return;
+        }
+        const [only] = selectableOptions;
+        selectSinglePrice(formIndexOfProduct(only.product.id), only.priceIndex);
+    }, [singleSelection, form.values.products?.length, selectableOptions.length, requestedCategory]);
+
     const handleProductSelection = (values: Omit<ProductFormPayload, "session_identifier">) => {
         if (values && selectedProductQuantitySum > 0) {
             productMutation.mutate({
@@ -305,8 +378,6 @@ const SelectProducts = (props: SelectProductsProps) => {
         || selectedProductQuantitySum === 0
         || props.widgetMode === 'preview'
         || products?.every(product => product.is_sold_out);
-
-    let productIndex = 0;
 
     return (
         <div className={classNames('hi-product-widget-container', {'hi-has-sticky-footer': props.widgetMode !== 'embedded'})}
@@ -411,12 +482,31 @@ const SelectProducts = (props: SelectProductsProps) => {
                     </div>
                 </Modal>
             )}
-            {(event && productAreAvailable) && (
+            {(event && productAreAvailable && showCategoryChoice) && (
+                <div className={'hi-category-choice'}>
+                    {choosableCategories.map((category) => (
+                        <button
+                            type="button"
+                            key={category.id}
+                            className={'hi-category-choice-button'}
+                            onClick={() => selectCategory(category)}
+                        >
+                            {category.selection_label || t`Register: ${category.name}`}
+                        </button>
+                    ))}
+                </div>
+            )}
+            {(event && productAreAvailable && !showCategoryChoice) && (
                 <form target={'__blank'} onSubmit={form.onSubmit(handleProductSelection as any)}>
                     <Input type={'hidden'} {...form.getInputProps('promo_code')} />
                     <Input type={'hidden'} {...form.getInputProps('affiliate_code')} />
+                    {isCategoryFiltered && (
+                        <button type="button" className={'hi-product-category-show-all'} onClick={showAllCategories}>
+                            {categoryChoiceEnabled ? t`Change path` : t`See all tickets`}
+                        </button>
+                    )}
                     <div className={'hi-product-category-rows'}>
-                        {productCategories && productCategories.map((category) => {
+                        {visibleCategories.map((category) => {
                             return (
                                 <div className={'hi-product-category-row'} key={category.id}>
                                     <h2 className={'hi-product-category-title'} style={category.description ? {
@@ -441,7 +531,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                                         )}
 
                                         {(category.products) && category.products.map((product) => {
-                                            const currentProductIndex = productIndex;
+                                            const currentProductIndex = formIndexOfProduct(product.id);
                                             const quantityRange = range(product.min_per_order || 1, product.max_per_order || 25)
                                                 .map((n) => n.toString());
                                             quantityRange.unshift("0");
@@ -501,10 +591,12 @@ const SelectProducts = (props: SelectProductsProps) => {
                                                               className={'hi-product-content'} hidden={isProductCollapsed}>
                                                         <div className={'hi-price-tiers-rows'}>
                                                             <TieredPricing
-                                                                productIndex={productIndex++}
+                                                                productIndex={currentProductIndex}
                                                                 event={event}
                                                                 product={product}
                                                                 form={form}
+                                                                singleSelection={singleSelection}
+                                                                onSelectPrice={(priceIndex) => selectSinglePrice(currentProductIndex, priceIndex)}
                                                             />
                                                         </div>
 

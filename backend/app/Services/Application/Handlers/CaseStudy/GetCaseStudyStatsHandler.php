@@ -12,11 +12,23 @@ class GetCaseStudyStatsHandler
     ) {}
 
     /**
+     * @return int[]
+     */
+    public function findEventIdsEndedSince(string $since, int $limit): array
+    {
+        return $this->repository->findEventIdsEndedSince($since, $limit);
+    }
+
+    /**
      * @param  int[]  $eventIds
      * @return CaseStudyEventStatsDTO[]
      */
     public function handle(array $eventIds): array
     {
+        if ($eventIds === []) {
+            return [];
+        }
+
         return array_map(function (array $event): CaseStudyEventStatsDTO {
             $eventId = (int) $event['id'];
             $timezone = (string) $event['timezone'];

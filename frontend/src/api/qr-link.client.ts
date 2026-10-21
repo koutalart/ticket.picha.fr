@@ -89,4 +89,7 @@ export const qrLinkClientPublic = {
     recordClick: (shortId: string, target: string) => {
         return publicApi.post(`/qr-links/${shortId}/visits`, {type: 'CLICK' satisfies QrLinkVisitType, target});
     },
+    recordScan: (shortId: string, referrer: string | null) => {
+        return publicApi.post(`/qr-links/${shortId}/visits`, {type: 'SCAN' satisfies QrLinkVisitType, referrer});
+    },
 };

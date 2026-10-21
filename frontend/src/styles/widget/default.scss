@@ -122,6 +122,17 @@
       .hi-price-tier-row {
         margin-bottom: 15px;
 
+        &.hi-price-tier-selectable {
+          padding: 10px 12px;
+          border: 1px solid var(--widget-secondary-color, #dee2e6);
+          border-radius: 8px;
+        }
+
+        &.hi-price-tier-selected {
+          border-width: 2px;
+          padding: 9px 11px;
+        }
+
         .hi-price-tier {
           .hi-price-tier-label {
             font-weight: bold;
@@ -271,4 +282,65 @@
 
 .hi-product-widget-container.hi-has-sticky-footer {
   padding-bottom: 0;
+}
+
+.hi-product-category-show-all {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: .9em;
+  text-decoration: underline;
+  opacity: .8;
+  cursor: pointer;
+}
+
+.hi-category-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 4px 0 16px;
+}
+
+.hi-category-choice-button {
+  display: block;
+  width: 100%;
+  padding: 20px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--widget-secondary-color, var(--hi-primary)) 0%,
+    color-mix(in srgb, var(--widget-secondary-color, var(--hi-primary)) 72%, #000) 100%
+  );
+  color: var(--widget-secondary-text-color, #fff);
+  font: inherit;
+  font-size: 1.15em;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--widget-secondary-color, var(--hi-primary)) 35%, transparent);
+  transition: transform .15s ease, box-shadow .15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--widget-secondary-color, var(--hi-primary)) 45%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--widget-primary-color, var(--hi-primary));
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
 }

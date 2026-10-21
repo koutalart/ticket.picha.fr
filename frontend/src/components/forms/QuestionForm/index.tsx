@@ -6,6 +6,7 @@ import {
     IconAlignBoxLeftTop,
     IconCalendar,
     IconCircleCheck,
+    IconFileTypePdf,
     IconForms,
     IconMapPin,
     IconPhone,
@@ -143,6 +144,12 @@ export const QuestionForm = ({form, productCategories}: QuestionFormProps) => {
             label: t`Date`,
             value: QuestionType.DATE,
             description: t`A date input. Perfect for asking for a date of birth etc.`,
+        },
+        {
+            icon: <IconFileTypePdf/>,
+            label: t`File (PDF)`,
+            value: QuestionType.FILE,
+            description: t`Lets buyers upload a PDF document of up to 5 MB, such as a CV.`,
         }
     ];
     const multiAnswerQuestionTypes = [

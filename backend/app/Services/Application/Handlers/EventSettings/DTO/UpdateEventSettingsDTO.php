@@ -88,6 +88,9 @@ class UpdateEventSettingsDTO extends BaseDTO
         // Self-service settings
         public readonly bool                    $allow_attendee_self_edit = true,
 
+        public readonly bool                    $single_product_per_order = false,
+        public readonly bool                    $choose_category_first = false,
+
         // Waitlist settings
         public readonly ?bool                   $waitlist_auto_process = null,
         public readonly ?int                    $waitlist_offer_timeout_minutes = null,
@@ -177,6 +180,10 @@ class UpdateEventSettingsDTO extends BaseDTO
 
             // Self-service defaults
             allow_attendee_self_edit: true,
+
+            single_product_per_order: false,
+
+            choose_category_first: false,
         );
     }
 }

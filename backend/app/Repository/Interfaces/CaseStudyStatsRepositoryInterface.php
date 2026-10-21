@@ -11,6 +11,13 @@ interface CaseStudyStatsRepositoryInterface
     public function getEvents(array $eventIds): array;
 
     /**
+     * Live events whose end (or start, when no end is set) falls between $since and now.
+     *
+     * @return int[]
+     */
+    public function findEventIdsEndedSince(string $since, int $limit): array;
+
+    /**
      * @return array<int, array{channel: string, product: string, tickets: int}>
      */
     public function getTicketsByChannelAndProduct(int $eventId): array;

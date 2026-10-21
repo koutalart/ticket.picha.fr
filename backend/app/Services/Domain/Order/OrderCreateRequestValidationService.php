@@ -6,7 +6,9 @@ use Exception;
 use HiEvents\DomainObjects\CapacityAssignmentDomainObject;
 use HiEvents\DomainObjects\Enums\ProductPriceType;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\PromoCodeDomainObjectAbstract;
+use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\Helper\Currency;
@@ -16,6 +18,7 @@ use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\Product\AvailableProductQuantitiesFetchService;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesDTO;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesResponseDTO;
+use HiEvents\Services\Domain\Product\ProductUnlockService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -25,11 +28,15 @@ class OrderCreateRequestValidationService
 {
     private AvailableProductQuantitiesResponseDTO $availableProductQuantities;
 
+    /** @var int[] */
+    private array $lockedProductIds = [];
+
     public function __construct(
         readonly private ProductRepositoryInterface             $productRepository,
         readonly private PromoCodeRepositoryInterface           $promoCodeRepository,
         readonly private EventRepositoryInterface               $eventRepository,
         readonly private AvailableProductQuantitiesFetchService $fetchAvailableProductQuantitiesService,
+        readonly private ProductUnlockService                   $productUnlockService,
     )
     {
     }
@@ -42,9 +49,12 @@ class OrderCreateRequestValidationService
     {
         $this->validateTypes($data);
 
-        $event = $this->eventRepository->findById($eventId);
+        $event = $this->eventRepository
+            ->loadRelation(EventSettingDomainObject::class)
+            ->findById($eventId);
         $this->validatePromoCode($eventId, $data);
         $this->validateProductSelection($data);
+        $this->validateSingleProductPerOrder($event, $data);
 
         $this->availableProductQuantities = $this->fetchAvailableProductQuantitiesService
             ->getAvailableProductQuantities(
@@ -108,6 +118,25 @@ class OrderCreateRequestValidationService
     }
 
     /**
+     * @throws ValidationException
+     */
+    private function validateSingleProductPerOrder(EventDomainObject $event, array $data): void
+    {
+        if (!$event->getEventSettings()?->getSingleProductPerOrder()) {
+            return;
+        }
+
+        $totalQuantity = collect($data['products'])
+            ->sum(fn($product) => collect($product['quantities'])->sum('quantity'));
+
+        if ($totalQuantity > 1) {
+            throw ValidationException::withMessages([
+                'products' => __('Only one registration per order is allowed for this event.'),
+            ]);
+        }
+    }
+
+    /**
      * @throws Exception
      */
     private function getProducts(array $data): Collection
@@ -126,8 +155,50 @@ class OrderCreateRequestValidationService
     {
         $products = $this->getProducts($data);
 
+        $this->lockedProductIds = $this->productUnlockService->getLockedProductIds(
+            $products,
+            $this->availableProductQuantities,
+        );
+
         foreach ($data['products'] as $productIndex => $productAndQuantities) {
             $this->validateSingleProductDetails($event, $productIndex, $productAndQuantities, $products);
+        }
+
+        $this->validateOptionsComeWithATicket($event, $data, $products);
+    }
+
+    /**
+     * An option (non-ticket product, e.g. an insurance) cannot be ordered alone
+     * when the event sells tickets.
+     *
+     * @throws ValidationException
+     */
+    private function validateOptionsComeWithATicket(EventDomainObject $event, array $data, Collection $products): void
+    {
+        $quantityByType = ['ticket' => 0, 'option' => 0];
+
+        foreach ($data['products'] as $productAndQuantities) {
+            $product = $products->first(fn (ProductDomainObject $item) => $item->getId() === (int) $productAndQuantities['product_id']);
+            $quantity = collect($productAndQuantities['quantities'] ?? [])->sum('quantity');
+            if ($product === null || $quantity <= 0) {
+                continue;
+            }
+            $quantityByType[$product->getProductType() === ProductType::TICKET->name ? 'ticket' : 'option'] += $quantity;
+        }
+
+        if ($quantityByType['option'] === 0 || $quantityByType['ticket'] > 0) {
+            return;
+        }
+
+        $eventSellsTickets = $this->productRepository->findFirstWhere([
+            'event_id' => $event->getId(),
+            'product_type' => ProductType::TICKET->name,
+        ]) !== null;
+
+        if ($eventSellsTickets) {
+            throw ValidationException::withMessages([
+                'products' => __('This option can only be ordered together with a ticket.'),
+            ]);
         }
     }
 
@@ -273,6 +344,12 @@ class OrderCreateRequestValidationService
         if ($product->getIsSalesPaused()) {
             throw ValidationException::withMessages([
                 "products.$productIndex" => __('Sales of :product are paused', ['product' => $product->getTitle()]),
+            ]);
+        }
+
+        if (in_array($product->getId(), $this->lockedProductIds, true)) {
+            throw ValidationException::withMessages([
+                "products.$productIndex" => __(':product is not on sale yet', ['product' => $product->getTitle()]),
             ]);
         }
 

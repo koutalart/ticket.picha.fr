@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\Enums\QuestionBelongsTo;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
+use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\ProductCategoryDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
@@ -22,6 +23,7 @@ use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AffiliateRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
+use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\CapacityAssignment\CreateCapacityAssignmentService;
 use HiEvents\Services\Domain\CheckInList\CreateCheckInListService;
 use HiEvents\Services\Domain\CreateWebhookService;
@@ -49,6 +51,7 @@ class DuplicateEventService
         private readonly CreateProductCategoryService    $createProductCategoryService,
         private readonly CreateWebhookService            $createWebhookService,
         private readonly AffiliateRepositoryInterface    $affiliateRepository,
+        private readonly ProductRepositoryInterface      $productRepository,
     )
     {
     }
@@ -174,8 +177,9 @@ class DuplicateEventService
     ): void
     {
         $oldProductToNewProductMap = [];
+        $unlockRules = [];
 
-        $event->getProductCategories()?->each(function (ProductCategoryDomainObject $productCategory) use ($event, $newEventId, &$oldProductToNewProductMap) {
+        $event->getProductCategories()?->each(function (ProductCategoryDomainObject $productCategory) use ($event, $newEventId, &$oldProductToNewProductMap, &$unlockRules) {
             $newCategory = $this->createProductCategoryService->createCategory(
                 (new ProductCategoryDomainObject())
                     ->setName($productCategory->getName())
@@ -189,6 +193,10 @@ class DuplicateEventService
             foreach ($productCategory->getProducts() as $product) {
                 $product->setEventId($newEventId);
                 $product->setProductCategoryId($newCategory->getId());
+                if ($product->getUnlockAfterProductId() !== null) {
+                    $unlockRules[$product->getId()] = $product->getUnlockAfterProductId();
+                    $product->setUnlockAfterProductId(null);
+                }
                 $newProduct = $this->createProductService->createProduct(
                     product: $product,
                     accountId: $event->getAccountId(),
@@ -197,6 +205,8 @@ class DuplicateEventService
                 $oldProductToNewProductMap[$product->getId()] = $newProduct->getId();
             }
         });
+
+        $this->cloneUnlockRules($unlockRules, $oldProductToNewProductMap);
 
         if ($duplicateQuestions) {
             $this->clonePerProductQuestions($event, $newEventId, $oldProductToNewProductMap);
@@ -218,6 +228,20 @@ class DuplicateEventService
     /**
      * @throws Throwable
      */
+    private function cloneUnlockRules(array $unlockRules, array $oldProductToNewProductMap): void
+    {
+        foreach ($unlockRules as $oldProductId => $oldSourceProductId) {
+            if (!isset($oldProductToNewProductMap[$oldSourceProductId])) {
+                continue;
+            }
+
+            $this->productRepository->updateWhere(
+                attributes: [ProductDomainObjectAbstract::UNLOCK_AFTER_PRODUCT_ID => $oldProductToNewProductMap[$oldSourceProductId]],
+                where: [ProductDomainObjectAbstract::ID => $oldProductToNewProductMap[$oldProductId]],
+            );
+        }
+    }
+
     private function clonePerProductQuestions(EventDomainObject $event, int $newEventId, array $oldProductToNewProductMap): void
     {
         foreach ($event->getQuestions() as $question) {

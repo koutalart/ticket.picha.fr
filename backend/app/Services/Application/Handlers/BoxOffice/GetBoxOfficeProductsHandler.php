@@ -10,6 +10,7 @@ use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
+use HiEvents\Services\Domain\Product\ProductUnlockService;
 use Illuminate\Support\Collection;
 
 /**
@@ -27,6 +28,7 @@ class GetBoxOfficeProductsHandler
 {
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
+        private readonly ProductUnlockService $productUnlockService,
     ) {}
 
     /**
@@ -43,7 +45,12 @@ class GetBoxOfficeProductsHandler
                 ProductDomainObjectAbstract::IS_SALES_PAUSED => false,
             ]);
 
-        return $products->map(function (ProductDomainObject $product) {
+        $lockedProductIds = $this->productUnlockService->getLockedProductIdsForEvent($eventId, $products);
+
+        return $products
+            ->reject(fn (ProductDomainObject $product) => in_array($product->getId(), $lockedProductIds, true))
+            ->values()
+            ->map(function (ProductDomainObject $product) {
             $product->setIsScannable($this->productRepository->hasActiveCheckInList($product->getId()));
 
             foreach ($product->getProductPrices() ?? [] as $price) {

@@ -13,6 +13,7 @@ class UpsertProductCategoryRequest extends BaseRequest
             'description' => ['string', 'max:5000', 'nullable'],
             'is_hidden' => ['boolean', 'required'],
             'no_products_message' => ['string', 'max:255', 'nullable'],
+            'selection_label' => ['string', 'max:120', 'nullable'],
         ];
     }
 }

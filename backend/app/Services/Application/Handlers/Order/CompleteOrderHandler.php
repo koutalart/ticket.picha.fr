@@ -17,10 +17,12 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
+use HiEvents\DomainObjects\QuestionAnswerFileDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderPaymentStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Events\OrderStatusChangedEvent;
+use HiEvents\Exceptions\InvalidQuestionAnswerFileException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Exceptions\UnauthorizedException;
 use HiEvents\Helper\IdHelper;
@@ -38,6 +40,7 @@ use HiEvents\Services\Application\Handlers\Order\DTO\CreatedProductDataDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\OrderQuestionsDTO;
 use HiEvents\Services\Domain\Payment\Stripe\EventHandlers\PaymentIntentSucceededHandler;
 use HiEvents\Services\Domain\Product\ProductQuantityUpdateService;
+use HiEvents\Services\Domain\Question\File\QuestionAnswerFileService;
 use HiEvents\Services\Infrastructure\DomainEvents\DomainEventDispatcherService;
 use HiEvents\Services\Infrastructure\Session\CheckoutSessionManagementService;
 use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
@@ -52,6 +55,9 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
  */
 class CompleteOrderHandler
 {
+    /** @var Collection<QuestionAnswerFileDomainObject> */
+    private Collection $uploadedFiles;
+
     public function __construct(
         private readonly OrderRepositoryInterface          $orderRepository,
         private readonly AffiliateRepositoryInterface      $affiliateRepository,
@@ -62,12 +68,13 @@ class CompleteOrderHandler
         private readonly DomainEventDispatcherService      $domainEventDispatcherService,
         private readonly EventSettingsRepositoryInterface  $eventSettingsRepository,
         private readonly CheckoutSessionManagementService  $sessionManagementService,
+        private readonly QuestionAnswerFileService         $questionAnswerFileService,
     )
     {
     }
 
     /**
-     * @throws ResourceNotFoundException|ResourceConflictException|RuntimeException
+     * @throws ResourceNotFoundException|ResourceConflictException|RuntimeException|InvalidQuestionAnswerFileException
      */
     public function handle(string $orderShortId, CompleteOrderDTO $orderData): OrderDomainObject
     {
@@ -80,6 +87,7 @@ class CompleteOrderHandler
             $orderDTO = $orderData->order;
 
             $order = $this->getOrder($orderShortId);
+            $this->uploadedFiles = $this->questionAnswerFileService->getUnattachedFilesForOrder($order->getId());
 
             $updatedOrder = $this->updateOrder($order, $orderDTO);
 
@@ -201,12 +209,53 @@ class CompleteOrderHandler
             if (empty($orderQuestionsDTO->response)) {
                 return;
             }
-            $this->questionAnswersRepository->create([
-                'question_id' => $orderQuestionsDTO->question_id,
-                'answer' => $orderQuestionsDTO->response['answer'] ?? $orderQuestionsDTO->response,
-                'order_id' => $order->getId(),
-            ]);
+
+            $this->createQuestionAnswer(
+                questionId: (int)$orderQuestionsDTO->question_id,
+                answer: $orderQuestionsDTO->response['answer'] ?? $orderQuestionsDTO->response,
+                order: $order,
+            );
         });
+    }
+
+    /**
+     * @throws InvalidQuestionAnswerFileException
+     */
+    private function createQuestionAnswer(
+        int               $questionId,
+        mixed             $answer,
+        OrderDomainObject $order,
+        ?int              $productId = null,
+        ?int              $attendeeId = null,
+    ): void
+    {
+        $file = null;
+
+        if ($this->uploadedFiles->contains(fn(QuestionAnswerFileDomainObject $file) => $file->getQuestionId() === $questionId)) {
+            if (empty($answer)) {
+                return;
+            }
+
+            $file = $this->questionAnswerFileService->getUnattachedFileForAnswer($order->getId(), $questionId, $answer);
+            $answer = $this->questionAnswerFileService->buildAnswer($file);
+        }
+
+        $attributes = [
+            'question_id' => $questionId,
+            'answer' => $answer,
+            'order_id' => $order->getId(),
+        ];
+
+        if ($productId !== null) {
+            $attributes['product_id'] = $productId;
+            $attributes['attendee_id'] = $attendeeId;
+        }
+
+        $questionAnswer = $this->questionAnswersRepository->create($attributes);
+
+        if ($file !== null) {
+            $this->questionAnswerFileService->attachToAnswer($file->getId(), $questionAnswer->getId());
+        }
     }
 
     /**
@@ -246,13 +295,13 @@ class CompleteOrderHandler
                     continue;
                 }
 
-                $this->questionAnswersRepository->create([
-                    'question_id' => $question->question_id,
-                    'answer' => $question->response['answer'] ?? $question->response,
-                    'order_id' => $order->getId(),
-                    'product_id' => $productId,
-                    'attendee_id' => $insertedAttendee?->getId(),
-                ]);
+                $this->createQuestionAnswer(
+                    questionId: (int)$question->question_id,
+                    answer: $question->response['answer'] ?? $question->response,
+                    order: $order,
+                    productId: $productId,
+                    attendeeId: $insertedAttendee?->getId(),
+                );
             }
         }
     }

@@ -26,7 +26,10 @@ class GetQrLinksHandler
         $qrLinks = $this->qrLinkRepository
             ->loadRelation(new Relationship(EventDomainObject::class, name: 'event'))
             ->findWhere(
-                where: [QrLinkDomainObjectAbstract::ORGANIZER_ID => $organizerId],
+                where: [
+                    QrLinkDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+                    [QrLinkDomainObjectAbstract::SMS_CAMPAIGN_ID, 'null', null],
+                ],
                 orderAndDirections: [new OrderAndDirection(QrLinkDomainObjectAbstract::CREATED_AT, 'desc')],
             );
 

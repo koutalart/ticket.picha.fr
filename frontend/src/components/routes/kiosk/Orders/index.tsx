@@ -61,6 +61,11 @@ const KioskOrders = () => {
         skipPrint: settings.printOutput === 'none',
         zebraPrinterHost: settings.zebraPrinterHost || currentEvent?.last_printer_host || '',
         onZebraPrinterHostChange: (zebraPrinterHost) => setSettings({...settings, zebraPrinterHost}),
+        zebraLabelFormat: {
+            printerDpi: settings.printerDpi,
+            labelWidthMm: settings.labelWidthMm,
+            labelLengthMm: settings.labelLengthMm,
+        },
     });
 
     const formatTime = (value: string | null, withDate = false) => {

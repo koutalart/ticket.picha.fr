@@ -11,11 +11,13 @@ use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\Enums\CapacityChangeDirection;
 use HiEvents\Events\CapacityChangedEvent;
 use HiEvents\Exceptions\CannotChangeProductTypeException;
+use HiEvents\Exceptions\InvalidProductUnlockRuleException;
 use HiEvents\Helper\DateHelper;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Product\DTO\UpsertProductDTO;
 use HiEvents\Services\Domain\Product\ProductPriceUpdateService;
+use HiEvents\Services\Domain\Product\ProductUnlockService;
 use HiEvents\Services\Domain\ProductCategory\GetProductCategoryService;
 use HiEvents\Services\Domain\Tax\DTO\TaxAndProductAssociateParams;
 use HiEvents\Services\Domain\Tax\TaxAndProductAssociationService;
@@ -41,6 +43,7 @@ class EditProductHandler
         private readonly EventRepositoryInterface        $eventRepository,
         private readonly GetProductCategoryService       $getProductCategoryService,
         private readonly DomainEventDispatcherService    $domainEventDispatcherService,
+        private readonly ProductUnlockService            $productUnlockService,
     )
     {
     }
@@ -89,12 +92,19 @@ class EditProductHandler
 
     /**
      * @throws CannotChangeProductTypeException
+     * @throws InvalidProductUnlockRuleException
      */
     private function updateProduct(UpsertProductDTO $productsData, array $where): ProductDomainObject
     {
         $event = $this->eventRepository->findById($productsData->event_id);
 
         $this->validateChangeInProductType($productsData);
+
+        $this->productUnlockService->validateUnlockRule(
+            eventId: $productsData->event_id,
+            productId: $productsData->product_id,
+            unlockAfterProductId: $productsData->unlock_after_product_id,
+        );
 
         $productCategory = $this->getProductCategoryService->getCategory(
             $productsData->product_category_id,
@@ -128,6 +138,7 @@ class EditProductHandler
                 'is_highlighted' => $productsData->is_highlighted ?? false,
                 'highlight_message' => $productsData->highlight_message,
                 'waitlist_enabled' => $productsData->waitlist_enabled,
+                'unlock_after_product_id' => $productsData->unlock_after_product_id,
             ],
             where: $where
         );

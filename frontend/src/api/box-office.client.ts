@@ -1,5 +1,14 @@
 import {api} from "./client";
-import {Attendee, GenericDataResponse, GenericPaginatedResponse, IdParam, Order} from "../types";
+import {
+    Attendee,
+    EnqueueKioskPrintJobsResponse,
+    GenericDataResponse,
+    GenericPaginatedResponse,
+    IdParam,
+    KioskPrintRelayStatus,
+    KioskPrintRelayToken,
+    Order,
+} from "../types";
 import {ZebraLabelFormat} from "../hooks/useKioskSettings.ts";
 
 export enum BoxOfficePaymentMethod {
@@ -288,6 +297,33 @@ export const boxOfficeClient = {
             },
         );
         return response.data.data.zpl;
+    },
+
+    enqueuePrintJobs: async (eventId: IdParam, attendeePublicIds: string[], labelFormat: ZebraLabelFormat) => {
+        const response = await api.post<GenericDataResponse<EnqueueKioskPrintJobsResponse>>(
+            `events/${eventId}/box-office/print-jobs`,
+            {
+                attendee_public_ids: attendeePublicIds,
+                printer_dpi: labelFormat.printerDpi,
+                label_width_mm: labelFormat.labelWidthMm,
+                label_length_mm: labelFormat.labelLengthMm,
+            },
+        );
+        return response.data;
+    },
+
+    getPrintRelayStatus: async (eventId: IdParam) => {
+        const response = await api.get<GenericDataResponse<KioskPrintRelayStatus>>(
+            `events/${eventId}/box-office/print-relay`,
+        );
+        return response.data;
+    },
+
+    generatePrintRelayToken: async (eventId: IdParam) => {
+        const response = await api.post<GenericDataResponse<KioskPrintRelayToken>>(
+            `events/${eventId}/box-office/print-relay/token`,
+        );
+        return response.data;
     },
 
     getOperators: async (eventId: IdParam) => {

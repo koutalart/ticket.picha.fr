@@ -12,6 +12,8 @@ class QrLinkUrlService
 {
     public const QR_QUERY_PARAM = 'qr';
 
+    public const QR_COUNTED_PARAM = 'qrc';
+
     public function getPublicUrl(QrLinkDomainObject $qrLink): string
     {
         return $this->frontendUrl('/q/'.$qrLink->getShortId());
@@ -19,7 +21,10 @@ class QrLinkUrlService
 
     public function getEventUrl(EventDomainObject $event, QrLinkDomainObject $qrLink): string
     {
-        return $event->getEventUrl().'?'.http_build_query([self::QR_QUERY_PARAM => $qrLink->getShortId()]);
+        return $event->getEventUrl().'?'.http_build_query([
+            self::QR_QUERY_PARAM => $qrLink->getShortId(),
+            self::QR_COUNTED_PARAM => 1,
+        ]);
     }
 
     public function getRedirectUrl(QrLinkDomainObject $qrLink, ?EventDomainObject $event, ?string $os = null): ?string
