@@ -7,6 +7,7 @@ use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\PromoCodeDomainObjectAbstract;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\DomainObjects\OrganizerFontDomainObject;
 use HiEvents\DomainObjects\OrganizerSettingDomainObject;
 use HiEvents\DomainObjects\ProductCategoryDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
@@ -52,6 +53,7 @@ class GetPublicEventHandler
             ->loadRelation(new Relationship(OrganizerDomainObject::class, nested: [
                 new Relationship(ImageDomainObject::class),
                 new Relationship(OrganizerSettingDomainObject::class),
+                new Relationship(OrganizerFontDomainObject::class),
             ], name: 'organizer'))
             ->findById($data->eventId);
 

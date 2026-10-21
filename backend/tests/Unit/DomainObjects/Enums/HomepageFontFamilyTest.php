@@ -16,6 +16,7 @@ class HomepageFontFamilyTest extends TestCase
         $this->assertContains('Plus Jakarta Sans', $values);
         $this->assertContains('Playfair Display', $values);
         $this->assertContains('Bebas Neue', $values);
+        $this->assertContains('organizer_font', $values);
     }
 
     public function test_values_are_unique_non_empty_strings(): void
