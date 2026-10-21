@@ -87,9 +87,6 @@ class SmsReminderSchedulingService
         }
 
         $audience = $this->audienceService->build($dto->organizerId, $dto->eventId);
-        if ($audience->recipients === []) {
-            throw new SmsReminderValidationException(__('No attendee of this event can receive an SMS'), 'event_id');
-        }
 
         return $this->databaseManager->transaction(function () use ($dto, $event, $organizer, $audience, $scheduledAt) {
             /** @var SmsCampaignDomainObject $campaign */

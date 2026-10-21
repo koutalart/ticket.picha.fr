@@ -227,13 +227,16 @@ export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps
                         </div>
                     )}
 
+                    <Text size="xs" c="dimmed">
+                        {t`The recipients are recalculated when the reminder is sent: people who register later receive it too, cancelled attendees and opt-outs do not.`}
+                    </Text>
+
                     <Group justify="flex-end">
                         <Button variant="default" onClick={onClose}>{t`Cancel`}</Button>
                         <Button
                             type="submit"
                             leftSection={<IconCalendarTime size={16}/>}
                             loading={scheduleMutation.isPending}
-                            disabled={!!preview && preview.recipients_count === 0}
                         >
                             {t`Schedule`}
                         </Button>

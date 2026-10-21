@@ -163,17 +163,16 @@ class SmsReminderSchedulingServiceTest extends TestCase
         $this->service->schedule(new SmsReminderRequestDTO(9, 8, 'Rappel', '24/10/2026'));
     }
 
-    public function test_refuses_an_event_without_reachable_attendee(): void
+    public function test_schedules_a_reminder_before_any_reachable_attendee(): void
     {
         $this->audienceService->shouldReceive('build')->andReturn(new SmsReminderAudienceDTO([], 3, 3, 0, 0));
-        $this->campaignRepository->shouldNotReceive('create');
+        $this->campaignRepository->shouldReceive('create')->once()
+            ->andReturn((new SmsCampaignDomainObject)->setId(71)->setScheduledAt('2026-10-24 07:00:00'));
+        $this->recipientRepository->shouldReceive('insert')->zeroOrMoreTimes()->andReturnTrue();
 
-        try {
-            $this->service->schedule(new SmsReminderRequestDTO(9, 8, 'Rappel', '2026-10-24 10:00'));
-            $this->fail('Expected exception');
-        } catch (SmsReminderValidationException $exception) {
-            $this->assertSame('event_id', $exception->getField());
-        }
+        $campaign = $this->service->schedule(new SmsReminderRequestDTO(9, 8, 'Rappel', '2026-10-24 10:00'));
+
+        $this->assertSame(71, $campaign->getId());
     }
 
     public function test_refuses_an_event_of_another_organizer(): void
