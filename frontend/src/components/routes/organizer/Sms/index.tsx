@@ -59,7 +59,7 @@ const Sms = () => {
             <div className={classes.pageHeader}>
                 <h1 className={classes.pageTitle}>{t`SMS messages`}</h1>
                 <p className={classes.pageIntro}>
-                    {t`Replies from your customers to your SMS, sent from your httpSMS phone. A customer who replies STOP is automatically unsubscribed from your SMS.`}
+                    {t`A customer who replies STOP is automatically unsubscribed from your SMS.`}
                 </p>
             </div>
 
