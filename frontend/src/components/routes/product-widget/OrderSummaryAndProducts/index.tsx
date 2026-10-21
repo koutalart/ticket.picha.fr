@@ -172,13 +172,23 @@ const FullscreenWelcomeHeader = ({order, event, heroTitle, heroSubtitle, fontFam
         ensureHomepageFontLoaded(fontFamily);
     }, [fontFamily]);
 
+    const titleLines = (heroTitle?.trim() || event.title).split('\n').map((line) => line.trim()).filter(Boolean);
+
     return (
     <div className={classes.fullscreenWelcome} style={{fontFamily: buildHomepageFontStack(fontFamily)}}>
         <div className={classes.fullscreenWelcomeEyebrow}>
             {isFree ? t`Registration confirmed` : t`Order confirmed`}
         </div>
         <h1 className={classes.fullscreenWelcomeTitle}>
-            {(heroTitle?.trim() || event.title).split('\n').map((line, index) => <span key={index}>{line}</span>)}
+            {titleLines.slice(0, -2).map((line, index) => <span key={index}>{line}</span>)}
+            {titleLines.length >= 2 ? (
+                <span>
+                    {titleLines[titleLines.length - 2]}{' '}
+                    <span className={classes.fullscreenWelcomeTitleLight}>{titleLines[titleLines.length - 1]}</span>
+                </span>
+            ) : (
+                <span>{titleLines[0]}</span>
+            )}
         </h1>
         {heroSubtitle?.trim() && <div className={classes.fullscreenWelcomeSubtitle}>{heroSubtitle}</div>}
         <div className={classes.fullscreenWelcomeDate}><EventDateRange event={event}/></div>
