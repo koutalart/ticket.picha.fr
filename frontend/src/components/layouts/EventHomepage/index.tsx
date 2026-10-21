@@ -43,7 +43,7 @@ import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isDateInPast} from "../../../utilites/dates.ts";
 import {RichDescription} from "../../common/RichDescription";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
-import {useDeferredCoverVideo} from "../../../hooks/useDeferredCoverVideo.ts";
+import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 
 interface EventHomepageProps {
     event?: Event;
@@ -177,7 +177,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const coverImageData = eventCoverImage(event);
     const coverImage = coverImageData?.url;
     const coverVideo = event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO')?.url;
-    const videoAllowed = useDeferredCoverVideo(coverVideo);
+    const coverVideoMobile = event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO_MOBILE')?.url;
+    const coverVideoSource = useCoverVideoSource(coverVideo, coverVideoMobile);
     const flyer = event?.images?.find((image) => image.type === 'EVENT_FLYER')?.url;
     const heroPartnerLogo = event?.images?.find((image) => image.type === 'EVENT_HERO_PARTNER_LOGO')?.url;
     const heroSignatureLogo = event?.images?.find((image) => image.type === 'EVENT_HERO_SIGNATURE_LOGO')?.url;
@@ -281,9 +282,9 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                 <div className={classes.container}>
                     {isFullscreenHero && (
                         <section className={classes.fullscreenHero} ref={fullscreenHeroRef}>
-                            {coverVideo && videoAllowed ? (
+                            {coverVideoSource ? (
                                 <video
-                                    src={coverVideo}
+                                    src={coverVideoSource}
                                     poster={coverImage}
                                     className={classes.fullscreenMedia}
                                     aria-hidden="true"
@@ -360,9 +361,9 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                 className={classes.coverLqip}
                                             />
                                         )}
-                                        {coverVideo && videoAllowed ? (
+                                        {coverVideoSource ? (
                                             <video
-                                                src={coverVideo}
+                                                src={coverVideoSource}
                                                 poster={coverImage}
                                                 className={classes.coverImage}
                                                 aria-label={event.title}

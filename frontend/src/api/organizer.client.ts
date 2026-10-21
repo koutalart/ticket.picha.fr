@@ -36,9 +36,12 @@ export const organizerClient = {
         return response.data;
     },
 
-    uploadCoverVideo: async (organizerId: IdParam, video: File) => {
+    uploadCoverVideo: async (organizerId: IdParam, video: File, mobile = false) => {
         const formData = new FormData();
         formData.append('video', video);
+        if (mobile) {
+            formData.append('mobile', '1');
+        }
         const response = await api.post<GenericDataResponse<Image>>('organizers/' + organizerId + '/cover-video', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'

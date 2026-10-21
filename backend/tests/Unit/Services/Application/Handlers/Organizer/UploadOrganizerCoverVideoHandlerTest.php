@@ -46,12 +46,13 @@ class UploadOrganizerCoverVideoHandlerTest extends TestCase
         );
     }
 
-    private function dto(): UploadOrganizerCoverVideoDTO
+    private function dto(bool $mobile = false): UploadOrganizerCoverVideoDTO
     {
         return new UploadOrganizerCoverVideoDTO(
             organizerId: 9,
             accountId: 6,
             video: UploadedFile::fake()->create('teaser.mp4', 2048, 'video/mp4'),
+            mobile: $mobile,
         );
     }
 
@@ -81,6 +82,32 @@ class UploadOrganizerCoverVideoHandlerTest extends TestCase
             ->andReturn($created);
 
         $this->assertSame($created, $this->handler->handle($this->dto()));
+    }
+
+    public function test_stores_the_mobile_video_without_touching_the_main_one(): void
+    {
+        $this->organizerRepository->shouldReceive('findFirstWhere')
+            ->with(['id' => 9, 'account_id' => 6])
+            ->andReturn(new OrganizerDomainObject);
+
+        $this->storage->shouldReceive('store')
+            ->with(m::type(UploadedFile::class), ImageType::ORGANIZER_COVER_VIDEO_MOBILE->name)
+            ->andReturn(new ImageStorageResponseDTO('teaser-720.mp4', 'public', 'organizer_cover_video_mobile/teaser-720.mp4', 1048576, 'video/mp4'));
+
+        $this->imageRepository->shouldReceive('deleteWhere')->once()->with([
+            'entity_id' => 9,
+            'entity_type' => OrganizerDomainObject::class,
+            'type' => 'ORGANIZER_COVER_VIDEO_MOBILE',
+        ])->andReturn(0);
+
+        $created = new ImageDomainObject;
+        $this->imageRepository->shouldReceive('create')->once()
+            ->with(m::on(fn (array $data) => $data['type'] === 'ORGANIZER_COVER_VIDEO_MOBILE'
+                && $data['entity_id'] === 9
+                && $data['path'] === 'organizer_cover_video_mobile/teaser-720.mp4'))
+            ->andReturn($created);
+
+        $this->assertSame($created, $this->handler->handle($this->dto(mobile: true)));
     }
 
     public function test_rejects_an_organizer_from_another_account(): void

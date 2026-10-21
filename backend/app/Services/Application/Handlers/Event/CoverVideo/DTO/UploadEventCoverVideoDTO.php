@@ -11,5 +11,6 @@ class UploadEventCoverVideoDTO extends BaseDataObject
         public readonly int $eventId,
         public readonly int $accountId,
         public readonly UploadedFile $video,
+        public readonly bool $mobile = false,
     ) {}
 }

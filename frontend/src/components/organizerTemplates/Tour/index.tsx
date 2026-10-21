@@ -9,7 +9,7 @@ import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
-import {useDeferredCoverVideo} from "../../../hooks/useDeferredCoverVideo.ts";
+import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
@@ -71,7 +71,8 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
     const logo = organizer.images?.find(image => image.type === 'ORGANIZER_LOGO');
     const cover = organizer.images?.find(image => image.type === 'ORGANIZER_COVER');
     const coverVideo = organizer.images?.find(image => image.type === 'ORGANIZER_COVER_VIDEO')?.url;
-    const videoAllowed = useDeferredCoverVideo(coverVideo);
+    const coverVideoMobile = organizer.images?.find(image => image.type === 'ORGANIZER_COVER_VIDEO_MOBILE')?.url;
+    const coverVideoSource = useCoverVideoSource(coverVideo, coverVideoMobile);
 
     const events = eventsData?.data || [];
     const cities = events.map(tourCity);
@@ -153,8 +154,8 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                 <main id="top">
                     {(coverVideo || cover) && (
                         <section className={classes.hero}>
-                            {coverVideo && videoAllowed ? (
-                                <video src={coverVideo} poster={cover?.url} aria-label={organizer.name}
+                            {coverVideoSource ? (
+                                <video src={coverVideoSource} poster={cover?.url} aria-label={organizer.name}
                                        autoPlay muted loop playsInline preload="metadata"/>
                             ) : cover ? (
                                 <img src={cover.url} alt={organizer.name} fetchPriority="high"/>

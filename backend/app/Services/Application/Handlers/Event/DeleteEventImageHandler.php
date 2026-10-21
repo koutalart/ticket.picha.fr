@@ -5,6 +5,7 @@ namespace HiEvents\Services\Application\Handlers\Event;
 use HiEvents\DomainObjects\Enums\HomepageBackgroundType;
 use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Event\DTO\DeleteEventImageDTO;
@@ -26,28 +27,42 @@ class DeleteEventImageHandler
      */
     public function handle(DeleteEventImageDTO $deleteEventImageDTO): void
     {
-        $this->databaseManager->beginTransaction();
+        $this->databaseManager->transaction(function () use ($deleteEventImageDTO) {
+            $where = [
+                'entity_id' => $deleteEventImageDTO->eventId,
+                'entity_type' => EventDomainObject::class,
+                'id' => $deleteEventImageDTO->imageId,
+            ];
 
+            /** @var ImageDomainObject|null $image */
+            $image = $this->imageRepository->findFirstWhere($where);
+
+            if ($image === null) {
+                return;
+            }
+
+            if ($image->getType() === ImageType::EVENT_COVER->name) {
+                $this->resetMirroredCoverBackground($deleteEventImageDTO->eventId);
+            }
+
+            $this->imageRepository->deleteWhere($where);
+        });
+    }
+
+    private function resetMirroredCoverBackground(int $eventId): void
+    {
         $eventSettings = $this->eventSettingsRepository->findFirstWhere([
-            'event_id' => $deleteEventImageDTO->eventId,
+            'event_id' => $eventId,
         ]);
 
-        // If we're deleting the cover image, we need to reset the homepage background type to color
-        if ($eventSettings?->getHomepageBackgroundType() === HomepageBackgroundType::MIRROR_COVER_IMAGE->name) {
-            $this->eventSettingsRepository->updateWhere(attributes: [
-                'homepage_background_type' => HomepageBackgroundType::COLOR->name,
-            ], where: [
-                'event_id' => $deleteEventImageDTO->eventId,
-            ]);
+        if ($eventSettings?->getHomepageBackgroundType() !== HomepageBackgroundType::MIRROR_COVER_IMAGE->name) {
+            return;
         }
 
-        $this->imageRepository->deleteWhere([
-            'entity_id' => $deleteEventImageDTO->eventId,
-            'entity_type' => EventDomainObject::class,
-            'type' => ImageType::EVENT_COVER->name,
-            'id' => $deleteEventImageDTO->imageId,
+        $this->eventSettingsRepository->updateWhere(attributes: [
+            'homepage_background_type' => HomepageBackgroundType::COLOR->name,
+        ], where: [
+            'event_id' => $eventId,
         ]);
-
-        $this->databaseManager->commit();
     }
 }

@@ -36,24 +36,26 @@ class UploadEventCoverVideoHandler
             throw new CoverVideoUploadException(__('Event not found'));
         }
 
+        $type = $dto->mobile ? ImageType::EVENT_COVER_VIDEO_MOBILE : ImageType::EVENT_COVER_VIDEO;
+
         try {
-            $stored = $this->imageStorageService->store($dto->video, ImageType::EVENT_COVER_VIDEO->name);
+            $stored = $this->imageStorageService->store($dto->video, $type->name);
         } catch (CouldNotUploadImageException) {
             throw new CoverVideoUploadException(__('The video could not be saved. Please try again.'));
         }
 
-        return $this->databaseManager->transaction(function () use ($dto, $stored) {
+        return $this->databaseManager->transaction(function () use ($dto, $stored, $type) {
             $this->imageRepository->deleteWhere([
                 'entity_id' => $dto->eventId,
                 'entity_type' => EventDomainObject::class,
-                'type' => ImageType::EVENT_COVER_VIDEO->name,
+                'type' => $type->name,
             ]);
 
             return $this->imageRepository->create([
                 'account_id' => $dto->accountId,
                 'entity_id' => $dto->eventId,
                 'entity_type' => EventDomainObject::class,
-                'type' => ImageType::EVENT_COVER_VIDEO->name,
+                'type' => $type->name,
                 'filename' => $stored->filename,
                 'disk' => $stored->disk,
                 'path' => $stored->path,
