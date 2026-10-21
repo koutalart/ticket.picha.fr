@@ -29,6 +29,7 @@ abstract class AttendeeDomainObjectAbstract extends \HiEvents\DomainObjects\Abst
     final public const DELETED_AT = 'deleted_at';
     final public const LOCALE = 'locale';
     final public const NOTES = 'notes';
+    final public const BIRTH_DATE = 'birth_date';
 
     protected int $id;
     protected int $order_id;
@@ -49,6 +50,7 @@ abstract class AttendeeDomainObjectAbstract extends \HiEvents\DomainObjects\Abst
     protected ?string $deleted_at = null;
     protected string $locale = 'en';
     protected ?string $notes = null;
+    protected ?string $birth_date = null;
 
     public function toArray(): array
     {
@@ -72,6 +74,7 @@ abstract class AttendeeDomainObjectAbstract extends \HiEvents\DomainObjects\Abst
                     'deleted_at' => $this->deleted_at ?? null,
                     'locale' => $this->locale ?? null,
                     'notes' => $this->notes ?? null,
+                    'birth_date' => $this->birth_date ?? null,
                 ];
     }
 
@@ -282,5 +285,16 @@ abstract class AttendeeDomainObjectAbstract extends \HiEvents\DomainObjects\Abst
     public function getNotes(): ?string
     {
         return $this->notes;
+    }
+
+    public function setBirthDate(?string $birth_date): self
+    {
+        $this->birth_date = $birth_date;
+        return $this;
+    }
+
+    public function getBirthDate(): ?string
+    {
+        return $this->birth_date;
     }
 }

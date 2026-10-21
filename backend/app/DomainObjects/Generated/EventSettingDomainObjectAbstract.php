@@ -70,6 +70,8 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const WAITLIST_OFFER_TIMEOUT_MINUTES = 'waitlist_offer_timeout_minutes';
     final public const SINGLE_PRODUCT_PER_ORDER = 'single_product_per_order';
     final public const CHOOSE_CATEGORY_FIRST = 'choose_category_first';
+    final public const AGE_RESTRICTION_RULE = 'age_restriction_rule';
+    final public const AGE_RESTRICTION_MINIMUM_AGE = 'age_restriction_minimum_age';
 
     protected int $id;
     protected int $event_id;
@@ -131,6 +133,8 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected ?int $waitlist_offer_timeout_minutes = null;
     protected bool $single_product_per_order = false;
     protected bool $choose_category_first = false;
+    protected string $age_restriction_rule = 'NONE';
+    protected int $age_restriction_minimum_age = 18;
 
     public function toArray(): array
     {
@@ -195,6 +199,8 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'waitlist_offer_timeout_minutes' => $this->waitlist_offer_timeout_minutes ?? null,
                     'single_product_per_order' => $this->single_product_per_order ?? null,
                     'choose_category_first' => $this->choose_category_first ?? null,
+                    'age_restriction_rule' => $this->age_restriction_rule ?? null,
+                    'age_restriction_minimum_age' => $this->age_restriction_minimum_age ?? null,
                 ];
     }
 
@@ -857,5 +863,27 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getChooseCategoryFirst(): bool
     {
         return $this->choose_category_first;
+    }
+
+    public function setAgeRestrictionRule(string $age_restriction_rule): self
+    {
+        $this->age_restriction_rule = $age_restriction_rule;
+        return $this;
+    }
+
+    public function getAgeRestrictionRule(): string
+    {
+        return $this->age_restriction_rule;
+    }
+
+    public function setAgeRestrictionMinimumAge(int $age_restriction_minimum_age): self
+    {
+        $this->age_restriction_minimum_age = $age_restriction_minimum_age;
+        return $this;
+    }
+
+    public function getAgeRestrictionMinimumAge(): int
+    {
+        return $this->age_restriction_minimum_age;
     }
 }

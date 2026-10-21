@@ -4,6 +4,7 @@ namespace HiEvents\Services\Application\Handlers\EventSettings\DTO;
 
 use HiEvents\DataTransferObjects\AddressDTO;
 use HiEvents\DataTransferObjects\BaseDTO;
+use HiEvents\DomainObjects\Enums\AgeRestrictionRule;
 use HiEvents\DomainObjects\Enums\AttendeeDetailsCollectionMethod;
 use HiEvents\DomainObjects\Enums\HomepageBackgroundType;
 use HiEvents\DomainObjects\Enums\PaymentProviders;
@@ -90,6 +91,10 @@ class UpdateEventSettingsDTO extends BaseDTO
 
         public readonly bool                    $single_product_per_order = false,
         public readonly bool                    $choose_category_first = false,
+
+        // Age restriction settings
+        public readonly ?AgeRestrictionRule     $age_restriction_rule = null,
+        public readonly ?int                    $age_restriction_minimum_age = null,
 
         // Waitlist settings
         public readonly ?bool                   $waitlist_auto_process = null,
@@ -184,6 +189,9 @@ class UpdateEventSettingsDTO extends BaseDTO
             single_product_per_order: false,
 
             choose_category_first: false,
+
+            age_restriction_rule: AgeRestrictionRule::NONE,
+            age_restriction_minimum_age: 18,
         );
     }
 }

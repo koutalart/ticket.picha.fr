@@ -85,6 +85,10 @@ class EventSettingsResource extends JsonResource
             'single_product_per_order' => $this->getSingleProductPerOrder(),
             'choose_category_first' => $this->getChooseCategoryFirst(),
 
+            // Age restriction settings
+            'age_restriction_rule' => $this->getAgeRestrictionRule(),
+            'age_restriction_minimum_age' => $this->getAgeRestrictionMinimumAge(),
+
             // Waitlist settings
             'waitlist_auto_process' => $this->getWaitlistAutoProcess(),
             'waitlist_offer_timeout_minutes' => $this->getWaitlistOfferTimeoutMinutes(),
