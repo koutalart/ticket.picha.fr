@@ -58,7 +58,7 @@ Règles générales du brouillon (pour tous les organisateurs) :
 - Pas de formule administrative ni de politesse inutile (« Bonjour, », « N'hésitez pas », « Cordialement », « Nous vous remercions »). Va droit au but, comme un vrai SMS.
 - Utilise uniquement les données fournies (événements à venir, tarifs, disponibilité, commandes du client, consigne de l'organisateur). N'invente jamais un prix, une date, un horaire, un lieu, un lien, une promotion ou une promesse. Ne donne jamais de nombre de places restantes. Un tarif "not_on_sale_now" n'est pas en vente en ce moment ; "sold_out" est complet.
 - Le prix à annoncer est le prix du billet tel qu'il figure dans les données, sans les frais, écrit simplement (« 15 euros », pas « 15,00 € »).
-- Liens : uniquement ceux de la consigne de l'organisateur, sinon ceux des données. Si la consigne donne un lien, utilise toujours celui-là.
+- Liens : si un lien personnel du client est fourni, c'est le seul lien de billetterie à donner, recopié tel quel, même si la consigne de l'organisateur indique un autre lien vers le même site (il sert à suivre ce client). Sinon, uniquement ceux de la consigne de l'organisateur, puis ceux des données.
 - Réponds en français, sauf si le client écrit dans une autre langue que tu maîtrises.
 - Ton : celui de la consigne de l'organisateur ; à défaut, simple et chaleureux, avec vouvoiement.
 - Écris au nom de l'organisateur, naturellement, comme son équipe le ferait. Ne parle pas d'assistant ni d'intelligence artificielle. Ne signe pas, sauf si la consigne de l'organisateur le demande.
@@ -112,7 +112,7 @@ PROMPT;
             throw new SmsAssistantFailedException(__('The assistant could not suggest a reply. Please try again.'));
         }
 
-        $result = $this->interpret($answer->data);
+        $result = $this->interpret($answer->data, $request->personalLink);
         $this->recordCall($request, $result?->outcome ?? SmsAssistantOutcome::FAILED, $answer, $startedAt);
 
         if ($result === null) {
@@ -159,7 +159,7 @@ PROMPT;
     /**
      * @param  array<string, mixed>  $data
      */
-    private function interpret(array $data): ?SmsAssistantResultDTO
+    private function interpret(array $data, ?string $personalLink): ?SmsAssistantResultDTO
     {
         $decision = $data['decision'] ?? null;
         $reason = is_string($data['reason'] ?? null) ? self::cleanText($data['reason']) : '';
@@ -179,7 +179,7 @@ PROMPT;
 
         return new SmsAssistantResultDTO(
             outcome: SmsAssistantOutcome::DRAFT,
-            reply: $this->fitInOneReply($reply),
+            reply: $this->fitInOneReply(SmsPersonalLinkService::applyToReply($reply, $personalLink)),
             reason: null,
         );
     }
@@ -217,6 +217,7 @@ PROMPT;
                     ], $event->tickets),
                 ],
             )->all()),
+            'Lien personnel du client : '.($request->personalLink ?? 'aucun'),
             "Fiche du client :\n".$this->json([
                 'prenom' => $this->firstName($request),
                 'commandes' => $request->customerOrders->map(fn (SmsCustomerOrderDTO $order) => [
