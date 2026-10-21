@@ -888,6 +888,8 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getAgeRestrictionMinimumAge(): int
     {
         return $this->age_restriction_minimum_age;
+    }
+
     public function setAllowAttendeeAttendanceResponse(bool $allow_attendee_attendance_response): self
     {
         $this->allow_attendee_attendance_response = $allow_attendee_attendance_response;

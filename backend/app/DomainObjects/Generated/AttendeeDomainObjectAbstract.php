@@ -302,6 +302,8 @@ abstract class AttendeeDomainObjectAbstract extends \HiEvents\DomainObjects\Abst
     public function getBirthDate(): ?string
     {
         return $this->birth_date;
+    }
+
     public function setAttendanceConfirmedAt(?string $attendance_confirmed_at): self
     {
         $this->attendance_confirmed_at = $attendance_confirmed_at;
