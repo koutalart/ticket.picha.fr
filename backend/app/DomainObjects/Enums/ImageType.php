@@ -19,6 +19,7 @@ enum ImageType
     case TICKET_SPONSOR_LOGO;
     case EVENT_SHARE_IMAGE;
     case EVENT_COVER_VIDEO;
+    case EVENT_COVER_VIDEO_MOBILE;
     case EVENT_FLYER;
     case EVENT_HERO_PARTNER_LOGO;
     case EVENT_HERO_SIGNATURE_LOGO;
@@ -29,6 +30,7 @@ enum ImageType
     case ORGANIZER_EMAIL_LOGO;
     case ORGANIZER_COVER;
     case ORGANIZER_COVER_VIDEO;
+    case ORGANIZER_COVER_VIDEO_MOBILE;
     case QR_POSTER_BACKGROUND;
 
     public static function eventImageTypes(): array
@@ -39,6 +41,7 @@ enum ImageType
             self::TICKET_SPONSOR_LOGO,
             self::EVENT_SHARE_IMAGE,
             self::EVENT_COVER_VIDEO,
+            self::EVENT_COVER_VIDEO_MOBILE,
             self::EVENT_FLYER,
             self::EVENT_HERO_PARTNER_LOGO,
             self::EVENT_HERO_SIGNATURE_LOGO,
@@ -53,8 +56,24 @@ enum ImageType
             self::ORGANIZER_EMAIL_LOGO,
             self::ORGANIZER_COVER,
             self::ORGANIZER_COVER_VIDEO,
+            self::ORGANIZER_COVER_VIDEO_MOBILE,
             self::QR_POSTER_BACKGROUND,
         ];
+    }
+
+    public static function coverVideoTypes(): array
+    {
+        return [
+            self::EVENT_COVER_VIDEO,
+            self::EVENT_COVER_VIDEO_MOBILE,
+            self::ORGANIZER_COVER_VIDEO,
+            self::ORGANIZER_COVER_VIDEO_MOBILE,
+        ];
+    }
+
+    public function isCoverVideo(): bool
+    {
+        return in_array($this, self::coverVideoTypes(), true);
     }
 
     public static function genericImageTypes(): array

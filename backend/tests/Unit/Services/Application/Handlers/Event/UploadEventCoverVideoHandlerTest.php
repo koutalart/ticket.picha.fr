@@ -46,12 +46,13 @@ class UploadEventCoverVideoHandlerTest extends TestCase
         );
     }
 
-    private function dto(): UploadEventCoverVideoDTO
+    private function dto(bool $mobile = false): UploadEventCoverVideoDTO
     {
         return new UploadEventCoverVideoDTO(
             eventId: 12,
             accountId: 6,
             video: UploadedFile::fake()->create('teaser.mp4', 2048, 'video/mp4'),
+            mobile: $mobile,
         );
     }
 
@@ -81,6 +82,32 @@ class UploadEventCoverVideoHandlerTest extends TestCase
             ->andReturn($created);
 
         $this->assertSame($created, $this->handler->handle($this->dto()));
+    }
+
+    public function test_stores_the_mobile_video_without_touching_the_main_one(): void
+    {
+        $this->eventRepository->shouldReceive('findFirstWhere')
+            ->with(['id' => 12, 'account_id' => 6])
+            ->andReturn(new EventDomainObject);
+
+        $this->storage->shouldReceive('store')
+            ->with(m::type(UploadedFile::class), ImageType::EVENT_COVER_VIDEO_MOBILE->name)
+            ->andReturn(new ImageStorageResponseDTO('teaser-720.mp4', 'public', 'event_cover_video_mobile/teaser-720.mp4', 1048576, 'video/mp4'));
+
+        $this->imageRepository->shouldReceive('deleteWhere')->once()->with([
+            'entity_id' => 12,
+            'entity_type' => EventDomainObject::class,
+            'type' => 'EVENT_COVER_VIDEO_MOBILE',
+        ])->andReturn(0);
+
+        $created = new ImageDomainObject;
+        $this->imageRepository->shouldReceive('create')->once()
+            ->with(m::on(fn (array $data) => $data['type'] === 'EVENT_COVER_VIDEO_MOBILE'
+                && $data['entity_id'] === 12
+                && $data['path'] === 'event_cover_video_mobile/teaser-720.mp4'))
+            ->andReturn($created);
+
+        $this->assertSame($created, $this->handler->handle($this->dto(mobile: true)));
     }
 
     public function test_rejects_an_event_from_another_account(): void

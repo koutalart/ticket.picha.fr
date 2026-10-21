@@ -10,5 +10,6 @@ class UploadOrganizerCoverVideoDTO
         public readonly int $organizerId,
         public readonly int $accountId,
         public readonly UploadedFile $video,
+        public readonly bool $mobile = false,
     ) {}
 }
