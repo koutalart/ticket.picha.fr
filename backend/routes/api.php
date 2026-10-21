@@ -10,6 +10,8 @@ use HiEvents\Http\Actions\Sms\GetSmsConversationAction;
 use HiEvents\Http\Actions\Sms\UpdateSmsConversationAction;
 use HiEvents\Http\Actions\Sms\SendSmsReplyAction;
 use HiEvents\Http\Actions\Sms\HttpSmsIncomingWebhookAction;
+use HiEvents\Http\Actions\Sms\GetSmsCampaignsAction;
+use HiEvents\Http\Actions\Sms\GetSmsCampaignRecipientsAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -363,6 +365,9 @@ $router->middleware(['auth:api'])->group(
             ->middleware('throttle:10,1');
         $router->get('/organizers/{organizer_id}/sms/conversations', GetSmsConversationsAction::class);
         $router->get('/organizers/{organizer_id}/sms/unread-count', GetSmsUnreadCountAction::class);
+        $router->get('/organizers/{organizer_id}/sms/campaigns', GetSmsCampaignsAction::class);
+        $router->get('/organizers/{organizer_id}/sms/campaigns/{campaign_id}/recipients', GetSmsCampaignRecipientsAction::class)
+            ->where('campaign_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/sms/conversations/{conversation_id}', GetSmsConversationAction::class)
             ->where('conversation_id', '[0-9]+');
         $router->patch('/organizers/{organizer_id}/sms/conversations/{conversation_id}', UpdateSmsConversationAction::class)

@@ -6,6 +6,7 @@ namespace HiEvents\Services\Application\Handlers\Sms;
 
 use HiEvents\DomainObjects\Generated\OrganizerSmsSettingDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
+use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
 use HiEvents\Exceptions\SmsWebhookUnauthorizedException;
@@ -15,6 +16,7 @@ use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
+use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use Psr\Log\LoggerInterface;
@@ -36,6 +38,7 @@ class HandleHttpSmsWebhookHandler
         private readonly OrganizerSmsSettingRepositoryInterface $settingsRepository,
         private readonly HttpSmsWebhookSignatureVerifier $signatureVerifier,
         private readonly SmsInboundService $inboundService,
+        private readonly SmsCampaignDeliveryService $campaignDeliveryService,
         private readonly LoggerInterface $logger,
     ) {}
 
@@ -115,6 +118,14 @@ class HandleHttpSmsWebhookHandler
         if (! is_string($messageId) || ! is_string($data['contact'] ?? null)) {
             return;
         }
+
+        $this->campaignDeliveryService->applyProviderStatus(
+            organizerId: $settings->getOrganizerId(),
+            providerMessageId: $messageId,
+            status: SmsCampaignRecipientStatus::from($status->value),
+            failureReason: $data['error_message'] ?? null,
+            timestamp: $data['timestamp'] ?? null,
+        );
 
         $this->inboundService->recordOutboundEvent($settings, new OutboundSmsEventDTO(
             status: $status,

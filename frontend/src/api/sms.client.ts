@@ -4,6 +4,8 @@ import {
     GenericPaginatedResponse,
     IdParam,
     OrganizerSmsSettings,
+    SmsCampaign,
+    SmsCampaignRecipient,
     SmsConnectionTestResult,
     SmsConversation,
     SmsConversationDetail,
@@ -24,6 +26,16 @@ export interface SmsConversationsParams {
 }
 
 export const smsClient = {
+    campaigns: async (organizerId: IdParam) => {
+        const response = await api.get<GenericDataResponse<SmsCampaign[]>>(`organizers/${organizerId}/sms/campaigns`);
+        return response.data;
+    },
+    campaignRecipients: async (organizerId: IdParam, campaignId: IdParam) => {
+        const response = await api.get<GenericDataResponse<SmsCampaignRecipient[]>>(
+            `organizers/${organizerId}/sms/campaigns/${campaignId}/recipients`,
+        );
+        return response.data;
+    },
     settings: async (organizerId: IdParam) => {
         const response = await api.get<GenericDataResponse<OrganizerSmsSettings>>(`organizers/${organizerId}/sms/settings`);
         return response.data;

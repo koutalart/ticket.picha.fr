@@ -262,3 +262,62 @@
   flex-direction: column;
   gap: 2px;
 }
+
+.viewSwitch {
+  margin-bottom: 16px;
+}
+
+.campaigns {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campaign {
+  padding: 16px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-body);
+}
+
+.campaignHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.campaignName {
+  margin: 0 0 2px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.campaignKpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.kpi {
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--mantine-color-default-hover);
+}
+
+.kpiValue {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.kpiLabel {
+  font-size: 12px;
+  color: var(--mantine-color-dimmed);
+}
+
+.recipientName {
+  font-weight: 600;
+  font-size: 14px;
+}
