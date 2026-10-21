@@ -34,6 +34,8 @@ return [
     'httpsms' => [
         'base_url' => env('HTTPSMS_BASE_URL', 'https://api.httpsms.com/v1'),
         'timeout_seconds' => (int) env('HTTPSMS_TIMEOUT_SECONDS', 15),
+        'reminder_batch_size' => (int) env('HTTPSMS_REMINDER_BATCH_SIZE', 200),
+        'reminder_pause_ms' => (int) env('HTTPSMS_REMINDER_PAUSE_MS', 250),
     ],
 
     'meta' => [

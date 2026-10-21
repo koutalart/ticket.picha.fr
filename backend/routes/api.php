@@ -22,6 +22,10 @@ use HiEvents\Http\Actions\Sms\DeleteSmsReplyTemplateAction;
 use HiEvents\Http\Actions\Sms\GetSmsOptOutsAction;
 use HiEvents\Http\Actions\Sms\AddSmsOptOutAction;
 use HiEvents\Http\Actions\Sms\RemoveSmsOptOutAction;
+use HiEvents\Http\Actions\Sms\GetSmsRemindersAction;
+use HiEvents\Http\Actions\Sms\ScheduleSmsReminderAction;
+use HiEvents\Http\Actions\Sms\PreviewSmsReminderAction;
+use HiEvents\Http\Actions\Sms\CancelSmsReminderAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -395,6 +399,13 @@ $router->middleware(['auth:api'])->group(
         $router->get('/organizers/{organizer_id}/sms/campaigns', GetSmsCampaignsAction::class);
         $router->get('/organizers/{organizer_id}/sms/campaigns/{campaign_id}/recipients', GetSmsCampaignRecipientsAction::class)
             ->where('campaign_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/sms/reminders', GetSmsRemindersAction::class);
+        $router->post('/organizers/{organizer_id}/sms/reminders', ScheduleSmsReminderAction::class)
+            ->middleware('throttle:20,1');
+        $router->post('/organizers/{organizer_id}/sms/reminders/preview', PreviewSmsReminderAction::class)
+            ->middleware('throttle:60,1');
+        $router->post('/organizers/{organizer_id}/sms/reminders/{reminder_id}/cancel', CancelSmsReminderAction::class)
+            ->where('reminder_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/sms/conversations/{conversation_id}', GetSmsConversationAction::class)
             ->where('conversation_id', '[0-9]+');
         $router->patch('/organizers/{organizer_id}/sms/conversations/{conversation_id}', UpdateSmsConversationAction::class)

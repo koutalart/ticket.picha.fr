@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Repository\Interfaces;
 
 use HiEvents\Services\Domain\Sms\DTO\SmsCustomerContactDTO;
+use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
 use Illuminate\Support\Collection;
 
 interface SmsCustomerDirectoryRepositoryInterface
@@ -18,4 +19,11 @@ interface SmsCustomerDirectoryRepositoryInterface
      * @return array<string, string> phone => contact name given to the organizer SMS conversation
      */
     public function findConversationNames(int $organizerId): array;
+
+    /**
+     * Active attendees of the event with the phone given for them (attendee answer, then order answer, then box office sale).
+     *
+     * @return Collection<int, SmsReminderAttendeeDTO>
+     */
+    public function findActiveAttendeesWithPhone(int $eventId): Collection;
 }

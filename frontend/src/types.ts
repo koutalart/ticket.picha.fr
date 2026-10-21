@@ -1458,6 +1458,30 @@ export interface SmsCampaign {
     orders_count: number;
     revenue_gross: number;
     created_at: string;
+    type: SmsCampaignType;
+    status: SmsCampaignStatus | null;
+    scheduled_at: string | null;
+    started_at: string | null;
+    completed_at: string | null;
+    failure_reason: string | null;
+    event_timezone: string | null;
+}
+
+export type SmsCampaignType = 'IMPORTED' | 'REMINDER';
+
+export type SmsCampaignStatus = 'SCHEDULED' | 'PROCESSING' | 'SENT' | 'FAILED' | 'CANCELLED';
+
+export interface SmsReminderPreview {
+    recipients_count: number;
+    sms_count: number;
+    sample_message: string | null;
+    active_attendees_count: number;
+    without_valid_phone_count: number;
+    opted_out_count: number;
+    shared_phone_count: number;
+    personal_link_available: boolean;
+    event_timezone: string;
+    scheduled_at: string | null;
 }
 
 export interface SmsCampaignRecipient {

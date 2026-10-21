@@ -19,6 +19,13 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
     final public const DELETED_AT = 'deleted_at';
+    final public const TYPE = 'type';
+    final public const STATUS = 'status';
+    final public const SCHEDULED_AT = 'scheduled_at';
+    final public const STARTED_AT = 'started_at';
+    final public const COMPLETED_AT = 'completed_at';
+    final public const FAILURE_REASON = 'failure_reason';
+    final public const CREATED_BY_USER_ID = 'created_by_user_id';
 
     protected int $id;
     protected int $account_id;
@@ -29,6 +36,13 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
     protected ?string $deleted_at = null;
+    protected string $type = 'IMPORTED';
+    protected ?string $status = null;
+    protected ?string $scheduled_at = null;
+    protected ?string $started_at = null;
+    protected ?string $completed_at = null;
+    protected ?string $failure_reason = null;
+    protected ?int $created_by_user_id = null;
 
     public function toArray(): array
     {
@@ -42,6 +56,13 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
                     'deleted_at' => $this->deleted_at ?? null,
+                    'type' => $this->type ?? null,
+                    'status' => $this->status ?? null,
+                    'scheduled_at' => $this->scheduled_at ?? null,
+                    'started_at' => $this->started_at ?? null,
+                    'completed_at' => $this->completed_at ?? null,
+                    'failure_reason' => $this->failure_reason ?? null,
+                    'created_by_user_id' => $this->created_by_user_id ?? null,
                 ];
     }
 
@@ -142,5 +163,82 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
     public function getDeletedAt(): ?string
     {
         return $this->deleted_at;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setScheduledAt(?string $scheduled_at): self
+    {
+        $this->scheduled_at = $scheduled_at;
+        return $this;
+    }
+
+    public function getScheduledAt(): ?string
+    {
+        return $this->scheduled_at;
+    }
+
+    public function setStartedAt(?string $started_at): self
+    {
+        $this->started_at = $started_at;
+        return $this;
+    }
+
+    public function getStartedAt(): ?string
+    {
+        return $this->started_at;
+    }
+
+    public function setCompletedAt(?string $completed_at): self
+    {
+        $this->completed_at = $completed_at;
+        return $this;
+    }
+
+    public function getCompletedAt(): ?string
+    {
+        return $this->completed_at;
+    }
+
+    public function setFailureReason(?string $failure_reason): self
+    {
+        $this->failure_reason = $failure_reason;
+        return $this;
+    }
+
+    public function getFailureReason(): ?string
+    {
+        return $this->failure_reason;
+    }
+
+    public function setCreatedByUserId(?int $created_by_user_id): self
+    {
+        $this->created_by_user_id = $created_by_user_id;
+        return $this;
+    }
+
+    public function getCreatedByUserId(): ?int
+    {
+        return $this->created_by_user_id;
     }
 }
