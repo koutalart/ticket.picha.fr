@@ -167,6 +167,26 @@ class SmsInboundServiceTest extends TestCase
         $this->assertSame($existing, $result);
     }
 
+    public function test_sent_event_overrides_an_earlier_expiry(): void
+    {
+        $existing = (new SmsMessageDomainObject)
+            ->setId(55)
+            ->setStatus(SmsMessageStatus::EXPIRED->name)
+            ->setProviderMessageId('prov-1');
+
+        $this->messageRepository->shouldReceive('findFirstWhere')
+            ->with(['provider_message_id' => 'prov-1'])
+            ->andReturn($existing);
+        $this->messageRepository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(fn (int $id, array $attributes) => $id === 55
+                && $attributes['status'] === SmsMessageStatus::SENT->name
+                && $attributes['error_message'] === null)
+            ->andReturn($existing);
+
+        $this->service->recordOutboundEvent($this->settings, $this->outbound(SmsMessageStatus::SENT));
+    }
+
     public function test_unknown_outbound_message_is_stored_as_campaign(): void
     {
         $this->messageRepository->shouldReceive('findFirstWhere')->andReturnNull();
