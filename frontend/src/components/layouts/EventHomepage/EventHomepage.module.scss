@@ -67,6 +67,7 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 // Main page wrapper
 .pageWrapper {
   min-height: 100vh;
+  overflow-x: clip;
   --background-overlay: #{rgba(white, 0.5)};
 
   &[data-mode="dark"] {

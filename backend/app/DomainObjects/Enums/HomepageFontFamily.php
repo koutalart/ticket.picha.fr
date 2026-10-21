@@ -29,4 +29,9 @@ enum HomepageFontFamily: string
     case PlayfairDisplay = 'Playfair Display';
     case Merriweather = 'Merriweather';
     case Lora = 'Lora';
+
+    /**
+     * Font files uploaded by the organizer, only selectable once a Regular (400) file exists.
+     */
+    case OrganizerFont = 'organizer_font';
 }

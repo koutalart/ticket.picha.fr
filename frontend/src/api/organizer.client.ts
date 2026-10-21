@@ -7,6 +7,7 @@ import {
     Image,
     Order,
     Organizer,
+    OrganizerFont,
     OrganizerSettings,
     OrganizerStats,
     QueryFilters,
@@ -44,6 +45,35 @@ export const organizerClient = {
             }
         });
         return response.data;
+    },
+
+    getFonts: async (organizerId: IdParam) => {
+        const response = await api.get<GenericDataResponse<OrganizerFont[]>>('organizers/' + organizerId + '/fonts');
+        return response.data;
+    },
+
+    uploadFont: async (organizerId: IdParam, file: File, weight: number, familyName: string) => {
+        const formData = new FormData();
+        formData.append('font_file', file);
+        formData.append('weight', String(weight));
+        formData.append('family_name', familyName);
+        const response = await api.post<GenericDataResponse<OrganizerFont>>('organizers/' + organizerId + '/fonts', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data;
+    },
+
+    updateFontFamily: async (organizerId: IdParam, familyName: string) => {
+        const response = await api.put<GenericDataResponse<OrganizerFont[]>>('organizers/' + organizerId + '/fonts/family', {
+            family_name: familyName,
+        });
+        return response.data;
+    },
+
+    deleteFont: async (organizerId: IdParam, fontId: IdParam) => {
+        await api.delete('organizers/' + organizerId + '/fonts/' + fontId);
     },
 
     delete: async (organizerId: IdParam) => {

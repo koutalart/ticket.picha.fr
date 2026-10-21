@@ -11,6 +11,7 @@ use HiEvents\DomainObjects\Enums\PaymentProviders;
 use HiEvents\DomainObjects\Enums\PriceDisplayMode;
 use HiEvents\DomainObjects\Enums\TicketDateDisplayMode;
 use HiEvents\Http\Request\BaseRequest;
+use HiEvents\Validators\Rules\OrganizerFontAvailableRule;
 use HiEvents\Validators\Rules\RulesHelper;
 use Illuminate\Validation\Rule;
 
@@ -107,7 +108,12 @@ class UpdateEventSettingsRequest extends BaseRequest
             'homepage_theme_settings.background' => ['nullable', 'string', ...RulesHelper::HEX_COLOR],
             'homepage_theme_settings.mode' => ['nullable', 'string', Rule::in(['light', 'dark'])],
             'homepage_theme_settings.background_type' => ['nullable', 'string', Rule::in(HomepageBackgroundType::valuesArray())],
-            'homepage_theme_settings.font_family' => ['nullable', 'string', Rule::in(HomepageFontFamily::valuesArray())],
+            'homepage_theme_settings.font_family' => [
+                'nullable',
+                'string',
+                Rule::in(HomepageFontFamily::valuesArray()),
+                OrganizerFontAvailableRule::forEvent($this->route('event_id')),
+            ],
             'homepage_theme_settings.hero_layout' => ['nullable', 'string', Rule::in(HomepageHeroLayout::valuesArray())],
             'homepage_theme_settings.hero_title' => ['nullable', 'string', 'max:120'],
             'homepage_theme_settings.hero_subtitle' => ['nullable', 'string', 'max:120'],

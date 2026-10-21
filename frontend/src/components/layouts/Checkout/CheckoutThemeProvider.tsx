@@ -5,6 +5,7 @@ import {getContrastColor, hexToRgb} from "../../../utilites/themeUtils";
 interface CheckoutThemeProviderProps {
     accentColor: string;
     mode: 'light' | 'dark';
+    fontFamily?: string;
 }
 
 /**
@@ -183,11 +184,17 @@ function createCSSVariablesResolver(accentColor: string, mode: 'light' | 'dark')
 export const CheckoutThemeProvider = ({
     accentColor,
     mode,
+    fontFamily,
     children,
 }: PropsWithChildren<CheckoutThemeProviderProps>) => {
     const theme = useMemo(
-        () => createCheckoutTheme(accentColor, mode),
-        [accentColor, mode]
+        () => {
+            const baseTheme = createCheckoutTheme(accentColor, mode);
+            return fontFamily
+                ? {...baseTheme, fontFamily, headings: {fontFamily}}
+                : baseTheme;
+        },
+        [accentColor, mode, fontFamily]
     );
 
     const cssVariablesResolver = useMemo(

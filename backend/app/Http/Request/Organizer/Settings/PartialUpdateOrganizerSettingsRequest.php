@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\Enums\HomepageFontFamily;
 use HiEvents\DomainObjects\Enums\OrganizerHomepageVisibility;
 use HiEvents\DomainObjects\Enums\TrackingPixelProvider;
 use HiEvents\Http\Request\BaseRequest;
+use HiEvents\Validators\Rules\OrganizerFontAvailableRule;
 use HiEvents\Validators\Rules\RulesHelper;
 use Illuminate\Validation\Rule;
 
@@ -111,7 +112,12 @@ class PartialUpdateOrganizerSettingsRequest extends BaseRequest
             'homepage_theme_settings.background' => ['nullable', 'string', ...RulesHelper::HEX_COLOR],
             'homepage_theme_settings.mode' => ['nullable', 'string', Rule::in(['light', 'dark'])],
             'homepage_theme_settings.background_type' => ['nullable', 'string', Rule::in(HomepageBackgroundType::valuesArray())],
-            'homepage_theme_settings.font_family' => ['nullable', 'string', Rule::in(HomepageFontFamily::valuesArray())],
+            'homepage_theme_settings.font_family' => [
+                'nullable',
+                'string',
+                Rule::in(HomepageFontFamily::valuesArray()),
+                OrganizerFontAvailableRule::forOrganizer(request()->route('organizer_id')),
+            ],
 
             // SEO
             'seo_keywords' => ['sometimes', 'nullable', 'string', 'max:255'],

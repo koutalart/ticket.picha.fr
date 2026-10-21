@@ -35,7 +35,8 @@ import {computeThemeVariables, validateThemeSettings} from "../../../utilites/th
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
-import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
+import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
+import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {ShareComponent} from "../../common/ShareIcon";
 import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
@@ -149,12 +150,14 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
     const rawThemeSettings = event?.settings?.homepage_theme_settings;
     const themeSettings = validateThemeSettings(rawThemeSettings);
-    const cssVars = computeThemeVariables(themeSettings);
+    const organizerFont = event.organizer?.custom_font;
+    const cssVars = computeThemeVariables(themeSettings, organizerFont);
     const backgroundType = themeSettings.background_type;
+    const organizerFontActive = isOrganizerFontActive(themeSettings.font_family, organizerFont);
 
     useEffect(() => {
-        ensureHomepageFontLoaded(themeSettings.font_family);
-    }, [themeSettings.font_family]);
+        ensureHomepageFontLoaded(themeSettings.font_family, organizerFont);
+    }, [themeSettings.font_family, organizerFont]);
 
     const themeStyles = {
         '--event-bg-color': themeSettings.background,
@@ -244,6 +247,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                 className={classes.pageWrapper}
                 style={themeStyles}
                 data-mode={themeSettings.mode}
+                {...(organizerFontActive ? {[ORGANIZER_FONT_ATTRIBUTE]: ''} : {})}
             >
                 <SsrLoaderStyle
                     background={themeSettings.background}

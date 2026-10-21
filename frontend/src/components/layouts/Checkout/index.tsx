@@ -26,6 +26,8 @@ import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {useGetEventPublic} from "../../../queries/useGetEventPublic.ts";
 import {getFullscreenHero} from "../../../utilites/fullscreenHero.ts";
 import {useDeferredCoverVideo} from "../../../hooks/useDeferredCoverVideo.ts";
+import {buildHomepageFontStack, isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
+import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
 
 const DEFAULT_ACCENT = '#8b5cf6';
 
@@ -151,6 +153,18 @@ const Checkout = () => {
         }
     }, [blocker.state]);
 
+    const publicFontFamily = publicEvent?.settings?.homepage_theme_settings?.font_family;
+    const publicOrganizerFont = publicEvent?.organizer?.custom_font;
+    const organizerFontStack = isOrganizerFontActive(publicFontFamily, publicOrganizerFont)
+        ? buildHomepageFontStack(publicFontFamily, publicOrganizerFont)
+        : undefined;
+
+    useEffect(() => {
+        if (organizerFontStack) {
+            ensureHomepageFontLoaded(publicFontFamily, publicOrganizerFont);
+        }
+    }, [organizerFontStack, publicFontFamily, publicOrganizerFont]);
+
     const {consentPending, consentGranted, onConsent} = useOrganizerTrackingPixels(
         publicEvent?.organizer?.settings?.tracking_pixels
     );
@@ -196,8 +210,10 @@ const Checkout = () => {
         : homepageSettings?.mode || detectMode(homepageSettings?.background || '#ffffff');
 
     return (
-        <CheckoutThemeProvider accentColor={accentColor} mode={checkoutMode}>
-            <div className={classes.container} data-mode={checkoutMode} data-immersive={fullscreenHero.enabled || undefined}>
+        <CheckoutThemeProvider accentColor={accentColor} mode={checkoutMode} fontFamily={organizerFontStack}>
+            <div className={classes.container} data-mode={checkoutMode} data-immersive={fullscreenHero.enabled || undefined}
+                 style={organizerFontStack ? {fontFamily: organizerFontStack} : undefined}
+                 {...(organizerFontStack ? {[ORGANIZER_FONT_ATTRIBUTE]: ''} : {})}>
                 {fullscreenHero.enabled && (
                     <div className={classes.immersiveBackground} aria-hidden="true">
                         {fullscreenHero.coverVideo && immersiveVideoAllowed ? (

@@ -125,6 +125,10 @@ use HiEvents\Http\Actions\Events\GetEventPublicAction;
 use HiEvents\Http\Actions\Events\GetEventsAction;
 use HiEvents\Http\Actions\Events\GetOrganizerEventsPublicAction;
 use HiEvents\Http\Actions\Organizers\CoverVideo\UploadOrganizerCoverVideoAction;
+use HiEvents\Http\Actions\Organizers\Font\DeleteOrganizerFontAction;
+use HiEvents\Http\Actions\Organizers\Font\GetOrganizerFontsAction;
+use HiEvents\Http\Actions\Organizers\Font\UpdateOrganizerFontFamilyAction;
+use HiEvents\Http\Actions\Organizers\Font\UploadOrganizerFontAction;
 use HiEvents\Http\Actions\Questions\Files\DownloadQuestionAnswerFileAction;
 use HiEvents\Http\Actions\Questions\Public\UploadQuestionAnswerFilePublicAction;
 use HiEvents\Services\Domain\Question\File\QuestionAnswerFileUrlGenerator;
@@ -365,6 +369,10 @@ $router->middleware(['auth:api'])->group(
         // This is POST instead of PUT because you can't upload files via PUT in PHP (at least not easily)
         $router->post('/organizers/{organizer_id}', EditOrganizerAction::class);
         $router->post('/organizers/{organizer_id}/cover-video', UploadOrganizerCoverVideoAction::class);
+        $router->get('/organizers/{organizer_id}/fonts', GetOrganizerFontsAction::class);
+        $router->post('/organizers/{organizer_id}/fonts', UploadOrganizerFontAction::class);
+        $router->put('/organizers/{organizer_id}/fonts/family', UpdateOrganizerFontFamilyAction::class);
+        $router->delete('/organizers/{organizer_id}/fonts/{font_id}', DeleteOrganizerFontAction::class);
         $router->put('/organizers/{organizer_id}/status', UpdateOrganizerStatusAction::class);
         $router->delete('/organizers/{organizer_id}', DeleteOrganizerAction::class);
         $router->get('/organizers/{organizer_id}/deletion-status', GetOrganizerDeletionStatusAction::class);

@@ -16,6 +16,23 @@ class OrganizerDomainObject extends Generated\OrganizerDomainObjectAbstract
 
     private ?OrganizerSettingDomainObject $settings = null;
 
+    /**
+     * @var Collection<OrganizerFontDomainObject>|null
+     */
+    private ?Collection $organizerFonts = null;
+
+    public function getOrganizerFonts(): ?Collection
+    {
+        return $this->organizerFonts;
+    }
+
+    public function setOrganizerFonts(?Collection $organizerFonts): self
+    {
+        $this->organizerFonts = $organizerFonts;
+
+        return $this;
+    }
+
     public function getImages(): ?Collection
     {
         return $this->images;
