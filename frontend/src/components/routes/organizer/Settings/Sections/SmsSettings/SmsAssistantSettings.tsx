@@ -90,7 +90,7 @@ export const SmsAssistantSettings = () => {
 
             <Alert color="blue" variant="light" mb="md" icon={<IconRobot size={16}/>}>
                 <Text size="sm">
-                    {t`Suggestions introduce themselves as an assistant and offer to pass the customer to your team. Refunds, complaints, unusual requests and questions it cannot answer from your data are marked "To handle" with the reason, without a suggestion.`}
+                    {t`Refunds, complaints, unusual requests and questions it cannot answer from your data are marked "To handle" with the reason, without a suggestion.`}
                 </Text>
             </Alert>
 

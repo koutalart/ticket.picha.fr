@@ -49,7 +49,7 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         })->byDefault();
     }
 
-    public function test_draft_is_cleaned_signed_and_logged_without_its_content(): void
+    public function test_draft_is_cleaned_unsigned_and_logged_without_its_content(): void
     {
         $this->claude->shouldReceive('isConfigured')->andReturnTrue();
         $this->claude->shouldReceive('askWithUsage')->once()->andReturnUsing(function (string $system, array $content) use (&$sent) {
@@ -69,7 +69,8 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         self::assertStringNotContainsString('—', $result->reply);
         self::assertStringNotContainsString('•', $result->reply);
         self::assertStringContainsString("22h, l'entrée flash est à 15 €", $result->reply);
-        self::assertStringEndsWith("\nL'assistant d'Innocent Event via PICHA Ticket", $result->reply);
+        self::assertStringEndsWith('https://ticket.picha.fr/event/7/halloween', $result->reply);
+        self::assertStringNotContainsString('assistant', $result->reply);
 
         self::assertStringContainsString('Halloween', $sent);
         self::assertStringContainsString('"prix": 15', $sent);
@@ -153,7 +154,7 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         }
     }
 
-    public function test_long_reply_is_shortened_to_fit_one_message_with_its_signature(): void
+    public function test_long_reply_is_shortened_to_fit_one_message(): void
     {
         $this->claude->shouldReceive('isConfigured')->andReturnTrue();
         $this->claude->shouldReceive('askWithUsage')->once()->andReturn($this->answer([
@@ -165,13 +166,7 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         $result = $this->generator()->generate($this->request());
 
         self::assertLessThanOrEqual(640, mb_strlen($result->reply));
-        self::assertStringEndsWith('via PICHA Ticket', $result->reply);
-    }
-
-    public function test_signature_uses_the_right_article(): void
-    {
-        self::assertSame("L'assistant d'Innocent Event via PICHA Ticket", SmsAssistantReplyGenerator::signature('Innocent Event'));
-        self::assertSame("L'assistant de Konka Wawa via PICHA Ticket", SmsAssistantReplyGenerator::signature('Konka Wawa'));
+        self::assertStringEndsWith('...', $result->reply);
     }
 
     private function generator(int $dailyLimit = 150): SmsAssistantReplyGenerator

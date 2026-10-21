@@ -114,11 +114,11 @@ class SmsAssistantServiceTest extends TestCase
                 && $request->conversationId === 3
                 && $request->instructions === 'Tutoie.'
                 && $request->thread->count() === 2)
-            ->andReturn(new SmsAssistantResultDTO(SmsAssistantOutcome::DRAFT, "Salut !\nL'assistant d'Innocent Event via PICHA Ticket", null));
+            ->andReturn(new SmsAssistantResultDTO(SmsAssistantOutcome::DRAFT, 'Salut ! Ça commence à 22h.', null));
 
         $this->conversationRepository->shouldReceive('updateFromArray')->once()
             ->withArgs(fn (int $id, array $attributes) => $id === 3
-                && $attributes['draft_reply'] === "Salut !\nL'assistant d'Innocent Event via PICHA Ticket"
+                && $attributes['draft_reply'] === 'Salut ! Ça commence à 22h.'
                 && $attributes['draft_source'] === 'AGENT'
                 && $attributes['draft_generated_at'] !== null
                 && ! array_key_exists('status', $attributes));

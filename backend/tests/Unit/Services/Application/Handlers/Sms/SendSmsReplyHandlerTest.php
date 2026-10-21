@@ -16,7 +16,7 @@ use Tests\TestCase;
 
 class SendSmsReplyHandlerTest extends TestCase
 {
-    private const DRAFT = "Salut ! La soirée commence à 22h.\nL'assistant d'Innocent Event via PICHA Ticket";
+    private const DRAFT = "Salut ! La soirée commence à 22h.\nÀ très vite !";
 
     public function test_unchanged_suggestion_is_sent_as_the_assistant(): void
     {
