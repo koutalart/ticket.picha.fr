@@ -46,6 +46,43 @@ class HttpSmsClient
     }
 
     /**
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws SmsGatewayException
+     */
+    public function listContacts(string $apiKey, int $skip, int $limit): array
+    {
+        $response = $this->send($apiKey, fn (PendingRequest $request) => $request->get($this->url('contacts'), [
+            'skip' => $skip,
+            'limit' => $limit,
+        ]));
+
+        return array_values(array_filter((array) $response->json('data', []), 'is_array'));
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $contacts
+     *
+     * @throws SmsGatewayException
+     */
+    public function createContacts(string $apiKey, array $contacts): void
+    {
+        $this->send($apiKey, fn (PendingRequest $request) => $request->post($this->url('contacts'), [
+            'contacts' => $contacts,
+        ]));
+    }
+
+    /**
+     * @param  array<string, mixed>  $contact
+     *
+     * @throws SmsGatewayException
+     */
+    public function updateContact(string $apiKey, string $contactId, array $contact): void
+    {
+        $this->send($apiKey, fn (PendingRequest $request) => $request->put($this->url('contacts/'.$contactId), $contact));
+    }
+
+    /**
      * @throws SmsGatewayException
      */
     private function send(string $apiKey, callable $callback): Response
