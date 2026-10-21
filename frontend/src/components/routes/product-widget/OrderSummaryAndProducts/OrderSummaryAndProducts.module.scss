@@ -193,3 +193,49 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
   gap: 4px;
   flex-shrink: 0;
 }
+
+.fullscreenWelcome {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 28px;
+  padding: 40px 4px 12px;
+  color: #fff;
+}
+
+.fullscreenWelcomeEyebrow {
+  color: var(--checkout-accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.fullscreenWelcomeTitle {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+
+.fullscreenWelcomeSubtitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.fullscreenWelcomeDate {
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  font-weight: 600;
+}
+
+.fullscreenWelcomeEmail {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}

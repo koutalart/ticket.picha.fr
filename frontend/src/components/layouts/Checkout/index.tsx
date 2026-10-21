@@ -24,6 +24,8 @@ import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPix
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {useGetEventPublic} from "../../../queries/useGetEventPublic.ts";
+import {getFullscreenHero} from "../../../utilites/fullscreenHero.ts";
+import {useDeferredCoverVideo} from "../../../hooks/useDeferredCoverVideo.ts";
 
 const DEFAULT_ACCENT = '#8b5cf6';
 
@@ -32,6 +34,8 @@ const Checkout = () => {
     const {data: order} = useGetOrderPublic(eventId, orderShortId, ['event']);
     const event = order?.event;
     const {data: publicEvent} = useGetEventPublic(eventId, !!eventId);
+    const fullscreenHero = getFullscreenHero(publicEvent);
+    const immersiveVideoAllowed = useDeferredCoverVideo(fullscreenHero.enabled ? fullscreenHero.coverVideo : undefined);
     const navigate = useNavigate();
     const location = useLocation();
     const orderIsCompleted = order?.status === 'COMPLETED';
@@ -187,12 +191,35 @@ const Checkout = () => {
     const homepageSettings = event?.settings?.homepage_theme_settings;
     const accentColor = homepageSettings?.accent || DEFAULT_ACCENT;
     // Mode is derived from the homepage background color (light homepage = light checkout)
-    const checkoutMode = homepageSettings?.mode || detectMode(homepageSettings?.background || '#ffffff');
+    const checkoutMode = fullscreenHero.enabled
+        ? 'dark'
+        : homepageSettings?.mode || detectMode(homepageSettings?.background || '#ffffff');
 
     return (
         <CheckoutThemeProvider accentColor={accentColor} mode={checkoutMode}>
-            <div className={classes.container} data-mode={checkoutMode}>
+            <div className={classes.container} data-mode={checkoutMode} data-immersive={fullscreenHero.enabled || undefined}>
+                {fullscreenHero.enabled && (
+                    <div className={classes.immersiveBackground} aria-hidden="true">
+                        {fullscreenHero.coverVideo && immersiveVideoAllowed ? (
+                            <video src={fullscreenHero.coverVideo} poster={fullscreenHero.coverImage} autoPlay muted loop
+                                   playsInline preload="metadata"/>
+                        ) : fullscreenHero.coverImage ? (
+                            <img src={fullscreenHero.coverImage} alt=""/>
+                        ) : null}
+                    </div>
+                )}
                 <div className={classes.mainContent}>
+                    {fullscreenHero.enabled && (fullscreenHero.partnerLogo || fullscreenHero.brandLogo || fullscreenHero.organizerLogo) && (
+                        <div className={classes.immersiveBrandBar}>
+                            {fullscreenHero.partnerLogo ? <img src={fullscreenHero.partnerLogo} alt=""/> : <span/>}
+                            {fullscreenHero.brandLogo ? (
+                                <img src={fullscreenHero.brandLogo} alt={publicEvent?.organizer?.name || ''}/>
+                            ) : fullscreenHero.organizerLogo ? (
+                                <img src={fullscreenHero.organizerLogo} alt={publicEvent?.organizer?.name || ''}
+                                     className={classes.immersiveInvertedLogo}/>
+                            ) : null}
+                        </div>
+                    )}
                     <header className={classes.header}>
                         {(event) && (
                             <div className={classes.actionBar}>
