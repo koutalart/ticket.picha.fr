@@ -27,10 +27,10 @@ class SmsInboundService
 {
     private const STATUS_RANK = [
         'PENDING' => 0,
-        'SENT' => 1,
-        'DELIVERED' => 2,
-        'FAILED' => 2,
-        'EXPIRED' => 2,
+        'EXPIRED' => 1,
+        'FAILED' => 1,
+        'SENT' => 2,
+        'DELIVERED' => 3,
     ];
 
     public function __construct(
