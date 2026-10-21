@@ -1,5 +1,6 @@
 import {FormEvent, KeyboardEvent, ReactNode, RefObject, useEffect, useMemo, useRef, useState} from "react";
 import {t, Trans} from "@lingui/macro";
+import {i18n} from "@lingui/core";
 import {useNavigate} from "react-router";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {useForm} from "@mantine/form";
@@ -623,6 +624,32 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
         || (questionsQuery.isFetched && hasUnsupportedQuestions(relevantQuestions))
         || !!event.settings?.require_billing_address
         || (publicProductIds !== null && !ticket);
+
+    const upcomingSaleStart = (event.product_categories?.flatMap(category => category.products || []) || event.products || [])
+        .filter(product => product.is_before_sale_start_date && product.sale_start_date)
+        .map(product => new Date(product.sale_start_date as string))
+        .sort((a, b) => a.getTime() - b.getTime())[0];
+
+    if (!forceClassic && publicProductIds !== null && !ticket && upcomingSaleStart) {
+        const openingDay = upcomingSaleStart.toLocaleDateString(i18n.locale || 'fr', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            timeZone: event.timezone || undefined,
+        });
+
+        return (
+            <section className={classes.root} ref={sectionRef} id="tickets" aria-label={t`Registration`}>
+                <div className={classNames(classes.panel, classes.comingSoon)}>
+                    <span className={classes.eyebrow}>
+                        <IconTicket size={18}/>
+                        {t`Free registration`}
+                    </span>
+                    <h2 className={classes.comingSoonTitle}>{t`Registration opens on ${openingDay}`}</h2>
+                </div>
+            </section>
+        );
+    }
 
     if (forceClassic || cannotEmbed) {
         return <>{renderFallback()}</>;
