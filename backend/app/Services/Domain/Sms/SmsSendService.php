@@ -111,7 +111,7 @@ class SmsSendService
         ]);
 
         if ($settings === null || ! $settings->getApiKey() || ! $settings->getFromNumber()) {
-            throw new SmsGatewayNotConfiguredException(__('SMS sending is not configured. Add your httpSMS API key and sending number in Settings.'));
+            throw new SmsGatewayNotConfiguredException(__('SMS sending is not configured. Add your PICHA SMS API key and sending number in Settings.'));
         }
 
         return $settings;

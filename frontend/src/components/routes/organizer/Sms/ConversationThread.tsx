@@ -189,7 +189,7 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
                     </Alert>
                 ) : !canSend ? (
                     <Alert color="yellow" variant="light">
-                        {t`Add your httpSMS API key and sending number in Settings to reply from here.`}
+                        {t`Add your PICHA SMS API key and sending number in Settings to reply from here.`}
                     </Alert>
                 ) : (
                     <>

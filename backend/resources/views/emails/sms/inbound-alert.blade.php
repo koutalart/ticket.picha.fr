@@ -27,6 +27,6 @@
 {{ __('Reply in PICHA Ticket') }}
 </x-mail::button>
 
-{{ __('To avoid too many emails, you will receive at most one alert per conversation every 15 minutes. You can turn these alerts off in Settings > SMS (httpSMS).') }}
+{{ __('To avoid too many emails, you will receive at most one alert per conversation every 15 minutes. You can turn these alerts off in Settings > PICHA SMS.') }}
 
 </x-mail::message>

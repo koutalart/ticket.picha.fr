@@ -28,7 +28,7 @@ class TestSmsConnectionAction extends BaseAction
             return $this->errorResponse($exception->getMessage(), ResponseCodes::HTTP_UNPROCESSABLE_ENTITY);
         } catch (SmsGatewayException $exception) {
             return $this->errorResponse(
-                __('httpSMS rejected the connection: :message', ['message' => $exception->getMessage()]),
+                __('PICHA SMS rejected the connection: :message', ['message' => $exception->getMessage()]),
                 ResponseCodes::HTTP_UNPROCESSABLE_ENTITY,
             );
         }

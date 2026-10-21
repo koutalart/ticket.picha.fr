@@ -20,7 +20,7 @@
 
 {{ __('As long as it stays offline, SMS replies from your contacts will not reach PICHA Ticket and your messages will not be sent.') }}
 
-{{ __('Check that the phone is switched on, connected to the internet and that the httpSMS app is running.') }}
+{{ __('Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running.') }}
 
 <x-mail::button :url="$settingsUrl">
 {{ __('View SMS settings') }}

@@ -78,7 +78,7 @@ export const SmsSettings = () => {
     };
 
     const removeApiKey = () => {
-        confirmationDialog(t`Remove the httpSMS API key? You will no longer be able to send SMS from PICHA.`, () => {
+        confirmationDialog(t`Remove the PICHA SMS API key? You will no longer be able to send SMS from PICHA.`, () => {
             updateMutation.mutate({
                 organizerId: organizerId!,
                 settings: {api_key: null},
@@ -90,7 +90,7 @@ export const SmsSettings = () => {
     };
 
     const regenerateKey = () => {
-        confirmationDialog(t`Generate a new signing key? You will need to paste it into your httpSMS webhook, otherwise incoming SMS will be rejected.`, () => {
+        confirmationDialog(t`Generate a new signing key? You will need to paste it into your PICHA SMS webhook, otherwise incoming SMS will be rejected.`, () => {
             regenerateMutation.mutate({organizerId: organizerId!}, {
                 onSuccess: () => showSuccess(t`New signing key generated`),
                 onError: () => showError(t`Unable to generate a new signing key`),
@@ -113,14 +113,14 @@ export const SmsSettings = () => {
             onSuccess: ({data}) => {
                 const phones = data.phone_numbers.join(', ');
                 if (data.from_number_registered) {
-                    showSuccess(t`Connected to httpSMS. Your sending number is registered.`);
+                    showSuccess(t`Connected to PICHA SMS. Your sending number is registered.`);
                 } else if (data.phone_numbers.length > 0) {
-                    showError(t`Connected to httpSMS, but your sending number is not one of your phones: ${phones}`);
+                    showError(t`Connected to PICHA SMS, but your sending number is not one of your phones: ${phones}`);
                 } else {
-                    showError(t`Connected to httpSMS, but no phone is registered. Install the httpSMS app on your Android phone.`);
+                    showError(t`Connected to PICHA SMS, but no phone is registered. Install the PICHA SMS app on your Android phone.`);
                 }
             },
-            onError: (error: any) => showError(error?.response?.data?.message || t`Unable to reach httpSMS. Please try again.`),
+            onError: (error: any) => showError(error?.response?.data?.message || t`Unable to reach PICHA SMS. Please try again.`),
         });
     };
 
@@ -135,8 +135,8 @@ export const SmsSettings = () => {
         <>
         <Card>
             <HeadingWithDescription
-                heading={t`SMS (httpSMS)`}
-                description={t`Send and receive SMS with your customers from your own Android phone, using the httpSMS app. Replies appear in SMS messages.`}
+                heading={t`PICHA SMS`}
+                description={t`Send and receive SMS with your customers from your own Android phone, using the PICHA SMS app. Replies appear in SMS messages.`}
             />
 
             <Group gap="xs" mb="md">
@@ -160,8 +160,8 @@ export const SmsSettings = () => {
             {settings?.phone_status === 'OFFLINE' && (
                 <Alert color="red" variant="light" mb="md">
                     {settings.phone_status_changed_at
-                        ? t`Your httpSMS phone went offline ${relativeDate(settings.phone_status_changed_at)}. Check that it is switched on, connected to the internet and that the httpSMS app is running.`
-                        : t`Your httpSMS phone is offline. Check that it is switched on, connected to the internet and that the httpSMS app is running.`}
+                        ? t`Your PICHA SMS phone went offline ${relativeDate(settings.phone_status_changed_at)}. Check that it is switched on, connected to the internet and that the PICHA SMS app is running.`
+                        : t`Your PICHA SMS phone is offline. Check that it is switched on, connected to the internet and that the PICHA SMS app is running.`}
                 </Alert>
             )}
 
@@ -170,11 +170,11 @@ export const SmsSettings = () => {
                 <List size="sm" spacing={4} type="ordered">
                     <List.Item>
                         <Trans>
-                            Install the httpSMS app on your Android phone and sign in on <Anchor href="https://httpsms.com/settings" target="_blank" size="sm">httpsms.com</Anchor>.
+                            Install the PICHA SMS app on your Android phone and sign in on <Anchor href="https://sms.picha.fr/settings" target="_blank" size="sm">sms.picha.fr</Anchor>.
                         </Trans>
                     </List.Item>
-                    <List.Item>{t`Copy your API key from the httpSMS settings page and paste it below, with the phone number of the SIM used to send.`}</List.Item>
-                    <List.Item>{t`In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events.`}</List.Item>
+                    <List.Item>{t`Copy your API key from the PICHA SMS settings page and paste it below, with the phone number of the SIM used to send.`}</List.Item>
+                    <List.Item>{t`In PICHA SMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events.`}</List.Item>
                 </List>
             </Alert>
 
@@ -182,7 +182,7 @@ export const SmsSettings = () => {
                 <fieldset disabled={settingsQuery.isLoading || updateMutation.isPending}>
                     <PasswordInput
                         {...form.getInputProps('api_key')}
-                        label={t`httpSMS API key`}
+                        label={t`PICHA SMS API key`}
                         placeholder={settings?.api_key_configured ? t`A key is saved. Paste a new one to replace it.` : 'uk_...'}
                         description={t`Stored encrypted. It is never displayed again.`}
                         autoComplete="off"
@@ -191,7 +191,7 @@ export const SmsSettings = () => {
                     <TextInput
                         {...form.getInputProps('from_number')}
                         label={t`Sending number`}
-                        description={t`The number of the SIM card in the httpSMS phone, for example +262639123456.`}
+                        description={t`The number of the SIM card in the PICHA SMS phone, for example +262639123456.`}
                         placeholder="+262639123456"
                         mb="md"
                     />
@@ -234,7 +234,7 @@ export const SmsSettings = () => {
                     />
                     <TextInput
                         label={t`Webhook signing key`}
-                        description={t`Paste it into the signing key field of your httpSMS webhook. Keep it private.`}
+                        description={t`Paste it into the signing key field of your PICHA SMS webhook. Keep it private.`}
                         value={settings.webhook_signing_key}
                         readOnly
                         rightSection={<CopyButton value={settings.webhook_signing_key}/>}
@@ -256,7 +256,7 @@ export const SmsSettings = () => {
 
             <Text fw={600} size="sm" mb={4}>{t`SMS history`}</Text>
             <Text size="sm" c="dimmed" mb="sm">
-                {t`Retrieve the SMS sent and received with your httpSMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread.`}
+                {t`Retrieve the SMS sent and received with your PICHA SMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread.`}
             </Text>
             <Group gap="sm" align="center">
                 <Button
@@ -266,7 +266,7 @@ export const SmsSettings = () => {
                     loading={importMutation.isPending}
                     disabled={!isConfigured || isImporting}
                 >
-                    {t`Retrieve httpSMS history`}
+                    {t`Retrieve PICHA SMS history`}
                 </Button>
                 {isImporting && (
                     <Group gap={6}>
