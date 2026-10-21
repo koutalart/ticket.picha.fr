@@ -86,6 +86,14 @@ msgstr "{0} disponible"
 msgid "{0} characters, {1} SMS"
 msgstr "{0} caractères, {1} SMS"
 
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:221
+msgid "{0} characters, {1} SMS per recipient"
+msgstr "{0} caractères, {1} SMS par destinataire"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:222
+msgid "{0} characters, 1 SMS per recipient"
+msgstr "{0} caractères, 1 SMS par destinataire"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:251
 msgid "{0} charges platform fees to maintain and improve its services. These fees are automatically deducted from each transaction."
 msgstr "{0} applique des frais de plateforme pour maintenir et améliorer ses services. Ces frais sont automatiquement déduits de chaque transaction."
@@ -194,6 +202,10 @@ msgstr "{0}/{1} enregistré"
 #: src/components/routes/kiosk/Orders/index.tsx:188
 msgid "{0}/{1} entered"
 msgstr "{0}/{1} entrés"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:211
+msgid "{activeCount} active attendees, {withoutPhoneCount} without a valid number, {optedOutCount} unsubscribed, {sharedCount} sharing a number already reached."
+msgstr "{activeCount} participants actifs, {withoutPhoneCount} sans numéro valide, {optedOutCount} désinscrits, {sharedCount} partageant un numéro déjà joint."
 
 #: src/components/common/EventCard/index.tsx:123
 msgid "{availableCount} of {totalCount} available"
@@ -410,7 +422,7 @@ msgstr "Un avis d'annulation a été envoyé à"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "Un ordinateur branché sur le réseau du lieu fait tourner le relais d'impression PICHA. Il récupère les billets imprimés depuis ce poste et les envoie à la Zebra."
 
-#: src/components/routes/organizer/Sms/index.tsx:81
+#: src/components/routes/organizer/Sms/index.tsx:85
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Un client qui répond STOP est automatiquement désinscrit de vos SMS."
 
@@ -2045,7 +2057,7 @@ msgstr "Campagne renommée"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
-#: src/components/routes/organizer/Sms/index.tsx:108
+#: src/components/routes/organizer/Sms/index.tsx:112
 msgid "Campaigns"
 msgstr "Campagnes"
 
@@ -2076,6 +2088,7 @@ msgstr "Peut-on utiliser la plateforme en autonomie, sans accompagnement ?"
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:231
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:85
 #: src/utilites/confirmationDialog.tsx:17
@@ -2102,6 +2115,10 @@ msgstr "Annuler la commande"
 #: src/components/modals/CancelOrderModal/index.tsx:57
 msgid "Cancel Order {0}"
 msgstr "Annuler la commande {0}"
+
+#: src/components/routes/organizer/Sms/ReminderList.tsx:96
+msgid "Cancel the reminder"
+msgstr "Annuler le rappel"
 
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:151
 msgid "Cancel the ticket"
@@ -2131,6 +2148,7 @@ msgstr "annulée"
 #: src/components/routes/kiosk/Orders/index.tsx:180
 #: src/components/routes/kiosk/Orders/index.tsx:195
 #: src/components/routes/kiosk/Orders/index.tsx:260
+#: src/components/routes/organizer/Sms/labels.ts:83
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:102
 msgid "Cancelled"
 msgstr "Annulé"
@@ -2425,6 +2443,8 @@ msgstr "Choisissez un compte"
 
 #: src/components/routes/kiosk/SelectEvent/index.tsx:41
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:351
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:64
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:139
 msgid "Choose an event"
 msgstr "Choisir un événement"
 
@@ -2443,6 +2463,10 @@ msgstr "Choisissez comment la date de l'événement s'affiche sur le billet"
 #: src/components/organizerTemplates/Tour/index.tsx:411
 msgid "Choose my city"
 msgstr "Choisir ma ville"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:65
+msgid "Choose the date and time of sending"
+msgstr "Choisissez la date et l'heure d'envoi"
 
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:45
 msgid "Choose the default setting for new events. This can be overridden for individual events."
@@ -2819,6 +2843,10 @@ msgstr "Confirmez le mot de passe"
 msgid "Confirm Password"
 msgstr "Confirmez le mot de passe"
 
+#: src/components/routes/organizer/Sms/ReminderList.tsx:102
+msgid "Confirm the cancellation"
+msgstr "Confirmer l'annulation"
+
 #: src/components/layouts/Event/index.tsx:196
 msgid "Confirm your email to access all features."
 msgstr "Confirmez votre e-mail pour accéder à toutes les fonctionnalités."
@@ -2848,7 +2876,7 @@ msgstr "Connecter et mettre à niveau"
 msgid "Connect Documentation"
 msgstr "Documentation de connexion"
 
-#: src/components/routes/organizer/Sms/index.tsx:89
+#: src/components/routes/organizer/Sms/index.tsx:93
 msgid "Connect PICHA SMS in Settings"
 msgstr "Connecter PICHA SMS dans les Paramètres"
 
@@ -3019,7 +3047,7 @@ msgstr "Continuer vers le paiement"
 msgid "Control how platform fees are handled for this event"
 msgstr "Contrôlez comment les frais de plateforme sont gérés pour cet événement"
 
-#: src/components/routes/organizer/Sms/index.tsx:107
+#: src/components/routes/organizer/Sms/index.tsx:111
 msgid "Conversations"
 msgstr "Conversations"
 
@@ -3510,7 +3538,7 @@ msgstr "Modèle personnalisé"
 msgid "Customer"
 msgstr "Client"
 
-#: src/components/routes/organizer/Sms/index.tsx:149
+#: src/components/routes/organizer/Sms/index.tsx:163
 msgid "Customer file"
 msgstr "Fiche client"
 
@@ -3656,6 +3684,7 @@ msgstr "Propriété des données"
 #: src/components/routes/event/Reports/DailySalesReport/index.tsx:29
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:56
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:24
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:128
 msgid "Date"
 msgstr "Date"
 
@@ -3812,6 +3841,7 @@ msgstr "Supprimer le webhook"
 #: src/components/routes/organizer/Sms/CampaignList.tsx:43
 #: src/components/routes/organizer/Sms/labels.ts:22
 #: src/components/routes/organizer/Sms/labels.ts:50
+#: src/components/routes/organizer/Sms/ReminderList.tsx:68
 msgid "Delivered"
 msgstr "Distribué"
 
@@ -4729,6 +4759,7 @@ msgstr "EUR"
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:41
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:43
 #: src/components/routes/organizer/Reports/TaxSummaryReport/index.tsx:23
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:138
 msgid "Event"
 msgstr "Événement"
 
@@ -4914,6 +4945,10 @@ msgstr "Fuseau horaire de l'événement"
 msgid "Event Timezone"
 msgstr "Fuseau Horaire de l'Événement"
 
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:127
+msgid "Event title"
+msgstr "Titre de l'événement"
+
 #: src/components/common/AdminEventsTable/index.tsx:84
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:34
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:68
@@ -4996,6 +5031,10 @@ msgstr "L'essentiel est prêt. Vous pouvez mettre votre événement en ligne."
 msgid "Everything you need to know."
 msgstr "Tout ce qu'il faut savoir."
 
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:216
+msgid "Example"
+msgstr "Exemple"
+
 #: src/components/routes/landing/index.tsx:433
 msgid "Example:"
 msgstr "Exemple :"
@@ -5073,6 +5112,8 @@ msgstr "Facebook"
 #: src/components/routes/organizer/Sms/CampaignList.tsx:47
 #: src/components/routes/organizer/Sms/labels.ts:24
 #: src/components/routes/organizer/Sms/labels.ts:52
+#: src/components/routes/organizer/Sms/labels.ts:81
+#: src/components/routes/organizer/Sms/ReminderList.tsx:69
 msgid "Failed"
 msgstr "Échoué"
 
@@ -5456,6 +5497,7 @@ msgstr "Premier numéro de facture"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:585
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:890
 #: src/components/routes/landing/DemoRequestForm/index.tsx:119
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:126
 #: src/components/routes/product-widget/CollectInformation/index.tsx:478
 #: src/components/routes/product-widget/CollectInformation/index.tsx:700
 msgid "First name"
@@ -5543,6 +5585,7 @@ msgid "Font Family"
 msgstr "Police de caractères"
 
 #: src/components/routes/organizer/Sms/CampaignList.tsx:65
+#: src/components/routes/organizer/Sms/ReminderList.tsx:83
 msgid "For {0}"
 msgstr "Pour {0}"
 
@@ -5873,6 +5916,10 @@ msgstr "Titre de l'en-tête"
 #: src/components/routes/admin/Dashboard/index.tsx:74
 msgid "Hello {0}, manage your platform from here."
 msgstr "Bonjour {0}, gérez votre plateforme depuis ici."
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:60
+msgid "Hello {FIRST_NAME}, a reminder: {EVENT_TITLE} takes place on {EVENT_DATE} at {EVENT_TIME}. See you soon!"
+msgstr "Bonjour {FIRST_NAME}, petit rappel : {EVENT_TITLE} a lieu le {EVENT_DATE} à {EVENT_TIME}. A très vite !"
 
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:117
 msgid "Hello {SMS_FIRST_NAME_VARIABLE}, doors open at 7pm."
@@ -6246,6 +6293,14 @@ msgstr "Dans PICHA SMS, créez un webhook avec l'URL et la clé de signature ci-
 msgid "In progress"
 msgstr "En cours"
 
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:151
+msgid "In the timezone of the event"
+msgstr "Dans le fuseau horaire de l'événement"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:150
+msgid "In the timezone of the event ({timezone})"
+msgstr "Dans le fuseau horaire de l'événement ({timezone})"
+
 #: src/components/common/AffiliateTable/index.tsx:131
 #: src/components/common/CheckInListList/index.tsx:114
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:267
@@ -6315,6 +6370,10 @@ msgstr "Insérer un jeton Liquid"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:111
 msgid "Insert Variable"
 msgstr "Insérer une variable"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:168
+msgid "Insert:"
+msgstr "Insérer :"
 
 #: src/components/common/QuestionsTable/index.tsx:371
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:53
@@ -6604,6 +6663,10 @@ msgstr "Conserver"
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:519
 msgid "Keep a dark color on a light background so every phone can scan it."
 msgstr "Gardez une couleur foncée sur un fond clair pour que tous les téléphones puissent le scanner."
+
+#: src/components/routes/organizer/Sms/ReminderList.tsx:105
+msgid "Keep it"
+msgstr "Le garder"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:610
 #: src/components/routes/product-widget/CollectInformation/index.tsx:765
@@ -7137,6 +7200,7 @@ msgstr "Rencontrez notre public là où l'émotion est la plus forte."
 #: src/components/common/ContactOrganizerModal/index.tsx:88
 #: src/components/common/OrdersTable/index.tsx:258
 #: src/components/modals/SendMessageModal/index.tsx:354
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:160
 msgid "Message"
 msgstr "Message"
 
@@ -7467,6 +7531,10 @@ msgstr "Le nom doit comporter moins de 255 caractères"
 msgid "Name of the event"
 msgstr "Nom de l'événement"
 
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:183
+msgid "Name of the reminder"
+msgstr "Nom du rappel"
+
 #: src/components/routes/organizer/Sms/ConversationList.tsx:61
 msgid "Name or number"
 msgstr "Nom ou numéro"
@@ -7537,7 +7605,7 @@ msgstr "Nouvelle clé de signature générée"
 msgid "New Signups"
 msgstr "Nouvelles inscriptions"
 
-#: src/components/routes/organizer/Sms/index.tsx:98
+#: src/components/routes/organizer/Sms/index.tsx:102
 msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Les nouveaux SMS n'arrivent plus ici et vos réponses ne partent pas. Vérifiez que le téléphone est allumé, connecté à internet et que l'application PICHA SMS est ouverte."
 
@@ -7680,6 +7748,10 @@ msgstr "Aucun événement assigné"
 #: src/components/routes/organizer/Sms/CampaignList.tsx:66
 msgid "No event attached"
 msgstr "Aucun événement associé"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:143
+msgid "No event found"
+msgstr "Aucun événement trouvé"
 
 #: src/components/routes/organizer/Events/index.tsx:96
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:183
@@ -7894,6 +7966,10 @@ msgstr "Aucune inscription pour l'instant"
 #: src/components/routes/event/EventDashboard/index.tsx:265
 msgid "No registrations yet."
 msgstr "Aucune inscription pour l'instant."
+
+#: src/components/routes/organizer/Sms/ReminderList.tsx:58
+msgid "No reminder scheduled yet."
+msgstr "Aucun rappel programmé pour le moment."
 
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:244
 msgid "No reply template yet"
@@ -8449,6 +8525,10 @@ msgstr "Optionnel en rush — saisissez au moins un prénom, un e-mail ou un té
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:200
 msgid "Optional prefix for invoice numbers (e.g., INV-)"
 msgstr "Préfixe optionnel pour les numéros de facture (par exemple, INV-)"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:184
+msgid "Optional, only visible to you"
+msgstr "Facultatif, visible uniquement par vous"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:412
 msgid "Optional. A line under the title, for example a second event on the same evening."
@@ -9274,6 +9354,10 @@ msgstr "Supprimez définitivement cet organisateur et tous ses événements."
 #: src/components/routes/profile/ManageProfile/index.tsx:147
 msgid "Personal Information"
 msgstr "Informations personnelles"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:130
+msgid "Personal link"
+msgstr "Lien personnel"
 
 #: src/components/routes/landing/index.tsx:133
 msgid "Personalized invitations, a registration page with your own questions, free or paid tickets: every attendee receives their QR code badge or ticket by e-mail."
@@ -10180,6 +10264,8 @@ msgstr "destinataires"
 #: src/components/routes/admin/Messages/index.tsx:166
 #: src/components/routes/admin/Messages/index.tsx:299
 #: src/components/routes/organizer/Sms/CampaignList.tsx:41
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:202
+#: src/components/routes/organizer/Sms/ReminderList.tsx:66
 msgid "Recipients"
 msgstr "Destinataires"
 
@@ -10391,9 +10477,21 @@ msgstr "Des chiffres fiables, immédiatement"
 msgid "Remaining Uses"
 msgstr "Utilisations restantes"
 
+#: src/components/routes/organizer/Sms/ReminderList.tsx:33
+msgid "Reminder cancelled"
+msgstr "Rappel annulé"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:110
+msgid "Reminder scheduled"
+msgstr "Rappel programmé"
+
 #: src/components/routes/landing/ProductVisuals/index.tsx:56
 msgid "Reminder sent"
 msgstr "Relancé"
+
+#: src/components/routes/organizer/Sms/index.tsx:113
+msgid "Reminders"
+msgstr "Rappels"
 
 #: src/components/routes/product-widget/SelectProducts/index.tsx:665
 msgid "remove"
@@ -10947,6 +11045,18 @@ msgstr "Scans"
 msgid "Scans per day"
 msgstr "Scans par jour"
 
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:238
+msgid "Schedule"
+msgstr "Programmer"
+
+#: src/components/routes/organizer/Sms/ReminderList.tsx:50
+msgid "Schedule a reminder"
+msgstr "Programmer un rappel"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:134
+msgid "Schedule an SMS reminder"
+msgstr "Programmer un rappel SMS"
+
 #: src/components/modals/SendMessageModal/index.tsx:382
 msgid "Schedule for later"
 msgstr "Programmer pour plus tard"
@@ -10977,6 +11087,7 @@ msgstr "Pas encore en vente"
 #: src/components/routes/admin/Messages/index.tsx:125
 #: src/components/routes/event/messages.tsx:62
 #: src/components/routes/organizer/Sms/labels.ts:46
+#: src/components/routes/organizer/Sms/labels.ts:85
 msgid "Scheduled"
 msgstr "Planifié"
 
@@ -11143,6 +11254,7 @@ msgid "See the events"
 msgstr "Voir les événements"
 
 #: src/components/routes/organizer/Sms/CampaignList.tsx:72
+#: src/components/routes/organizer/Sms/ReminderList.tsx:92
 msgid "See the recipients"
 msgstr "Voir les destinataires"
 
@@ -11330,6 +11442,10 @@ msgstr "Envoyer"
 msgid "Send a message"
 msgstr "Envoyer un message"
 
+#: src/components/routes/organizer/Sms/ReminderList.tsx:43
+msgid "Send an SMS to the attendees of an event at the date and time of your choice. Unsubscribed numbers are left out and each number receives the reminder only once."
+msgstr "Envoyez un SMS aux participants d'un événement à la date et à l'heure de votre choix. Les numéros désinscrits sont exclus et chaque numéro ne reçoit le rappel qu'une seule fois."
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:139
 msgid "Send and receive SMS with your customers from your own Android phone, using the PICHA SMS app. Replies appear in SMS messages."
 msgstr "Envoyez et recevez des SMS avec vos clients depuis votre propre téléphone Android, grâce à l'application PICHA SMS. Les réponses apparaissent dans Messages SMS."
@@ -11399,9 +11515,21 @@ msgstr "Envoyez automatiquement vos commandes et participants vers un autre outi
 msgid "Sending"
 msgstr "Envoi en cours"
 
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:148
+msgid "Sending date and time"
+msgstr "Date et heure d'envoi"
+
+#: src/components/routes/organizer/Sms/labels.ts:77
+msgid "Sending in progress"
+msgstr "Envoi en cours"
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:193
 msgid "Sending number"
 msgstr "Numéro d'envoi"
+
+#: src/components/routes/organizer/Sms/ReminderList.tsx:86
+msgid "sending on {0}"
+msgstr "envoi le {0}"
 
 #: src/components/routes/auth/ForgotPassword/index.tsx:70
 msgid "Sending..."
@@ -11418,6 +11546,8 @@ msgstr "envoyées"
 #: src/components/routes/admin/Messages/index.tsx:123
 #: src/components/routes/organizer/Sms/labels.ts:20
 #: src/components/routes/organizer/Sms/labels.ts:48
+#: src/components/routes/organizer/Sms/labels.ts:79
+#: src/components/routes/organizer/Sms/ReminderList.tsx:67
 msgid "Sent"
 msgstr "Envoyé"
 
@@ -11764,11 +11894,11 @@ msgstr "Assistant SMS"
 msgid "SMS history"
 msgstr "Historique des SMS"
 
-#: src/components/routes/organizer/Sms/index.tsx:87
+#: src/components/routes/organizer/Sms/index.tsx:91
 msgid "SMS is not connected yet."
 msgstr "Les SMS ne sont pas encore connectés."
 
-#: src/components/routes/organizer/Sms/index.tsx:79
+#: src/components/routes/organizer/Sms/index.tsx:83
 msgid "SMS messages"
 msgstr "Messages SMS"
 
@@ -11785,6 +11915,10 @@ msgstr "Réponses SMS toutes faites"
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:74
 msgid "SMS settings saved"
 msgstr "Paramètres SMS enregistrés"
+
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:206
+msgid "SMS to send"
+msgstr "SMS à envoyer"
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:73
 msgid "Snapchat"
@@ -12672,6 +12806,10 @@ msgstr "La langue du client"
 msgid "The maximum number of products for {0}is {1}"
 msgstr "Le nombre maximum de produits pour {0} est {1}"
 
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:66
+msgid "The message cannot be empty"
+msgstr "Le message ne peut pas être vide"
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:194
 msgid "The number of the SIM card in the PICHA SMS phone, for example +262639123456."
 msgstr "Le numéro de la carte SIM du téléphone PICHA SMS, par exemple +262639123456."
@@ -12697,7 +12835,11 @@ msgstr "La page que vous recherchez n'existe pas"
 msgid "The people behind the events."
 msgstr "Les visages derrière les événements."
 
-#: src/components/routes/organizer/Sms/index.tsx:97
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:191
+msgid "The personal confirmation link is not available yet: it will be left out of the message until it is."
+msgstr "Le lien personnel de confirmation n'est pas encore disponible : il sera retiré du message en attendant."
+
+#: src/components/routes/organizer/Sms/index.tsx:101
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Le téléphone est passé hors ligne {0}. Les nouveaux SMS n'arrivent plus ici et vos réponses ne partent pas. Vérifiez que le téléphone est allumé, connecté à internet et que l'application PICHA SMS est ouverte."
 
@@ -12732,6 +12874,10 @@ msgstr "La question n'a pas pu être ajoutée. Veuillez réessayer."
 #: src/components/common/ThemeFontControl/index.tsx:81
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "Le vif renard brun saute par-dessus le chien paresseux."
+
+#: src/components/routes/organizer/Sms/ReminderList.tsx:34
+msgid "The reminder could not be cancelled"
+msgstr "Le rappel n'a pas pu être annulé"
 
 #: src/components/modals/SendMessageModal/index.tsx:173
 msgid "The scheduled time is required"
@@ -13273,6 +13419,7 @@ msgid "TikTok"
 msgstr "TikTok"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:148
+#: src/components/routes/organizer/Sms/ReminderFormModal.tsx:129
 msgid "Time"
 msgstr "Horaires"
 
@@ -15163,7 +15310,7 @@ msgstr "Votre paiement n'a pas abouti, veuillez réessayer."
 msgid "Your payment was unsuccessful. Please try again."
 msgstr "Votre paiement a échoué. Veuillez réessayer."
 
-#: src/components/routes/organizer/Sms/index.tsx:95
+#: src/components/routes/organizer/Sms/index.tsx:99
 msgid "Your PICHA SMS phone is offline"
 msgstr "Votre téléphone PICHA SMS est hors ligne"
 
