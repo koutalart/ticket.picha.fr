@@ -28,6 +28,7 @@ class OrderQuestionRule extends BaseQuestionRule
     protected function validateQuestions(mixed $questions): array
     {
         $validationMessages = [];
+        $usedFileIds = [];
         foreach ($questions as $index => $orderQuestion) {
             $questionDomainObject = $this->getQuestionDomainObject($orderQuestion['question_id']);
             $key = 'order.questions.' . $index . '.response';
@@ -52,6 +53,7 @@ class OrderQuestionRule extends BaseQuestionRule
             }
 
             $validationMessages = $this->validateResponseLength($questionDomainObject, $response, $key, $validationMessages);
+            $validationMessages = $this->validateFileAnswer($questionDomainObject, $answer, $key, $validationMessages, $usedFileIds);
         }
 
         return $validationMessages;

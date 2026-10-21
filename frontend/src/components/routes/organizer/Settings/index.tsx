@@ -9,11 +9,14 @@ import { DangerZoneSettings } from "./Sections/DangerZoneSettings";
 import { TrackingPixelSettings } from "./Sections/TrackingPixelSettings";
 import { WebhookSettings } from "./Sections/WebhookSettings";
 import { MetaConversionsApiSettings } from "./Sections/MetaConversionsApiSettings";
+import { SmsSettings } from "./Sections/SmsSettings";
+import { SmsReplyTemplates } from "./Sections/SmsReplyTemplates";
+import { SmsOptOuts } from "./Sections/SmsOptOuts";
 import { PageBody } from "../../../common/PageBody";
 import { PageTitle } from "../../../common/PageTitle";
 import { t } from "@lingui/macro";
 import { Box, Group, NavLink as MantineNavLink, Stack } from "@mantine/core";
-import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconWebhook, IconBrandMeta } from "@tabler/icons-react";
+import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconWebhook, IconBrandMeta, IconMessage, IconMessageBolt, IconBan } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "../../../common/Card";
@@ -80,6 +83,24 @@ const Settings = () => {
                 label: t`Meta Conversions API`,
                 icon: IconBrandMeta,
                 component: MetaConversionsApiSettings,
+            },
+            {
+                id: 'sms',
+                label: t`PICHA SMS`,
+                icon: IconMessage,
+                component: SmsSettings,
+            },
+            {
+                id: 'sms-reply-templates',
+                label: t`SMS reply templates`,
+                icon: IconMessageBolt,
+                component: SmsReplyTemplates,
+            },
+            {
+                id: 'sms-opt-outs',
+                label: t`SMS opt-out list`,
+                icon: IconBan,
+                component: SmsOptOuts,
             },
             {
                 id: 'webhooks',

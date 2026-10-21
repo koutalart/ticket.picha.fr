@@ -29,7 +29,7 @@ import {HeroVideo} from "./HeroVideo";
 import {MarketingHeader} from "./MarketingHeader";
 import {MarketingFooter} from "./MarketingFooter";
 import {CaseStudyCard} from "../case-studies/CaseStudyCard";
-import {getVisibleCaseStudies} from "../case-studies/caseStudies.ts";
+import {getCaseStudyTitle, getVisibleCaseStudies} from "../case-studies/caseStudies.ts";
 import {InvitationPanel, LiveDashboard, PrintedBadge, ScanScreen} from "./ProductVisuals";
 import classes from "./Landing.module.scss";
 
@@ -54,6 +54,10 @@ const Landing = () => {
     const pageDescription = t`Manage registrations, welcome, digital check-in and badge printing for your professional and institutional events with ${appName}.`;
 
     const featuredCaseStudies = getVisibleCaseStudies().slice(0, 3);
+    const caseStudyExample = (slug: string) => {
+        const caseStudy = getVisibleCaseStudies().find((entry) => entry.slug === slug);
+        return caseStudy ? {to: `/cas-clients/${caseStudy.slug}`, label: getCaseStudyTitle(caseStudy)} : undefined;
+    };
     const hasCaseStudies = featuredCaseStudies.length > 0;
     const sectionTone = (mutedWhenCaseStudies: boolean) =>
         `${classes.section} ${mutedWhenCaseStudies === hasCaseStudies ? classes.sectionMuted : ""}`;
@@ -200,7 +204,8 @@ const Landing = () => {
         {
             icon: IconBuildingSkyscraper,
             title: t`Companies`,
-            description: t`Open days, seminars, internal events.`,
+            description: t`Open days, seminars, job fairs, internal events.`,
+            example: caseStudyExample("mayotte-la-1ere-journee-portes-ouvertes"),
         },
         {
             icon: IconBuildingBank,
@@ -212,11 +217,13 @@ const Landing = () => {
             icon: IconUsersGroup,
             title: t`Associations and professional networks`,
             description: t`Festivals, workshops, award ceremonies.`,
+            example: caseStudyExample("somaroho"),
         },
         {
             icon: IconMicrophone2,
             title: t`Promoters and cultural venues`,
-            description: t`Concerts, parties, sports and cultural events: online ticketing, physical presales and on-site sales on the day.`,
+            description: t`Concerts, tours, themed parties, sports and cultural events: online ticketing, physical presales and on-site sales on the day.`,
+            example: caseStudyExample("innocent-event"),
         },
     ];
 
@@ -421,6 +428,11 @@ const Landing = () => {
                                     <useCase.icon size={28} stroke={1.6} className={classes.icon} aria-hidden="true"/>
                                     <h3 className={classes.cardTitle}>{useCase.title}</h3>
                                     <p className={classes.cardText}>{useCase.description}</p>
+                                    {"example" in useCase && useCase.example && (
+                                        <p className={classes.useCaseExample}>
+                                            {t`Example:`} <Link to={useCase.example.to}>{useCase.example.label}</Link>
+                                        </p>
+                                    )}
                                     {"link" in useCase && useCase.link && (
                                         <p className={classes.solutionLinks}>
                                             <Link to={useCase.link.to}>

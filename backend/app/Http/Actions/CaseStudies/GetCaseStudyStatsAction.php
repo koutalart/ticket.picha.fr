@@ -31,10 +31,15 @@ class GetCaseStudyStatsAction extends BaseAction
         }
 
         $data = $this->validate($request, [
-            'event_ids' => ['required', 'string', 'regex:/^\d+(,\d+)*$/'],
+            'event_ids' => ['required_without:ended_since', 'nullable', 'string', 'regex:/^\d+(,\d+)*$/'],
+            'ended_since' => ['required_without:event_ids', 'nullable', 'date_format:Y-m-d'],
         ]);
 
-        $eventIds = array_slice(array_unique(array_map('intval', explode(',', $data['event_ids']))), 0, self::MAX_EVENTS);
+        $eventIds = isset($data['event_ids'])
+            ? array_map('intval', explode(',', $data['event_ids']))
+            : $this->handler->findEventIdsEndedSince($data['ended_since'], self::MAX_EVENTS);
+
+        $eventIds = array_slice(array_values(array_unique($eventIds)), 0, self::MAX_EVENTS);
 
         return $this->jsonResponse($this->handler->handle($eventIds), wrapInData: true);
     }

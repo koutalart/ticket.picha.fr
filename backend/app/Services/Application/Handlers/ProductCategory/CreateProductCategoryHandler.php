@@ -23,10 +23,18 @@ class CreateProductCategoryHandler
         $productCategory->setIsHidden($dto->is_hidden);
         $productCategory->setEventId($dto->event_id);
         $productCategory->setDescription($this->purifier->purify($dto->description));
+        $productCategory->setSelectionLabel($this->normalizeSelectionLabel($dto->selection_label));
         $productCategory->setNoProductsMessage(
             $dto->no_products_message ?? __('There are no products available in this category'
         ));
 
         return $this->productCategoryService->createCategory($productCategory);
+    }
+
+    private function normalizeSelectionLabel(?string $label): ?string
+    {
+        $label = trim(strip_tags((string)$label));
+
+        return $label === '' ? null : $label;
     }
 }

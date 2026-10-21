@@ -32,6 +32,20 @@ class CaseStudyStatsRepository implements CaseStudyStatsRepositoryInterface
             ->all();
     }
 
+    public function findEventIdsEndedSince(string $since, int $limit): array
+    {
+        return DB::table('events')
+            ->whereNull('deleted_at')
+            ->where('status', 'LIVE')
+            ->whereRaw('COALESCE(end_date, start_date) >= ?', [$since])
+            ->whereRaw('COALESCE(end_date, start_date) <= NOW()')
+            ->orderBy('id')
+            ->limit($limit)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
     public function getTicketsByChannelAndProduct(int $eventId): array
     {
         return DB::table('attendees as a')

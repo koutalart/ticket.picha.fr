@@ -1,7 +1,25 @@
 import {Product, Question, QuestionType} from "../../../types.ts";
 import {UseFormReturnType} from "@mantine/form";
-import {Box, Checkbox, ComboboxItem, Group, NativeSelect, Radio, Select, Textarea, TextInput} from "@mantine/core";
+import {
+    ActionIcon,
+    Box,
+    Checkbox,
+    ComboboxItem,
+    FileInput,
+    Group,
+    Input,
+    NativeSelect,
+    Radio,
+    Select,
+    Text,
+    Textarea,
+    TextInput
+} from "@mantine/core";
 import {t} from "@lingui/macro";
+import {useState} from "react";
+import {useParams} from "react-router";
+import {IconFileTypePdf, IconUpload, IconX} from "@tabler/icons-react";
+import {useUploadQuestionFile} from "../../../mutations/useUploadQuestionFile.ts";
 import countries from "../../../../data/countries.json";
 import {InputGroup} from "../InputGroup";
 import classes from "./CheckoutQuestion.module.scss";
@@ -163,6 +181,113 @@ const CheckBoxInput = ({question, name, form}: QuestionInputProps) => {
     );
 }
 
+const MAX_QUESTION_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
+const getUploadErrorMessage = (error: any): string => {
+    const errors = error?.response?.data?.errors;
+    const firstError = errors?.file?.[0] ?? errors?.question_id?.[0];
+
+    return firstError ?? error?.response?.data?.message ?? t`The file could not be uploaded. Please try again.`;
+}
+
+const FileQuestionInput = ({question, name, form}: QuestionInputProps) => {
+    const {eventId, orderShortId} = useParams();
+    const uploadMutation = useUploadQuestionFile();
+    const [fileName, setFileName] = useState<string | null>(null);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    const answerPath = `${name}.answer`;
+    const answer = form.getInputProps(answerPath).value;
+    const formError = form.getInputProps(answerPath).error;
+    const canUpload = !!eventId && !!orderShortId && !!question.id;
+    const description = (<UserGeneratedContent dangerouslySetInnerHTML={{__html: question.description || ''}}/>);
+
+    const handleFileChange = (file: File | null) => {
+        setUploadError(null);
+
+        if (!file || !canUpload) {
+            return;
+        }
+
+        const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+        if (!isPdf) {
+            setUploadError(t`Only PDF files are accepted.`);
+            return;
+        }
+
+        if (file.size > MAX_QUESTION_FILE_SIZE_BYTES) {
+            setUploadError(t`The file must not be larger than 5 MB.`);
+            return;
+        }
+
+        uploadMutation.mutate({
+            eventId: eventId as string,
+            orderShortId: orderShortId as string,
+            questionId: question.id as number,
+            file,
+        }, {
+            onSuccess: ({data}) => {
+                setFileName(data.original_filename);
+                form.setFieldValue(answerPath, data.id);
+                form.clearFieldError(answerPath);
+            },
+            onError: (error: any) => {
+                setUploadError(getUploadErrorMessage(error));
+            },
+        });
+    };
+
+    const handleRemove = () => {
+        setFileName(null);
+        setUploadError(null);
+        form.setFieldValue(answerPath, '');
+    };
+
+    if (answer && fileName) {
+        return (
+            <Input.Wrapper
+                classNames={{description: classes.descriptionWithNoStyle}}
+                label={question.title}
+                description={description}
+                withAsterisk={question.required}
+                error={formError}
+            >
+                <Group gap="xs" wrap="nowrap" mt={6} className={classes.uploadedFile}>
+                    <IconFileTypePdf size={20}/>
+                    <Text size="sm" truncate="end" className={classes.uploadedFileName}>{fileName}</Text>
+                    <ActionIcon
+                        variant="subtle"
+                        color="gray"
+                        onClick={handleRemove}
+                        aria-label={t`Remove file`}
+                        title={t`Remove file`}
+                    >
+                        <IconX size={16}/>
+                    </ActionIcon>
+                </Group>
+            </Input.Wrapper>
+        );
+    }
+
+    return (
+        <FileInput
+            classNames={{
+                description: classes.descriptionWithNoStyle,
+            }}
+            accept="application/pdf"
+            label={question.title}
+            description={description}
+            withAsterisk={question.required}
+            placeholder={uploadMutation.isPending ? t`Uploading...` : t`Choose a PDF file (5 MB max)`}
+            leftSection={<IconUpload size={16}/>}
+            value={null}
+            onChange={handleFileChange}
+            disabled={!canUpload || uploadMutation.isPending}
+            error={uploadError || formError}
+            clearable={false}
+        />
+    );
+}
+
 const AddressInput = ({question, name, form}: QuestionInputProps) => {
     return (
         <>
@@ -222,6 +347,9 @@ export const QuestionInput = ({question, name, form}: QuestionInputProps) => {
             break;
         case QuestionType.DATE:
             input = <DateInput question={question} name={name} form={form}/>;
+            break;
+        case QuestionType.FILE:
+            input = <FileQuestionInput question={question} name={name} form={form}/>;
             break;
     }
 

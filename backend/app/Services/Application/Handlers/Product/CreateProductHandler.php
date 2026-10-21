@@ -8,10 +8,12 @@ use HiEvents\DomainObjects\Enums\ProductPriceType;
 use HiEvents\DomainObjects\Generated\ProductPriceDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
+use HiEvents\Exceptions\InvalidProductUnlockRuleException;
 use HiEvents\Services\Application\Handlers\Product\DTO\UpsertProductDTO;
 use HiEvents\Services\Domain\CheckInList\DefaultCheckInListService;
 use HiEvents\Services\Domain\Product\CreateProductService;
 use HiEvents\Services\Domain\Product\DTO\ProductPriceDTO;
+use HiEvents\Services\Domain\Product\ProductUnlockService;
 use HiEvents\Services\Domain\ProductCategory\GetProductCategoryService;
 use Illuminate\Database\DatabaseManager;
 use Throwable;
@@ -23,15 +25,23 @@ class CreateProductHandler
         private readonly GetProductCategoryService $getProductCategoryService,
         private readonly DefaultCheckInListService $defaultCheckInListService,
         private readonly DatabaseManager           $databaseManager,
+        private readonly ProductUnlockService      $productUnlockService,
     )
     {
     }
 
     /**
+     * @throws InvalidProductUnlockRuleException
      * @throws Throwable
      */
     public function handle(UpsertProductDTO $productsData): ProductDomainObject
     {
+        $this->productUnlockService->validateUnlockRule(
+            eventId: $productsData->event_id,
+            productId: null,
+            unlockAfterProductId: $productsData->unlock_after_product_id,
+        );
+
         return $this->databaseManager->transaction(function () use ($productsData) {
             $product = $this->createProduct($productsData);
             $this->defaultCheckInListService->addTicket($product);
@@ -78,6 +88,7 @@ class CreateProductHandler
                 ->setIsHighlighted($productsData->is_highlighted ?? false)
                 ->setHighlightMessage($productsData->highlight_message)
                 ->setWaitlistEnabled($productsData->waitlist_enabled)
+                ->setUnlockAfterProductId($productsData->unlock_after_product_id)
                 ->setProductPrices($productPrices)
                 ->setEventId($productsData->event_id)
                 ->setProductType($productsData->product_type->name)

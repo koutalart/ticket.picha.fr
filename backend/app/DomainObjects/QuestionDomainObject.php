@@ -40,10 +40,19 @@ class QuestionDomainObject extends Generated\QuestionDomainObjectAbstract
         return $this;
     }
 
+    public function isFileQuestion(): bool
+    {
+        return $this->getType() === QuestionTypeEnum::FILE->name;
+    }
+
     public function isAnswerValid(mixed $answer): bool
     {
         if (!isset($answer)) {
             return false;
+        }
+
+        if ($this->isFileQuestion()) {
+            return empty($answer) || is_int($answer) || (is_string($answer) && ctype_digit($answer));
         }
 
         if (!$this->isPreDefinedChoice()) {

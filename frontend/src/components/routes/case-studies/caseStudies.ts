@@ -54,6 +54,7 @@ export interface CaseStudy {
     publishedAt?: string;
     updatedAt?: string;
     ticketingEventId?: number;
+    lockedFigures?: boolean;
     quote?: CaseStudyQuote;
     photos?: CaseStudyPhoto[];
     services: CaseStudyService[];
@@ -165,26 +166,33 @@ export const caseStudies: CaseStudy[] = [
         sector: "Média",
         draft: false,
         ticketingEventId: 6,
+        lockedFigures: true,
         date: "Dimanche 18 octobre 2026, de 10 h à 16 h",
         location: "Mayotte la 1ère, Mayotte",
-        attendees: "1 500 places, entrée libre sur inscription",
-        headline: "Journée portes ouvertes de Mayotte la 1ère : inscriptions gratuites et accueil par QR code pour ses 40 ans",
-        summary: "Pour ses 40 ans, Mayotte la 1ère ouvre ses portes le 18 octobre 2026 : inscription gratuite en ligne, billet QR code par e-mail et contrôle d'accès à l'entrée.",
-        challenge: "Mayotte la 1ère, la chaîne de France Télévisions à Mayotte, fête ses 40 ans en ouvrant ses portes au public le dimanche 18 octobre 2026, de 10 h à 16 h. Au programme : un voyage dans les années 80 et plusieurs villages thématiques (médias et coulisses, souvenirs, influenceurs, saveurs gourmandes), sous le thème « Le salouva vous va si bien ». L'entrée est libre, mais la chaîne voulait connaître à l'avance le nombre de visiteurs, respecter une jauge de 1 500 personnes et fluidifier l'accueil le jour J.",
+        attendees: "Plus de 2 000 visiteurs",
+        headline: "Journée portes ouvertes de Mayotte la 1ère : plus de 2 000 visiteurs accueillis pour les 40 ans de la chaîne",
+        summary: "Pour ses 40 ans, Mayotte la 1ère a accueilli plus de 2 000 visiteurs le 18 octobre 2026 : inscriptions en ligne et sur place, billets QR code, contrôle d'accès.",
+        challenge: "Mayotte la 1ère, la chaîne de France Télévisions à Mayotte, a fêté ses 40 ans en ouvrant ses portes au public le dimanche 18 octobre 2026, de 10 h à 16 h. Au programme : un voyage dans les années 80 et plusieurs villages thématiques (médias et coulisses, souvenirs, influenceurs, saveurs gourmandes), sous le thème « Le salouva vous va si bien ». L'entrée était libre : la chaîne voulait connaître à l'avance le nombre de visiteurs, enregistrer aussi ceux qui arrivaient sans inscription et garder un accueil fluide toute la journée.",
         solution: [
             "Page d'inscription gratuite en ligne, sans paiement, accessible depuis un smartphone",
-            "Jauge de 1 500 places, fermée automatiquement une fois atteinte",
             "Billet QR code envoyé par e-mail à chaque inscrit",
             "Contrôle d'accès par scan du QR code à l'entrée le jour J",
+            "Inscription sur place, par l'équipe d'accueil, des visiteurs arrivés sans billet",
             "Suivi des inscriptions et des entrées en temps réel pour les équipes de la chaîne",
         ],
+        results: [
+            {value: "+ de 2 000", label: "visiteurs accueillis sur la journée"},
+            {value: "636", label: "inscriptions gratuites en ligne"},
+            {value: "6 h", label: "d'ouverture continue, de 10 h à 16 h"},
+        ],
+        dayOf: "Les portes ouvrent à 10 h et l'affluence est immédiate : l'heure d'ouverture est la plus chargée de la journée. Les visiteurs inscrits en ligne présentent leur QR code à l'entrée, les autres sont enregistrés sur place par l'équipe d'accueil. Le flux reste soutenu jusqu'à la fermeture à 16 h, pour plus de 2 000 visiteurs accueillis sur la journée.",
         services: ["registrations", "access-control"],
         solutions: ["controle-acces-qr-code", "emargement-numerique"],
         eventStartDate: "2026-10-18T10:00:00+03:00",
         eventEndDate: "2026-10-18T16:00:00+03:00",
         eventCountryCode: "YT",
         publishedAt: "2026-10-07",
-        updatedAt: "2026-10-07",
+        updatedAt: "2026-10-20",
     },
 ];
 

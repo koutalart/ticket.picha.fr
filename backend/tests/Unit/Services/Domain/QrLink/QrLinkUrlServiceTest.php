@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services\Domain\QrLink;
 
+use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\QrLinkDomainObject;
 use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
 use HiEvents\Services\Domain\QrLink\UserAgentParser;
@@ -32,6 +33,18 @@ class QrLinkUrlServiceTest extends TestCase
     public function test_app_link_without_fallback_uses_the_app_store(): void
     {
         $this->assertSame(self::APP_STORE, (new QrLinkUrlService)->getRedirectUrl($this->appLink(null), null, 'Windows'));
+    }
+
+    public function test_event_url_flags_the_visit_as_already_counted(): void
+    {
+        $event = (new EventDomainObject)->setId(7)->setTitle('Halloween');
+        $qrLink = (new QrLinkDomainObject)->setShortId('abcd1234')->setDestinationType('EVENT');
+
+        $url = (new QrLinkUrlService)->getRedirectUrl($qrLink, $event);
+
+        $this->assertStringStartsWith($event->getEventUrl().'?', $url);
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+        $this->assertSame(['qr' => 'abcd1234', 'qrc' => '1'], $query);
     }
 
     private function appLink(?string $fallback): QrLinkDomainObject

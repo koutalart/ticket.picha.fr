@@ -34,6 +34,7 @@ use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\CreateBoxOfficeSaleItemDTO;
 use HiEvents\Services\Domain\BoxOffice\BoxOfficeCartOrderService;
 use HiEvents\Services\Domain\BoxOffice\BoxOfficeEventAvailabilityService;
+use HiEvents\Services\Domain\Product\ProductUnlockService;
 use HiEvents\Services\Infrastructure\Authorization\IsAuthorizedService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\QueryException;
@@ -59,6 +60,7 @@ class CreateBoxOfficeSaleHandler
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
         private readonly EventRepositoryInterface $eventRepository,
         private readonly BoxOfficeEventAvailabilityService $eventAvailabilityService,
+        private readonly ProductUnlockService $productUnlockService,
     ) {}
 
     /**
@@ -127,7 +129,7 @@ class CreateBoxOfficeSaleHandler
             $lockedPrices = $this->lockPrices($items);
 
             $this->validateCartTotals($dto, $items, $lockedPrices);
-            $this->validateBoxOfficeVisibility($items);
+            $this->validateBoxOfficeVisibility($dto->event_id, $items);
             $this->validateScannableItems($items);
             $this->validateStock($items);
 
@@ -291,7 +293,7 @@ class CreateBoxOfficeSaleHandler
      *
      * @throws ProductNotSoldAtBoxOfficeException
      */
-    private function validateBoxOfficeVisibility(array $items): void
+    private function validateBoxOfficeVisibility(int $eventId, array $items): void
     {
         $productIds = array_values(array_unique(array_map(
             static fn (CreateBoxOfficeSaleItemDTO $item) => $item->product_id,
@@ -317,6 +319,17 @@ class CreateBoxOfficeSaleHandler
         if ($pausedCount > 0) {
             throw new ProductNotSoldAtBoxOfficeException(
                 __('Sales of this ticket are paused.')
+            );
+        }
+
+        $lockedProductIds = $this->productUnlockService->getLockedProductIdsForEvent(
+            $eventId,
+            $this->productRepository->findWhereIn(ProductDomainObjectAbstract::ID, $productIds),
+        );
+
+        if ($lockedProductIds !== []) {
+            throw new ProductNotSoldAtBoxOfficeException(
+                __('This ticket is not on sale yet.')
             );
         }
     }

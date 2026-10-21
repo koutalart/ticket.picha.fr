@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-const SLOW_CONNECTIONS = ['slow-2g', '2g', '3g'];
+const SLOW_CONNECTIONS = ['slow-2g', '2g'];
 
 /**
  * The cover video only starts once the page has finished loading, so the poster and the

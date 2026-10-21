@@ -6,7 +6,7 @@ RUN apk add --no-cache yarn
 
 COPY package.json yarn.lock ./
 
-RUN yarn install
+RUN yarn install --network-timeout 600000
 
 COPY . .
 RUN sh check-env-secrets.sh
