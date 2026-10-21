@@ -26,5 +26,6 @@ class SmsAssistantRequestDTO extends BaseDataObject
         public readonly Collection $thread,
         public readonly Collection $customerOrders,
         public readonly Collection $events,
+        public readonly ?string $personalLink = null,
     ) {}
 }

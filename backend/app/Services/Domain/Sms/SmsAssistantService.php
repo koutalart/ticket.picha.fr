@@ -44,6 +44,7 @@ class SmsAssistantService
         private readonly SmsConversationRepositoryInterface $conversationRepository,
         private readonly SmsMessageRepositoryInterface $messageRepository,
         private readonly OrganizerRepositoryInterface $organizerRepository,
+        private readonly SmsPersonalLinkService $personalLinkService,
     ) {}
 
     public function isAvailable(): bool
@@ -196,6 +197,7 @@ class SmsAssistantService
             ))->values(),
             customerOrders: $this->conversationRepository->findOrdersByPhone($organizerId, $conversation->getPhone()),
             events: $this->catalogService->getUpcomingEvents($organizerId),
+            personalLink: $this->personalLinkService->findForContact($organizerId, $conversation->getPhone(), $messages),
         ));
 
         $this->conversationRepository->updateFromArray($conversation->getId(), $result->outcome === SmsAssistantOutcome::DRAFT

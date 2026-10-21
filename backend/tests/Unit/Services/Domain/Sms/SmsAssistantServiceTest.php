@@ -22,6 +22,7 @@ use HiEvents\Services\Domain\Sms\SmsAssistantEventCatalogService;
 use HiEvents\Services\Domain\Sms\SmsAssistantReplyGenerator;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
+use HiEvents\Services\Domain\Sms\SmsPersonalLinkService;
 use Illuminate\Support\Facades\Bus;
 use Mockery;
 use Mockery\MockInterface;
@@ -43,6 +44,8 @@ class SmsAssistantServiceTest extends TestCase
 
     private OrganizerRepositoryInterface|MockInterface $organizerRepository;
 
+    private SmsPersonalLinkService|MockInterface $personalLinkService;
+
     private SmsAssistantService $service;
 
     protected function setUp(): void
@@ -56,6 +59,8 @@ class SmsAssistantServiceTest extends TestCase
         $this->conversationRepository = Mockery::mock(SmsConversationRepositoryInterface::class);
         $this->messageRepository = Mockery::mock(SmsMessageRepositoryInterface::class);
         $this->organizerRepository = Mockery::mock(OrganizerRepositoryInterface::class);
+        $this->personalLinkService = Mockery::mock(SmsPersonalLinkService::class);
+        $this->personalLinkService->shouldReceive('findForContact')->andReturn('https://innocent976.yt/?qr=abc')->byDefault();
 
         $this->service = new SmsAssistantService(
             $this->generator,
@@ -65,6 +70,7 @@ class SmsAssistantServiceTest extends TestCase
             $this->conversationRepository,
             $this->messageRepository,
             $this->organizerRepository,
+            $this->personalLinkService,
         );
     }
 
@@ -113,6 +119,7 @@ class SmsAssistantServiceTest extends TestCase
             ->withArgs(fn (SmsAssistantRequestDTO $request) => $request->trigger === SmsAssistantTrigger::INBOUND
                 && $request->conversationId === 3
                 && $request->instructions === 'Tutoie.'
+                && $request->personalLink === 'https://innocent976.yt/?qr=abc'
                 && $request->thread->count() === 2)
             ->andReturn(new SmsAssistantResultDTO(SmsAssistantOutcome::DRAFT, 'Salut ! Ça commence à 22h.', null));
 
@@ -201,6 +208,7 @@ class SmsAssistantServiceTest extends TestCase
             $this->conversationRepository,
             $this->messageRepository,
             $this->organizerRepository,
+            $this->personalLinkService,
         );
     }
 

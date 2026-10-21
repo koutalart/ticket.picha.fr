@@ -76,6 +76,7 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         self::assertStringContainsString('160 caractères', $systemPrompt);
         self::assertStringContainsString('sans les frais', $systemPrompt);
         self::assertStringContainsString('Ne sois pas répétitif', $systemPrompt);
+        self::assertStringContainsString('Lien personnel du client : aucun', $sent);
         self::assertStringContainsString('Tutoie les clients.', $sent);
         self::assertStringContainsString('Halloween', $sent);
         self::assertStringContainsString('"prix": 15', $sent);
@@ -189,7 +190,7 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         return new ClaudeStructuredAnswerDTO(data: $data, model: 'claude-opus-5-5', inputTokens: 1200, outputTokens: 80);
     }
 
-    private function request(): SmsAssistantRequestDTO
+    private function request(?string $personalLink = null): SmsAssistantRequestDTO
     {
         return new SmsAssistantRequestDTO(
             organizerId: 4,
@@ -226,6 +227,22 @@ class SmsAssistantReplyGeneratorTest extends TestCase
                 url: 'https://ticket.picha.fr/event/7/halloween',
                 tickets: [new SmsAssistantTicketInfoDTO(name: 'Vente flash', price: 15.0, currency: 'EUR', availability: SmsAssistantTicketInfoDTO::ON_SALE)],
             )]),
+            personalLink: $personalLink,
         );
+    }
+
+    public function test_plain_link_in_the_draft_becomes_the_personal_link(): void
+    {
+        $this->claude->shouldReceive('isConfigured')->andReturnTrue();
+        $this->claude->shouldReceive('askWithUsage')->once()->andReturnUsing(function (string $system, array $content) use (&$sent) {
+            $sent = $content[0]['text'];
+
+            return $this->answer(['decision' => 'draft', 'reply' => 'Si si, il en reste ! Ta place à 15 euros est ici : https://innocent976.yt 🎃', 'reason' => null]);
+        });
+
+        $result = $this->generator()->generate($this->request(personalLink: 'https://innocent976.yt/?qr=iiekn0hg'));
+
+        self::assertStringContainsString('Lien personnel du client : https://innocent976.yt/?qr=iiekn0hg', $sent);
+        self::assertSame('Si si, il en reste ! Ta place à 15 euros est ici : https://innocent976.yt/?qr=iiekn0hg 🎃', $result->reply);
     }
 }
