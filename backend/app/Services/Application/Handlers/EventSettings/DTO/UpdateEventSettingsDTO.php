@@ -99,6 +99,9 @@ class UpdateEventSettingsDTO extends BaseDTO
         // Waitlist settings
         public readonly ?bool                   $waitlist_auto_process = null,
         public readonly ?int                    $waitlist_offer_timeout_minutes = null,
+
+        // Attendance response settings
+        public readonly bool                    $allow_attendee_attendance_response = false,
     )
     {
     }

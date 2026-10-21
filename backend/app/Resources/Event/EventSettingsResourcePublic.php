@@ -98,6 +98,9 @@ class EventSettingsResourcePublic extends JsonResource
             // Waitlist settings
             'waitlist_auto_process' => $this->getWaitlistAutoProcess(),
             'waitlist_offer_timeout_minutes' => $this->getWaitlistOfferTimeoutMinutes(),
+
+            // Attendance response settings
+            'allow_attendee_attendance_response' => $this->getAllowAttendeeAttendanceResponse(),
         ];
     }
 }

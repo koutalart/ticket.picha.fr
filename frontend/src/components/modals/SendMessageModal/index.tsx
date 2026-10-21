@@ -7,6 +7,7 @@ import {
     Alert,
     Button,
     Checkbox,
+    Code,
     ComboboxItemGroup,
     Group,
     LoadingOverlay,
@@ -41,6 +42,8 @@ import {utcToTz} from "../../../utilites/dates.ts";
 import dayjs from "dayjs";
 import classes from "./SendMessageModal.module.scss";
 import {DateTimeInput} from "../../common/DateTimeInput";
+import {useGetEventSettings} from "../../../queries/useGetEventSettings.ts";
+import {ATTENDANCE_URL_VARIABLE} from "../../../constants/attendance.ts";
 
 interface EventMessageModalProps extends GenericModalProps {
     orderId?: IdParam,
@@ -130,6 +133,7 @@ export const SendMessageModal = (props: EventMessageModalProps) => {
     const {eventId} = useParams();
     const {data: event, data: {product_categories} = {}} = useGetEvent(eventId);
     const {data: me} = useGetMe();
+    const {data: eventSettings} = useGetEventSettings(eventId);
     const errorHandler = useFormErrorResponseHandler();
     const isPreselectedRecipient = !!(orderId || attendeeId || productId);
     const {data: account, isFetched: isAccountFetched} = useGetAccount();
@@ -356,6 +360,27 @@ export const SendMessageModal = (props: EventMessageModalProps) => {
                                 onChange={(value) => form.setFieldValue('message', value)}
                                 error={form.errors.message as string}
                             />
+
+                            {eventSettings?.allow_attendee_attendance_response && (
+                                <Alert variant="light" color="gray" icon={<IconInfoCircle size="1rem"/>}>
+                                    {t`Each attendee can receive their personal link to confirm or cancel their attendance. Insert this variable in the message:`}
+                                    {' '}<Code>{ATTENDANCE_URL_VARIABLE}</Code>
+                                    <div>
+                                        <Button
+                                            size="xs"
+                                            variant="subtle"
+                                            px={0}
+                                            mt={4}
+                                            onClick={() => form.setFieldValue(
+                                                'message',
+                                                `${form.values.message || ''}<p>${ATTENDANCE_URL_VARIABLE}</p>`,
+                                            )}
+                                        >
+                                            {t`Insert the personal link`}
+                                        </Button>
+                                    </div>
+                                </Alert>
+                            )}
                         </div>
 
                         <div className={classes.footerSection}>

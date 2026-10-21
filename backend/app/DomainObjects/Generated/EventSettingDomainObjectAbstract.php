@@ -72,6 +72,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const CHOOSE_CATEGORY_FIRST = 'choose_category_first';
     final public const AGE_RESTRICTION_RULE = 'age_restriction_rule';
     final public const AGE_RESTRICTION_MINIMUM_AGE = 'age_restriction_minimum_age';
+    final public const ALLOW_ATTENDEE_ATTENDANCE_RESPONSE = 'allow_attendee_attendance_response';
 
     protected int $id;
     protected int $event_id;
@@ -135,6 +136,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected bool $choose_category_first = false;
     protected string $age_restriction_rule = 'NONE';
     protected int $age_restriction_minimum_age = 18;
+    protected bool $allow_attendee_attendance_response = false;
 
     public function toArray(): array
     {
@@ -201,6 +203,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'choose_category_first' => $this->choose_category_first ?? null,
                     'age_restriction_rule' => $this->age_restriction_rule ?? null,
                     'age_restriction_minimum_age' => $this->age_restriction_minimum_age ?? null,
+                    'allow_attendee_attendance_response' => $this->allow_attendee_attendance_response ?? null,
                 ];
     }
 
@@ -885,5 +888,14 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getAgeRestrictionMinimumAge(): int
     {
         return $this->age_restriction_minimum_age;
+    public function setAllowAttendeeAttendanceResponse(bool $allow_attendee_attendance_response): self
+    {
+        $this->allow_attendee_attendance_response = $allow_attendee_attendance_response;
+        return $this;
+    }
+
+    public function getAllowAttendeeAttendanceResponse(): bool
+    {
+        return $this->allow_attendee_attendance_response;
     }
 }

@@ -280,6 +280,8 @@ export interface EventSettings {
     // Waitlist settings
     waitlist_auto_process?: boolean;
     waitlist_offer_timeout_minutes?: number | null;
+
+    allow_attendee_attendance_response?: boolean;
 }
 
 export interface VenueAddress {
@@ -412,6 +414,8 @@ export interface EventStats {
     total_refunded: number;
     total_awaiting_payment?: number;
     orders_awaiting_payment?: number;
+    total_attendance_confirmed?: number;
+    total_cancelled_by_attendee?: number;
 }
 
 export interface OrganizerStats {
@@ -780,6 +784,21 @@ export interface Attendee {
     locale?: SupportedLocales;
     check_in?: AttendeeCheckIn; // Use in contexts where a single check is expected, like dealing with a check-in list
     check_ins?: AttendeeCheckIn[];
+    attendance_confirmed_at?: string | null;
+    cancelled_by_attendee_at?: string | null;
+    attendance_code?: string;
+}
+
+export interface AttendeeAttendance {
+    short_id: string;
+    first_name: string;
+    last_name: string;
+    status: Attendee['status'];
+    product_title?: string | null;
+    attendance_confirmed_at: string | null;
+    cancelled_by_attendee_at: string | null;
+    can_respond: boolean;
+    blocking_reason: string | null;
 }
 
 export type PublicCheckIn = Pick<AttendeeCheckIn, 'id' | 'order_id' | 'attendee_id' | 'check_in_list_id' | 'product_id' | 'event_id'>;

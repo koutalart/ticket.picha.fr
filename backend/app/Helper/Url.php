@@ -12,6 +12,7 @@ class Url
     public const CONFIRM_EMAIL_ADDRESS = 'app.frontend_urls.confirm_email_address';
     public const EVENT_HOMEPAGE = 'app.frontend_urls.event_homepage';
     public const ATTENDEE_TICKET = 'app.frontend_urls.attendee_product';
+    public const ATTENDEE_ATTENDANCE = 'app.frontend_urls.attendee_attendance';
     public const ORDER_SUMMARY = 'app.frontend_urls.order_summary';
     public const ORDER_DETAILS = 'app.frontend_urls.order_details';
     public const ORGANIZER_ORDER_SUMMARY = 'app.frontend_urls.organizer_order_summary';

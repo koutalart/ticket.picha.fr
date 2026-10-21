@@ -14,11 +14,18 @@ use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\EmailFormatHelper;
 use HiEvents\Helper\IdHelper;
 use HiEvents\Helper\Url;
+use HiEvents\Services\Domain\Attendee\AttendeeAttendanceLinkGenerator;
 use Illuminate\Support\Traits\Localizable;
 
 class EmailTokenContextBuilder
 {
     use Localizable;
+
+    public function __construct(
+        private readonly AttendeeAttendanceLinkGenerator $attendanceLinkGenerator = new AttendeeAttendanceLinkGenerator(),
+    )
+    {
+    }
 
     public function buildOrderConfirmationContext(
         OrderDomainObject        $order,
@@ -107,6 +114,9 @@ class EmailTokenContextBuilder
         $baseContext['attendee'] = [
             'name' => $attendee->getFirstName() . ' ' . $attendee->getLastName(),
             'email' => $attendee->getEmail() ?? '',
+            'attendance_url' => $eventSettings->getAllowAttendeeAttendanceResponse()
+                ? $this->attendanceLinkGenerator->getAttendanceUrl($attendee)
+                : '',
         ];
 
         $baseContext['ticket'] = [
@@ -182,6 +192,7 @@ class EmailTokenContextBuilder
             $baseContext['attendee'] = [
                 'name' => 'Fatima Ali',
                 'email' => 'fatima@example.com',
+                'attendance_url' => 'https://example.com/venue/XYZ789',
             ];
             $baseContext['ticket'] = [
                 'name' => __('VIP Pass'),

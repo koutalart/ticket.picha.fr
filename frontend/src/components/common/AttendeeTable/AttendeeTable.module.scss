@@ -141,6 +141,27 @@
   }
 }
 
+.statusCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.attendanceNote {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &[data-response="confirmed"] {
+    color: var(--mantine-color-green-8);
+  }
+
+  &[data-response="cancelled"] {
+    color: var(--mantine-color-red-8);
+  }
+}
+
 .actionsMenu {
   display: flex;
   align-items: center;

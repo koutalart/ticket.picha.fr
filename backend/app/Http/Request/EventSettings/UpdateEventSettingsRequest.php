@@ -125,6 +125,9 @@ class UpdateEventSettingsRequest extends BaseRequest
             // Waitlist settings
             'waitlist_auto_process' => ['boolean'],
             'waitlist_offer_timeout_minutes' => ['nullable', 'integer', 'min:1', 'max:10080'],
+
+            // Attendance response settings
+            'allow_attendee_attendance_response' => ['boolean'],
         ];
     }
 

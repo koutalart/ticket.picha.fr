@@ -35,6 +35,9 @@ use HiEvents\Http\Actions\Affiliates\ExportAffiliatesAction;
 use HiEvents\Http\Actions\Affiliates\GetAffiliateAction;
 use HiEvents\Http\Actions\Affiliates\GetAffiliatesAction;
 use HiEvents\Http\Actions\Affiliates\UpdateAffiliateAction;
+use HiEvents\Http\Actions\Attendees\Attendance\CancelAttendeeAttendanceActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\ConfirmAttendeeAttendanceActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\GetAttendeeAttendanceActionPublic;
 use HiEvents\Http\Actions\Attendees\CheckInAttendeeAction;
 use HiEvents\Http\Actions\Attendees\CreateAttendeeAction;
 use HiEvents\Http\Actions\Attendees\EditAttendeeAction;
@@ -712,6 +715,12 @@ $router->prefix('/public')->group(
         $router->get('/events/{event_id}/attendees/{attendee_short_id}', GetAttendeeActionPublic::class);
         $router->get('/events/{event_id}/attendees/{attendee_short_id}/ticket.png', GetAttendeeTicketImageActionPublic::class)
             ->middleware('throttle:60,1');
+        $router->get('/events/{event_id}/attendees/{attendee_short_id}/attendance', GetAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:30,1');
+        $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/confirm', ConfirmAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/cancel', CancelAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:10,1');
 
         // Waitlist
         $router->post('/events/{event_id}/waitlist', CreateWaitlistEntryActionPublic::class)

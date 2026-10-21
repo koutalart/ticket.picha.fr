@@ -281,24 +281,36 @@ export const AttendeeTable = ({attendees, openCreateModal}: AttendeeTableProps) 
                     cell: (info: CellContext<Attendee, unknown>) => {
                         const attendee = info.row.original;
                         return (
-                            <div className={classes.statusBadge} data-status={attendee.status}>
-                                {attendee.status === 'ACTIVE' && (
-                                    <>
-                                        <IconCheck size={14}/>
-                                        {t`Active`}
-                                    </>
+                            <div className={classes.statusCell}>
+                                <div className={classes.statusBadge} data-status={attendee.status}>
+                                    {attendee.status === 'ACTIVE' && (
+                                        <>
+                                            <IconCheck size={14}/>
+                                            {t`Active`}
+                                        </>
+                                    )}
+                                    {attendee.status === 'AWAITING_PAYMENT' && (
+                                        <>
+                                            <IconClock size={14}/>
+                                            {t`Awaiting Payment`}
+                                        </>
+                                    )}
+                                    {attendee.status === 'CANCELLED' && (
+                                        <>
+                                            <IconX size={14}/>
+                                            {t`Cancelled`}
+                                        </>
+                                    )}
+                                </div>
+                                {attendee.status === 'ACTIVE' && attendee.attendance_confirmed_at && (
+                                    <span className={classes.attendanceNote} data-response="confirmed">
+                                        {t`Attendance confirmed`}
+                                    </span>
                                 )}
-                                {attendee.status === 'AWAITING_PAYMENT' && (
-                                    <>
-                                        <IconClock size={14}/>
-                                        {t`Awaiting Payment`}
-                                    </>
-                                )}
-                                {attendee.status === 'CANCELLED' && (
-                                    <>
-                                        <IconX size={14}/>
-                                        {t`Cancelled`}
-                                    </>
+                                {attendee.status === 'CANCELLED' && attendee.cancelled_by_attendee_at && (
+                                    <span className={classes.attendanceNote} data-response="cancelled">
+                                        {t`Cancelled by attendee`}
+                                    </span>
                                 )}
                             </div>
                         );
