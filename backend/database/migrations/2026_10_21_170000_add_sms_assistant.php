@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('organizer_sms_settings', function (Blueprint $table) {
-            $table->boolean('assistant_enabled')->default(false);
+            $table->boolean('assistant_enabled')->default(true);
             $table->text('assistant_instructions')->nullable();
         });
 

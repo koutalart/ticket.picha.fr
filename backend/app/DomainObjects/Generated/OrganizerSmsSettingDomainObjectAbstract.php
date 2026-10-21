@@ -35,7 +35,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $last_webhook_received_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
-    protected bool $assistant_enabled = false;
+    protected bool $assistant_enabled = true;
     protected ?string $assistant_instructions = null;
 
     public function toArray(): array

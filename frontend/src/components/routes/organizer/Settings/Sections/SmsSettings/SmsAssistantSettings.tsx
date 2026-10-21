@@ -28,7 +28,7 @@ export const SmsAssistantSettings = () => {
 
     const form = useForm({
         initialValues: {
-            assistant_enabled: false,
+            assistant_enabled: true,
             assistant_instructions: '',
         },
     });
@@ -99,7 +99,7 @@ export const SmsAssistantSettings = () => {
                     <Switch
                         {...form.getInputProps('assistant_enabled', {type: 'checkbox'})}
                         label={t`Suggest replies to my customers' SMS`}
-                        description={t`Turned off by default. You can turn it off at any time.`}
+                        description={t`Turned on by default. You can turn it off at any time.`}
                         mb="md"
                     />
                     <Textarea
