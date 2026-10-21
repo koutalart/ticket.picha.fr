@@ -132,8 +132,9 @@ class AttendeeTicketMail extends BaseMail
 
     private function getOrganizerLogoUrl(): ?string
     {
-        $logo = $this->organizer->getImages()
-            ?->first(static fn (ImageDomainObject $image) => $image->getType() === ImageType::ORGANIZER_LOGO->name);
+        $images = $this->organizer->getImages();
+        $logo = $images?->first(static fn (ImageDomainObject $image) => $image->getType() === ImageType::ORGANIZER_EMAIL_LOGO->name)
+            ?? $images?->first(static fn (ImageDomainObject $image) => $image->getType() === ImageType::ORGANIZER_LOGO->name);
 
         return $logo?->getPath() ? Url::getCdnUrl($logo->getPath()) : null;
     }

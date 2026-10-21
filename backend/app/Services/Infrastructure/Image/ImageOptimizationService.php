@@ -28,6 +28,7 @@ class ImageOptimizationService
 
     private const LOGO_TYPES = [
         ImageType::ORGANIZER_LOGO,
+        ImageType::ORGANIZER_EMAIL_LOGO,
         ImageType::TICKET_LOGO,
         ImageType::TICKET_SPONSOR_LOGO,
     ];
@@ -108,7 +109,7 @@ class ImageOptimizationService
         }
 
         if (in_array($type, self::LOGO_TYPES, true)) {
-            $max = $type === ImageType::ORGANIZER_LOGO ? self::ORGANIZER_LOGO_MAX_DIMENSION : self::LOGO_MAX_DIMENSION;
+            $max = in_array($type, [ImageType::ORGANIZER_LOGO, ImageType::ORGANIZER_EMAIL_LOGO], true) ? self::ORGANIZER_LOGO_MAX_DIMENSION : self::LOGO_MAX_DIMENSION;
 
             return $mimeType === 'image/jpeg'
                 ? ['jpeg', 'image/jpeg', 'jpg', $max, $max]

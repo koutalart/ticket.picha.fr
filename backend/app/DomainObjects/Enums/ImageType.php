@@ -23,6 +23,7 @@ enum ImageType
 
     // Organizer images
     case ORGANIZER_LOGO;
+    case ORGANIZER_EMAIL_LOGO;
     case ORGANIZER_COVER;
     case ORGANIZER_COVER_VIDEO;
     case QR_POSTER_BACKGROUND;
@@ -43,6 +44,7 @@ enum ImageType
     {
         return [
             self::ORGANIZER_LOGO,
+            self::ORGANIZER_EMAIL_LOGO,
             self::ORGANIZER_COVER,
             self::ORGANIZER_COVER_VIDEO,
             self::QR_POSTER_BACKGROUND,
@@ -66,6 +68,7 @@ enum ImageType
             self::EVENT_SHARE_IMAGE->name => [600, 315],
             self::EVENT_FLYER->name => [600, 600],
             self::ORGANIZER_LOGO->name => [100, 100],
+            self::ORGANIZER_EMAIL_LOGO->name => [100, 100],
             self::ORGANIZER_COVER->name => [600, 50],
             self::QR_POSTER_BACKGROUND->name => [600, 600],
         ];
