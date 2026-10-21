@@ -481,7 +481,7 @@ msgstr ""
 msgid "A fixed amount per product. E.g, $0.50 per product"
 msgstr "Stała kwota za produkt. Np. 0,50 USD za produkt"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:137
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:161
 msgid "A key is saved. Paste a new one to replace it."
 msgstr "Klucz jest zapisany. Wklej nowy, aby go zastąpić."
 
@@ -2891,7 +2891,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:96
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
 msgid "Configured"
 msgstr "Skonfigurowano"
 
@@ -2972,7 +2972,7 @@ msgstr "Połącz i uaktualnij"
 msgid "Connect Documentation"
 msgstr "Dokumentacja połączenia"
 
-#: src/components/routes/organizer/Sms/index.tsx:70
+#: src/components/routes/organizer/Sms/index.tsx:71
 msgid "Connect httpSMS in Settings"
 msgstr "Połącz httpSMS w Ustawieniach"
 
@@ -3033,15 +3033,15 @@ msgstr "Połącz swoje konto Stripe, aby rozpocząć przyjmowanie płatności."
 msgid "Connected at"
 msgstr "Godzina logowania"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:93
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:103
 msgid "Connected to httpSMS, but no phone is registered. Install the httpSMS app on your Android phone."
 msgstr "Połączono z httpSMS, ale nie zarejestrowano żadnego telefonu. Zainstaluj aplikację httpSMS na telefonie z Androidem."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:91
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:101
 msgid "Connected to httpSMS, but your sending number is not one of your phones: {phones}"
 msgstr "Połączono z httpSMS, ale numer nadawcy nie należy do Twoich telefonów: {phones}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:99
 msgid "Connected to httpSMS. Your sending number is registered."
 msgstr "Połączono z httpSMS. Numer nadawcy jest zarejestrowany."
 
@@ -3273,7 +3273,7 @@ msgstr "Kopiuj do schowka"
 msgid "Copy URL"
 msgstr "Kopiuj URL"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:127
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:151
 msgid "Copy your API key from the httpSMS settings page and paste it below, with the phone number of the SIM used to send."
 msgstr "Skopiuj klucz API ze strony ustawień httpSMS i wklej go poniżej wraz z numerem karty SIM używanej do wysyłki."
 
@@ -4557,6 +4557,14 @@ msgstr "Adres e-mail skopiowany do schowka"
 msgid "Email addresses do not match"
 msgstr "Adresy e-mail nie pasują"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+msgid "Email alerts disabled"
+msgstr "Powiadomienia e-mail wyłączone"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+msgid "Email alerts enabled"
+msgstr "Powiadomienia e-mail włączone"
+
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:110
 msgid "Email and names are hashed (SHA-256) before leaving our servers."
 msgstr ""
@@ -4592,6 +4600,10 @@ msgstr "Wiadomość w stopce e-mail"
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:32
 msgid "Email is required"
 msgstr "E-mail jest wymagany"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:196
+msgid "Email me when a new SMS arrives"
+msgstr "Powiadamiaj mnie e-mailem o nowym SMS-ie"
 
 #: src/components/routes/profile/ManageProfile/index.tsx:159
 msgid "Email not verified"
@@ -5929,7 +5941,7 @@ msgstr "Generuj"
 msgid "Generate a new relay token"
 msgstr "Wygeneruj nowy token przekaźnika"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:193
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:225
 msgid "Generate a new signing key"
 msgstr "Wygeneruj nowy klucz podpisu"
 
@@ -6290,7 +6302,7 @@ msgstr "Ile minut klient ma na ukończenie zamówienia. Zalecamy co najmniej 15 
 #~ msgid "How many times can this code be used?"
 #~ msgstr "Ile razy można użyć tego kodu?"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
 msgid "How to connect"
 msgstr "Jak połączyć"
 
@@ -6319,7 +6331,7 @@ msgstr "https://example-maps-service.com/..."
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://webhook-domain.com/webhook"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:136
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:160
 msgid "httpSMS API key"
 msgstr "Klucz API httpSMS"
 
@@ -6453,8 +6465,12 @@ msgid "In {diffMinutes} minutes"
 msgstr "Za {diffMinutes} minut"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:128
-msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events."
-msgstr "W httpSMS utwórz webhook z poniższym adresem URL i kluczem podpisu, a następnie zaznacz zdarzenia message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed i message.send.expired."
+#~ msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed and message.send.expired events."
+#~ msgstr "W httpSMS utwórz webhook z poniższym adresem URL i kluczem podpisu, a następnie zaznacz zdarzenia message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed i message.send.expired."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:152
+msgid "In httpSMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events."
+msgstr "W httpSMS utwórz webhook z poniższym adresem URL i kluczem podpisu oraz zaznacz zdarzenia message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline i phone.heartbeat.online."
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:122
 msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
@@ -6547,7 +6563,7 @@ msgstr "Instagram"
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:147
 msgid "Install the httpSMS app on your Android phone and sign in on <0>httpsms.com</0>."
 msgstr "Zainstaluj aplikację httpSMS na telefonie z Androidem i zaloguj się na <0>httpsms.com</0>."
 
@@ -6964,7 +6980,7 @@ msgstr "Ostatnia sprzedaż: <0>{0} biletów</0>"
 msgid "Last sale: <0>{0}</0>"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:114
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:130
 msgid "Last SMS event received {0}"
 msgstr "Ostatnie zdarzenie SMS odebrano {0}"
 
@@ -7770,6 +7786,10 @@ msgstr "Wygenerowano nowy klucz podpisu"
 msgid "New Signups"
 msgstr "Nowe rejestracje"
 
+#: src/components/routes/organizer/Sms/index.tsx:80
+msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the httpSMS app is running."
+msgstr "Nowe SMS-y nie będą tu docierać, a Twoje odpowiedzi nie zostaną wysłane. Sprawdź, czy telefon jest włączony, połączony z internetem i czy aplikacja httpSMS działa."
+
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:88
 msgid "Next steps"
 msgstr ""
@@ -8241,7 +8261,7 @@ msgstr "Nie zameldowany"
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:97
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:111
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:121
 msgid "Not configured"
 msgstr "Nie skonfigurowano"
 
@@ -9273,7 +9293,7 @@ msgstr "Przeszłe wydarzenia"
 msgid "Past events."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:180
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:212
 msgid "Paste it into the signing key field of your httpSMS webhook. Keep it private."
 msgstr "Wklej go w pole klucza podpisu webhooka httpSMS. Zachowaj go w tajemnicy."
 
@@ -9519,6 +9539,14 @@ msgstr "Numer telefonu"
 #: src/components/forms/QuestionForm/index.tsx:138
 msgid "Phone Number"
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:126
+msgid "Phone offline"
+msgstr "Telefon offline"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
+msgid "Phone online"
+msgstr "Telefon online"
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:287
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:293
@@ -10651,7 +10679,7 @@ msgstr ""
 msgid "Remove the httpSMS API key? You will no longer be able to send SMS from PICHA."
 msgstr "Usunąć klucz API httpSMS? Nie będzie można już wysyłać SMS-ów z PICHA."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:162
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:186
 msgid "Remove the key"
 msgstr "Usuń klucz"
 
@@ -10699,7 +10727,7 @@ msgstr ""
 msgid "Replaces the page title on the visual."
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:62
+#: src/components/routes/organizer/Sms/index.tsx:63
 msgid "Replies from your customers to your SMS, sent from your httpSMS phone. A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Odpowiedzi klientów na Twoje SMS-y wysłane z telefonu httpSMS. Klient, który odpowie STOP, zostaje automatycznie wypisany z Twoich SMS-ów."
 
@@ -11073,7 +11101,7 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:150
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:174
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:88
@@ -11541,7 +11569,7 @@ msgstr "Wyślij"
 msgid "Send a message"
 msgstr "Wyślij wiadomość"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:104
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:114
 msgid "Send and receive SMS with your customers from your own Android phone, using the httpSMS app. Replies appear in SMS messages."
 msgstr "Wysyłaj i odbieraj SMS-y od klientów z własnego telefonu z Androidem, za pomocą aplikacji httpSMS. Odpowiedzi pojawiają się w Wiadomościach SMS."
 
@@ -11610,7 +11638,7 @@ msgstr ""
 msgid "Sending"
 msgstr "Wysyłanie"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:168
 msgid "Sending number"
 msgstr "Numer nadawcy"
 
@@ -11647,6 +11675,10 @@ msgstr "Wysłane do klientów, gdy złożą zamówienie"
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:206
 msgid "Sent to each attendee with their ticket details"
 msgstr "Wysłane do każdego uczestnika z jego szczegółami biletu"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:197
+msgid "Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline."
+msgstr "Wysyłane na adres e-mail organizatora. Najwyżej jeden e-mail na rozmowę co 15 minut. Zawsze dostaniesz e-mail, gdy telefon przejdzie w tryb offline."
 
 #: src/components/routes/organizer/Settings/index.tsx:63
 msgid "SEO"
@@ -11962,15 +11994,15 @@ msgid "SMS"
 msgstr "SMS"
 
 #: src/components/routes/organizer/Settings/index.tsx:87
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:103
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:113
 msgid "SMS (httpSMS)"
 msgstr "SMS (httpSMS)"
 
-#: src/components/routes/organizer/Sms/index.tsx:68
+#: src/components/routes/organizer/Sms/index.tsx:69
 msgid "SMS is not connected yet."
 msgstr "SMS nie jest jeszcze połączony."
 
-#: src/components/routes/organizer/Sms/index.tsx:60
+#: src/components/routes/organizer/Sms/index.tsx:61
 msgid "SMS messages"
 msgstr "Wiadomości SMS"
 
@@ -12246,7 +12278,7 @@ msgstr "Wciąż obsługa zwrotów dla starszych transakcji."
 msgid "Stop Impersonating"
 msgstr "Zatrzymaj personifikację"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:138
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:162
 msgid "Stored encrypted. It is never displayed again."
 msgstr "Przechowywany w postaci zaszyfrowanej. Nie będzie ponownie wyświetlany."
 
@@ -12699,7 +12731,7 @@ msgid "Test event code (optional)"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:146
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:158
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:182
 msgid "Test the connection"
 msgstr "Testuj połączenie"
 
@@ -12846,7 +12878,7 @@ msgstr "Język klienta"
 msgid "The maximum number of products for {0}is {1}"
 msgstr "Maksymalna liczba produktów dla {0} to {1}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:145
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:169
 msgid "The number of the SIM card in the httpSMS phone, for example +262639123456."
 msgstr "Numer karty SIM w telefonie httpSMS, na przykład +262639123456."
 
@@ -12870,6 +12902,10 @@ msgstr "Strona, której szukasz, nie istnieje"
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:65
 msgid "The people behind the events."
 msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:79
+msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the httpSMS app is running."
+msgstr "Telefon przeszedł w tryb offline {0}. Nowe SMS-y nie będą tu docierać, a Twoje odpowiedzi nie zostaną wysłane. Sprawdź, czy telefon jest włączony, połączony z internetem i czy aplikacja httpSMS działa."
 
 #: src/components/common/PlatformFeesSettings/index.tsx:212
 msgid "The platform fee is added to the ticket price. Buyers pay more, but you receive the full ticket price."
@@ -13784,7 +13820,7 @@ msgstr ""
 msgid "Unable to join waitlist"
 msgstr "Nie udało się dołączyć do listy oczekujących"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:96
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:106
 msgid "Unable to reach httpSMS. Please try again."
 msgstr "Nie można połączyć się z httpSMS. Spróbuj ponownie."
 
@@ -13799,6 +13835,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:70
 msgid "Unable to remove the API key"
 msgstr "Nie udało się usunąć klucza API"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:90
+msgid "Unable to update email alerts"
+msgstr "Nie udało się zaktualizować powiadomień e-mail"
 
 #: src/components/modals/EditQuestionModal/index.tsx:84
 msgid "Unable to update question. Please check the your details"
@@ -14628,7 +14668,7 @@ msgstr "Webhook został pomyślnie usunięty"
 msgid "Webhook Logs"
 msgstr "Dzienniki webhook"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:179
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:211
 msgid "Webhook signing key"
 msgstr "Klucz podpisu webhooka"
 
@@ -14638,7 +14678,7 @@ msgid "Webhook Signing Secret"
 msgstr "Klucz podpisu Webhook"
 
 #: src/components/forms/WebhookForm/index.tsx:138
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:172
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:204
 msgid "Webhook URL"
 msgstr "URL webhook"
 
@@ -15305,6 +15345,18 @@ msgstr ""
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:147
 msgid "Your events"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:77
+msgid "Your httpSMS phone is offline"
+msgstr "Twój telefon httpSMS jest offline"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:139
+msgid "Your httpSMS phone is offline. Check that it is switched on, connected to the internet and that the httpSMS app is running."
+msgstr "Twój telefon httpSMS jest offline. Sprawdź, czy jest włączony, połączony z internetem i czy aplikacja httpSMS działa."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:138
+msgid "Your httpSMS phone went offline {0}. Check that it is switched on, connected to the internet and that the httpSMS app is running."
+msgstr "Twój telefon httpSMS przeszedł w tryb offline {0}. Sprawdź, czy jest włączony, połączony z internetem i czy aplikacja httpSMS działa."
 
 #: src/components/layouts/AuthLayout/index.tsx:46
 msgid "Your logo, colors, and style on every page"

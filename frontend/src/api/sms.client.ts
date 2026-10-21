@@ -15,6 +15,7 @@ import {
 export interface SmsSettingsRequest {
     api_key?: string | null;
     from_number?: string | null;
+    notify_on_inbound_sms?: boolean;
 }
 
 export interface SmsConversationsParams {

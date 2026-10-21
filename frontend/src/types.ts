@@ -1300,7 +1300,12 @@ export interface OrganizerSmsSettings {
     webhook_url: string;
     webhook_signing_key: string;
     last_webhook_received_at: string | null;
+    notify_on_inbound_sms: boolean;
+    phone_status: SmsPhoneStatus | null;
+    phone_status_changed_at: string | null;
 }
+
+export type SmsPhoneStatus = 'ONLINE' | 'OFFLINE';
 
 export interface SmsConnectionTestResult {
     phone_numbers: string[];

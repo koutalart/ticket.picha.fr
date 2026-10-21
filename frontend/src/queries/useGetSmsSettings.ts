@@ -4,7 +4,7 @@ import {smsClient} from "../api/sms.client.ts";
 
 export const GET_SMS_SETTINGS_QUERY_KEY = 'getSmsSettings';
 
-export const useGetSmsSettings = (organizerId: IdParam) => {
+export const useGetSmsSettings = (organizerId: IdParam, refetchInterval?: number) => {
     return useQuery({
         queryKey: [GET_SMS_SETTINGS_QUERY_KEY, organizerId],
         queryFn: async () => {
@@ -12,5 +12,6 @@ export const useGetSmsSettings = (organizerId: IdParam) => {
             return data;
         },
         enabled: !!organizerId,
+        refetchInterval,
     });
 };

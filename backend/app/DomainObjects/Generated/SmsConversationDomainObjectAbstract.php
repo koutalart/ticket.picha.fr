@@ -25,6 +25,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     final public const DRAFT_GENERATED_AT = 'draft_generated_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const INBOUND_NOTIFIED_AT = 'inbound_notified_at';
 
     protected int $id;
     protected int $account_id;
@@ -41,6 +42,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     protected ?string $draft_generated_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?string $inbound_notified_at = null;
 
     public function toArray(): array
     {
@@ -60,6 +62,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
                     'draft_generated_at' => $this->draft_generated_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'inbound_notified_at' => $this->inbound_notified_at ?? null,
                 ];
     }
 
@@ -226,5 +229,16 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setInboundNotifiedAt(?string $inbound_notified_at): self
+    {
+        $this->inbound_notified_at = $inbound_notified_at;
+        return $this;
+    }
+
+    public function getInboundNotifiedAt(): ?string
+    {
+        return $this->inbound_notified_at;
     }
 }
