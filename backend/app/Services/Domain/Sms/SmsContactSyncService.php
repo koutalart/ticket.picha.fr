@@ -143,7 +143,7 @@ class SmsContactSyncService
 
         foreach ($organizerIds as $organizerId) {
             foreach ($this->directoryRepository->findCustomersWithPhone($organizerId) as $customer) {
-                $phone = SmsPhoneNormalizer::normalize($customer->phone);
+                $phone = self::canonicalPhone(SmsPhoneNormalizer::normalize($customer->phone));
                 $name = trim(($customer->firstName ?? '').' '.($customer->lastName ?? ''));
 
                 if ($phone === null || $name === '') {
@@ -198,7 +198,12 @@ class SmsContactSyncService
             foreach ($contacts as $contact) {
                 $isManaged = (($contact['properties'][self::MANAGED_PROPERTY] ?? null) === '1');
 
-                foreach ((array) ($contact['phone_numbers'] ?? []) as $phone) {
+                foreach ((array) ($contact['phone_numbers'] ?? []) as $storedPhone) {
+                    $phone = self::canonicalPhone((string) $storedPhone);
+                    if ($phone === null) {
+                        continue;
+                    }
+
                     if ($isManaged) {
                         $managed[$phone] ??= $contact;
                     } else {
@@ -213,6 +218,15 @@ class SmsContactSyncService
         }
 
         return [$managed, $manualPhones];
+    }
+
+    private static function canonicalPhone(?string $phone): ?string
+    {
+        if ($phone === null || $phone === '') {
+            return null;
+        }
+
+        return preg_replace('/^\+(33|262)0/', '+$1', $phone) ?? $phone;
     }
 
     /**
