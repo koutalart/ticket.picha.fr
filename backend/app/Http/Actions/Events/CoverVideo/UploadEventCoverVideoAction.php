@@ -30,6 +30,7 @@ class UploadEventCoverVideoAction extends BaseAction
                 eventId: $eventId,
                 accountId: $this->getAuthenticatedAccountId(),
                 video: $request->file('video'),
+                mobile: $request->boolean('mobile'),
             ));
         } catch (CoverVideoUploadException $exception) {
             throw ValidationException::withMessages(['video' => $exception->getMessage()]);
