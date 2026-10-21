@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(new ProcessExpiredWaitlistOffersJob)->everyMinute()->withoutOverlapping();
         $schedule->command(PurgeQuestionAnswerFilesCommand::class)->hourly()->withoutOverlapping();
         $schedule->command(SyncSmsContactsCommand::class)->everyFifteenMinutes()->withoutOverlapping();
+        $schedule->command('contacts:sync')->dailyAt('03:30')->withoutOverlapping();
     }
 
     protected function commands(): void

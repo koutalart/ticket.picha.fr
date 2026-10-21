@@ -315,6 +315,20 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "contacts",
+                async lazy() {
+                    const Contacts = await import("./components/routes/organizer/Contacts");
+                    return { Component: Contacts.default };
+                }
+            },
+            {
+                path: "contacts/:contactId",
+                async lazy() {
+                    const ContactDetail = await import("./components/routes/organizer/Contacts/ContactDetail");
+                    return { Component: ContactDetail.default };
+                }
+            },
+            {
                 path: "organizer-homepage-designer",
                 async lazy() {
                     const OrganizerHomepageDesigner = await import("./components/routes/organizer/OrganizerHomepageDesigner");

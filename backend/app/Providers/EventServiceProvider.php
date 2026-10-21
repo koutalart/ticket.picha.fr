@@ -2,6 +2,7 @@
 
 namespace HiEvents\Providers;
 
+use HiEvents\Listeners\Contact\SyncContactsListener;
 use HiEvents\Listeners\Webhook\WebhookEventListener;
 use HiEvents\Services\Infrastructure\DomainEvents\Events\AttendeeEvent;
 use HiEvents\Services\Infrastructure\DomainEvents\Events\CheckinEvent;
@@ -20,6 +21,11 @@ class EventServiceProvider extends ServiceProvider
     private static array $domainEventMap = [
         WebhookEventListener::class => [
             ProductEvent::class,
+            OrderEvent::class,
+            AttendeeEvent::class,
+            CheckinEvent::class,
+        ],
+        SyncContactsListener::class => [
             OrderEvent::class,
             AttendeeEvent::class,
             CheckinEvent::class,
