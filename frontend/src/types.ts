@@ -477,6 +477,29 @@ export interface Organizer {
     settings?: OrganizerSettings;
     location_details?: VenueAddress;
     status?: OrganizerStatus;
+    custom_font?: OrganizerCustomFont | null;
+}
+
+export type OrganizerFontFormat = 'woff2' | 'woff' | 'truetype' | 'opentype';
+
+export interface OrganizerCustomFontFile {
+    weight: number;
+    format: OrganizerFontFormat;
+    url: string;
+}
+
+export interface OrganizerCustomFont {
+    family_name: string;
+    files: OrganizerCustomFontFile[];
+}
+
+export interface OrganizerFont extends OrganizerCustomFontFile {
+    id: IdParam;
+    organizer_id: IdParam;
+    family_name: string;
+    file_name: string;
+    size: number;
+    updated_at?: string;
 }
 
 export interface OrganizerSettings {

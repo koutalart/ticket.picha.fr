@@ -15,7 +15,8 @@ import {organizerHomepagePath} from "../../../utilites/urlHelper.ts";
 import {StatusToggle} from "../../common/StatusToggle";
 import {Pagination} from "../../common/Pagination";
 import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
-import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
+import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
+import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
@@ -88,12 +89,14 @@ export const OrganizerHomepage = ({
     // Theme settings
     const rawThemeSettings = organizer?.settings?.homepage_theme_settings;
     const themeSettings = validateThemeSettings(rawThemeSettings);
-    const cssVars = computeThemeVariables(themeSettings);
+    const organizerFont = organizer?.custom_font;
+    const cssVars = computeThemeVariables(themeSettings, organizerFont);
     const backgroundType = themeSettings.background_type;
+    const organizerFontActive = isOrganizerFontActive(themeSettings.font_family, organizerFont);
 
     useEffect(() => {
-        ensureHomepageFontLoaded(themeSettings.font_family);
-    }, [themeSettings.font_family]);
+        ensureHomepageFontLoaded(themeSettings.font_family, organizerFont);
+    }, [themeSettings.font_family, organizerFont]);
 
     const themeStyles = {
         '--organizer-bg-color': themeSettings.background,
@@ -127,7 +130,8 @@ export const OrganizerHomepage = ({
             )}
 
             {organizer && <OrganizerDocumentHead organizer={organizer}/>}
-            <main className={classes.pageWrapper} style={themeStyles} data-mode={themeSettings.mode}>
+            <main className={classes.pageWrapper} style={themeStyles} data-mode={themeSettings.mode}
+                  {...(organizerFontActive ? {[ORGANIZER_FONT_ATTRIBUTE]: ''} : {})}>
                 <SsrLoaderStyle
                     background={themeSettings.background}
                     accent={themeSettings.accent}

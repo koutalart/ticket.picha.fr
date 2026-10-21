@@ -47,7 +47,7 @@ import {useEditOrderPublic} from "../../../../mutations/useEditOrderPublic";
 import {useResendAttendeeTicketPublic} from "../../../../mutations/useResendAttendeeTicketPublic";
 import {useResendOrderConfirmationPublic} from "../../../../mutations/useResendOrderConfirmationPublic";
 
-import {Attendee, Event, Order, Product} from "../../../../types.ts";
+import {Attendee, Event, Order, OrganizerCustomFont, Product} from "../../../../types.ts";
 import classes from './OrderSummaryAndProducts.module.scss';
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
 import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
@@ -178,22 +178,23 @@ const DetailItem = ({icon: Icon, label, value}: { icon: any, label: string, valu
     </div>
 );
 
-const FullscreenWelcomeHeader = ({order, event, heroTitle, heroSubtitle, fontFamily, isFree}: {
+const FullscreenWelcomeHeader = ({order, event, heroTitle, heroSubtitle, fontFamily, organizerFont, isFree}: {
     order: Order;
     event: Event;
     heroTitle?: string;
     heroSubtitle?: string;
     fontFamily?: string;
+    organizerFont?: OrganizerCustomFont | null;
     isFree: boolean;
 }) => {
     useEffect(() => {
-        ensureHomepageFontLoaded(fontFamily);
-    }, [fontFamily]);
+        ensureHomepageFontLoaded(fontFamily, organizerFont);
+    }, [fontFamily, organizerFont]);
 
     const titleLines = (heroTitle?.trim() || event.title).split('\n').map((line) => line.trim()).filter(Boolean);
 
     return (
-    <div className={classes.fullscreenWelcome} style={{fontFamily: buildHomepageFontStack(fontFamily)}}>
+    <div className={classes.fullscreenWelcome} style={{fontFamily: buildHomepageFontStack(fontFamily, organizerFont)}}>
         <div className={classes.fullscreenWelcomeEyebrow}>
             {isFree ? t`Registration confirmed` : t`Order confirmed`}
         </div>
@@ -626,6 +627,7 @@ export const OrderSummaryAndProducts = () => {
                         heroTitle={fullscreenHero.settings.hero_title}
                         heroSubtitle={fullscreenHero.settings.hero_subtitle}
                         fontFamily={fullscreenHero.settings.font_family}
+                        organizerFont={publicEvent?.organizer?.custom_font}
                         isFree={!!isFreeOrder}
                     />
                 ) : (

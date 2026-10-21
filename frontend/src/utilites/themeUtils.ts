@@ -1,4 +1,4 @@
-import {HomepageThemeSettings} from "../types.ts";
+import {HomepageThemeSettings, OrganizerCustomFont} from "../types.ts";
 import {buildHomepageFontStack, DEFAULT_HOMEPAGE_FONT} from "../constants/homepageFonts.ts";
 
 export interface DerivedThemeColors {
@@ -143,7 +143,10 @@ export function mixWithWhite(hex: string, ratio: number): string | null {
     return `#${channel(rgb.r)}${channel(rgb.g)}${channel(rgb.b)}`;
 }
 
-export function computeThemeVariables(settings: HomepageThemeSettings): ThemeCSSVariables {
+export function computeThemeVariables(
+    settings: HomepageThemeSettings,
+    organizerFont?: OrganizerCustomFont | null,
+): ThemeCSSVariables {
     const baseDerived = getDerivedColors(settings.mode);
     const derived = settings.mode === 'dark'
         ? {...baseDerived, surface: mixWithWhite(settings.background, 0.07) || baseDerived.surface}
@@ -166,7 +169,7 @@ export function computeThemeVariables(settings: HomepageThemeSettings): ThemeCSS
         '--theme-accent-tint-10': `color-mix(in srgb, ${settings.accent} 10%, ${derived.surface})`,
         '--theme-accent-tint-15': `color-mix(in srgb, ${settings.accent} 15%, ${derived.surface})`,
         '--theme-accent-tint-20': `color-mix(in srgb, ${settings.accent} 20%, ${derived.surface})`,
-        '--theme-font-family': buildHomepageFontStack(settings.font_family),
+        '--theme-font-family': buildHomepageFontStack(settings.font_family, organizerFont),
     };
 }
 

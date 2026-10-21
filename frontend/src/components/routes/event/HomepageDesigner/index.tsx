@@ -25,6 +25,8 @@ import {DEFAULT_HOMEPAGE_FONT} from "../../../../constants/homepageFonts.ts";
 import {useUploadEventCoverVideo} from "../../../../mutations/useUploadEventCoverVideo.ts";
 import {useDeleteEventImage} from "../../../../mutations/useDeleteEventImage.ts";
 import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
+import {useGetEvent} from "../../../../queries/useGetEvent.ts";
+import {toOrganizerCustomFont, useGetOrganizerFonts} from "../../../../queries/useGetOrganizerFonts.ts";
 
 const MAX_COVER_VIDEO_BYTES = 15 * 1024 * 1024;
 
@@ -38,6 +40,9 @@ const HomepageDesigner = () => {
     const eventSettingsQuery = useGetEventSettings(eventId);
     const eventImagesQuery = useGetEventImages(eventId);
     const updateMutation = useUpdateEventSettings();
+    const eventQuery = useGetEvent(eventId);
+    const organizerFontsQuery = useGetOrganizerFonts(eventQuery.data?.organizer_id);
+    const organizerFont = toOrganizerCustomFont(organizerFontsQuery.data);
 
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const lastSentSettings = useRef<string | null>(null);
@@ -476,6 +481,7 @@ const HomepageDesigner = () => {
                                             font_family: fontFamily,
                                         })}
                                         disabled={eventSettingsQuery.isLoading || updateMutation.isPending}
+                                        organizerFont={organizerFont}
                                     />
                                 </fieldset>
                             </Accordion.Panel>
