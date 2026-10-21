@@ -2,6 +2,7 @@
 
 namespace HiEvents\Http\Request\EventSettings;
 
+use HiEvents\DomainObjects\Enums\AgeRestrictionRule;
 use HiEvents\DomainObjects\Enums\AttendeeDetailsCollectionMethod;
 use HiEvents\DomainObjects\Enums\HomepageBackgroundType;
 use HiEvents\DomainObjects\Enums\HomepageFontFamily;
@@ -116,6 +117,10 @@ class UpdateEventSettingsRequest extends BaseRequest
             'allow_attendee_self_edit' => ['boolean'],
             'single_product_per_order' => ['boolean'],
             'choose_category_first' => ['boolean'],
+
+            // Age restriction settings
+            'age_restriction_rule' => [Rule::in(AgeRestrictionRule::valuesArray())],
+            'age_restriction_minimum_age' => ['integer', 'min:1', 'max:99'],
 
             // Waitlist settings
             'waitlist_auto_process' => ['boolean'],

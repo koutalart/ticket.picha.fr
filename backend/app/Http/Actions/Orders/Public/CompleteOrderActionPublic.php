@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Http\Actions\Orders\Public;
 
+use HiEvents\Exceptions\AttendeeAgeRestrictionException;
 use HiEvents\Exceptions\InvalidQuestionAnswerFileException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Http\Actions\BaseAction;
@@ -13,6 +14,7 @@ use HiEvents\Services\Application\Handlers\Order\CompleteOrderHandler;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderOrderDTO;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class CompleteOrderActionPublic extends BaseAction
@@ -21,6 +23,9 @@ class CompleteOrderActionPublic extends BaseAction
     {
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function __invoke(CompleteOrderRequest $request, int $eventId, string $orderShortId): JsonResponse
     {
         try {
@@ -38,6 +43,8 @@ class CompleteOrderActionPublic extends BaseAction
                 'products' => $request->input('products'),
                 'event_id' => $eventId,
             ]));
+        } catch (AttendeeAgeRestrictionException $e) {
+            throw ValidationException::withMessages($e->getErrors());
         } catch (InvalidQuestionAnswerFileException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (ResourceConflictException $e) {

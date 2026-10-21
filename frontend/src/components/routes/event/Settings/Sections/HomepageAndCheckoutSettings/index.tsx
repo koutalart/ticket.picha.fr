@@ -3,7 +3,7 @@ import {Button, NumberInput, Switch} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {useParams} from "react-router";
 import {useEffect} from "react";
-import {EventSettings} from "../../../../../../types.ts";
+import {AgeRestrictionRule, EventSettings} from "../../../../../../types.ts";
 import {Card} from "../../../../../common/Card";
 import {showSuccess} from "../../../../../../utilites/notifications.tsx";
 import {useFormErrorResponseHandler} from "../../../../../../hooks/useFormErrorResponseHandler.tsx";
@@ -13,7 +13,7 @@ import {Editor} from "../../../../../common/Editor";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
 import {isEmptyHtml} from "../../../../../../utilites/helpers.ts";
 import {CustomSelect, ItemProps} from "../../../../../common/CustomSelect";
-import {IconUser, IconUsers} from "@tabler/icons-react";
+import {IconUser, IconUserCheck, IconUserShield, IconUsers} from "@tabler/icons-react";
 
 export const HomepageAndCheckoutSettings = () => {
     const {eventId} = useParams();
@@ -27,6 +27,8 @@ export const HomepageAndCheckoutSettings = () => {
             attendee_details_collection_method: 'PER_TICKET' as 'PER_TICKET' | 'PER_ORDER',
             show_marketing_opt_in: true,
             allow_copy_details_to_all_attendees: true,
+            age_restriction_rule: 'NONE' as AgeRestrictionRule,
+            age_restriction_minimum_age: 18,
         },
         transformValues: (values) => ({
             ...values,
@@ -49,6 +51,26 @@ export const HomepageAndCheckoutSettings = () => {
             description: t`Use order details for all attendees. Attendee names and emails will match the buyer's information.`,
         },
     ];
+    const ageRestrictionOptions: ItemProps[] = [
+        {
+            icon: <IconUsers/>,
+            label: t`No restriction`,
+            value: 'NONE',
+            description: t`Attendees of all ages can register. No date of birth is requested.`,
+        },
+        {
+            icon: <IconUserCheck/>,
+            label: t`Minors must be accompanied`,
+            value: 'ACCOMPANIED_MINORS',
+            description: t`Attendees under the age limit are only accepted if the same order includes at least one adult.`,
+        },
+        {
+            icon: <IconUserShield/>,
+            label: t`Strict minimum age`,
+            value: 'MINIMUM_AGE',
+            description: t`Any attendee under the age limit is refused.`,
+        },
+    ];
     const formErrorHandle = useFormErrorResponseHandler();
 
     useEffect(() => {
@@ -60,6 +82,8 @@ export const HomepageAndCheckoutSettings = () => {
                 attendee_details_collection_method: eventSettingsQuery.data.attendee_details_collection_method || 'PER_TICKET',
                 show_marketing_opt_in: eventSettingsQuery.data.show_marketing_opt_in ?? true,
                 allow_copy_details_to_all_attendees: eventSettingsQuery.data.allow_copy_details_to_all_attendees ?? true,
+                age_restriction_rule: eventSettingsQuery.data.age_restriction_rule || 'NONE',
+                age_restriction_minimum_age: eventSettingsQuery.data.age_restriction_minimum_age ?? 18,
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -116,6 +140,26 @@ export const HomepageAndCheckoutSettings = () => {
                         label={t`Attendee information collection`}
                         required
                     />
+
+                    <CustomSelect
+                        optionList={ageRestrictionOptions}
+                        form={form}
+                        name={'age_restriction_rule'}
+                        label={t`Attendee age check`}
+                        description={t`When a rule is active, a date of birth is required for each attendee. Age is calculated on the event start date.`}
+                        required
+                    />
+
+                    {form.values.age_restriction_rule !== 'NONE' && (
+                        <NumberInput
+                            label={t`Age limit`}
+                            description={t`Attendees younger than this age on the event date are considered minors.`}
+                            min={1}
+                            max={99}
+                            allowDecimal={false}
+                            {...form.getInputProps('age_restriction_minimum_age')}
+                        />
+                    )}
 
                     <NumberInput
                         label={t`Order timeout`}

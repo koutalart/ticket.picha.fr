@@ -2,6 +2,7 @@
 
 namespace HiEvents\Services\Application\Handlers\EventSettings;
 
+use HiEvents\DomainObjects\Enums\AgeRestrictionRule;
 use HiEvents\DomainObjects\Enums\CapacityChangeDirection;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\Events\CapacityChangedEvent;
@@ -103,6 +104,9 @@ class UpdateEventSettingsHandler
 
                     'single_product_per_order' => $settings->single_product_per_order,
                     'choose_category_first' => $settings->choose_category_first,
+
+                    'age_restriction_rule' => ($settings->age_restriction_rule ?? AgeRestrictionRule::NONE)->value,
+                    'age_restriction_minimum_age' => $settings->age_restriction_minimum_age ?? 18,
 
                     // Waitlist settings
                     'waitlist_auto_process' => $settings->waitlist_auto_process,
