@@ -10,9 +10,10 @@ import {useRegenerateSmsDraft} from "../../../../mutations/useRegenerateSmsDraft
 import {useGetSmsReplyTemplates} from "../../../../queries/useGetSmsReplyTemplates.ts";
 import {showError} from "../../../../utilites/notifications.tsx";
 import {relativeDate} from "../../../../utilites/dates.ts";
-import {conversationStatusLabel, messageAuthorLabel, messageStatusLabel} from "./labels.ts";
+import {conversationStatusLabel, messageAuthorLabel} from "./labels.ts";
 import {countSmsSegments} from "./smsSegments.ts";
 import {applyReplyTemplate, contactFirstName} from "./replyTemplates.ts";
+import {MessageStatusIcon} from "./MessageStatusIcon.tsx";
 import classes from "./Sms.module.scss";
 
 const MAX_LENGTH = 640;
@@ -152,7 +153,6 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
 
             <div className={classes.messages}>
                 {detail.messages.map(message => {
-                    const statusLabel = messageStatusLabel(message);
                     const authorLabel = messageAuthorLabel(message);
                     const date = message.provider_timestamp || message.created_at;
 
@@ -167,7 +167,7 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
                                 <div className={classes.bubbleMeta}>
                                     {authorLabel && <span>{authorLabel}</span>}
                                     <span>{relativeDate(date)}</span>
-                                    {statusLabel && <span>{statusLabel}</span>}
+                                    <MessageStatusIcon message={message}/>
                                 </div>
                                 {message.error_message && <div className={classes.bubbleError}>{message.error_message}</div>}
                             </div>

@@ -252,6 +252,17 @@
   color: var(--mantine-color-dimmed);
 }
 
+.statusIcon {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+
+  &[data-status='FAILED'],
+  &[data-status='EXPIRED'] {
+    color: var(--mantine-color-red-text);
+  }
+}
+
 .bubbleError {
   margin-top: 4px;
   font-size: 11px;
