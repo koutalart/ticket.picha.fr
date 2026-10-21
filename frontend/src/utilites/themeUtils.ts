@@ -184,14 +184,49 @@ export function getDefaultThemeSettings(): HomepageThemeSettings {
     };
 }
 
+const toSixDigitHex = (value: unknown): string | undefined => {
+    if (typeof value !== 'string') {
+        return undefined;
+    }
+    const match = value.trim().match(/^#([0-9a-f]{6})(?:[0-9a-f]{2})?$/i);
+    return match ? `#${match[1]}` : undefined;
+};
+
+/**
+ * Older themes (e.g. the « Midnight » preset) were stored with homepage_* keys
+ * instead of accent / background / mode.
+ */
+function fromLegacyTheme(settings: Record<string, unknown>): Partial<HomepageThemeSettings> {
+    const textColor = toSixDigitHex(settings.homepage_primary_text_color);
+    const background = toSixDigitHex(settings.homepage_content_background_color)
+        || toSixDigitHex(settings.homepage_background_color);
+    const accent = toSixDigitHex(settings.homepage_primary_color);
+    const mode: 'light' | 'dark' | undefined = textColor
+        ? (isLightColor(textColor) ? 'dark' : 'light')
+        : undefined;
+
+    return {
+        ...(settings as Partial<HomepageThemeSettings>),
+        background: background,
+        accent: accent,
+        mode: mode,
+    };
+}
+
 export function validateThemeSettings(
-    settings: Partial<HomepageThemeSettings> | null | undefined
+    rawSettings: Partial<HomepageThemeSettings> | null | undefined
 ): HomepageThemeSettings {
     const defaults = getDefaultThemeSettings();
 
-    if (!settings) {
+    if (!rawSettings) {
         return defaults;
     }
+
+    const isLegacy = !rawSettings.background && !rawSettings.accent
+        && ('homepage_primary_color' in rawSettings || 'homepage_background_color' in rawSettings);
+    const settings = isLegacy
+        ? fromLegacyTheme(rawSettings as Record<string, unknown>)
+        : rawSettings;
 
     return {
         accent: settings.accent || defaults.accent,
