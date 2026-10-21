@@ -103,6 +103,11 @@ export const EventDashboard = () => {
         {label: t`Page views`, value: stats ? formatNumber(stats.total_views) : null},
     ];
 
+    const attendanceFigures: typeof figures = settings?.allow_attendee_attendance_response ? [
+        {label: t`Attendance confirmed`, value: stats ? formatNumber(stats.total_attendance_confirmed ?? 0) : null},
+        {label: t`Cancelled by attendee`, value: stats ? formatNumber(stats.total_cancelled_by_attendee ?? 0) : null},
+    ] : [];
+
     const chartData = stats?.daily_stats.map((day) => ({
         date: formatDateWithLocale(day.date, 'chartDate', event.timezone),
         products_sold: day.products_sold,
@@ -147,7 +152,7 @@ export const EventDashboard = () => {
             </header>
 
             <section className={classes.figures}>
-                {figures.map((figure) => (
+                {figures.concat(attendanceFigures).map((figure) => (
                     <div key={figure.label} className={classes.figure}>
                         <span className={classes.figureLabel}>{figure.label}</span>
                         {figure.value === null

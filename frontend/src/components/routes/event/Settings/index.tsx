@@ -11,6 +11,7 @@ import {MiscSettings} from "./Sections/MiscSettings";
 import {PaymentAndInvoicingSettings} from "./Sections/PaymentSettings";
 import {PlatformFeesSettings} from "./Sections/PlatformFeesSettings";
 import {WaitlistSettings} from "./Sections/WaitlistSettings";
+import {AttendanceResponseSettings} from "./Sections/AttendanceResponseSettings";
 import {DangerZoneSettings} from "./Sections/DangerZoneSettings";
 import {useGetAccount} from "../../../../queries/useGetAccount.ts";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
@@ -48,6 +49,7 @@ export const Settings = () => {
                 {id: 'homepage-settings', component: HomepageAndCheckoutSettings},
                 {id: 'payment-settings', component: PaymentAndInvoicingSettings},
                 {id: 'waitlist-settings', component: WaitlistSettings},
+                {id: 'attendance-response-settings', component: AttendanceResponseSettings},
             ],
         },
         {

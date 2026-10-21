@@ -1,5 +1,5 @@
 import {api} from "./client";
-import {Attendee, GenericDataResponse, GenericPaginatedResponse, IdParam, QueryFilters} from "../types";
+import {Attendee, AttendeeAttendance, GenericDataResponse, GenericPaginatedResponse, IdParam, QueryFilters} from "../types";
 import {queryParamsHelper} from "../utilites/queryParamsHelper.ts";
 import {publicApi} from "./public-client.ts";
 import {SupportedLocales} from "../locales.ts";
@@ -70,6 +70,27 @@ export const attendeesClient = {
 export const attendeeClientPublic = {
     findByShortId: async (eventId: IdParam, attendeeShortId: string) => {
         const response = await publicApi.get<GenericDataResponse<Partial<Attendee>>>(`events/${eventId}/attendees/${attendeeShortId}`);
+        return response.data;
+    },
+    getAttendance: async (eventId: IdParam, attendeeShortId: string, code: string) => {
+        const response = await publicApi.get<GenericDataResponse<AttendeeAttendance>>(
+            `events/${eventId}/attendees/${attendeeShortId}/attendance`,
+            {params: {code}},
+        );
+        return response.data;
+    },
+    confirmAttendance: async (eventId: IdParam, attendeeShortId: string, code: string) => {
+        const response = await publicApi.post<GenericDataResponse<AttendeeAttendance>>(
+            `events/${eventId}/attendees/${attendeeShortId}/attendance/confirm`,
+            {code},
+        );
+        return response.data;
+    },
+    cancelAttendance: async (eventId: IdParam, attendeeShortId: string, code: string) => {
+        const response = await publicApi.post<GenericDataResponse<AttendeeAttendance>>(
+            `events/${eventId}/attendees/${attendeeShortId}/attendance/cancel`,
+            {code},
+        );
         return response.data;
     },
 }
