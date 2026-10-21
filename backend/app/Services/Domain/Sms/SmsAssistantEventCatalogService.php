@@ -116,7 +116,7 @@ class SmsAssistantEventCatalogService
             price: match (true) {
                 $product->isFreeType() || $price->isFree() => 0.0,
                 $product->isDonationType() => null,
-                default => $price->getPriceIncludingTaxAndServiceFee(),
+                default => $price->getPrice(),
             },
             currency: $event->getCurrency(),
             availability: $availability,
