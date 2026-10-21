@@ -19,6 +19,7 @@ const Settings = () => {
     const organizerQuery = useGetOrganizer(organizerId);
     const {data: organizer} = organizerQuery;
     const organizerLogo = organizer?.images?.find((image) => image.type === 'ORGANIZER_LOGO');
+    const organizerEmailLogo = organizer?.images?.find((image) => image.type === 'ORGANIZER_EMAIL_LOGO');
     const organizerCover = organizer?.images?.find((image) => image.type === 'ORGANIZER_COVER');
     const organizerCoverVideo = organizer?.images?.find((image) => image.type === 'ORGANIZER_COVER_VIDEO');
     const uploadCoverVideo = useUploadOrganizerCoverVideo();
@@ -79,6 +80,17 @@ const Settings = () => {
                     existingImageData={{
                         url: organizerLogo?.url,
                         id: organizerLogo?.id,
+                    }}
+                />
+                <h2>{t`Email logo`}</h2>
+                <ImageUploadDropzone
+                    helpText={t`Optional. Version of your logo for light backgrounds, used in emails instead of the logo above. Prefer a PNG with a transparent background.`}
+                    imageType={'ORGANIZER_EMAIL_LOGO'}
+                    entityId={organizerId}
+                    onUploadSuccess={handleImageChange}
+                    existingImageData={{
+                        url: organizerEmailLogo?.url,
+                        id: organizerEmailLogo?.id,
                     }}
                 />
                 <h2>{t`Cover`}</h2>

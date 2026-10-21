@@ -28,7 +28,7 @@ class AttendeeTicketMailRenderTest extends TestCase
     use BoxOfficeTestFixtures;
     use DatabaseTransactions;
 
-    private function mail(float $price, int $eventId = 6, ?RenderedEmailTemplateDTO $template = null): AttendeeTicketMail
+    private function mail(float $price, int $eventId = 6, ?RenderedEmailTemplateDTO $template = null, array $extraImages = []): AttendeeTicketMail
     {
         [$eventModel, $product, $productPrice] = $this->createEventWithProduct();
 
@@ -65,6 +65,7 @@ class AttendeeTicketMailRenderTest extends TestCase
             ->setImages(new Collection([
                 (new ImageDomainObject)->setType('ORGANIZER_COVER')->setPath('organizer_cover/cover.webp'),
                 (new ImageDomainObject)->setType('ORGANIZER_LOGO')->setPath('organizer_logo/logo-mayotte.png'),
+                ...$extraImages,
             ]));
 
         return new AttendeeTicketMail(
@@ -107,5 +108,15 @@ class AttendeeTicketMailRenderTest extends TestCase
         $otherHtml = $this->mail(price: 0, eventId: 4, template: $template)->render();
         self::assertStringNotContainsString('x-mail::message', $otherHtml);
         self::assertStringNotContainsString('organizer_logo/logo-mayotte.png', $otherHtml);
+    }
+
+    public function test_email_logo_is_preferred_over_site_logo(): void
+    {
+        $html = $this->mail(price: 0, extraImages: [
+            (new ImageDomainObject)->setType('ORGANIZER_EMAIL_LOGO')->setPath('organizer_email_logo/logo-fond-clair.png'),
+        ])->render();
+
+        self::assertStringContainsString('organizer_email_logo/logo-fond-clair.png', $html);
+        self::assertStringNotContainsString('organizer_logo/logo-mayotte.png', $html);
     }
 }
