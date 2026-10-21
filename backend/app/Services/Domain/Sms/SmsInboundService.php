@@ -165,7 +165,7 @@ class SmsInboundService
 
     private function findByRequestId(int $organizerId, ?string $requestId): ?SmsMessageDomainObject
     {
-        if ($requestId === null || $requestId === '') {
+        if ($requestId === null || ! str_starts_with($requestId, SmsSendService::REQUEST_ID_PREFIX)) {
             return null;
         }
 

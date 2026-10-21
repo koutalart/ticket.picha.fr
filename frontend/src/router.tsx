@@ -329,6 +329,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "sms",
+                async lazy() {
+                    const Sms = await import("./components/routes/organizer/Sms");
+                    return { Component: Sms.default };
+                }
+            },
+            {
                 path: "webhooks",
                 element: <Navigate to="../settings#webhooks" replace/>,
             },

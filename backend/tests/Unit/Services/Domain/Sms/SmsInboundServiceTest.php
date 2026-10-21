@@ -187,6 +187,21 @@ class SmsInboundServiceTest extends TestCase
         $this->service->recordOutboundEvent($this->settings, $this->outbound(SmsMessageStatus::SENT, 'test-halloween'));
     }
 
+    public function test_shared_campaign_request_id_does_not_merge_messages(): void
+    {
+        $this->messageRepository->shouldReceive('findFirstWhere')
+            ->with(['provider_message_id' => 'prov-1'])
+            ->andReturnNull();
+        $this->messageRepository->shouldNotReceive('findFirstWhere')
+            ->with(['organizer_id' => 4, 'request_id' => 'test-halloween']);
+        $this->conversationService->shouldReceive('findOrCreate')->andReturn($this->conversation);
+        $this->conversationService->shouldReceive('recordActivity');
+
+        $this->messageRepository->shouldReceive('create')->once()->andReturn((new SmsMessageDomainObject)->setId(4));
+
+        $this->service->recordOutboundEvent($this->settings, $this->outbound(SmsMessageStatus::DELIVERED, 'test-halloween'));
+    }
+
     private function expectStoredInbound(): void
     {
         $this->messageRepository->shouldReceive('findFirstWhere')->andReturnNull();
