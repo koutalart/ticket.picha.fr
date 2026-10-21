@@ -81,6 +81,10 @@ export interface HomepageThemeSettings {
     mode: 'light' | 'dark';
     background_type: 'COLOR' | 'MIRROR_COVER_IMAGE';
     font_family?: string;
+    hero_layout?: 'CARD' | 'FULLSCREEN';
+    hero_title?: string;
+    hero_subtitle?: string;
+    hero_tagline?: string;
 }
 
 export interface LoginResponse {
@@ -187,7 +191,7 @@ export interface Image {
     lqip_base64?: string | null;
 }
 
-export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_FLYER' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_EMAIL_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_COVER_VIDEO' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
+export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_FLYER' | 'EVENT_HERO_PARTNER_LOGO' | 'EVENT_HERO_SIGNATURE_LOGO' | 'EVENT_HERO_BRAND_LOGO' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_EMAIL_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_COVER_VIDEO' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
 
 export type PaymentProvider = 'STRIPE' | 'OFFLINE';
 

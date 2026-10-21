@@ -142,6 +142,9 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const coverVideo = event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO')?.url;
     const videoAllowed = useDeferredCoverVideo(coverVideo);
     const flyer = event?.images?.find((image) => image.type === 'EVENT_FLYER')?.url;
+    const heroPartnerLogo = event?.images?.find((image) => image.type === 'EVENT_HERO_PARTNER_LOGO')?.url;
+    const heroSignatureLogo = event?.images?.find((image) => image.type === 'EVENT_HERO_SIGNATURE_LOGO')?.url;
+    const heroBrandLogo = event?.images?.find((image) => image.type === 'EVENT_HERO_BRAND_LOGO')?.url;
     const organizer = event.organizer!;
     const organizerSocials = organizer?.settings?.social_media_handles;
     const organizerLogo = imageUrl('ORGANIZER_LOGO', organizer?.images);
@@ -181,6 +184,10 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     };
 
     const statusBadge = getStatusBadge();
+
+    const isFullscreenHero = themeSettings.hero_layout === 'FULLSCREEN' && !!(coverVideo || coverImage);
+    const isFreeEvent = (event.products || event.product_categories?.flatMap(c => c.products || []) || [])
+        .every(p => !p.prices?.some(price => Number(price.price) > 0));
 
     const mapUrl = event.settings?.maps_url || (locationDetails ? getGoogleMapsUrl(locationDetails) : null);
 
@@ -234,12 +241,71 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                 />
 
                 <div className={classes.container}>
+                    {isFullscreenHero && (
+                        <section className={classes.fullscreenHero}>
+                            {coverVideo && videoAllowed ? (
+                                <video
+                                    src={coverVideo}
+                                    poster={coverImage}
+                                    className={classes.fullscreenMedia}
+                                    aria-hidden="true"
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    preload="metadata"
+                                />
+                            ) : coverImage ? (
+                                <img src={coverImage} alt="" aria-hidden="true" className={classes.fullscreenMedia}/>
+                            ) : null}
+                            <div className={classes.fullscreenVeil}/>
+                            <div className={classes.fullscreenTopBar}>
+                                {heroPartnerLogo ? (
+                                    <img src={heroPartnerLogo} alt="" className={classes.fullscreenPartnerLogo}/>
+                                ) : <span/>}
+                                {heroBrandLogo ? (
+                                    <img src={heroBrandLogo} alt={organizer.name} className={classes.fullscreenBrandCustom}/>
+                                ) : organizerLogo && (
+                                    <img src={organizerLogo} alt={organizer.name} className={classes.fullscreenBrand}/>
+                                )}
+                            </div>
+                            <div className={classes.fullscreenCenter}>
+                                <div className={classes.fullscreenLockup}>
+                                    <h1 className={classes.fullscreenTitle}>
+                                        {(themeSettings.hero_title?.trim() || event.title)
+                                            .split('\n')
+                                            .map((line, index) => <span key={index}>{line}</span>)}
+                                    </h1>
+                                    {themeSettings.hero_subtitle?.trim() && (
+                                        <div className={classes.fullscreenSubtitle}>{themeSettings.hero_subtitle}</div>
+                                    )}
+                                    <div className={classes.fullscreenDate}>
+                                        <EventDateRange event={event}/>
+                                    </div>
+                                    {(themeSettings.hero_tagline?.trim() || heroSignatureLogo) && (
+                                        <div className={classes.fullscreenTagline}>
+                                            {themeSettings.hero_tagline?.trim() && <span>{themeSettings.hero_tagline}</span>}
+                                            {heroSignatureLogo && (
+                                                <img src={heroSignatureLogo} alt="" className={classes.fullscreenSignatureLogo}/>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className={classes.fullscreenFooter}>
+                                <button type="button" className={classes.fullscreenCta} onClick={scrollToTickets}>
+                                    <span className={classes.fullscreenCtaArrow} aria-hidden="true">→</span>
+                                    {isFreeEvent ? t`Register for free` : t`Get Tickets`}
+                                </button>
+                            </div>
+                        </section>
+                    )}
                     <div className={classes.wrapper}>
                         {/* Main unified card */}
                         <div className={classes.mainCard}>
                             {/* Hero Section */}
                             <div className={classes.heroSection}>
-                                {(coverImage || coverVideo) && (
+                                {(coverImage || coverVideo) && !isFullscreenHero && (
                                     <div
                                         className={classes.coverWrapper}
                                         style={coverVideo ? {
@@ -347,7 +413,11 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                         </div>
                                     </div>
 
-                                    <h1 className={classes.eventTitle}>{event.title}</h1>
+                                    {isFullscreenHero ? (
+                                        <h2 className={classes.eventTitle}>{event.title}</h2>
+                                    ) : (
+                                        <h1 className={classes.eventTitle}>{event.title}</h1>
+                                    )}
 
                                     <div className={classes.eventMeta}>
                                         {/* Date/Time */}

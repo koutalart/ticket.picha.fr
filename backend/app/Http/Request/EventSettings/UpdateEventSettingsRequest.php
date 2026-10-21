@@ -5,6 +5,7 @@ namespace HiEvents\Http\Request\EventSettings;
 use HiEvents\DomainObjects\Enums\AttendeeDetailsCollectionMethod;
 use HiEvents\DomainObjects\Enums\HomepageBackgroundType;
 use HiEvents\DomainObjects\Enums\HomepageFontFamily;
+use HiEvents\DomainObjects\Enums\HomepageHeroLayout;
 use HiEvents\DomainObjects\Enums\PaymentProviders;
 use HiEvents\DomainObjects\Enums\PriceDisplayMode;
 use HiEvents\DomainObjects\Enums\TicketDateDisplayMode;
@@ -106,6 +107,10 @@ class UpdateEventSettingsRequest extends BaseRequest
             'homepage_theme_settings.mode' => ['nullable', 'string', Rule::in(['light', 'dark'])],
             'homepage_theme_settings.background_type' => ['nullable', 'string', Rule::in(HomepageBackgroundType::valuesArray())],
             'homepage_theme_settings.font_family' => ['nullable', 'string', Rule::in(HomepageFontFamily::valuesArray())],
+            'homepage_theme_settings.hero_layout' => ['nullable', 'string', Rule::in(HomepageHeroLayout::valuesArray())],
+            'homepage_theme_settings.hero_title' => ['nullable', 'string', 'max:120'],
+            'homepage_theme_settings.hero_subtitle' => ['nullable', 'string', 'max:120'],
+            'homepage_theme_settings.hero_tagline' => ['nullable', 'string', 'max:80'],
 
             // Self-service settings
             'allow_attendee_self_edit' => ['boolean'],
