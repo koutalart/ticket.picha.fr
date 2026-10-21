@@ -145,7 +145,7 @@ const QrLinkPage = () => {
     const logo = organizer?.images?.find(image => image.type === 'ORGANIZER_LOGO');
     const title = qrLink.title || qrLink.event_title || organizer?.name || qrLink.name;
     const organizerUrl = organizer?.slug && organizer.status === 'LIVE'
-        ? `/events/${organizer.id}/${organizer.slug}?qr=${qrLink.short_id}`
+        ? `/events/${organizer.id}/${organizer.slug}?qr=${qrLink.short_id}&qrc=1`
         : null;
     const ticketUrl = qrLink.ticket_url || organizerUrl;
 
