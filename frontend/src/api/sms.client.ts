@@ -6,6 +6,7 @@ import {
     OrganizerSmsSettings,
     SmsCampaign,
     SmsCampaignRecipient,
+    SmsAssistantPreview,
     SmsConnectionTestResult,
     SmsConversation,
     SmsConversationDetail,
@@ -18,6 +19,8 @@ export interface SmsSettingsRequest {
     api_key?: string | null;
     from_number?: string | null;
     notify_on_inbound_sms?: boolean;
+    assistant_enabled?: boolean;
+    assistant_instructions?: string | null;
 }
 
 export interface SmsConversationsParams {
@@ -79,6 +82,19 @@ export const smsClient = {
         const response = await api.post<GenericDataResponse<SmsMessage>>(
             `organizers/${organizerId}/sms/conversations/${conversationId}/messages`,
             {content},
+        );
+        return response.data;
+    },
+    regenerateDraft: async (organizerId: IdParam, conversationId: IdParam) => {
+        const response = await api.post<GenericDataResponse<SmsConversation>>(
+            `organizers/${organizerId}/sms/conversations/${conversationId}/draft`,
+        );
+        return response.data;
+    },
+    previewAssistant: async (organizerId: IdParam, message: string, instructions: string | null) => {
+        const response = await api.post<GenericDataResponse<SmsAssistantPreview>>(
+            `organizers/${organizerId}/sms/assistant/preview`,
+            {message, instructions},
         );
         return response.data;
     },

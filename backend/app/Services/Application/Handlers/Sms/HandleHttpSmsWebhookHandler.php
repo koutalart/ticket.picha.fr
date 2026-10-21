@@ -19,6 +19,7 @@ use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
 use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
 use HiEvents\Services\Domain\Sms\SmsAlertService;
+use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use Psr\Log\LoggerInterface;
@@ -53,6 +54,7 @@ class HandleHttpSmsWebhookHandler
         private readonly SmsInboundService $inboundService,
         private readonly SmsCampaignDeliveryService $campaignDeliveryService,
         private readonly SmsAlertService $alertService,
+        private readonly SmsAssistantService $assistantService,
         private readonly LoggerInterface $logger,
     ) {}
 
@@ -137,6 +139,7 @@ class HandleHttpSmsWebhookHandler
 
             if ($message !== null) {
                 $this->alertService->notifyInbound($settings, $message);
+                $this->assistantService->queueDraftIfEligible($settings, $message);
             }
 
             return;

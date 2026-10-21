@@ -1303,6 +1303,17 @@ export interface OrganizerSmsSettings {
     notify_on_inbound_sms: boolean;
     phone_status: SmsPhoneStatus | null;
     phone_status_changed_at: string | null;
+    assistant_available: boolean;
+    assistant_enabled: boolean;
+    assistant_instructions: string | null;
+}
+
+export type SmsAssistantOutcome = 'DRAFT' | 'NEEDS_HUMAN';
+
+export interface SmsAssistantPreview {
+    outcome: SmsAssistantOutcome;
+    reply: string | null;
+    reason: string | null;
 }
 
 export type SmsPhoneStatus = 'ONLINE' | 'OFFLINE';
@@ -1317,6 +1328,7 @@ export interface SmsConversation {
     phone: string;
     contact_name: string | null;
     status: SmsConversationStatus;
+    needs_human_reason: string | null;
     unread_count: number;
     last_message_at: string | null;
     last_message_preview: string | null;

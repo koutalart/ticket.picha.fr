@@ -41,6 +41,7 @@ const Sms = () => {
     const conversations = conversationsQuery.data?.data ?? [];
     const settings = settingsQuery.data;
     const canSend = !!settings?.api_key_configured && !!settings?.from_number;
+    const assistantEnabled = !!settings?.assistant_available && !!settings?.assistant_enabled;
 
     useEffect(() => {
         const listed = conversations.find(conversation => conversation.id === selectedId);
@@ -127,6 +128,7 @@ const Sms = () => {
                     detail={selectedId ? detailQuery.data : undefined}
                     isLoading={!!selectedId && detailQuery.isLoading}
                     canSend={canSend}
+                    assistantEnabled={assistantEnabled}
                     onBack={() => select(null)}
                 />
                 <CustomerCard

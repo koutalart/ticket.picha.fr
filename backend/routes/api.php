@@ -12,6 +12,8 @@ use HiEvents\Http\Actions\Sms\SendSmsReplyAction;
 use HiEvents\Http\Actions\Sms\HttpSmsIncomingWebhookAction;
 use HiEvents\Http\Actions\Sms\GetSmsCampaignsAction;
 use HiEvents\Http\Actions\Sms\GetSmsCampaignRecipientsAction;
+use HiEvents\Http\Actions\Sms\RegenerateSmsDraftAction;
+use HiEvents\Http\Actions\Sms\PreviewSmsAssistantAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -375,6 +377,11 @@ $router->middleware(['auth:api'])->group(
         $router->post('/organizers/{organizer_id}/sms/conversations/{conversation_id}/messages', SendSmsReplyAction::class)
             ->where('conversation_id', '[0-9]+')
             ->middleware('throttle:30,1');
+        $router->post('/organizers/{organizer_id}/sms/conversations/{conversation_id}/draft', RegenerateSmsDraftAction::class)
+            ->where('conversation_id', '[0-9]+')
+            ->middleware('throttle:20,1');
+        $router->post('/organizers/{organizer_id}/sms/assistant/preview', PreviewSmsAssistantAction::class)
+            ->middleware('throttle:10,1');
         $router->get('/organizers/{organizer_id}/qr-campaigns', GetQrCampaignsAction::class);
         $router->post('/organizers/{organizer_id}/qr-campaigns', CreateQrCampaignAction::class);
         $router->put('/organizers/{organizer_id}/qr-campaigns/{qr_campaign_id}', UpdateQrCampaignAction::class);

@@ -16,4 +16,11 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
      * @return Collection<int, SmsMessageDomainObject>
      */
     public function findLatestInbound(int $conversationId, int $limit): Collection;
+
+    /**
+     * The most recent messages of a conversation, oldest first.
+     *
+     * @return Collection<int, SmsMessageDomainObject>
+     */
+    public function findLatestForConversation(int $conversationId, int $limit): Collection;
 }

@@ -66,5 +66,7 @@ return [
     'anthropic' => [
         'api_key' => env('ANTHROPIC_API_KEY'),
         'model' => env('ANTHROPIC_MODEL', 'claude-opus-5-5'),
+        // SMS reply assistant: maximum Claude calls per organizer and per day (0 = no limit).
+        'sms_assistant_daily_limit' => (int) env('SMS_ASSISTANT_DAILY_LIMIT', 150),
     ],
 ];
