@@ -124,13 +124,19 @@ class SmsConversationRepository extends BaseRepository implements SmsConversatio
                     ->select('box_office_sales.order_id')
             );
 
-        return DB::table('orders')
-            ->join('events', 'events.id', '=', 'orders.event_id')
-            ->where('events.organizer_id', $organizerId)
-            ->whereNull('orders.deleted_at')
-            ->whereNull('events.deleted_at')
+        $phoneOrderIds = fn (Builder $sub) => $sub->fromSub($matchingOrderIds, 'matching')->select('order_id');
+
+        $matchingEmails = $this->organizerOrders($organizerId)
+            ->whereIn('orders.id', $phoneOrderIds)
+            ->whereNotNull('orders.email')
+            ->where('orders.email', '<>', '')
+            ->selectRaw('lower(orders.email)');
+
+        return $this->organizerOrders($organizerId)
             ->whereNotIn('orders.status', [OrderStatus::RESERVED->name, OrderStatus::ABANDONED->name])
-            ->whereIn('orders.id', fn (Builder $sub) => $sub->fromSub($matchingOrderIds, 'matching')->select('order_id'))
+            ->where(fn (Builder $query) => $query
+                ->whereIn('orders.id', $phoneOrderIds)
+                ->orWhereIn(DB::raw('lower(orders.email)'), $matchingEmails))
             ->orderByDesc('orders.created_at')
             ->limit(self::MAX_CUSTOMER_ORDERS)
             ->get([
@@ -161,5 +167,14 @@ class SmsConversationRepository extends BaseRepository implements SmsConversatio
                 status: (string) $row->status,
                 createdAt: (string) $row->created_at,
             ));
+    }
+
+    private function organizerOrders(int $organizerId): Builder
+    {
+        return DB::table('orders')
+            ->join('events', 'events.id', '=', 'orders.event_id')
+            ->where('events.organizer_id', $organizerId)
+            ->whereNull('orders.deleted_at')
+            ->whereNull('events.deleted_at');
     }
 }
