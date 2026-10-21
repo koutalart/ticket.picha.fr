@@ -12,5 +12,6 @@ class OrganizerSmsSettingsViewDTO extends BaseDataObject
     public function __construct(
         public readonly OrganizerSmsSettingDomainObject $settings,
         public readonly string $webhookUrl,
+        public readonly bool $assistantAvailable,
     ) {}
 }

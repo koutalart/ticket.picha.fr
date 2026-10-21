@@ -15,6 +15,7 @@ import {useFormErrorResponseHandler} from "../../../../../../hooks/useFormErrorR
 import {showError, showSuccess} from "../../../../../../utilites/notifications.tsx";
 import {confirmationDialog} from "../../../../../../utilites/confirmationDialog.tsx";
 import {relativeDate} from "../../../../../../utilites/dates.ts";
+import {SmsAssistantSettings} from "./SmsAssistantSettings.tsx";
 
 export const SmsSettings = () => {
     const {organizerId} = useParams();
@@ -98,6 +99,7 @@ export const SmsSettings = () => {
     };
 
     return (
+        <>
         <Card>
             <HeadingWithDescription
                 heading={t`SMS (httpSMS)`}
@@ -195,5 +197,7 @@ export const SmsSettings = () => {
                 </>
             )}
         </Card>
+        <SmsAssistantSettings/>
+        </>
     );
 };

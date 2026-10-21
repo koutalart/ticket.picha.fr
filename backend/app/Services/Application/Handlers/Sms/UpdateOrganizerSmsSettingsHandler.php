@@ -10,13 +10,17 @@ use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Sms\DTO\OrganizerSmsSettingsViewDTO;
 use HiEvents\Services\Application\Handlers\Sms\DTO\UpdateOrganizerSmsSettingsDTO;
+use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
+use HiEvents\Services\Infrastructure\HtmlPurifier\HtmlPurifierService;
 
 class UpdateOrganizerSmsSettingsHandler
 {
     public function __construct(
         private readonly SmsSettingsService $settingsService,
         private readonly OrganizerSmsSettingRepositoryInterface $settingsRepository,
+        private readonly SmsAssistantService $assistantService,
+        private readonly HtmlPurifierService $purifier,
     ) {}
 
     /**
@@ -36,6 +40,14 @@ class UpdateOrganizerSmsSettingsHandler
             $attributes[OrganizerSmsSettingDomainObjectAbstract::FROM_NUMBER] = $this->normalizeFromNumber($dto->fromNumber);
         }
 
+        if ($dto->wasProvided('assistantEnabled')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_ENABLED] = $dto->assistantEnabled;
+        }
+
+        if ($dto->wasProvided('assistantInstructions')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_INSTRUCTIONS] = $this->cleanInstructions($dto->assistantInstructions);
+        }
+
         if ($attributes !== []) {
             $settings = $this->settingsRepository->updateFromArray($settings->getId(), $attributes);
         }
@@ -43,6 +55,7 @@ class UpdateOrganizerSmsSettingsHandler
         return new OrganizerSmsSettingsViewDTO(
             settings: $settings,
             webhookUrl: $this->settingsService->getWebhookUrl($settings),
+            assistantAvailable: $this->assistantService->isAvailable(),
         );
     }
 
@@ -61,5 +74,13 @@ class UpdateOrganizerSmsSettingsHandler
         }
 
         return $normalized;
+    }
+
+    private function cleanInstructions(?string $instructions): ?string
+    {
+        $purified = (string) $this->purifier->purify($instructions);
+        $text = trim(strip_tags(html_entity_decode($purified, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+
+        return $text !== '' ? $text : null;
     }
 }

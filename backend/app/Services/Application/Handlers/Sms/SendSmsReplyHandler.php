@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Application\Handlers\Sms;
 
+use HiEvents\DomainObjects\Enums\SmsDraftSource;
 use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\Generated\SmsConversationDomainObjectAbstract;
 use HiEvents\DomainObjects\SmsConversationDomainObject;
@@ -43,12 +44,23 @@ class SendSmsReplyHandler
             throw new ResourceNotFoundException(__('Conversation not found'));
         }
 
+        $content = trim($content);
+
         return $this->sendService->send(new SendSmsDTO(
             organizerId: $organizerId,
             phone: $conversation->getPhone(),
-            content: trim($content),
-            authorType: SmsMessageAuthorType::HUMAN,
+            content: $content,
+            authorType: $this->isUnchangedAgentDraft($conversation, $content)
+                ? SmsMessageAuthorType::AGENT
+                : SmsMessageAuthorType::HUMAN,
             sentByUserId: $userId,
         ));
+    }
+
+    private function isUnchangedAgentDraft(SmsConversationDomainObject $conversation, string $content): bool
+    {
+        return $conversation->getDraftSource() === SmsDraftSource::AGENT->name
+            && $conversation->getDraftReply() !== null
+            && trim(str_replace("\r\n", "\n", $conversation->getDraftReply())) === str_replace("\r\n", "\n", $content);
     }
 }

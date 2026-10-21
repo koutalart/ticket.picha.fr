@@ -8,11 +8,15 @@ use HiEvents\Http\Request\BaseRequest;
 
 class UpdateOrganizerSmsSettingsRequest extends BaseRequest
 {
+    public const MAX_INSTRUCTIONS_LENGTH = 2000;
+
     public function rules(): array
     {
         return [
             'api_key' => ['sometimes', 'nullable', 'string', 'min:10', 'max:512', 'regex:/^\S+$/'],
             'from_number' => ['sometimes', 'nullable', 'string', 'max:25', 'regex:/^[0-9+\s().-]+$/'],
+            'assistant_enabled' => ['sometimes', 'boolean'],
+            'assistant_instructions' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_INSTRUCTIONS_LENGTH],
         ];
     }
 }

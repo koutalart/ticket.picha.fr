@@ -15,6 +15,7 @@ use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
+use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use Psr\Log\LoggerInterface;
@@ -36,6 +37,7 @@ class HandleHttpSmsWebhookHandler
         private readonly OrganizerSmsSettingRepositoryInterface $settingsRepository,
         private readonly HttpSmsWebhookSignatureVerifier $signatureVerifier,
         private readonly SmsInboundService $inboundService,
+        private readonly SmsAssistantService $assistantService,
         private readonly LoggerInterface $logger,
     ) {}
 
@@ -96,12 +98,16 @@ class HandleHttpSmsWebhookHandler
                 return;
             }
 
-            $this->inboundService->recordInbound($settings, new InboundSmsDTO(
+            $message = $this->inboundService->recordInbound($settings, new InboundSmsDTO(
                 providerMessageId: $messageId,
                 contact: $data['contact'],
                 content: (string) ($data['content'] ?? ''),
                 timestamp: $data['timestamp'] ?? null,
             ));
+
+            if ($message !== null) {
+                $this->assistantService->queueDraftIfEligible($settings, $message);
+            }
 
             return;
         }

@@ -32,7 +32,10 @@ class UpdateSmsConversationStatusHandler
 
         return $this->conversationRepository->updateByIdWhere(
             id: $conversationId,
-            attributes: [SmsConversationDomainObjectAbstract::STATUS => $status->name],
+            attributes: [
+                SmsConversationDomainObjectAbstract::STATUS => $status->name,
+                ...($status === SmsConversationStatus::NEEDS_HUMAN ? [] : [SmsConversationDomainObjectAbstract::NEEDS_HUMAN_REASON => null]),
+            ],
             where: $where,
         );
     }

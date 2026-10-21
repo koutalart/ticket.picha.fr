@@ -1,10 +1,11 @@
 import {useEffect, useRef, useState} from "react";
 import {t} from "@lingui/macro";
 import {ActionIcon, Alert, Badge, Button, Loader, Select, Text, Textarea} from "@mantine/core";
-import {IconArrowLeft, IconBan, IconSend, IconSparkles} from "@tabler/icons-react";
+import {IconArrowLeft, IconBan, IconRefresh, IconSend, IconSparkles, IconUserExclamation} from "@tabler/icons-react";
 import {IdParam, SmsConversationDetail, SmsConversationStatus} from "../../../../types.ts";
 import {useSendSmsReply} from "../../../../mutations/useSendSmsReply.ts";
 import {useUpdateSmsConversation} from "../../../../mutations/useUpdateSmsConversation.ts";
+import {useRegenerateSmsDraft} from "../../../../mutations/useRegenerateSmsDraft.ts";
 import {showError} from "../../../../utilites/notifications.tsx";
 import {relativeDate} from "../../../../utilites/dates.ts";
 import {conversationStatusLabel, messageAuthorLabel, messageStatusLabel} from "./labels.ts";
@@ -18,22 +19,34 @@ interface ConversationThreadProps {
     detail: SmsConversationDetail | undefined;
     isLoading: boolean;
     canSend: boolean;
+    assistantEnabled: boolean;
     onBack: () => void;
 }
 
-export const ConversationThread = ({organizerId, detail, isLoading, canSend, onBack}: ConversationThreadProps) => {
+export const ConversationThread = ({organizerId, detail, isLoading, canSend, assistantEnabled, onBack}: ConversationThreadProps) => {
     const [content, setContent] = useState('');
     const [error, setError] = useState<string | null>(null);
     const sendMutation = useSendSmsReply();
     const updateMutation = useUpdateSmsConversation();
+    const regenerateMutation = useRegenerateSmsDraft();
     const bottomRef = useRef<HTMLDivElement>(null);
+    const shownDraftRef = useRef<string | null>(null);
     const conversation = detail?.conversation;
     const messageCount = detail?.messages.length ?? 0;
 
     useEffect(() => {
         setContent(conversation?.draft_reply || '');
+        shownDraftRef.current = conversation?.draft_reply || null;
         setError(null);
     }, [conversation?.id]);
+
+    useEffect(() => {
+        const draft = conversation?.draft_reply || null;
+        if (draft && draft !== shownDraftRef.current) {
+            setContent(current => (!current.trim() || current === shownDraftRef.current) ? draft : current);
+        }
+        shownDraftRef.current = draft;
+    }, [conversation?.draft_reply]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({block: 'end'});
@@ -48,6 +61,7 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
     }
 
     const segments = countSmsSegments(content);
+    const needsHumanReason = conversation.needs_human_reason;
     const isDraft = !!conversation.draft_reply && content === conversation.draft_reply;
 
     const send = () => {
@@ -63,6 +77,17 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
                 const response = exception?.response?.data;
                 setError(response?.errors?.content?.[0] || response?.message || t`The SMS could not be sent`);
             },
+        });
+    };
+
+    const regenerate = () => {
+        setError(null);
+        regenerateMutation.mutate({organizerId, conversationId: conversation.id}, {
+            onSuccess: ({data}) => {
+                shownDraftRef.current = data.draft_reply;
+                setContent(data.draft_reply || '');
+            },
+            onError: (exception: any) => showError(exception?.response?.data?.message || t`The assistant could not suggest a reply. Please try again.`),
         });
     };
 
@@ -128,6 +153,11 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
             </div>
 
             <div className={classes.composer}>
+                {conversation.status === 'NEEDS_HUMAN' && needsHumanReason && (
+                    <Alert color="orange" variant="light" icon={<IconUserExclamation size={16}/>} mb="xs">
+                        {t`To handle by your team: ${needsHumanReason}`}
+                    </Alert>
+                )}
                 {detail.opted_out ? (
                     <Alert color="red" variant="light" icon={<IconBan size={16}/>}>
                         {t`This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again.`}
@@ -164,6 +194,17 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
                                 {t`${segments.characters} characters, ${segments.segments} SMS`}
                                 {segments.unicode ? ` ${t`(emoji or special characters: 70 characters per SMS)`}` : ''}
                             </Text>
+                            <div className={classes.composerActions}>
+                            {assistantEnabled && (
+                                <Button
+                                    variant="subtle"
+                                    leftSection={<IconRefresh size={16}/>}
+                                    onClick={regenerate}
+                                    loading={regenerateMutation.isPending}
+                                >
+                                    {t`Regenerate the suggestion`}
+                                </Button>
+                            )}
                             <Button
                                 leftSection={<IconSend size={16}/>}
                                 onClick={send}
@@ -172,6 +213,7 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, onB
                             >
                                 {t`Send`}
                             </Button>
+                            </div>
                         </div>
                     </>
                 )}

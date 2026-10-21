@@ -47,6 +47,7 @@ use HiEvents\Repository\Eloquent\ProductRepository;
 use HiEvents\Repository\Eloquent\PromoCodeRepository;
 use HiEvents\Repository\Eloquent\QrCampaignRepository;
 use HiEvents\Repository\Eloquent\OrganizerSmsSettingRepository;
+use HiEvents\Repository\Eloquent\SmsAssistantCallRepository;
 use HiEvents\Repository\Eloquent\SmsConversationRepository;
 use HiEvents\Repository\Eloquent\SmsMessageRepository;
 use HiEvents\Repository\Eloquent\SmsOptOutRepository;
@@ -110,6 +111,7 @@ use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
@@ -150,6 +152,7 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsConversationRepositoryInterface::class => SmsConversationRepository::class,
         SmsMessageRepositoryInterface::class => SmsMessageRepository::class,
         SmsOptOutRepositoryInterface::class => SmsOptOutRepository::class,
+        SmsAssistantCallRepositoryInterface::class => SmsAssistantCallRepository::class,
         QrLinkVisitRepositoryInterface::class => QrLinkVisitRepository::class,
         OrderItemRepositoryInterface::class => OrderItemRepository::class,
         QuestionRepositoryInterface::class => QuestionRepository::class,

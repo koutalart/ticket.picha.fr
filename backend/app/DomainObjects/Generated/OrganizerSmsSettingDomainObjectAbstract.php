@@ -21,6 +21,8 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const LAST_WEBHOOK_RECEIVED_AT = 'last_webhook_received_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const ASSISTANT_ENABLED = 'assistant_enabled';
+    final public const ASSISTANT_INSTRUCTIONS = 'assistant_instructions';
 
     protected int $id;
     protected int $account_id;
@@ -33,6 +35,8 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $last_webhook_received_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected bool $assistant_enabled = false;
+    protected ?string $assistant_instructions = null;
 
     public function toArray(): array
     {
@@ -48,6 +52,8 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'last_webhook_received_at' => $this->last_webhook_received_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'assistant_enabled' => $this->assistant_enabled ?? null,
+                    'assistant_instructions' => $this->assistant_instructions ?? null,
                 ];
     }
 
@@ -170,5 +176,27 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setAssistantEnabled(bool $assistant_enabled): self
+    {
+        $this->assistant_enabled = $assistant_enabled;
+        return $this;
+    }
+
+    public function getAssistantEnabled(): bool
+    {
+        return $this->assistant_enabled;
+    }
+
+    public function setAssistantInstructions(?string $assistant_instructions): self
+    {
+        $this->assistant_instructions = $assistant_instructions;
+        return $this;
+    }
+
+    public function getAssistantInstructions(): ?string
+    {
+        return $this->assistant_instructions;
     }
 }

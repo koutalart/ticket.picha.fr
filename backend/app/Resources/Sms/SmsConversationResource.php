@@ -19,6 +19,7 @@ class SmsConversationResource extends BaseResource
             'phone' => $this->getPhone(),
             'contact_name' => $this->getContactName(),
             'status' => $this->getStatus(),
+            'needs_human_reason' => $this->getNeedsHumanReason(),
             'unread_count' => $this->getUnreadCount(),
             'last_message_at' => $this->getLastMessageAt(),
             'last_message_preview' => $this->getLastMessagePreview(),

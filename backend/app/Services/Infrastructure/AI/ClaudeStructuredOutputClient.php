@@ -8,6 +8,7 @@ use Anthropic\Client;
 use Anthropic\Core\Exceptions\AnthropicException;
 use HiEvents\Exceptions\EventAssistantFailedException;
 use HiEvents\Exceptions\EventAssistantUnavailableException;
+use HiEvents\Services\Infrastructure\AI\DTO\ClaudeStructuredAnswerDTO;
 use Illuminate\Config\Repository;
 use Psr\Log\LoggerInterface;
 
@@ -42,12 +43,29 @@ class ClaudeStructuredOutputClient
      */
     public function ask(string $system, array $content, array $schema, array $tools = []): array
     {
+        return $this->askWithUsage($system, $content, $schema, $tools)->data;
+    }
+
+    /**
+     * Same as ask(), with the model and token usage of the answer.
+     *
+     * @param  array<int, array<string, mixed>>  $content
+     * @param  array<string, mixed>  $schema
+     * @param  array<int, array<string, mixed>>  $tools
+     *
+     * @throws EventAssistantUnavailableException
+     * @throws EventAssistantFailedException
+     */
+    public function askWithUsage(string $system, array $content, array $schema, array $tools = []): ClaudeStructuredAnswerDTO
+    {
         if (! $this->isConfigured()) {
             throw new EventAssistantUnavailableException(__('The assistant is not available.'));
         }
 
         $client = new Client(apiKey: (string) $this->config->get('services.anthropic.api_key'));
         $messages = [['role' => 'user', 'content' => $content]];
+        $inputTokens = 0;
+        $outputTokens = 0;
 
         try {
             for ($attempt = 0; $attempt <= self::MAX_CONTINUATIONS; $attempt++) {
@@ -64,6 +82,9 @@ class ClaudeStructuredOutputClient
                     tools: $tools === [] ? null : $tools,
                     betas: ['server-side-fallback-2026-07-01'],
                 );
+
+                $inputTokens += $message->usage->inputTokens;
+                $outputTokens += $message->usage->outputTokens;
 
                 if ($message->stopReason !== 'pause_turn') {
                     break;
@@ -86,7 +107,12 @@ class ClaudeStructuredOutputClient
             if ($block->type === 'text') {
                 $data = json_decode($block->text, true);
                 if (is_array($data)) {
-                    return $data;
+                    return new ClaudeStructuredAnswerDTO(
+                        data: $data,
+                        model: $message->model,
+                        inputTokens: $inputTokens,
+                        outputTokens: $outputTokens,
+                    );
                 }
             }
         }

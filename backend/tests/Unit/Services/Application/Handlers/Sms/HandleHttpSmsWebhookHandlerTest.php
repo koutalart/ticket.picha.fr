@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services\Application\Handlers\Sms;
 
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
+use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\Exceptions\SmsWebhookUnauthorizedException;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
@@ -11,6 +12,7 @@ use HiEvents\Services\Application\Handlers\Sms\HandleHttpSmsWebhookHandler;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
+use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use Mockery;
@@ -28,6 +30,8 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
     private SmsInboundService|MockInterface $inboundService;
 
+    private SmsAssistantService|MockInterface $assistantService;
+
     private HandleHttpSmsWebhookHandler $handler;
 
     private OrganizerSmsSettingDomainObject $settings;
@@ -40,12 +44,14 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->settingsRepository = Mockery::mock(OrganizerSmsSettingRepositoryInterface::class);
         $this->verifier = Mockery::mock(HttpSmsWebhookSignatureVerifier::class);
         $this->inboundService = Mockery::mock(SmsInboundService::class);
+        $this->assistantService = Mockery::mock(SmsAssistantService::class);
 
         $this->handler = new HandleHttpSmsWebhookHandler(
             $this->settingsService,
             $this->settingsRepository,
             $this->verifier,
             $this->inboundService,
+            $this->assistantService,
             new NullLogger,
         );
 
@@ -85,6 +91,18 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
                 && $sms->providerMessageId === 'msg-1'
                 && $sms->contact === '+262639123456'
                 && $sms->content === 'STOP');
+        $this->assistantService->shouldReceive('queueDraftIfEligible')->never();
+
+        $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
+    }
+
+    public function test_recorded_message_is_handed_to_the_assistant(): void
+    {
+        $this->expectVerified();
+        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3);
+
+        $this->inboundService->shouldReceive('recordInbound')->once()->andReturn($message);
+        $this->assistantService->shouldReceive('queueDraftIfEligible')->once()->with($this->settings, $message);
 
         $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
     }
