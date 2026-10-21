@@ -47,6 +47,8 @@ import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 import {EmbeddedRegistration} from "../../routes/product-widget/EmbeddedRegistration";
 import {isEmbeddedRegistrationEnabled} from "../../../utilites/embeddedRegistration.ts";
 
+const VIDEO_PAUSE_PROGRESS = 0.6;
+
 interface EventHomepageProps {
     event?: Event;
     promoCodeValid?: boolean;
@@ -121,6 +123,15 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
             }
             const progress = Math.min(1, Math.max(0, window.scrollY / Math.max(1, window.innerHeight)));
             hero.style.setProperty('--hero-progress', progress.toFixed(3));
+
+            const video = hero.querySelector('video');
+            if (video && hero.dataset.pauseOnScroll === 'true') {
+                if (progress >= VIDEO_PAUSE_PROGRESS && !video.paused) {
+                    video.pause();
+                } else if (progress < VIDEO_PAUSE_PROGRESS && video.paused) {
+                    video.play().catch(() => undefined);
+                }
+            }
         };
 
         const handleScroll = () => {
@@ -308,7 +319,11 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                 <div className={classes.container}>
                     {isFullscreenHero && (
-                        <section className={classes.fullscreenHero} ref={fullscreenHeroRef}>
+                        <section
+                            className={classes.fullscreenHero}
+                            ref={fullscreenHeroRef}
+                            data-pause-on-scroll={isEmbeddedRegistration ? 'true' : undefined}
+                        >
                             {coverVideoSource ? (
                                 <video
                                     src={coverVideoSource}

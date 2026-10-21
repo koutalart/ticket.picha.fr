@@ -1556,6 +1556,10 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   object-fit: contain;
 }
 
+.fullscreenHero[data-pause-on-scroll="true"] .fullscreenMedia {
+  transform: scale(calc(1.02 + var(--hero-progress) * 0.3));
+}
+
 .fullscreenHero ~ .wrapper {
   position: relative;
   z-index: 1;
@@ -1581,7 +1585,6 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   color: #fff;
   font-family: $font-body;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.72) 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .landingFooterInner {
