@@ -34,6 +34,7 @@ abstract class ContactDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     final public const LAST_SYNCED_AT = 'last_synced_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const PUBLIC_CODE = 'public_code';
 
     protected int $id;
     protected int $organizer_id;
@@ -59,6 +60,7 @@ abstract class ContactDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     protected ?string $last_synced_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected string $public_code;
 
     public function toArray(): array
     {
@@ -87,6 +89,7 @@ abstract class ContactDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
                     'last_synced_at' => $this->last_synced_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'public_code' => $this->public_code ?? null,
                 ];
     }
 
@@ -352,5 +355,16 @@ abstract class ContactDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setPublicCode(string $public_code): self
+    {
+        $this->public_code = $public_code;
+        return $this;
+    }
+
+    public function getPublicCode(): string
+    {
+        return $this->public_code;
     }
 }

@@ -53,6 +53,7 @@ use HiEvents\Http\Actions\QrLinks\GetQrLinkPosterAction;
 use HiEvents\Http\Actions\QrLinks\GetQrLinkStatsAction;
 use HiEvents\Http\Actions\QrLinks\Public\GetQrLinkPublicAction;
 use HiEvents\Http\Actions\QrLinks\Public\RecordQrLinkVisitPublicAction;
+use HiEvents\Http\Actions\Contacts\Public\RecordContactLinkVisitPublicAction;
 use HiEvents\Http\Actions\QrLinks\UpdateQrLinkAction;
 use HiEvents\Http\Actions\Tickets\GetAttendeeTicketImageActionPublic;
 use HiEvents\Http\Actions\Tickets\GetEventTicketPreviewImageAction;
@@ -713,6 +714,11 @@ $router->prefix('/public')->group(
             ->where('short_id', '[A-Za-z0-9]{4,32}');
         $router->post('/qr-links/{short_id}/visits', RecordQrLinkVisitPublicAction::class)
             ->where('short_id', '[A-Za-z0-9]{4,32}')
+            ->middleware('throttle:60,1');
+
+        // Personal contact links (?c=)
+        $router->post('/contact-links/{code}/visits', RecordContactLinkVisitPublicAction::class)
+            ->where('code', '[A-Za-z0-9]{6,16}')
             ->middleware('throttle:60,1');
 
         // Demo requests

@@ -15,6 +15,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     final public const PROMO_CODE_ID = 'promo_code_id';
     final public const AFFILIATE_ID = 'affiliate_id';
     final public const QR_LINK_ID = 'qr_link_id';
+    final public const ATTRIBUTED_CONTACT_ID = 'attributed_contact_id';
     final public const SHORT_ID = 'short_id';
     final public const TOTAL_BEFORE_ADDITIONS = 'total_before_additions';
     final public const TOTAL_REFUNDED = 'total_refunded';
@@ -53,6 +54,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     protected ?int $promo_code_id = null;
     protected ?int $affiliate_id = null;
     protected ?int $qr_link_id = null;
+    protected ?int $attributed_contact_id = null;
     protected string $short_id;
     protected float $total_before_additions = 0.0;
     protected float $total_refunded = 0.0;
@@ -94,6 +96,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
                     'promo_code_id' => $this->promo_code_id ?? null,
                     'affiliate_id' => $this->affiliate_id ?? null,
                     'qr_link_id' => $this->qr_link_id ?? null,
+                    'attributed_contact_id' => $this->attributed_contact_id ?? null,
                     'short_id' => $this->short_id ?? null,
                     'total_before_additions' => $this->total_before_additions ?? null,
                     'total_refunded' => $this->total_refunded ?? null,
@@ -182,6 +185,17 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     public function getQrLinkId(): ?int
     {
         return $this->qr_link_id;
+    }
+
+    public function setAttributedContactId(?int $attributed_contact_id): self
+    {
+        $this->attributed_contact_id = $attributed_contact_id;
+        return $this;
+    }
+
+    public function getAttributedContactId(): ?int
+    {
+        return $this->attributed_contact_id;
     }
 
     public function setShortId(string $short_id): self

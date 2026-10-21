@@ -124,6 +124,7 @@ const Contacts = () => {
         ATTENDEE: t`Ticket received`,
         IMPORT: t`Import`,
         MANUAL: t`Added by hand`,
+        SMS_CAMPAIGN: t`SMS campaign`,
     };
 
     const formatDay = (date?: string | null) => date ? formatDateWithLocale(date, 'shortDate', timezone) : '—';

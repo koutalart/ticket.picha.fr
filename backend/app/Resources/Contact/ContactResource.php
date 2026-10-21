@@ -20,6 +20,7 @@ class ContactResource extends BaseResource
             'last_name' => $this->getLastName(),
             'email' => $this->getEmail(),
             'phone' => $this->getPhone(),
+            'public_code' => $this->getPublicCode(),
             'source' => $this->getSource(),
             'email_consent' => $this->hasEmailConsent(),
             'email_consent_at' => $this->getEmailConsentAt(),

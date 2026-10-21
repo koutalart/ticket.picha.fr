@@ -46,6 +46,7 @@ class CreateOrderActionPublic extends BaseAction
                 'promo_code' => $request->input('promo_code'),
                 'affiliate_code' => $request->input('affiliate_code'),
                 'qr_link_code' => is_string($request->input('qr_link_code')) ? $request->input('qr_link_code') : null,
+                'contact_code' => is_string($request->input('contact_code')) ? $request->input('contact_code') : null,
                 'tracking_context' => $this->trackingContextFactory->create(
                     input: is_array($request->input('tracking_context')) ? $request->input('tracking_context') : null,
                     ipAddress: $request->ip(),

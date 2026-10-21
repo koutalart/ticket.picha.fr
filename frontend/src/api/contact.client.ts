@@ -14,7 +14,8 @@ export interface Contact {
     last_name?: string | null;
     email?: string | null;
     phone?: string | null;
-    source: 'ORDER' | 'ATTENDEE' | 'IMPORT' | 'MANUAL';
+    public_code: string;
+    source: 'ORDER' | 'ATTENDEE' | 'IMPORT' | 'MANUAL' | 'SMS_CAMPAIGN';
     email_consent: boolean;
     email_consent_at?: string | null;
     email_consent_source?: 'CHECKOUT' | 'IMPORT' | 'MANUAL' | null;
