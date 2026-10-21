@@ -69,3 +69,22 @@ Légende : ✅ déjà en place · 🔧 la plateforme sait le faire, réglage à 
 2. SMS de rappel programmé à une date (si la messagerie SMS ne le permet pas encore).
 3. Statistiques des réponses aux questions (profil, commune) dans le tableau de bord.
 4. Contrôle d'âge des mineurs, si Mayotte La 1ère fixe une règle stricte.
+
+## 8. Tableau de bord de suivi (complément)
+
+| Besoin | État | Ce qui existe / ce qui manque |
+|---|---|---|
+| Inscrits et places restantes en temps réel | ✅ | Tableau de bord de l'événement (statistiques : inscrits, commandes, billets restants du produit). |
+| Quotas en temps réel | ✅ / 🔧 | Une fois les billets par quota et la capacité partagée créés, l'écran Capacités affiche le remplissage de chaque quota. |
+| Liste d'attente en temps réel | ✅ | Écran Liste d'attente (statistiques : en attente, offres envoyées, converties, expirées). |
+| Répartition par profil et par commune | ❌ (export ✅) | Export des réponses aux questions (CSV/Excel) et export des participants : la répartition se calcule dans un tableur. Graphiques par réponse dans le tableau de bord : à développer. |
+| Annulations | ✅ / ❌ | Les commandes annulées par l'organisateur sont visibles et exportables. Annulation par le participant : à développer (voir point 4). |
+| Confirmations après le rappel J-2 | ❌ | Pas de bouton « Je confirme ma venue » ni de statut de confirmation. À développer : lien « Je viens / Je ne viens plus » dans le rappel, compteur dans le tableau de bord. |
+| Taux de présence le jour J | ✅ | Statistiques de la liste de contrôle des entrées : entrés / inscrits, en direct. |
+| Liste nominative exportable (contrôle, sécurité, bilan) | ✅ | Export des participants (nom, e-mail, billet, statut d'entrée) et export des réponses (téléphone, commune, profil). Un export unique « tout en un » pour la sécurité serait plus simple : à développer si besoin. |
+
+### Ce qui manque pour le tableau de bord (code noyau)
+
+5. Graphiques de répartition des réponses aux questions (profil, commune) sur le tableau de bord de l'événement.
+6. Confirmation de venue après le rappel J-2 (lien dans l'e-mail ou le SMS, statut par participant, compteur).
+7. Export unique pour la sécurité : participants + réponses aux questions + statut d'entrée dans un seul fichier.
