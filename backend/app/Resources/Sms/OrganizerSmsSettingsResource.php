@@ -29,6 +29,13 @@ class OrganizerSmsSettingsResource extends BaseResource
             'assistant_available' => $this->assistantAvailable,
             'assistant_enabled' => $settings->getAssistantEnabled(),
             'assistant_instructions' => $settings->getAssistantInstructions(),
+            'history_import' => [
+                'status' => $settings->getHistoryImportStatus(),
+                'started_at' => $settings->getHistoryImportStartedAt(),
+                'finished_at' => $settings->getHistoryImportFinishedAt(),
+                'imported_count' => $settings->getHistoryImportCount(),
+                'error' => $settings->getHistoryImportError(),
+            ],
         ];
     }
 }

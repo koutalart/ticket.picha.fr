@@ -26,6 +26,11 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const PHONE_STATUS_CHANGED_AT = 'phone_status_changed_at';
     final public const ASSISTANT_ENABLED = 'assistant_enabled';
     final public const ASSISTANT_INSTRUCTIONS = 'assistant_instructions';
+    final public const HISTORY_IMPORT_STATUS = 'history_import_status';
+    final public const HISTORY_IMPORT_STARTED_AT = 'history_import_started_at';
+    final public const HISTORY_IMPORT_FINISHED_AT = 'history_import_finished_at';
+    final public const HISTORY_IMPORT_COUNT = 'history_import_count';
+    final public const HISTORY_IMPORT_ERROR = 'history_import_error';
 
     protected int $id;
     protected int $account_id;
@@ -43,6 +48,11 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $phone_status_changed_at = null;
     protected bool $assistant_enabled = true;
     protected ?string $assistant_instructions = null;
+    protected ?string $history_import_status = null;
+    protected ?string $history_import_started_at = null;
+    protected ?string $history_import_finished_at = null;
+    protected ?int $history_import_count = null;
+    protected ?string $history_import_error = null;
 
     public function toArray(): array
     {
@@ -63,6 +73,11 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'phone_status_changed_at' => $this->phone_status_changed_at ?? null,
                     'assistant_enabled' => $this->assistant_enabled ?? null,
                     'assistant_instructions' => $this->assistant_instructions ?? null,
+                    'history_import_status' => $this->history_import_status ?? null,
+                    'history_import_started_at' => $this->history_import_started_at ?? null,
+                    'history_import_finished_at' => $this->history_import_finished_at ?? null,
+                    'history_import_count' => $this->history_import_count ?? null,
+                    'history_import_error' => $this->history_import_error ?? null,
                 ];
     }
 
@@ -240,5 +255,60 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getAssistantInstructions(): ?string
     {
         return $this->assistant_instructions;
+    }
+
+    public function setHistoryImportStatus(?string $history_import_status): self
+    {
+        $this->history_import_status = $history_import_status;
+        return $this;
+    }
+
+    public function getHistoryImportStatus(): ?string
+    {
+        return $this->history_import_status;
+    }
+
+    public function setHistoryImportStartedAt(?string $history_import_started_at): self
+    {
+        $this->history_import_started_at = $history_import_started_at;
+        return $this;
+    }
+
+    public function getHistoryImportStartedAt(): ?string
+    {
+        return $this->history_import_started_at;
+    }
+
+    public function setHistoryImportFinishedAt(?string $history_import_finished_at): self
+    {
+        $this->history_import_finished_at = $history_import_finished_at;
+        return $this;
+    }
+
+    public function getHistoryImportFinishedAt(): ?string
+    {
+        return $this->history_import_finished_at;
+    }
+
+    public function setHistoryImportCount(?int $history_import_count): self
+    {
+        $this->history_import_count = $history_import_count;
+        return $this;
+    }
+
+    public function getHistoryImportCount(): ?int
+    {
+        return $this->history_import_count;
+    }
+
+    public function setHistoryImportError(?string $history_import_error): self
+    {
+        $this->history_import_error = $history_import_error;
+        return $this;
+    }
+
+    public function getHistoryImportError(): ?string
+    {
+        return $this->history_import_error;
     }
 }

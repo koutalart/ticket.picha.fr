@@ -13,6 +13,7 @@ use HiEvents\DomainObjects\Status\SmsConversationStatus;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Carbon;
 
 class SmsConversationService
 {
@@ -54,9 +55,14 @@ class SmsConversationService
         SmsMessageDirection $direction,
         string $content,
         bool $markUnread,
+        ?string $occurredAt = null,
     ): SmsConversationDomainObject {
+        if ($occurredAt !== null && $this->isOlderThanLastMessage($conversation, $occurredAt)) {
+            return $conversation;
+        }
+
         $attributes = [
-            SmsConversationDomainObjectAbstract::LAST_MESSAGE_AT => now()->toDateTimeString(),
+            SmsConversationDomainObjectAbstract::LAST_MESSAGE_AT => $occurredAt ?? now()->toDateTimeString(),
             SmsConversationDomainObjectAbstract::LAST_MESSAGE_PREVIEW => mb_substr($content, 0, self::PREVIEW_LENGTH),
             SmsConversationDomainObjectAbstract::LAST_MESSAGE_DIRECTION => $direction->name,
         ];
@@ -65,11 +71,18 @@ class SmsConversationService
             $attributes[SmsConversationDomainObjectAbstract::UNREAD_COUNT] = $conversation->getUnreadCount() + 1;
         }
 
-        if ($direction === SmsMessageDirection::INBOUND && $conversation->getStatus() === SmsConversationStatus::CLOSED->name) {
+        if ($occurredAt === null && $direction === SmsMessageDirection::INBOUND && $conversation->getStatus() === SmsConversationStatus::CLOSED->name) {
             $attributes[SmsConversationDomainObjectAbstract::STATUS] = SmsConversationStatus::OPEN->name;
         }
 
         return $this->conversationRepository->updateFromArray($conversation->getId(), $attributes);
+    }
+
+    private function isOlderThanLastMessage(SmsConversationDomainObject $conversation, string $occurredAt): bool
+    {
+        $lastMessageAt = $conversation->getLastMessageAt();
+
+        return $lastMessageAt !== null && Carbon::parse($lastMessageAt)->gte(Carbon::parse($occurredAt));
     }
 
     public function isOptedOut(int $organizerId, string $phone): bool

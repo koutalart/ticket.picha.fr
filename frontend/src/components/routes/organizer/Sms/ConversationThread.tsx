@@ -1,15 +1,18 @@
 import {useEffect, useRef, useState} from "react";
 import {t} from "@lingui/macro";
-import {ActionIcon, Alert, Badge, Button, Loader, Select, Text, Textarea, UnstyledButton} from "@mantine/core";
-import {IconArrowLeft, IconBan, IconRefresh, IconSend, IconSparkles, IconUserExclamation} from "@tabler/icons-react";
+import {NavLink} from "react-router";
+import {ActionIcon, Alert, Badge, Button, Loader, Menu, Select, Text, Textarea, UnstyledButton} from "@mantine/core";
+import {IconArrowLeft, IconBan, IconMessageBolt, IconRefresh, IconSend, IconSettings, IconSparkles, IconUserExclamation} from "@tabler/icons-react";
 import {IdParam, SmsConversationDetail, SmsConversationStatus} from "../../../../types.ts";
 import {useSendSmsReply} from "../../../../mutations/useSendSmsReply.ts";
 import {useUpdateSmsConversation} from "../../../../mutations/useUpdateSmsConversation.ts";
 import {useRegenerateSmsDraft} from "../../../../mutations/useRegenerateSmsDraft.ts";
+import {useGetSmsReplyTemplates} from "../../../../queries/useGetSmsReplyTemplates.ts";
 import {showError} from "../../../../utilites/notifications.tsx";
 import {relativeDate} from "../../../../utilites/dates.ts";
 import {conversationStatusLabel, messageAuthorLabel, messageStatusLabel} from "./labels.ts";
 import {countSmsSegments} from "./smsSegments.ts";
+import {applyReplyTemplate, contactFirstName} from "./replyTemplates.ts";
 import classes from "./Sms.module.scss";
 
 const MAX_LENGTH = 640;
@@ -32,6 +35,9 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
     const regenerateMutation = useRegenerateSmsDraft();
     const bottomRef = useRef<HTMLDivElement>(null);
     const shownDraftRef = useRef<string | null>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const templatesQuery = useGetSmsReplyTemplates(canSend ? organizerId : undefined);
+    const templates = templatesQuery.data ?? [];
     const conversation = detail?.conversation;
     const messageCount = detail?.messages.length ?? 0;
 
@@ -89,6 +95,24 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
                 setContent(data.draft_reply || '');
             },
             onError: (exception: any) => showError(exception?.response?.data?.message || t`The assistant could not suggest a reply. Please try again.`),
+        });
+    };
+
+    const insertTemplate = (templateContent: string) => {
+        const text = applyReplyTemplate(templateContent, contactFirstName(detail));
+        const textarea = textareaRef.current;
+        const start = textarea?.selectionStart ?? content.length;
+        const end = textarea?.selectionEnd ?? content.length;
+        const before = content.slice(0, start);
+        const after = content.slice(end);
+        const separator = before && !/\s$/.test(before) ? ' ' : '';
+        const next = (before + separator + text + after).slice(0, MAX_LENGTH);
+
+        setContent(next);
+        requestAnimationFrame(() => {
+            const position = Math.min(next.length, before.length + separator.length + text.length);
+            textarea?.focus();
+            textarea?.setSelectionRange(position, position);
         });
     };
 
@@ -175,6 +199,7 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
                             </Badge>
                         )}
                         <Textarea
+                            ref={textareaRef}
                             value={content}
                             onChange={(event) => setContent(event.currentTarget.value)}
                             placeholder={t`Write your reply`}
@@ -196,24 +221,50 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
                                 {segments.unicode ? ` ${t`(emoji or special characters: 70 characters per SMS)`}` : ''}
                             </Text>
                             <div className={classes.composerActions}>
-                            {assistantEnabled && (
+                                {assistantEnabled && (
+                                    <Button
+                                        variant="subtle"
+                                        leftSection={<IconRefresh size={16}/>}
+                                        onClick={regenerate}
+                                        loading={regenerateMutation.isPending}
+                                    >
+                                        {t`Regenerate the suggestion`}
+                                    </Button>
+                                )}
+                                <Menu position="top-end" withinPortal shadow="md" width={280}>
+                                    <Menu.Target>
+                                        <Button variant="default" leftSection={<IconMessageBolt size={16}/>}>
+                                            {t`Templates`}
+                                        </Button>
+                                    </Menu.Target>
+                                    <Menu.Dropdown className={classes.templateMenu}>
+                                        {templates.length === 0 && (
+                                            <Menu.Label>{t`No reply template yet`}</Menu.Label>
+                                        )}
+                                        {templates.map(template => (
+                                            <Menu.Item key={template.id} onClick={() => insertTemplate(template.content)}>
+                                                <Text size="sm" fw={600}>{template.name}</Text>
+                                                <Text size="xs" c="dimmed" lineClamp={2}>{template.content}</Text>
+                                            </Menu.Item>
+                                        ))}
+                                        <Menu.Divider/>
+                                        <Menu.Item
+                                            component={NavLink}
+                                            to={`/manage/organizer/${organizerId}/settings#sms-reply-templates`}
+                                            leftSection={<IconSettings size={14}/>}
+                                        >
+                                            {t`Manage reply templates`}
+                                        </Menu.Item>
+                                    </Menu.Dropdown>
+                                </Menu>
                                 <Button
-                                    variant="subtle"
-                                    leftSection={<IconRefresh size={16}/>}
-                                    onClick={regenerate}
-                                    loading={regenerateMutation.isPending}
+                                    leftSection={<IconSend size={16}/>}
+                                    onClick={send}
+                                    loading={sendMutation.isPending}
+                                    disabled={!content.trim()}
                                 >
-                                    {t`Regenerate the suggestion`}
+                                    {t`Send`}
                                 </Button>
-                            )}
-                            <Button
-                                leftSection={<IconSend size={16}/>}
-                                onClick={send}
-                                loading={sendMutation.isPending}
-                                disabled={!content.trim()}
-                            >
-                                {t`Send`}
-                            </Button>
                             </div>
                         </div>
                     </>

@@ -1306,6 +1306,34 @@ export interface OrganizerSmsSettings {
     assistant_available: boolean;
     assistant_enabled: boolean;
     assistant_instructions: string | null;
+    history_import: SmsHistoryImport;
+}
+
+export type SmsHistoryImportStatus = 'RUNNING' | 'COMPLETED' | 'FAILED';
+
+export interface SmsHistoryImport {
+    status: SmsHistoryImportStatus | null;
+    started_at: string | null;
+    finished_at: string | null;
+    imported_count: number | null;
+    error: string | null;
+}
+
+export interface SmsReplyTemplate {
+    id: number;
+    name: string;
+    content: string;
+    updated_at: string;
+}
+
+export type SmsOptOutSource = 'KEYWORD' | 'MANUAL';
+
+export interface SmsOptOut {
+    id: number;
+    phone: string;
+    source: SmsOptOutSource;
+    contact_name: string | null;
+    created_at: string;
 }
 
 export type SmsAssistantOutcome = 'DRAFT' | 'NEEDS_HUMAN';
