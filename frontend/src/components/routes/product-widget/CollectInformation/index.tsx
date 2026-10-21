@@ -76,6 +76,13 @@ export const CollectInformation = () => {
     const requireBillingAddress = event?.settings?.require_billing_address;
     const isPerOrderCollection = event?.settings?.attendee_details_collection_method === 'PER_ORDER';
     const allowCopyToAllAttendees = event?.settings?.allow_copy_details_to_all_attendees ?? true;
+    const ageRestrictionRule = event?.settings?.age_restriction_rule ?? 'NONE';
+    const isAgeCheckEnabled = ageRestrictionRule === 'ACCOMPANIED_MINORS' || ageRestrictionRule === 'MINIMUM_AGE';
+    const ageLimit = event?.settings?.age_restriction_minimum_age ?? 18;
+    const ageRestrictionHint = ageRestrictionRule === 'MINIMUM_AGE'
+        ? t`This event is restricted to attendees aged ${ageLimit} or over.`
+        : t`Attendees under ${ageLimit} must be accompanied by an adult registered in the same order.`;
+    const todayIsoDate = new Date().toISOString().slice(0, 10);
     const isFreeEvent = !!order
         && !order.is_payment_required
         && (orderItems?.length ?? 0) > 0
@@ -111,6 +118,7 @@ export const CollectInformation = () => {
                 email_confirmation: "",
                 product_price_id: "",
                 product_id: "",
+                birth_date: "",
                 questions: {},
             }],
         },
@@ -125,6 +133,13 @@ export const CollectInformation = () => {
                     const product = values.products[index];
                     if (product && product.email !== value) {
                         return t`Email addresses do not match`;
+                    }
+                    return null;
+                },
+                birth_date: (value, _values, path) => {
+                    const index = parseInt(path.split('.')[1]);
+                    if (isAgeCheckEnabled && getTicketAttendeeIndices().includes(index) && !value) {
+                        return t`Date of birth is required`;
                     }
                     return null;
                 },
@@ -288,6 +303,7 @@ export const CollectInformation = () => {
                     last_name: "",
                     email: "",
                     email_confirmation: "",
+                    birth_date: "",
                     questions: productIdToQuestionMap.get(orderItem?.product_id)?.map((question: Question) => {
                         return {
                             question_id: question.id,
@@ -620,12 +636,13 @@ export const CollectInformation = () => {
                     const product = products?.find(product => product!.id === orderItem.product_id);
                     const productRequiresDetails = product?.product_type === 'TICKET' && !isPerOrderCollection;
                     const productHasQuestions = productQuestions?.some(question => question.product_ids?.includes(orderItem.product_id));
+                    const productRequiresBirthDate = product?.product_type === 'TICKET' && isAgeCheckEnabled;
 
                     if (!product) {
                         return null;
                     }
 
-                    if (!productRequiresDetails && !productHasQuestions) {
+                    if (!productRequiresDetails && !productHasQuestions && !productRequiresBirthDate) {
                         // Still increment productIndex for each item in the quantity
                         // to maintain correct form field indices
                         productIndex += orderItem.quantity ?? 0;
@@ -729,6 +746,19 @@ export const CollectInformation = () => {
                                                     />
                                                 </InputGroup>
                                             </>
+                                        )}
+
+                                        {productRequiresBirthDate && (
+                                            <InputGroup>
+                                                <TextInput
+                                                    withAsterisk
+                                                    type={"date"}
+                                                    label={t`Date of birth`}
+                                                    description={ageRestrictionHint}
+                                                    max={todayIsoDate}
+                                                    {...form.getInputProps(`products.${currentProductIndex}.birth_date`)}
+                                                />
+                                            </InputGroup>
                                         )}
 
                                         {productQuestions &&

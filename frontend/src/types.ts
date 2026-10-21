@@ -270,6 +270,10 @@ export interface EventSettings {
 
     choose_category_first?: boolean;
 
+    // Age restriction settings
+    age_restriction_rule?: AgeRestrictionRule;
+    age_restriction_minimum_age?: number;
+
     // Simplified homepage theme settings (new 2-color + mode system)
     homepage_theme_settings?: HomepageThemeSettings;
 
@@ -737,6 +741,8 @@ export interface ProductCategory {
     selection_label?: string | null;
 }
 
+export type AgeRestrictionRule = 'NONE' | 'ACCOMPANIED_MINORS' | 'MINIMUM_AGE';
+
 export interface Attendee {
     id?: number;
     product_id: number;
@@ -748,6 +754,7 @@ export interface Attendee {
     last_name: string;
     email: string | null;
     notes?: string;
+    birth_date?: string | null;
     order?: Order;
     public_id: string;
     short_id: string;
