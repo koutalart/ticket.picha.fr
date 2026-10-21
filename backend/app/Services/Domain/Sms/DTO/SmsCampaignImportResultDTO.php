@@ -10,6 +10,7 @@ class SmsCampaignImportResultDTO extends BaseDataObject
 {
     /**
      * @param  string[]  $warnings
+     * @param  SmsCampaignRecipientMessageDTO[]  $messages
      */
     public function __construct(
         public readonly int $campaignId,
@@ -18,5 +19,7 @@ class SmsCampaignImportResultDTO extends BaseDataObject
         public readonly int $linkedQrLinks,
         public readonly array $warnings,
         public readonly bool $qrCampaignRetired,
+        public readonly int $contactsCreated = 0,
+        public readonly array $messages = [],
     ) {}
 }

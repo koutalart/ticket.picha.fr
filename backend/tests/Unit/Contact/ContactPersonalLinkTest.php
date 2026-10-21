@@ -10,6 +10,7 @@ use HiEvents\Models\ContactLinkVisit;
 use HiEvents\Models\Event;
 use HiEvents\Models\Organizer;
 use HiEvents\Models\QrLink;
+use HiEvents\Models\SmsCampaignRecipient;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Services\Domain\Contact\ContactLinkVisitRecorder;
 use HiEvents\Services\Domain\Contact\ContactPersonalLinkService;
@@ -144,7 +145,7 @@ class ContactPersonalLinkTest extends TestCase
         $result = $this->app->make(SmsRecipientContactLinker::class)->link($this->event->organizer_id);
 
         self::assertSame(3, $result->linkedQrLinks);
-        self::assertSame(1, $result->createdContacts);
+        self::assertSame(0, $result->createdContacts);
 
         $fatima = Contact::where('phone', '+262639111111')->firstOrFail();
         self::assertSame('SMS_CAMPAIGN', $fatima->source);
@@ -155,6 +156,7 @@ class ContactPersonalLinkTest extends TestCase
         self::assertSame($fatima->id, QrLink::where('short_id', 'smscccc3')->value('contact_id'));
         self::assertSame($existing->id, QrLink::where('short_id', 'smsbbbb2')->value('contact_id'));
         self::assertNull(QrLink::where('short_id', 'affiche1')->value('contact_id'));
+        self::assertSame([$fatima->id, $existing->id, $fatima->id], SmsCampaignRecipient::orderBy('id')->pluck('contact_id')->all());
 
         $again = $this->app->make(SmsRecipientContactLinker::class)->link();
         self::assertSame(0, $again->linkedQrLinks);

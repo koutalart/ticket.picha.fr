@@ -13,6 +13,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     final public const ID = 'id';
     final public const SMS_CAMPAIGN_ID = 'sms_campaign_id';
     final public const QR_LINK_ID = 'qr_link_id';
+    final public const CONTACT_ID = 'contact_id';
     final public const PHONE = 'phone';
     final public const CONTACT_NAME = 'contact_name';
     final public const PROVIDER_MESSAGE_ID = 'provider_message_id';
@@ -27,6 +28,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     protected int $id;
     protected int $sms_campaign_id;
     protected ?int $qr_link_id = null;
+    protected ?int $contact_id = null;
     protected string $phone;
     protected ?string $contact_name = null;
     protected ?string $provider_message_id = null;
@@ -44,6 +46,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
                     'id' => $this->id ?? null,
                     'sms_campaign_id' => $this->sms_campaign_id ?? null,
                     'qr_link_id' => $this->qr_link_id ?? null,
+                    'contact_id' => $this->contact_id ?? null,
                     'phone' => $this->phone ?? null,
                     'contact_name' => $this->contact_name ?? null,
                     'provider_message_id' => $this->provider_message_id ?? null,
@@ -88,6 +91,17 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     public function getQrLinkId(): ?int
     {
         return $this->qr_link_id;
+    }
+
+    public function setContactId(?int $contact_id): self
+    {
+        $this->contact_id = $contact_id;
+        return $this;
+    }
+
+    public function getContactId(): ?int
+    {
+        return $this->contact_id;
     }
 
     public function setPhone(string $phone): self

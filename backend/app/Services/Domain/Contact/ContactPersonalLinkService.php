@@ -6,6 +6,7 @@ namespace HiEvents\Services\Domain\Contact;
 
 use HiEvents\DomainObjects\ContactDomainObject;
 use HiEvents\DomainObjects\Generated\ContactDomainObjectAbstract;
+use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Repository\Interfaces\ContactRepositoryInterface;
 use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
 
@@ -85,5 +86,13 @@ class ContactPersonalLinkService
         $query[self::QUERY_PARAM] = $contact->getPublicCode();
 
         return $path.'?'.http_build_query($query).$fragment;
+    }
+
+    public function getOrganizerSiteUrl(?OrganizerDomainObject $organizer): ?string
+    {
+        $domain = strtolower(trim((string) $organizer?->getCustomDomain(), " \t\n\r\0\x0B/"));
+        $domain = preg_replace('~^https?://~', '', $domain);
+
+        return $domain === '' ? null : 'https://'.$domain.'/';
     }
 }

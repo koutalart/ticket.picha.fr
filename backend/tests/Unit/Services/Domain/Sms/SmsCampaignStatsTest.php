@@ -6,8 +6,11 @@ use HiEvents\DomainObjects\QrLinkDomainObject;
 use HiEvents\DomainObjects\SmsCampaignDomainObject;
 use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
 use HiEvents\Helper\IdHelper;
+use HiEvents\Models\Contact;
+use HiEvents\Models\ContactLinkVisit;
 use HiEvents\Models\Event;
 use HiEvents\Models\Order;
+use HiEvents\Models\Organizer;
 use HiEvents\Models\QrCampaign;
 use HiEvents\Models\QrLink;
 use HiEvents\Models\SmsCampaignRecipient;
@@ -120,6 +123,107 @@ class SmsCampaignStatsTest extends TestCase
         $recipient = SmsCampaignRecipient::where('provider_message_id', 'prov-3')->first();
         self::assertSame('DELIVERED', $recipient->status);
         self::assertSame('2026-10-21 09:00:00', (string) $recipient->delivered_at);
+    }
+
+    public function test_personal_link_variable_gives_each_recipient_their_own_c_link(): void
+    {
+        Organizer::where('id', $this->event->organizer_id)->update(['custom_domain' => 'innocent976.yt']);
+        $fatima = $this->contact('+262639111111');
+
+        $result = $this->importPersonal([
+            new SmsCampaignImportRecipientDTO(phone: '0639111111', contactName: 'Fatima'),
+            new SmsCampaignImportRecipientDTO(phone: '+262 639 22 22 22', contactName: 'Anli Madi'),
+            new SmsCampaignImportRecipientDTO(phone: '12'),
+        ]);
+
+        $anli = Contact::where('phone', '+262639222222')->firstOrFail();
+        self::assertSame(1, $result->contactsCreated);
+        self::assertSame('SMS_CAMPAIGN', $anli->source);
+        self::assertSame(['Anli', 'Madi'], [$anli->first_name, $anli->last_name]);
+        self::assertSame([
+            "Ta place pour Konka Wawa : https://innocent976.yt/?c={$fatima->public_code}",
+            "Ta place pour Konka Wawa : https://innocent976.yt/?c={$anli->public_code}",
+        ], array_map(fn ($message) => $message->message, $result->messages));
+        self::assertSame([$fatima->id, $anli->id], SmsCampaignRecipient::where('sms_campaign_id', $result->campaignId)->orderBy('id')->pluck('contact_id')->all());
+    }
+
+    public function test_personal_link_falls_back_to_the_event_page_without_custom_domain(): void
+    {
+        $result = $this->importPersonal([new SmsCampaignImportRecipientDTO(phone: '0639111111')]);
+        $code = Contact::where('phone', '+262639111111')->value('public_code');
+
+        self::assertStringEndsWith("?c={$code}", $result->messages[0]->link);
+        self::assertStringContainsString('/event/'.$this->event->id.'/', $result->messages[0]->link);
+    }
+
+    public function test_campaign_stats_count_c_link_orders_and_visits_made_after_sending(): void
+    {
+        $fatima = $this->contact('+262639111111');
+        $result = $this->importPersonal([
+            new SmsCampaignImportRecipientDTO(phone: '0639111111', status: 'delivered', scheduledAt: '2026-10-21T08:00:00Z'),
+            new SmsCampaignImportRecipientDTO(phone: '0639222222', status: 'failed', scheduledAt: '2026-10-21T08:00:00Z'),
+        ]);
+        $anliId = Contact::where('phone', '+262639222222')->value('id');
+        [$otherEvent] = $this->createEventWithProduct();
+
+        $this->contactOrder($fatima->id, $this->event->id, 30.00, '2026-10-21 10:00:00');
+        $this->contactOrder($fatima->id, $this->event->id, 99.00, '2026-10-20 10:00:00');
+        $this->contactOrder($fatima->id, $otherEvent->id, 15.00, '2026-10-21 11:00:00');
+        $this->contactOrder($anliId, $this->event->id, 20.00, '2026-10-21 12:00:00');
+        ContactLinkVisit::create(['contact_id' => $fatima->id, 'visitor_hash' => 'a', 'is_unique' => true, 'created_at' => '2026-10-21 09:00:00']);
+        ContactLinkVisit::create(['contact_id' => $fatima->id, 'visitor_hash' => 'a', 'is_unique' => false, 'created_at' => '2026-10-21 09:30:00']);
+        ContactLinkVisit::create(['contact_id' => $fatima->id, 'visitor_hash' => 'b', 'is_unique' => true, 'created_at' => '2026-10-19 09:00:00']);
+
+        /** @var SmsCampaignDomainObject $campaign */
+        $campaign = app(GetSmsCampaignsHandler::class)->handle($this->event->organizer_id)
+            ->first(fn (SmsCampaignDomainObject $campaign) => $campaign->getId() === $result->campaignId);
+        $stats = $campaign->getStats();
+
+        self::assertSame(2, $stats->visits);
+        self::assertSame(1, $stats->clickers);
+        self::assertSame(1, $stats->orders);
+        self::assertSame(30.0, $stats->revenueGross);
+    }
+
+    /**
+     * @param  SmsCampaignImportRecipientDTO[]  $recipients
+     */
+    private function importPersonal(array $recipients)
+    {
+        return app(SmsCampaignImportService::class)->import(new SmsCampaignImportDTO(
+            organizerId: $this->event->organizer_id,
+            name: 'SMS Konka Wawa',
+            recipients: $recipients,
+            eventId: $this->event->id,
+            message: 'Ta place pour Konka Wawa : '.SmsCampaignImportService::PERSONAL_LINK_VARIABLE,
+        ));
+    }
+
+    private function contact(string $phone): Contact
+    {
+        return Contact::create([
+            'organizer_id' => $this->event->organizer_id,
+            'email' => 'fatima@example.test',
+            'phone' => $phone,
+            'source' => 'MANUAL',
+        ])->refresh();
+    }
+
+    private function contactOrder(int $contactId, int $eventId, float $total, string $createdAt): void
+    {
+        Order::create([
+            'event_id' => $eventId,
+            'attributed_contact_id' => $contactId,
+            'total_gross' => $total,
+            'currency' => 'EUR',
+            'status' => 'COMPLETED',
+            'email' => 'acheteur@example.test',
+            'first_name' => 'Fatima',
+            'last_name' => 'Madi',
+            'short_id' => IdHelper::shortId(IdHelper::ORDER_PREFIX),
+            'public_id' => IdHelper::publicId(IdHelper::ORDER_PREFIX),
+            'created_at' => $createdAt,
+        ]);
     }
 
     private function import()
