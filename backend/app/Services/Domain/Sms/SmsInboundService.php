@@ -44,15 +44,18 @@ class SmsInboundService
      * @throws InvalidSmsPhoneNumberException
      * @throws Throwable
      */
-    public function recordInbound(OrganizerSmsSettingDomainObject $settings, InboundSmsDTO $sms): ?SmsMessageDomainObject
-    {
+    public function recordInbound(
+        OrganizerSmsSettingDomainObject $settings,
+        InboundSmsDTO $sms,
+        bool $fromHistory = false,
+    ): ?SmsMessageDomainObject {
         if ($this->findByProviderId($sms->providerMessageId) !== null) {
             return null;
         }
 
         $phone = $this->normalize($sms->contact);
 
-        return $this->databaseManager->transaction(function () use ($settings, $sms, $phone) {
+        return $this->databaseManager->transaction(function () use ($settings, $sms, $phone, $fromHistory) {
             $conversation = $this->conversationService->findOrCreate($settings, $phone);
 
             /** @var SmsMessageDomainObject $message */
@@ -67,7 +70,13 @@ class SmsInboundService
                 SmsMessageDomainObjectAbstract::PROVIDER_TIMESTAMP => $this->parseTimestamp($sms->timestamp),
             ]);
 
-            $this->conversationService->recordActivity($conversation, SmsMessageDirection::INBOUND, $sms->content, markUnread: true);
+            $this->conversationService->recordActivity(
+                $conversation,
+                SmsMessageDirection::INBOUND,
+                $sms->content,
+                markUnread: ! $fromHistory,
+                occurredAt: $fromHistory ? $this->parseTimestamp($sms->timestamp) : null,
+            );
             $this->applyKeyword($settings->getOrganizerId(), $phone, $sms->content);
 
             return $message;
@@ -78,8 +87,11 @@ class SmsInboundService
      * @throws InvalidSmsPhoneNumberException
      * @throws Throwable
      */
-    public function recordOutboundEvent(OrganizerSmsSettingDomainObject $settings, OutboundSmsEventDTO $event): SmsMessageDomainObject
-    {
+    public function recordOutboundEvent(
+        OrganizerSmsSettingDomainObject $settings,
+        OutboundSmsEventDTO $event,
+        bool $fromHistory = false,
+    ): SmsMessageDomainObject {
         $existing = $this->findByProviderId($event->providerMessageId)
             ?? $this->findByRequestId($settings->getOrganizerId(), $event->requestId);
 
@@ -89,7 +101,7 @@ class SmsInboundService
 
         $phone = $this->normalize($event->contact);
 
-        return $this->databaseManager->transaction(function () use ($settings, $event, $phone) {
+        return $this->databaseManager->transaction(function () use ($settings, $event, $phone, $fromHistory) {
             $conversation = $this->conversationService->findOrCreate($settings, $phone);
             $content = (string) $event->content;
 
@@ -107,7 +119,13 @@ class SmsInboundService
                 SmsMessageDomainObjectAbstract::PROVIDER_TIMESTAMP => $this->parseTimestamp($event->timestamp),
             ]);
 
-            $this->conversationService->recordActivity($conversation, SmsMessageDirection::OUTBOUND, $content, markUnread: false);
+            $this->conversationService->recordActivity(
+                $conversation,
+                SmsMessageDirection::OUTBOUND,
+                $content,
+                markUnread: false,
+                occurredAt: $fromHistory ? $this->parseTimestamp($event->timestamp) : null,
+            );
 
             return $message;
         });

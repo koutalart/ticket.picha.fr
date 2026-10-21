@@ -92,7 +92,7 @@ class SmsInboundServiceTest extends TestCase
 
         $this->conversationService->shouldReceive('recordActivity')
             ->once()
-            ->with($this->conversation, SmsMessageDirection::INBOUND, 'Il reste des places ?', true);
+            ->with($this->conversation, SmsMessageDirection::INBOUND, 'Il reste des places ?', true, null);
         $this->optOutRepository->shouldNotReceive('create');
         $this->optOutRepository->shouldNotReceive('deleteWhere');
 
@@ -182,7 +182,7 @@ class SmsInboundServiceTest extends TestCase
 
         $this->conversationService->shouldReceive('recordActivity')
             ->once()
-            ->with($this->conversation, SmsMessageDirection::OUTBOUND, 'Halloween le 31/10', false);
+            ->with($this->conversation, SmsMessageDirection::OUTBOUND, 'Halloween le 31/10', false, null);
 
         $this->service->recordOutboundEvent($this->settings, $this->outbound(SmsMessageStatus::SENT, 'test-halloween'));
     }
@@ -200,6 +200,42 @@ class SmsInboundServiceTest extends TestCase
         $this->messageRepository->shouldReceive('create')->once()->andReturn((new SmsMessageDomainObject)->setId(4));
 
         $this->service->recordOutboundEvent($this->settings, $this->outbound(SmsMessageStatus::DELIVERED, 'test-halloween'));
+    }
+
+    public function test_historical_inbound_message_is_not_marked_unread_and_keeps_its_date(): void
+    {
+        $this->messageRepository->shouldReceive('findFirstWhere')->andReturnNull();
+        $this->conversationService->shouldReceive('findOrCreate')->andReturn($this->conversation);
+        $this->messageRepository->shouldReceive('create')->once()->andReturn((new SmsMessageDomainObject)->setId(5));
+
+        $this->conversationService->shouldReceive('recordActivity')
+            ->once()
+            ->with($this->conversation, SmsMessageDirection::INBOUND, 'Merci', false, '2026-10-21 08:00:00');
+
+        $this->service->recordInbound($this->settings, $this->inbound('Merci'), fromHistory: true);
+    }
+
+    public function test_historical_outbound_message_keeps_its_date(): void
+    {
+        $this->messageRepository->shouldReceive('findFirstWhere')->andReturnNull();
+        $this->conversationService->shouldReceive('findOrCreate')->andReturn($this->conversation);
+        $this->messageRepository->shouldReceive('create')->once()->andReturn((new SmsMessageDomainObject)->setId(6));
+
+        $this->conversationService->shouldReceive('recordActivity')
+            ->once()
+            ->with($this->conversation, SmsMessageDirection::OUTBOUND, 'Halloween le 31/10', false, '2026-10-21 07:00:00');
+
+        $this->service->recordOutboundEvent(
+            $this->settings,
+            new OutboundSmsEventDTO(
+                status: SmsMessageStatus::DELIVERED,
+                providerMessageId: 'prov-9',
+                contact: '+262639123456',
+                content: 'Halloween le 31/10',
+                timestamp: '2026-10-21T10:00:00+03:00',
+            ),
+            fromHistory: true,
+        );
     }
 
     private function expectStoredInbound(): void

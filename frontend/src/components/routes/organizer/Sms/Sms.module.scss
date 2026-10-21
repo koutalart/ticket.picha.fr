@@ -28,7 +28,12 @@
   @media (max-width: 1100px) {
     grid-template-columns: 280px minmax(0, 1fr);
 
-    .customerColumn {
+    .templateMenu {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.customerColumn {
       display: none;
     }
   }
@@ -153,6 +158,26 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+
+  &:hover .threadName {
+    text-decoration: underline;
+  }
+}
+
+.threadName {
+  color: var(--mantine-primary-color-filled);
+}
+
+.customerSheet {
+  display: flex;
+  flex-direction: column;
+}
+
+.customerSummary {
+  padding: 10px 12px;
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-primary-color-light);
 }
 
 .backButton {
@@ -243,6 +268,13 @@
   align-items: center;
   gap: 8px;
   margin-top: 8px;
+}
+
+.composerActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .customerColumn {

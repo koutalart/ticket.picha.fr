@@ -26,6 +26,16 @@ class OrganizerSmsSettingsResource extends BaseResource
             'notify_on_inbound_sms' => $settings->getNotifyOnInboundSms(),
             'phone_status' => $settings->getPhoneStatus(),
             'phone_status_changed_at' => $settings->getPhoneStatusChangedAt(),
+            'assistant_available' => $this->assistantAvailable,
+            'assistant_enabled' => $settings->getAssistantEnabled(),
+            'assistant_instructions' => $settings->getAssistantInstructions(),
+            'history_import' => [
+                'status' => $settings->getHistoryImportStatus(),
+                'started_at' => $settings->getHistoryImportStartedAt(),
+                'finished_at' => $settings->getHistoryImportFinishedAt(),
+                'imported_count' => $settings->getHistoryImportCount(),
+                'error' => $settings->getHistoryImportError(),
+            ],
         ];
     }
 }

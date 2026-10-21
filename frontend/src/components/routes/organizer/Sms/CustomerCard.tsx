@@ -4,16 +4,20 @@ import {NavLink} from "react-router";
 import {SmsConversationDetail} from "../../../../types.ts";
 import {formatCurrency} from "../../../../utilites/currency.ts";
 import {formatDateWithLocale} from "../../../../utilites/dates.ts";
+import {buildCustomerSummary} from "./customerSummary.ts";
 import classes from "./Sms.module.scss";
 
 interface CustomerCardProps {
     detail: SmsConversationDetail | undefined;
     timezone: string;
+    variant?: 'column' | 'sheet';
 }
 
-export const CustomerCard = ({detail, timezone}: CustomerCardProps) => {
+export const CustomerCard = ({detail, timezone, variant = 'column'}: CustomerCardProps) => {
+    const rootClass = variant === 'sheet' ? classes.customerSheet : classes.customerColumn;
+
     if (!detail) {
-        return <div className={classes.customerColumn}/>;
+        return <div className={rootClass}/>;
     }
 
     const orders = detail.customer_orders;
@@ -21,12 +25,22 @@ export const CustomerCard = ({detail, timezone}: CustomerCardProps) => {
     const name = first ? [first.first_name, first.last_name].filter(Boolean).join(' ') : null;
     const emails = Array.from(new Set(orders.map(order => order.email).filter(Boolean)));
     const events = Array.from(new Set(orders.map(order => order.event_title)));
+    const received = detail.messages.filter(message => message.direction === 'INBOUND').length;
+    const sent = detail.messages.length - received;
+    const firstMessage = detail.messages[0];
+    const firstDate = firstMessage ? (firstMessage.provider_timestamp || firstMessage.created_at) : null;
 
     return (
-        <div className={classes.customerColumn}>
-            <Text fw={700} mb={4}>{name || t`Unknown customer`}</Text>
+        <div className={rootClass}>
+            {variant === 'column' && <Text fw={700} mb={4}>{name || t`Unknown customer`}</Text>}
+            <Text size="sm" className={classes.customerSummary} mb="sm">{buildCustomerSummary(detail)}</Text>
             <Text size="sm" c="dimmed">{detail.conversation.phone}</Text>
             {emails.map(email => <Text key={email} size="sm" c="dimmed">{email}</Text>)}
+
+            <Text size="xs" c="dimmed" mt={4}>
+                {t`${received} SMS received, ${sent} SMS sent`}
+                {firstDate ? `, ${t`first exchange ${formatDateWithLocale(firstDate, 'shortDate', timezone)}`}` : ''}
+            </Text>
 
             {detail.opted_out && (
                 <Badge color="red" variant="light" mt="sm">{t`Unsubscribed (STOP)`}</Badge>

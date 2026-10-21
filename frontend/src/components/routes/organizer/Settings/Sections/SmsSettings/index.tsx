@@ -1,9 +1,10 @@
 import {useParams} from "react-router";
 import {useForm} from "@mantine/form";
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
+import {useQueryClient} from "@tanstack/react-query";
 import {t, Trans} from "@lingui/macro";
-import {Alert, Anchor, Badge, Button, Group, List, PasswordInput, Switch, Text, TextInput} from "@mantine/core";
-import {IconCircleCheck, IconMessage, IconPlugConnected, IconRefresh} from "@tabler/icons-react";
+import {Alert, Anchor, Badge, Button, Divider, Group, List, Loader, PasswordInput, Switch, Text, TextInput} from "@mantine/core";
+import {IconCircleCheck, IconHistory, IconMessage, IconPlugConnected, IconRefresh} from "@tabler/icons-react";
 import {Card} from "../../../../../common/Card";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
 import {CopyButton} from "../../../../../common/CopyButton";
@@ -11,10 +12,13 @@ import {useGetSmsSettings} from "../../../../../../queries/useGetSmsSettings.ts"
 import {useUpdateSmsSettings} from "../../../../../../mutations/useUpdateSmsSettings.ts";
 import {useTestSmsConnection} from "../../../../../../mutations/useTestSmsConnection.ts";
 import {useRegenerateSmsSigningKey} from "../../../../../../mutations/useRegenerateSmsSigningKey.ts";
+import {useStartSmsHistoryImport} from "../../../../../../mutations/useStartSmsHistoryImport.ts";
+import {GET_SMS_CONVERSATIONS_QUERY_KEY} from "../../../../../../queries/useGetSmsConversations.ts";
 import {useFormErrorResponseHandler} from "../../../../../../hooks/useFormErrorResponseHandler.tsx";
 import {showError, showSuccess} from "../../../../../../utilites/notifications.tsx";
 import {confirmationDialog} from "../../../../../../utilites/confirmationDialog.tsx";
 import {relativeDate} from "../../../../../../utilites/dates.ts";
+import {SmsAssistantSettings} from "./SmsAssistantSettings.tsx";
 
 export const SmsSettings = () => {
     const {organizerId} = useParams();
@@ -22,9 +26,22 @@ export const SmsSettings = () => {
     const updateMutation = useUpdateSmsSettings();
     const testMutation = useTestSmsConnection();
     const regenerateMutation = useRegenerateSmsSigningKey();
+    const importMutation = useStartSmsHistoryImport();
+    const queryClient = useQueryClient();
     const formErrorHandle = useFormErrorResponseHandler();
     const settings = settingsQuery.data;
     const isConfigured = !!settings?.api_key_configured && !!settings?.from_number;
+    const historyImport = settings?.history_import;
+    const isImporting = historyImport?.status === 'RUNNING';
+    const importError = historyImport?.error || t`unknown error`;
+    const previousImportStatus = useRef(historyImport?.status);
+
+    useEffect(() => {
+        if (previousImportStatus.current === 'RUNNING' && historyImport?.status === 'COMPLETED') {
+            queryClient.invalidateQueries({queryKey: [GET_SMS_CONVERSATIONS_QUERY_KEY, organizerId]});
+        }
+        previousImportStatus.current = historyImport?.status;
+    }, [historyImport?.status]);
 
     const form = useForm({
         initialValues: {
@@ -107,7 +124,15 @@ export const SmsSettings = () => {
         });
     };
 
+    const importHistory = () => {
+        importMutation.mutate({organizerId: organizerId!}, {
+            onSuccess: () => showSuccess(t`Import started. Messages will appear in SMS messages within a few minutes.`),
+            onError: (error: any) => showError(error?.response?.data?.message || t`Unable to start the import`),
+        });
+    };
+
     return (
+        <>
         <Card>
             <HeadingWithDescription
                 heading={t`SMS (httpSMS)`}
@@ -226,6 +251,44 @@ export const SmsSettings = () => {
                     </Button>
                 </>
             )}
+
+            <Divider my="lg"/>
+
+            <Text fw={600} size="sm" mb={4}>{t`SMS history`}</Text>
+            <Text size="sm" c="dimmed" mb="sm">
+                {t`Retrieve the SMS sent and received with your httpSMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread.`}
+            </Text>
+            <Group gap="sm" align="center">
+                <Button
+                    variant="light"
+                    leftSection={<IconHistory size={16}/>}
+                    onClick={importHistory}
+                    loading={importMutation.isPending}
+                    disabled={!isConfigured || isImporting}
+                >
+                    {t`Retrieve httpSMS history`}
+                </Button>
+                {isImporting && (
+                    <Group gap={6}>
+                        <Loader size="xs"/>
+                        <Text size="sm" c="dimmed">
+                            {t`Import in progress: ${historyImport?.imported_count ?? 0} messages retrieved`}
+                        </Text>
+                    </Group>
+                )}
+                {historyImport?.status === 'COMPLETED' && historyImport.finished_at && (
+                    <Text size="sm" c="dimmed">
+                        {t`Last import ${relativeDate(historyImport.finished_at)}: ${historyImport.imported_count ?? 0} new messages`}
+                    </Text>
+                )}
+            </Group>
+            {historyImport?.status === 'FAILED' && (
+                <Alert color="red" variant="light" mt="sm">
+                    {t`The import failed: ${importError}. You can start it again, messages already imported are kept.`}
+                </Alert>
+            )}
         </Card>
+        <SmsAssistantSettings/>
+        </>
     );
 };

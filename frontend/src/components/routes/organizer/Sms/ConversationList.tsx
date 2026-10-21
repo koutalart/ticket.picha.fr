@@ -1,4 +1,5 @@
 import {t} from "@lingui/macro";
+import {useEffect, useRef} from "react";
 import {Badge, Loader, SegmentedControl, Text, TextInput, UnstyledButton} from "@mantine/core";
 import {IconSearch} from "@tabler/icons-react";
 import {SmsConversation, SmsConversationFilter} from "../../../../types.ts";
@@ -15,6 +16,9 @@ interface ConversationListProps {
     onSearchChange: (value: string) => void;
     filter: SmsConversationFilter;
     onFilterChange: (value: SmsConversationFilter) => void;
+    hasMore: boolean;
+    isLoadingMore: boolean;
+    onLoadMore: () => void;
 }
 
 export const ConversationList = ({
@@ -26,7 +30,28 @@ export const ConversationList = ({
                                      onSearchChange,
                                      filter,
                                      onFilterChange,
+                                     hasMore,
+                                     isLoadingMore,
+                                     onLoadMore,
                                  }: ConversationListProps) => {
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const sentinel = sentinelRef.current;
+        if (!sentinel || !hasMore || typeof IntersectionObserver === 'undefined') {
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0]?.isIntersecting && !isLoadingMore) {
+                onLoadMore();
+            }
+        }, {rootMargin: '200px'});
+
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [hasMore, isLoadingMore, onLoadMore, conversations.length]);
+
     return (
         <div className={classes.listColumn}>
             <div className={classes.listFilters}>
@@ -49,7 +74,15 @@ export const ConversationList = ({
                 />
             </div>
 
-            <div className={classes.listItems}>
+            <div
+                className={classes.listItems}
+                onScroll={(event) => {
+                    const list = event.currentTarget;
+                    if (hasMore && !isLoadingMore && list.scrollHeight - list.scrollTop - list.clientHeight < 200) {
+                        onLoadMore();
+                    }
+                }}
+            >
                 {isLoading && <div className={classes.centered}><Loader size="sm"/></div>}
 
                 {!isLoading && conversations.length === 0 && (
@@ -89,6 +122,12 @@ export const ConversationList = ({
                         )}
                     </UnstyledButton>
                 ))}
+
+                {hasMore && (
+                    <div ref={sentinelRef} className={classes.centered}>
+                        {isLoadingMore && <Loader size="xs"/>}
+                    </div>
+                )}
             </div>
         </div>
     );

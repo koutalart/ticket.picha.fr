@@ -1,0 +1,21 @@
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {IdParam} from "../types.ts";
+import {smsClient} from "../api/sms.client.ts";
+import {GET_SMS_CONVERSATION_QUERY_KEY} from "../queries/useGetSmsConversation.ts";
+import {GET_SMS_CONVERSATIONS_QUERY_KEY} from "../queries/useGetSmsConversations.ts";
+
+export const useRegenerateSmsDraft = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({organizerId, conversationId}: {
+            organizerId: IdParam,
+            conversationId: IdParam,
+        }) => smsClient.regenerateDraft(organizerId, conversationId),
+
+        onSettled: (_, __, variables) => Promise.all([
+            queryClient.invalidateQueries({queryKey: [GET_SMS_CONVERSATION_QUERY_KEY, variables.organizerId, variables.conversationId]}),
+            queryClient.invalidateQueries({queryKey: [GET_SMS_CONVERSATIONS_QUERY_KEY, variables.organizerId]}),
+        ]),
+    });
+};

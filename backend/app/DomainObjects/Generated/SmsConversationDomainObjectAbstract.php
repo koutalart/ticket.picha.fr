@@ -26,6 +26,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
     final public const INBOUND_NOTIFIED_AT = 'inbound_notified_at';
+    final public const NEEDS_HUMAN_REASON = 'needs_human_reason';
 
     protected int $id;
     protected int $account_id;
@@ -43,6 +44,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
     protected ?string $inbound_notified_at = null;
+    protected ?string $needs_human_reason = null;
 
     public function toArray(): array
     {
@@ -63,6 +65,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
                     'inbound_notified_at' => $this->inbound_notified_at ?? null,
+                    'needs_human_reason' => $this->needs_human_reason ?? null,
                 ];
     }
 
@@ -240,5 +243,16 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     public function getInboundNotifiedAt(): ?string
     {
         return $this->inbound_notified_at;
+    }
+
+    public function setNeedsHumanReason(?string $needs_human_reason): self
+    {
+        $this->needs_human_reason = $needs_human_reason;
+        return $this;
+    }
+
+    public function getNeedsHumanReason(): ?string
+    {
+        return $this->needs_human_reason;
     }
 }

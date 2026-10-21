@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useQueryClient} from "@tanstack/react-query";
 import {NavLink, useParams, useSearchParams} from "react-router";
 import {t} from "@lingui/macro";
-import {Alert, Anchor, SegmentedControl} from "@mantine/core";
+import {Alert, Anchor, Drawer, SegmentedControl} from "@mantine/core";
 import {useDebouncedValue} from "@mantine/hooks";
 import {SmsConversation, SmsConversationFilter} from "../../../../types.ts";
 import {GET_SMS_CONVERSATIONS_QUERY_KEY, SMS_POLL_INTERVAL_MS, useGetSmsConversations} from "../../../../queries/useGetSmsConversations.ts";
@@ -38,9 +38,11 @@ const Sms = () => {
     const conversationsQuery = useGetSmsConversations(organizerId, {query: debouncedSearch || undefined, filter});
     const detailQuery = useGetSmsConversation(organizerId, selectedId ?? undefined);
 
-    const conversations = conversationsQuery.data?.data ?? [];
+    const conversations = conversationsQuery.data?.pages.flatMap(page => page.data) ?? [];
+    const [customerOpen, setCustomerOpen] = useState(false);
     const settings = settingsQuery.data;
     const canSend = !!settings?.api_key_configured && !!settings?.from_number;
+    const assistantEnabled = !!settings?.assistant_available && !!settings?.assistant_enabled;
 
     useEffect(() => {
         const listed = conversations.find(conversation => conversation.id === selectedId);
@@ -76,7 +78,7 @@ const Sms = () => {
             <div className={classes.pageHeader}>
                 <h1 className={classes.pageTitle}>{t`SMS messages`}</h1>
                 <p className={classes.pageIntro}>
-                    {t`Replies from your customers to your SMS, sent from your httpSMS phone. A customer who replies STOP is automatically unsubscribed from your SMS.`}
+                    {t`A customer who replies STOP is automatically unsubscribed from your SMS.`}
                 </p>
             </div>
 
@@ -121,19 +123,37 @@ const Sms = () => {
                     onSearchChange={setSearch}
                     filter={filter}
                     onFilterChange={setFilter}
+                    hasMore={!!conversationsQuery.hasNextPage}
+                    isLoadingMore={conversationsQuery.isFetchingNextPage}
+                    onLoadMore={() => conversationsQuery.fetchNextPage()}
                 />
                 <ConversationThread
                     organizerId={organizerId}
                     detail={selectedId ? detailQuery.data : undefined}
                     isLoading={!!selectedId && detailQuery.isLoading}
                     canSend={canSend}
+                    assistantEnabled={assistantEnabled}
                     onBack={() => select(null)}
+                    onOpenCustomer={() => setCustomerOpen(true)}
                 />
                 <CustomerCard
                     detail={selectedId ? detailQuery.data : undefined}
                     timezone={organizer?.timezone || 'Indian/Mayotte'}
                 />
             </div>}
+
+            <Drawer
+                opened={customerOpen && !!detailQuery.data}
+                onClose={() => setCustomerOpen(false)}
+                position="right"
+                title={detailQuery.data?.conversation.contact_name || detailQuery.data?.conversation.phone || t`Customer file`}
+            >
+                <CustomerCard
+                    detail={detailQuery.data}
+                    timezone={organizer?.timezone || 'Indian/Mayotte'}
+                    variant="sheet"
+                />
+            </Drawer>
         </PageBody>
     );
 };

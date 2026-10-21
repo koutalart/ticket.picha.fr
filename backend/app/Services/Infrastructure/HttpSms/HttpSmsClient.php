@@ -61,6 +61,46 @@ class HttpSmsClient
     }
 
     /**
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws SmsGatewayException
+     */
+    public function listMessageThreads(string $apiKey, string $owner, int $skip, int $limit): array
+    {
+        $response = $this->send($apiKey, fn (PendingRequest $request) => $request->get($this->url('message-threads'), [
+            'owner' => $owner,
+            'skip' => $skip,
+            'limit' => $limit,
+        ]));
+
+        return $this->rows($response);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws SmsGatewayException
+     */
+    public function listMessages(string $apiKey, string $owner, string $contact, int $skip, int $limit): array
+    {
+        $response = $this->send($apiKey, fn (PendingRequest $request) => $request->get($this->url('messages'), [
+            'owner' => $owner,
+            'contact' => $contact,
+            'skip' => $skip,
+            'limit' => $limit,
+        ]));
+
+        return $this->rows($response);
+    }
+
+    private function rows(Response $response): array
+    {
+        $rows = $response->json('data', []);
+
+        return is_array($rows) ? array_values(array_filter($rows, 'is_array')) : [];
+    }
+
+    /**
      * @param  array<int, array<string, mixed>>  $contacts
      *
      * @throws SmsGatewayException

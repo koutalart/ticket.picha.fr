@@ -37,4 +37,15 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
 
         return $this->handleResults($messages)->reverse()->values();
     }
+
+    public function findLatestForConversation(int $conversationId, int $limit): Collection
+    {
+        $messages = SmsMessage::query()
+            ->where(SmsMessageDomainObjectAbstract::SMS_CONVERSATION_ID, $conversationId)
+            ->orderByDesc(SmsMessageDomainObjectAbstract::ID)
+            ->limit($limit)
+            ->get();
+
+        return $this->handleResults($messages)->reverse()->values();
+    }
 }
