@@ -75,6 +75,7 @@ class SmsAssistantReplyGeneratorTest extends TestCase
 
         self::assertStringContainsString('160 caractères', $systemPrompt);
         self::assertStringContainsString('sans les frais', $systemPrompt);
+        self::assertStringContainsString('Ne sois pas répétitif', $systemPrompt);
         self::assertStringContainsString('Tutoie les clients.', $sent);
         self::assertStringContainsString('Halloween', $sent);
         self::assertStringContainsString('"prix": 15', $sent);
