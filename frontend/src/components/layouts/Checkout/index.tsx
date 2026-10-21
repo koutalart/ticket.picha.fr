@@ -25,7 +25,7 @@ import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {useGetEventPublic} from "../../../queries/useGetEventPublic.ts";
 import {getFullscreenHero} from "../../../utilites/fullscreenHero.ts";
-import {useDeferredCoverVideo} from "../../../hooks/useDeferredCoverVideo.ts";
+import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 
 const DEFAULT_ACCENT = '#8b5cf6';
 
@@ -35,7 +35,10 @@ const Checkout = () => {
     const event = order?.event;
     const {data: publicEvent} = useGetEventPublic(eventId, !!eventId);
     const fullscreenHero = getFullscreenHero(publicEvent);
-    const immersiveVideoAllowed = useDeferredCoverVideo(fullscreenHero.enabled ? fullscreenHero.coverVideo : undefined);
+    const immersiveVideoSource = useCoverVideoSource(
+        fullscreenHero.enabled ? fullscreenHero.coverVideo : undefined,
+        fullscreenHero.coverVideoMobile,
+    );
     const navigate = useNavigate();
     const location = useLocation();
     const orderIsCompleted = order?.status === 'COMPLETED';
@@ -200,8 +203,8 @@ const Checkout = () => {
             <div className={classes.container} data-mode={checkoutMode} data-immersive={fullscreenHero.enabled || undefined}>
                 {fullscreenHero.enabled && (
                     <div className={classes.immersiveBackground} aria-hidden="true">
-                        {fullscreenHero.coverVideo && immersiveVideoAllowed ? (
-                            <video src={fullscreenHero.coverVideo} poster={fullscreenHero.coverImage} autoPlay muted loop
+                        {immersiveVideoSource ? (
+                            <video src={immersiveVideoSource} poster={fullscreenHero.coverImage} autoPlay muted loop
                                    playsInline preload="metadata"/>
                         ) : fullscreenHero.coverImage ? (
                             <img src={fullscreenHero.coverImage} alt=""/>

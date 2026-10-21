@@ -11,6 +11,7 @@ import {useDeleteImage} from "../../../../../../mutations/useDeleteImage.ts";
 import {showError, showSuccess} from "../../../../../../utilites/notifications.tsx";
 import {confirmationDialog} from "../../../../../../utilites/confirmationDialog.tsx";
 import classes from "./ImageAssetSettings.module.scss";
+import {IdParam} from "../../../../../../types.ts";
 
 const MAX_COVER_VIDEO_BYTES = 15 * 1024 * 1024;
 
@@ -22,6 +23,7 @@ const Settings = () => {
     const organizerEmailLogo = organizer?.images?.find((image) => image.type === 'ORGANIZER_EMAIL_LOGO');
     const organizerCover = organizer?.images?.find((image) => image.type === 'ORGANIZER_COVER');
     const organizerCoverVideo = organizer?.images?.find((image) => image.type === 'ORGANIZER_COVER_VIDEO');
+    const organizerCoverVideoMobile = organizer?.images?.find((image) => image.type === 'ORGANIZER_COVER_VIDEO_MOBILE');
     const uploadCoverVideo = useUploadOrganizerCoverVideo();
     const deleteImage = useDeleteImage();
 
@@ -29,7 +31,7 @@ const Settings = () => {
         organizerQuery.refetch();
     };
 
-    const handleCoverVideo = (file: File | null) => {
+    const handleCoverVideo = (file: File | null, mobile = false) => {
         if (!file || !organizerId) {
             return;
         }
@@ -41,8 +43,8 @@ const Settings = () => {
             showError(t`The video must not be larger than 15 MB.`);
             return;
         }
-        uploadCoverVideo.mutate({organizerId, video: file}, {
-            onSuccess: () => showSuccess(t`Cover video saved`),
+        uploadCoverVideo.mutate({organizerId, video: file, mobile}, {
+            onSuccess: () => showSuccess(mobile ? t`Mobile video saved` : t`Cover video saved`),
             onError: (error: any) => showError(error?.response?.data?.errors?.video?.[0]
                 || error?.response?.data?.message
                 || t`The video could not be saved. Please try again.`),
@@ -63,6 +65,26 @@ const Settings = () => {
             });
         });
     };
+
+    const removeCoverVideoMobile = () => {
+        if (!organizerCoverVideoMobile?.id) {
+            return;
+        }
+        confirmationDialog(t`Remove the mobile video? Phones will play the main cover video instead.`, () => {
+            deleteImage.mutate({imageId: organizerCoverVideoMobile.id!}, {
+                onSuccess: () => {
+                    showSuccess(t`Mobile video removed`);
+                    handleImageChange();
+                },
+                onError: () => showError(t`Something went wrong. Please try again.`),
+            });
+        });
+    };
+
+    const isUploadingCoverVideo = (mobile: boolean) =>
+        uploadCoverVideo.isPending && !!uploadCoverVideo.variables?.mobile === mobile;
+    const isDeletingImage = (imageId?: IdParam) =>
+        deleteImage.isPending && deleteImage.variables?.imageId === imageId;
 
     return (
         <>
@@ -110,17 +132,17 @@ const Settings = () => {
                            muted loop playsInline autoPlay/>
                 )}
                 <Group gap="xs">
-                    <FileButton onChange={handleCoverVideo} accept="video/mp4,video/webm">
+                    <FileButton onChange={(file) => handleCoverVideo(file)} accept="video/mp4,video/webm">
                         {(props) => (
                             <Button {...props} variant="light" leftSection={<IconVideo size={16}/>}
-                                    loading={uploadCoverVideo.isPending}>
+                                    loading={isUploadingCoverVideo(false)}>
                                 {organizerCoverVideo ? t`Replace the video` : t`Add a video`}
                             </Button>
                         )}
                     </FileButton>
                     {organizerCoverVideo && (
                         <Button variant="subtle" color="red" leftSection={<IconTrash size={16}/>}
-                                loading={deleteImage.isPending} onClick={removeCoverVideo}>
+                                loading={isDeletingImage(organizerCoverVideo.id)} onClick={removeCoverVideo}>
                             {t`Remove`}
                         </Button>
                     )}
@@ -128,6 +150,35 @@ const Settings = () => {
                 <Text size="xs" c="dimmed" mt={6}>
                     {t`Optional. A short, silent loop shown at the top of the organizer page by templates that support it. The cover image stays for thumbnails and sharing.`}
                 </Text>
+                {(organizerCoverVideo || organizerCoverVideoMobile) && (
+                    <>
+                        <h2>{t`Video for mobile (optional)`}</h2>
+                        {organizerCoverVideoMobile?.url && (
+                            <video className={classes.coverVideoPreview} src={organizerCoverVideoMobile.url}
+                                   muted loop playsInline autoPlay/>
+                        )}
+                        <Group gap="xs">
+                            <FileButton onChange={(file) => handleCoverVideo(file, true)} accept="video/mp4,video/webm">
+                                {(props) => (
+                                    <Button {...props} variant="light" leftSection={<IconVideo size={16}/>}
+                                            loading={isUploadingCoverVideo(true)}>
+                                        {organizerCoverVideoMobile ? t`Replace the video` : t`Add a video`}
+                                    </Button>
+                                )}
+                            </FileButton>
+                            {organizerCoverVideoMobile && (
+                                <Button variant="subtle" color="red" leftSection={<IconTrash size={16}/>}
+                                        loading={isDeletingImage(organizerCoverVideoMobile.id)}
+                                        onClick={removeCoverVideoMobile}>
+                                    {t`Remove`}
+                                </Button>
+                            )}
+                        </Group>
+                        <Text size="xs" c="dimmed" mt={6}>
+                            {t`Lighter version, for example 720p, used on phones.`}
+                        </Text>
+                    </>
+                )}
             </Card>
         </>
     );

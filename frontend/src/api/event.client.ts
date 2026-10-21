@@ -65,9 +65,12 @@ export const eventsClient = {
         return response.data;
     },
 
-    uploadEventCoverVideo: async (eventId: IdParam, video: File) => {
+    uploadEventCoverVideo: async (eventId: IdParam, video: File, mobile = false) => {
         const formData = new FormData();
         formData.append('video', video);
+        if (mobile) {
+            formData.append('mobile', '1');
+        }
         const response = await api.post<GenericDataResponse<Image>>('events/' + eventId + '/cover-video', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'

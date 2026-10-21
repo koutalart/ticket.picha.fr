@@ -49,6 +49,7 @@ const HomepageDesigner = () => {
 
     const existingCover = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER');
     const existingCoverVideo = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER_VIDEO');
+    const existingCoverVideoMobile = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER_VIDEO_MOBILE');
     const existingFlyer = eventImagesQuery.data?.find((image) => image.type === 'EVENT_FLYER');
     const existingHeroPartnerLogo = eventImagesQuery.data?.find((image) => image.type === 'EVENT_HERO_PARTNER_LOGO');
     const existingHeroSignatureLogo = eventImagesQuery.data?.find((image) => image.type === 'EVENT_HERO_SIGNATURE_LOGO');
@@ -131,7 +132,7 @@ const HomepageDesigner = () => {
         });
     };
 
-    const handleCoverVideo = (file: File | null) => {
+    const handleCoverVideo = (file: File | null, mobile = false) => {
         if (!file) {
             return;
         }
@@ -143,8 +144,8 @@ const HomepageDesigner = () => {
             showError(t`The video must not be larger than 15 MB.`);
             return;
         }
-        uploadCoverVideo.mutate({eventId, video: file}, {
-            onSuccess: () => showSuccess(t`Cover video saved`),
+        uploadCoverVideo.mutate({eventId, video: file, mobile}, {
+            onSuccess: () => showSuccess(mobile ? t`Mobile video saved` : t`Cover video saved`),
             onError: (error: any) => showError(error?.response?.data?.errors?.video?.[0]
                 || error?.response?.data?.message
                 || t`The video could not be saved. Please try again.`),
@@ -162,6 +163,23 @@ const HomepageDesigner = () => {
             });
         });
     };
+
+    const removeCoverVideoMobile = () => {
+        if (!existingCoverVideoMobile?.id) {
+            return;
+        }
+        confirmationDialog(t`Remove the mobile video? Phones will play the main cover video instead.`, () => {
+            deleteEventImage.mutate({eventId, imageId: existingCoverVideoMobile.id}, {
+                onSuccess: () => showSuccess(t`Mobile video removed`),
+                onError: () => showError(t`Something went wrong. Please try again.`),
+            });
+        });
+    };
+
+    const isUploadingCoverVideo = (mobile: boolean) =>
+        uploadCoverVideo.isPending && !!uploadCoverVideo.variables?.mobile === mobile;
+    const isDeletingImage = (imageId?: IdParam) =>
+        deleteEventImage.isPending && deleteEventImage.variables?.imageId === imageId;
 
     const sendSettingsToIframe = () => {
         if (iframeRef.current?.contentWindow && iframeLoaded) {
@@ -263,17 +281,17 @@ const HomepageDesigner = () => {
                                                    muted loop playsInline autoPlay/>
                                         )}
                                         <Group gap="xs">
-                                            <FileButton onChange={handleCoverVideo} accept="video/mp4,video/webm">
+                                            <FileButton onChange={(file) => handleCoverVideo(file)} accept="video/mp4,video/webm">
                                                 {(props) => (
                                                     <Button {...props} variant="light" leftSection={<IconVideo size={16}/>}
-                                                            loading={uploadCoverVideo.isPending}>
+                                                            loading={isUploadingCoverVideo(false)}>
                                                         {existingCoverVideo ? t`Replace the video` : t`Add a video`}
                                                     </Button>
                                                 )}
                                             </FileButton>
                                             {existingCoverVideo && (
                                                 <Button variant="subtle" color="red" leftSection={<IconTrash size={16}/>}
-                                                        loading={deleteEventImage.isPending} onClick={removeCoverVideo}>
+                                                        loading={isDeletingImage(existingCoverVideo.id)} onClick={removeCoverVideo}>
                                                     {t`Remove`}
                                                 </Button>
                                             )}
@@ -282,6 +300,37 @@ const HomepageDesigner = () => {
                                             {t`Optional. Replaces the cover image at the top of the page, without sound.`}
                                         </Text>
                                     </div>
+
+                                    {(existingCoverVideo || existingCoverVideoMobile) && (
+                                        <div>
+                                            <Text fw={500} size="sm" mb="xs">{t`Video for mobile (optional)`}</Text>
+                                            {existingCoverVideoMobile?.url && (
+                                                <video className={classes.coverVideoPreview} src={existingCoverVideoMobile.url}
+                                                       muted loop playsInline autoPlay/>
+                                            )}
+                                            <Group gap="xs">
+                                                <FileButton onChange={(file) => handleCoverVideo(file, true)}
+                                                            accept="video/mp4,video/webm">
+                                                    {(props) => (
+                                                        <Button {...props} variant="light" leftSection={<IconVideo size={16}/>}
+                                                                loading={isUploadingCoverVideo(true)}>
+                                                            {existingCoverVideoMobile ? t`Replace the video` : t`Add a video`}
+                                                        </Button>
+                                                    )}
+                                                </FileButton>
+                                                {existingCoverVideoMobile && (
+                                                    <Button variant="subtle" color="red" leftSection={<IconTrash size={16}/>}
+                                                            loading={isDeletingImage(existingCoverVideoMobile.id)}
+                                                            onClick={removeCoverVideoMobile}>
+                                                        {t`Remove`}
+                                                    </Button>
+                                                )}
+                                            </Group>
+                                            <Text size="xs" c="dimmed" mt={6}>
+                                                {t`Lighter version, for example 720p, used on phones.`}
+                                            </Text>
+                                        </div>
+                                    )}
 
                                     <div>
                                         <Group justify={'space-between'} mb="xs">
