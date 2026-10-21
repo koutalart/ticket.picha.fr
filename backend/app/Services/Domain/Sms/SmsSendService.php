@@ -32,6 +32,7 @@ class SmsSendService
         private readonly SmsConversationRepositoryInterface $conversationRepository,
         private readonly SmsConversationService $conversationService,
         private readonly HttpSmsClient $httpSmsClient,
+        private readonly SmsLineService $lineService,
     ) {}
 
     /**
@@ -42,7 +43,8 @@ class SmsSendService
      */
     public function send(SendSmsDTO $sms): SmsMessageDomainObject
     {
-        $settings = $this->getConfiguredSettings($sms->organizerId);
+        $settings = $this->findSettings($sms->organizerId);
+        $line = $this->getConfiguredLine($settings);
 
         $phone = SmsPhoneNormalizer::normalize($sms->phone);
         if ($phone === null) {
@@ -80,8 +82,8 @@ class SmsSendService
 
         try {
             $providerId = $this->httpSmsClient->sendMessage(
-                apiKey: (string) $settings->getApiKey(),
-                from: (string) $settings->getFromNumber(),
+                apiKey: (string) $line->getApiKey(),
+                from: (string) $line->getFromNumber(),
                 to: $phone,
                 content: $sms->content,
                 requestId: $requestId,
@@ -103,17 +105,33 @@ class SmsSendService
     /**
      * @throws SmsGatewayNotConfiguredException
      */
-    private function getConfiguredSettings(int $organizerId): OrganizerSmsSettingDomainObject
+    private function findSettings(int $organizerId): OrganizerSmsSettingDomainObject
     {
         /** @var OrganizerSmsSettingDomainObject|null $settings */
         $settings = $this->settingsRepository->findFirstWhere([
             OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ID => $organizerId,
         ]);
 
-        if ($settings === null || ! $settings->getApiKey() || ! $settings->getFromNumber()) {
+        if ($settings === null) {
             throw new SmsGatewayNotConfiguredException(__('SMS sending is not configured. Add your PICHA SMS API key and sending number in Settings.'));
         }
 
         return $settings;
+    }
+
+    /**
+     * The line the organizer sends with: its own settings, or the line it shares with other organizers.
+     *
+     * @throws SmsGatewayNotConfiguredException
+     */
+    private function getConfiguredLine(OrganizerSmsSettingDomainObject $settings): OrganizerSmsSettingDomainObject
+    {
+        $line = $this->lineService->resolveLine($settings);
+
+        if (! $line->getApiKey() || ! $line->getFromNumber()) {
+            throw new SmsGatewayNotConfiguredException(__('SMS sending is not configured. Add your PICHA SMS API key and sending number in Settings.'));
+        }
+
+        return $line;
     }
 }

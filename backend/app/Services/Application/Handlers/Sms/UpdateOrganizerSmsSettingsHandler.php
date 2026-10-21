@@ -30,13 +30,14 @@ class UpdateOrganizerSmsSettingsHandler
     {
         $settings = $this->settingsService->getOrCreate($dto->accountId, $dto->organizerId);
         $attributes = [];
+        $usesSharedLine = $settings->getSharedLineSettingsId() !== null;
 
-        if ($dto->wasProvided('apiKey')) {
+        if ($dto->wasProvided('apiKey') && ! $usesSharedLine) {
             $apiKey = trim((string) $dto->apiKey);
             $attributes[OrganizerSmsSettingDomainObjectAbstract::API_KEY] = $apiKey !== '' ? $apiKey : null;
         }
 
-        if ($dto->wasProvided('fromNumber')) {
+        if ($dto->wasProvided('fromNumber') && ! $usesSharedLine) {
             $attributes[OrganizerSmsSettingDomainObjectAbstract::FROM_NUMBER] = $this->normalizeFromNumber($dto->fromNumber);
         }
 
@@ -60,6 +61,7 @@ class UpdateOrganizerSmsSettingsHandler
             settings: $settings,
             webhookUrl: $this->settingsService->getWebhookUrl($settings),
             assistantAvailable: $this->assistantService->isAvailable(),
+            sharedLine: $this->settingsService->findSharedLine($settings),
         );
     }
 

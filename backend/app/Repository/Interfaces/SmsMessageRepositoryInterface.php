@@ -23,4 +23,11 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
      * @return Collection<int, SmsMessageDomainObject>
      */
     public function findLatestForConversation(int $conversationId, int $limit): Collection;
+
+    /**
+     * The organizer, among the given ones, who sent the most recent SMS to this number since the given date.
+     *
+     * @param  array<int, int>  $organizerIds
+     */
+    public function findLastOutboundOrganizerId(array $organizerIds, string $phone, string $since): ?int;
 }

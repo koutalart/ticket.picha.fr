@@ -15,17 +15,20 @@ class OrganizerSmsSettingsResource extends BaseResource
     public function toArray($request): array
     {
         $settings = $this->settings;
+        $sharedLine = $this->sharedLine;
+        $line = $sharedLine ?? $settings;
 
         return [
-            'provider' => $settings->getProvider(),
-            'api_key_configured' => ! empty($settings->getApiKey()),
-            'from_number' => $settings->getFromNumber(),
-            'webhook_url' => $this->webhookUrl,
-            'webhook_signing_key' => $settings->getWebhookSigningKey(),
-            'last_webhook_received_at' => $settings->getLastWebhookReceivedAt(),
+            'provider' => $line->getProvider(),
+            'api_key_configured' => ! empty($line->getApiKey()),
+            'from_number' => $line->getFromNumber(),
+            'shared_line' => $sharedLine !== null,
+            'webhook_url' => $sharedLine === null ? $this->webhookUrl : '',
+            'webhook_signing_key' => $sharedLine === null ? $settings->getWebhookSigningKey() : '',
+            'last_webhook_received_at' => $line->getLastWebhookReceivedAt(),
             'notify_on_inbound_sms' => $settings->getNotifyOnInboundSms(),
-            'phone_status' => $settings->getPhoneStatus(),
-            'phone_status_changed_at' => $settings->getPhoneStatusChangedAt(),
+            'phone_status' => $line->getPhoneStatus(),
+            'phone_status_changed_at' => $line->getPhoneStatusChangedAt(),
             'assistant_available' => $this->assistantAvailable,
             'assistant_enabled' => $settings->getAssistantEnabled(),
             'assistant_instructions' => $settings->getAssistantInstructions(),

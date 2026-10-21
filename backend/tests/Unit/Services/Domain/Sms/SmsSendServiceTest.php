@@ -14,6 +14,7 @@ use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Services\Domain\Sms\DTO\SendSmsDTO;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
+use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSendService;
 use HiEvents\Services\Infrastructure\HttpSms\HttpSmsClient;
 use Mockery;
@@ -32,6 +33,8 @@ class SmsSendServiceTest extends TestCase
 
     private HttpSmsClient|MockInterface $client;
 
+    private SmsLineService|MockInterface $lineService;
+
     private SmsSendService $service;
 
     protected function setUp(): void
@@ -43,6 +46,8 @@ class SmsSendServiceTest extends TestCase
         $this->conversationRepository = Mockery::mock(SmsConversationRepositoryInterface::class);
         $this->conversationService = Mockery::mock(SmsConversationService::class);
         $this->client = Mockery::mock(HttpSmsClient::class);
+        $this->lineService = Mockery::mock(SmsLineService::class);
+        $this->lineService->shouldReceive('resolveLine')->andReturnUsing(fn ($settings) => $settings)->byDefault();
 
         $this->service = new SmsSendService(
             $this->settingsRepository,
@@ -50,6 +55,7 @@ class SmsSendServiceTest extends TestCase
             $this->conversationRepository,
             $this->conversationService,
             $this->client,
+            $this->lineService,
         );
     }
 
@@ -107,6 +113,43 @@ class SmsSendServiceTest extends TestCase
 
         $this->expectException(SmsGatewayException::class);
         $this->service->send($this->dto());
+    }
+
+    public function test_member_of_a_shared_line_sends_with_the_line_but_keeps_its_own_conversation(): void
+    {
+        $member = (new OrganizerSmsSettingDomainObject)
+            ->setId(2)
+            ->setAccountId(20)
+            ->setOrganizerId(8)
+            ->setSharedLineSettingsId(1);
+        $conversation = (new SmsConversationDomainObject)->setId(70)->setOrganizerId(8)->setPhone('+262639123456');
+
+        $this->settingsRepository->shouldReceive('findFirstWhere')->with(['organizer_id' => 8])->andReturn($member);
+        $this->lineService->shouldReceive('resolveLine')->with($member)->andReturn($this->settings());
+        $this->conversationService->shouldReceive('isOptedOut')->with(8, '+262639123456')->andReturnFalse();
+        $this->conversationService->shouldReceive('findOrCreate')->once()->with($member, '+262639123456')->andReturn($conversation);
+        $this->conversationService->shouldReceive('recordActivity');
+        $this->conversationRepository->shouldReceive('updateFromArray');
+
+        $this->messageRepository->shouldReceive('create')
+            ->once()
+            ->withArgs(fn (array $attributes) => $attributes['organizer_id'] === 8 && $attributes['sms_conversation_id'] === 70)
+            ->andReturn((new SmsMessageDomainObject)->setId(13));
+        $this->messageRepository->shouldReceive('updateFromArray')->with(13, ['request_id' => 'picha-sms-13'])->once();
+
+        $this->client->shouldReceive('sendMessage')
+            ->once()
+            ->with('api-key-123', '+262639000000', '+262639123456', 'Bonjour', 'picha-sms-13')
+            ->andReturn('prov-13');
+        $this->messageRepository->shouldReceive('updateFromArray')
+            ->with(13, ['provider_message_id' => 'prov-13'])
+            ->once()
+            ->andReturn((new SmsMessageDomainObject)->setId(13)->setOrganizerId(8)->setProviderMessageId('prov-13'));
+
+        $message = $this->service->send(new SendSmsDTO(organizerId: 8, phone: '0639123456', content: 'Bonjour', sentByUserId: 3));
+
+        $this->assertSame(8, $message->getOrganizerId());
+        $this->assertSame('prov-13', $message->getProviderMessageId());
     }
 
     private function expectMessageCreated(): void

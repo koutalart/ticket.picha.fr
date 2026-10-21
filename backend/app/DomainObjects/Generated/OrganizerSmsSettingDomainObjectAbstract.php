@@ -31,6 +31,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const HISTORY_IMPORT_FINISHED_AT = 'history_import_finished_at';
     final public const HISTORY_IMPORT_COUNT = 'history_import_count';
     final public const HISTORY_IMPORT_ERROR = 'history_import_error';
+    final public const SHARED_LINE_SETTINGS_ID = 'shared_line_settings_id';
 
     protected int $id;
     protected int $account_id;
@@ -53,6 +54,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $history_import_finished_at = null;
     protected ?int $history_import_count = null;
     protected ?string $history_import_error = null;
+    protected ?int $shared_line_settings_id = null;
 
     public function toArray(): array
     {
@@ -78,6 +80,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'history_import_finished_at' => $this->history_import_finished_at ?? null,
                     'history_import_count' => $this->history_import_count ?? null,
                     'history_import_error' => $this->history_import_error ?? null,
+                    'shared_line_settings_id' => $this->shared_line_settings_id ?? null,
                 ];
     }
 
@@ -310,5 +313,16 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getHistoryImportError(): ?string
     {
         return $this->history_import_error;
+    }
+
+    public function setSharedLineSettingsId(?int $shared_line_settings_id): self
+    {
+        $this->shared_line_settings_id = $shared_line_settings_id;
+        return $this;
+    }
+
+    public function getSharedLineSettingsId(): ?int
+    {
+        return $this->shared_line_settings_id;
     }
 }

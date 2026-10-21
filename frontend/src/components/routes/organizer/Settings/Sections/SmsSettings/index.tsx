@@ -31,6 +31,8 @@ export const SmsSettings = () => {
     const formErrorHandle = useFormErrorResponseHandler();
     const settings = settingsQuery.data;
     const isConfigured = !!settings?.api_key_configured && !!settings?.from_number;
+    const isSharedLine = !!settings?.shared_line;
+    const sharedNumber = settings?.from_number || '';
     const historyImport = settings?.history_import;
     const isImporting = historyImport?.status === 'RUNNING';
     const importError = historyImport?.error || t`unknown error`;
@@ -144,6 +146,9 @@ export const SmsSettings = () => {
                 {isConfigured
                     ? <Badge color="green" variant="light" leftSection={<IconCircleCheck size={12}/>}>{t`Configured`}</Badge>
                     : <Badge color="gray" variant="light">{t`Not configured`}</Badge>}
+                {isSharedLine && (
+                    <Badge color="blue" variant="light">{t`Shared line`}</Badge>
+                )}
                 {settings?.phone_status === 'ONLINE' && (
                     <Badge color="green" variant="light">{t`Phone online`}</Badge>
                 )}
@@ -165,6 +170,16 @@ export const SmsSettings = () => {
                 </Alert>
             )}
 
+            {isSharedLine && (
+                <Alert color="blue" variant="light" mb="md">
+                    <Text size="sm">
+                        {t`Your SMS are sent with a line shared and managed by PICHA, from the number ${sharedNumber}. Customer replies appear in SMS messages and only your team can see your conversations.`}
+                    </Text>
+                </Alert>
+            )}
+
+            {!isSharedLine && (
+            <>
             <Alert color="blue" variant="light" mb="md">
                 <Text size="sm" mb={6}>{t`How to connect`}</Text>
                 <List size="sm" spacing={4} type="ordered">
@@ -215,6 +230,9 @@ export const SmsSettings = () => {
                 </fieldset>
             </form>
 
+            </>
+            )}
+
             {settings && (
                 <>
                     <Switch
@@ -225,6 +243,8 @@ export const SmsSettings = () => {
                         disabled={updateMutation.isPending}
                         mb="lg"
                     />
+                    {!isSharedLine && (
+                    <>
                     <TextInput
                         label={t`Webhook URL`}
                         value={settings.webhook_url}
@@ -249,9 +269,13 @@ export const SmsSettings = () => {
                     >
                         {t`Generate a new signing key`}
                     </Button>
+                    </>
+                    )}
                 </>
             )}
 
+            {!isSharedLine && (
+            <>
             <Divider my="lg"/>
 
             <Text fw={600} size="sm" mb={4}>{t`SMS history`}</Text>
@@ -286,6 +310,8 @@ export const SmsSettings = () => {
                 <Alert color="red" variant="light" mt="sm">
                     {t`The import failed: ${importError}. You can start it again, messages already imported are kept.`}
                 </Alert>
+            )}
+            </>
             )}
         </Card>
         <SmsAssistantSettings/>

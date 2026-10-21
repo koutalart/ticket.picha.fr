@@ -227,6 +227,31 @@ class SmsContactSyncServiceTest extends TestCase
         $this->service->syncAll();
     }
 
+    public function test_shared_line_member_contacts_are_never_written_to_the_line(): void
+    {
+        $this->settingsRepository->shouldReceive('findWhere')->andReturn(collect([
+            (new OrganizerSmsSettingDomainObject)->setId(1)->setOrganizerId(4)->setApiKey('uk_line'),
+            (new OrganizerSmsSettingDomainObject)->setId(2)->setOrganizerId(8)->setApiKey('uk_line')->setSharedLineSettingsId(1),
+        ]));
+        $this->organizerRepository->shouldReceive('findWhereIn')
+            ->with('id', [4])
+            ->andReturn(collect([(new OrganizerDomainObject)->setId(4)->setName('Innocent Event')]));
+        $this->givenCustomers(4, [['0639123456', 'Awa', 'Madi', null]]);
+        $this->directoryRepository->shouldNotReceive('findCustomersWithPhone')->with(8);
+        $this->directoryRepository->shouldNotReceive('findConversationNames')->with(8);
+        $this->client->shouldReceive('listContacts')->andReturn([]);
+
+        $this->client->shouldReceive('createContacts')->once()->with('uk_line', Mockery::on(
+            fn (array $contacts) => count($contacts) === 1
+                && $contacts[0]['name'] === 'Awa Madi'
+                && $contacts[0]['properties']['picha_organizers'] === '4'
+        ));
+
+        $result = $this->service->syncAll();
+
+        $this->assertSame(1, $result->accounts);
+    }
+
     public function test_separate_accounts_only_receive_their_own_customers(): void
     {
         $this->givenSettings([[4, 'uk_a'], [9, 'uk_b']]);

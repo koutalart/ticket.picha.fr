@@ -39,12 +39,17 @@ class SmsContactSyncService
         private readonly LoggerInterface $logger,
     ) {}
 
+    /**
+     * Organizers using a line shared by another organizer are skipped: the contacts of a shared httpSMS account
+     * are common to every organizer of the line, so only the line owner customers are written there.
+     */
     public function syncAll(bool $dryRun = false): SmsContactSyncResultDTO
     {
         /** @var Collection<int, OrganizerSmsSettingDomainObject> $settings */
         $settings = $this->settingsRepository
             ->findWhere([[OrganizerSmsSettingDomainObjectAbstract::API_KEY, 'not null', null]])
-            ->filter(fn (OrganizerSmsSettingDomainObject $setting) => trim((string) $setting->getApiKey()) !== '');
+            ->filter(fn (OrganizerSmsSettingDomainObject $setting) => trim((string) $setting->getApiKey()) !== '')
+            ->filter(fn (OrganizerSmsSettingDomainObject $setting) => $setting->getSharedLineSettingsId() === null);
 
         if ($settings->isEmpty()) {
             return new SmsContactSyncResultDTO;
