@@ -1556,7 +1556,11 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   object-fit: contain;
 }
 
-.fullscreenHero + .wrapper {
+.fullscreenHero[data-pause-on-scroll="true"] .fullscreenMedia {
+  transform: scale(calc(1.02 + var(--hero-progress) * 0.3));
+}
+
+.fullscreenHero ~ .wrapper {
   position: relative;
   z-index: 1;
 }
@@ -1572,5 +1576,97 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   .fullscreenFooter {
     opacity: 1;
     transform: none;
+  }
+}
+
+.landingFooter {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-family: $font-body;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+.landingFooterInner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.landingOrganizer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.landingOrganizerName {
+  margin: 0;
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.landingOrganizerBio {
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.65;
+  font-size: 0.95rem;
+
+  p {
+    margin: 0 0 0.8em;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    color: #fff;
+  }
+}
+
+.landingContact {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  background: transparent;
+  color: #fff;
+  font-family: $font-body;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color $transition-fast, border-color $transition-fast;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--event-primary-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--event-primary-color);
+    outline-offset: 3px;
+  }
+}
+
+.landingPoweredBy {
+  margin-top: 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+
+  a {
+    color: rgba(255, 255, 255, 0.85);
   }
 }

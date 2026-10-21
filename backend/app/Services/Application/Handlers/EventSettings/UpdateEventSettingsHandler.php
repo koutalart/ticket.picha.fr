@@ -114,6 +114,8 @@ class UpdateEventSettingsHandler
 
                     // Attendance response settings
                     'allow_attendee_attendance_response' => $settings->allow_attendee_attendance_response,
+
+                    'embedded_registration_enabled' => $settings->embedded_registration_enabled,
                 ],
                 where: [
                     'event_id' => $settings->event_id,
