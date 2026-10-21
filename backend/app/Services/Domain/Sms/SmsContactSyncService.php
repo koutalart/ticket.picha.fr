@@ -140,17 +140,30 @@ class SmsContactSyncService
     private function buildDesiredContacts(Collection $organizerIds, Collection $organizerNames, bool $labelOrganizers): array
     {
         $byPhone = [];
+        $conversationNames = [];
+
+        foreach ($organizerIds as $organizerId) {
+            foreach ($this->directoryRepository->findConversationNames($organizerId) as $rawPhone => $name) {
+                $phone = self::canonicalPhone(SmsPhoneNormalizer::normalize((string) $rawPhone));
+                if ($phone !== null) {
+                    $conversationNames[$phone] ??= $name;
+                    $byPhone[$phone] ??= ['name' => $name, 'email' => null, 'organizers' => []];
+                    $byPhone[$phone]['organizers'][$organizerId] = $organizerNames->get($organizerId, '');
+                }
+            }
+        }
 
         foreach ($organizerIds as $organizerId) {
             foreach ($this->directoryRepository->findCustomersWithPhone($organizerId) as $customer) {
                 $phone = self::canonicalPhone(SmsPhoneNormalizer::normalize($customer->phone));
-                $name = trim(($customer->firstName ?? '').' '.($customer->lastName ?? ''));
+                $name = $conversationNames[$phone ?? ''] ?? trim(($customer->firstName ?? '').' '.($customer->lastName ?? ''));
 
                 if ($phone === null || $name === '') {
                     continue;
                 }
 
-                $byPhone[$phone] ??= ['name' => $name, 'email' => $customer->email, 'organizers' => []];
+                $byPhone[$phone] ??= ['name' => $name, 'email' => null, 'organizers' => []];
+                $byPhone[$phone]['email'] ??= $customer->email;
                 $byPhone[$phone]['organizers'][$organizerId] = $organizerNames->get($organizerId, '');
             }
         }
