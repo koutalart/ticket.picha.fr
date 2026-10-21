@@ -4,7 +4,9 @@ namespace Tests\Unit\Services\Application\Handlers\Sms;
 
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
 use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
+use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
+use HiEvents\DomainObjects\Status\SmsPhoneStatus;
 use HiEvents\Exceptions\SmsWebhookUnauthorizedException;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
@@ -13,6 +15,7 @@ use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
 use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
+use HiEvents\Services\Domain\Sms\SmsAlertService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use Mockery;
@@ -31,6 +34,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
     private SmsInboundService|MockInterface $inboundService;
 
     private SmsCampaignDeliveryService|MockInterface $campaignDeliveryService;
+    private SmsAlertService|MockInterface $alertService;
 
     private HandleHttpSmsWebhookHandler $handler;
 
@@ -45,6 +49,8 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->verifier = Mockery::mock(HttpSmsWebhookSignatureVerifier::class);
         $this->inboundService = Mockery::mock(SmsInboundService::class);
         $this->campaignDeliveryService = Mockery::mock(SmsCampaignDeliveryService::class);
+        $this->alertService = Mockery::mock(SmsAlertService::class);
+        $this->alertService->shouldReceive('markPhoneActive')->andReturnUsing(fn ($settings) => $settings)->byDefault();
 
         $this->handler = new HandleHttpSmsWebhookHandler(
             $this->settingsService,
@@ -52,6 +58,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             $this->verifier,
             $this->inboundService,
             $this->campaignDeliveryService,
+            $this->alertService,
             new NullLogger,
         );
 
@@ -127,6 +134,71 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             'owner' => '+262639000000',
             'content' => 'Bonjour',
             'request_id' => 'picha-sms-5',
+        ]));
+    }
+
+    public function test_new_received_message_triggers_inbound_alert(): void
+    {
+        $this->expectVerified();
+        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3);
+
+        $this->inboundService->shouldReceive('recordInbound')->once()->andReturn($message);
+        $this->alertService->shouldReceive('markPhoneActive')->once()->with($this->settings)->andReturn($this->settings);
+        $this->alertService->shouldReceive('notifyInbound')->once()->with($this->settings, $message);
+
+        $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
+    }
+
+    public function test_duplicate_received_message_does_not_trigger_alert(): void
+    {
+        $this->expectVerified();
+
+        $this->inboundService->shouldReceive('recordInbound')->once()->andReturnNull();
+        $this->alertService->shouldNotReceive('notifyInbound');
+
+        $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
+    }
+
+    public function test_heartbeat_offline_records_phone_status(): void
+    {
+        $this->expectVerified();
+        $this->inboundService->shouldNotReceive('recordInbound');
+        $this->inboundService->shouldNotReceive('recordOutboundEvent');
+
+        $this->alertService->shouldReceive('recordPhoneStatus')
+            ->once()
+            ->with($this->settings, SmsPhoneStatus::OFFLINE, '2026-10-21T08:00:00Z');
+
+        $this->handler->handle($this->dto('phone.heartbeat.offline', [
+            'phone_id' => 'phone-1',
+            'owner' => '+262639000000',
+            'timestamp' => '2026-10-21T08:00:00Z',
+            'last_heartbeat_timestamp' => '2026-10-21T07:45:00Z',
+        ]));
+    }
+
+    public function test_heartbeat_online_records_phone_status(): void
+    {
+        $this->expectVerified();
+
+        $this->alertService->shouldReceive('recordPhoneStatus')
+            ->once()
+            ->with($this->settings, SmsPhoneStatus::ONLINE, null);
+
+        $this->handler->handle($this->dto('phone.heartbeat.online', [
+            'phone_id' => 'phone-1',
+            'owner' => '+262639000000',
+        ]));
+    }
+
+    public function test_heartbeat_for_another_phone_is_ignored(): void
+    {
+        $this->expectVerified();
+        $this->alertService->shouldNotReceive('recordPhoneStatus');
+
+        $this->handler->handle($this->dto('phone.heartbeat.offline', [
+            'phone_id' => 'phone-1',
+            'owner' => '+33600000000',
         ]));
     }
 

@@ -21,6 +21,9 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const LAST_WEBHOOK_RECEIVED_AT = 'last_webhook_received_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const NOTIFY_ON_INBOUND_SMS = 'notify_on_inbound_sms';
+    final public const PHONE_STATUS = 'phone_status';
+    final public const PHONE_STATUS_CHANGED_AT = 'phone_status_changed_at';
 
     protected int $id;
     protected int $account_id;
@@ -33,6 +36,9 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $last_webhook_received_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected bool $notify_on_inbound_sms = true;
+    protected ?string $phone_status = null;
+    protected ?string $phone_status_changed_at = null;
 
     public function toArray(): array
     {
@@ -48,6 +54,9 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'last_webhook_received_at' => $this->last_webhook_received_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'notify_on_inbound_sms' => $this->notify_on_inbound_sms ?? null,
+                    'phone_status' => $this->phone_status ?? null,
+                    'phone_status_changed_at' => $this->phone_status_changed_at ?? null,
                 ];
     }
 
@@ -170,5 +179,38 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setNotifyOnInboundSms(bool $notify_on_inbound_sms): self
+    {
+        $this->notify_on_inbound_sms = $notify_on_inbound_sms;
+        return $this;
+    }
+
+    public function getNotifyOnInboundSms(): bool
+    {
+        return $this->notify_on_inbound_sms;
+    }
+
+    public function setPhoneStatus(?string $phone_status): self
+    {
+        $this->phone_status = $phone_status;
+        return $this;
+    }
+
+    public function getPhoneStatus(): ?string
+    {
+        return $this->phone_status;
+    }
+
+    public function setPhoneStatusChangedAt(?string $phone_status_changed_at): self
+    {
+        $this->phone_status_changed_at = $phone_status_changed_at;
+        return $this;
+    }
+
+    public function getPhoneStatusChangedAt(): ?string
+    {
+        return $this->phone_status_changed_at;
     }
 }

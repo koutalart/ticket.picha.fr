@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\Generated\OrganizerSmsSettingDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
 use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
+use HiEvents\DomainObjects\Status\SmsPhoneStatus;
 use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
 use HiEvents\Exceptions\SmsWebhookUnauthorizedException;
 use HiEvents\Helper\SmsPhoneNormalizer;
@@ -17,6 +18,7 @@ use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
 use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
+use HiEvents\Services\Domain\Sms\SmsAlertService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use Psr\Log\LoggerInterface;
@@ -25,6 +27,17 @@ use Throwable;
 class HandleHttpSmsWebhookHandler
 {
     public const EVENT_RECEIVED = 'message.phone.received';
+
+    private const PHONE_STATUS_EVENTS = [
+        'phone.heartbeat.offline' => SmsPhoneStatus::OFFLINE,
+        'phone.heartbeat.online' => SmsPhoneStatus::ONLINE,
+    ];
+
+    private const PHONE_ACTIVITY_EVENTS = [
+        self::EVENT_RECEIVED,
+        'message.phone.sent',
+        'message.phone.delivered',
+    ];
 
     private const OUTBOUND_EVENTS = [
         'message.phone.sent' => SmsMessageStatus::SENT,
@@ -39,6 +52,7 @@ class HandleHttpSmsWebhookHandler
         private readonly HttpSmsWebhookSignatureVerifier $signatureVerifier,
         private readonly SmsInboundService $inboundService,
         private readonly SmsCampaignDeliveryService $campaignDeliveryService,
+        private readonly SmsAlertService $alertService,
         private readonly LoggerInterface $logger,
     ) {}
 
@@ -93,18 +107,37 @@ class HandleHttpSmsWebhookHandler
      */
     private function dispatch(OrganizerSmsSettingDomainObject $settings, ?string $type, array $data): void
     {
+        $phoneStatus = self::PHONE_STATUS_EVENTS[$type] ?? null;
+        if ($phoneStatus !== null) {
+            $this->alertService->recordPhoneStatus(
+                $settings,
+                $phoneStatus,
+                is_string($data['timestamp'] ?? null) ? $data['timestamp'] : null,
+            );
+
+            return;
+        }
+
+        if (in_array($type, self::PHONE_ACTIVITY_EVENTS, true)) {
+            $settings = $this->alertService->markPhoneActive($settings);
+        }
+
         if ($type === self::EVENT_RECEIVED) {
             $messageId = $data['message_id'] ?? $data['id'] ?? null;
             if (! is_string($messageId) || ! is_string($data['contact'] ?? null)) {
                 return;
             }
 
-            $this->inboundService->recordInbound($settings, new InboundSmsDTO(
+            $message = $this->inboundService->recordInbound($settings, new InboundSmsDTO(
                 providerMessageId: $messageId,
                 contact: $data['contact'],
                 content: (string) ($data['content'] ?? ''),
                 timestamp: $data['timestamp'] ?? null,
             ));
+
+            if ($message !== null) {
+                $this->alertService->notifyInbound($settings, $message);
+            }
 
             return;
         }
