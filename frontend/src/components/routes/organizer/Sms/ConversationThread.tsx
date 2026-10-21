@@ -224,6 +224,8 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
                                 {assistantEnabled && (
                                     <Button
                                         variant="subtle"
+                                        size="sm"
+                                        px="xs"
                                         leftSection={<IconRefresh size={16}/>}
                                         onClick={regenerate}
                                         loading={regenerateMutation.isPending}
@@ -233,7 +235,7 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
                                 )}
                                 <Menu position="top-end" withinPortal shadow="md" width={280}>
                                     <Menu.Target>
-                                        <Button variant="default" leftSection={<IconMessageBolt size={16}/>}>
+                                        <Button variant="default" size="sm" leftSection={<IconMessageBolt size={16}/>}>
                                             {t`Templates`}
                                         </Button>
                                     </Menu.Target>
@@ -258,6 +260,8 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
                                     </Menu.Dropdown>
                                 </Menu>
                                 <Button
+                                    size="sm"
+                                    className={classes.composerSend}
                                     leftSection={<IconSend size={16}/>}
                                     onClick={send}
                                     loading={sendMutation.isPending}
