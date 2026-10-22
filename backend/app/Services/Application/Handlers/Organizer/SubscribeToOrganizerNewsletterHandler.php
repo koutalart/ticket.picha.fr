@@ -2,6 +2,7 @@
 
 namespace HiEvents\Services\Application\Handlers\Organizer;
 
+use HiEvents\DomainObjects\Enums\NewsletterSubscriberSource;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
@@ -55,6 +56,7 @@ class SubscribeToOrganizerNewsletterHandler
             'organizer_id' => $event->getOrganizerId(),
             'event_id' => $event->getId(),
             'email' => Str::lower(trim($dto->email)),
+            'source' => NewsletterSubscriberSource::FOOTER->name,
             'consent_text' => $this->consentText($dto->consent_text, $event),
             'consented_at' => now(),
             'ip' => $dto->ip,

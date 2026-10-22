@@ -58,22 +58,22 @@ class OrganizerNewsletterSubscribersManagementTest extends TestCase
         (new GetOrganizerNewsletterSubscribersHandler($this->repository))->handleExport(8, 'concert');
     }
 
-    public function test_delete_only_targets_a_subscriber_of_the_organizer(): void
+    public function test_delete_unsubscribes_only_a_subscriber_of_the_organizer(): void
     {
-        $this->repository->shouldReceive('deleteWhere')
+        $this->repository->shouldReceive('unsubscribe')
             ->once()
-            ->with(['id' => 31, 'organizer_id' => 8])
-            ->andReturn(1);
+            ->with(8, 31)
+            ->andReturnTrue();
 
         (new DeleteOrganizerNewsletterSubscriberHandler($this->repository))->handle(8, 31);
     }
 
     public function test_delete_of_another_organizer_subscriber_is_not_found(): void
     {
-        $this->repository->shouldReceive('deleteWhere')
+        $this->repository->shouldReceive('unsubscribe')
             ->once()
-            ->with(['id' => 31, 'organizer_id' => 9])
-            ->andReturn(0);
+            ->with(9, 31)
+            ->andReturnFalse();
 
         $this->expectException(ResourceNotFoundException::class);
 
@@ -85,10 +85,11 @@ class OrganizerNewsletterSubscribersManagementTest extends TestCase
         $export = (new OrganizerNewsletterSubscribersExport())
             ->withData(new LengthAwarePaginator([$this->subscriber()], 1, 10));
 
-        $this->assertCount(4, $export->headings());
+        $this->assertCount(5, $export->headings());
         $this->assertCount(1, $export->collection());
         $this->assertSame([
             'jo@example.com',
+            'Footer',
             'Le Concert des Générations',
             '2026-10-22 09:30:00',
             "J'accepte de recevoir les actualités.",
@@ -102,11 +103,20 @@ class OrganizerNewsletterSubscribersManagementTest extends TestCase
         $this->assertSame([
             'id' => 31,
             'email' => 'jo@example.com',
+            'source' => 'FOOTER',
             'event_id' => 14,
             'event_title' => 'Le Concert des Générations',
             'consent_text' => "J'accepte de recevoir les actualités.",
             'consented_at' => '2026-10-22 09:30:00',
         ], $array);
+    }
+
+    public function test_a_registration_subscriber_shows_the_event_as_source(): void
+    {
+        $subscriber = $this->subscriber()->setSource('REGISTRATION');
+
+        $this->assertSame('Registration: Le Concert des Générations', $subscriber->getSourceLabel());
+        $this->assertSame('Registration: Deleted event', $subscriber->setEventTitle(null)->getSourceLabel());
     }
 
     private function subscriber(): OrganizerNewsletterSubscriberDomainObject
@@ -117,6 +127,7 @@ class OrganizerNewsletterSubscribersManagementTest extends TestCase
             ->setEventId(14)
             ->setEventTitle('Le Concert des Générations')
             ->setEmail('jo@example.com')
+            ->setSource('FOOTER')
             ->setConsentText("J'accepte de recevoir les actualités.")
             ->setConsentedAt('2026-10-22 09:30:00');
     }

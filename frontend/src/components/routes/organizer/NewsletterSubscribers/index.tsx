@@ -17,6 +17,15 @@ import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
 import {formatDateWithLocale} from "../../../../utilites/dates.ts";
 
+const sourceLabel = (subscriber: NewsletterSubscriber) => {
+    if (subscriber.source === 'REGISTRATION') {
+        const eventTitle = subscriber.event_title || t`Deleted event`;
+        return t`Registration: ${eventTitle}`;
+    }
+
+    return t`Footer`;
+};
+
 const NewsletterSubscribers = () => {
     const {organizerId} = useParams();
     const [search, setSearch] = useState('');
@@ -45,9 +54,9 @@ const NewsletterSubscribers = () => {
 
     const remove = (subscriber: NewsletterSubscriber) => {
         confirmationDialog(
-            t`Delete ${subscriber.email} from the subscribers? Do this when the person asks to unsubscribe or to have their data erased. This cannot be undone.`,
+            t`Unsubscribe ${subscriber.email}? Do this when the person asks to unsubscribe or to have their data erased. The address leaves the list and the export, and a past registration will never add it back: only a new consent will.`,
             () => deleteMutation.mutate({organizerId: organizerId!, subscriberId: subscriber.id}, {
-                onSuccess: () => showSuccess(t`Subscriber deleted`),
+                onSuccess: () => showSuccess(t`Subscriber unsubscribed`),
                 onError: () => showError(t`Unable to delete the subscriber`),
             })
         );
@@ -56,7 +65,7 @@ const NewsletterSubscribers = () => {
     return (
         <PageBody>
             <PageTitle
-                subheading={t`People who subscribed to your news from the footer of your event pages. You are responsible for this data: only use it for the purpose shown to them, and delete an address when asked.`}>
+                subheading={t`People who agreed to receive your news, from the footer of your event pages or by ticking the box when registering. You are responsible for this data: only use it for the purpose shown to them, and delete an address when asked.`}>
                 {t`Subscribers`}
             </PageTitle>
 
@@ -100,7 +109,7 @@ const NewsletterSubscribers = () => {
                             <Table.Thead>
                                 <Table.Tr>
                                     <Table.Th>{t`E-mail`}</Table.Th>
-                                    <Table.Th>{t`Source event`}</Table.Th>
+                                    <Table.Th>{t`Source`}</Table.Th>
                                     <Table.Th>{t`Consent date`}</Table.Th>
                                     <Table.Th>{t`Consent text`}</Table.Th>
                                     <Table.Th/>
@@ -111,7 +120,10 @@ const NewsletterSubscribers = () => {
                                     <Table.Tr key={subscriber.id}>
                                         <Table.Td><Text size="sm">{subscriber.email}</Text></Table.Td>
                                         <Table.Td>
-                                            <Text size="sm">{subscriber.event_title || t`Deleted event`}</Text>
+                                            <Text size="sm">{sourceLabel(subscriber)}</Text>
+                                            {subscriber.source !== 'REGISTRATION' && (
+                                                <Text size="xs" c="dimmed">{subscriber.event_title || t`Deleted event`}</Text>
+                                            )}
                                         </Table.Td>
                                         <Table.Td>
                                             <Text size="sm" style={{whiteSpace: 'nowrap'}}>

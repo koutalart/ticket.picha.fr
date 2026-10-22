@@ -13,6 +13,7 @@ abstract class OrganizerNewsletterSubscriberDomainObjectAbstract extends \HiEven
     final public const ID = 'id';
     final public const ORGANIZER_ID = 'organizer_id';
     final public const EVENT_ID = 'event_id';
+    final public const ORDER_ID = 'order_id';
     final public const EMAIL = 'email';
     final public const CONSENT_TEXT = 'consent_text';
     final public const CONSENTED_AT = 'consented_at';
@@ -20,10 +21,13 @@ abstract class OrganizerNewsletterSubscriberDomainObjectAbstract extends \HiEven
     final public const USER_AGENT = 'user_agent';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const SOURCE = 'source';
+    final public const UNSUBSCRIBED_AT = 'unsubscribed_at';
 
     protected int $id;
     protected int $organizer_id;
     protected ?int $event_id = null;
+    protected ?int $order_id = null;
     protected string $email;
     protected string $consent_text;
     protected string $consented_at;
@@ -31,6 +35,8 @@ abstract class OrganizerNewsletterSubscriberDomainObjectAbstract extends \HiEven
     protected ?string $user_agent = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected string $source = 'FOOTER';
+    protected ?string $unsubscribed_at = null;
 
     public function toArray(): array
     {
@@ -38,6 +44,7 @@ abstract class OrganizerNewsletterSubscriberDomainObjectAbstract extends \HiEven
                     'id' => $this->id ?? null,
                     'organizer_id' => $this->organizer_id ?? null,
                     'event_id' => $this->event_id ?? null,
+                    'order_id' => $this->order_id ?? null,
                     'email' => $this->email ?? null,
                     'consent_text' => $this->consent_text ?? null,
                     'consented_at' => $this->consented_at ?? null,
@@ -45,6 +52,8 @@ abstract class OrganizerNewsletterSubscriberDomainObjectAbstract extends \HiEven
                     'user_agent' => $this->user_agent ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'source' => $this->source ?? null,
+                    'unsubscribed_at' => $this->unsubscribed_at ?? null,
                 ];
     }
 
@@ -79,6 +88,17 @@ abstract class OrganizerNewsletterSubscriberDomainObjectAbstract extends \HiEven
     public function getEventId(): ?int
     {
         return $this->event_id;
+    }
+
+    public function setOrderId(?int $order_id): self
+    {
+        $this->order_id = $order_id;
+        return $this;
+    }
+
+    public function getOrderId(): ?int
+    {
+        return $this->order_id;
     }
 
     public function setEmail(string $email): self
@@ -156,5 +176,27 @@ abstract class OrganizerNewsletterSubscriberDomainObjectAbstract extends \HiEven
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setSource(string $source): self
+    {
+        $this->source = $source;
+        return $this;
+    }
+
+    public function getSource(): string
+    {
+        return $this->source;
+    }
+
+    public function setUnsubscribedAt(?string $unsubscribed_at): self
+    {
+        $this->unsubscribed_at = $unsubscribed_at;
+        return $this;
+    }
+
+    public function getUnsubscribedAt(): ?string
+    {
+        return $this->unsubscribed_at;
     }
 }

@@ -20,12 +20,7 @@ class DeleteOrganizerNewsletterSubscriberHandler
      */
     public function handle(int $organizerId, int $subscriberId): void
     {
-        $deleted = $this->subscriberRepository->deleteWhere([
-            'id' => $subscriberId,
-            'organizer_id' => $organizerId,
-        ]);
-
-        if ($deleted === 0) {
+        if (!$this->subscriberRepository->unsubscribe($organizerId, $subscriberId)) {
             throw new ResourceNotFoundException(__('Subscriber not found'));
         }
     }

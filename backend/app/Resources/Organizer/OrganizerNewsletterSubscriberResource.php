@@ -17,6 +17,7 @@ class OrganizerNewsletterSubscriberResource extends BaseResource
         return [
             'id' => $this->getId(),
             'email' => $this->getEmail(),
+            'source' => $this->getSource(),
             'event_id' => $this->getEventId(),
             'event_title' => $this->getEventTitle(),
             'consent_text' => $this->getConsentText(),
