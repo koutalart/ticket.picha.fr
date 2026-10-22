@@ -74,6 +74,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const AGE_RESTRICTION_MINIMUM_AGE = 'age_restriction_minimum_age';
     final public const ALLOW_ATTENDEE_ATTENDANCE_RESPONSE = 'allow_attendee_attendance_response';
     final public const EMBEDDED_REGISTRATION_ENABLED = 'embedded_registration_enabled';
+    final public const EVENT_PAGES = 'event_pages';
 
     protected int $id;
     protected int $event_id;
@@ -139,6 +140,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected int $age_restriction_minimum_age = 18;
     protected bool $allow_attendee_attendance_response = false;
     protected bool $embedded_registration_enabled = false;
+    protected array|string|null $event_pages = null;
 
     public function toArray(): array
     {
@@ -207,6 +209,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'age_restriction_minimum_age' => $this->age_restriction_minimum_age ?? null,
                     'allow_attendee_attendance_response' => $this->allow_attendee_attendance_response ?? null,
                     'embedded_registration_enabled' => $this->embedded_registration_enabled ?? null,
+                    'event_pages' => $this->event_pages ?? null,
                 ];
     }
 
@@ -913,5 +916,16 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getEmbeddedRegistrationEnabled(): bool
     {
         return $this->embedded_registration_enabled;
+    }
+
+    public function setEventPages(array|string|null $event_pages): self
+    {
+        $this->event_pages = $event_pages;
+        return $this;
+    }
+
+    public function getEventPages(): array|string|null
+    {
+        return $this->event_pages;
     }
 }
