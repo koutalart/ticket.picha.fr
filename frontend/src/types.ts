@@ -315,6 +315,15 @@ export interface HomepageFooterRelatedLink {
     image_url?: string | null;
 }
 
+export interface NewsletterSubscriber {
+    id: IdParam;
+    email: string;
+    event_id?: IdParam | null;
+    event_title?: string | null;
+    consent_text: string;
+    consented_at: string;
+}
+
 export interface HomepageFooterSettings {
     newsletter_enabled?: boolean;
     newsletter_title?: string | null;
