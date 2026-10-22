@@ -1,3 +1,5 @@
+@use "../../../../styles/mixins.scss";
+
 $text: #fff;
 $text-soft: rgba(255, 255, 255, 0.78);
 $line: rgba(255, 255, 255, 0.28);
@@ -240,7 +242,7 @@ $error: #ffb4a8;
   z-index: 1;
   color: $text;
   font-family: var(--theme-font-family, inherit);
-  background: rgba(0, 0, 0, 0.42);
+  @include mixins.immersive-scrim;
 }
 
 .panel {

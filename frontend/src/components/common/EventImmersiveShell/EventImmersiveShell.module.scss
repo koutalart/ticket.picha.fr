@@ -10,6 +10,7 @@
   min-height: 100dvh;
   color: #fff;
   background-color: transparent;
+  @include mixins.immersive-scrim(after, 0.5, 18px);
 
   @media print {
     min-height: 0;
@@ -31,6 +32,12 @@
     object-fit: cover;
     filter: blur(18px) brightness(0.45);
     transform: scale(1.08);
+  }
+
+  .shell > & video,
+  .shell > & img {
+    filter: brightness(0.8);
+    transform: none;
   }
 
   &::after {
