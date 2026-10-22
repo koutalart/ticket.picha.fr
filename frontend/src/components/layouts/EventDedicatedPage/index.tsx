@@ -12,6 +12,7 @@ import {EventDateRange} from "../../common/EventDateRange";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {ArtistsList, FaqList, PracticalInfoList} from "../../common/EventPagesContent";
+import {EventImmersiveShell, useEventImmersive} from "../../common/EventImmersiveShell";
 import {EventDedicatedPageHead} from "./EventDedicatedPageHead.tsx";
 import classes from "./EventDedicatedPage.module.scss";
 
@@ -53,6 +54,7 @@ export const EventDedicatedPage = () => {
     const organizerFont = event.organizer?.custom_font;
     const cssVars = computeThemeVariables(themeSettings, organizerFont);
     const organizerFontActive = isOrganizerFontActive(themeSettings.font_family, organizerFont);
+    const immersive = useEventImmersive(event);
 
     useEffect(() => {
         ensureHomepageFontLoaded(themeSettings.font_family, organizerFont);
@@ -73,6 +75,20 @@ export const EventDedicatedPage = () => {
         fontFamily: cssVars['--theme-font-family'],
     } as React.CSSProperties;
 
+    const immersiveVars = immersive.style as Record<string, string>;
+    const immersiveStyles = {
+        '--event-bg-color': 'transparent',
+        '--event-content-bg-color': 'rgba(255, 255, 255, 0.05)',
+        '--event-primary-color': immersive.accent,
+        '--event-primary-text-color': '#ffffff',
+        '--event-secondary-color': 'rgba(255, 255, 255, 0.74)',
+        '--event-secondary-text-color': 'rgba(255, 255, 255, 0.56)',
+        '--event-accent-contrast': immersiveVars['--immersive-accent-contrast'],
+        '--event-accent-soft': immersiveVars['--immersive-accent-tint'],
+        '--event-accent-muted': immersiveVars['--immersive-accent-tint'],
+        '--event-border-color': 'rgba(255, 255, 255, 0.14)',
+    } as React.CSSProperties;
+
     const organizer = event.organizer;
     const coverImage = eventCoverImageUrl(event);
     const brandLogo = event.images?.find((image) => image.type === 'EVENT_HERO_BRAND_LOGO')?.url
@@ -84,6 +100,84 @@ export const EventDedicatedPage = () => {
     const ctaLabel = isFreeEvent(event)
         ? t({message: 'Register', context: 'event dedicated page cta'})
         : t`Get Tickets`;
+
+    const tabsAndBody = (
+        <>
+            <nav className={classes.tabs} aria-label={t`Event pages`}>
+                <div className={classes.tabsInner}>
+                    <a href={eventHomepagePath(event)} className={classes.tab}>{t`Event`}</a>
+                    {availablePages.map((available) => (
+                        <Link
+                            key={available}
+                            to={eventDedicatedPagePath(event, available)}
+                            className={classes.tab}
+                            aria-current={available === page ? 'page' : undefined}
+                        >
+                            {eventPageLabel(available)}
+                        </Link>
+                    ))}
+                </div>
+            </nav>
+
+            <div className={classes.body}>
+                <p className={classes.intro}>{pageIntro(page, event.title)}</p>
+
+                {page === 'artistes' && <ArtistsList artists={pages.artists}/>}
+                {page === 'infos-pratiques' && <PracticalInfoList sections={pages.practical_info}/>}
+                {page === 'faq' && <FaqList items={pages.faq}/>}
+
+                <aside className={classes.ctaCard}>
+                    <div>
+                        <h2 className={classes.ctaTitle}>{event.title}</h2>
+                        <p className={classes.ctaText}><EventDateRange event={event}/>{locationLabel ? `, ${locationLabel}` : ''}</p>
+                    </div>
+                    <a href={eventRegistrationPath(event)} className={classes.ctaButton}>
+                        {ctaLabel}
+                        <IconArrowRight size={18} aria-hidden="true"/>
+                    </a>
+                </aside>
+
+                {otherPages.length > 0 && (
+                    <nav className={classes.related} aria-label={t`See also`}>
+                        <h2 className={classes.relatedTitle}>{t`See also`}</h2>
+                        <div className={classes.relatedLinks}>
+                            {otherPages.map((other) => (
+                                <Link key={other} to={eventDedicatedPagePath(event, other)} className={classes.relatedLink}>
+                                    <span>{eventPageLabel(other)}</span>
+                                    <IconArrowRight size={18} aria-hidden="true"/>
+                                </Link>
+                            ))}
+                            <a href={eventHomepagePath(event)} className={classes.relatedLink}>
+                                <span>{t`Event page`}</span>
+                                <IconArrowRight size={18} aria-hidden="true"/>
+                            </a>
+                        </div>
+                    </nav>
+                )}
+            </div>
+        </>
+    );
+
+    if (immersive.enabled) {
+        return (
+            <EventImmersiveShell event={event} width="wide">
+                <EventDedicatedPageHead event={event} pages={pages} page={page}/>
+                <div className={classes.immersive} style={immersiveStyles}>
+                    <div className={classes.immersiveHeading}>
+                        <p className={classes.heroEyebrow}>{event.title}</p>
+                        <h1 className={classes.heroTitle}>{pageHeading(page)}</h1>
+                        <div className={classes.heroMeta}>
+                            <span><IconCalendar size={16} aria-hidden="true"/><EventDateRange event={event}/></span>
+                            {locationLabel && !event.settings?.is_online_event && (
+                                <span><IconMapPin size={16} aria-hidden="true"/>{locationLabel}</span>
+                            )}
+                        </div>
+                    </div>
+                    {tabsAndBody}
+                </div>
+            </EventImmersiveShell>
+        );
+    }
 
     return (
         <main
@@ -145,58 +239,7 @@ export const EventDedicatedPage = () => {
                 </div>
             </header>
 
-            <nav className={classes.tabs} aria-label={t`Event pages`}>
-                <div className={classes.tabsInner}>
-                    <a href={eventHomepagePath(event)} className={classes.tab}>{t`Event`}</a>
-                    {availablePages.map((available) => (
-                        <Link
-                            key={available}
-                            to={eventDedicatedPagePath(event, available)}
-                            className={classes.tab}
-                            aria-current={available === page ? 'page' : undefined}
-                        >
-                            {eventPageLabel(available)}
-                        </Link>
-                    ))}
-                </div>
-            </nav>
-
-            <div className={classes.body}>
-                <p className={classes.intro}>{pageIntro(page, event.title)}</p>
-
-                {page === 'artistes' && <ArtistsList artists={pages.artists}/>}
-                {page === 'infos-pratiques' && <PracticalInfoList sections={pages.practical_info}/>}
-                {page === 'faq' && <FaqList items={pages.faq}/>}
-
-                <aside className={classes.ctaCard}>
-                    <div>
-                        <h2 className={classes.ctaTitle}>{event.title}</h2>
-                        <p className={classes.ctaText}><EventDateRange event={event}/>{locationLabel ? `, ${locationLabel}` : ''}</p>
-                    </div>
-                    <a href={eventRegistrationPath(event)} className={classes.ctaButton}>
-                        {ctaLabel}
-                        <IconArrowRight size={18} aria-hidden="true"/>
-                    </a>
-                </aside>
-
-                {otherPages.length > 0 && (
-                    <nav className={classes.related} aria-label={t`See also`}>
-                        <h2 className={classes.relatedTitle}>{t`See also`}</h2>
-                        <div className={classes.relatedLinks}>
-                            {otherPages.map((other) => (
-                                <Link key={other} to={eventDedicatedPagePath(event, other)} className={classes.relatedLink}>
-                                    <span>{eventPageLabel(other)}</span>
-                                    <IconArrowRight size={18} aria-hidden="true"/>
-                                </Link>
-                            ))}
-                            <a href={eventHomepagePath(event)} className={classes.relatedLink}>
-                                <span>{t`Event page`}</span>
-                                <IconArrowRight size={18} aria-hidden="true"/>
-                            </a>
-                        </div>
-                    </nav>
-                )}
-            </div>
+            {tabsAndBody}
 
             <footer className={classes.footer}>
                 <PoweredByFooter/>
