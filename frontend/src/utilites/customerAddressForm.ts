@@ -4,6 +4,7 @@ import {Event, IdParam, Organizer} from "../types.ts";
 import {GET_EVENT_PUBLIC_QUERY_KEY, getEventPublicQuery} from "../queries/useGetEventPublic.ts";
 import {GET_ORGANIZER_PUBLIC_QUERY_KEY, getOrganizerPublicQuery} from "../queries/useGetOrganizerPublic.ts";
 import {ORGANIZER_SITE_PAGES} from "../routeLoaders/organizerSitePageLoader.ts";
+import {CustomDomainOrganizer} from "./customDomain.ts";
 
 /**
  * Customer pages that belong to a single event: event page, embedded widget, checkout,
@@ -84,19 +85,43 @@ const resolveForOrganizer = async (queryClient: QueryClient, organizerId: string
     }
 };
 
+/**
+ * The tone of the organizer whose own domain serves the page, from the custom domain lookup when it carries it.
+ */
+const resolveForCustomDomain = async (
+    queryClient: QueryClient,
+    customDomainOrganizer: CustomDomainOrganizer,
+): Promise<CustomerAddressForm> => {
+    if (customDomainOrganizer.customer_address_form) {
+        return normalizeCustomerAddressForm(customDomainOrganizer.customer_address_form);
+    }
+
+    return resolveForOrganizer(queryClient, String(customDomainOrganizer.id));
+};
+
+/**
+ * On an organizer's own domain every page uses that organizer's tone, error and 404 pages included,
+ * unless the page shows an event of another organizer.
+ */
 export const resolveCustomerAddressForm = async (
     pathname: string,
     queryClient: QueryClient,
-    customDomainOrganizerId?: IdParam | null,
+    customDomainOrganizer?: CustomDomainOrganizer | null,
 ): Promise<CustomerAddressForm> => {
-    const organizerId = organizerIdFromCustomerPath(pathname, customDomainOrganizerId);
+    const fallback = async (): Promise<CustomerAddressForm> => customDomainOrganizer
+        ? resolveForCustomDomain(queryClient, customDomainOrganizer)
+        : 'vous';
+
+    const organizerId = organizerIdFromCustomerPath(pathname, customDomainOrganizer?.id);
     if (organizerId) {
-        return resolveForOrganizer(queryClient, organizerId);
+        return customDomainOrganizer && organizerId === String(customDomainOrganizer.id)
+            ? resolveForCustomDomain(queryClient, customDomainOrganizer)
+            : resolveForOrganizer(queryClient, organizerId);
     }
 
     const eventId = eventIdFromCustomerPath(pathname);
     if (!eventId) {
-        return 'vous';
+        return fallback();
     }
 
     const cached = findCachedEvent(queryClient, eventId);
@@ -108,6 +133,6 @@ export const resolveCustomerAddressForm = async (
         const event = await queryClient.fetchQuery(getEventPublicQuery(eventId, null, false));
         return customerAddressFormFromEvent(event);
     } catch {
-        return 'vous';
+        return fallback();
     }
 };

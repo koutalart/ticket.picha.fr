@@ -59,7 +59,7 @@ export async function render(params: {
     const customerAddressForm = await resolveCustomerAddressForm(
         new URL(remixRequest.url).pathname,
         queryClient,
-        getCustomDomainOrganizer(remixRequest)?.id,
+        getCustomDomainOrganizer(remixRequest),
     );
     initCustomerAddressForm(customerAddressForm);
     await dynamicActivateLocale(getLocale(params.req));

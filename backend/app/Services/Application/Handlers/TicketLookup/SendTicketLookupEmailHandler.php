@@ -6,11 +6,11 @@ use Carbon\Carbon;
 use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\Status\OrderStatus;
-use HiEvents\Helper\CustomerLocale;
 use HiEvents\Mail\TicketLookup\TicketLookupEmail;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\TicketLookupTokenRepositoryInterface;
 use HiEvents\Services\Application\Handlers\TicketLookup\DTO\SendTicketLookupEmailDTO;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Infrastructure\TokenGenerator\TokenGeneratorService;
 use Illuminate\Contracts\Mail\Mailer;
@@ -31,6 +31,7 @@ class SendTicketLookupEmailHandler
         private readonly LoggerInterface $logger,
         private readonly DatabaseManager $databaseManager,
         private readonly PublicBaseUrlResolver $publicBaseUrlResolver,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {
     }
 
@@ -52,10 +53,13 @@ class SendTicketLookupEmailHandler
 
         $orderCount = $orders->count();
         $publicBaseUrl = $this->publicBaseUrl($orders);
+        $locale = $this->customerLocaleResolver->forEventIds(
+            $orders->map(fn (OrderDomainObject $order) => $order->getEventId())
+        );
 
-        $this->databaseManager->transaction(function () use ($email, $orderCount, $publicBaseUrl) {
+        $this->databaseManager->transaction(function () use ($email, $orderCount, $publicBaseUrl, $locale) {
             $token = $this->generateAndSaveToken($email);
-            $this->sendTicketLookupEmail($email, $token, $orderCount, $publicBaseUrl);
+            $this->sendTicketLookupEmail($email, $token, $orderCount, $publicBaseUrl, $locale);
         });
     }
 
@@ -99,7 +103,7 @@ class SendTicketLookupEmailHandler
         return $token;
     }
 
-    private function sendTicketLookupEmail(string $email, string $token, int $orderCount, ?string $publicBaseUrl): void
+    private function sendTicketLookupEmail(string $email, string $token, int $orderCount, ?string $publicBaseUrl, string $locale): void
     {
         $this->logger->info('Sending ticket lookup email', [
             'email' => $email,
@@ -108,7 +112,7 @@ class SendTicketLookupEmailHandler
 
         $this->mailer
             ->to($email)
-            ->locale(CustomerLocale::get())
+            ->locale($locale)
             ->queue(new TicketLookupEmail(
                 email: $email,
                 token: $token,

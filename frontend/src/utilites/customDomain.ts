@@ -2,6 +2,7 @@ export interface CustomDomainOrganizer {
     id: number;
     slug: string;
     domain: string;
+    customer_address_form?: string | null;
 }
 
 export const CUSTOM_DOMAIN_HEADER = 'x-picha-custom-domain-organizer';

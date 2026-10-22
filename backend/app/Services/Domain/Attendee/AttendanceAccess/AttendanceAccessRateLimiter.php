@@ -27,14 +27,14 @@ class AttendanceAccessRateLimiter
      *
      * @throws AttendanceAccessRateLimitedException
      */
-    public function hitCodeRequest(string $contactKey, string $ipAddress): void
+    public function hitCodeRequest(string $contactKey, string $ipAddress, ?string $locale = null): void
     {
         $ipKey = 'attendance-access:request-ip:'.hash('sha256', $ipAddress);
         $contactLimitKey = 'attendance-access:request-contact:'.$contactKey;
 
         if ($this->rateLimiter->tooManyAttempts($ipKey, self::MAX_REQUESTS_PER_IP)
             || $this->rateLimiter->tooManyAttempts($contactLimitKey, self::MAX_REQUESTS_PER_CONTACT)) {
-            throw $this->limited();
+            throw $this->limited($locale);
         }
 
         $this->rateLimiter->hit($ipKey, self::DECAY_SECONDS);
@@ -44,21 +44,21 @@ class AttendanceAccessRateLimiter
     /**
      * @throws AttendanceAccessRateLimitedException
      */
-    public function hitVerification(string $ipAddress): void
+    public function hitVerification(string $ipAddress, ?string $locale = null): void
     {
         $ipKey = 'attendance-access:verify-ip:'.hash('sha256', $ipAddress);
 
         if ($this->rateLimiter->tooManyAttempts($ipKey, self::MAX_VERIFICATIONS_PER_IP)) {
-            throw $this->limited();
+            throw $this->limited($locale);
         }
 
         $this->rateLimiter->hit($ipKey, self::DECAY_SECONDS);
     }
 
-    private function limited(): AttendanceAccessRateLimitedException
+    private function limited(?string $locale): AttendanceAccessRateLimitedException
     {
         return new AttendanceAccessRateLimitedException(
-            __('Too many attempts. Please try again in an hour.', [], CustomerLocale::get())
+            __('Too many attempts. Please try again in an hour.', [], $locale ?? CustomerLocale::get())
         );
     }
 }
