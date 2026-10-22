@@ -163,12 +163,17 @@ class SmsAssistantServiceTest extends TestCase
         self::assertNull($this->service->draftForInboundMessage(3, 9));
     }
 
-    public function test_conversation_already_handled_by_the_team_is_skipped(): void
+    public function test_conversation_waiting_for_the_team_still_gets_a_draft(): void
     {
-        $this->conversationRepository->shouldReceive('findFirstWhere')->andReturn($this->conversation()->setStatus('NEEDS_HUMAN'));
-        $this->generator->shouldNotReceive('generate');
+        $this->conversationRepository->shouldReceive('findFirstWhere')->once()->andReturn($this->conversation()->setStatus('NEEDS_HUMAN'));
+        $this->expectDraftContext();
+        $this->generator->shouldReceive('generate')->once()
+            ->andReturn(new SmsAssistantResultDTO(SmsAssistantOutcome::DRAFT, 'Les artistes seront annoncés bientôt.', null));
+        $this->conversationRepository->shouldReceive('updateFromArray')->once();
 
-        self::assertNull($this->service->draftForInboundMessage(3, 9));
+        $result = $this->service->draftForInboundMessage(3, 9);
+
+        self::assertSame(SmsAssistantOutcome::DRAFT, $result->outcome);
     }
 
     public function test_regenerate_requires_the_assistant_to_be_on(): void
