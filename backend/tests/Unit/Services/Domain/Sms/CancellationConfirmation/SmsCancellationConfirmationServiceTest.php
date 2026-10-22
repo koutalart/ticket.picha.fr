@@ -80,6 +80,12 @@ class SmsCancellationConfirmationServiceTest extends TestCase
     /** @var array<int, array> */
     private array $updates = [];
 
+    /** @var array<int, array> */
+    private array $rows = [];
+
+    /** @var string[] */
+    private array $waveStarts = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -113,14 +119,31 @@ class SmsCancellationConfirmationServiceTest extends TestCase
         )->byDefault();
 
         $this->confirmationRepository->shouldReceive('findFirstWhere')->andReturnNull()->byDefault();
-        $this->confirmationRepository->shouldReceive('create')->andReturnUsing(function (array $attributes) {
-            $id = count($this->claims) + 1;
-            $this->claims[$id] = $attributes;
+        $this->confirmationRepository->shouldReceive('createUnlessPhoneConfirmedSince')->andReturnUsing(
+            function (array $attributes, string $since, array $skippedAttributes) {
+                $this->waveStarts[] = $since;
+                foreach ($this->rows as $claim) {
+                    if ($claim['event_id'] === $attributes['event_id']
+                        && $claim['phone'] === $attributes['phone']
+                        && in_array($claim['status'], ['SENDING', 'SENT'], true)) {
+                        $attributes = array_merge($attributes, $skippedAttributes);
+                        break;
+                    }
+                }
 
-            return (new SmsCancellationConfirmationDomainObject)->setId($id)->setAttendeeId($attributes['attendee_id']);
-        })->byDefault();
+                $id = count($this->claims) + 1;
+                $this->claims[$id] = $attributes;
+                $this->rows[$id] = $attributes;
+
+                return (new SmsCancellationConfirmationDomainObject)
+                    ->setId($id)
+                    ->setAttendeeId($attributes['attendee_id'])
+                    ->setStatus($attributes['status']);
+            }
+        )->byDefault();
         $this->confirmationRepository->shouldReceive('updateFromArray')->andReturnUsing(function (int $id, array $attributes) {
             $this->updates[$id] = $attributes;
+            $this->rows[$id] = array_merge($this->rows[$id], $attributes);
 
             return new SmsCancellationConfirmationDomainObject;
         })->byDefault();
@@ -310,7 +333,7 @@ class SmsCancellationConfirmationServiceTest extends TestCase
         $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings(true, self::TEMPLATE, true));
         $this->confirmationRepository->shouldReceive('findFirstWhere')->with(['attendee_id' => 1])->andReturn(new SmsCancellationConfirmationDomainObject);
         $this->confirmationRepository->shouldReceive('findFirstWhere')->with(['attendee_id' => 2])->andReturnNull();
-        $this->confirmationRepository->shouldReceive('create')->with(Mockery::on(fn (array $attributes) => $attributes['attendee_id'] === 2))
+        $this->confirmationRepository->shouldReceive('createUnlessPhoneConfirmedSince')->with(Mockery::on(fn (array $attributes) => $attributes['attendee_id'] === 2), Mockery::any(), Mockery::any())
             ->andThrow(new UniqueConstraintViolationException('pgsql', 'insert', [], new \Exception('duplicate')));
         $this->cancelledOrder([$this->attendee(1, false), $this->attendee(2, false)]);
         $this->phones([1, 2], [
@@ -382,6 +405,66 @@ class SmsCancellationConfirmationServiceTest extends TestCase
         $this->assertSame(1, $result->failed);
         $this->assertSame('FAILED', $this->updates[1]['status']);
         $this->assertCount(1, $this->claims);
+    }
+
+    public function test_attendees_of_an_order_sharing_a_phone_receive_a_single_cancellation_sms(): void
+    {
+        $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings(true, self::TEMPLATE, true));
+        $this->cancelledOrder([$this->attendee(1, false), $this->attendee(2, false), $this->attendee(3, false)]);
+        $this->phones([1, 2, 3], [
+            $this->withPhone(1, '0639 25 02 06', 'Awa'),
+            $this->withPhone(2, '+262639250206', 'Ali'),
+            $this->withPhone(3, '+262639250207', 'Zaïna'),
+        ]);
+
+        $result = $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame(2, $result->sent);
+        $this->assertSame(1, $result->alreadyConfirmedForPhone);
+        $this->assertSame(['+262639250206', '+262639250207'], array_map(fn (SendSmsDTO $sms) => $sms->phone, $this->sent));
+        $this->assertSame('SKIPPED', $this->claims[2]['status']);
+        $this->assertSame('Déjà confirmé pour ce numéro', $this->claims[2]['failure_reason']);
+    }
+
+    public function test_separate_cancellations_processed_together_send_once_per_phone(): void
+    {
+        $this->phones([1], [$this->withPhone(1, '+262639250206', 'Awa')]);
+        $this->phones([2], [$this->withPhone(2, '0639250206', 'Ali')]);
+
+        $first = $this->service->sendForAttendee(1);
+        $second = $this->service->sendForAttendee(2);
+
+        $this->assertSame(1, $first->sent);
+        $this->assertSame(0, $second->sent);
+        $this->assertSame(1, $second->alreadyConfirmedForPhone);
+        $this->assertCount(1, $this->sent);
+    }
+
+    public function test_the_cancellation_wave_starts_ten_minutes_before_the_claim(): void
+    {
+        $this->phones([1], [$this->withPhone(1, '+262639250206', 'Awa')]);
+
+        $this->service->sendForAttendee(1);
+
+        $since = \Illuminate\Support\Carbon::parse($this->waveStarts[0]);
+        $this->assertEqualsWithDelta(10 * 60, \Illuminate\Support\Carbon::now()->diffInSeconds($since, true), 5);
+    }
+
+    public function test_a_failed_cancellation_sms_does_not_block_the_number(): void
+    {
+        $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings(true, self::TEMPLATE, true));
+        $this->sendService->shouldReceive('send')->once()->ordered()->andThrow(new SmsGatewayException('Téléphone hors ligne'));
+        $this->sendService->shouldReceive('send')->once()->ordered()->andReturn((new SmsMessageDomainObject)->setId(777));
+        $this->cancelledOrder([$this->attendee(1, false), $this->attendee(2, false)]);
+        $this->phones([1, 2], [
+            $this->withPhone(1, '+262639250206', 'Awa'),
+            $this->withPhone(2, '+262639250206', 'Ali'),
+        ]);
+
+        $result = $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame(1, $result->failed);
+        $this->assertSame(1, $result->sent);
     }
 
     public function test_enabled_rules(): void

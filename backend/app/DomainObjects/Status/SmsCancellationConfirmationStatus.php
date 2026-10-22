@@ -13,4 +13,5 @@ enum SmsCancellationConfirmationStatus: string
     case SENDING = 'SENDING';
     case SENT = 'SENT';
     case FAILED = 'FAILED';
+    case SKIPPED = 'SKIPPED';
 }

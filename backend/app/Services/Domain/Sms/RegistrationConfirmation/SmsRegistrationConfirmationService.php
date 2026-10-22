@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Sms\RegistrationConfirmation;
 
+use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\EventDomainObject;
@@ -14,6 +15,7 @@ use HiEvents\DomainObjects\Generated\SmsOptOutDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsRegistrationConfirmationDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\SmsRegistrationConfirmationDomainObject;
+use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\DomainObjects\Status\SmsRegistrationConfirmationStatus;
 use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
@@ -22,6 +24,7 @@ use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
 use HiEvents\Exceptions\SmsRecipientOptedOutException;
 use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\SmsPhoneNormalizer;
+use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
@@ -36,15 +39,22 @@ use HiEvents\Services\Domain\Sms\Reminder\SmsReminderMessageRenderer;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderPersonalLinkProviderInterface;
 use HiEvents\Services\Domain\Sms\SmsSendService;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Carbon;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
  * Sends one confirmation SMS to each active attendee of a completed online order, with their personal attendance link.
  * Each attendee is claimed in sms_registration_confirmations before the call to PICHA SMS, so nobody receives it twice.
+ *
+ * A phone number receives at most one confirmation per event: other attendees sharing it are recorded as SKIPPED.
+ * The unique partial index sms_registration_confirmations_one_per_phone settles concurrent orders.
+ * Once the attendee who received it has cancelled, the number is released and a new registration is confirmed again.
  */
 class SmsRegistrationConfirmationService
 {
+    public const SKIP_REASON_ALREADY_CONFIRMED_FOR_PHONE = 'Déjà confirmé pour ce numéro';
+
     public function __construct(
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly EventRepositoryInterface $eventRepository,
@@ -57,6 +67,7 @@ class SmsRegistrationConfirmationService
         private readonly SmsSendService $sendService,
         private readonly LoggerInterface $logger,
         private readonly CustomerLocaleResolver $customerLocaleResolver,
+        private readonly AttendeeRepositoryInterface $attendeeRepository,
     ) {}
 
     /**
@@ -115,6 +126,7 @@ class SmsRegistrationConfirmationService
         $withoutValidPhone = 0;
         $optedOut = 0;
         $alreadySent = 0;
+        $alreadyConfirmedForPhone = 0;
 
         foreach ($this->directoryRepository->findActiveAttendeesWithPhone($event->getId(), $order->getId()) as $attendee) {
             $phone = $attendee->phone !== null ? SmsPhoneNormalizer::normalize($attendee->phone) : null;
@@ -133,6 +145,12 @@ class SmsRegistrationConfirmationService
             $confirmation = $this->claim($order, $event, $attendee, $phone);
             if ($confirmation === null) {
                 $alreadySent++;
+
+                continue;
+            }
+
+            if ($confirmation === SmsRegistrationConfirmationStatus::SKIPPED) {
+                $alreadyConfirmedForPhone++;
 
                 continue;
             }
@@ -172,6 +190,7 @@ class SmsRegistrationConfirmationService
             withoutValidPhone: $withoutValidPhone,
             optedOut: $optedOut,
             alreadySent: $alreadySent,
+            alreadyConfirmedForPhone: $alreadyConfirmedForPhone,
         );
     }
 
@@ -183,26 +202,96 @@ class SmsRegistrationConfirmationService
         ]) !== null;
     }
 
-    private function claim(OrderDomainObject $order, EventDomainObject $event, SmsReminderAttendeeDTO $attendee, string $phone): ?SmsRegistrationConfirmationDomainObject
-    {
-        if ($this->confirmationRepository->findFirstWhere([
-            SmsRegistrationConfirmationDomainObjectAbstract::ATTENDEE_ID => $attendee->attendeeId,
-        ]) !== null) {
+    /**
+     * Returns the claimed row, SKIPPED when the phone already received the confirmation for this event,
+     * or null when this attendee was already handled.
+     */
+    private function claim(
+        OrderDomainObject $order,
+        EventDomainObject $event,
+        SmsReminderAttendeeDTO $attendee,
+        string $phone,
+    ): SmsRegistrationConfirmationDomainObject|SmsRegistrationConfirmationStatus|null {
+        if ($this->isAttendeeAlreadyHandled($attendee->attendeeId)) {
             return null;
         }
 
+        $attributes = [
+            SmsRegistrationConfirmationDomainObjectAbstract::ORGANIZER_ID => $event->getOrganizerId(),
+            SmsRegistrationConfirmationDomainObjectAbstract::EVENT_ID => $event->getId(),
+            SmsRegistrationConfirmationDomainObjectAbstract::ORDER_ID => $order->getId(),
+            SmsRegistrationConfirmationDomainObjectAbstract::ATTENDEE_ID => $attendee->attendeeId,
+            SmsRegistrationConfirmationDomainObjectAbstract::PHONE => $phone,
+            SmsRegistrationConfirmationDomainObjectAbstract::STATUS => SmsRegistrationConfirmationStatus::SENDING->name,
+        ];
+
+        $holder = $this->findPhoneHolder($event->getId(), $phone);
+        if ($holder !== null && ! $this->releaseIfCancelled($holder)) {
+            return $this->recordSkipped($attributes);
+        }
+
         try {
-            return $this->confirmationRepository->create([
-                SmsRegistrationConfirmationDomainObjectAbstract::ORGANIZER_ID => $event->getOrganizerId(),
-                SmsRegistrationConfirmationDomainObjectAbstract::EVENT_ID => $event->getId(),
-                SmsRegistrationConfirmationDomainObjectAbstract::ORDER_ID => $order->getId(),
-                SmsRegistrationConfirmationDomainObjectAbstract::ATTENDEE_ID => $attendee->attendeeId,
-                SmsRegistrationConfirmationDomainObjectAbstract::PHONE => $phone,
-                SmsRegistrationConfirmationDomainObjectAbstract::STATUS => SmsRegistrationConfirmationStatus::SENDING->name,
+            return $this->confirmationRepository->create($attributes);
+        } catch (UniqueConstraintViolationException) {
+            if ($this->isAttendeeAlreadyHandled($attendee->attendeeId)) {
+                return null;
+            }
+
+            return $this->recordSkipped($attributes);
+        }
+    }
+
+    private function isAttendeeAlreadyHandled(int $attendeeId): bool
+    {
+        return $this->confirmationRepository->findFirstWhere([
+            SmsRegistrationConfirmationDomainObjectAbstract::ATTENDEE_ID => $attendeeId,
+        ]) !== null;
+    }
+
+    private function findPhoneHolder(int $eventId, string $phone): ?SmsRegistrationConfirmationDomainObject
+    {
+        return $this->confirmationRepository->findFirstWhere([
+            SmsRegistrationConfirmationDomainObjectAbstract::EVENT_ID => $eventId,
+            SmsRegistrationConfirmationDomainObjectAbstract::PHONE => $phone,
+            [SmsRegistrationConfirmationDomainObjectAbstract::STATUS, 'in', [
+                SmsRegistrationConfirmationStatus::SENDING->name,
+                SmsRegistrationConfirmationStatus::SENT->name,
+            ]],
+            [SmsRegistrationConfirmationDomainObjectAbstract::PHONE_RELEASED_AT, 'null', null],
+        ]);
+    }
+
+    /**
+     * The number stays taken while the attendee who received the confirmation is still registered.
+     */
+    private function releaseIfCancelled(SmsRegistrationConfirmationDomainObject $holder): bool
+    {
+        /** @var AttendeeDomainObject|null $holderAttendee */
+        $holderAttendee = $this->attendeeRepository->findFirst($holder->getAttendeeId());
+        if ($holderAttendee !== null && $holderAttendee->getStatus() !== AttendeeStatus::CANCELLED->name) {
+            return false;
+        }
+
+        $this->confirmationRepository->updateFromArray($holder->getId(), [
+            SmsRegistrationConfirmationDomainObjectAbstract::PHONE_RELEASED_AT => Carbon::now()->toDateTimeString(),
+        ]);
+
+        return true;
+    }
+
+    private function recordSkipped(array $attributes): ?SmsRegistrationConfirmationStatus
+    {
+        try {
+            $this->confirmationRepository->create([
+                ...$attributes,
+                SmsRegistrationConfirmationDomainObjectAbstract::STATUS => SmsRegistrationConfirmationStatus::SKIPPED->name,
+                SmsRegistrationConfirmationDomainObjectAbstract::FAILURE_REASON => self::SKIP_REASON_ALREADY_CONFIRMED_FOR_PHONE,
             ]);
         } catch (UniqueConstraintViolationException) {
             return null;
         }
+
+        return SmsRegistrationConfirmationStatus::SKIPPED;
     }
 
     private function fail(SmsRegistrationConfirmationDomainObject $confirmation, SmsReminderAttendeeDTO $attendee, string $phone, Throwable $exception): void

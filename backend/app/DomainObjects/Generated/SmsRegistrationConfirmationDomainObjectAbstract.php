@@ -21,6 +21,7 @@ abstract class SmsRegistrationConfirmationDomainObjectAbstract extends \HiEvents
     final public const FAILURE_REASON = 'failure_reason';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const PHONE_RELEASED_AT = 'phone_released_at';
 
     protected int $id;
     protected int $organizer_id;
@@ -33,6 +34,7 @@ abstract class SmsRegistrationConfirmationDomainObjectAbstract extends \HiEvents
     protected ?string $failure_reason = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?string $phone_released_at = null;
 
     public function toArray(): array
     {
@@ -48,6 +50,7 @@ abstract class SmsRegistrationConfirmationDomainObjectAbstract extends \HiEvents
                     'failure_reason' => $this->failure_reason ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'phone_released_at' => $this->phone_released_at ?? null,
                 ];
     }
 
@@ -170,5 +173,16 @@ abstract class SmsRegistrationConfirmationDomainObjectAbstract extends \HiEvents
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setPhoneReleasedAt(?string $phone_released_at): self
+    {
+        $this->phone_released_at = $phone_released_at;
+        return $this;
+    }
+
+    public function getPhoneReleasedAt(): ?string
+    {
+        return $this->phone_released_at;
     }
 }
