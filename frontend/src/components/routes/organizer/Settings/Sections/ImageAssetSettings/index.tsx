@@ -93,9 +93,12 @@ const Settings = () => {
                     heading={t`Logo & Cover`}
                     description={t`Logo and cover image for your organizer`}
                 />
-                <h2>{t`Logo`}</h2>
+                <Text size="sm" c="dimmed" mb="md">
+                    {t`Your pages pick the right logo for each background. If you only add one, it is used everywhere.`}
+                </Text>
+                <h2>{t`Logo for dark or coloured backgrounds`}</h2>
                 <ImageUploadDropzone
-                    helpText={t`Upload a logo for your organizer`}
+                    helpText={t`Used on full screen videos, coloured footers and dark pages. A white or light logo works best.`}
                     imageType={'ORGANIZER_LOGO'}
                     entityId={organizerId}
                     onUploadSuccess={handleImageChange}
@@ -104,9 +107,9 @@ const Settings = () => {
                         id: organizerLogo?.id,
                     }}
                 />
-                <h2>{t`Email logo`}</h2>
+                <h2>{t`Logo for light backgrounds (emails and website)`}</h2>
                 <ImageUploadDropzone
-                    helpText={t`Optional. Version of your logo for light backgrounds, used in emails instead of the logo above. Prefer a PNG with a transparent background.`}
+                    helpText={t`Used in emails and on white areas of your pages, such as your organizer page and event cards. Prefer a dark logo on a transparent background (PNG).`}
                     imageType={'ORGANIZER_EMAIL_LOGO'}
                     entityId={organizerId}
                     onUploadSuccess={handleImageChange}
