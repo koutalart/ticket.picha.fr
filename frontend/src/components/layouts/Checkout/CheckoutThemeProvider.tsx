@@ -1,6 +1,8 @@
-import {MantineProvider, MantineThemeOverride, CSSVariablesResolver, MantineColorsTuple, ButtonProps, CheckboxProps, MantineTheme} from "@mantine/core";
+import {MantineProvider, MantineThemeOverride, CSSVariablesResolver, ButtonProps, CheckboxProps, MantineTheme} from "@mantine/core";
 import {PropsWithChildren, useMemo} from "react";
 import {getContrastColor, hexToRgb} from "../../../utilites/themeUtils";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
+import {createAccentPalette, DARK_PALETTE, LIGHT_PALETTE} from "../../common/PublicOverlayTheme/palette.ts";
 
 interface CheckoutThemeProviderProps {
     accentColor: string;
@@ -9,71 +11,10 @@ interface CheckoutThemeProviderProps {
 }
 
 /**
- * Fixed color palettes for checkout - these ensure good contrast and readability.
- * Users can only customize accent color, not the base palette.
- */
-const LIGHT_PALETTE = {
-    surface: '#ffffff',
-    background: '#f8f9fa',
-    textPrimary: '#1a1a1a',
-    textSecondary: '#525252',
-    textTertiary: '#737373',
-    border: '#e5e7eb',
-};
-
-const DARK_PALETTE = {
-    surface: '#1f1f1f',
-    background: '#121212',
-    textPrimary: '#ffffff',
-    textSecondary: '#a3a3a3',
-    textTertiary: '#737373',
-    border: '#333333',
-};
-
-/**
- * Creates a color palette that preserves the user's exact accent color.
- */
-function createColorPalette(accentColor: string): MantineColorsTuple {
-    const rgb = hexToRgb(accentColor);
-    if (!rgb) {
-        return ['#f3e8ff', '#e9d5ff', '#d8b4fe', '#c084fc', '#a855f7', '#9333ea', '#7c3aed', '#6d28d9', '#5b21b6', '#4c1d95'];
-    }
-
-    const {r, g, b} = rgb;
-
-    const lighten = (factor: number) => {
-        const lr = Math.round(r + (255 - r) * factor);
-        const lg = Math.round(g + (255 - g) * factor);
-        const lb = Math.round(b + (255 - b) * factor);
-        return `rgb(${lr}, ${lg}, ${lb})`;
-    };
-
-    const darken = (factor: number) => {
-        const dr = Math.round(r * (1 - factor));
-        const dg = Math.round(g * (1 - factor));
-        const db = Math.round(b * (1 - factor));
-        return `rgb(${dr}, ${dg}, ${db})`;
-    };
-
-    return [
-        lighten(0.9),
-        lighten(0.8),
-        lighten(0.6),
-        lighten(0.4),
-        lighten(0.2),
-        accentColor,
-        accentColor,
-        accentColor,
-        darken(0.15),
-        darken(0.3),
-    ];
-}
-
-/**
  * Creates a Mantine theme with the user's accent color.
  */
 function createCheckoutTheme(accentColor: string, mode: 'light' | 'dark'): MantineThemeOverride {
-    const primaryColors = createColorPalette(accentColor);
+    const primaryColors = createAccentPalette(accentColor);
     const contrastColor = getContrastColor(accentColor);
 
     return {
@@ -208,7 +149,9 @@ export const CheckoutThemeProvider = ({
             cssVariablesResolver={cssVariablesResolver}
             forceColorScheme={mode}
         >
-            {children}
+            <PublicOverlayTheme accentColor={accentColor} mode={mode} fontFamily={fontFamily}>
+                {children}
+            </PublicOverlayTheme>
         </MantineProvider>
     );
 };

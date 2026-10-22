@@ -10,6 +10,7 @@ import {t} from "@lingui/macro";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {formatAddress, getShortLocationDisplay} from "../../../utilites/addressUtilities.ts";
 import {organizerHomepagePath} from "../../../utilites/urlHelper.ts";
 import {StatusToggle} from "../../common/StatusToggle";
@@ -349,11 +350,17 @@ export const OrganizerHomepage = ({
                     </div>
 
                     {/* Contact Modal */}
-                    <ContactOrganizerModal
-                        opened={contactModalOpen}
-                        onClose={() => setContactModalOpen(false)}
-                        organizer={organizer}
-                    />
+                    <PublicOverlayTheme
+                        accentColor={themeSettings.accent}
+                        mode={themeSettings.mode}
+                        fontFamily={cssVars['--theme-font-family']}
+                    >
+                        <ContactOrganizerModal
+                            opened={contactModalOpen}
+                            onClose={() => setContactModalOpen(false)}
+                            organizer={organizer}
+                        />
+                    </PublicOverlayTheme>
                 </div>
                 {consentPending && (
                     <CookieConsentBanner onConsent={onConsent}/>
