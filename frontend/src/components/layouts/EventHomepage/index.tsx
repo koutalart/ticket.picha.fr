@@ -43,6 +43,8 @@ import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isDateInPast} from "../../../utilites/dates.ts";
 import {RichDescription} from "../../common/RichDescription";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
+import {organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
+import {ssrLoaderBackground} from "../../../utilites/ssrLoader.ts";
 import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 import {EmbeddedRegistration} from "../../routes/product-widget/EmbeddedRegistration";
 import {getEventProducts, isEmbeddedRegistrationEnabled} from "../../../utilites/embeddedRegistration.ts";
@@ -213,7 +215,16 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const heroBrandLogo = event?.images?.find((image) => image.type === 'EVENT_HERO_BRAND_LOGO')?.url;
     const organizer = event.organizer!;
     const organizerSocials = organizer?.settings?.social_media_handles;
-    const organizerLogo = imageUrl('ORGANIZER_LOGO', organizer?.images);
+    const organizerLogo = organizerLogoUrl(organizer?.images, cssVars['--theme-surface'])
+        ?? imageUrl('ORGANIZER_LOGO', organizer?.images);
+    const heroOrganizerLogo = organizerLogoUrl(organizer?.images, 'dark');
+    const footerOrganizerLogo = organizerLogoUrl(organizer?.images, themeSettings.accent);
+    const loaderOrganizerLogo = organizerLogoUrl(organizer?.images, ssrLoaderBackground({
+        background: themeSettings.background,
+        accent: themeSettings.accent,
+        mode: themeSettings.mode,
+        backgroundType,
+    }));
     const organizerLocation = organizer?.settings?.location_details;
     const websiteUrl = organizer?.website;
     const locationDetails = event.settings?.location_details;
@@ -310,7 +321,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                     accent={themeSettings.accent}
                     mode={themeSettings.mode}
                     backgroundType={backgroundType}
-                    logoUrl={organizerLogo}
+                    logoUrl={loaderOrganizerLogo}
                 />
 
                 {event && <EventDocumentHead event={event}/>}
@@ -375,8 +386,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                 ) : <span/>}
                                 {heroBrandLogo ? (
                                     <img src={heroBrandLogo} alt={organizer.name} className={classes.fullscreenBrandCustom}/>
-                                ) : organizerLogo && (
-                                    <img src={organizerLogo} alt={organizer.name} className={classes.fullscreenBrand}/>
+                                ) : heroOrganizerLogo && (
+                                    <img src={heroOrganizerLogo} alt={organizer.name} className={classes.fullscreenBrand}/>
                                 )}
                             </div>
                             <div className={classes.fullscreenCenter}>
@@ -447,7 +458,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         <RichFooter
                             event={event}
                             organizer={organizer}
-                            organizerLogo={organizerLogo}
+                            organizerLogo={footerOrganizerLogo}
                             socialLinks={socialLinks}
                             websiteUrl={websiteUrl}
                             onRegister={scrollToTickets}

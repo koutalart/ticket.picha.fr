@@ -17,6 +17,7 @@ import {eventHomepagePath, eventHomepageUrl, organizerHomepagePath} from "../../
 import {buildEventJsonLd, getVenue} from "../Poster/eventData.ts";
 import {dateBlock, eventAccent, eventFlyer, TOUR_FALLBACK_ACCENT, tourCity, tourPrice} from "./tourData.ts";
 import classes from "./Tour.module.scss";
+import {findOrganizerLogo} from "../../../utilites/organizerLogo.ts";
 
 const DEFAULT_THEME_ACCENT = '#8b5cf6';
 const BACKGROUND = '#0e0c16';
@@ -68,7 +69,7 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
     const content = organizer.site_content || {};
     const themeAccent = organizer.settings?.homepage_theme_settings?.accent;
     const accent = themeAccent && themeAccent.toLowerCase() !== DEFAULT_THEME_ACCENT ? themeAccent : TOUR_FALLBACK_ACCENT;
-    const logo = organizer.images?.find(image => image.type === 'ORGANIZER_LOGO');
+    const logo = findOrganizerLogo(organizer.images, BACKGROUND);
     const cover = organizer.images?.find(image => image.type === 'ORGANIZER_COVER');
     const coverVideo = organizer.images?.find(image => image.type === 'ORGANIZER_COVER_VIDEO')?.url;
     const coverVideoMobile = organizer.images?.find(image => image.type === 'ORGANIZER_COVER_VIDEO_MOBILE')?.url;

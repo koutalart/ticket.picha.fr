@@ -24,6 +24,7 @@ import {ServicesPage} from "./pages/ServicesPage.tsx";
 import {ContactPage} from "./pages/ContactPage.tsx";
 import classes from "./Poster.module.scss";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
+import {findOrganizerLogo} from "../../../utilites/organizerLogo.ts";
 
 const DEFAULT_POSTER_ACCENT = '#E4173D';
 
@@ -50,7 +51,7 @@ export const PosterTemplate = ({
 
     const content = organizer.site_content || {};
     const accent = getAccent(organizer);
-    const logo = organizer.images?.find(image => image.type === 'ORGANIZER_LOGO');
+    const logo = findOrganizerLogo(organizer.images, 'dark');
     const events = eventsData?.data || [];
     const isFirstPage = !eventsData || eventsData.meta.current_page === 1;
     const featured = !isPastEvents && isFirstPage ? events[0] : undefined;

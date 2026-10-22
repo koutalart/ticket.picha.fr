@@ -6,7 +6,7 @@ import {Event, EventPages, EventPageSlug, OrganizerStatus} from "../../../types.
 import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
 import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
 import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
-import {eventCoverImageUrl, eventHomepagePath, imageUrl, organizerHomepageUrl} from "../../../utilites/urlHelper.ts";
+import {eventCoverImageUrl, eventHomepagePath, organizerHomepageUrl} from "../../../utilites/urlHelper.ts";
 import {eventDedicatedPagePath, eventPageLabel, eventRegistrationPath} from "../../../utilites/eventPages.ts";
 import {EventDateRange} from "../../common/EventDateRange";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
@@ -16,6 +16,7 @@ import {EventImmersiveShell, useEventImmersive} from "../../common/EventImmersiv
 import {hasEventRichFooter} from "../../common/EventRichFooter";
 import {EventDedicatedPageHead} from "./EventDedicatedPageHead.tsx";
 import classes from "./EventDedicatedPage.module.scss";
+import {organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
 
 interface LoaderData {
     event: Event;
@@ -93,7 +94,7 @@ export const EventDedicatedPage = () => {
     const organizer = event.organizer;
     const coverImage = eventCoverImageUrl(event);
     const brandLogo = event.images?.find((image) => image.type === 'EVENT_HERO_BRAND_LOGO')?.url
-        ?? (organizer?.images?.some((image) => image.type === 'ORGANIZER_LOGO') ? imageUrl('ORGANIZER_LOGO', organizer?.images) : undefined);
+        ?? organizerLogoUrl(organizer?.images, 'dark');
     const location = event.settings?.location_details;
     const locationLabel = [location?.venue_name, location?.city].filter(Boolean).join(', ');
     const availablePages = pages.available_pages ?? [];
