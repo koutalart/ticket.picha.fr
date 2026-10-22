@@ -8,6 +8,11 @@
     margin: 0 0 0.75em;
   }
 
+  p, li {
+    color: inherit;
+    font-weight: inherit;
+  }
+
   p:last-child {
     margin-bottom: 0;
   }
@@ -161,6 +166,7 @@
   background: var(--event-accent-soft, rgba(139, 92, 246, 0.12));
   color: var(--event-primary-text-color, #111827);
   font-size: 0.875rem;
+  font-weight: var(--event-body-font-weight, inherit);
 
   svg {
     color: var(--event-primary-color, #8b5cf6);

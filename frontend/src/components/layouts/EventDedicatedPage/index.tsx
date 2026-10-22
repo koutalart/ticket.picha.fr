@@ -13,6 +13,7 @@ import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {ArtistsList, FaqList, PracticalInfoList} from "../../common/EventPagesContent";
 import {EventImmersiveShell, useEventImmersive} from "../../common/EventImmersiveShell";
+import {hasEventRichFooter} from "../../common/EventRichFooter";
 import {EventDedicatedPageHead} from "./EventDedicatedPageHead.tsx";
 import classes from "./EventDedicatedPage.module.scss";
 
@@ -96,7 +97,7 @@ export const EventDedicatedPage = () => {
     const location = event.settings?.location_details;
     const locationLabel = [location?.venue_name, location?.city].filter(Boolean).join(', ');
     const availablePages = pages.available_pages ?? [];
-    const otherPages = availablePages.filter((available) => available !== page);
+    const otherPages = hasEventRichFooter(event) ? [] : availablePages.filter((available) => available !== page);
     const ctaLabel = isFreeEvent(event)
         ? t({message: 'Register', context: 'event dedicated page cta'})
         : t`Get Tickets`;
