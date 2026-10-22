@@ -11,6 +11,7 @@ use HiEvents\Repository\Interfaces\AffiliateRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
+use HiEvents\Services\Domain\Contact\OrderContactAttributionService;
 use HiEvents\Services\Domain\PromoCode\PromoCodeUsageValidationService;
 use HiEvents\Services\Application\Handlers\Order\CreateOrderHandler;
 use HiEvents\Services\Application\Handlers\Order\DTO\CreateOrderPublicDTO;
@@ -65,6 +66,7 @@ class CreateOrderHandlerTest extends TestCase
             $this->availabilityService,
             $this->databaseManager,
             Mockery::mock(QrLinkRepositoryInterface::class),
+            Mockery::mock(OrderContactAttributionService::class)->shouldReceive('resolveContactId')->andReturn(null)->getMock(),
         );
     }
 

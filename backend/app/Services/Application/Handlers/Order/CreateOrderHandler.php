@@ -21,6 +21,7 @@ use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Order\DTO\CreateOrderPublicDTO;
+use HiEvents\Services\Domain\Contact\OrderContactAttributionService;
 use HiEvents\Services\Domain\Order\OrderItemProcessingService;
 use HiEvents\Services\Domain\Order\OrderManagementService;
 use HiEvents\Services\Domain\PromoCode\PromoCodeUsageValidationService;
@@ -42,6 +43,7 @@ class CreateOrderHandler
         private readonly AvailableProductQuantitiesFetchService $availableProductQuantitiesFetchService,
         private readonly DatabaseManager                        $databaseManager,
         private readonly QrLinkRepositoryInterface              $qrLinkRepository,
+        private readonly OrderContactAttributionService         $orderContactAttributionService,
     )
     {
     }
@@ -85,6 +87,7 @@ class CreateOrderHandler
                 sessionId: $createOrderPublicDTO->session_identifier,
                 qrLink: $qrLink,
                 trackingContext: $createOrderPublicDTO->tracking_context,
+                attributedContactId: $this->getAttributedContactId($createOrderPublicDTO, $event, $qrLink),
             );
 
             $orderItems = $this->orderItemProcessingService->process(
@@ -127,6 +130,15 @@ class CreateOrderHandler
             QrLinkDomainObjectAbstract::ORGANIZER_ID => $event->getOrganizerId(),
             QrLinkDomainObjectAbstract::STATUS => QrLinkStatus::ACTIVE->value,
         ]);
+    }
+
+    private function getAttributedContactId(CreateOrderPublicDTO $createOrderPublicDTO, EventDomainObject $event, ?QrLinkDomainObject $qrLink): ?int
+    {
+        if ($createOrderPublicDTO->contact_code === null && $qrLink === null) {
+            return null;
+        }
+
+        return $this->orderContactAttributionService->resolveContactId($createOrderPublicDTO->contact_code, $event->getOrganizerId(), $qrLink);
     }
 
     private function getAffiliate(CreateOrderPublicDTO $createOrderPublicDTO, int $eventId): ?AffiliateDomainObject

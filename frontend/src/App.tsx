@@ -24,6 +24,7 @@ import {getConfig} from "./utilites/config.ts";
 import {CookieConsentBanner} from "./components/common/CookieConsentBanner";
 import {isConsentPending, setConsentState, updateGoogleConsentMode} from "./utilites/trackingPixels/consent";
 import {captureQrLinkCodeFromUrl} from "./utilites/qrAttribution";
+import {captureContactCodeFromUrl} from "./utilites/contactLinkAttribution";
 import "./utilites/dateLocales.ts";
 import {getAppName} from "./utilites/branding.ts";
 
@@ -54,6 +55,7 @@ export const App: FC<
     useEffect(() => {
         setIsLoadedOnBrowser(!isSsr());
         captureQrLinkCodeFromUrl();
+        captureContactCodeFromUrl();
     }, []);
 
     return (
