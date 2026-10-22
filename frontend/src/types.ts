@@ -896,6 +896,12 @@ export interface Attendee {
     attendance_code?: string;
 }
 
+export interface AttendanceAccessLink {
+    short_id: string;
+    first_name: string;
+    code: string;
+}
+
 export interface AttendeeAttendance {
     short_id: string;
     first_name: string;

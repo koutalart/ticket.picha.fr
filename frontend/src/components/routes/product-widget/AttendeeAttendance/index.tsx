@@ -1,4 +1,4 @@
-import {CSSProperties, useState} from "react";
+import {CSSProperties, useEffect, useState} from "react";
 import {useParams, useSearchParams} from "react-router";
 import {Button, Loader, Modal} from "@mantine/core";
 import {IconCalendarEvent, IconCircleCheck, IconCircleX, IconMapPin} from "@tabler/icons-react";
@@ -14,6 +14,7 @@ import {formatEventDateRange} from "../../../../utilites/dates.ts";
 import {getFullscreenHero} from "../../../../utilites/fullscreenHero.ts";
 import {EventImmersiveShell} from "../../../common/EventImmersiveShell";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
+import {markRegisteredOnDevice} from "../../../../utilites/rememberedVenue.ts";
 import classes from "./AttendeeAttendance.module.scss";
 
 const errorMessage = (error: any, fallback: string): string => error?.response?.data?.message || fallback;
@@ -29,6 +30,12 @@ export const AttendeeAttendance = () => {
     const attendance = attendanceQuery.data;
     const confirmMutation = useConfirmAttendancePublic();
     const cancelMutation = useCancelAttendancePublic();
+
+    useEffect(() => {
+        if (event?.settings?.allow_attendee_attendance_response && attendance && attendance.status !== 'CANCELLED') {
+            markRegisteredOnDevice(event);
+        }
+    }, [event?.id, attendance?.status]);
 
     if (!code || eventError || attendanceQuery.error?.response?.status === 404) {
         return (

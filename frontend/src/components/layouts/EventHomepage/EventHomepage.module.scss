@@ -1439,10 +1439,25 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   bottom: 0;
   display: flex;
   justify-content: flex-end;
+  align-items: flex-end;
+  gap: 16px 32px;
   padding: 0 clamp(20px, 4vw, 56px) clamp(22px, 4vw, 44px);
 
   @media (max-width: 640px) {
+    flex-direction: column-reverse;
+    align-items: center;
     justify-content: center;
+  }
+}
+
+.fullscreenAlreadyLink {
+  margin-right: auto;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.95rem;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+
+  @media (max-width: 640px) {
+    margin-right: 0;
   }
 }
 
@@ -1460,6 +1475,11 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: -0.01em;
   white-space: nowrap;
   cursor: pointer;
+
+  @media (max-width: 360px) {
+    white-space: normal;
+    text-align: left;
+  }
 
   &:hover .fullscreenCtaArrow {
     transform: translateX(6px);
@@ -1558,6 +1578,10 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
 .fullscreenHero[data-pause-on-scroll="true"] .fullscreenMedia {
   transform: scale(calc(1.02 + var(--hero-progress) * 0.3));
+}
+
+.fullscreenHero[data-sale-countdown="true"] .fullscreenMedia {
+  filter: brightness(calc(1 - var(--hero-progress) * 0.4));
 }
 
 .fullscreenHero ~ .wrapper {

@@ -50,6 +50,7 @@ import {useResendOrderConfirmationPublic} from "../../../../mutations/useResendO
 import {Attendee, Event, Order, OrganizerCustomFont, Product} from "../../../../types.ts";
 import classes from './OrderSummaryAndProducts.module.scss';
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
+import {markRegisteredOnDevice} from "../../../../utilites/rememberedVenue.ts";
 import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
 import {getFullscreenHero} from "../../../../utilites/fullscreenHero.ts";
 import {buildHomepageFontStack} from "../../../../constants/homepageFonts.ts";
@@ -477,6 +478,12 @@ export const OrderSummaryAndProducts = () => {
 
     const allowSelfEdit = event?.settings?.allow_attendee_self_edit ?? true;
     const allowAttendanceResponse = !!event?.settings?.allow_attendee_attendance_response && order?.status === 'COMPLETED';
+
+    useEffect(() => {
+        if (allowAttendanceResponse && event && order?.attendees?.some(attendee => attendee.status !== 'CANCELLED')) {
+            markRegisteredOnDevice(event);
+        }
+    }, [allowAttendanceResponse, event?.id, order?.short_id]);
     // Keep the financial summary collapsed for free events; paid orders keep the existing behavior.
     const isFreeOrder = !order?.is_payment_required
         && (order?.order_items?.length ?? 0) > 0
