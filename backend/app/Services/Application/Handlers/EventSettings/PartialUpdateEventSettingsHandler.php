@@ -160,6 +160,11 @@ class PartialUpdateEventSettingsHandler
                 'sms_registration_confirmation_message' => array_key_exists('sms_registration_confirmation_message', $eventSettingsDTO->settings)
                     ? $eventSettingsDTO->settings['sms_registration_confirmation_message']
                     : $existingSettings->getSmsRegistrationConfirmationMessage(),
+                'sms_cancellation_confirmation_enabled' => $eventSettingsDTO->settings['sms_cancellation_confirmation_enabled'] ?? $existingSettings->getSmsCancellationConfirmationEnabled(),
+                'sms_cancellation_confirmation_message' => array_key_exists('sms_cancellation_confirmation_message', $eventSettingsDTO->settings)
+                    ? $eventSettingsDTO->settings['sms_cancellation_confirmation_message']
+                    : $existingSettings->getSmsCancellationConfirmationMessage(),
+                'sms_cancellation_confirmation_on_organizer_cancel' => $eventSettingsDTO->settings['sms_cancellation_confirmation_on_organizer_cancel'] ?? $existingSettings->getSmsCancellationConfirmationOnOrganizerCancel(),
 
                 'rich_footer_enabled' => $eventSettingsDTO->settings['rich_footer_enabled'] ?? $existingSettings->getRichFooterEnabled(),
                 'homepage_footer_settings' => array_key_exists('homepage_footer_settings', $eventSettingsDTO->settings)

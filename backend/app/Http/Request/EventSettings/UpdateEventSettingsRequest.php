@@ -143,6 +143,9 @@ class UpdateEventSettingsRequest extends BaseRequest
 
             'sms_registration_confirmation_enabled' => ['boolean'],
             'sms_registration_confirmation_message' => ['nullable', 'string', 'max:1000'],
+            'sms_cancellation_confirmation_enabled' => ['boolean'],
+            'sms_cancellation_confirmation_message' => ['nullable', 'string', 'max:1000'],
+            'sms_cancellation_confirmation_on_organizer_cancel' => ['boolean'],
 
             'rich_footer_enabled' => ['boolean'],
             'homepage_footer_settings' => ['nullable', 'array'],

@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Repository\Interfaces\SmsCustomerDirectoryRepositoryInterface;
 use HiEvents\Services\Domain\Sms\DTO\SmsCustomerContactDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -55,6 +56,40 @@ class SmsCustomerDirectoryRepository implements SmsCustomerDirectoryRepositoryIn
 
     public function findActiveAttendeesWithPhone(int $eventId, ?int $orderId = null): Collection
     {
+        return $this->attendeesWithPhone(
+            $this->attendeesQuery($eventId)
+                ->when($orderId !== null, fn ($query) => $query->where('attendees.order_id', $orderId))
+                ->where('attendees.status', AttendeeStatus::ACTIVE->name)
+        );
+    }
+
+    public function findAttendeesWithPhone(int $eventId, array $attendeeIds): Collection
+    {
+        if ($attendeeIds === []) {
+            return collect();
+        }
+
+        return $this->attendeesWithPhone(
+            $this->attendeesQuery($eventId)->whereIn('attendees.id', array_values($attendeeIds))
+        );
+    }
+
+    private function attendeesQuery(int $eventId): Builder
+    {
+        return DB::table('attendees')
+            ->join('orders', 'orders.id', '=', 'attendees.order_id')
+            ->where('attendees.event_id', $eventId)
+            ->whereNull('attendees.deleted_at')
+            ->whereNull('orders.deleted_at');
+    }
+
+    /**
+     * Phone given for each attendee: attendee answer, then order answer, then box office sale.
+     *
+     * @return Collection<int, SmsReminderAttendeeDTO>
+     */
+    private function attendeesWithPhone(Builder $attendees): Collection
+    {
         $phoneAnswer = fn () => DB::table('question_answers')
             ->join('questions', 'questions.id', '=', 'question_answers.question_id')
             ->where('questions.type', 'PHONE')
@@ -78,13 +113,7 @@ class SmsCustomerDirectoryRepository implements SmsCustomerDirectoryRepositoryIn
             ->limit(1)
             ->select('box_office_sales.phone');
 
-        return DB::table('attendees')
-            ->join('orders', 'orders.id', '=', 'attendees.order_id')
-            ->where('attendees.event_id', $eventId)
-            ->when($orderId !== null, fn ($query) => $query->where('attendees.order_id', $orderId))
-            ->where('attendees.status', AttendeeStatus::ACTIVE->name)
-            ->whereNull('attendees.deleted_at')
-            ->whereNull('orders.deleted_at')
+        return $attendees
             ->orderBy('attendees.id')
             ->select('attendees.id', 'attendees.first_name', 'attendees.last_name')
             ->selectSub($attendeePhone, 'attendee_phone')
