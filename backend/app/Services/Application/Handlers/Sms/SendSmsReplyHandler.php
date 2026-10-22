@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\Generated\SmsConversationDomainObjectAbstract;
 use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
+use HiEvents\DomainObjects\Status\SmsConversationStatus;
 use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Exceptions\SmsGatewayException;
@@ -46,7 +47,7 @@ class SendSmsReplyHandler
 
         $content = trim($content);
 
-        return $this->sendService->send(new SendSmsDTO(
+        $message = $this->sendService->send(new SendSmsDTO(
             organizerId: $organizerId,
             phone: $conversation->getPhone(),
             content: $content,
@@ -55,6 +56,17 @@ class SendSmsReplyHandler
                 : SmsMessageAuthorType::HUMAN,
             sentByUserId: $userId,
         ));
+
+        if ($conversation->getStatus() === SmsConversationStatus::NEEDS_HUMAN->name) {
+            $this->conversationRepository->updateWhere([
+                SmsConversationDomainObjectAbstract::STATUS => SmsConversationStatus::OPEN->name,
+                SmsConversationDomainObjectAbstract::NEEDS_HUMAN_REASON => null,
+            ], [
+                SmsConversationDomainObjectAbstract::ID => $conversation->getId(),
+            ]);
+        }
+
+        return $message;
     }
 
     private function isUnchangedAgentDraft(SmsConversationDomainObject $conversation, string $content): bool
