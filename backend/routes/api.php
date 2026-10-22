@@ -122,6 +122,9 @@ use HiEvents\Http\Actions\EventAssistant\ResearchEventDescriptionAction;
 use HiEvents\Http\Actions\Events\DuplicateEventAction;
 use HiEvents\Http\Actions\Events\GetEventAction;
 use HiEvents\Http\Actions\Events\GetEventPublicAction;
+use HiEvents\Http\Actions\Events\Pages\GetEventPagesAction;
+use HiEvents\Http\Actions\Events\Pages\GetEventPagesPublicAction;
+use HiEvents\Http\Actions\Events\Pages\UpdateEventPagesAction;
 use HiEvents\Http\Actions\Events\GetEventsAction;
 use HiEvents\Http\Actions\Events\GetOrganizerEventsPublicAction;
 use HiEvents\Http\Actions\Organizers\CoverVideo\UploadOrganizerCoverVideoAction;
@@ -594,6 +597,8 @@ $router->middleware(['auth:api'])->group(
         $router->get('/events/{event_id}/settings', GetEventSettingsAction::class);
         $router->put('/events/{event_id}/settings', EditEventSettingsAction::class);
         $router->patch('/events/{event_id}/settings', PartialEditEventSettingsAction::class);
+        $router->get('/events/{event_id}/pages', GetEventPagesAction::class);
+        $router->put('/events/{event_id}/pages', UpdateEventPagesAction::class);
         $router->get('/events/{event_id}/settings/platform-fee-preview', GetPlatformFeePreviewAction::class);
 
         // Capacity Assignments
@@ -694,6 +699,7 @@ $router->prefix('/public')->group(
     function (Router $router): void {
         // Events
         $router->get('/events/{event_id}', GetEventPublicAction::class);
+        $router->get('/events/{event_id}/pages', GetEventPagesPublicAction::class);
 
         // Organizers
         $router->get('/organizers/{organizer_id}', GetPublicOrganizerAction::class);
