@@ -23,6 +23,7 @@ import {Anchor} from "@mantine/core";
 import {t} from "@lingui/macro";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {
     formatAddress,
@@ -203,6 +204,12 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
         '--theme-font-family': cssVars['--theme-font-family'],
         fontFamily: cssVars['--theme-font-family'],
     } as React.CSSProperties;
+
+    const overlayTheme = {
+        accentColor: themeSettings.accent,
+        mode: themeSettings.mode,
+        fontFamily: cssVars['--theme-font-family'],
+    };
 
     const coverImageData = eventCoverImage(event);
     const coverImage = coverImageData?.url;
@@ -584,16 +591,18 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                             )}
 
                                             <div className={classes.actionButtons}>
-                                                <ShareComponent
-                                                    title={'Check out this event: ' + event.title}
-                                                    text={'Check out this event: ' + event.title}
-                                                    url={eventHomepageUrl(event)}
-                                                    imageUrl={coverImage || undefined}
-                                                >
-                                                    <button className={classes.actionButton} title={t`Share`}>
-                                                        <IconShare/>
-                                                    </button>
-                                                </ShareComponent>
+                                                <PublicOverlayTheme {...overlayTheme}>
+                                                    <ShareComponent
+                                                        title={'Check out this event: ' + event.title}
+                                                        text={'Check out this event: ' + event.title}
+                                                        url={eventHomepageUrl(event)}
+                                                        imageUrl={coverImage || undefined}
+                                                    >
+                                                        <button className={classes.actionButton} title={t`Share`}>
+                                                            <IconShare/>
+                                                        </button>
+                                                    </ShareComponent>
+                                                </PublicOverlayTheme>
                                                 {/* Future enhancement: Favorite/Heart button */}
                                                 {/* <button className={`${classes.actionButton} ${classes.favoriteButton}`} title={t`Save`}>
                                                     <IconHeart />
@@ -895,11 +904,13 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                     )}
 
                     {/* Contact Modal */}
-                    <ContactOrganizerModal
-                        opened={contactModalOpen}
-                        onClose={() => setContactModalOpen(false)}
-                        organizer={organizer}
-                    />
+                    <PublicOverlayTheme {...overlayTheme}>
+                        <ContactOrganizerModal
+                            opened={contactModalOpen}
+                            onClose={() => setContactModalOpen(false)}
+                            organizer={organizer}
+                        />
+                    </PublicOverlayTheme>
                 </div>
                 {(consentPending || cookieBannerReopened) && (
                     <CookieConsentBanner onConsent={handleCookieConsent}/>

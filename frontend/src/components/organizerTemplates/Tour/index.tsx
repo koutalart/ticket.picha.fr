@@ -6,6 +6,7 @@ import {IconMail, IconPlayerPlayFilled} from "@tabler/icons-react";
 import type {OrganizerTemplateProps} from "../index.ts";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
@@ -433,7 +434,9 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                 </footer>
             </div>
 
-            <ContactOrganizerModal opened={contactModalOpen} onClose={() => setContactModalOpen(false)} organizer={organizer}/>
+            <PublicOverlayTheme accentColor={accent} mode="dark">
+                <ContactOrganizerModal opened={contactModalOpen} onClose={() => setContactModalOpen(false)} organizer={organizer}/>
+            </PublicOverlayTheme>
             {consentPending && <CookieConsentBanner onConsent={onConsent}/>}
         </>
     );
