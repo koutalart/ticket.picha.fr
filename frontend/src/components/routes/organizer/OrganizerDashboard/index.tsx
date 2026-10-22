@@ -9,6 +9,8 @@ import {useGetOrganizerStats} from "../../../../queries/useGetOrganizerStats.ts"
 import {useGetEvents} from "../../../../queries/useGetEvents.ts";
 import {useGetOrganizerOrders} from "../../../../queries/useGetOrganizerOrders.ts";
 import {useGetOrganizer} from "../../../../queries/useGetOrganizer.ts";
+import {useGetSmsUnreadCount} from "../../../../queries/useGetSmsUnreadCount.ts";
+import {smsClient} from "../../../../api/sms.client.ts";
 import {formatCurrency} from "../../../../utilites/currency.ts";
 import {relativeDate} from "../../../../utilites/dates.ts";
 import {formatNumber} from "../../../../utilites/helpers.ts";
@@ -75,6 +77,20 @@ export const OrganizerDashboard = () => {
         {value: 'drafts', label: t`Drafts`},
     ];
 
+    const smsUnreadQuery = useGetSmsUnreadCount(organizerId);
+    const smsUnread = smsUnreadQuery.isSuccess ? Number(smsUnreadQuery.data ?? 0) : null;
+
+    const openFirstUnreadSms = async () => {
+        const smsPath = `/manage/organizer/${organizerId}/sms`;
+        try {
+            const {data} = await smsClient.conversations(organizerId, {filter: 'unread', page: 1});
+            const first = data?.[0];
+            navigate(first ? `${smsPath}?conversation=${first.id}` : smsPath);
+        } catch {
+            navigate(smsPath);
+        }
+    };
+
     const awaitingPayment = Number(stats?.total_awaiting_payment ?? 0);
 
     // Only free registrations so far: talk about registrations rather than sales.
@@ -93,6 +109,15 @@ export const OrganizerDashboard = () => {
         {label: t`Tickets sold`, value: stats ? formatNumber(stats.total_products_sold) : null},
         {label: t`Orders`, value: stats ? formatNumber(stats.total_orders) : null},
     ];
+
+    const smsStat = smsUnread !== null ? [{
+        label: t`Unread messages`,
+        value: formatNumber(smsUnread),
+        highlight: smsUnread > 0,
+        onClick: openFirstUnreadSms,
+    }] : [];
+
+    const allStatItems = [...statItems, ...smsStat];
 
     const searchInput = (className: string) => (
         <TextInput
@@ -115,15 +140,25 @@ export const OrganizerDashboard = () => {
             </header>
 
             <section className={classes.stats}>
-                {statItems.map((item) => (
-                    <div key={item.label} className={classes.stat}>
-                        <span className={classes.statLabel}>{item.label}</span>
-                        {item.value === null
-                            ? <Skeleton height={36} width={90} radius="sm"/>
-                            : <span className={classes.statValue}>{item.value}</span>}
-                        {'hint' in item && item.hint && <span className={classes.statHint}>{item.hint}</span>}
-                    </div>
-                ))}
+                {allStatItems.map((item) => {
+                    const content = (
+                        <>
+                            <span className={classes.statLabel}>{item.label}</span>
+                            {item.value === null
+                                ? <Skeleton height={36} width={90} radius="sm"/>
+                                : <span className={'highlight' in item && item.highlight ? `${classes.statValue} ${classes.statValueHighlight}` : classes.statValue}>{item.value}</span>}
+                            {'hint' in item && item.hint && <span className={classes.statHint}>{item.hint}</span>}
+                        </>
+                    );
+
+                    return 'onClick' in item && item.onClick ? (
+                        <UnstyledButton key={item.label} className={`${classes.stat} ${classes.statLink}`} onClick={item.onClick}>
+                            {content}
+                        </UnstyledButton>
+                    ) : (
+                        <div key={item.label} className={classes.stat}>{content}</div>
+                    );
+                })}
                 {currencies.length > 1 && (
                     <Menu position="bottom-end" withinPortal>
                         <Menu.Target>
