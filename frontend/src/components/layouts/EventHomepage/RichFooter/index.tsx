@@ -6,6 +6,7 @@ import {Event, HomepageFooterSettings, Organizer} from "../../../../types.ts";
 import {socialMediaConfig} from "../../../../constants/socialMediaConfig";
 import {getAppName, getPrivacyPolicyUrl, getTermsOfUseUrl} from "../../../../utilites/branding.ts";
 import {getConfig} from "../../../../utilites/config.ts";
+import {toParticipantUrl} from "../../../../utilites/urlHelper.ts";
 import {useSubscribeToOrganizerNewsletter} from "../../../../mutations/useSubscribeToOrganizerNewsletter.ts";
 import {showError} from "../../../../utilites/notifications.tsx";
 import {EMAIL_PATTERN} from "../../../../utilites/embeddedRegistration.ts";
@@ -49,8 +50,13 @@ export const RichFooter = ({
     const newsletterEnabled = settings.newsletter_enabled !== false;
     const privacyUrl = settings.privacy_policy_url || getPrivacyPolicyUrl();
     const termsUrl = settings.terms_url || getTermsOfUseUrl();
-    const eventLinks = (settings.event_links || []).filter(link => link?.label && link?.url);
-    const relatedLinks = (settings.related_links || []).filter(link => link?.title && link?.url).slice(0, 3);
+    const eventLinks = (settings.event_links || [])
+        .filter(link => link?.label && link?.url)
+        .map(link => ({...link, url: toParticipantUrl(link.url, organizer)}));
+    const relatedLinks = (settings.related_links || [])
+        .filter(link => link?.title && link?.url)
+        .slice(0, 3)
+        .map(link => ({...link, url: toParticipantUrl(link.url, organizer)}));
     const brandUrl = getConfig("VITE_BRAND_URL", "https://ticket.picha.fr") as string;
 
     const emailId = useId();

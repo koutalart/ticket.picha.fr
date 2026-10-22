@@ -7,6 +7,7 @@ namespace HiEvents\Services\Domain\QrLink;
 use HiEvents\DomainObjects\Enums\QrLinkDestinationType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\QrLinkDomainObject;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 
 class QrLinkUrlService
 {
@@ -16,7 +17,7 @@ class QrLinkUrlService
 
     public function getPublicUrl(QrLinkDomainObject $qrLink): string
     {
-        return $this->frontendUrl('/q/'.$qrLink->getShortId());
+        return app(PublicBaseUrlResolver::class)->forOrganizerId($qrLink->getOrganizerId()).'/q/'.$qrLink->getShortId();
     }
 
     public function getEventUrl(EventDomainObject $event, QrLinkDomainObject $qrLink): string
@@ -44,10 +45,5 @@ class QrLinkUrlService
             'Android' => $qrLink->getPlayStoreUrl(),
             default => $qrLink->getDestinationUrl() ?: $qrLink->getAppStoreUrl(),
         };
-    }
-
-    private function frontendUrl(string $path): string
-    {
-        return rtrim((string) config('app.frontend_url'), '/').$path;
     }
 }

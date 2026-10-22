@@ -4,10 +4,13 @@ namespace Tests\Unit\Services\Domain\Attendee;
 
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\Services\Domain\Attendee\AttendeeAttendanceLinkGenerator;
+use Tests\Support\FakesPublicBaseUrl;
 use Tests\TestCase;
 
 class AttendeeAttendanceLinkGeneratorTest extends TestCase
 {
+    use FakesPublicBaseUrl;
+
     private AttendeeAttendanceLinkGenerator $generator;
 
     protected function setUp(): void
@@ -19,6 +22,7 @@ class AttendeeAttendanceLinkGeneratorTest extends TestCase
             'app.frontend_url' => 'https://ticket.picha.fr',
         ]);
 
+        $this->fakePublicBaseUrl([8 => 'mayottela1ere.fr'], [14 => 8]);
         $this->generator = new AttendeeAttendanceLinkGenerator();
     }
 
@@ -58,6 +62,16 @@ class AttendeeAttendanceLinkGeneratorTest extends TestCase
 
         $this->assertSame(
             'https://ticket.picha.fr/venue/2/a_short5?code=' . $this->generator->generateCode($attendee),
+            $this->generator->getAttendanceUrl($attendee),
+        );
+    }
+
+    public function testBuildsThePublicUrlOnTheOrganizerCustomDomain(): void
+    {
+        $attendee = $this->createAttendee(5)->setEventId(14);
+
+        $this->assertSame(
+            'https://mayottela1ere.fr/venue/14/a_short5?code=' . $this->generator->generateCode($attendee),
             $this->generator->getAttendanceUrl($attendee),
         );
     }

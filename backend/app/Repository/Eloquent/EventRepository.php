@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\EventStatisticDomainObject;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\OrganizerDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\EventSettingDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\Status\EventStatus;
@@ -154,9 +155,11 @@ class EventRepository extends BaseRepository implements EventRepositoryInterface
                 'events.' . EventDomainObjectAbstract::START_DATE,
             ])
             ->join('event_settings', 'events.id', '=', 'event_settings.event_id')
+            ->join('organizers', 'events.organizer_id', '=', 'organizers.id')
             ->where('events.' . EventDomainObjectAbstract::STATUS, EventStatus::LIVE->name)
             ->where('event_settings.' . EventSettingDomainObjectAbstract::ALLOW_SEARCH_ENGINE_INDEXING, true)
             ->whereNull('events.' . EventDomainObjectAbstract::DELETED_AT)
+            ->whereNull('organizers.' . OrganizerDomainObjectAbstract::CUSTOM_DOMAIN)
             ->orderBy('events.' . EventDomainObjectAbstract::ID)
             ->paginate($perPage, ['*'], 'page', $page));
     }
@@ -166,9 +169,11 @@ class EventRepository extends BaseRepository implements EventRepositoryInterface
         return $this->model
             ->newQuery()
             ->join('event_settings', 'events.id', '=', 'event_settings.event_id')
+            ->join('organizers', 'events.organizer_id', '=', 'organizers.id')
             ->where('events.' . EventDomainObjectAbstract::STATUS, EventStatus::LIVE->name)
             ->where('event_settings.' . EventSettingDomainObjectAbstract::ALLOW_SEARCH_ENGINE_INDEXING, true)
             ->whereNull('events.' . EventDomainObjectAbstract::DELETED_AT)
+            ->whereNull('organizers.' . OrganizerDomainObjectAbstract::CUSTOM_DOMAIN)
             ->count();
     }
 }

@@ -6,6 +6,7 @@ use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\OrganizerFontDomainObject;
 use HiEvents\Helper\Url;
 use HiEvents\Resources\Event\EventResourcePublic;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\Organizer\Font\OrganizerFontService;
 use HiEvents\Resources\Image\ImageResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -26,7 +27,7 @@ class OrganizerResourcePublic extends JsonResource
             'status' => $this->getStatus(),
             'homepage_template' => $this->getHomepageTemplate(),
             'site_content' => $this->getSiteContent(),
-            'custom_domain' => $this->getCustomDomain(),
+            'custom_domain' => PublicBaseUrlResolver::activeCustomDomain($this->resource),
             'images' => $this->when(
                 (bool)$this->getImages(),
                 fn() => ImageResource::collection($this->getImages())

@@ -16,7 +16,7 @@ class AttendanceAccessCodeMail extends BaseMail
         private readonly string $eventTitle,
         private readonly string $code,
         private readonly int $validityMinutes,
-        ?EventDomainObject $event = null,
+        private readonly ?EventDomainObject $event = null,
     ) {
         parent::__construct();
 
@@ -40,6 +40,7 @@ class AttendanceAccessCodeMail extends BaseMail
                 'eventTitle' => $this->eventTitle,
                 'code' => $this->code,
                 'validityMinutes' => $this->validityMinutes,
+                'event' => $this->event,
             ]
         );
     }

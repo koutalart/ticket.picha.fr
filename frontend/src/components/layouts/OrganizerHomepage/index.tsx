@@ -315,6 +315,7 @@ export const OrganizerHomepage = ({
                                             <EventCard
                                                 key={event.id}
                                                 event={event as Event}
+                                                organizer={organizer}
                                                 primaryColor={themeSettings.accent}
                                             />
                                         ))}

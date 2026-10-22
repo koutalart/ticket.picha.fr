@@ -4,6 +4,7 @@ namespace HiEvents\Resources\Organizer;
 
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Resources\Image\ImageResource;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -24,6 +25,7 @@ class OrganizerResource extends JsonResource
             'currency' => $this->getCurrency(),
             'slug' => $this->getSlug(),
             'status' => $this->getStatus(),
+            'custom_domain' => PublicBaseUrlResolver::activeCustomDomain($this->resource),
             'images' => $this->when(
                 (bool)$this->getImages(),
                 fn() => ImageResource::collection($this->getImages())

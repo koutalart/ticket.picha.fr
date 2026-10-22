@@ -15,10 +15,13 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
+use Tests\Support\FakesPublicBaseUrl;
 use Tests\TestCase;
 
 class SendTicketLookupEmailHandlerTest extends TestCase
 {
+    use FakesPublicBaseUrl;
+
     private OrderRepositoryInterface $orderRepository;
     private TicketLookupTokenRepositoryInterface $ticketLookupTokenRepository;
     private TokenGeneratorService $tokenGeneratorService;
@@ -38,6 +41,9 @@ class SendTicketLookupEmailHandlerTest extends TestCase
         $this->logger = m::mock(LoggerInterface::class);
         $this->databaseManager = m::mock(DatabaseManager::class);
 
+        config(['app.frontend_url' => 'https://ticket.picha.fr']);
+        $resolver = $this->fakePublicBaseUrl([8 => 'mayottela1ere.fr'], [14 => 8, 15 => 8, 3 => 2]);
+
         $this->handler = new SendTicketLookupEmailHandler(
             $this->orderRepository,
             $this->ticketLookupTokenRepository,
@@ -45,6 +51,7 @@ class SendTicketLookupEmailHandlerTest extends TestCase
             $this->mailer,
             $this->logger,
             $this->databaseManager,
+            $resolver,
         );
     }
 
@@ -54,8 +61,7 @@ class SendTicketLookupEmailHandlerTest extends TestCase
         $dto = new SendTicketLookupEmailDTO(email: $email);
         $token = 'tl_test123';
 
-        $order = m::mock(OrderDomainObject::class);
-        $orders = new Collection([$order]);
+        $orders = new Collection([(new OrderDomainObject())->setEventId(3)]);
 
         $this->orderRepository
             ->shouldReceive('findWhere')
@@ -109,6 +115,50 @@ class SendTicketLookupEmailHandlerTest extends TestCase
         $this->handler->handle($dto);
 
         $this->assertTrue(true);
+    }
+
+    public function testLinkStaysOnTheOrganizerDomainWhenEveryOrderBelongsToIt(): void
+    {
+        $this->assertSame(
+            'https://mayottela1ere.fr/my-tickets/tl_test123',
+            $this->sentLookupUrl(new Collection([
+                (new OrderDomainObject())->setEventId(14),
+                (new OrderDomainObject())->setEventId(15),
+            ])),
+        );
+    }
+
+    public function testLinkUsesThePlatformWhenOrdersBelongToSeveralOrganizers(): void
+    {
+        $this->assertSame(
+            'https://ticket.picha.fr/my-tickets/tl_test123',
+            $this->sentLookupUrl(new Collection([
+                (new OrderDomainObject())->setEventId(14),
+                (new OrderDomainObject())->setEventId(3),
+            ])),
+        );
+    }
+
+    private function sentLookupUrl(Collection $orders): string
+    {
+        $this->orderRepository->shouldReceive('findWhere')->andReturn($orders);
+        $this->databaseManager->shouldReceive('transaction')->andReturnUsing(fn ($callback) => $callback());
+        $this->ticketLookupTokenRepository->shouldReceive('deleteWhere');
+        $this->ticketLookupTokenRepository->shouldReceive('create');
+        $this->tokenGeneratorService->shouldReceive('generateToken')->andReturn('tl_test123');
+        $this->logger->shouldReceive('info');
+
+        $sent = null;
+        $pendingMail = m::mock('PendingMail');
+        $this->mailer->shouldReceive('to')->andReturn($pendingMail);
+        $pendingMail->shouldReceive('locale')->andReturnSelf();
+        $pendingMail->shouldReceive('queue')->andReturnUsing(function (TicketLookupEmail $mail) use (&$sent) {
+            $sent = $mail;
+        });
+
+        $this->handler->handle(new SendTicketLookupEmailDTO(email: 'test@example.com'));
+
+        return $sent->content()->with['ticketLookupUrl'];
     }
 
     public function testHandleDoesNotSendEmailWhenNoOrdersExist(): void

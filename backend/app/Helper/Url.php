@@ -2,6 +2,10 @@
 
 namespace HiEvents\Helper;
 
+use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
+
 class Url
 {
     public const STRIPE_CONNECT_RETURN_URL = 'app.frontend_urls.stripe_connect_return_url';
@@ -18,11 +22,37 @@ class Url
     public const ORGANIZER_ORDER_SUMMARY = 'app.frontend_urls.organizer_order_summary';
     public const TICKET_LOOKUP = 'app.frontend_urls.ticket_lookup';
 
-    public static function getFrontEndUrlFromConfig(string $key, array $queryParams = []): string
+    public static function getFrontEndUrlFromConfig(string $key, array $queryParams = [], ?string $baseUrl = null): string
     {
-        $url = config('app.frontend_url') . config($key);
+        $url = ($baseUrl ?? config('app.frontend_url')) . config($key);
 
         return self::addQueryParamsToUrl($queryParams, $url);
+    }
+
+    /**
+     * A participant-facing URL, on the organizer's custom domain when it has one.
+     */
+    public static function getPublicFrontEndUrlFromConfig(
+        string                                       $key,
+        EventDomainObject|OrganizerDomainObject|null $owner,
+        array                                        $queryParams = [],
+    ): string
+    {
+        return self::getFrontEndUrlFromConfig($key, $queryParams, self::publicBaseUrl($owner));
+    }
+
+    public static function getPublicFrontEndUrlForEventId(string $key, ?int $eventId, array $queryParams = []): string
+    {
+        return self::getFrontEndUrlFromConfig($key, $queryParams, app(PublicBaseUrlResolver::class)->forEventId($eventId));
+    }
+
+    public static function publicBaseUrl(EventDomainObject|OrganizerDomainObject|null $owner): string
+    {
+        $resolver = app(PublicBaseUrlResolver::class);
+
+        return $owner instanceof OrganizerDomainObject
+            ? $resolver->forOrganizer($owner)
+            : $resolver->forEvent($owner);
     }
 
     public static function getApiUrl(string $path, array $queryParams = []): string
