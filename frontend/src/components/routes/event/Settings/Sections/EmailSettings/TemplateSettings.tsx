@@ -16,7 +16,7 @@ export const TemplateSettings = () => {
 
     // Queries
     const {data: templatesData, isLoading} = useGetEmailTemplatesForEvent(eventId!, {include_inactive: true});
-    const {data: defaultTemplatesData} = useGetDefaultEmailTemplates(shouldFetchDefaults);
+    const {data: defaultTemplatesData} = useGetDefaultEmailTemplates(shouldFetchDefaults, {event_id: eventId});
 
     // Mutations
     const createMutation = useCreateEmailTemplateForEvent();

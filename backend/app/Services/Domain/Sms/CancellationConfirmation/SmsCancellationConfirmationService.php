@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Services\Domain\Sms\CancellationConfirmation;
 
 use HiEvents\DomainObjects\AttendeeDomainObject;
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\Enums\SmsCancellationSource;
 use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\EventDomainObject;
@@ -20,6 +21,7 @@ use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\DomainObjects\Status\SmsCancellationConfirmationStatus;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -28,6 +30,7 @@ use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCancellationConfirmationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCustomerDirectoryRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Services\Domain\Sms\DTO\SendSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsCancellationConfirmationResultDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
@@ -56,11 +59,16 @@ class SmsCancellationConfirmationService
         private readonly SmsCancellationLinkProviderInterface $linkProvider,
         private readonly SmsSendService $sendService,
         private readonly LoggerInterface $logger,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
-    public static function defaultMessage(): string
+    public static function defaultMessage(CustomerAddressForm $addressForm = CustomerAddressForm::VOUS): string
     {
-        return __('Noted, your registration for {evenement} is cancelled and your place has been released. We hope to see you again.', [], 'fr');
+        return __(
+            'Noted, your registration for {evenement} is cancelled and your place has been released. We hope to see you again.',
+            [],
+            $addressForm === CustomerAddressForm::TU ? CustomerLocale::FRENCH_TUTOIEMENT : 'fr',
+        );
     }
 
     public static function isEnabledFor(?EventSettingDomainObject $settings, SmsCancellationSource $source): bool
@@ -138,7 +146,7 @@ class SmsCancellationConfirmationService
 
         $template = trim((string) $settings->getSmsCancellationConfirmationMessage());
         if ($template === '') {
-            $template = self::defaultMessage();
+            $template = self::defaultMessage($this->customerLocaleResolver->addressFormForOrganizerId($event->getOrganizerId()));
         }
 
         $sent = 0;

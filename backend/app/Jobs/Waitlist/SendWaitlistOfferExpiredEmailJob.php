@@ -5,7 +5,7 @@ namespace HiEvents\Jobs\Waitlist;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\WaitlistEntryDomainObject;
-use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Mail\Waitlist\WaitlistOfferExpiredMail;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -35,6 +35,7 @@ class SendWaitlistOfferExpiredEmailJob implements ShouldQueue
         ProductPriceRepositoryInterface $productPriceRepository,
         ProductRepositoryInterface    $productRepository,
         Mailer                        $mailer,
+        CustomerLocaleResolver        $customerLocaleResolver,
     ): void
     {
         $event = $eventRepository
@@ -51,7 +52,7 @@ class SendWaitlistOfferExpiredEmailJob implements ShouldQueue
 
         $mailer
             ->to($this->entry->getEmail())
-            ->locale(CustomerLocale::get())
+            ->locale($customerLocaleResolver->forEvent($event))
             ->send(new WaitlistOfferExpiredMail(
                 entry: $this->entry,
                 event: $event,

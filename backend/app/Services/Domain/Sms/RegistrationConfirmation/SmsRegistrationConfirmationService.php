@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Sms\RegistrationConfirmation;
 
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
@@ -19,6 +20,7 @@ use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
 use HiEvents\Exceptions\SmsGatewayException;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
 use HiEvents\Exceptions\SmsRecipientOptedOutException;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
@@ -26,6 +28,7 @@ use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCustomerDirectoryRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsRegistrationConfirmationRepositoryInterface;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Services\Domain\Sms\DTO\SendSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsRegistrationConfirmationResultDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
@@ -53,6 +56,7 @@ class SmsRegistrationConfirmationService
         private readonly SmsReminderPersonalLinkProviderInterface $linkProvider,
         private readonly SmsSendService $sendService,
         private readonly LoggerInterface $logger,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     /**
@@ -64,9 +68,13 @@ class SmsRegistrationConfirmationService
             && ! $order->getIsManuallyCreated();
     }
 
-    public static function defaultMessage(): string
+    public static function defaultMessage(CustomerAddressForm $addressForm = CustomerAddressForm::VOUS): string
     {
-        return __('Confirmed, your place for {evenement} is booked. See you on {date}, welcome from {heure}. Manage my attendance: {lien}', [], 'fr');
+        return __(
+            'Confirmed, your place for {evenement} is booked. See you on {date}, welcome from {heure}. Manage my attendance: {lien}',
+            [],
+            $addressForm === CustomerAddressForm::TU ? CustomerLocale::FRENCH_TUTOIEMENT : 'fr',
+        );
     }
 
     public function isEnabledForEvent(int $eventId): bool
@@ -99,7 +107,7 @@ class SmsRegistrationConfirmationService
 
         $template = trim((string) $settings->getSmsRegistrationConfirmationMessage());
         if ($template === '') {
-            $template = self::defaultMessage();
+            $template = self::defaultMessage($this->customerLocaleResolver->addressFormForOrganizerId($event->getOrganizerId()));
         }
 
         $sent = 0;

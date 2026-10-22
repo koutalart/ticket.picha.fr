@@ -15,6 +15,8 @@ import {getConfig} from "../../../../../../utilites/config.ts";
 import {countSmsSegments} from "../../../../organizer/Sms/smsSegments.ts";
 import {renderSmsTemplate} from "../SmsConfirmationSettings/renderSmsTemplate.ts";
 import classes from "../SmsConfirmationSettings/SmsConfirmationSettings.module.scss";
+import {useOrganizerCustomerAddressForm} from "../../../../../../hooks/useOrganizerCustomerAddressForm.ts";
+import {defaultSmsCancellationMessage} from "../../../../../../utilites/customerSmsDefaults.ts";
 
 const MAX_LENGTH = 1000;
 
@@ -23,11 +25,6 @@ const EVENT_TITLE = '{evenement}';
 const EVENT_DATE = '{date}';
 const EVENT_TIME = '{heure}';
 const PERSONAL_LINK = '{lien}';
-
-/**
- * Sent to the attendees, always in French like the other customer messages (same text as the backend default).
- */
-export const DEFAULT_SMS_CANCELLATION_MESSAGE = "C'est noté, votre inscription à {evenement} est annulée et votre place est libérée. Au plaisir de vous revoir.";
 
 const SAMPLE_FIRST_NAME = 'Awa';
 const SAMPLE_CODE = '3f9c2a7e1b8d4c6f0a5e9b2d7c1f4a8e6b3d0c9f';
@@ -45,13 +42,15 @@ export const SmsCancellationSettings = () => {
     const eventSettingsQuery = useGetEventSettings(eventId);
     const organizerId = eventQuery.data?.organizer_id;
     const smsSettingsQuery = useGetSmsSettings(organizerId);
+    const {addressForm, isFetched: addressFormFetched} = useOrganizerCustomerAddressForm(organizerId);
+    const defaultMessage = defaultSmsCancellationMessage(addressForm);
     const updateMutation = useUpdateEventSettings();
     const formErrorHandle = useFormErrorResponseHandler();
 
     const form = useForm<FormValues>({
         initialValues: {
             sms_cancellation_confirmation_enabled: false,
-            sms_cancellation_confirmation_message: DEFAULT_SMS_CANCELLATION_MESSAGE,
+            sms_cancellation_confirmation_message: defaultSmsCancellationMessage('vous'),
             sms_cancellation_confirmation_on_organizer_cancel: false,
         },
         validate: {
@@ -62,14 +61,14 @@ export const SmsCancellationSettings = () => {
     });
 
     useEffect(() => {
-        if (eventSettingsQuery?.isFetched && eventSettingsQuery?.data) {
+        if (eventSettingsQuery?.isFetched && eventSettingsQuery?.data && addressFormFetched) {
             form.setValues({
                 sms_cancellation_confirmation_enabled: eventSettingsQuery.data.sms_cancellation_confirmation_enabled ?? false,
-                sms_cancellation_confirmation_message: eventSettingsQuery.data.sms_cancellation_confirmation_message || DEFAULT_SMS_CANCELLATION_MESSAGE,
+                sms_cancellation_confirmation_message: eventSettingsQuery.data.sms_cancellation_confirmation_message || defaultMessage,
                 sms_cancellation_confirmation_on_organizer_cancel: eventSettingsQuery.data.sms_cancellation_confirmation_on_organizer_cancel ?? false,
             });
         }
-    }, [eventSettingsQuery.isFetched]);
+    }, [eventSettingsQuery.isFetched, addressFormFetched]);
 
     const smsSettings = smsSettingsQuery.data;
     const smsConfigured = !!smsSettings?.api_key_configured && !!smsSettings?.from_number;
@@ -194,11 +193,11 @@ export const SmsCancellationSettings = () => {
                                         </Button>
                                     ))}
                                 </Group>
-                                {message !== DEFAULT_SMS_CANCELLATION_MESSAGE && (
+                                {message !== defaultMessage && (
                                     <Button
                                         size="compact-xs"
                                         variant="subtle"
-                                        onClick={() => form.setFieldValue('sms_cancellation_confirmation_message', DEFAULT_SMS_CANCELLATION_MESSAGE)}
+                                        onClick={() => form.setFieldValue('sms_cancellation_confirmation_message', defaultMessage)}
                                     >
                                         {t`Restore the default text`}
                                     </Button>

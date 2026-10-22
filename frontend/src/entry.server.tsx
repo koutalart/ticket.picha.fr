@@ -10,6 +10,7 @@ import {i18n} from "@lingui/core";
 import {dynamicActivateLocale, initCustomerAddressForm, toHtmlLang} from "./locales.ts";
 import {resolveCustomerAddressForm} from "./utilites/customerAddressForm.ts";
 import {setSsrQueryClient} from "./utilites/ssrQueryClient.ts";
+import {getCustomDomainOrganizer} from "./utilites/customDomain.ts";
 
 export {renderLlmsTxt, renderMarketingSitemap} from "./marketing/pages.ts";
 export {renderOrganizerLlmsTxt} from "./marketing/organizerLlmsTxt.ts";
@@ -58,6 +59,7 @@ export async function render(params: {
     const customerAddressForm = await resolveCustomerAddressForm(
         new URL(remixRequest.url).pathname,
         queryClient,
+        getCustomDomainOrganizer(remixRequest)?.id,
     );
     initCustomerAddressForm(customerAddressForm);
     await dynamicActivateLocale(getLocale(params.req));

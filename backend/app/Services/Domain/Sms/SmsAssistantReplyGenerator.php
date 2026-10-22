@@ -81,6 +81,8 @@ Réponse d'attente ("holding_reply") : toujours fournie, quelle que soit la déc
 La raison ("reason") est en français, 100 caractères au plus, pour l'équipe ; mets-la à null pour un brouillon. "reply" est null pour "needs_human".
 PROMPT;
 
+    private const TUTOIEMENT_RULE = "Tutoiement : l'organisateur tutoie ses clients. Écris la réponse et la réponse d'attente en « tu » (par exemple « je reviens vers toi très vite »), sauf si sa consigne demande autre chose.";
+
     public function __construct(
         private readonly ClaudeStructuredOutputClient $claude,
         private readonly SmsAssistantCallRepositoryInterface $callRepository,
@@ -233,6 +235,7 @@ PROMPT;
             sprintf('Nous sommes le %s (fuseau %s).', $now->isoFormat('dddd D MMMM YYYY [à] HH[h]mm'), $request->timezone),
             'Organisateur : '.$request->organizerName,
             "Consigne de l'organisateur :\n".($instructions !== '' ? $instructions : 'aucune'),
+            ...($request->tutoiement ? [self::TUTOIEMENT_RULE] : []),
             "Événements à venir (données publiques à jour) :\n".$this->json($request->events->map(
                 fn (SmsAssistantEventInfoDTO $event) => [
                     'titre' => $event->title,

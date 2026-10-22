@@ -5,12 +5,12 @@ namespace HiEvents\Http\Actions\Attendees\Attendance;
 use HiEvents\Exceptions\AttendanceAccessRateLimitedException;
 use HiEvents\Exceptions\AttendanceResponseNotAllowedException;
 use HiEvents\Exceptions\InvalidAttendanceAccessContactException;
-use HiEvents\Helper\CustomerLocale;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\Request\Attendee\RequestAttendanceAccessCodeRequest;
 use HiEvents\Http\ResponseCodes;
 use HiEvents\Services\Application\Handlers\Attendee\AttendanceAccess\DTO\RequestAttendanceAccessCodeDTO;
 use HiEvents\Services\Application\Handlers\Attendee\AttendanceAccess\RequestAttendanceAccessCodeHandler;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
@@ -18,6 +18,7 @@ class RequestAttendanceAccessCodeActionPublic extends BaseAction
 {
     public function __construct(
         private readonly RequestAttendanceAccessCodeHandler $handler,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     public function __invoke(RequestAttendanceAccessCodeRequest $request, int $eventId): JsonResponse
@@ -37,7 +38,7 @@ class RequestAttendanceAccessCodeActionPublic extends BaseAction
         }
 
         return $this->jsonResponse([
-            'message' => __('If a registration matches, you will receive a message with a code.', [], CustomerLocale::get()),
+            'message' => __('If a registration matches, you will receive a message with a code.', [], $this->customerLocaleResolver->forEventId($eventId)),
         ]);
     }
 }

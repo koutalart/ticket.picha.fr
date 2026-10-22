@@ -4,10 +4,10 @@ namespace HiEvents\Jobs\Event;
 
 use HiEvents\DomainObjects\Generated\OutgoingMessageDomainObjectAbstract;
 use HiEvents\DomainObjects\Status\OutgoingMessageStatus;
-use HiEvents\Helper\CustomerLocale;
 use HiEvents\Mail\Event\EventMessage;
 use HiEvents\Repository\Interfaces\OutgoingMessageRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Message\DTO\SendMessageDTO;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -35,12 +35,13 @@ class SendEventEmailJob implements ShouldQueue
     public function handle(
         Mailer                             $mailer,
         OutgoingMessageRepositoryInterface $outgoingMessageRepository,
+        CustomerLocaleResolver             $customerLocaleResolver,
     ): void
     {
         try {
             $mailer
                 ->to($this->email, $this->toName)
-                ->locale(CustomerLocale::get())
+                ->locale($customerLocaleResolver->forEventId($this->messageData->event_id))
                 ->send($this->eventMessage);
         } catch (Throwable $exception) {
             $outgoingMessageRepository->create([

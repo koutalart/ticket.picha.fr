@@ -24,9 +24,13 @@ use Illuminate\Support\Facades\Bus;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
+use Tests\Unit\Support\StaticCustomerLocaleResolver;
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 
 class SmsAutoReplyServiceTest extends TestCase
 {
+    private StaticCustomerLocaleResolver $customerLocaleResolver;
+
     private const REPLY = 'Ça commence à 20h, ouverture des portes à 19h.';
 
     private const QUESTION = 'Bonsoir, ça commence à quelle heure ?';
@@ -264,6 +268,18 @@ class SmsAutoReplyServiceTest extends TestCase
         $this->service()->keepWaitingForTeam($this->conversation()->setStatus('NEEDS_HUMAN'));
     }
 
+    public function test_default_holding_reply_says_tu_when_the_organizer_chose_it(): void
+    {
+        $service = $this->service();
+        $this->customerLocaleResolver->addressForm = CustomerAddressForm::TU;
+        $this->settings->setAssistantHoldingReply(null);
+
+        self::assertSame(
+            "Bonne question, je vérifie avec l'équipe et je reviens vers toi très vite.",
+            $service->holdingReplyFor($this->settings, null),
+        );
+    }
+
     public function test_holding_reply_comes_from_the_assistant_then_the_organizer_then_a_default(): void
     {
         $service = $this->service();
@@ -357,6 +373,7 @@ class SmsAutoReplyServiceTest extends TestCase
             $this->messageRepository,
             $this->conversationService,
             $this->lineService,
+            $this->customerLocaleResolver = new StaticCustomerLocaleResolver,
         );
     }
 

@@ -190,7 +190,7 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         return new ClaudeStructuredAnswerDTO(data: $data, model: 'claude-opus-5-5', inputTokens: 1200, outputTokens: 80);
     }
 
-    private function request(?string $personalLink = null): SmsAssistantRequestDTO
+    private function request(?string $personalLink = null, bool $tutoiement = false): SmsAssistantRequestDTO
     {
         return new SmsAssistantRequestDTO(
             organizerId: 4,
@@ -228,7 +228,25 @@ class SmsAssistantReplyGeneratorTest extends TestCase
                 tickets: [new SmsAssistantTicketInfoDTO(name: 'Vente flash', price: 15.0, currency: 'EUR', availability: SmsAssistantTicketInfoDTO::ON_SALE)],
             )]),
             personalLink: $personalLink,
+            tutoiement: $tutoiement,
         );
+    }
+
+    public function test_organizer_in_tu_asks_for_tu_replies(): void
+    {
+        $this->claude->shouldReceive('isConfigured')->andReturnTrue();
+        $sent = [];
+        $this->claude->shouldReceive('askWithUsage')->twice()->andReturnUsing(function (string $system, array $content) use (&$sent) {
+            $sent[] = $content[0]['text'];
+
+            return $this->answer(['decision' => 'draft', 'reply' => 'Oui, il en reste !', 'reason' => null]);
+        });
+
+        $this->generator()->generate($this->request(tutoiement: true));
+        $this->generator()->generate($this->request());
+
+        self::assertStringContainsString("Tutoiement : l'organisateur tutoie ses clients.", $sent[0]);
+        self::assertStringNotContainsString('Tutoiement :', $sent[1]);
     }
 
     public function test_plain_link_in_the_draft_becomes_the_personal_link(): void
