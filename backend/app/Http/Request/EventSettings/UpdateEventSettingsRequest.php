@@ -147,6 +147,8 @@ class UpdateEventSettingsRequest extends BaseRequest
             'sms_cancellation_confirmation_message' => ['nullable', 'string', 'max:1000'],
             'sms_cancellation_confirmation_on_organizer_cancel' => ['boolean'],
 
+            'ticket_footer_use_organizer_domain' => ['boolean'],
+
             'rich_footer_enabled' => ['boolean'],
             'homepage_footer_settings' => ['nullable', 'array'],
             'homepage_footer_settings.newsletter_enabled' => ['nullable', 'boolean'],

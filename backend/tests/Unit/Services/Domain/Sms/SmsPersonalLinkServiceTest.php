@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Domain\Sms;
 
+use HiEvents\DomainObjects\ContactDomainObject;
 use HiEvents\DomainObjects\QrLinkDomainObject;
 use HiEvents\DomainObjects\SmsCampaignRecipientDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
+use HiEvents\Repository\Interfaces\ContactRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
+use HiEvents\Services\Domain\Contact\ContactPersonalLinkService;
+use HiEvents\Services\Domain\Contact\SmsContactResolver;
 use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
 use HiEvents\Services\Domain\Sms\SmsPersonalLinkService;
@@ -27,6 +31,8 @@ class SmsPersonalLinkServiceTest extends TestCase
 
     private QrLinkUrlService|MockInterface $urls;
 
+    private ContactRepositoryInterface|MockInterface $contacts;
+
     private PublicBaseUrlResolver $resolver;
 
     protected function setUp(): void
@@ -36,8 +42,46 @@ class SmsPersonalLinkServiceTest extends TestCase
         $this->recipients = Mockery::mock(SmsCampaignRecipientRepositoryInterface::class);
         $this->qrLinks = Mockery::mock(QrLinkRepositoryInterface::class);
         $this->urls = Mockery::mock(QrLinkUrlService::class);
+        $this->contacts = Mockery::mock(ContactRepositoryInterface::class);
         config(['app.frontend_url' => 'https://ticket.picha.fr']);
         $this->resolver = $this->fakePublicBaseUrl([8 => 'mayottela1ere.fr']);
+    }
+
+    public function test_contact_gets_their_c_link_on_the_organizer_site(): void
+    {
+        $this->expectContact('+262639017818');
+        $this->resolver = $this->fakePublicBaseUrl([4 => 'innocent976.yt', 8 => 'mayottela1ere.fr']);
+
+        $link = $this->service()->findForContact(4, '+262639017818', collect([
+            $this->outbound('https://innocent976.yt/?qr=iiekn0hg'),
+        ]));
+
+        self::assertSame('https://innocent976.yt/?c=k7mzq2xwpa', $link);
+    }
+
+    public function test_without_custom_domain_the_c_link_reuses_the_last_tracked_link_sent(): void
+    {
+        $this->expectContact('+262639017818');
+
+        $link = $this->service()->findForContact(4, '0639 01 78 18', collect([
+            $this->outbound('Ta place : https://innocent976.yt/event/7/halloween?qr=iiekn0hg&qrc=1.'),
+            $this->outbound('Redirection : https://ticket.picha.fr/q/iiekn0hg'),
+        ]));
+
+        self::assertSame('https://innocent976.yt/event/7/halloween?c=k7mzq2xwpa', $link);
+    }
+
+    public function test_qr_link_stays_the_fallback_when_the_c_link_has_no_site(): void
+    {
+        $this->expectContact('+262639017818');
+        $qrLink = $this->expectCampaignQrLink('iiekn0hg');
+        $this->urls->shouldReceive('getPublicUrl')->with($qrLink)->andReturn('https://ticket.picha.fr/q/iiekn0hg');
+
+        $link = $this->service()->findForContact(4, '+262639017818', collect([
+            $this->outbound('https://ticket.picha.fr/q/iiekn0hg'),
+        ]));
+
+        self::assertSame('https://ticket.picha.fr/q/iiekn0hg', $link);
     }
 
     public function test_link_already_sent_in_the_campaign_is_reused_as_is(): void
@@ -107,6 +151,10 @@ class SmsPersonalLinkServiceTest extends TestCase
             SmsPersonalLinkService::applyToReply('Ici : https://www.innocent976.yt/.', $personal),
         );
         self::assertSame('Vidéo : https://we.tl/t-abc', SmsPersonalLinkService::applyToReply('Vidéo : https://we.tl/t-abc', $personal));
+        self::assertSame(
+            'Ici : https://innocent976.yt/?c=k7mzq2xwpa',
+            SmsPersonalLinkService::applyToReply('Ici : https://innocent976.yt/?c=k7mzq2xwpa', 'https://innocent976.yt/?c=other12345'),
+        );
         self::assertSame('Ici : https://innocent976.yt', SmsPersonalLinkService::applyToReply('Ici : https://innocent976.yt', null));
     }
 
@@ -122,9 +170,25 @@ class SmsPersonalLinkServiceTest extends TestCase
         return $qrLink;
     }
 
+    private function expectContact(string $phone): void
+    {
+        $this->contacts->shouldReceive('findFirstWhere')
+            ->with(Mockery::on(fn (array $where) => $where['organizer_id'] === 4 && $where['phone'] === $phone))
+            ->andReturn((new ContactDomainObject)->setId(31)->setOrganizerId(4)->setPhone($phone)->setPublicCode('k7mzq2xwpa'));
+    }
+
     private function service(): SmsPersonalLinkService
     {
-        return new SmsPersonalLinkService($this->recipients, $this->qrLinks, $this->urls, $this->resolver);
+        $this->contacts->shouldReceive('findFirstWhere')->andReturnNull()->byDefault();
+
+        return new SmsPersonalLinkService(
+            $this->recipients,
+            $this->qrLinks,
+            $this->urls,
+            $this->resolver,
+            new SmsContactResolver($this->contacts),
+            new ContactPersonalLinkService($this->contacts, $this->resolver),
+        );
     }
 
     private function outbound(string $content): SmsMessageDomainObject

@@ -364,7 +364,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 render = (await dynamicImport(path.join(__dirname, "./dist/server/entry.server.js"))).render;
             }
 
-            const { appHtml, dehydratedState, helmetContext, locale, htmlLang, statusCode } = await render(
+            const { appHtml, dehydratedState, helmetContext, locale, htmlLang, statusCode, customerAddressForm } = await render(
                 { req, res },
                 ssrManifest
             );
@@ -392,7 +392,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
             }
 
             const html = template
-                .replace('<html lang="en">', `<html lang="${htmlLang}" data-locale="${locale}">`)
+                .replace('<html lang="en">', `<html lang="${htmlLang}" data-locale="${locale}"${customerAddressForm === 'tu' ? ' data-address-form="tu"' : ''}>`)
                 .replace("<!--head-snippets-->", headSnippets.join("\n"))
                 .replace("<!--app-html-->", appHtml)
                 .replace("<!--dehydrated-state-->", `<script>window.__REHYDRATED_STATE__ = ${stringifiedState}</script>`)

@@ -90,12 +90,52 @@ export const getClientLocale = () => {
     return getSupportedLocale(i18n.locale || "en");
 };
 
+export type CustomerAddressForm = 'vous' | 'tu';
+
+let customerAddressForm: CustomerAddressForm = 'vous';
+const customerAddressFormListeners = new Set<() => void>();
+
+export const getCustomerAddressForm = (): CustomerAddressForm => customerAddressForm;
+
+export const normalizeCustomerAddressForm = (value?: string | null): CustomerAddressForm =>
+    value === 'tu' ? 'tu' : 'vous';
+
+export const subscribeToCustomerAddressForm = (listener: () => void) => {
+    customerAddressFormListeners.add(listener);
+    return () => {
+        customerAddressFormListeners.delete(listener);
+    };
+};
+
+/**
+ * Sets the address form without reloading the catalog. Used before the first activation
+ * (server render, client boot) so the catalog is loaded once with the right variant.
+ */
+export const initCustomerAddressForm = (value?: string | null) => {
+    customerAddressForm = normalizeCustomerAddressForm(value);
+};
+
+export async function setCustomerAddressForm(value?: string | null) {
+    const next = normalizeCustomerAddressForm(value);
+    if (next === customerAddressForm) {
+        return;
+    }
+
+    customerAddressForm = next;
+
+    if (i18n.locale === 'fr') {
+        await dynamicActivateLocale('fr');
+    }
+
+    customerAddressFormListeners.forEach((listener) => listener());
+}
+
 export async function dynamicActivateLocale(locale: string) {
     try {
         locale = availableLocales.includes(locale) ? locale : "en";
-        const module = (await import(`./locales/${locale}.po`));
-        i18n.load(locale, module.messages);
-        i18n.activate(locale);
+        const catalog = locale === 'fr' && customerAddressForm === 'tu' ? 'fr-tu' : locale;
+        const module = (await import(`./locales/${catalog}.po`));
+        i18n.loadAndActivate({locale, messages: {...module.messages}});
     } catch (error) {
         console.error("Error loading locale:", error);
         // i18n.activate("en");

@@ -52,7 +52,7 @@ class TicketLayoutBuilder
                 $this->title($ticket->eventTitle),
                 $this->details($ticket),
                 $this->qrCode($ticket),
-                $this->footer(),
+                $this->footer($ticket),
             ),
         );
     }
@@ -186,22 +186,43 @@ class TicketLayoutBuilder
     /**
      * @return list<TicketTextElement|TicketBoxElement|TicketGraphicElement>
      */
-    private function footer(): array
+    private function footer(TicketDataDTO $ticket): array
     {
         $y = self::FOOTER_Y;
         $elements = [new TicketBoxElement(36, $y, 567, 2, 2)];
+        $domain = $ticket->footerDomain !== null ? $this->field($ticket->footerDomain, 30) : '';
 
-        if ($logo = $this->asset(self::FOOTER_LOGO)) {
-            $elements[] = new TicketGraphicElement(44, $y + 9, $logo);
+        if ($domain === '') {
+            if ($logo = $this->asset(self::FOOTER_LOGO)) {
+                $elements[] = new TicketGraphicElement(44, $y + 9, $logo);
+            }
+        } elseif ($logo = $this->convertImage($ticket->footerLogo, 200, 78)) {
+            $elements[] = new TicketGraphicElement(44 + intdiv(214 - $logo->width, 2), $y + 12 + intdiv(78 - $logo->height, 2), $logo);
+        } else {
+            $elements[] = new TicketTextElement(44, $y + 30, 22, 19, $this->field($ticket->sellerName, 40), 214, 'C', 2);
         }
         $elements[] = new TicketBoxElement(266, $y + 12, 2, 78, 2);
-        $elements[] = new TicketTextElement(292, $y + 18, 20, 17, $this->field(__('Event management platform'), 40));
+        $label = $domain === '' ? __('Event management platform') : __('Official ticketing');
+        $elements[] = new TicketTextElement(292, $y + 18, 20, 17, $this->field($label, 40));
         if ($globe = $this->asset('icon-globe.gfa')) {
             $elements[] = new TicketGraphicElement(292, $y + 52, $globe);
         }
-        $elements[] = new TicketTextElement(334, $y + 48, 41, 34, self::FOOTER_TEXT);
+        $elements[] = $domain === ''
+            ? new TicketTextElement(334, $y + 48, 41, 34, self::FOOTER_TEXT)
+            : $this->footerDomainText($domain, $y);
 
         return $elements;
+    }
+
+    private function footerDomainText(string $domain, int $y): TicketTextElement
+    {
+        $length = mb_strlen($domain);
+
+        return match (true) {
+            $length <= 15 => new TicketTextElement(334, $y + 48, 41, 34, $domain),
+            $length <= 19 => new TicketTextElement(334, $y + 52, 34, 28, $domain),
+            default => new TicketTextElement(334, $y + 56, 26, 21, $domain),
+        };
     }
 
     private function convertImage(?string $imageData, int $maxWidth, int $maxHeight): ?ZplGraphicDTO

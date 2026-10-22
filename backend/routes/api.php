@@ -64,6 +64,7 @@ use HiEvents\Http\Actions\QrLinks\GetQrLinkPosterAction;
 use HiEvents\Http\Actions\QrLinks\GetQrLinkStatsAction;
 use HiEvents\Http\Actions\QrLinks\Public\GetQrLinkPublicAction;
 use HiEvents\Http\Actions\QrLinks\Public\RecordQrLinkVisitPublicAction;
+use HiEvents\Http\Actions\Contacts\Public\RecordContactLinkVisitPublicAction;
 use HiEvents\Http\Actions\QrLinks\UpdateQrLinkAction;
 use HiEvents\Http\Actions\Tickets\GetAttendeeTicketImageActionPublic;
 use HiEvents\Http\Actions\Tickets\GetEventTicketPreviewImageAction;
@@ -198,6 +199,22 @@ use HiEvents\Http\Actions\Organizers\GetOrganizerEventsAction;
 use HiEvents\Http\Actions\Organizers\GetOrganizersAction;
 use HiEvents\Http\Actions\Organizers\GetPublicOrganizerAction;
 use HiEvents\Http\Actions\Organizers\GetOrganizerByCustomDomainPublicAction;
+use HiEvents\Http\Actions\Organizers\Contacts\CreateContactAction;
+use HiEvents\Http\Actions\Organizers\Contacts\UploadContactImportAction;
+use HiEvents\Http\Actions\Organizers\Contacts\RunContactImportAction;
+use HiEvents\Http\Actions\Organizers\Contacts\RevertContactImportAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactsAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactsSummaryAction;
+use HiEvents\Http\Actions\Organizers\Contacts\ExportContactsAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactTagsAction;
+use HiEvents\Http\Actions\Organizers\Contacts\AssignContactTagAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactAction;
+use HiEvents\Http\Actions\Organizers\Contacts\UpdateContactAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactTimelineAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactNotesAction;
+use HiEvents\Http\Actions\Organizers\Contacts\CreateContactNoteAction;
+use HiEvents\Http\Actions\Organizers\Contacts\DeleteContactNoteAction;
+use HiEvents\Http\Actions\Organizers\Contacts\RemoveContactTagAction;
 use HiEvents\Http\Actions\Organizers\Orders\GetOrganizerOrdersAction;
 use HiEvents\Http\Actions\Organizers\Public\SendOrganizerContactMessagePublicAction;
 use HiEvents\Http\Actions\Organizers\Public\SubscribeToOrganizerNewsletterPublicAction;
@@ -391,6 +408,22 @@ $router->middleware(['auth:api'])->group(
         $router->get('/organizers/{organizer_id}/events', GetOrganizerEventsAction::class);
         $router->get('/organizers/{organizer_id}/stats', GetOrganizerStatsAction::class);
         $router->get('/organizers/{organizer_id}/orders', GetOrganizerOrdersAction::class);
+        $router->get('/organizers/{organizer_id}/contacts', GetContactsAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/summary', GetContactsSummaryAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/export', ExportContactsAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/tags', GetContactTagsAction::class);
+        $router->post('/organizers/{organizer_id}/contacts/tags', AssignContactTagAction::class);
+        $router->post('/organizers/{organizer_id}/contacts', CreateContactAction::class);
+        $router->post('/organizers/{organizer_id}/contacts/imports/upload', UploadContactImportAction::class);
+        $router->post('/organizers/{organizer_id}/contacts/imports', RunContactImportAction::class);
+        $router->delete('/organizers/{organizer_id}/contacts/imports/{import_id}', RevertContactImportAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/{contact_id}', GetContactAction::class);
+        $router->put('/organizers/{organizer_id}/contacts/{contact_id}', UpdateContactAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/{contact_id}/timeline', GetContactTimelineAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/{contact_id}/notes', GetContactNotesAction::class);
+        $router->post('/organizers/{organizer_id}/contacts/{contact_id}/notes', CreateContactNoteAction::class);
+        $router->delete('/organizers/{organizer_id}/contacts/{contact_id}/notes/{note_id}', DeleteContactNoteAction::class);
+        $router->delete('/organizers/{organizer_id}/contacts/{contact_id}/tags/{tag_id}', RemoveContactTagAction::class);
         $router->get('/organizers/{organizer_id}/settings', GetOrganizerSettingsAction::class);
         $router->patch('/organizers/{organizer_id}/settings', PartialUpdateOrganizerSettingsAction::class);
         $router->post('/organizers/{organizer_id}/settings/meta-conversions-api/test', TestMetaConversionsApiAction::class)
@@ -725,6 +758,11 @@ $router->prefix('/public')->group(
             ->where('short_id', '[A-Za-z0-9]{4,32}');
         $router->post('/qr-links/{short_id}/visits', RecordQrLinkVisitPublicAction::class)
             ->where('short_id', '[A-Za-z0-9]{4,32}')
+            ->middleware('throttle:60,1');
+
+        // Personal contact links (?c=)
+        $router->post('/contact-links/{code}/visits', RecordContactLinkVisitPublicAction::class)
+            ->where('code', '[A-Za-z0-9]{6,16}')
             ->middleware('throttle:60,1');
 
         // Demo requests

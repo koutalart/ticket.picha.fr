@@ -34,6 +34,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     final public const META_CONVERSIONS_API_TOKEN = 'meta_conversions_api_token';
     final public const META_TEST_EVENT_CODE = 'meta_test_event_code';
     final public const EMAIL_SENDER_NAME = 'email_sender_name';
+    final public const CUSTOMER_ADDRESS_FORM = 'customer_address_form';
 
     protected int $id;
     protected int $organizer_id;
@@ -59,6 +60,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     protected ?string $meta_conversions_api_token = null;
     protected ?string $meta_test_event_code = null;
     protected ?string $email_sender_name = null;
+    protected string $customer_address_form = 'vous';
 
     public function toArray(): array
     {
@@ -87,6 +89,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
                     'meta_conversions_api_token' => $this->meta_conversions_api_token ?? null,
                     'meta_test_event_code' => $this->meta_test_event_code ?? null,
                     'email_sender_name' => $this->email_sender_name ?? null,
+                    'customer_address_form' => $this->customer_address_form ?? null,
                 ];
     }
 
@@ -353,5 +356,16 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     public function getEmailSenderName(): ?string
     {
         return $this->email_sender_name;
+    }
+
+    public function setCustomerAddressForm(string $customer_address_form): self
+    {
+        $this->customer_address_form = $customer_address_form;
+        return $this;
+    }
+
+    public function getCustomerAddressForm(): string
+    {
+        return $this->customer_address_form;
     }
 }

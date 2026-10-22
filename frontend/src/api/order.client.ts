@@ -50,6 +50,7 @@ export interface ProductFormPayload {
     promo_code: string | null,
     affiliate_code?: string | null,
     qr_link_code?: string | null,
+    contact_code?: string | null,
     tracking_context?: OrderTrackingContext | null,
     session_identifier?: string,
 }

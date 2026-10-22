@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Stripe\StripeClient;
 use HiEvents\Services\Infrastructure\Stripe\StripeConfigurationService;
-use HiEvents\Services\Domain\Sms\CancellationConfirmation\AttendanceSmsCancellationLinkProvider;
+use HiEvents\Services\Domain\Sms\CancellationConfirmation\ContactSmsCancellationLinkProvider;
 use HiEvents\Services\Domain\Sms\CancellationConfirmation\SmsCancellationLinkProviderInterface;
 use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\Sms\Reminder\AttendanceSmsReminderPersonalLinkProvider;
@@ -38,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
         $this->bindCurrencyConversionClient();
         $this->app->bind(ZebraPrinterClientInterface::class, ZebraNetworkPrinter::class);
         $this->app->bind(SmsReminderPersonalLinkProviderInterface::class, AttendanceSmsReminderPersonalLinkProvider::class);
-        $this->app->bind(SmsCancellationLinkProviderInterface::class, AttendanceSmsCancellationLinkProvider::class);
+        $this->app->bind(SmsCancellationLinkProviderInterface::class, ContactSmsCancellationLinkProvider::class);
         $this->app->scoped(PublicBaseUrlResolver::class);
     }
 
