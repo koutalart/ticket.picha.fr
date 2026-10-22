@@ -80,7 +80,7 @@ export const SaleCountdown = ({opensAt, timezone, onReached}: SaleCountdownProps
                     </div>
                 ))}
             </div>
-            <h2 className={classes.title}>{t`Free registration on ${day} at ${time}`}</h2>
+            <h2 className={classes.title}>{t`Registration opens on ${day} at ${time}`}</h2>
             {remaining === 0 && (
                 <p className={classes.opening} role="status">{t`Registration is opening...`}</p>
             )}
