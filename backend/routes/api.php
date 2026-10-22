@@ -42,6 +42,9 @@ use HiEvents\Http\Actions\Affiliates\UpdateAffiliateAction;
 use HiEvents\Http\Actions\Attendees\Attendance\CancelAttendeeAttendanceActionPublic;
 use HiEvents\Http\Actions\Attendees\Attendance\ConfirmAttendeeAttendanceActionPublic;
 use HiEvents\Http\Actions\Attendees\Attendance\GetAttendeeAttendanceActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\RequestAttendanceAccessCodeActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\VerifyAttendanceAccessCodeActionPublic;
+use HiEvents\Http\Actions\Common\GetServerTimeActionPublic;
 use HiEvents\Http\Actions\Attendees\CheckInAttendeeAction;
 use HiEvents\Http\Actions\Attendees\CreateAttendeeAction;
 use HiEvents\Http\Actions\Attendees\EditAttendeeAction;
@@ -122,6 +125,9 @@ use HiEvents\Http\Actions\EventAssistant\ResearchEventDescriptionAction;
 use HiEvents\Http\Actions\Events\DuplicateEventAction;
 use HiEvents\Http\Actions\Events\GetEventAction;
 use HiEvents\Http\Actions\Events\GetEventPublicAction;
+use HiEvents\Http\Actions\Events\Pages\GetEventPagesAction;
+use HiEvents\Http\Actions\Events\Pages\GetEventPagesPublicAction;
+use HiEvents\Http\Actions\Events\Pages\UpdateEventPagesAction;
 use HiEvents\Http\Actions\Events\GetEventsAction;
 use HiEvents\Http\Actions\Events\GetOrganizerEventsPublicAction;
 use HiEvents\Http\Actions\Organizers\CoverVideo\UploadOrganizerCoverVideoAction;
@@ -603,6 +609,8 @@ $router->middleware(['auth:api'])->group(
         $router->get('/events/{event_id}/settings', GetEventSettingsAction::class);
         $router->put('/events/{event_id}/settings', EditEventSettingsAction::class);
         $router->patch('/events/{event_id}/settings', PartialEditEventSettingsAction::class);
+        $router->get('/events/{event_id}/pages', GetEventPagesAction::class);
+        $router->put('/events/{event_id}/pages', UpdateEventPagesAction::class);
         $router->get('/events/{event_id}/settings/platform-fee-preview', GetPlatformFeePreviewAction::class);
 
         // Capacity Assignments
@@ -703,6 +711,7 @@ $router->prefix('/public')->group(
     function (Router $router): void {
         // Events
         $router->get('/events/{event_id}', GetEventPublicAction::class);
+        $router->get('/events/{event_id}/pages', GetEventPagesPublicAction::class);
 
         // Organizers
         $router->get('/organizers/{organizer_id}', GetPublicOrganizerAction::class);
@@ -749,6 +758,10 @@ $router->prefix('/public')->group(
             ->middleware('throttle:10,1');
         $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/cancel', CancelAttendeeAttendanceActionPublic::class)
             ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/attendance-access', RequestAttendanceAccessCodeActionPublic::class)
+            ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/attendance-access/verify', VerifyAttendanceAccessCodeActionPublic::class)
+            ->middleware('throttle:10,1');
 
         // Newsletter
         $router->post('/events/{event_id}/newsletter-subscriptions', SubscribeToOrganizerNewsletterPublicAction::class)
@@ -785,6 +798,10 @@ $router->prefix('/public')->group(
 
         // Color themes
         $router->get('/color-themes', GetColorThemesAction::class);
+
+        // Server time
+        $router->get('/server-time', GetServerTimeActionPublic::class)
+            ->middleware('throttle:60,1');
 
         // Ticket Lookup
         $router->post('/ticket-lookup', SendTicketLookupEmailAction::class)

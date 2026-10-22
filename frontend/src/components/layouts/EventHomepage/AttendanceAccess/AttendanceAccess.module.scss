@@ -1,0 +1,338 @@
+$text: #fff;
+$text-soft: rgba(255, 255, 255, 0.78);
+$line: rgba(255, 255, 255, 0.28);
+$accent: var(--event-primary-color, #b8963e);
+$accent-contrast: var(--event-accent-contrast, #000);
+$error: #ffb4a8;
+
+.modalContent {
+  background: rgba(12, 12, 12, 0.94);
+  border: 1px solid $line;
+  color: $text;
+  font-family: var(--theme-font-family, inherit);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modalHeader {
+  background: transparent;
+  padding-bottom: 4px;
+}
+
+.modalTitle {
+  font-family: var(--theme-font-family, inherit);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: $text;
+}
+
+.modalClose {
+  color: $text-soft;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: $text;
+  }
+}
+
+.modalBody {
+  padding-bottom: 24px;
+}
+
+.text {
+  margin: 0 0 20px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $text-soft;
+}
+
+.label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $text-soft;
+}
+
+.input {
+  height: 52px;
+  border: 0;
+  border-bottom: 2px solid $line;
+  border-radius: 0;
+  background: transparent;
+  color: $text;
+  font-family: inherit;
+  font-size: 1.2rem;
+  padding: 0 2px;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  &:focus {
+    border-bottom-color: $accent;
+  }
+}
+
+.error,
+.errorText {
+  color: $error;
+  font-size: 0.9rem;
+}
+
+.errorText {
+  margin: 10px 0 0;
+}
+
+.pinRoot {
+  justify-content: space-between;
+  flex-wrap: nowrap;
+
+  & > * {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 56px;
+  }
+}
+
+.pinInput {
+  width: 100%;
+  height: 56px;
+  border: 1px solid $line;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: $text;
+  font-family: inherit;
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  &:focus {
+    border-color: $accent;
+  }
+
+  &[data-error] {
+    border-color: $error;
+  }
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  margin-top: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: $accent;
+  color: $accent-contrast;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+}
+
+.secondaryRow {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.linkButton,
+.anotherLink,
+.alreadyLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $text-soft;
+  font-family: inherit;
+  font-size: 0.92rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    color: $text;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+  }
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $text-soft;
+}
+
+.peopleList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.personButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px solid $line;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  color: $text;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $accent;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+  }
+}
+
+.personName {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.personArrow {
+  color: $accent;
+  font-size: 1.2rem;
+}
+
+.root {
+  position: relative;
+  z-index: 1;
+  color: $text;
+  font-family: var(--theme-font-family, inherit);
+  background: rgba(0, 0, 0, 0.42);
+}
+
+.panel {
+  max-width: 720px;
+  min-height: 70vh;
+  min-height: 70svh;
+  margin: 0 auto;
+  padding: clamp(48px, 14vh, 140px) 20px clamp(40px, 8vh, 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.noticeEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $text-soft;
+
+  svg {
+    color: $accent;
+  }
+}
+
+.noticeTitle {
+  margin: 0 0 12px;
+  font-family: var(--theme-font-family, inherit);
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: $text;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+}
+
+.noticeText {
+  margin: 0 0 32px;
+  max-width: 560px;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.5;
+  color: $text-soft;
+}
+
+.primaryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 54px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 999px;
+  background: $accent;
+  color: $accent-contrast;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.2s ease;
+
+  @media (max-width: 420px) {
+    padding: 0 20px;
+    font-size: 1rem;
+    gap: 8px;
+  }
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+  }
+}
+
+.anotherLink {
+  margin-top: 28px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryButton,
+  .primaryLink,
+  .personButton {
+    transition: none;
+  }
+}

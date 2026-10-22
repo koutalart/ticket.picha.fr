@@ -29,6 +29,7 @@ class OrderCancelled extends BaseMail
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: __('Your order has been cancelled'),
         );

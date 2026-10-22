@@ -191,7 +191,7 @@ export interface Image {
     lqip_base64?: string | null;
 }
 
-export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_COVER_VIDEO_MOBILE' | 'EVENT_FLYER' | 'EVENT_HERO_PARTNER_LOGO' | 'EVENT_HERO_SIGNATURE_LOGO' | 'EVENT_HERO_BRAND_LOGO' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_EMAIL_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_COVER_VIDEO' | 'ORGANIZER_COVER_VIDEO_MOBILE' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
+export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_COVER_VIDEO_MOBILE' | 'EVENT_FLYER' | 'EVENT_HERO_PARTNER_LOGO' | 'EVENT_HERO_SIGNATURE_LOGO' | 'EVENT_HERO_BRAND_LOGO' | 'EVENT_ARTIST_PHOTO' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_EMAIL_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_COVER_VIDEO' | 'ORGANIZER_COVER_VIDEO_MOBILE' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
 
 export type PaymentProvider = 'STRIPE' | 'OFFLINE';
 
@@ -401,6 +401,39 @@ export interface Event extends EventBase {
     location_details?: VenueAddress;
     statistics?: EventStatistics;
     attributes?: { name: string; value: string; is_public?: boolean }[];
+    dedicated_pages?: EventPageSlug[];
+}
+
+export type EventPageSlug = 'artistes' | 'infos-pratiques' | 'faq';
+
+export type EventArtistLinkType = 'instagram' | 'facebook' | 'tiktok' | 'youtube' | 'spotify' | 'website';
+
+export interface EventArtist {
+    name: string;
+    slug?: string | null;
+    kind?: 'PERSON' | 'GROUP' | null;
+    image_id?: IdParam | null;
+    photo_url?: string | null;
+    bio?: string | null;
+    song?: string | null;
+    links?: Partial<Record<EventArtistLinkType, string>>;
+}
+
+export interface EventPageSection {
+    title: string;
+    content?: string | null;
+}
+
+export interface EventFaqItem {
+    question: string;
+    answer: string;
+}
+
+export interface EventPages {
+    available_pages?: EventPageSlug[];
+    artists: EventArtist[];
+    practical_info: EventPageSection[];
+    faq: EventFaqItem[];
 }
 
 export interface EventStatistics {
@@ -590,6 +623,7 @@ export interface OrganizerSettings {
     meta_conversions_api_configured?: boolean;
     meta_test_event_code?: string | null;
     meta_conversions_api_token?: string | null;
+    email_sender_name?: string | null;
 }
 
 export interface TrackingPixelConfig {
@@ -860,6 +894,12 @@ export interface Attendee {
     attendance_confirmed_at?: string | null;
     cancelled_by_attendee_at?: string | null;
     attendance_code?: string;
+}
+
+export interface AttendanceAccessLink {
+    short_id: string;
+    first_name: string;
+    code: string;
 }
 
 export interface AttendeeAttendance {

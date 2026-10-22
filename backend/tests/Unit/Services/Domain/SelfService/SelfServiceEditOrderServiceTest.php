@@ -71,6 +71,7 @@ class SelfServiceEditOrderServiceTest extends TestCase
         $mockEvent = Mockery::mock(EventDomainObject::class);
         $mockEvent->shouldReceive('getEventSettings')->andReturn($mockEventSettings);
         $mockEvent->shouldReceive('getOrganizer')->andReturn($mockOrganizer);
+        $mockEvent->shouldReceive('getOrganizerId')->andReturn(null);
 
         $this->eventRepository
             ->shouldReceive('loadRelation')
@@ -150,6 +151,7 @@ class SelfServiceEditOrderServiceTest extends TestCase
         $mockEvent = Mockery::mock(EventDomainObject::class);
         $mockEvent->shouldReceive('getEventSettings')->andReturn($mockEventSettings);
         $mockEvent->shouldReceive('getOrganizer')->andReturn($mockOrganizer);
+        $mockEvent->shouldReceive('getOrganizerId')->andReturn(null);
 
         $this->eventRepository
             ->shouldReceive('loadRelation')
@@ -264,6 +266,7 @@ class SelfServiceEditOrderServiceTest extends TestCase
         $mockEvent = Mockery::mock(EventDomainObject::class);
         $mockEvent->shouldReceive('getEventSettings')->andReturn($mockEventSettings);
         $mockEvent->shouldReceive('getOrganizer')->andReturn($mockOrganizer);
+        $mockEvent->shouldReceive('getOrganizerId')->andReturn(null);
 
         $this->eventRepository
             ->shouldReceive('loadRelation')
@@ -350,6 +353,7 @@ class SelfServiceEditOrderServiceTest extends TestCase
         $mockEvent = Mockery::mock(EventDomainObject::class);
         $mockEvent->shouldReceive('getEventSettings')->andReturn($mockEventSettings);
         $mockEvent->shouldReceive('getOrganizer')->andReturn($mockOrganizer);
+        $mockEvent->shouldReceive('getOrganizerId')->andReturn(null);
 
         $this->eventRepository
             ->shouldReceive('loadRelation')
@@ -408,6 +412,7 @@ class SelfServiceEditOrderServiceTest extends TestCase
         $mockEvent = Mockery::mock(EventDomainObject::class);
         $mockEvent->shouldReceive('getEventSettings')->andReturn($mockEventSettings);
         $mockEvent->shouldReceive('getOrganizer')->andReturn($mockOrganizer);
+        $mockEvent->shouldReceive('getOrganizerId')->andReturn(null);
 
         $this->eventRepository
             ->shouldReceive('loadRelation')

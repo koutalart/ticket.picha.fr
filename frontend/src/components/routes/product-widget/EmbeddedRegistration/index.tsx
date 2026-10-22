@@ -1,6 +1,5 @@
 import {FormEvent, KeyboardEvent, ReactNode, RefObject, useEffect, useMemo, useRef, useState} from "react";
 import {t, Trans} from "@lingui/macro";
-import {i18n} from "@lingui/core";
 import {useNavigate} from "react-router";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {useForm} from "@mantine/form";
@@ -35,6 +34,7 @@ import {AnalyticsEvents, trackEvent} from "../../../../utilites/analytics.ts";
 import {getConfig} from "../../../../utilites/config.ts";
 import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 import {UserGeneratedContent} from "../../../common/UserGeneratedContent";
+import {SaleCountdown} from "./SaleCountdown.tsx";
 import classes from "./EmbeddedRegistration.module.scss";
 
 type StepKind = 'name' | 'email' | 'phone' | 'questions' | 'participants' | 'confirm';
@@ -77,6 +77,7 @@ interface EmbeddedRegistrationProps {
     promoCodeValid?: boolean;
     sectionRef?: RefObject<HTMLElement>;
     renderFallback: () => ReactNode;
+    onAlreadyRegistered?: () => void;
 }
 
 const AFFILIATE_EXPIRY_DAYS = 30;
@@ -127,7 +128,7 @@ const largeFieldClassNames = {
     label: classNames(classes.fieldLabel, classes.questionLabel),
 };
 
-export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPromoCode, promoCodeValid, sectionRef, renderFallback}: EmbeddedRegistrationProps) => {
+export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPromoCode, promoCodeValid, sectionRef, renderFallback, onAlreadyRegistered}: EmbeddedRegistrationProps) => {
     const navigate = useNavigate();
     const eventId = initialEvent.id;
     const startsWithCode = !!promoCodeValid && !!initialPromoCode;
@@ -619,6 +620,31 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
         });
     };
 
+    const refreshAfterSaleStart = () => {
+        let attempts = 0;
+        const refresh = () => {
+            attempts++;
+            eventsClientPublic.findByID(eventId, promoCode)
+                .then(({data}) => {
+                    const stillClosed = getEventProducts(data).some(product => product.is_before_sale_start_date)
+                        && !resolveEmbeddedRegistrationTicket(data, promoCode ? publicProductIds : productIdsOf(data));
+                    setEvent(data);
+                    if (!promoCode) {
+                        setPublicProductIds(productIdsOf(data));
+                    }
+                    if (stillClosed && attempts < 6) {
+                        window.setTimeout(refresh, 2000);
+                    }
+                })
+                .catch(() => {
+                    if (attempts < 6) {
+                        window.setTimeout(refresh, 2000);
+                    }
+                });
+        };
+        refresh();
+    };
+
     const relevantQuestions = [...orderQuestions, ...participantQuestions];
     const cannotEmbed = questionsQuery.isError
         || (questionsQuery.isFetched && hasUnsupportedQuestions(relevantQuestions))
@@ -631,21 +657,21 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
         .sort((a, b) => a.getTime() - b.getTime())[0];
 
     if (!forceClassic && publicProductIds !== null && !ticket && upcomingSaleStart) {
-        const openingDay = upcomingSaleStart.toLocaleDateString(i18n.locale || 'fr', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            timeZone: event.timezone || undefined,
-        });
-
         return (
             <section className={classes.root} ref={sectionRef} id="tickets" aria-label={t`Registration`}>
                 <div className={classNames(classes.panel, classes.comingSoon)}>
-                    <span className={classes.eyebrow}>
-                        <IconTicket size={18}/>
-                        {t`Free registration`}
-                    </span>
-                    <h2 className={classes.comingSoonTitle}>{t`Registration opens on ${openingDay}`}</h2>
+                    <SaleCountdown
+                        opensAt={upcomingSaleStart}
+                        timezone={event.timezone || undefined}
+                        onReached={refreshAfterSaleStart}
+                    />
+                    {onAlreadyRegistered && (
+                        <div className={classes.alreadyRegisteredRow}>
+                            <button type="button" className={classes.linkButton} onClick={onAlreadyRegistered}>
+                                {t`Already registered? Manage my attendance`}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </section>
         );
@@ -1136,6 +1162,13 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
                                 </button>
                             )}
                         </div>
+                        {onAlreadyRegistered && (
+                            <div className={classes.alreadyRegisteredRow}>
+                                <button type="button" className={classes.linkButton} onClick={onAlreadyRegistered}>
+                                    {t`Already registered? Manage my attendance`}
+                                </button>
+                            </div>
+                        )}
                     </>
                 )}
             </div>

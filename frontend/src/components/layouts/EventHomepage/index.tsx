@@ -45,9 +45,11 @@ import {RichDescription} from "../../common/RichDescription";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 import {EmbeddedRegistration} from "../../routes/product-widget/EmbeddedRegistration";
-import {isEmbeddedRegistrationEnabled} from "../../../utilites/embeddedRegistration.ts";
+import {getEventProducts, isEmbeddedRegistrationEnabled} from "../../../utilites/embeddedRegistration.ts";
 import {RichFooter} from "./RichFooter";
 import {EventFactSummary} from "../../common/EventFactSummary";
+import {useRegisteredOnDevice} from "../../../hooks/useRegisteredOnDevice.ts";
+import {AlreadyRegisteredLink, AttendanceAccessModal, RegisteredNotice} from "./AttendanceAccess";
 
 const VIDEO_PAUSE_PROGRESS = 0.6;
 
@@ -64,6 +66,10 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const [cookieBannerReopened, setCookieBannerReopened] = useState(false);
     const ticketsSectionRef = useRef<HTMLElement>(null);
     const fullscreenHeroRef = useRef<HTMLElement>(null);
+    const [attendanceAccessOpen, setAttendanceAccessOpen] = useState(false);
+    const [registerAnotherPerson, setRegisterAnotherPerson] = useState(false);
+    const {attendanceEnabled, registered: registeredOnDevice, forget: forgetRegistration} = useRegisteredOnDevice(event);
+    const openAttendanceAccess = () => setAttendanceAccessOpen(true);
 
     const {consentPending, consentGranted, onConsent} = useOrganizerTrackingPixels(
         event?.organizer?.settings?.tracking_pixels
@@ -250,6 +256,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
         .every(p => !p.prices?.some(price => Number(price.price) > 0));
 
     const isEmbeddedRegistration = isFullscreenHero && isEmbeddedRegistrationEnabled(event);
+    const isWaitingForSaleStart = getEventProducts(event).some(product => product.is_before_sale_start_date)
+        && !getEventProducts(event).some(product => product.is_available && !product.is_before_sale_start_date);
 
     const renderTicketsSection = () => (
         <div className={`${classes.section} ${classes.ticketsSection}`}
@@ -307,6 +315,16 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                 {event && <EventDocumentHead event={event}/>}
 
+                {attendanceEnabled && (
+                    <AttendanceAccessModal
+                        opened={attendanceAccessOpen}
+                        onClose={() => setAttendanceAccessOpen(false)}
+                        eventId={event.id}
+                        themeStyle={themeStyles}
+                        onNoActiveRegistration={forgetRegistration}
+                    />
+                )}
+
                 {/* Background */}
                 {(coverImage && backgroundType === 'MIRROR_COVER_IMAGE') ? (
                     <div
@@ -333,6 +351,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             className={classes.fullscreenHero}
                             ref={fullscreenHeroRef}
                             data-pause-on-scroll={isEmbeddedRegistration ? 'true' : undefined}
+                            data-sale-countdown={isEmbeddedRegistration && isWaitingForSaleStart ? 'true' : undefined}
                         >
                             {coverVideoSource ? (
                                 <video
@@ -384,15 +403,33 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                 </div>
                             </div>
                             <div className={classes.fullscreenFooter}>
-                                <button type="button" className={classes.fullscreenCta} onClick={scrollToTickets}>
-                                    <span className={classes.fullscreenCtaArrow} aria-hidden="true">→</span>
-                                    {isFreeEvent ? t`Register for free` : t`Get Tickets`}
-                                </button>
+                                {attendanceEnabled && !registeredOnDevice && (
+                                    <AlreadyRegisteredLink className={classes.fullscreenAlreadyLink} onClick={openAttendanceAccess}/>
+                                )}
+                                {registeredOnDevice ? (
+                                    <button type="button" className={classes.fullscreenCta} onClick={openAttendanceAccess}>
+                                        <span className={classes.fullscreenCtaArrow} aria-hidden="true">→</span>
+                                        {t`Confirm or cancel my attendance`}
+                                    </button>
+                                ) : (
+                                    <button type="button" className={classes.fullscreenCta} onClick={scrollToTickets}>
+                                        <span className={classes.fullscreenCtaArrow} aria-hidden="true">→</span>
+                                        {isFreeEvent ? t`Register for free` : t`Get Tickets`}
+                                    </button>
+                                )}
                             </div>
                         </section>
                     )}
-                    {isEmbeddedRegistration && (
+                    {isEmbeddedRegistration && registeredOnDevice && !registerAnotherPerson && (
+                        <RegisteredNotice
+                            sectionRef={ticketsSectionRef}
+                            onManageAttendance={openAttendanceAccess}
+                            onRegisterAnother={() => setRegisterAnotherPerson(true)}
+                        />
+                    )}
+                    {isEmbeddedRegistration && (!registeredOnDevice || registerAnotherPerson) && (
                         <EmbeddedRegistration
+                            onAlreadyRegistered={attendanceEnabled ? openAttendanceAccess : undefined}
                             event={event}
                             promoCode={promoCode}
                             promoCodeValid={promoCodeValid}

@@ -77,6 +77,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const RICH_FOOTER_ENABLED = 'rich_footer_enabled';
     final public const HOMEPAGE_FOOTER_SETTINGS = 'homepage_footer_settings';
     final public const SCHEMA_EVENT_TYPE = 'schema_event_type';
+    final public const EVENT_PAGES = 'event_pages';
 
     protected int $id;
     protected int $event_id;
@@ -145,6 +146,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected bool $rich_footer_enabled = false;
     protected array|string|null $homepage_footer_settings = null;
     protected string $schema_event_type = 'Event';
+    protected array|string|null $event_pages = null;
 
     public function toArray(): array
     {
@@ -216,6 +218,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'rich_footer_enabled' => $this->rich_footer_enabled ?? null,
                     'homepage_footer_settings' => $this->homepage_footer_settings ?? null,
                     'schema_event_type' => $this->schema_event_type ?? null,
+                    'event_pages' => $this->event_pages ?? null,
                 ];
     }
 
@@ -955,5 +958,16 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getSchemaEventType(): string
     {
         return $this->schema_event_type;
+    }
+
+    public function setEventPages(array|string|null $event_pages): self
+    {
+        $this->event_pages = $event_pages;
+        return $this;
+    }
+
+    public function getEventPages(): array|string|null
+    {
+        return $this->event_pages;
     }
 }
