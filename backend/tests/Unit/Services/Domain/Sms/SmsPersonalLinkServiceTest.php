@@ -9,19 +9,25 @@ use HiEvents\DomainObjects\SmsCampaignRecipientDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
 use HiEvents\Services\Domain\Sms\SmsPersonalLinkService;
 use Mockery;
 use Mockery\MockInterface;
+use Tests\Support\FakesPublicBaseUrl;
 use Tests\TestCase;
 
 class SmsPersonalLinkServiceTest extends TestCase
 {
+    use FakesPublicBaseUrl;
+
     private SmsCampaignRecipientRepositoryInterface|MockInterface $recipients;
 
     private QrLinkRepositoryInterface|MockInterface $qrLinks;
 
     private QrLinkUrlService|MockInterface $urls;
+
+    private PublicBaseUrlResolver $resolver;
 
     protected function setUp(): void
     {
@@ -30,6 +36,8 @@ class SmsPersonalLinkServiceTest extends TestCase
         $this->recipients = Mockery::mock(SmsCampaignRecipientRepositoryInterface::class);
         $this->qrLinks = Mockery::mock(QrLinkRepositoryInterface::class);
         $this->urls = Mockery::mock(QrLinkUrlService::class);
+        config(['app.frontend_url' => 'https://ticket.picha.fr']);
+        $this->resolver = $this->fakePublicBaseUrl([8 => 'mayottela1ere.fr']);
     }
 
     public function test_link_already_sent_in_the_campaign_is_reused_as_is(): void
@@ -53,6 +61,18 @@ class SmsPersonalLinkServiceTest extends TestCase
         $link = $this->service()->findForContact(4, '+262639091486', collect([$this->inbound('Merci')]));
 
         self::assertSame('https://ticket.picha.fr/q/aq7d407g', $link);
+    }
+
+    public function test_platform_link_sent_before_the_custom_domain_is_replaced_by_the_organizer_domain(): void
+    {
+        $qrLink = $this->expectCampaignQrLink('k4rm1ere', organizerId: 8);
+        $this->urls->shouldReceive('getPublicUrl')->with($qrLink)->andReturn('https://mayottela1ere.fr/q/k4rm1ere');
+
+        $link = $this->service()->findForContact(8, '+262639017818', collect([
+            $this->outbound('Ta place : https://ticket.picha.fr/q/k4rm1ere?qr=k4rm1ere'),
+        ]));
+
+        self::assertSame('https://mayottela1ere.fr/q/k4rm1ere', $link);
     }
 
     public function test_last_tracked_link_of_the_thread_is_used_without_campaign(): void
@@ -90,21 +110,21 @@ class SmsPersonalLinkServiceTest extends TestCase
         self::assertSame('Ici : https://innocent976.yt', SmsPersonalLinkService::applyToReply('Ici : https://innocent976.yt', null));
     }
 
-    private function expectCampaignQrLink(string $shortId): QrLinkDomainObject
+    private function expectCampaignQrLink(string $shortId, int $organizerId = 4): QrLinkDomainObject
     {
-        $qrLink = (new QrLinkDomainObject)->setId(12)->setOrganizerId(4)->setShortId($shortId);
+        $qrLink = (new QrLinkDomainObject)->setId(12)->setOrganizerId($organizerId)->setShortId($shortId);
 
         $this->recipients->shouldReceive('findWhere')->andReturn(collect([
             (new SmsCampaignRecipientDomainObject)->setId(3)->setQrLinkId(12),
         ]));
-        $this->qrLinks->shouldReceive('findWhereIn')->with('id', [12], ['organizer_id' => 4])->andReturn(collect([$qrLink]));
+        $this->qrLinks->shouldReceive('findWhereIn')->with('id', [12], ['organizer_id' => $organizerId])->andReturn(collect([$qrLink]));
 
         return $qrLink;
     }
 
     private function service(): SmsPersonalLinkService
     {
-        return new SmsPersonalLinkService($this->recipients, $this->qrLinks, $this->urls);
+        return new SmsPersonalLinkService($this->recipients, $this->qrLinks, $this->urls, $this->resolver);
     }
 
     private function outbound(string $content): SmsMessageDomainObject

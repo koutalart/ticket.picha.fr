@@ -21,6 +21,7 @@ class OrderDetailsChangedMail extends BaseMail
         private readonly array $changedFields,
     ) {
         parent::__construct();
+        $this->useEventEmailLogo($this->event, $this->organizer);
     }
 
     public function envelope(): Envelope

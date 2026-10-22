@@ -1,7 +1,6 @@
 import {t} from "@lingui/macro";
 import {Event, EventArtist, EventPageSlug} from "../types.ts";
-import {eventHomepagePath} from "./urlHelper.ts";
-import {getConfig} from "./config.ts";
+import {eventHomepagePath, publicBaseUrl} from "./urlHelper.ts";
 
 export const EVENT_PAGE_SLUGS: EventPageSlug[] = ['artistes', 'infos-pratiques', 'faq'];
 
@@ -19,7 +18,7 @@ export const eventPageLabel = (page: EventPageSlug): string => {
 export const eventDedicatedPagePath = (event: Event, page: EventPageSlug) => `${eventHomepagePath(event)}/${page}`;
 
 export const eventDedicatedPageUrl = (event: Event, page: EventPageSlug) =>
-    getConfig('VITE_FRONTEND_URL') + eventDedicatedPagePath(event, page);
+    publicBaseUrl(event?.organizer) + eventDedicatedPagePath(event, page);
 
 export const eventRegistrationPath = (event: Event) => `${eventHomepagePath(event)}#tickets`;
 

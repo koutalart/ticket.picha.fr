@@ -7,7 +7,7 @@
 
 @php /** @see \HiEvents\Mail\Waitlist\WaitlistOfferExpiredMail */ @endphp
 
-<x-mail::message>
+<x-mail::message :emailLogo="$emailLogo ?? null">
 # {{ __('Your waitlist offer has expired') }}
 
 {{ __('Hello') }},

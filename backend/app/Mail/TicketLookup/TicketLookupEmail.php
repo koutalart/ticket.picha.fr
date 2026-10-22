@@ -16,6 +16,7 @@ class TicketLookupEmail extends BaseMail
         private readonly string $email,
         private readonly string $token,
         private readonly int $orderCount,
+        private readonly ?string $publicBaseUrl = null,
     ) {
         parent::__construct();
     }
@@ -34,8 +35,9 @@ class TicketLookupEmail extends BaseMail
             with: [
                 'email' => $this->email,
                 'orderCount' => $this->orderCount,
+                'logoLinkUrl' => $this->publicBaseUrl,
                 'ticketLookupUrl' => sprintf(
-                    Url::getFrontEndUrlFromConfig(Url::TICKET_LOOKUP),
+                    Url::getFrontEndUrlFromConfig(Url::TICKET_LOOKUP, baseUrl: $this->publicBaseUrl),
                     $this->token,
                 ),
             ]

@@ -30,7 +30,7 @@ class AttendeeAttendanceLinkGenerator
     public function getAttendanceUrl(AttendeeDomainObject $attendee): string
     {
         $url = sprintf(
-            Url::getFrontEndUrlFromConfig(Url::ATTENDEE_ATTENDANCE),
+            Url::getPublicFrontEndUrlForEventId(Url::ATTENDEE_ATTENDANCE, $attendee->getEventId()),
             $attendee->getEventId(),
             $attendee->getShortId(),
         );

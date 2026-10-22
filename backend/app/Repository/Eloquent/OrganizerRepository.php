@@ -40,6 +40,7 @@ class OrganizerRepository extends BaseRepository implements OrganizerRepositoryI
             ->where('organizers.' . OrganizerDomainObjectAbstract::STATUS, OrganizerStatus::LIVE->name)
             ->where('organizer_settings.' . OrganizerSettingDomainObjectAbstract::ALLOW_SEARCH_ENGINE_INDEXING, true)
             ->whereNull('organizers.' . OrganizerDomainObjectAbstract::DELETED_AT)
+            ->whereNull('organizers.' . OrganizerDomainObjectAbstract::CUSTOM_DOMAIN)
             ->orderBy('organizers.' . OrganizerDomainObjectAbstract::ID)
             ->paginate($perPage, ['*'], 'page', $page));
     }
@@ -52,6 +53,7 @@ class OrganizerRepository extends BaseRepository implements OrganizerRepositoryI
             ->where('organizers.' . OrganizerDomainObjectAbstract::STATUS, OrganizerStatus::LIVE->name)
             ->where('organizer_settings.' . OrganizerSettingDomainObjectAbstract::ALLOW_SEARCH_ENGINE_INDEXING, true)
             ->whereNull('organizers.' . OrganizerDomainObjectAbstract::DELETED_AT)
+            ->whereNull('organizers.' . OrganizerDomainObjectAbstract::CUSTOM_DOMAIN)
             ->count();
     }
 
