@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Sms;
 
+use HiEvents\DomainObjects\ContactDomainObject;
+use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\OrganizerDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\QrCampaignDomainObjectAbstract;
@@ -23,15 +25,20 @@ use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
+use HiEvents\Services\Domain\Contact\ContactPersonalLinkService;
+use HiEvents\Services\Domain\Contact\SmsContactResolver;
 use HiEvents\Services\Domain\Sms\DTO\SmsCampaignImportDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsCampaignImportRecipientDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsCampaignImportResultDTO;
+use HiEvents\Services\Domain\Sms\DTO\SmsCampaignRecipientMessageDTO;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Carbon;
 use Throwable;
 
 class SmsCampaignImportService
 {
+    public const PERSONAL_LINK_VARIABLE = '{lien_personnel}';
+
     public function __construct(
         private readonly OrganizerRepositoryInterface $organizerRepository,
         private readonly EventRepositoryInterface $eventRepository,
@@ -40,6 +47,8 @@ class SmsCampaignImportService
         private readonly QrLinkRepositoryInterface $qrLinkRepository,
         private readonly QrCampaignRepositoryInterface $qrCampaignRepository,
         private readonly SmsCampaignDeliveryService $deliveryService,
+        private readonly SmsContactResolver $contactResolver,
+        private readonly ContactPersonalLinkService $contactPersonalLinkService,
         private readonly DatabaseManager $databaseManager,
     ) {}
 
@@ -55,15 +64,19 @@ class SmsCampaignImportService
             throw new ResourceNotFoundException(__('Organizer not found'));
         }
 
-        if ($dto->eventId !== null && $this->eventRepository->findFirstWhere([
+        /** @var EventDomainObject|null $event */
+        $event = $dto->eventId !== null ? $this->eventRepository->findFirstWhere([
             EventDomainObjectAbstract::ID => $dto->eventId,
             EventDomainObjectAbstract::ORGANIZER_ID => $dto->organizerId,
-        ]) === null) {
+        ]) : null;
+        if ($dto->eventId !== null && $event === null) {
             throw new ResourceNotFoundException(__('Event not found'));
         }
 
-        return $this->databaseManager->transaction(function () use ($dto, $organizer) {
+        return $this->databaseManager->transaction(function () use ($dto, $organizer, $event) {
             $campaign = $this->findOrCreateCampaign($dto, $organizer);
+            $template = $campaign->getMessage();
+            $linkBaseUrl = $this->linkBaseUrl($dto, $organizer, $event);
             $qrLinks = $this->findQrLinks($dto);
             $existing = $this->recipientRepository
                 ->findWhere([SmsCampaignRecipientDomainObjectAbstract::SMS_CAMPAIGN_ID => $campaign->getId()])
@@ -73,6 +86,13 @@ class SmsCampaignImportService
             $updated = 0;
             $warnings = [];
             $linkedIds = [];
+            $contactsCreated = 0;
+            $messages = [];
+
+            $usesPersonalLink = $template !== null && str_contains($template, self::PERSONAL_LINK_VARIABLE);
+            if ($usesPersonalLink && $linkBaseUrl === null) {
+                $warnings[] = __('No site address to build :variable, set the organizer custom domain or give a link base', ['variable' => self::PERSONAL_LINK_VARIABLE]);
+            }
 
             foreach ($dto->recipients as $recipient) {
                 $phone = SmsPhoneNormalizer::normalize($recipient->phone);
@@ -91,15 +111,25 @@ class SmsCampaignImportService
                     $linkedIds[] = $qrLink->getId();
                 }
 
+                $contact = $this->contactResolver->find($dto->organizerId, $phone);
+                if ($contact === null) {
+                    $contact = $this->contactResolver->create($dto->organizerId, $phone, $this->contactName($recipient->contactName));
+                    $contactsCreated++;
+                }
+
+                if ($usesPersonalLink && $linkBaseUrl !== null) {
+                    $messages[] = $this->personalMessage($template, $linkBaseUrl, $phone, $recipient, $contact);
+                }
+
                 $current = $existing->get($phone);
                 if ($current === null) {
-                    $this->recipientRepository->create($this->newRecipientAttributes($campaign, $phone, $recipient, $qrLink));
+                    $this->recipientRepository->create($this->newRecipientAttributes($campaign, $phone, $recipient, $qrLink, $contact));
                     $created++;
 
                     continue;
                 }
 
-                $attributes = $this->updatedRecipientAttributes($current, $recipient, $qrLink);
+                $attributes = $this->updatedRecipientAttributes($current, $recipient, $qrLink, $contact);
                 if ($attributes !== []) {
                     $this->recipientRepository->updateFromArray($current->getId(), $attributes);
                     $updated++;
@@ -126,6 +156,8 @@ class SmsCampaignImportService
                 linkedQrLinks: count(array_unique($linkedIds)),
                 warnings: $warnings,
                 qrCampaignRetired: $this->retireQrCampaign($dto),
+                contactsCreated: $contactsCreated,
+                messages: $messages,
             );
         });
     }
@@ -156,6 +188,33 @@ class SmsCampaignImportService
         ]);
     }
 
+    private function linkBaseUrl(SmsCampaignImportDTO $dto, OrganizerDomainObject $organizer, ?EventDomainObject $event): ?string
+    {
+        $baseUrl = trim((string) $dto->linkBaseUrl);
+        if ($baseUrl !== '') {
+            return $baseUrl;
+        }
+
+        return $this->contactPersonalLinkService->getOrganizerSiteUrl($organizer) ?? $event?->getEventUrl();
+    }
+
+    private function personalMessage(
+        string $template,
+        string $linkBaseUrl,
+        string $phone,
+        SmsCampaignImportRecipientDTO $recipient,
+        ContactDomainObject $contact,
+    ): SmsCampaignRecipientMessageDTO {
+        $link = $this->contactPersonalLinkService->getUrl($linkBaseUrl, $contact);
+
+        return new SmsCampaignRecipientMessageDTO(
+            phone: $phone,
+            contactName: $this->contactName($recipient->contactName),
+            link: $link,
+            message: str_replace(self::PERSONAL_LINK_VARIABLE, $link, $template),
+        );
+    }
+
     /**
      * @return array<string, QrLinkDomainObject>
      */
@@ -181,6 +240,7 @@ class SmsCampaignImportService
         string $phone,
         SmsCampaignImportRecipientDTO $recipient,
         ?QrLinkDomainObject $qrLink,
+        ContactDomainObject $contact,
     ): array {
         $status = SmsCampaignRecipientStatus::fromProvider($recipient->status) ?? SmsCampaignRecipientStatus::PENDING;
         $draft = (new SmsCampaignRecipientDomainObject)->setStatus(SmsCampaignRecipientStatus::PENDING->value);
@@ -190,6 +250,7 @@ class SmsCampaignImportService
             SmsCampaignRecipientDomainObjectAbstract::PHONE => $phone,
             SmsCampaignRecipientDomainObjectAbstract::CONTACT_NAME => $this->contactName($recipient->contactName),
             SmsCampaignRecipientDomainObjectAbstract::QR_LINK_ID => $qrLink?->getId(),
+            SmsCampaignRecipientDomainObjectAbstract::CONTACT_ID => $contact->getId(),
             SmsCampaignRecipientDomainObjectAbstract::PROVIDER_MESSAGE_ID => $recipient->providerMessageId,
             SmsCampaignRecipientDomainObjectAbstract::STATUS => SmsCampaignRecipientStatus::PENDING->value,
             SmsCampaignRecipientDomainObjectAbstract::SCHEDULED_AT => $this->parseTimestamp($recipient->scheduledAt),
@@ -201,6 +262,7 @@ class SmsCampaignImportService
         SmsCampaignRecipientDomainObject $current,
         SmsCampaignImportRecipientDTO $recipient,
         ?QrLinkDomainObject $qrLink,
+        ContactDomainObject $contact,
     ): array {
         $status = SmsCampaignRecipientStatus::fromProvider($recipient->status);
         $attributes = $status !== null
@@ -210,6 +272,7 @@ class SmsCampaignImportService
         $candidates = [
             SmsCampaignRecipientDomainObjectAbstract::CONTACT_NAME => [$current->getContactName(), $this->contactName($recipient->contactName)],
             SmsCampaignRecipientDomainObjectAbstract::QR_LINK_ID => [$current->getQrLinkId(), $qrLink?->getId()],
+            SmsCampaignRecipientDomainObjectAbstract::CONTACT_ID => [$current->getContactId(), $contact->getId()],
             SmsCampaignRecipientDomainObjectAbstract::PROVIDER_MESSAGE_ID => [$current->getProviderMessageId(), $recipient->providerMessageId],
             SmsCampaignRecipientDomainObjectAbstract::SCHEDULED_AT => [$current->getScheduledAt(), $this->parseTimestamp($recipient->scheduledAt)],
         ];

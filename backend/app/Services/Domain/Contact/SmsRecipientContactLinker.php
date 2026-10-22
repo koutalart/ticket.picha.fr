@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Contact;
 
-use HiEvents\DomainObjects\ContactDomainObject;
-use HiEvents\DomainObjects\Enums\ContactSource;
-use HiEvents\DomainObjects\Generated\ContactDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\QrLinkDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsCampaignRecipientDomainObjectAbstract;
 use HiEvents\DomainObjects\QrLinkDomainObject;
 use HiEvents\DomainObjects\SmsCampaignRecipientDomainObject;
 use HiEvents\Helper\PhoneNumberNormalizer;
-use HiEvents\Repository\Interfaces\ContactRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Services\Domain\Contact\DTO\SmsRecipientContactLinkResultDTO;
@@ -26,7 +22,7 @@ class SmsRecipientContactLinker
     public function __construct(
         private readonly QrLinkRepositoryInterface $qrLinkRepository,
         private readonly SmsCampaignRecipientRepositoryInterface $recipientRepository,
-        private readonly ContactRepositoryInterface $contactRepository,
+        private readonly SmsContactResolver $contactResolver,
         private readonly DatabaseManager $databaseManager,
     ) {}
 
@@ -67,12 +63,18 @@ class SmsRecipientContactLinker
 
                 $key = $qrLink->getOrganizerId().'|'.$phone;
                 if (! isset($contacts[$key])) {
-                    $contact = $this->findContact($qrLink->getOrganizerId(), $phone);
+                    $contact = $this->contactResolver->find($qrLink->getOrganizerId(), $phone);
                     if ($contact === null) {
-                        $contact = $this->createContact($qrLink->getOrganizerId(), $phone, $recipient->getContactName());
+                        $contact = $this->contactResolver->create($qrLink->getOrganizerId(), $phone, $recipient->getContactName());
                         $created++;
                     }
                     $contacts[$key] = $contact->getId();
+                }
+
+                if ($recipient->getContactId() === null) {
+                    $this->recipientRepository->updateFromArray($recipient->getId(), [
+                        SmsCampaignRecipientDomainObjectAbstract::CONTACT_ID => $contacts[$key],
+                    ]);
                 }
 
                 $this->qrLinkRepository->updateWhere(
@@ -84,33 +86,5 @@ class SmsRecipientContactLinker
 
             return new SmsRecipientContactLinkResultDTO($linked, $created, $skipped);
         });
-    }
-
-    private function findContact(int $organizerId, string $phone): ?ContactDomainObject
-    {
-        /** @var ContactDomainObject|null $contact */
-        $contact = $this->contactRepository->findFirstWhere([
-            ContactDomainObjectAbstract::ORGANIZER_ID => $organizerId,
-            ContactDomainObjectAbstract::PHONE => $phone,
-            [ContactDomainObjectAbstract::MERGED_INTO_CONTACT_ID, 'null', null],
-        ]);
-
-        return $contact;
-    }
-
-    private function createContact(int $organizerId, string $phone, ?string $name): ContactDomainObject
-    {
-        $parts = preg_split('/\s+/', trim((string) $name), 2, PREG_SPLIT_NO_EMPTY) ?: [];
-
-        /** @var ContactDomainObject $contact */
-        $contact = $this->contactRepository->create([
-            ContactDomainObjectAbstract::ORGANIZER_ID => $organizerId,
-            ContactDomainObjectAbstract::PHONE => $phone,
-            ContactDomainObjectAbstract::FIRST_NAME => isset($parts[0]) ? mb_substr($parts[0], 0, 255) : null,
-            ContactDomainObjectAbstract::LAST_NAME => isset($parts[1]) ? mb_substr($parts[1], 0, 255) : null,
-            ContactDomainObjectAbstract::SOURCE => ContactSource::SMS_CAMPAIGN->name,
-        ]);
-
-        return $contact;
     }
 }

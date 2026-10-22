@@ -18,5 +18,6 @@ class SmsCampaignImportDTO extends BaseDataObject
         public readonly ?int $eventId = null,
         public readonly ?string $message = null,
         public readonly ?int $retireQrCampaignId = null,
+        public readonly ?string $linkBaseUrl = null,
     ) {}
 }
