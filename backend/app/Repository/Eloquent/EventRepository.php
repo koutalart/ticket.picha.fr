@@ -6,6 +6,7 @@ namespace HiEvents\Repository\Eloquent;
 
 use HiEvents\DomainObjects\AccountDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\EventStatisticDomainObject;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\EventSettingDomainObjectAbstract;
@@ -143,6 +144,8 @@ class EventRepository extends BaseRepository implements EventRepositoryInterface
 
     public function getSitemapEvents(int $page, int $perPage): LengthAwarePaginator
     {
+        $this->loadRelation(new Relationship(EventSettingDomainObject::class));
+
         return $this->handleResults($this->model
             ->select([
                 'events.' . EventDomainObjectAbstract::ID,
