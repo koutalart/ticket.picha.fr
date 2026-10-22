@@ -17,6 +17,7 @@ export const getFullscreenHero = (event?: Event) => {
         coverImage,
         partnerLogo: findImageUrl(event?.images, 'EVENT_HERO_PARTNER_LOGO'),
         brandLogo: findImageUrl(event?.images, 'EVENT_HERO_BRAND_LOGO'),
+        signatureLogo: findImageUrl(event?.images, 'EVENT_HERO_SIGNATURE_LOGO'),
         organizerLogo: findImageUrl(event?.organizer?.images, 'ORGANIZER_LOGO'),
     };
 };
