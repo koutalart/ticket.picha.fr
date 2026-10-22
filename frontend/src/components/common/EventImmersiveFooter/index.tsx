@@ -4,13 +4,22 @@ import {IconMail} from "@tabler/icons-react";
 import {Event} from "../../../types.ts";
 import {PoweredByFooter} from "../PoweredByFooter";
 import {ContactOrganizerModal} from "../ContactOrganizerModal";
+import {EventRichFooter, hasEventRichFooter} from "../EventRichFooter";
 import classes from "./EventImmersiveFooter.module.scss";
 
 /**
- * Minimal footer shown under the pages of an event using the fullscreen hero.
- * Kept self-contained so it can be swapped for a richer footer.
+ * Footer shown under the pages of an event using the fullscreen hero: the homepage rich footer when the
+ * event has it, otherwise a minimal footer.
  */
 export const EventImmersiveFooter = ({event}: { event: Event }) => {
+    if (hasEventRichFooter(event)) {
+        return <EventRichFooter event={event}/>;
+    }
+
+    return <EventImmersiveMinimalFooter event={event}/>;
+};
+
+const EventImmersiveMinimalFooter = ({event}: { event: Event }) => {
     const [contactOpen, setContactOpen] = useState(false);
     const organizer = event.organizer;
 
