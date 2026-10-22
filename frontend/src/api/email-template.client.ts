@@ -12,6 +12,14 @@ import {
     DefaultEmailTemplate
 } from "../types";
 
+/**
+ * The defaults follow the tone (vous / tu) of the organizer the template is written for.
+ */
+export interface DefaultEmailTemplatesContext {
+    organizer_id?: IdParam;
+    event_id?: IdParam;
+}
+
 export const emailTemplateClient = {
     // Organizer-level templates
     getByOrganizer: async (organizerId: IdParam, params?: { template_type?: EmailTemplateType, include_inactive?: boolean }) => {
@@ -86,8 +94,10 @@ export const emailTemplateClient = {
     },
 
     // Get default templates
-    getDefaultTemplates: async () => {
-        const response = await api.get<Record<EmailTemplateType, DefaultEmailTemplate>>('email-templates/defaults');
+    getDefaultTemplates: async (context?: DefaultEmailTemplatesContext) => {
+        const response = await api.get<Record<EmailTemplateType, DefaultEmailTemplate>>('email-templates/defaults', {
+            params: context,
+        });
         return response.data;
     },
 };

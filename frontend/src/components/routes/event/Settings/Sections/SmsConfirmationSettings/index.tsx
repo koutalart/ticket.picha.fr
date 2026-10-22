@@ -14,6 +14,8 @@ import {useGetSmsSettings} from "../../../../../../queries/useGetSmsSettings.ts"
 import {publicBaseUrl} from "../../../../../../utilites/urlHelper.ts";
 import {countSmsSegments} from "../../../../organizer/Sms/smsSegments.ts";
 import {renderSmsTemplate} from "./renderSmsTemplate.ts";
+import {useOrganizerCustomerAddressForm} from "../../../../../../hooks/useOrganizerCustomerAddressForm.ts";
+import {defaultSmsConfirmationMessage} from "../../../../../../utilites/customerSmsDefaults.ts";
 import classes from "./SmsConfirmationSettings.module.scss";
 
 const MAX_LENGTH = 1000;
@@ -23,11 +25,6 @@ const EVENT_TITLE = '{evenement}';
 const EVENT_DATE = '{date}';
 const EVENT_TIME = '{heure}';
 const PERSONAL_LINK = '{lien}';
-
-/**
- * Sent to the attendees, always in French like the other customer messages (same text as the backend default).
- */
-export const DEFAULT_SMS_CONFIRMATION_MESSAGE = "C'est validé, votre place pour {evenement} est réservée. Rendez-vous le {date}, accueil dès {heure}. Gérer ma venue : {lien}";
 
 const SAMPLE_FIRST_NAME = 'Awa';
 const SAMPLE_CODE = '3f9c2a7e1b8d4c6f0a5e9b2d7c1f4a8e6b3d0c9f';
@@ -44,13 +41,15 @@ export const SmsConfirmationSettings = () => {
     const eventSettingsQuery = useGetEventSettings(eventId);
     const organizerId = eventQuery.data?.organizer_id;
     const smsSettingsQuery = useGetSmsSettings(organizerId);
+    const {addressForm, isFetched: addressFormFetched} = useOrganizerCustomerAddressForm(organizerId);
+    const defaultMessage = defaultSmsConfirmationMessage(addressForm);
     const updateMutation = useUpdateEventSettings();
     const formErrorHandle = useFormErrorResponseHandler();
 
     const form = useForm<FormValues>({
         initialValues: {
             sms_registration_confirmation_enabled: false,
-            sms_registration_confirmation_message: DEFAULT_SMS_CONFIRMATION_MESSAGE,
+            sms_registration_confirmation_message: defaultSmsConfirmationMessage('vous'),
         },
         validate: {
             sms_registration_confirmation_message: (value, values) => values.sms_registration_confirmation_enabled && !value.trim()
@@ -60,13 +59,13 @@ export const SmsConfirmationSettings = () => {
     });
 
     useEffect(() => {
-        if (eventSettingsQuery?.isFetched && eventSettingsQuery?.data) {
+        if (eventSettingsQuery?.isFetched && eventSettingsQuery?.data && addressFormFetched) {
             form.setValues({
                 sms_registration_confirmation_enabled: eventSettingsQuery.data.sms_registration_confirmation_enabled ?? false,
-                sms_registration_confirmation_message: eventSettingsQuery.data.sms_registration_confirmation_message || DEFAULT_SMS_CONFIRMATION_MESSAGE,
+                sms_registration_confirmation_message: eventSettingsQuery.data.sms_registration_confirmation_message || defaultMessage,
             });
         }
-    }, [eventSettingsQuery.isFetched]);
+    }, [eventSettingsQuery.isFetched, addressFormFetched]);
 
     const smsSettings = smsSettingsQuery.data;
     const smsConfigured = !!smsSettings?.api_key_configured && !!smsSettings?.from_number;
@@ -176,11 +175,11 @@ export const SmsConfirmationSettings = () => {
                                         </Button>
                                     ))}
                                 </Group>
-                                {message !== DEFAULT_SMS_CONFIRMATION_MESSAGE && (
+                                {message !== defaultMessage && (
                                     <Button
                                         size="compact-xs"
                                         variant="subtle"
-                                        onClick={() => form.setFieldValue('sms_registration_confirmation_message', DEFAULT_SMS_CONFIRMATION_MESSAGE)}
+                                        onClick={() => form.setFieldValue('sms_registration_confirmation_message', defaultMessage)}
                                     >
                                         {t`Restore the default text`}
                                     </Button>

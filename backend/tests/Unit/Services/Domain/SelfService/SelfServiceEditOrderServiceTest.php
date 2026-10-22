@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
+use Tests\Unit\Support\StaticCustomerLocaleResolver;
 
 class SelfServiceEditOrderServiceTest extends TestCase
 {
@@ -40,7 +41,8 @@ class SelfServiceEditOrderServiceTest extends TestCase
             $this->orderRepository,
             $this->eventRepository,
             $this->orderAuditLogService,
-            $this->sendOrderDetailsService
+            $this->sendOrderDetailsService,
+            new StaticCustomerLocaleResolver,
         );
     }
 

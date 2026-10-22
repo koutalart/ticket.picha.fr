@@ -10,7 +10,7 @@ use HiEvents\DomainObjects\InvoiceDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
-use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Mail\Order\OrderFailed;
 use HiEvents\Mail\Organizer\OrderSummaryForOrganizer;
@@ -33,6 +33,7 @@ class SendOrderDetailsService
         private readonly Mailer $mailer,
         private readonly SendAttendeeTicketService $sendAttendeeTicketService,
         private readonly MailBuilderService $mailBuilderService,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     public function sendOrderSummaryAndTicketEmails(OrderDomainObject $order): void
@@ -61,7 +62,7 @@ class SendOrderDetailsService
         if ($order->isOrderFailed() && $order->getEmail()) {
             $this->mailer
                 ->to($order->getEmail())
-                ->locale(CustomerLocale::get())
+                ->locale($this->customerLocaleResolver->forEvent($event))
                 ->send(new OrderFailed(
                     order: $order,
                     event: $event,
@@ -94,7 +95,7 @@ class SendOrderDetailsService
 
         $this->mailer
             ->to($order->getEmail())
-            ->locale(CustomerLocale::get())
+            ->locale($this->customerLocaleResolver->forEvent($event))
             ->send($mail);
     }
 

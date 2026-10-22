@@ -7,7 +7,7 @@ use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
-use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Services\Domain\Email\MailBuilderService;
 use Illuminate\Contracts\Mail\Mailer;
@@ -17,6 +17,7 @@ class SendAttendeeTicketService
     public function __construct(
         private readonly Mailer $mailer,
         private readonly MailBuilderService $mailBuilderService,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     /**
@@ -45,7 +46,7 @@ class SendAttendeeTicketService
 
         $this->mailer
             ->to($attendee->getEmail())
-            ->locale(CustomerLocale::get())
+            ->locale($this->customerLocaleResolver->forEvent($event))
             ->send($mail);
     }
 }

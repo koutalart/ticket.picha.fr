@@ -30,9 +30,13 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use Psr\Log\NullLogger;
 use Tests\TestCase;
+use Tests\Unit\Support\StaticCustomerLocaleResolver;
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 
 class SmsRegistrationConfirmationServiceTest extends TestCase
 {
+    private StaticCustomerLocaleResolver $customerLocaleResolver;
+
     use MockeryPHPUnitIntegration;
 
     private const ORGANIZER_ID = 9;
@@ -126,6 +130,7 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
             $this->linkProvider,
             $this->sendService,
             new NullLogger,
+            $this->customerLocaleResolver = new StaticCustomerLocaleResolver,
         );
     }
 
@@ -178,6 +183,20 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
 
         $this->assertSame(
             "C'est validé, votre place pour Konka Wawa est réservée. Rendez-vous le samedi 24 octobre, accueil dès 20h00. Gérer ma venue : https://ticket.picha.fr/venue/8/a1?code=x",
+            $this->sent[0]->content,
+        );
+    }
+
+    public function test_the_default_message_says_tu_when_the_organizer_chose_it(): void
+    {
+        $this->customerLocaleResolver->addressForm = CustomerAddressForm::TU;
+        $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings(true, null));
+        $this->attendees([$this->attendee(1, '+262639250206', 'Awa')]);
+
+        $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame(
+            "C'est validé, ta place pour Konka Wawa est réservée. Rendez-vous le samedi 24 octobre, accueil dès 20h00. Gérer ma venue : https://ticket.picha.fr/venue/8/a1?code=x",
             $this->sent[0]->content,
         );
     }

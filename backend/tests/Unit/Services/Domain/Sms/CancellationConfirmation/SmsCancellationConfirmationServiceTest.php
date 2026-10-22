@@ -36,9 +36,13 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use Psr\Log\NullLogger;
 use Tests\TestCase;
+use Tests\Unit\Support\StaticCustomerLocaleResolver;
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 
 class SmsCancellationConfirmationServiceTest extends TestCase
 {
+    private StaticCustomerLocaleResolver $customerLocaleResolver;
+
     use MockeryPHPUnitIntegration;
 
     private const ORGANIZER_ID = 8;
@@ -139,6 +143,7 @@ class SmsCancellationConfirmationServiceTest extends TestCase
             $this->linkProvider,
             $this->sendService,
             new NullLogger,
+            $this->customerLocaleResolver = new StaticCustomerLocaleResolver,
         );
     }
 
@@ -192,6 +197,21 @@ class SmsCancellationConfirmationServiceTest extends TestCase
 
         $this->assertSame(
             "C'est noté, votre inscription à Mayotte La 1ère en live est annulée et votre place est libérée. Au plaisir de vous revoir.",
+            $this->sent[0]->content,
+        );
+    }
+
+    public function test_the_default_message_says_tu_when_the_organizer_chose_it(): void
+    {
+        $this->customerLocaleResolver->addressForm = CustomerAddressForm::TU;
+        $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings(true, '', false));
+        $this->linkProvider->shouldNotReceive('findForAttendee');
+        $this->phones([1], [$this->withPhone(1, '+262639250206', 'Awa')]);
+
+        $this->service->sendForAttendee(1);
+
+        $this->assertSame(
+            "C'est noté, ton inscription à Mayotte La 1ère en live est annulée et ta place est libérée. Au plaisir de te revoir.",
             $this->sent[0]->content,
         );
     }

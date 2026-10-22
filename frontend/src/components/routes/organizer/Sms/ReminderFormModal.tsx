@@ -13,6 +13,8 @@ import {showSuccess} from "../../../../utilites/notifications.tsx";
 import {formatNumber} from "../../../../utilites/helpers.ts";
 import {Modal} from "../../../common/Modal";
 import {DateTimeInput} from "../../../common/DateTimeInput";
+import {useOrganizerCustomerAddressForm} from "../../../../hooks/useOrganizerCustomerAddressForm.ts";
+import {SMS_REMINDER_TU} from "../../../../utilites/customerSmsDefaults.ts";
 import {countSmsSegments} from "./smsSegments.ts";
 import classes from "./Sms.module.scss";
 
@@ -53,11 +55,14 @@ export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps
         label: event.title,
     })), [eventsQuery.data]);
 
+    const defaultMessage = t`Hello ${FIRST_NAME}, a reminder: ${EVENT_TITLE} takes place on ${EVENT_DATE} at ${EVENT_TIME}. See you soon!`;
+    const {addressForm} = useOrganizerCustomerAddressForm(organizerId);
+
     const form = useForm<FormValues>({
         initialValues: {
             event_id: null,
             send_at: '',
-            message: t`Hello ${FIRST_NAME}, a reminder: ${EVENT_TITLE} takes place on ${EVENT_DATE} at ${EVENT_TIME}. See you soon!`,
+            message: defaultMessage,
             name: '',
         },
         validate: {
@@ -66,6 +71,12 @@ export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps
             message: (value) => value.trim() ? null : t`The message cannot be empty`,
         },
     });
+
+    useEffect(() => {
+        if (addressForm === 'tu' && form.values.message === defaultMessage) {
+            form.setFieldValue('message', SMS_REMINDER_TU);
+        }
+    }, [addressForm]);
 
     const selectedEvent = events.find(event => String(event.id) === form.values.event_id);
     const timezone = previewMutation.data?.data.event_timezone || selectedEvent?.timezone;

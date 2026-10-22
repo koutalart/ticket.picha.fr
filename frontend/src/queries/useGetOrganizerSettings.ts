@@ -4,13 +4,14 @@ import {organizerSettingsClient} from "../api/organizer.client.ts";
 
 export const GET_ORGANIZER_SETTINGS_QUERY_KEY = 'getOrganizerSettings';
 
-export const useGetOrganizerSettings = (organizerId: IdParam) => {
+export const useGetOrganizerSettings = (organizerId: IdParam, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: [GET_ORGANIZER_SETTINGS_QUERY_KEY, organizerId],
 
         queryFn: async () => {
             const res = await organizerSettingsClient.all(organizerId);
             return res.data;
-        }
+        },
+        enabled: options?.enabled ?? true,
     });
 };

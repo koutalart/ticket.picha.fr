@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Bus;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
+use Tests\Unit\Support\StaticCustomerLocaleResolver;
 
 class SmsAssistantServiceTest extends TestCase
 {
@@ -71,6 +72,7 @@ class SmsAssistantServiceTest extends TestCase
             $this->messageRepository,
             $this->organizerRepository,
             $this->personalLinkService,
+            new StaticCustomerLocaleResolver,
         );
     }
 
@@ -240,6 +242,7 @@ class SmsAssistantServiceTest extends TestCase
             $this->messageRepository,
             $this->organizerRepository,
             $this->personalLinkService,
+            new StaticCustomerLocaleResolver,
         );
     }
 

@@ -7,6 +7,11 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Infrastructure\Translation\FallbackLocaleMessageSelector;
+use HiEvents\Services\Infrastructure\Translation\FallbackLocaleTranslationLoader;
+use Illuminate\Contracts\Translation\Loader;
+use Illuminate\Translation\Translator;
 use HiEvents\Models\Event;
 use HiEvents\Models\Organizer;
 use HiEvents\Services\Infrastructure\CurrencyConversion\CurrencyConversionClientInterface;
@@ -40,6 +45,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SmsReminderPersonalLinkProviderInterface::class, AttendanceSmsReminderPersonalLinkProvider::class);
         $this->app->bind(SmsCancellationLinkProviderInterface::class, ContactSmsCancellationLinkProvider::class);
         $this->app->scoped(PublicBaseUrlResolver::class);
+        $this->registerLocaleVariants();
+    }
+
+    private function registerLocaleVariants(): void
+    {
+        $this->app->extend('translation.loader', fn (Loader $loader) => new FallbackLocaleTranslationLoader($loader, CustomerLocale::FALLBACKS));
+        $this->app->extend('translator', fn (Translator $translator) => tap(
+            $translator,
+            fn (Translator $translator) => $translator->setSelector(new FallbackLocaleMessageSelector(CustomerLocale::FALLBACKS)),
+        ));
     }
 
     /**

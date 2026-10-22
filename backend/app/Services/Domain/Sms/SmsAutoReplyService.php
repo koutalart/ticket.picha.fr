@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Sms;
 
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\Enums\SmsAssistantOutcome;
 use HiEvents\DomainObjects\Enums\SmsAutoReplySkipReason;
 use HiEvents\DomainObjects\Enums\SmsAutoReplyType;
@@ -17,12 +18,14 @@ use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\DomainObjects\Status\SmsConversationStatus;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\SmsAcknowledgementDetector;
 use HiEvents\Helper\SmsSensitiveTopicDetector;
 use HiEvents\Jobs\Sms\SendSmsAutoReplyJob;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Services\Domain\Sms\DTO\SmsAssistantResultDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsAutoReplyCheckDTO;
 use Illuminate\Support\Carbon;
@@ -53,6 +56,7 @@ class SmsAutoReplyService
         private readonly SmsMessageRepositoryInterface $messageRepository,
         private readonly SmsConversationService $conversationService,
         private readonly SmsLineService $lineService,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     public function isEnabledFor(?OrganizerSmsSettingDomainObject $settings): bool
@@ -74,7 +78,13 @@ class SmsAutoReplyService
             }
         }
 
-        return __('Good question, I am checking with the team and will get back to you very soon.', [], 'fr');
+        $tutoiement = $this->customerLocaleResolver->addressFormForOrganizerId($settings->getOrganizerId()) === CustomerAddressForm::TU;
+
+        return __(
+            'Good question, I am checking with the team and will get back to you very soon.',
+            [],
+            $tutoiement ? CustomerLocale::FRENCH_TUTOIEMENT : 'fr',
+        );
     }
 
     /**

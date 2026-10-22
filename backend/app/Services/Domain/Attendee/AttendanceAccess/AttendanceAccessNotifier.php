@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Services\Domain\Attendee\AttendanceAccess;
 
 use HiEvents\DomainObjects\EventDomainObject;
-use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Jobs\Sms\SendAttendanceAccessCodeSmsJob;
 use HiEvents\Mail\Attendee\AttendanceAccessCodeMail;
 use HiEvents\Services\Domain\Attendee\AttendanceAccess\DTO\AttendanceAccessContactDTO;
@@ -20,14 +20,17 @@ class AttendanceAccessNotifier
     public function __construct(
         private readonly Mailer $mailer,
         private readonly Dispatcher $dispatcher,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     public function send(EventDomainObject $event, AttendanceAccessContactDTO $contact, string $code): void
     {
+        $locale = $this->customerLocaleResolver->forEvent($event);
+
         if ($contact->isEmail()) {
             $this->mailer
                 ->to($contact->value)
-                ->locale(CustomerLocale::get())
+                ->locale($locale)
                 ->queue(new AttendanceAccessCodeMail(
                     eventTitle: $event->getTitle(),
                     code: $code,
@@ -45,7 +48,7 @@ class AttendanceAccessNotifier
                 'code' => $code,
                 'event' => $event->getTitle(),
                 'minutes' => (int) (AttendanceAccessCodeService::TTL_SECONDS / 60),
-            ], CustomerLocale::get()),
+            ], $locale),
         ));
     }
 }

@@ -61,7 +61,7 @@ class EmailFormatHelper
 
     public static function money(float|int $amount, string $currencyCode): string
     {
-        return Currency::format($amount, $currencyCode, str_replace('-', '_', app()->getLocale()));
+        return Currency::format($amount, $currencyCode, str_replace('-', '_', CustomerLocale::formattingLocale(app()->getLocale())));
     }
 
     private static function start(EventDomainObject $event): ?Carbon
@@ -77,7 +77,7 @@ class EmailFormatHelper
     {
         return Carbon::parse($utcDateTime, 'UTC')
             ->setTimezone($timezone ?: 'UTC')
-            ->locale(app()->getLocale());
+            ->locale(CustomerLocale::formattingLocale(app()->getLocale()));
     }
 
     private static function date(Carbon $date): string
