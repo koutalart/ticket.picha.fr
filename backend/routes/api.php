@@ -194,6 +194,7 @@ use HiEvents\Http\Actions\Organizers\GetPublicOrganizerAction;
 use HiEvents\Http\Actions\Organizers\GetOrganizerByCustomDomainPublicAction;
 use HiEvents\Http\Actions\Organizers\Orders\GetOrganizerOrdersAction;
 use HiEvents\Http\Actions\Organizers\Public\SendOrganizerContactMessagePublicAction;
+use HiEvents\Http\Actions\Organizers\Public\SubscribeToOrganizerNewsletterPublicAction;
 use HiEvents\Http\Actions\DemoRequests\SendDemoRequestPublicAction;
 use HiEvents\Http\Actions\CaseStudies\GetCaseStudyStatsAction;
 use HiEvents\Http\Actions\Organizers\Settings\GetOrganizerSettingsAction;
@@ -740,6 +741,10 @@ $router->prefix('/public')->group(
             ->middleware('throttle:10,1');
         $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/cancel', CancelAttendeeAttendanceActionPublic::class)
             ->middleware('throttle:10,1');
+
+        // Newsletter
+        $router->post('/events/{event_id}/newsletter-subscriptions', SubscribeToOrganizerNewsletterPublicAction::class)
+            ->middleware('throttle:5,1');
 
         // Waitlist
         $router->post('/events/{event_id}/waitlist', CreateWaitlistEntryActionPublic::class)

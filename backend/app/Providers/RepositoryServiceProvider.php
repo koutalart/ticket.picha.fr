@@ -55,6 +55,7 @@ use HiEvents\Repository\Eloquent\SmsMessageRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRecipientRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRepository;
 use HiEvents\Repository\Eloquent\SmsOptOutRepository;
+use HiEvents\Repository\Eloquent\OrganizerNewsletterSubscriberRepository;
 use HiEvents\Repository\Eloquent\SmsReplyTemplateRepository;
 use HiEvents\Repository\Eloquent\SmsUnattributedMessageRepository;
 use HiEvents\Repository\Eloquent\QrLinkRepository;
@@ -125,6 +126,7 @@ use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerNewsletterSubscriberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsReplyTemplateRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
@@ -166,6 +168,7 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsCustomerDirectoryRepositoryInterface::class => SmsCustomerDirectoryRepository::class,
         SmsMessageRepositoryInterface::class => SmsMessageRepository::class,
         SmsOptOutRepositoryInterface::class => SmsOptOutRepository::class,
+        OrganizerNewsletterSubscriberRepositoryInterface::class => OrganizerNewsletterSubscriberRepository::class,
         SmsCampaignRepositoryInterface::class => SmsCampaignRepository::class,
         SmsCampaignRecipientRepositoryInterface::class => SmsCampaignRecipientRepository::class,
         SmsAssistantCallRepositoryInterface::class => SmsAssistantCallRepository::class,
