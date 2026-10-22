@@ -4,8 +4,6 @@ import {useDebouncedValue} from "@mantine/hooks";
 import {t} from "@lingui/macro";
 import {ActionIcon, Button, Group, Pagination, Table, Text, TextInput} from "@mantine/core";
 import {IconDownload, IconSearch, IconTrash} from "@tabler/icons-react";
-import {PageBody} from "../../../common/PageBody";
-import {PageTitle} from "../../../common/PageTitle";
 import {Card} from "../../../common/Card";
 import {NewsletterSubscriber} from "../../../../types.ts";
 import {useGetNewsletterSubscribers} from "../../../../queries/useGetNewsletterSubscribers.ts";
@@ -26,7 +24,7 @@ const sourceLabel = (subscriber: NewsletterSubscriber) => {
     return t`Footer`;
 };
 
-const NewsletterSubscribers = () => {
+export const NewsletterSubscribersTab = () => {
     const {organizerId} = useParams();
     const [search, setSearch] = useState('');
     const [debouncedSearch] = useDebouncedValue(search, 300);
@@ -63,11 +61,10 @@ const NewsletterSubscribers = () => {
     };
 
     return (
-        <PageBody>
-            <PageTitle
-                subheading={t`People who agreed to receive your news, from the footer of your event pages or by ticking the box when registering. You are responsible for this data: only use it for the purpose shown to them, and delete an address when asked.`}>
-                {t`Subscribers`}
-            </PageTitle>
+        <>
+            <Text size="sm" c="dimmed" mb="md">
+                {t`People who agreed to receive your news, from the footer of your event pages or by ticking the box when registering. You are responsible for this data: only use it for the purpose shown to them, and delete an address when asked.`}
+            </Text>
 
             <Card>
                 <Group gap="sm" mb="md" align="flex-start">
@@ -159,8 +156,6 @@ const NewsletterSubscribers = () => {
                     </Group>
                 )}
             </Card>
-        </PageBody>
+        </>
     );
 };
-
-export default NewsletterSubscribers;

@@ -353,10 +353,7 @@ export const router: RouteObject[] = [
             },
             {
                 path: "subscribers",
-                async lazy() {
-                    const NewsletterSubscribers = await import("./components/routes/organizer/NewsletterSubscribers");
-                    return { Component: NewsletterSubscribers.default };
-                }
+                element: <Navigate to="../contacts?tab=subscribers" replace/>,
             },
             {
                 path: "webhooks",
