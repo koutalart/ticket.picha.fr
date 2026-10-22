@@ -3,10 +3,8 @@
 namespace HiEvents\Mail\Attendee;
 
 use HiEvents\DomainObjects\AttendeeDomainObject;
-use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
-use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Helper\Url;
@@ -42,6 +40,7 @@ class AttendeeTicketMail extends BaseMail
         array $tickets = [],
     ) {
         parent::__construct();
+        $this->useEventEmailLogo($this->event, $this->organizer);
         $this->renderedTemplate = $renderedTemplate;
         $this->tickets = $tickets !== [] ? array_values($tickets) : [$attendee];
     }
@@ -69,7 +68,6 @@ class AttendeeTicketMail extends BaseMail
                     'renderedCta' => $this->renderedTemplate->cta,
                     'eventSettings' => $this->eventSettings,
                     'organizer' => $this->organizer,
-                    'organizerLogoUrl' => $this->isTargetFreeEvent() ? $this->getOrganizerLogoUrl() : null,
                     'isFreeEvent' => $this->isFreeEvent(),
                 ]
             );
@@ -83,7 +81,6 @@ class AttendeeTicketMail extends BaseMail
                 'attendee' => $this->attendee,
                 'eventSettings' => $this->eventSettings,
                 'organizer' => $this->organizer,
-                'organizerLogoUrl' => $this->isFreeEvent() ? $this->getOrganizerLogoUrl() : null,
                 'isFreeEvent' => $this->isFreeEvent(),
                 'order' => $this->order,
                 'tickets' => $this->tickets,
@@ -124,20 +121,6 @@ class AttendeeTicketMail extends BaseMail
 
         return $ticketItems->isNotEmpty()
             && $ticketItems->every(static fn ($item) => (float) $item->getPrice() <= 0);
-    }
-
-    private function isTargetFreeEvent(): bool
-    {
-        return $this->isFreeEvent() && (int) $this->event->getId() === 6;
-    }
-
-    private function getOrganizerLogoUrl(): ?string
-    {
-        $images = $this->organizer->getImages();
-        $logo = $images?->first(static fn (ImageDomainObject $image) => $image->getType() === ImageType::ORGANIZER_EMAIL_LOGO->name)
-            ?? $images?->first(static fn (ImageDomainObject $image) => $image->getType() === ImageType::ORGANIZER_LOGO->name);
-
-        return $logo?->getPath() ? Url::getCdnUrl($logo->getPath()) : null;
     }
 
     private function generateTicketPdf(AttendeeDomainObject $ticket): string

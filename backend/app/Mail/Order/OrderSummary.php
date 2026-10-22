@@ -38,6 +38,7 @@ class OrderSummary extends BaseMail
         $this->renderedTemplate = $renderedTemplate;
 
         parent::__construct();
+        $this->useEventEmailLogo($this->event, $this->organizer);
     }
 
     public function envelope(): Envelope

@@ -7,7 +7,7 @@
 
 @php /** @see \HiEvents\Mail\Waitlist\WaitlistConfirmationMail */ @endphp
 
-<x-mail::message>
+<x-mail::message :emailLogo="$emailLogo ?? null">
 # {{ __("You're on the waitlist!") }}
 
 {{ __('Hello') }},

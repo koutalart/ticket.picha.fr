@@ -2,6 +2,7 @@
 
 namespace HiEvents\Mail\Attendee;
 
+use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Mail\BaseMail;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -15,8 +16,13 @@ class AttendanceAccessCodeMail extends BaseMail
         private readonly string $eventTitle,
         private readonly string $code,
         private readonly int $validityMinutes,
+        ?EventDomainObject $event = null,
     ) {
         parent::__construct();
+
+        if ($event !== null) {
+            $this->useEventEmailLogo($event);
+        }
     }
 
     public function envelope(): Envelope

@@ -7,7 +7,6 @@ namespace Tests\Unit\Mail;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
-use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
@@ -15,6 +14,7 @@ use HiEvents\Helper\IdHelper;
 use HiEvents\Mail\Attendee\AttendeeTicketMail;
 use HiEvents\Models\Attendee;
 use HiEvents\Models\EventSetting;
+use HiEvents\Models\Image;
 use HiEvents\Models\Order;
 use HiEvents\Models\Organizer;
 use HiEvents\Services\Domain\Email\DTO\RenderedEmailTemplateDTO;
@@ -61,12 +61,22 @@ class AttendeeTicketMailRenderTest extends TestCase
             ->setId($eventId)
             ->setTitle('Journée Portes Ouvertes');
 
-        $organizer = OrganizerDomainObject::hydrateFromModel(Organizer::findOrFail($eventModel->organizer_id))
-            ->setImages(new Collection([
-                (new ImageDomainObject)->setType('ORGANIZER_COVER')->setPath('organizer_cover/cover.webp'),
-                (new ImageDomainObject)->setType('ORGANIZER_LOGO')->setPath('organizer_logo/logo-mayotte.png'),
-                ...$extraImages,
-            ]));
+        $organizer = OrganizerDomainObject::hydrateFromModel(Organizer::findOrFail($eventModel->organizer_id));
+
+        $images = ['ORGANIZER_COVER' => 'organizer_cover/cover.webp', 'ORGANIZER_LOGO' => 'organizer_logo/logo-mayotte.png', ...$extraImages];
+        foreach ($images as $type => $path) {
+            Image::create([
+                'account_id' => $eventModel->account_id,
+                'entity_id' => $organizer->getId(),
+                'entity_type' => OrganizerDomainObject::class,
+                'type' => $type,
+                'filename' => basename($path),
+                'disk' => 'public',
+                'path' => $path,
+                'size' => 1000,
+                'mime_type' => 'image/png',
+            ]);
+        }
 
         return new AttendeeTicketMail(
             $order,
@@ -78,7 +88,7 @@ class AttendeeTicketMailRenderTest extends TestCase
         );
     }
 
-    public function test_default_ticket_email_renders_and_shows_organizer_logo_for_free_event(): void
+    public function test_default_ticket_email_renders_and_shows_organizer_logo(): void
     {
         $html = $this->mail(price: 0)->render();
 
@@ -88,12 +98,12 @@ class AttendeeTicketMailRenderTest extends TestCase
         self::assertStringNotContainsString('wikimedia', $html);
     }
 
-    public function test_paid_ticket_email_keeps_platform_logo(): void
+    public function test_paid_ticket_email_also_shows_organizer_logo(): void
     {
         $html = $this->mail(price: 40)->render();
 
         self::assertStringNotContainsString('x-mail::message', $html);
-        self::assertStringNotContainsString('organizer_logo/logo-mayotte.png', $html);
+        self::assertStringContainsString('organizer_logo/logo-mayotte.png', $html);
     }
 
     public function test_custom_template_email_renders(): void
@@ -105,15 +115,15 @@ class AttendeeTicketMailRenderTest extends TestCase
         self::assertStringContainsString('Bienvenue à la JPO', $targetHtml);
         self::assertStringContainsString('organizer_logo/logo-mayotte.png', $targetHtml);
 
-        $otherHtml = $this->mail(price: 0, eventId: 4, template: $template)->render();
+        $otherHtml = $this->mail(price: 40, eventId: 4, template: $template)->render();
         self::assertStringNotContainsString('x-mail::message', $otherHtml);
-        self::assertStringNotContainsString('organizer_logo/logo-mayotte.png', $otherHtml);
+        self::assertStringContainsString('organizer_logo/logo-mayotte.png', $otherHtml);
     }
 
     public function test_email_logo_is_preferred_over_site_logo(): void
     {
         $html = $this->mail(price: 0, extraImages: [
-            (new ImageDomainObject)->setType('ORGANIZER_EMAIL_LOGO')->setPath('organizer_email_logo/logo-fond-clair.png'),
+            'ORGANIZER_EMAIL_LOGO' => 'organizer_email_logo/logo-fond-clair.png',
         ])->render();
 
         self::assertStringContainsString('organizer_email_logo/logo-fond-clair.png', $html);
