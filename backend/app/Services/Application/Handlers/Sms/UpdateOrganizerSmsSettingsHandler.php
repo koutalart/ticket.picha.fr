@@ -10,6 +10,7 @@ use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Sms\DTO\OrganizerSmsSettingsViewDTO;
 use HiEvents\Services\Application\Handlers\Sms\DTO\UpdateOrganizerSmsSettingsDTO;
+use HiEvents\Services\Domain\Sms\SmsAssistantReplyGenerator;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use HiEvents\Services\Infrastructure\HtmlPurifier\HtmlPurifierService;
@@ -47,6 +48,17 @@ class UpdateOrganizerSmsSettingsHandler
 
         if ($dto->wasProvided('assistantEnabled')) {
             $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_ENABLED] = $dto->assistantEnabled;
+        }
+
+        if ($dto->wasProvided('assistantAutoSend')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_AUTO_SEND] = $dto->assistantAutoSend;
+        }
+
+        if ($dto->wasProvided('assistantHoldingReply')) {
+            $holdingReply = $this->cleanInstructions($dto->assistantHoldingReply);
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_HOLDING_REPLY] = $holdingReply !== null
+                ? SmsAssistantReplyGenerator::cleanText($holdingReply)
+                : null;
         }
 
         if ($dto->wasProvided('assistantInstructions')) {

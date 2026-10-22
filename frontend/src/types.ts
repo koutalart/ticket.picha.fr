@@ -1469,6 +1469,8 @@ export interface OrganizerSmsSettings {
     assistant_available: boolean;
     assistant_enabled: boolean;
     assistant_instructions: string | null;
+    assistant_auto_send: boolean;
+    assistant_holding_reply: string | null;
     history_import: SmsHistoryImport;
 }
 
@@ -1538,6 +1540,8 @@ export interface SmsMessage {
     status: SmsMessageStatus;
     error_message: string | null;
     sent_by_user_id: number | null;
+    auto_sent?: boolean;
+    auto_reply_type?: 'ANSWER' | 'HOLDING' | null;
     provider_timestamp: string | null;
     created_at: string;
 }

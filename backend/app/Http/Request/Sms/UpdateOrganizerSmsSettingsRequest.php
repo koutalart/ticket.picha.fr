@@ -10,6 +10,8 @@ class UpdateOrganizerSmsSettingsRequest extends BaseRequest
 {
     public const MAX_INSTRUCTIONS_LENGTH = 2000;
 
+    public const MAX_HOLDING_REPLY_LENGTH = 320;
+
     public function rules(): array
     {
         return [
@@ -17,6 +19,8 @@ class UpdateOrganizerSmsSettingsRequest extends BaseRequest
             'from_number' => ['sometimes', 'nullable', 'string', 'max:25', 'regex:/^[0-9+\s().-]+$/'],
             'notify_on_inbound_sms' => ['sometimes', 'boolean'],
             'assistant_enabled' => ['sometimes', 'boolean'],
+            'assistant_auto_send' => ['sometimes', 'boolean'],
+            'assistant_holding_reply' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_HOLDING_REPLY_LENGTH],
             'assistant_instructions' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_INSTRUCTIONS_LENGTH],
         ];
     }

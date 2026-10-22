@@ -72,4 +72,23 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
 
         return $organizerId === null ? null : (int) $organizerId;
     }
+
+    public function hasOutboundToPhoneAfter(array $organizerIds, string $phone, int $afterMessageId, string $pendingSince): bool
+    {
+        if ($organizerIds === []) {
+            return false;
+        }
+
+        return SmsMessage::query()
+            ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
+            ->whereIn('sms_messages.organizer_id', $organizerIds)
+            ->where('sms_conversations.phone', $phone)
+            ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+            ->where(fn ($query) => $query
+                ->where('sms_messages.id', '>', $afterMessageId)
+                ->orWhere(fn ($pending) => $pending
+                    ->where('sms_messages.status', SmsMessageStatus::PENDING->name)
+                    ->where('sms_messages.created_at', '>=', $pendingSince)))
+            ->exists();
+    }
 }

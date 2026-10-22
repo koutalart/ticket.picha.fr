@@ -24,6 +24,8 @@ export interface SmsSettingsRequest {
     notify_on_inbound_sms?: boolean;
     assistant_enabled?: boolean;
     assistant_instructions?: string | null;
+    assistant_auto_send?: boolean;
+    assistant_holding_reply?: string | null;
 }
 
 export interface SmsConversationsParams {
