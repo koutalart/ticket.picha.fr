@@ -166,6 +166,8 @@ class PartialUpdateEventSettingsHandler
                     : $existingSettings->getSmsCancellationConfirmationMessage(),
                 'sms_cancellation_confirmation_on_organizer_cancel' => $eventSettingsDTO->settings['sms_cancellation_confirmation_on_organizer_cancel'] ?? $existingSettings->getSmsCancellationConfirmationOnOrganizerCancel(),
 
+                'ticket_footer_use_organizer_domain' => $eventSettingsDTO->settings['ticket_footer_use_organizer_domain'] ?? $existingSettings->getTicketFooterUseOrganizerDomain(),
+
                 'rich_footer_enabled' => $eventSettingsDTO->settings['rich_footer_enabled'] ?? $existingSettings->getRichFooterEnabled(),
                 'homepage_footer_settings' => array_key_exists('homepage_footer_settings', $eventSettingsDTO->settings)
                     ? $eventSettingsDTO->settings['homepage_footer_settings']

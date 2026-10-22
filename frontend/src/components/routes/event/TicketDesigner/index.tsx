@@ -8,7 +8,7 @@ import {IdParam} from "../../../../types.ts";
 import {showSuccess} from "../../../../utilites/notifications.tsx";
 import {t} from "@lingui/macro";
 import {useForm} from "@mantine/form";
-import {Button, Accordion, Stack, Text, Group, Select, TextInput} from "@mantine/core";
+import {Button, Accordion, Stack, Text, Group, Select, Switch, TextInput} from "@mantine/core";
 import {IconColorSwatch, IconHelp, IconPrinter} from "@tabler/icons-react";
 import {Tooltip} from "../../../common/Tooltip";
 import {ImageUploadDropzone} from "../../../common/ImageUploadDropzone";
@@ -24,6 +24,7 @@ interface TicketDesignSettings {
     date_display_mode: 'START_DATE_TIME' | 'DATE_RANGE' | 'HIDDEN';
     enabled: boolean;
     sponsor_name: string;
+    ticket_footer_use_organizer_domain: boolean;
 }
 
 const TicketDesigner = () => {
@@ -45,6 +46,7 @@ const TicketDesigner = () => {
             date_display_mode: 'START_DATE_TIME',
             sponsor_name: '',
             enabled: true,
+            ticket_footer_use_organizer_domain: false,
         }
     });
 
@@ -60,7 +62,10 @@ const TicketDesigner = () => {
                 date_display_mode: settings.date_display_mode || 'START_DATE_TIME',
                 enabled: settings.enabled !== false,
                 sponsor_name: settings.sponsor_name || '',
+                ticket_footer_use_organizer_domain: !!eventSettingsQuery.data.ticket_footer_use_organizer_domain,
             });
+        } else if (eventSettingsQuery?.isFetched) {
+            form.setFieldValue('ticket_footer_use_organizer_domain', !!eventSettingsQuery.data?.ticket_footer_use_organizer_domain);
         }
     }, [eventSettingsQuery.isFetched]);
 
@@ -83,7 +88,8 @@ const TicketDesigner = () => {
                         date_display_mode: values.date_display_mode,
                         enabled: values.enabled,
                         sponsor_name: values.sponsor_name.trim() || undefined,
-                    }
+                    },
+                    ticket_footer_use_organizer_domain: values.ticket_footer_use_organizer_domain,
                 },
                 eventId: eventId
             },
@@ -199,6 +205,12 @@ const TicketDesigner = () => {
                                                     {...form.getInputProps('date_display_mode')}
                                                 />
                                             </div>
+
+                                            <Switch
+                                                label={t`Show the organizer domain in the ticket footer`}
+                                                description={t`Replaces ticket.picha.fr and the PICHA logo with the organizer custom domain and email logo. No effect if the organizer has no custom domain.`}
+                                                {...form.getInputProps('ticket_footer_use_organizer_domain', {type: 'checkbox'})}
+                                            />
                                         </Stack>
                                     </Accordion.Panel>
                                 </Accordion.Item>
