@@ -716,7 +716,7 @@ export const OrderSummaryAndProducts = () => {
                     </>
                 )}
 
-                <PoweredByFooter/>
+                {!fullscreenHero.enabled && <PoweredByFooter/>}
             </CheckoutContent>
 
             {editingAttendee && (

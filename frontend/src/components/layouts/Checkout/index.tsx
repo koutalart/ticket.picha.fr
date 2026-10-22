@@ -27,7 +27,13 @@ import {useGetEventPublic} from "../../../queries/useGetEventPublic.ts";
 import {getFullscreenHero} from "../../../utilites/fullscreenHero.ts";
 import {buildHomepageFontStack, isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
-import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
+import {
+    EventImmersiveBackdrop,
+    EventImmersiveBrandBar,
+    EventImmersiveContext,
+    EventImmersiveSignature
+} from "../../common/EventImmersiveShell";
+import {EventImmersiveFooter} from "../../common/EventImmersiveFooter";
 
 const DEFAULT_ACCENT = '#8b5cf6';
 
@@ -37,10 +43,6 @@ const Checkout = () => {
     const event = order?.event;
     const {data: publicEvent} = useGetEventPublic(eventId, !!eventId);
     const fullscreenHero = getFullscreenHero(publicEvent);
-    const immersiveVideoSource = useCoverVideoSource(
-        fullscreenHero.enabled ? fullscreenHero.coverVideo : undefined,
-        fullscreenHero.coverVideoMobile,
-    );
     const navigate = useNavigate();
     const location = useLocation();
     const orderIsCompleted = order?.status === 'COMPLETED';
@@ -158,7 +160,8 @@ const Checkout = () => {
 
     const publicFontFamily = publicEvent?.settings?.homepage_theme_settings?.font_family;
     const publicOrganizerFont = publicEvent?.organizer?.custom_font;
-    const organizerFontStack = isOrganizerFontActive(publicFontFamily, publicOrganizerFont)
+    const organizerFontActive = isOrganizerFontActive(publicFontFamily, publicOrganizerFont);
+    const organizerFontStack = organizerFontActive || fullscreenHero.enabled
         ? buildHomepageFontStack(publicFontFamily, publicOrganizerFont)
         : undefined;
 
@@ -216,28 +219,22 @@ const Checkout = () => {
         <CheckoutThemeProvider accentColor={accentColor} mode={checkoutMode} fontFamily={organizerFontStack}>
             <div className={classes.container} data-mode={checkoutMode} data-immersive={fullscreenHero.enabled || undefined}
                  style={organizerFontStack ? {fontFamily: organizerFontStack} : undefined}
-                 {...(organizerFontStack ? {[ORGANIZER_FONT_ATTRIBUTE]: ''} : {})}>
+                 {...(organizerFontActive ? {[ORGANIZER_FONT_ATTRIBUTE]: ''} : {})}>
                 {fullscreenHero.enabled && (
-                    <div className={classes.immersiveBackground} aria-hidden="true">
-                        {immersiveVideoSource ? (
-                            <video src={immersiveVideoSource} poster={fullscreenHero.coverImage} autoPlay muted loop
-                                   playsInline preload="metadata"/>
-                        ) : fullscreenHero.coverImage ? (
-                            <img src={fullscreenHero.coverImage} alt=""/>
-                        ) : null}
-                    </div>
+                    <EventImmersiveBackdrop
+                        coverVideo={fullscreenHero.coverVideo}
+                        coverVideoMobile={fullscreenHero.coverVideoMobile}
+                        coverImage={fullscreenHero.coverImage}
+                    />
                 )}
                 <div className={classes.mainContent}>
-                    {fullscreenHero.enabled && (fullscreenHero.partnerLogo || fullscreenHero.brandLogo || fullscreenHero.organizerLogo) && (
-                        <div className={classes.immersiveBrandBar}>
-                            {fullscreenHero.partnerLogo ? <img src={fullscreenHero.partnerLogo} alt=""/> : <span/>}
-                            {fullscreenHero.brandLogo ? (
-                                <img src={fullscreenHero.brandLogo} alt={publicEvent?.organizer?.name || ''}/>
-                            ) : fullscreenHero.organizerLogo ? (
-                                <img src={fullscreenHero.organizerLogo} alt={publicEvent?.organizer?.name || ''}
-                                     className={classes.immersiveInvertedLogo}/>
-                            ) : null}
-                        </div>
+                    {fullscreenHero.enabled && (
+                        <EventImmersiveBrandBar
+                            partnerLogo={fullscreenHero.partnerLogo}
+                            brandLogo={fullscreenHero.brandLogo}
+                            organizerLogo={fullscreenHero.organizerLogo}
+                            organizerName={publicEvent?.organizer?.name}
+                        />
                     )}
                     <header className={classes.header}>
                         {(event) && (
@@ -319,7 +316,18 @@ const Checkout = () => {
                             </div>
                         )}
                     </header>
-                    <Outlet/>
+                    <EventImmersiveContext.Provider value={fullscreenHero.enabled}>
+                        <Outlet/>
+                    </EventImmersiveContext.Provider>
+                    {fullscreenHero.enabled && publicEvent && (
+                        <>
+                            <EventImmersiveSignature
+                                tagline={fullscreenHero.settings.hero_tagline}
+                                signatureLogo={fullscreenHero.signatureLogo}
+                            />
+                            <EventImmersiveFooter event={publicEvent}/>
+                        </>
+                    )}
                 </div>
             </div>
 
