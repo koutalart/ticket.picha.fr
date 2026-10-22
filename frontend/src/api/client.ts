@@ -32,6 +32,9 @@ const ALLOWED_UNAUTHENTICATED_PATHS = [
     '/legal/',
     '/cas-clients',
     '/q/',
+    '/venue/',
+    '/e/',
+    '/festival/',
     ...SOLUTION_SLUGS.map((slug) => `/${slug}`),
 ];
 
