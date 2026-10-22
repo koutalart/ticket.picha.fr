@@ -289,6 +289,8 @@ export interface EventSettings {
     sms_cancellation_confirmation_message?: string | null;
     sms_cancellation_confirmation_on_organizer_cancel?: boolean;
 
+    ticket_footer_use_organizer_domain?: boolean;
+
     embedded_registration_enabled?: boolean;
 
     rich_footer_enabled?: boolean;

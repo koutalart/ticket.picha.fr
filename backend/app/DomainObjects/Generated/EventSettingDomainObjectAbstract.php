@@ -83,6 +83,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const SMS_CANCELLATION_CONFIRMATION_ENABLED = 'sms_cancellation_confirmation_enabled';
     final public const SMS_CANCELLATION_CONFIRMATION_MESSAGE = 'sms_cancellation_confirmation_message';
     final public const SMS_CANCELLATION_CONFIRMATION_ON_ORGANIZER_CANCEL = 'sms_cancellation_confirmation_on_organizer_cancel';
+    final public const TICKET_FOOTER_USE_ORGANIZER_DOMAIN = 'ticket_footer_use_organizer_domain';
 
     protected int $id;
     protected int $event_id;
@@ -157,6 +158,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected bool $sms_cancellation_confirmation_enabled = false;
     protected ?string $sms_cancellation_confirmation_message = null;
     protected bool $sms_cancellation_confirmation_on_organizer_cancel = false;
+    protected bool $ticket_footer_use_organizer_domain = false;
 
     public function toArray(): array
     {
@@ -234,6 +236,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'sms_cancellation_confirmation_enabled' => $this->sms_cancellation_confirmation_enabled ?? null,
                     'sms_cancellation_confirmation_message' => $this->sms_cancellation_confirmation_message ?? null,
                     'sms_cancellation_confirmation_on_organizer_cancel' => $this->sms_cancellation_confirmation_on_organizer_cancel ?? null,
+                    'ticket_footer_use_organizer_domain' => $this->ticket_footer_use_organizer_domain ?? null,
                 ];
     }
 
@@ -1039,5 +1042,16 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getSmsCancellationConfirmationOnOrganizerCancel(): bool
     {
         return $this->sms_cancellation_confirmation_on_organizer_cancel;
+    }
+
+    public function setTicketFooterUseOrganizerDomain(bool $ticket_footer_use_organizer_domain): self
+    {
+        $this->ticket_footer_use_organizer_domain = $ticket_footer_use_organizer_domain;
+        return $this;
+    }
+
+    public function getTicketFooterUseOrganizerDomain(): bool
+    {
+        return $this->ticket_footer_use_organizer_domain;
     }
 }

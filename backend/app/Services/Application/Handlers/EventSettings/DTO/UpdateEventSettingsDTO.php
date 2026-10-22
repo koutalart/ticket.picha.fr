@@ -111,6 +111,8 @@ class UpdateEventSettingsDTO extends BaseDTO
         public readonly ?string                 $sms_cancellation_confirmation_message = null,
         public readonly bool                    $sms_cancellation_confirmation_on_organizer_cancel = false,
 
+        public readonly bool                    $ticket_footer_use_organizer_domain = false,
+
         public readonly bool                    $rich_footer_enabled = false,
         public readonly ?array                  $homepage_footer_settings = null,
         public readonly string                  $schema_event_type = 'Event',
