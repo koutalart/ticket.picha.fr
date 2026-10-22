@@ -1,6 +1,8 @@
 import { Navigate, RouteObject } from "react-router";
 import ErrorPage from "./error-page.tsx";
 import { publicEventRouteLoader } from "./routeLoaders/publicEventRouteLoader.ts";
+import { eventDedicatedPageRouteLoader } from "./routeLoaders/eventDedicatedPageRouteLoader.ts";
+import { EVENT_PAGE_SLUGS } from "./utilites/eventPages.ts";
 import { publicOrganizerRouteLoader } from "./routeLoaders/publicOrganizerRouteLoader.ts";
 import { qrLinkPageLoader } from "./routeLoaders/qrLinkPageLoader.ts";
 import { organizerPreviewRouteLoader } from "./routeLoaders/organizerPreviewRouteLoader.ts";
@@ -483,6 +485,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "pages",
+                async lazy() {
+                    const EventPages = await import("./components/routes/event/EventPages");
+                    return { Component: EventPages.default };
+                }
+            },
+            {
                 path: "ticket-designer",
                 async lazy() {
                     const TicketDesigner = await import("./components/routes/event/TicketDesigner");
@@ -628,6 +637,15 @@ export const router: RouteObject[] = [
         },
         errorElement: <ErrorPage />,
     },
+    ...EVENT_PAGE_SLUGS.map((page): RouteObject => ({
+        path: `/event/:eventId/:eventSlug/${page}`,
+        loader: eventDedicatedPageRouteLoader(page),
+        async lazy() {
+            const EventDedicatedPage = await import("./components/layouts/EventDedicatedPage");
+            return { Component: EventDedicatedPage.default };
+        },
+        errorElement: <ErrorPage />,
+    })),
     {
         path: "/widget/:eventId",
         async lazy() {

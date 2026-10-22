@@ -81,6 +81,7 @@ export async function render(params: {
         helmetContext,
         locale: i18n.locale,
         htmlLang: toHtmlLang(i18n.locale),
+        statusCode: context.statusCode === 404 ? 404 : 200,
     };
 }
 
