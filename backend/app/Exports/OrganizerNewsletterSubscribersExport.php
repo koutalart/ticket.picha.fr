@@ -32,6 +32,7 @@ class OrganizerNewsletterSubscribersExport implements FromCollection, WithHeadin
     {
         return [
             __('Email'),
+            __('Source'),
             __('Source event'),
             __('Consent date'),
             __('Consent text'),
@@ -45,6 +46,7 @@ class OrganizerNewsletterSubscribersExport implements FromCollection, WithHeadin
     {
         return [
             $subscriber->getEmail(),
+            $subscriber->getSourceLabel(),
             $subscriber->getEventTitle() ?? '',
             Carbon::parse($subscriber->getConsentedAt())->format('Y-m-d H:i:s'),
             $subscriber->getConsentText(),

@@ -323,9 +323,12 @@ export interface HomepageFooterRelatedLink {
     image_url?: string | null;
 }
 
+export type NewsletterSubscriberSource = 'FOOTER' | 'REGISTRATION';
+
 export interface NewsletterSubscriber {
     id: IdParam;
     email: string;
+    source: NewsletterSubscriberSource;
     event_id?: IdParam | null;
     event_title?: string | null;
     consent_text: string;
