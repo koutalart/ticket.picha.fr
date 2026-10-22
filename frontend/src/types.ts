@@ -283,6 +283,9 @@ export interface EventSettings {
 
     allow_attendee_attendance_response?: boolean;
 
+    sms_registration_confirmation_enabled?: boolean;
+    sms_registration_confirmation_message?: string | null;
+
     embedded_registration_enabled?: boolean;
 
     rich_footer_enabled?: boolean;
@@ -1449,7 +1452,7 @@ export interface EnqueueKioskPrintJobsResponse {
 export type SmsConversationStatus = 'OPEN' | 'NEEDS_HUMAN' | 'CLOSED';
 export type SmsMessageStatus = 'RECEIVED' | 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED' | 'EXPIRED';
 export type SmsMessageDirection = 'INBOUND' | 'OUTBOUND';
-export type SmsMessageAuthorType = 'CONTACT' | 'HUMAN' | 'AGENT' | 'CAMPAIGN';
+export type SmsMessageAuthorType = 'CONTACT' | 'HUMAN' | 'AGENT' | 'CAMPAIGN' | 'AUTOMATIC';
 export type SmsConversationFilter = 'all' | 'unread' | 'needs_human';
 
 export interface OrganizerSmsSettings {

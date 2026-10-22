@@ -33,6 +33,8 @@ export const messageAuthorLabel = (message: SmsMessage): string | null => {
     switch (message.author_type) {
         case 'CAMPAIGN':
             return t`Campaign`;
+        case 'AUTOMATIC':
+            return t`Automatic message`;
         case 'AGENT':
             return t`Assistant`;
         default:
