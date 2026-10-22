@@ -27,6 +27,7 @@ class AttendeeDetailsChangedMail extends BaseMail
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: __('Your Ticket Details Have Been Changed'),
         );

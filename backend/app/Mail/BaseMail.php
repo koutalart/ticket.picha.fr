@@ -2,9 +2,11 @@
 
 namespace HiEvents\Mail;
 
+use HiEvents\Services\Domain\Mail\OrganizerMailSenderResolver;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -21,4 +23,9 @@ abstract class BaseMail extends Mailable implements ShouldQueue
     abstract public function envelope(): Envelope;
 
     abstract public function content(): Content;
+
+    protected function organizerSender(?int $organizerId): ?Address
+    {
+        return app(OrganizerMailSenderResolver::class)->resolveForOrganizer($organizerId);
+    }
 }

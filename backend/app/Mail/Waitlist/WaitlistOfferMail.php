@@ -33,6 +33,7 @@ class WaitlistOfferMail extends BaseMail
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: __('A spot has opened up for :event!', ['event' => $this->event->getTitle()]),
         );
