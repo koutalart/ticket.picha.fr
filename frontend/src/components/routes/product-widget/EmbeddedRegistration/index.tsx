@@ -35,7 +35,11 @@ import {getConfig} from "../../../../utilites/config.ts";
 import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 import {UserGeneratedContent} from "../../../common/UserGeneratedContent";
 import {SaleCountdown} from "./SaleCountdown.tsx";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import classes from "./EmbeddedRegistration.module.scss";
+
+dayjs.extend(utc);
 
 type StepKind = 'name' | 'email' | 'phone' | 'questions' | 'participants' | 'confirm';
 
@@ -653,7 +657,7 @@ export const EmbeddedRegistration = ({event: initialEvent, promoCode: initialPro
 
     const upcomingSaleStart = (event.product_categories?.flatMap(category => category.products || []) || event.products || [])
         .filter(product => product.is_before_sale_start_date && product.sale_start_date)
-        .map(product => new Date(product.sale_start_date as string))
+        .map(product => dayjs.utc(product.sale_start_date as string).toDate())
         .sort((a, b) => a.getTime() - b.getTime())[0];
 
     if (!forceClassic && publicProductIds !== null && !ticket && upcomingSaleStart) {
