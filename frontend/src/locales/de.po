@@ -98,11 +98,13 @@ msgstr "{0} verfügbar"
 msgid "{0} characters, {1} SMS"
 msgstr "{0} Zeichen, {1} SMS"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:226
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:202
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:221
 msgid "{0} characters, {1} SMS per recipient"
 msgstr "{0} Zeichen, {1} SMS pro Empfänger"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:227
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:203
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:222
 msgid "{0} characters, 1 SMS per recipient"
@@ -1042,7 +1044,7 @@ msgstr "Admin Dashboard"
 msgid "Admin users have full access to events and account settings."
 msgstr "Administratorbenutzer haben vollständigen Zugriff auf Ereignisse und Kontoeinstellungen."
 
-#: src/components/routes/event/Settings/index.tsx:68
+#: src/components/routes/event/Settings/index.tsx:70
 msgctxt "event settings tab"
 msgid "Advanced"
 msgstr "Erweitert"
@@ -1267,6 +1269,10 @@ msgstr ""
 msgid "Also refund this order"
 msgstr "Diese Bestellung auch erstatten"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:164
+msgid "Also send it when I cancel a registration"
+msgstr "Auch senden, wenn ich eine Anmeldung storniere"
+
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:85
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:77
 msgid "Amazing, Event, Keywords..."
@@ -1348,7 +1354,7 @@ msgstr "Antwort"
 msgid "Answer updated successfully."
 msgstr "Antwort erfolgreich aktualisiert."
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:42
+#: src/components/layouts/EventDedicatedPage/index.tsx:43
 msgid "Answers to the most frequent questions about {title}."
 msgstr "Antworten auf die häufigsten Fragen zu {title}."
 
@@ -1807,6 +1813,10 @@ msgstr "Teilnehmer"
 msgid "Attendees can confirm or cancel their attendance"
 msgstr "Teilnehmer können ihre Teilnahme bestätigen oder absagen"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:170
+msgid "Attendees can only cancel by themselves when they can confirm or cancel their attendance (Sales tab)."
+msgstr "Teilnehmer können nur selbst stornieren, wenn sie ihre Teilnahme bestätigen oder absagen können (Reiter Verkauf)."
+
 #: src/components/routes/event/attendees.tsx:65
 msgid "Attendees Exported"
 msgstr "Teilnehmer exportiert"
@@ -2132,7 +2142,7 @@ msgstr ""
 msgid "Brazilian Portuguese"
 msgstr "Brasilianisches Portugiesisch"
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:119
+#: src/components/layouts/EventDedicatedPage/index.tsx:213
 msgid "Breadcrumb"
 msgstr "Brotkrumennavigation"
 
@@ -2186,6 +2196,10 @@ msgstr "Per Karte. Der Endpreis wird vor der Zahlung angezeigt."
 #: src/components/routes/product-widget/Payment/index.tsx:165
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "Durch Fortfahren stimmen Sie den <0>{0} Nutzungsbedingungen</0> zu"
+
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:165
+msgid "By default, only attendees who cancel by themselves from their attendance page receive it. Turn this on to also send it when you cancel an attendee or an order."
+msgstr "Standardmäßig erhalten sie nur Teilnehmer, die selbst über ihre Teilnahmeseite stornieren. Aktiviere dies, um sie auch zu senden, wenn du einen Teilnehmer oder eine Bestellung stornierst."
 
 #: src/components/routes/auth/Register/index.tsx:141
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
@@ -2329,6 +2343,10 @@ msgstr "Das Stornieren wird alle mit dieser Bestellung verbundenen Teilnehmer st
 #: src/components/organizerTemplates/Poster/faq.ts:18
 msgid "Cancellation and refund conditions are set by the organizer. Contact them before the event for any request."
 msgstr ""
+
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:133
+msgid "Cancellation confirmation SMS"
+msgstr "Stornierungsbestätigung per SMS"
 
 #: src/components/routes/organizer/Sms/CustomerCard.tsx:75
 msgid "cancelled"
@@ -3941,6 +3959,7 @@ msgstr "Dateneigentum"
 #: src/components/forms/QuestionForm/index.tsx:144
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:143
 #: src/components/routes/event/Reports/DailySalesReport/index.tsx:29
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:123
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:119
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:56
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:24
@@ -4472,6 +4491,10 @@ msgstr "Jeder Teilnehmer kann seinen persönlichen Link erhalten, um seine Teiln
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:130
 msgid "Each attendee receives an SMS as soon as their registration is confirmed, with their personal link to manage their attendance."
 msgstr "Jeder Teilnehmer erhält eine SMS, sobald seine Anmeldung bestätigt ist, mit seinem persönlichen Link zur Verwaltung seiner Teilnahme."
+
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:134
+msgid "Each attendee who cancels their registration receives an SMS confirming that their place has been released."
+msgstr "Jeder Teilnehmer, der seine Anmeldung storniert, erhält eine SMS, die bestätigt, dass sein Platz freigegeben wurde."
 
 #: src/components/modals/OfferWaitlistModal/index.tsx:129
 msgid "Each person will receive an email with a reserved spot to complete their purchase."
@@ -5060,7 +5083,7 @@ msgstr "Fehler beim Bestätigen der E-Mail-Änderung"
 msgid "Error loading logs"
 msgstr "Fehler beim Laden der Protokolle"
 
-#: src/components/routes/event/Settings/index.tsx:41
+#: src/components/routes/event/Settings/index.tsx:42
 msgctxt "event settings tab"
 msgid "Essentials"
 msgstr "Das Wichtigste"
@@ -5095,7 +5118,7 @@ msgstr "EUR"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:73
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:74
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:75
-#: src/components/layouts/EventDedicatedPage/index.tsx:150
+#: src/components/layouts/EventDedicatedPage/index.tsx:108
 #: src/components/routes/admin/Dashboard/index.tsx:256
 #: src/components/routes/admin/Dashboard/index.tsx:305
 #: src/components/routes/admin/Messages/index.tsx:163
@@ -5242,7 +5265,7 @@ msgctxt "event menu"
 msgid "Event page"
 msgstr "Veranstaltungsseite"
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:193
+#: src/components/layouts/EventDedicatedPage/index.tsx:151
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:301
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:46
 msgid "Event page"
@@ -5253,7 +5276,7 @@ msgctxt "event menu"
 msgid "Event pages"
 msgstr "Veranstaltungsseiten"
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:148
+#: src/components/layouts/EventDedicatedPage/index.tsx:106
 #: src/components/routes/event/EventPages/index.tsx:314
 msgid "Event pages"
 msgstr "Veranstaltungsseiten"
@@ -5310,6 +5333,7 @@ msgstr "Veranstaltungszeitzone"
 msgid "Event Timezone"
 msgstr "Veranstaltungszeitzone"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:122
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:118
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:127
 msgid "Event title"
@@ -5398,7 +5422,7 @@ msgstr ""
 msgid "Everything essential is ready. You can put your event online."
 msgstr ""
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:40
+#: src/components/layouts/EventDedicatedPage/index.tsx:41
 msgid "Everything you need to know before coming to {title}."
 msgstr "Alles, was du vor deinem Besuch von {title} wissen musst."
 
@@ -5746,13 +5770,13 @@ msgstr "Fehler beim Hochladen des Bildes. Bitte versuchen Sie es erneut."
 msgid "Failed to verify email"
 msgstr "E-Mail konnte nicht verifiziert werden"
 
-#: src/utilites/eventPages.ts:15
-msgctxt "event dedicated page"
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:245
+#: src/components/routes/landing/MarketingHeader/index.tsx:54
 msgid "FAQ"
 msgstr "FAQ"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:245
-#: src/components/routes/landing/MarketingHeader/index.tsx:54
+#: src/utilites/eventPages.ts:15
+msgctxt "event dedicated page"
 msgid "FAQ"
 msgstr "FAQ"
 
@@ -5889,6 +5913,7 @@ msgstr "Erste Rechnungsnummer"
 #: src/components/modals/ManageOrderModal/index.tsx:144
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:585
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:890
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:121
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:117
 #: src/components/routes/landing/DemoRequestForm/index.tsx:119
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:126
@@ -6096,7 +6121,7 @@ msgstr "kostenlos, mit Anmeldung"
 msgid "French"
 msgstr "Französisch"
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:31
+#: src/components/layouts/EventDedicatedPage/index.tsx:32
 #: src/components/routes/landing/index.tsx:538
 msgid "Frequently asked questions"
 msgstr "Häufige Fragen"
@@ -6235,7 +6260,7 @@ msgstr "Sofortige Auszahlung über Stripe Connect"
 msgid "Get started"
 msgstr "Erste Schritte"
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:86
+#: src/components/layouts/EventDedicatedPage/index.tsx:102
 #: src/components/layouts/EventHomepage/index.tsx:417
 #: src/components/layouts/EventHomepage/index.tsx:882
 msgid "Get Tickets"
@@ -6865,6 +6890,7 @@ msgstr "Persönlichen Link einfügen"
 msgid "Insert Variable"
 msgstr "Variable einfügen"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:185
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:167
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:168
 msgid "Insert:"
@@ -7779,7 +7805,7 @@ msgstr "Medium (500)"
 msgid "Meet our audience where emotions run high."
 msgstr ""
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:38
+#: src/components/layouts/EventDedicatedPage/index.tsx:39
 msgid "Meet the artists who will be on stage for {title}."
 msgstr "Die Künstler, die bei {title} auf der Bühne stehen."
 
@@ -7787,6 +7813,7 @@ msgstr "Die Künstler, die bei {title} auf der Bühne stehen."
 #: src/components/common/ContactOrganizerModal/index.tsx:88
 #: src/components/common/OrdersTable/index.tsx:258
 #: src/components/modals/SendMessageModal/index.tsx:358
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:177
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:159
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:160
 msgid "Message"
@@ -7850,11 +7877,6 @@ msgstr "Nachricht geplant"
 msgid "Message Sent"
 msgstr "Nachricht gesendet"
 
-#: src/components/routes/event/Settings/index.tsx:60
-msgctxt "event settings tab"
-msgid "Messages"
-msgstr "Nachrichten"
-
 #: src/components/layouts/Admin/index.tsx:18
 #: src/components/routes/event/messages.tsx:225
 msgid "Messages"
@@ -7864,6 +7886,11 @@ msgstr "Mitteilungen"
 msgctxt "event menu"
 msgid "Messages"
 msgstr "Mitteilungen"
+
+#: src/components/routes/event/Settings/index.tsx:61
+msgctxt "event settings tab"
+msgid "Messages"
+msgstr "Nachrichten"
 
 #: src/components/routes/landing/index.tsx:197
 msgid "Messages to attendees (e-mail and/or SMS)"
@@ -9045,6 +9072,10 @@ msgstr "Ein Scan des QR-Codes und der Eintritt ist erfasst: Das Namensschild wir
 msgid "One short sentence that sums up the organizer. Shown on the home page and in search results."
 msgstr ""
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:157
+msgid "One SMS per attendee with a valid number, never twice. Numbers that replied STOP receive nothing."
+msgstr "Eine SMS pro Teilnehmer mit gültiger Nummer, nie zweimal. Nummern, die mit STOP geantwortet haben, erhalten nichts."
+
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:153
 msgid "One SMS per attendee with a valid number. Box office sales, attendees added manually and numbers that replied STOP receive nothing."
 msgstr "Eine SMS pro Teilnehmer mit gültiger Nummer. Verkäufe an der Abendkasse, manuell hinzugefügte Teilnehmer und Nummern, die mit STOP geantwortet haben, erhalten nichts."
@@ -10107,6 +10138,7 @@ msgstr "Diesen Veranstalter und alle seine Veranstaltungen dauerhaft löschen."
 msgid "Personal Information"
 msgstr "Persönliche Daten"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:125
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:121
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:130
 msgid "Personal link"
@@ -10446,7 +10478,7 @@ msgstr "Bereitgestellt von"
 msgid "Practical info"
 msgstr ""
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:29
+#: src/components/layouts/EventDedicatedPage/index.tsx:30
 #: src/utilites/eventPages.ts:13
 msgctxt "event dedicated page"
 msgid "Practical information"
@@ -10514,6 +10546,7 @@ msgstr "Verhindern Sie Überverkäufe durch gemeinsame Nutzung des Bestands übe
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:139
 #: src/components/routes/event/EventPages/index.tsx:353
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:222
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:198
 #: src/components/routes/event/TicketDesigner/index.tsx:219
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:121
@@ -11187,7 +11220,7 @@ msgstr "Vorschlag neu erstellen"
 msgid "Regional Settings"
 msgstr "Regionale Einstellungen"
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:85
+#: src/components/layouts/EventDedicatedPage/index.tsx:101
 msgctxt "event dedicated page cta"
 msgid "Register"
 msgstr "Registrieren"
@@ -11633,6 +11666,7 @@ msgstr "Veranstaltung wiederherstellen"
 msgid "Restore Organizer"
 msgstr "Veranstalter wiederherstellen"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:203
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:185
 msgid "Restore the default text"
 msgstr "Standardtext wiederherstellen"
@@ -11776,7 +11810,7 @@ msgctxt "event menu"
 msgid "Sales"
 msgstr "Verkauf"
 
-#: src/components/routes/event/Settings/index.tsx:49
+#: src/components/routes/event/Settings/index.tsx:50
 msgctxt "event settings tab"
 msgid "Sales"
 msgstr "Verkauf"
@@ -11849,6 +11883,7 @@ msgstr "San Francisco"
 #: src/components/routes/event/Settings/Sections/MiscSettings/index.tsx:121
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:265
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:121
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:232
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:208
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:76
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:48
@@ -12138,8 +12173,8 @@ msgstr ""
 msgid "See all tickets"
 msgstr "Alle Tickets anzeigen"
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:183
-#: src/components/layouts/EventDedicatedPage/index.tsx:184
+#: src/components/layouts/EventDedicatedPage/index.tsx:141
+#: src/components/layouts/EventDedicatedPage/index.tsx:142
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:231
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:232
 msgid "See also"
@@ -12380,6 +12415,10 @@ msgstr "Neuen Code senden"
 msgid "Send an SMS to the attendees of an event at the date and time of your choice. Unsubscribed numbers are left out and each number receives the reminder only once."
 msgstr "Senden Sie den Teilnehmern einer Veranstaltung eine SMS zum gewünschten Datum und zur gewünschten Uhrzeit. Abgemeldete Nummern werden ausgeschlossen und jede Nummer erhält die Erinnerung nur einmal."
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:156
+msgid "Send an SMS when an attendee cancels their registration"
+msgstr "Eine SMS senden, wenn ein Teilnehmer seine Anmeldung storniert"
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:141
 msgid "Send and receive SMS with your customers from your own Android phone, using the PICHA SMS app. Replies appear in SMS messages."
 msgstr "Sende und empfange SMS mit deinen Kunden über dein eigenes Android-Telefon mit der PICHA SMS-App. Antworten erscheinen unter SMS-Nachrichten."
@@ -12589,6 +12628,7 @@ msgstr "Legen Sie die Startnummer für die Rechnungsnummerierung fest. Dies kann
 msgid "Set up check-in lists for different entrances, sessions, or days."
 msgstr "Richten Sie Check-in-Listen für verschiedene Eingänge, Sitzungen oder Tage ein."
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:147
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:143
 msgid "Set up SMS messaging"
 msgstr "SMS-Nachrichten einrichten"
@@ -12610,7 +12650,7 @@ msgstr "Einstellung aktualisiert"
 #: src/components/layouts/Kiosk/index.tsx:65
 #: src/components/layouts/OrganizerLayout/index.tsx:77
 #: src/components/modals/DuplicateEventModal/index.tsx:27
-#: src/components/routes/event/Settings/index.tsx:101
+#: src/components/routes/event/Settings/index.tsx:103
 #: src/components/routes/kiosk/Settings/index.tsx:60
 msgid "Settings"
 msgstr "Einstellungen"
@@ -13407,6 +13447,7 @@ msgstr "SEO-Einstellungen erfolgreich aktualisiert"
 
 #: src/components/routes/event/Settings/Sections/AttendanceResponseSettings/index.tsx:39
 #: src/components/routes/event/Settings/Sections/EmbeddedRegistrationSettings/index.tsx:46
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:112
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:108
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:40
 msgid "Successfully Updated Settings"
@@ -13711,7 +13752,7 @@ msgstr ""
 msgid "The AI is looking up your event and writing the description…"
 msgstr ""
 
-#: src/components/layouts/EventDedicatedPage/index.tsx:27
+#: src/components/layouts/EventDedicatedPage/index.tsx:28
 msgid "The artists"
 msgstr "Die Künstler"
 
@@ -13859,6 +13900,7 @@ msgstr "Die Sprache des Kunden"
 msgid "The maximum number of products for {0}is {1}"
 msgstr "Die maximale Anzahl an Produkten für {0} ist {1}"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:59
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:57
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:66
 msgid "The message cannot be empty"
@@ -13905,9 +13947,14 @@ msgstr ""
 msgid "The personal confirmation link is not available yet: it will be left out of the message until it is."
 msgstr "Der persönliche Bestätigungslink ist noch nicht verfügbar: Er wird bis dahin aus der Nachricht weggelassen."
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:217
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:193
 msgid "The personal link is only available when attendees can confirm or cancel their attendance (Sales tab). Until then, the link and its label are left out of the message."
 msgstr "Der persönliche Link ist nur verfügbar, wenn Teilnehmer ihre Teilnahme bestätigen oder absagen können (Reiter Verkauf). Bis dahin werden der Link und seine Beschriftung aus der Nachricht entfernt."
+
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:211
+msgid "The personal link lets the attendee find their registration again. When there is none for an attendee, the link and its label are left out of the message."
+msgstr "Mit dem persönlichen Link findet der Teilnehmer seine Anmeldung wieder. Gibt es für einen Teilnehmer keinen, werden der Link und seine Beschriftung aus der Nachricht entfernt."
 
 #: src/components/routes/organizer/Sms/index.tsx:101
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
@@ -13982,6 +14029,7 @@ msgstr "Der SMS-Assistent ist auf dieser Plattform noch nicht verfügbar."
 msgid "The SMS could not be sent"
 msgstr "Die SMS konnte nicht gesendet werden"
 
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:143
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:139
 msgid "The SMS messaging of this organizer is not configured yet. Set up the sending line to enable this option."
 msgstr "Die SMS-Nachrichten dieses Veranstalters sind noch nicht eingerichtet. Richten Sie die Versandleitung ein, um diese Option zu aktivieren."
@@ -14549,6 +14597,7 @@ msgid "TikTok"
 msgstr "TikTok"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:148
+#: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:124
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:120
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:129
 msgid "Time"
