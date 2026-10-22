@@ -331,6 +331,12 @@ const cookies: LegalDocument = {
                 <li>Session et authentification (connexion à votre compte) ;</li>
                 <li>Déroulement de la commande (panier, réservation temporaire des billets) ;</li>
                 <li>Préférences : langue d'affichage ;</li>
+                <li>
+                    Stockage local de votre inscription à un événement, sur cet appareil uniquement : il sert
+                    seulement à vous proposer de retrouver votre page de venue. Il ne contient ni coordonnées ni
+                    lien personnel, l'accès à votre venue demande toujours un code envoyé à votre e-mail ou à
+                    votre téléphone, et il s'efface après la fin de l'événement ;
+                </li>
                 <li>Mémorisation de votre choix sur les cookies.</li>
             </ul>
 
