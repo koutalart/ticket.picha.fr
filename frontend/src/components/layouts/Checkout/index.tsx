@@ -282,7 +282,7 @@ const Checkout = () => {
                                             <ShareComponent
                                                 title={event.title}
                                                 text={t`Check out this event!`}
-                                                url={eventHomepageUrl(event)}
+                                                url={eventHomepageUrl(event, publicEvent?.organizer)}
                                                 hideShareButtonText={isMobile}
                                             />
 

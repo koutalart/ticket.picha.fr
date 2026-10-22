@@ -50,6 +50,8 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
 }
 
 .welcomeMessage {
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-family: $font-display;
   font-size: 24px;
   font-weight: 600;
@@ -58,6 +60,8 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
 }
 
 .confirmationText {
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-size: 15px;
   color: var(--checkout-text-secondary, #6B7280);
 
@@ -97,8 +101,9 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
   }
 
   .value {
+    min-width: 0;
     word-wrap: break-word;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
     white-space: normal;
     color: var(--checkout-text-primary, #111827);
   }
@@ -178,7 +183,8 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
 }
 
 .guestEmail {
-  word-break: break-all;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .guestProduct {
@@ -204,6 +210,8 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
 }
 
 .fullscreenWelcome {
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -222,8 +230,11 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
 }
 
 .fullscreenWelcomeTitle {
+  max-width: 100%;
   margin: 0;
-  font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+  font-size: clamp(1.35rem, 6vw, 2.6rem);
+  overflow-wrap: anywhere;
+  hyphens: auto;
   font-weight: 800;
   line-height: 1.02;
   letter-spacing: -0.025em;
@@ -231,18 +242,23 @@ $font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
 }
 
 .fullscreenWelcomeSubtitle {
-  font-size: 0.9rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: clamp(0.78rem, 3.4vw, 0.9rem);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .fullscreenWelcomeDate {
-  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  max-width: 100%;
+  font-size: clamp(1rem, 4.2vw, 1.4rem);
   font-weight: 600;
 }
 
 .fullscreenWelcomeEmail {
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-size: 0.9rem;
   opacity: 0.8;
 }

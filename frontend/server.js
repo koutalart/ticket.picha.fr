@@ -106,6 +106,59 @@ async function main() {
         return cached?.organizer ?? null;
     };
 
+    // Participant pages opened on the platform for an organizer that has its own domain are moved onto that domain.
+    // Checkout steps before the summary stay where they are: the checkout session lives in the tab's sessionStorage.
+    const EVENT_PARTICIPANT_PATH = /^\/(?:event|e)\/(\d+)\/(?!preview(?:\/|$))[^/]+(?:\/[^/]+)?\/?$|^\/checkout\/(\d+)\/[^/]+\/summary\/?$|^\/(?:product|venue)\/(\d+)\/[^/]+(?:\/print)?\/?$|^\/order\/(\d+)\/[^/]+\/print\/?$/;
+    const eventDomainCache = new Map();
+
+    const resolveEventCustomDomain = async (eventId) => {
+        const cached = eventDomainCache.get(eventId);
+        if (cached && cached.expiresAt > Date.now()) {
+            return cached.domain;
+        }
+
+        try {
+            const response = await fetch(
+                `${process.env.VITE_API_URL_SERVER}/public/events/${encodeURIComponent(eventId)}`,
+                {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(5000)}
+            );
+
+            if (response.ok || response.status === 404) {
+                const domain = response.ok
+                    ? normalizeHost((await response.json()).data?.organizer?.custom_domain || '') || null
+                    : null;
+                eventDomainCache.set(eventId, {domain, expiresAt: Date.now() + CUSTOM_DOMAIN_CACHE_TTL_MS});
+                return domain;
+            }
+        } catch (error) {
+            console.error(`Event custom domain lookup failed for event ${eventId}`, error);
+        }
+
+        return cached?.domain ?? null;
+    };
+
+    const isPublicPlatformHost = (host) => !!platformHost
+        && host === platformHost
+        && platformHost !== 'localhost'
+        && platformHost.includes('.')
+        && !/^[\d.]+$/.test(platformHost);
+
+    const participantCustomDomainRedirect = async (req, requestHost) => {
+        if (req.method !== 'GET' || !isPublicPlatformHost(requestHost)) {
+            return null;
+        }
+
+        const match = req.originalUrl.split('?')[0].match(EVENT_PARTICIPANT_PATH);
+        const eventId = match?.slice(1).find(Boolean);
+        if (!eventId) {
+            return null;
+        }
+
+        const domain = await resolveEventCustomDomain(eventId);
+
+        return domain && domain !== platformHost ? `https://${domain}${req.originalUrl}` : null;
+    };
+
     const SERVER_ONLY_ENV_KEYS = new Set(['VITE_API_URL_SERVER']);
 
     const getViteEnvironmentVariables = (overrides = {}) => {
@@ -349,6 +402,13 @@ Sitemap: ${frontendUrl}/sitemap.xml
             }
 
             req.headers[CUSTOM_DOMAIN_HEADER] = JSON.stringify(customDomain);
+        } else {
+            const participantRedirect = await participantCustomDomainRedirect(req, requestHost);
+            if (participantRedirect) {
+                res.setHeader('Cache-Control', 'no-store');
+                res.redirect(302, participantRedirect);
+                return;
+            }
         }
 
         try {
