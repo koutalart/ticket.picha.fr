@@ -177,7 +177,7 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
         $this->service->sendForOrder(self::ORDER_ID);
 
         $this->assertSame(
-            "C'est validé, votre place pour Konka Wawa est réservée. samedi 24 octobre, accueil dès 20h00. Gérer ma venue : https://ticket.picha.fr/venue/8/a1?code=x",
+            "C'est validé, votre place pour Konka Wawa est réservée. Rendez-vous le samedi 24 octobre, accueil dès 20h00. Gérer ma venue : https://ticket.picha.fr/venue/8/a1?code=x",
             $this->sent[0]->content,
         );
     }

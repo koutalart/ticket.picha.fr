@@ -93,7 +93,7 @@ class SmsRegistrationConfirmationSettingTest extends TestCase
     public function test_default_message_is_in_french_with_the_variables(): void
     {
         $this->assertSame(
-            "C'est validé, votre place pour {evenement} est réservée. {date}, accueil dès {heure}. Gérer ma venue : {lien}",
+            "C'est validé, votre place pour {evenement} est réservée. Rendez-vous le {date}, accueil dès {heure}. Gérer ma venue : {lien}",
             SmsRegistrationConfirmationService::defaultMessage(),
         );
     }

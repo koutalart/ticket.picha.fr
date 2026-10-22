@@ -66,7 +66,7 @@ class SmsRegistrationConfirmationService
 
     public static function defaultMessage(): string
     {
-        return __('Confirmed, your place for {evenement} is booked. {date}, welcome from {heure}. Manage my attendance: {lien}', [], 'fr');
+        return __('Confirmed, your place for {evenement} is booked. See you on {date}, welcome from {heure}. Manage my attendance: {lien}', [], 'fr');
     }
 
     public function isEnabledForEvent(int $eventId): bool
