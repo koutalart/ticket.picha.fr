@@ -57,11 +57,11 @@ class AttendanceAccessCodeService
      *
      * @throws InvalidAttendanceAccessCodeException
      */
-    public function consume(int $eventId, AttendanceAccessContactDTO $contact, string $code): array
+    public function consume(int $eventId, AttendanceAccessContactDTO $contact, string $code, ?string $locale = null): array
     {
         $contactKey = $this->contactKey($eventId, $contact);
 
-        return $this->withLock($contactKey, fn () => $this->consumeUnlocked($contactKey, $code));
+        return $this->withLock($contactKey, fn () => $this->consumeUnlocked($contactKey, $code, $locale), $locale);
     }
 
     /**
@@ -69,14 +69,14 @@ class AttendanceAccessCodeService
      *
      * @throws InvalidAttendanceAccessCodeException
      */
-    private function consumeUnlocked(string $contactKey, string $code): array
+    private function consumeUnlocked(string $contactKey, string $code, ?string $locale): array
     {
         $key = self::KEY_PREFIX.$contactKey;
         $entry = $this->cache->get($key);
 
         if (! is_array($entry) || ($entry['expires_at'] ?? 0) < Carbon::now()->getTimestamp()) {
             $this->cache->forget($key);
-            throw $this->invalid();
+            throw $this->invalid($locale);
         }
 
         $normalizedCode = preg_replace('/\D+/', '', $code) ?? '';
@@ -92,7 +92,7 @@ class AttendanceAccessCodeService
                 $this->cache->put($key, $entry, max(1, (int) $entry['expires_at'] - Carbon::now()->getTimestamp()));
             }
 
-            throw $this->invalid();
+            throw $this->invalid($locale);
         }
 
         $this->cache->forget($key);
@@ -100,7 +100,7 @@ class AttendanceAccessCodeService
         return array_map('intval', (array) $entry['attendee_ids']);
     }
 
-    private function withLock(string $contactKey, callable $callback): mixed
+    private function withLock(string $contactKey, callable $callback, ?string $locale): mixed
     {
         $store = $this->cache->getStore();
 
@@ -111,7 +111,7 @@ class AttendanceAccessCodeService
         try {
             return $store->lock(self::KEY_PREFIX.'lock:'.$contactKey, 10)->block(5, $callback);
         } catch (LockTimeoutException) {
-            throw $this->invalid();
+            throw $this->invalid($locale);
         }
     }
 
@@ -125,10 +125,10 @@ class AttendanceAccessCodeService
         return 'attendance-access|'.config('app.key');
     }
 
-    private function invalid(): InvalidAttendanceAccessCodeException
+    private function invalid(?string $locale): InvalidAttendanceAccessCodeException
     {
         return new InvalidAttendanceAccessCodeException(
-            __('This code is incorrect or has expired. Request a new code.', [], CustomerLocale::get())
+            __('This code is incorrect or has expired. Request a new code.', [], $locale ?? CustomerLocale::get())
         );
     }
 }

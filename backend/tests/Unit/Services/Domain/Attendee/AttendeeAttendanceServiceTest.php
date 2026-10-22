@@ -18,6 +18,7 @@ use HiEvents\Services\Domain\Attendee\AttendeeAttendanceLinkGenerator;
 use HiEvents\Services\Domain\Attendee\AttendeeAttendanceService;
 use HiEvents\Services\Domain\Attendee\AttendeeCancellationService;
 use HiEvents\Services\Domain\Attendee\DTO\AttendeeAttendanceContextDTO;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -28,6 +29,7 @@ class AttendeeAttendanceServiceTest extends TestCase
     private MockInterface|EventRepositoryInterface $eventRepository;
     private MockInterface|OrderRepositoryInterface $orderRepository;
     private MockInterface|AttendeeCancellationService $cancellationService;
+    private MockInterface|CustomerLocaleResolver $customerLocaleResolver;
     private AttendeeAttendanceLinkGenerator $linkGenerator;
     private AttendeeAttendanceService $service;
 
@@ -44,6 +46,9 @@ class AttendeeAttendanceServiceTest extends TestCase
         $this->orderRepository = Mockery::mock(OrderRepositoryInterface::class);
         $this->cancellationService = Mockery::mock(AttendeeCancellationService::class);
         $this->linkGenerator = new AttendeeAttendanceLinkGenerator();
+        $this->customerLocaleResolver = Mockery::mock(CustomerLocaleResolver::class);
+        $this->customerLocaleResolver->shouldReceive('forEvent')->andReturn('fr')->byDefault();
+        $this->customerLocaleResolver->shouldReceive('forEventId')->andReturn('fr')->byDefault();
 
         $this->service = new AttendeeAttendanceService(
             attendeeRepository: $this->attendeeRepository,
@@ -51,6 +56,7 @@ class AttendeeAttendanceServiceTest extends TestCase
             orderRepository: $this->orderRepository,
             attendeeCancellationService: $this->cancellationService,
             linkGenerator: $this->linkGenerator,
+            customerLocaleResolver: $this->customerLocaleResolver,
         );
     }
 
@@ -169,6 +175,24 @@ class AttendeeAttendanceServiceTest extends TestCase
         $this->expectException(AttendanceResponseNotAllowedException::class);
 
         $this->service->cancel($context);
+    }
+
+    public function testMessagesFollowTheToneOfTheEventOrganizer(): void
+    {
+        $this->customerLocaleResolver->shouldReceive('forEvent')->andReturn('en');
+        $context = $this->createContext($this->createAttendee()->setStatus(AttendeeStatus::CANCELLED->name));
+
+        $this->assertSame('This registration has already been cancelled.', $this->service->getBlockingReason($context));
+    }
+
+    public function testAWrongLinkFollowsTheToneOfTheEventOrganizer(): void
+    {
+        $this->expectAttendeeLookup(null);
+        $this->customerLocaleResolver->shouldReceive('forEventId')->once()->with(2)->andReturn('en');
+
+        $this->expectExceptionMessage('This link is invalid or has expired.');
+
+        $this->service->getContext(2, 'a_short', 'anything');
     }
 
     public function testCannotRespondOnceTheEventHasStarted(): void

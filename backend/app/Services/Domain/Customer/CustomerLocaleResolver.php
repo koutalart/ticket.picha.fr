@@ -39,6 +39,26 @@ class CustomerLocaleResolver
         return CustomerLocale::forAddressForm($this->addressFormForEventId($eventId));
     }
 
+    /**
+     * « tu » only when every event belongs to an organizer in « tu ».
+     *
+     * @param  iterable<int|null>  $eventIds
+     */
+    public function forEventIds(iterable $eventIds): string
+    {
+        $addressForm = null;
+
+        foreach (collect($eventIds)->unique() as $eventId) {
+            $addressForm = $this->addressFormForEventId($eventId);
+
+            if ($addressForm !== CustomerAddressForm::TU) {
+                break;
+            }
+        }
+
+        return CustomerLocale::forAddressForm($addressForm ?? CustomerAddressForm::VOUS);
+    }
+
     public function addressFormForOrganizerId(?int $organizerId): CustomerAddressForm
     {
         if ($organizerId === null) {

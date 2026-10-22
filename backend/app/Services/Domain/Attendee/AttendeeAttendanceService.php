@@ -11,11 +11,11 @@ use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Exceptions\AttendanceResponseNotAllowedException;
 use HiEvents\Exceptions\InvalidAttendanceCodeException;
-use HiEvents\Helper\CustomerLocale;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Services\Domain\Attendee\DTO\AttendeeAttendanceContextDTO;
 use Throwable;
 
@@ -27,6 +27,7 @@ class AttendeeAttendanceService
         private readonly OrderRepositoryInterface    $orderRepository,
         private readonly AttendeeCancellationService $attendeeCancellationService,
         private readonly AttendeeAttendanceLinkGenerator $linkGenerator,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     )
     {
     }
@@ -46,7 +47,7 @@ class AttendeeAttendanceService
             ]);
 
         if ($attendee === null || !$this->linkGenerator->isValidCode($attendee, $code)) {
-            throw new InvalidAttendanceCodeException(__('This link is invalid or has expired.', [], CustomerLocale::get()));
+            throw new InvalidAttendanceCodeException(__('This link is invalid or has expired.', [], $this->customerLocaleResolver->forEventId($eventId)));
         }
 
         /** @var EventDomainObject $event */
@@ -54,9 +55,11 @@ class AttendeeAttendanceService
             ->loadRelation(new Relationship(EventSettingDomainObject::class))
             ->findById($eventId);
 
+        $locale = $this->customerLocaleResolver->forEvent($event);
+
         if (!$event->getEventSettings()?->getAllowAttendeeAttendanceResponse()) {
             throw new AttendanceResponseNotAllowedException(
-                __('The organizer has not enabled attendance confirmation for this event.', [], CustomerLocale::get())
+                __('The organizer has not enabled attendance confirmation for this event.', [], $locale)
             );
         }
 
@@ -69,6 +72,7 @@ class AttendeeAttendanceService
             attendee: $attendee,
             event: $event,
             order: $order,
+            locale: $locale,
         );
     }
 
@@ -108,7 +112,7 @@ class AttendeeAttendanceService
         ]);
 
         if (!$cancelled) {
-            throw new AttendanceResponseNotAllowedException(__('This registration has already been cancelled.', [], CustomerLocale::get()));
+            throw new AttendanceResponseNotAllowedException(__('This registration has already been cancelled.', [], $this->localeFor($context)));
         }
 
         return $this->attendeeRepository->findById($context->attendee->getId());
@@ -128,19 +132,26 @@ class AttendeeAttendanceService
 
     public function getBlockingReason(AttendeeAttendanceContextDTO $context): ?string
     {
+        $locale = $this->localeFor($context);
+
         if ($context->attendee->getStatus() === AttendeeStatus::CANCELLED->name) {
-            return __('This registration has already been cancelled.', [], CustomerLocale::get());
+            return __('This registration has already been cancelled.', [], $locale);
         }
 
         if ($context->attendee->getStatus() !== AttendeeStatus::ACTIVE->name
             || $context->order?->getStatus() !== OrderStatus::COMPLETED->name) {
-            return __('This registration cannot be changed.', [], CustomerLocale::get());
+            return __('This registration cannot be changed.', [], $locale);
         }
 
         if ($context->event->getStartDate() !== null && !$context->event->isEventInFuture()) {
-            return __('The event has already started, this registration can no longer be changed.', [], CustomerLocale::get());
+            return __('The event has already started, this registration can no longer be changed.', [], $locale);
         }
 
         return null;
+    }
+
+    private function localeFor(AttendeeAttendanceContextDTO $context): string
+    {
+        return $context->locale ?? $this->customerLocaleResolver->forEvent($context->event);
     }
 }

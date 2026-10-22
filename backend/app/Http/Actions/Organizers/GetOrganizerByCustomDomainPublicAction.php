@@ -6,6 +6,7 @@ use HiEvents\DomainObjects\Status\OrganizerStatus;
 use HiEvents\Helper\CustomDomainHelper;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Services\Domain\Organizer\CustomDomainCurrentEventService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -15,6 +16,7 @@ class GetOrganizerByCustomDomainPublicAction extends BaseAction
     public function __construct(
         private readonly OrganizerRepositoryInterface    $organizerRepository,
         private readonly CustomDomainCurrentEventService $currentEventService,
+        private readonly CustomerLocaleResolver          $customerLocaleResolver,
     )
     {
     }
@@ -37,6 +39,7 @@ class GetOrganizerByCustomDomainPublicAction extends BaseAction
             'id' => $organizer->getId(),
             'slug' => $organizer->getSlug(),
             'domain' => $organizer->getCustomDomain(),
+            'customer_address_form' => $this->customerLocaleResolver->addressFormForOrganizerId($organizer->getId())->value,
             'current_event' => $currentEvent ? [
                 'id' => $currentEvent->getId(),
                 'slug' => $currentEvent->getSlug(),

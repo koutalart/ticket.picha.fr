@@ -7,6 +7,8 @@ use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Exceptions\AttendanceAccessRateLimitedException;
 use HiEvents\Exceptions\AttendanceResponseNotAllowedException;
 use HiEvents\Exceptions\InvalidAttendanceAccessCodeException;
+use HiEvents\Exceptions\InvalidAttendanceAccessContactException;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Attendee\AttendanceAccess\DTO\RequestAttendanceAccessCodeDTO;
 use HiEvents\Services\Application\Handlers\Attendee\AttendanceAccess\DTO\VerifyAttendanceAccessCodeDTO;
@@ -19,6 +21,7 @@ use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessEventReso
 use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessNotifier;
 use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessRateLimiter;
 use HiEvents\Services\Domain\Attendee\AttendeeAttendanceLinkGenerator;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\Repository;
@@ -40,6 +43,8 @@ class AttendanceAccessHandlersTest extends TestCase
 
     private AttendanceAccessRateLimiter $rateLimiter;
 
+    private CustomerLocaleResolver $customerLocaleResolver;
+
     private array $logs = [];
 
     private EventDomainObject $event;
@@ -53,6 +58,9 @@ class AttendanceAccessHandlersTest extends TestCase
         $this->event = (new EventDomainObject)->setId(4)->setOrganizerId(9)->setTitle('Concert');
         $this->eventResolver = m::mock(AttendanceAccessEventResolver::class);
         $this->eventResolver->shouldReceive('resolve')->with(4)->andReturn($this->event)->byDefault();
+        config(['app.customer_locale' => 'fr']);
+        $this->customerLocaleResolver = m::mock(CustomerLocaleResolver::class);
+        $this->customerLocaleResolver->shouldReceive('forEvent')->with($this->event)->andReturn('fr')->byDefault();
         $this->matcher = m::mock(AttendanceAccessContactMatcher::class);
         $this->notifier = m::mock(AttendanceAccessNotifier::class);
         $this->attendeeRepository = m::mock(AttendeeRepositoryInterface::class);
@@ -159,6 +167,52 @@ class AttendanceAccessHandlersTest extends TestCase
         $this->assertSame('invalid_code', $this->logs[0]['context']['result']);
     }
 
+    public function test_errors_are_in_tu_when_the_organizer_chose_tu(): void
+    {
+        $this->customerLocaleResolver->shouldReceive('forEvent')->with($this->event)->andReturn(CustomerLocale::FRENCH_TUTOIEMENT);
+        $this->matcher->shouldReceive('findAttendeeIds')->andReturn([]);
+
+        $this->assertSame(
+            "Saisis l'adresse e-mail ou le numéro de téléphone utilisé lors de l'inscription.",
+            $this->exceptionMessage(fn () => $this->requestHandler()->handle($this->requestDto('pas-un-contact'))),
+        );
+        $this->assertSame(
+            'Ce code est incorrect ou a expiré. Demande un nouveau code.',
+            $this->exceptionMessage(fn () => $this->verifyHandler()->handle($this->verifyDto('jo@example.com', '123456'))),
+        );
+
+        for ($request = 0; $request < 3; $request++) {
+            $this->requestHandler()->handle($this->requestDto('nobody@example.com'));
+        }
+        $this->assertSame(
+            'Trop de tentatives. Réessaie dans une heure.',
+            $this->exceptionMessage(fn () => $this->requestHandler()->handle($this->requestDto('nobody@example.com'))),
+        );
+    }
+
+    public function test_errors_keep_vous_otherwise(): void
+    {
+        $this->assertSame(
+            "Saisissez l'adresse e-mail ou le numéro de téléphone utilisé lors de l'inscription.",
+            $this->exceptionMessage(fn () => $this->requestHandler()->handle($this->requestDto('pas-un-contact'))),
+        );
+        $this->assertSame(
+            'Ce code est incorrect ou a expiré. Demandez un nouveau code.',
+            $this->exceptionMessage(fn () => $this->verifyHandler()->handle($this->verifyDto('jo@example.com', '123456'))),
+        );
+    }
+
+    private function exceptionMessage(callable $callback): string
+    {
+        try {
+            $callback();
+        } catch (InvalidAttendanceAccessContactException|InvalidAttendanceAccessCodeException|AttendanceAccessRateLimitedException $exception) {
+            return $exception->getMessage();
+        }
+
+        $this->fail('An error was expected');
+    }
+
     private function requestHandler(): RequestAttendanceAccessCodeHandler
     {
         return new RequestAttendanceAccessCodeHandler(
@@ -169,6 +223,7 @@ class AttendanceAccessHandlersTest extends TestCase
             $this->codeService,
             $this->notifier,
             $this->logger(),
+            $this->customerLocaleResolver,
         );
     }
 
@@ -182,6 +237,7 @@ class AttendanceAccessHandlersTest extends TestCase
             $this->attendeeRepository,
             new AttendeeAttendanceLinkGenerator,
             $this->logger(),
+            $this->customerLocaleResolver,
         );
     }
 

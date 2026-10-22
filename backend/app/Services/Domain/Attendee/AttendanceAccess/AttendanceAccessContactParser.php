@@ -15,35 +15,35 @@ class AttendanceAccessContactParser
     /**
      * @throws InvalidAttendanceAccessContactException
      */
-    public function parse(string $contact): AttendanceAccessContactDTO
+    public function parse(string $contact, ?string $locale = null): AttendanceAccessContactDTO
     {
         $trimmed = trim($contact);
 
         if (str_contains($trimmed, '@')) {
             $email = mb_strtolower($trimmed);
             if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-                throw $this->invalid();
+                throw $this->invalid($locale);
             }
 
             return new AttendanceAccessContactDTO(AttendanceAccessChannel::EMAIL, $email);
         }
 
         if (preg_match('/^[0-9+\-\s().]{6,25}$/', $trimmed) !== 1) {
-            throw $this->invalid();
+            throw $this->invalid($locale);
         }
 
         $phone = SmsPhoneNormalizer::normalize($trimmed);
         if ($phone === null) {
-            throw $this->invalid();
+            throw $this->invalid($locale);
         }
 
         return new AttendanceAccessContactDTO(AttendanceAccessChannel::PHONE, $phone);
     }
 
-    private function invalid(): InvalidAttendanceAccessContactException
+    private function invalid(?string $locale): InvalidAttendanceAccessContactException
     {
         return new InvalidAttendanceAccessContactException(
-            __('Please enter the email address or phone number used to register.', [], CustomerLocale::get())
+            __('Please enter the email address or phone number used to register.', [], $locale ?? CustomerLocale::get())
         );
     }
 }

@@ -84,6 +84,21 @@ class CustomerLocaleResolverTest extends TestCase
         self::assertSame('fr', $this->resolver->forEventId(null));
     }
 
+    public function test_several_events_are_in_tu_only_when_all_their_organizers_are(): void
+    {
+        $this->organizerSays(4, 'tu');
+        $this->organizerSays(5, 'tu');
+        $this->organizerSays(8, 'vous');
+        $this->eventRepository->shouldReceive('findFirst')->andReturnUsing(
+            fn (int $id) => (new EventDomainObject)->setId($id)->setOrganizerId([12 => 4, 13 => 4, 14 => 5, 20 => 8][$id])
+        );
+
+        self::assertSame(CustomerLocale::FRENCH_TUTOIEMENT, $this->resolver->forEventIds([12, 13, 12, 14]));
+        self::assertSame('fr', $this->resolver->forEventIds([12, 20]));
+        self::assertSame('fr', $this->resolver->forEventIds([20, 12]));
+        self::assertSame('fr', $this->resolver->forEventIds([]));
+    }
+
     public function test_tutoiement_only_applies_to_french(): void
     {
         config(['app.customer_locale' => 'en']);

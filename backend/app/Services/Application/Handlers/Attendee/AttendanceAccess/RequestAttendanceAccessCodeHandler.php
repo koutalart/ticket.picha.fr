@@ -15,6 +15,7 @@ use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessContactPa
 use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessEventResolver;
 use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessNotifier;
 use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessRateLimiter;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use Psr\Log\LoggerInterface;
 
 class RequestAttendanceAccessCodeHandler
@@ -27,6 +28,7 @@ class RequestAttendanceAccessCodeHandler
         private readonly AttendanceAccessCodeService $codeService,
         private readonly AttendanceAccessNotifier $notifier,
         private readonly LoggerInterface $logger,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     /**
@@ -39,7 +41,8 @@ class RequestAttendanceAccessCodeHandler
     public function handle(RequestAttendanceAccessCodeDTO $data): void
     {
         $event = $this->eventResolver->resolve($data->eventId);
-        $contact = $this->contactParser->parse($data->contact);
+        $locale = $this->customerLocaleResolver->forEvent($event);
+        $contact = $this->contactParser->parse($data->contact, $locale);
         $context = [
             'event_id' => $data->eventId,
             'channel' => $contact->channel->value,
@@ -48,7 +51,7 @@ class RequestAttendanceAccessCodeHandler
         ];
 
         try {
-            $this->rateLimiter->hitCodeRequest($this->codeService->contactKey($data->eventId, $contact), $data->ipAddress);
+            $this->rateLimiter->hitCodeRequest($this->codeService->contactKey($data->eventId, $contact), $data->ipAddress, $locale);
         } catch (AttendanceAccessRateLimitedException $exception) {
             $this->logger->warning('Attendance access code request rate limited', $context + ['result' => 'rate_limited']);
             throw $exception;

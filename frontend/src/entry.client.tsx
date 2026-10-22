@@ -43,7 +43,7 @@ async function initClientApp() {
     setupScrollManagement(browserRouter);
 
     const syncCustomerAddressForm = (pathname: string) => {
-        resolveCustomerAddressForm(pathname, queryClient, window.__CUSTOM_DOMAIN_ORGANIZER__?.id).then((form) => {
+        resolveCustomerAddressForm(pathname, queryClient, window.__CUSTOM_DOMAIN_ORGANIZER__).then((form) => {
             if (window.location.pathname === pathname) {
                 setCustomerAddressForm(form);
             }

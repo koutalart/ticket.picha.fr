@@ -20,6 +20,7 @@ use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessContactPa
 use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessEventResolver;
 use HiEvents\Services\Domain\Attendee\AttendanceAccess\AttendanceAccessRateLimiter;
 use HiEvents\Services\Domain\Attendee\AttendeeAttendanceLinkGenerator;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use Illuminate\Support\Collection;
 use Psr\Log\LoggerInterface;
 
@@ -33,6 +34,7 @@ class VerifyAttendanceAccessCodeHandler
         private readonly AttendeeRepositoryInterface $attendeeRepository,
         private readonly AttendeeAttendanceLinkGenerator $linkGenerator,
         private readonly LoggerInterface $logger,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     /**
@@ -45,8 +47,9 @@ class VerifyAttendanceAccessCodeHandler
      */
     public function handle(VerifyAttendanceAccessCodeDTO $data): Collection
     {
-        $this->eventResolver->resolve($data->eventId);
-        $contact = $this->contactParser->parse($data->contact);
+        $event = $this->eventResolver->resolve($data->eventId);
+        $locale = $this->customerLocaleResolver->forEvent($event);
+        $contact = $this->contactParser->parse($data->contact, $locale);
         $context = [
             'event_id' => $data->eventId,
             'channel' => $contact->channel->value,
@@ -55,8 +58,8 @@ class VerifyAttendanceAccessCodeHandler
         ];
 
         try {
-            $this->rateLimiter->hitVerification($data->ipAddress);
-            $attendeeIds = $this->codeService->consume($data->eventId, $contact, $data->code);
+            $this->rateLimiter->hitVerification($data->ipAddress, $locale);
+            $attendeeIds = $this->codeService->consume($data->eventId, $contact, $data->code, $locale);
         } catch (AttendanceAccessRateLimitedException|InvalidAttendanceAccessCodeException $exception) {
             $this->logger->warning('Attendance access code rejected', $context + [
                 'result' => $exception instanceof AttendanceAccessRateLimitedException ? 'rate_limited' : 'invalid_code',

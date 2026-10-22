@@ -13,6 +13,7 @@ class AttendeeAttendanceContextDTO extends BaseDataObject
         public readonly AttendeeDomainObject $attendee,
         public readonly EventDomainObject    $event,
         public readonly ?OrderDomainObject   $order,
+        public readonly ?string              $locale = null,
     )
     {
     }
