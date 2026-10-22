@@ -8,8 +8,10 @@ use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSettingsRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Organizer\DTO\PartialUpdateOrganizerSettingsDTO;
 use HiEvents\Services\Application\Handlers\Organizer\Settings\PartialUpdateOrganizerSettingsHandler;
+use HiEvents\Services\Domain\Mail\OrganizerMailSenderResolver;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 class PartialUpdateOrganizerSettingsHandlerTest extends TestCase
@@ -30,6 +32,10 @@ class PartialUpdateOrganizerSettingsHandlerTest extends TestCase
         $this->handler = new PartialUpdateOrganizerSettingsHandler(
             organizerSettingsRepository: $this->settingsRepository,
             organizerRepository: $this->organizerRepository,
+            organizerMailSenderResolver: new OrganizerMailSenderResolver(
+                $this->settingsRepository,
+                Mockery::mock(LoggerInterface::class),
+            ),
         );
     }
 
@@ -141,5 +147,51 @@ class PartialUpdateOrganizerSettingsHandlerTest extends TestCase
         ]);
 
         $this->handler->handle($dto);
+    }
+
+    public function testEmailSenderNameIsSanitizedBeforeBeingPersisted(): void
+    {
+        $organizer = (new OrganizerDomainObject())->setId(1);
+        $existingSettings = (new OrganizerSettingDomainObject())->setId(10)->setOrganizerId(1);
+
+        $this->organizerRepository->shouldReceive('findFirstWhere')->once()->andReturn($organizer);
+        $this->settingsRepository->shouldReceive('findFirstWhere')->once()->andReturn($existingSettings);
+        $this->settingsRepository
+            ->shouldReceive('updateWhere')
+            ->once()
+            ->with(
+                Mockery::on(fn (array $attributes) => $attributes['email_sender_name'] === 'Innocent Event'),
+                Mockery::any()
+            );
+        $this->settingsRepository->shouldReceive('findFirst')->with(10)->once()->andReturn($existingSettings);
+
+        $this->handler->handle(PartialUpdateOrganizerSettingsDTO::from([
+            'organizer_id' => 1,
+            'account_id' => '100',
+            'email_sender_name' => "  <b>Innocent</b>\r\n Event  ",
+        ]));
+    }
+
+    public function testBlankEmailSenderNameIsStoredAsNull(): void
+    {
+        $organizer = (new OrganizerDomainObject())->setId(1);
+        $existingSettings = (new OrganizerSettingDomainObject())->setId(10)->setOrganizerId(1)->setEmailSenderName('Ancien nom');
+
+        $this->organizerRepository->shouldReceive('findFirstWhere')->once()->andReturn($organizer);
+        $this->settingsRepository->shouldReceive('findFirstWhere')->once()->andReturn($existingSettings);
+        $this->settingsRepository
+            ->shouldReceive('updateWhere')
+            ->once()
+            ->with(
+                Mockery::on(fn (array $attributes) => array_key_exists('email_sender_name', $attributes) && $attributes['email_sender_name'] === null),
+                Mockery::any()
+            );
+        $this->settingsRepository->shouldReceive('findFirst')->with(10)->once()->andReturn($existingSettings);
+
+        $this->handler->handle(PartialUpdateOrganizerSettingsDTO::from([
+            'organizer_id' => 1,
+            'account_id' => '100',
+            'email_sender_name' => '   ',
+        ]));
     }
 }
