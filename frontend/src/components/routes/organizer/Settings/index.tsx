@@ -4,6 +4,7 @@ import { SocialLinks } from "./Sections/SocialLinks";
 import { AddressSettings } from "./Sections/AddressSettings";
 import EmailTemplateSettings from "./Sections/EmailTemplateSettings";
 import { EmailSenderSettings } from "./Sections/EmailSenderSettings";
+import { CustomerAddressFormSettings } from "./Sections/CustomerAddressFormSettings";
 import { EventDefaults } from "./Sections/EventDefaults";
 import { PlatformFeesSettings } from "./Sections/PlatformFeesSettings";
 import { DangerZoneSettings } from "./Sections/DangerZoneSettings";
@@ -17,7 +18,7 @@ import { PageBody } from "../../../common/PageBody";
 import { PageTitle } from "../../../common/PageTitle";
 import { t } from "@lingui/macro";
 import { Box, Group, NavLink as MantineNavLink, Stack } from "@mantine/core";
-import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconWebhook, IconBrandMeta, IconMessage, IconMessageBolt, IconBan, IconSend } from "@tabler/icons-react";
+import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconWebhook, IconBrandMeta, IconMessage, IconMessageBolt, IconBan, IconSend, IconMessageCircle } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "../../../common/Card";
@@ -66,6 +67,12 @@ const Settings = () => {
                 label: t`SEO`,
                 icon: IconBrandGoogleAnalytics,
                 component: SeoSettings
+            },
+            {
+                id: 'customer-address-form',
+                label: t`Tone with customers`,
+                icon: IconMessageCircle,
+                component: CustomerAddressFormSettings,
             },
             {
                 id: 'email-sender',

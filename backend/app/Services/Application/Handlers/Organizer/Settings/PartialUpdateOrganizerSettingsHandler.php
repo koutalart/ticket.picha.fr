@@ -2,6 +2,7 @@
 
 namespace HiEvents\Services\Application\Handlers\Organizer\Settings;
 
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\OrganizerSettingDomainObject;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
@@ -104,6 +105,8 @@ class PartialUpdateOrganizerSettingsHandler
             'email_sender_name' => $this->organizerMailSenderResolver->sanitize(
                 $dto->getProvided('emailSenderName', $organizerSettings->getEmailSenderName())
             ),
+            'customer_address_form' => $dto->getProvided('customerAddressForm', $organizerSettings->getCustomerAddressForm())
+                ?? CustomerAddressForm::VOUS->value,
         ], [
             'organizer_id' => $dto->organizerId,
             'id' => $organizerSettings->getId(),

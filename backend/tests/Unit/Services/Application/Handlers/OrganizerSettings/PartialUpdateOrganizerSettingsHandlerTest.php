@@ -194,4 +194,60 @@ class PartialUpdateOrganizerSettingsHandlerTest extends TestCase
             'email_sender_name' => '   ',
         ]));
     }
+
+    public function testCustomerAddressFormIsPersisted(): void
+    {
+        $this->expectCustomerAddressFormUpdate(
+            (new OrganizerSettingDomainObject())->setId(10)->setOrganizerId(1),
+            ['customer_address_form' => 'tu'],
+            'tu',
+        );
+    }
+
+    public function testCustomerAddressFormKeepsExistingValueWhenNotProvided(): void
+    {
+        $this->expectCustomerAddressFormUpdate(
+            (new OrganizerSettingDomainObject())->setId(10)->setOrganizerId(1)->setCustomerAddressForm('tu'),
+            ['seo_title' => 'Halloween'],
+            'tu',
+        );
+    }
+
+    public function testNullCustomerAddressFormFallsBackToVous(): void
+    {
+        $this->expectCustomerAddressFormUpdate(
+            (new OrganizerSettingDomainObject())->setId(10)->setOrganizerId(1)->setCustomerAddressForm('tu'),
+            ['customer_address_form' => null],
+            'vous',
+        );
+    }
+
+    public function testCustomerAddressFormDefaultsToVous(): void
+    {
+        $this->assertSame('vous', (new OrganizerSettingDomainObject())->getCustomerAddressForm());
+    }
+
+    private function expectCustomerAddressFormUpdate(
+        OrganizerSettingDomainObject $existingSettings,
+        array $payload,
+        string $expected,
+    ): void {
+        $organizer = (new OrganizerDomainObject())->setId(1);
+
+        $this->organizerRepository->shouldReceive('findFirstWhere')->once()->andReturn($organizer);
+        $this->settingsRepository->shouldReceive('findFirstWhere')->once()->andReturn($existingSettings);
+        $this->settingsRepository
+            ->shouldReceive('updateWhere')
+            ->once()
+            ->with(
+                Mockery::on(fn (array $attributes) => $attributes['customer_address_form'] === $expected),
+                Mockery::any()
+            );
+        $this->settingsRepository->shouldReceive('findFirst')->with(10)->once()->andReturn($existingSettings);
+
+        $this->handler->handle(PartialUpdateOrganizerSettingsDTO::from(array_merge([
+            'organizer_id' => 1,
+            'account_id' => '100',
+        ], $payload)));
+    }
 }

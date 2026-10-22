@@ -78,6 +78,8 @@ class PartialUpdateOrganizerSettingsDTO extends BaseDataObject
 
         // E-mails
         public readonly string|Optional|null                          $emailSenderName,
+
+        public readonly string|Optional|null                          $customerAddressForm,
     )
     {
     }

@@ -632,7 +632,10 @@ export interface OrganizerSettings {
     meta_test_event_code?: string | null;
     meta_conversions_api_token?: string | null;
     email_sender_name?: string | null;
+    customer_address_form?: CustomerAddressForm;
 }
+
+export type CustomerAddressForm = 'vous' | 'tu';
 
 export interface TrackingPixelConfig {
     provider: string;

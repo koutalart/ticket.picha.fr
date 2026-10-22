@@ -34,6 +34,7 @@ class OrganizerSettingsResource extends BaseResource
             'meta_conversions_api_configured' => !empty($this->getMetaConversionsApiToken()),
             'meta_test_event_code' => $this->getMetaTestEventCode(),
             'email_sender_name' => $this->getEmailSenderName(),
+            'customer_address_form' => $this->getCustomerAddressForm(),
         ];
     }
 }
