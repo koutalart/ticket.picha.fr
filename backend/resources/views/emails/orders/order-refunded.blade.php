@@ -6,7 +6,7 @@
 
 @php /** @see \HiEvents\Mail\Order\OrderRefunded */ @endphp
 
-<x-mail::message>
+<x-mail::message :emailLogo="$emailLogo ?? null">
 {{ __('Hello') }},
 
 {{ __('You have received a refund of :refundAmount for the following event: :eventTitle.', ['refundAmount' => \HiEvents\Helper\EmailFormatHelper::money($refundAmount->toFloat(), $order->getCurrency()), 'eventTitle' => $event->getTitle()]) }}

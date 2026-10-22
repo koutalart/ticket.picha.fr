@@ -24,6 +24,7 @@ class OrderCancelled extends BaseMail
     )
     {
         parent::__construct();
+        $this->useEventEmailLogo($this->event, $this->organizer);
     }
 
     public function envelope(): Envelope

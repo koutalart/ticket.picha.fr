@@ -22,6 +22,7 @@ class EventMessage extends BaseMail
     )
     {
         parent::__construct();
+        $this->useEventEmailLogo($this->event);
     }
 
     public function envelope(): Envelope

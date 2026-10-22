@@ -28,6 +28,7 @@ class CreateImageHandler
         ImageType::EVENT_HERO_PARTNER_LOGO,
         ImageType::EVENT_HERO_SIGNATURE_LOGO,
         ImageType::EVENT_HERO_BRAND_LOGO,
+        ImageType::EVENT_EMAIL_LOGO,
     ];
 
     public function __construct(
