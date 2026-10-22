@@ -78,6 +78,8 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const HOMEPAGE_FOOTER_SETTINGS = 'homepage_footer_settings';
     final public const SCHEMA_EVENT_TYPE = 'schema_event_type';
     final public const EVENT_PAGES = 'event_pages';
+    final public const SMS_REGISTRATION_CONFIRMATION_ENABLED = 'sms_registration_confirmation_enabled';
+    final public const SMS_REGISTRATION_CONFIRMATION_MESSAGE = 'sms_registration_confirmation_message';
 
     protected int $id;
     protected int $event_id;
@@ -147,6 +149,8 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected array|string|null $homepage_footer_settings = null;
     protected string $schema_event_type = 'Event';
     protected array|string|null $event_pages = null;
+    protected bool $sms_registration_confirmation_enabled = false;
+    protected ?string $sms_registration_confirmation_message = null;
 
     public function toArray(): array
     {
@@ -219,6 +223,8 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'homepage_footer_settings' => $this->homepage_footer_settings ?? null,
                     'schema_event_type' => $this->schema_event_type ?? null,
                     'event_pages' => $this->event_pages ?? null,
+                    'sms_registration_confirmation_enabled' => $this->sms_registration_confirmation_enabled ?? null,
+                    'sms_registration_confirmation_message' => $this->sms_registration_confirmation_message ?? null,
                 ];
     }
 
@@ -969,5 +975,27 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getEventPages(): array|string|null
     {
         return $this->event_pages;
+    }
+
+    public function setSmsRegistrationConfirmationEnabled(bool $sms_registration_confirmation_enabled): self
+    {
+        $this->sms_registration_confirmation_enabled = $sms_registration_confirmation_enabled;
+        return $this;
+    }
+
+    public function getSmsRegistrationConfirmationEnabled(): bool
+    {
+        return $this->sms_registration_confirmation_enabled;
+    }
+
+    public function setSmsRegistrationConfirmationMessage(?string $sms_registration_confirmation_message): self
+    {
+        $this->sms_registration_confirmation_message = $sms_registration_confirmation_message;
+        return $this;
+    }
+
+    public function getSmsRegistrationConfirmationMessage(): ?string
+    {
+        return $this->sms_registration_confirmation_message;
     }
 }

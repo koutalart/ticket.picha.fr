@@ -52,6 +52,24 @@ class SmsReminderMessageRendererTest extends TestCase
         $this->assertSame("Bonjour, on vous attend à 20h00.\n\nA ce soir", $message);
     }
 
+    public function test_the_label_of_a_missing_link_is_removed_with_it(): void
+    {
+        $template = "C'est validé pour {evenement}. {date}, accueil dès {heure}. Gérer ma venue : {lien}";
+
+        $this->assertSame(
+            "C'est validé pour Konka Wawa 25 ans. samedi 24 octobre, accueil dès 20h00.",
+            $this->renderer->render($template, $this->event(), null, null),
+        );
+        $this->assertSame(
+            "C'est validé pour Konka Wawa 25 ans. samedi 24 octobre, accueil dès 20h00. Gérer ma venue : https://ticket.picha.fr/venue/8/a1",
+            $this->renderer->render($template, $this->event(), null, 'https://ticket.picha.fr/venue/8/a1'),
+        );
+        $this->assertSame(
+            "A ce soir !\nMerci",
+            $this->renderer->render("A ce soir ! Votre venue : { lien }\nMerci", $this->event(), null, null),
+        );
+    }
+
     public function test_unknown_variables_are_kept(): void
     {
         $this->assertSame('Code {code}', $this->renderer->render('Code {code}', $this->event(), 'Awa', null));

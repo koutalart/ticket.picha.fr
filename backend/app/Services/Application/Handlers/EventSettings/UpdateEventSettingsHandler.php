@@ -119,6 +119,9 @@ class UpdateEventSettingsHandler
 
                     'embedded_registration_enabled' => $settings->embedded_registration_enabled,
 
+                    'sms_registration_confirmation_enabled' => $settings->sms_registration_confirmation_enabled,
+                    'sms_registration_confirmation_message' => $this->smsMessage($settings->sms_registration_confirmation_message),
+
                     'rich_footer_enabled' => $settings->rich_footer_enabled,
                     'homepage_footer_settings' => $this->footerSettingsSanitizer->sanitize($settings->homepage_footer_settings),
                     'schema_event_type' => $settings->schema_event_type,
@@ -142,5 +145,15 @@ class UpdateEventSettingsHandler
         }
 
         return $result;
+    }
+
+    /**
+     * Plain text sent by SMS: tags are removed, the purifier would encode the characters.
+     */
+    private function smsMessage(?string $message): ?string
+    {
+        $message = trim(strip_tags((string) $message));
+
+        return $message === '' ? null : $message;
     }
 }

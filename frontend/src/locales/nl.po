@@ -99,10 +99,12 @@ msgstr "{0} beschikbaar"
 msgid "{0} characters, {1} SMS"
 msgstr "{0} tekens, {1} sms"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:202
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:221
 msgid "{0} characters, {1} SMS per recipient"
 msgstr "{0} tekens, {1} sms per ontvanger"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:203
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:222
 msgid "{0} characters, 1 SMS per recipient"
 msgstr "{0} tekens, 1 sms per ontvanger"
@@ -1041,7 +1043,7 @@ msgstr "Beheerders Dashboard"
 msgid "Admin users have full access to events and account settings."
 msgstr "Admin-gebruikers hebben volledige toegang tot evenementen en accountinstellingen."
 
-#: src/components/routes/event/Settings/index.tsx:66
+#: src/components/routes/event/Settings/index.tsx:68
 msgctxt "event settings tab"
 msgid "Advanced"
 msgstr "Geavanceerd"
@@ -1629,7 +1631,7 @@ msgstr "Toegewezen configuratie"
 msgid "Assigned Tier"
 msgstr "Toegewezen niveau"
 
-#: src/components/routes/organizer/Sms/labels.ts:37
+#: src/components/routes/organizer/Sms/labels.ts:39
 msgid "Assistant"
 msgstr "Assistent"
 
@@ -1866,6 +1868,10 @@ msgstr "Automatisch aanbod is ingeschakeld"
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:60
 msgid "Auto-Process Waitlist"
 msgstr "Wachtlijst automatisch verwerken"
+
+#: src/components/routes/organizer/Sms/labels.ts:37
+msgid "Automatic message"
+msgstr "Automatisch bericht"
 
 #: src/components/common/ThemeColorControls/index.tsx:72
 msgid "Automatically detected based on background color, but can be overridden"
@@ -2341,7 +2347,7 @@ msgstr "geannuleerd"
 #: src/components/routes/kiosk/Orders/index.tsx:180
 #: src/components/routes/kiosk/Orders/index.tsx:195
 #: src/components/routes/kiosk/Orders/index.tsx:260
-#: src/components/routes/organizer/Sms/labels.ts:83
+#: src/components/routes/organizer/Sms/labels.ts:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:106
 msgid "Cancelled"
 msgstr "Geannuleerd"
@@ -3936,6 +3942,7 @@ msgstr "Gegevenseigendom"
 #: src/components/forms/QuestionForm/index.tsx:144
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:143
 #: src/components/routes/event/Reports/DailySalesReport/index.tsx:29
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:119
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:56
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:24
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:128
@@ -4129,7 +4136,7 @@ msgstr "Verwijderd evenement"
 
 #: src/components/routes/organizer/Sms/CampaignList.tsx:43
 #: src/components/routes/organizer/Sms/labels.ts:22
-#: src/components/routes/organizer/Sms/labels.ts:50
+#: src/components/routes/organizer/Sms/labels.ts:52
 #: src/components/routes/organizer/Sms/ReminderList.tsx:68
 msgid "Delivered"
 msgstr "Afgeleverd"
@@ -4463,6 +4470,10 @@ msgstr "bijv. Standaard, Premium, Enterprise"
 msgid "Each attendee can receive their personal link to confirm or cancel their attendance. Insert this variable in the message:"
 msgstr "Elke deelnemer kan een persoonlijke link ontvangen om zijn aanwezigheid te bevestigen of te annuleren. Voeg deze variabele toe aan het bericht:"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:130
+msgid "Each attendee receives an SMS as soon as their registration is confirmed, with their personal link to manage their attendance."
+msgstr "Elke deelnemer ontvangt een sms zodra de inschrijving is bevestigd, met een persoonlijke link om de aanwezigheid te beheren."
+
 #: src/components/modals/OfferWaitlistModal/index.tsx:129
 msgid "Each person will receive an email with a reserved spot to complete their purchase."
 msgstr "Elke persoon ontvangt een e-mail met een gereserveerde plek om de aankoop te voltooien."
@@ -4784,11 +4795,6 @@ msgstr "E-mailverificatie vereist"
 msgid "Email verified successfully!"
 msgstr "E-mail succesvol geverifieerd!"
 
-#: src/components/routes/event/Settings/index.tsx:59
-msgctxt "event settings tab"
-msgid "Emails"
-msgstr "E-mails"
-
 #: src/components/common/WidgetEditor/index.tsx:246
 #: src/components/common/WidgetEditor/index.tsx:275
 msgid "Embed Code"
@@ -5055,7 +5061,7 @@ msgstr "Fout bij het bevestigen van een e-mailwijziging"
 msgid "Error loading logs"
 msgstr "Fout bij het laden van logboeken"
 
-#: src/components/routes/event/Settings/index.tsx:40
+#: src/components/routes/event/Settings/index.tsx:41
 msgctxt "event settings tab"
 msgid "Essentials"
 msgstr "De basis"
@@ -5305,6 +5311,7 @@ msgstr "Tijdzone evenement"
 msgid "Event Timezone"
 msgstr "Tijdzone Evenement"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:118
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:127
 msgid "Event title"
 msgstr "Titel van het evenement"
@@ -5488,8 +5495,8 @@ msgstr "Facebook"
 #: src/components/routes/admin/Messages/index.tsx:127
 #: src/components/routes/organizer/Sms/CampaignList.tsx:47
 #: src/components/routes/organizer/Sms/labels.ts:24
-#: src/components/routes/organizer/Sms/labels.ts:52
-#: src/components/routes/organizer/Sms/labels.ts:81
+#: src/components/routes/organizer/Sms/labels.ts:54
+#: src/components/routes/organizer/Sms/labels.ts:83
 #: src/components/routes/organizer/Sms/ReminderList.tsx:69
 msgid "Failed"
 msgstr "Mislukt"
@@ -5883,6 +5890,7 @@ msgstr "Eerste factuurnummer"
 #: src/components/modals/ManageOrderModal/index.tsx:144
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:585
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:890
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:117
 #: src/components/routes/landing/DemoRequestForm/index.tsx:119
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:126
 #: src/components/routes/product-widget/CollectInformation/index.tsx:494
@@ -6858,6 +6866,7 @@ msgstr "Persoonlijke link invoegen"
 msgid "Insert Variable"
 msgstr "Variabele Invoegen"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:167
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:168
 msgid "Insert:"
 msgstr "Invoegen:"
@@ -7779,6 +7788,7 @@ msgstr "De artiesten die op het podium staan tijdens {title}."
 #: src/components/common/ContactOrganizerModal/index.tsx:88
 #: src/components/common/OrdersTable/index.tsx:258
 #: src/components/modals/SendMessageModal/index.tsx:358
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:159
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:160
 msgid "Message"
 msgstr "Bericht"
@@ -7840,6 +7850,11 @@ msgstr "Bericht gepland"
 #: src/components/modals/SendMessageModal/index.tsx:199
 msgid "Message Sent"
 msgstr "Bericht verzonden"
+
+#: src/components/routes/event/Settings/index.tsx:60
+msgctxt "event settings tab"
+msgid "Messages"
+msgstr "Berichten"
 
 #: src/components/layouts/Admin/index.tsx:18
 #: src/components/routes/event/messages.tsx:225
@@ -8803,7 +8818,7 @@ msgid "Not published: the page appears once it has content and is saved."
 msgstr "Niet gepubliceerd: de pagina verschijnt zodra ze inhoud heeft en is opgeslagen."
 
 #: src/components/routes/organizer/Sms/labels.ts:26
-#: src/components/routes/organizer/Sms/labels.ts:54
+#: src/components/routes/organizer/Sms/labels.ts:56
 msgid "Not sent (phone offline)"
 msgstr "Niet verzonden (telefoon offline)"
 
@@ -9030,6 +9045,10 @@ msgstr "Eén scan van de QR-code en de toegang is geregistreerd: de badge wordt 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:237
 msgid "One short sentence that sums up the organizer. Shown on the home page and in search results."
 msgstr ""
+
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:153
+msgid "One SMS per attendee with a valid number. Box office sales, attendees added manually and numbers that replied STOP receive nothing."
+msgstr "Eén sms per deelnemer met een geldig nummer. Kassaverkopen, handmatig toegevoegde deelnemers en nummers die STOP hebben geantwoord ontvangen niets."
 
 #: src/components/common/EventStatusBadge/index.tsx:18
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:31
@@ -10089,6 +10108,7 @@ msgstr "Verwijder deze organisator en al zijn evenementen permanent."
 msgid "Personal Information"
 msgstr "Persoonlijke gegevens"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:121
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:130
 msgid "Personal link"
 msgstr "Persoonlijke link"
@@ -10495,6 +10515,7 @@ msgstr "Voorkom oververkoop door voorraad te delen over meerdere tickettypes."
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:139
 #: src/components/routes/event/EventPages/index.tsx:353
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:198
 #: src/components/routes/event/TicketDesigner/index.tsx:219
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:121
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:141
@@ -11220,6 +11241,10 @@ msgstr "Inschrijving"
 msgid "Registration built into the page"
 msgstr "Inschrijving geïntegreerd in de pagina"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:129
+msgid "Registration confirmation SMS"
+msgstr "Sms ter bevestiging van inschrijving"
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:200
 msgid "Registration confirmed"
 msgstr "Inschrijving bevestigd"
@@ -11609,6 +11634,10 @@ msgstr "Evenement herstellen"
 msgid "Restore Organizer"
 msgstr "Organisator herstellen"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:185
+msgid "Restore the default text"
+msgstr "Standaardtekst herstellen"
+
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:126
 msgid "Restore this event to make it visible again."
 msgstr "Herstel dit evenement om het weer zichtbaar te maken."
@@ -11748,7 +11777,7 @@ msgctxt "event menu"
 msgid "Sales"
 msgstr "Verkoop"
 
-#: src/components/routes/event/Settings/index.tsx:48
+#: src/components/routes/event/Settings/index.tsx:49
 msgctxt "event settings tab"
 msgid "Sales"
 msgstr "Verkoop"
@@ -11821,6 +11850,7 @@ msgstr "San Francisco"
 #: src/components/routes/event/Settings/Sections/MiscSettings/index.tsx:121
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:265
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:121
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:208
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:76
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:48
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:526
@@ -11955,8 +11985,8 @@ msgstr "Gepland"
 
 #: src/components/routes/admin/Messages/index.tsx:125
 #: src/components/routes/event/messages.tsx:62
-#: src/components/routes/organizer/Sms/labels.ts:46
-#: src/components/routes/organizer/Sms/labels.ts:85
+#: src/components/routes/organizer/Sms/labels.ts:48
+#: src/components/routes/organizer/Sms/labels.ts:87
 msgid "Scheduled"
 msgstr "Gepland"
 
@@ -12334,6 +12364,10 @@ msgstr "Seminar"
 msgid "Send"
 msgstr "Stuur"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:152
+msgid "Send a confirmation SMS at each registration"
+msgstr "Bij elke inschrijving een bevestigingssms sturen"
+
 #: src/components/modals/SendMessageModal/index.tsx:227
 #: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:36
 msgid "Send a message"
@@ -12424,7 +12458,7 @@ msgstr "Bezig met verzenden"
 msgid "Sending date and time"
 msgstr "Datum en tijdstip van verzending"
 
-#: src/components/routes/organizer/Sms/labels.ts:77
+#: src/components/routes/organizer/Sms/labels.ts:79
 msgid "Sending in progress"
 msgstr "Verzending bezig"
 
@@ -12451,8 +12485,8 @@ msgstr "verstuurd"
 
 #: src/components/routes/admin/Messages/index.tsx:123
 #: src/components/routes/organizer/Sms/labels.ts:20
-#: src/components/routes/organizer/Sms/labels.ts:48
-#: src/components/routes/organizer/Sms/labels.ts:79
+#: src/components/routes/organizer/Sms/labels.ts:50
+#: src/components/routes/organizer/Sms/labels.ts:81
 #: src/components/routes/organizer/Sms/ReminderList.tsx:67
 msgid "Sent"
 msgstr "Verzonden"
@@ -12556,6 +12590,10 @@ msgstr "Stel het startnummer voor factuurnummering in. Dit kan niet worden gewij
 msgid "Set up check-in lists for different entrances, sessions, or days."
 msgstr "Stel inchecklijsten in voor verschillende ingangen, sessies of dagen."
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:143
+msgid "Set up SMS messaging"
+msgstr "Sms-berichten instellen"
+
 #: src/components/routes/welcome/index.tsx:43
 msgid "Set up your organization"
 msgstr "Stel je organisatie in"
@@ -12573,7 +12611,7 @@ msgstr "Instelling bijgewerkt"
 #: src/components/layouts/Kiosk/index.tsx:65
 #: src/components/layouts/OrganizerLayout/index.tsx:77
 #: src/components/modals/DuplicateEventModal/index.tsx:27
-#: src/components/routes/event/Settings/index.tsx:99
+#: src/components/routes/event/Settings/index.tsx:101
 #: src/components/routes/kiosk/Settings/index.tsx:60
 msgid "Settings"
 msgstr "Instellingen"
@@ -13370,6 +13408,7 @@ msgstr "SEO-instellingen succesvol bijgewerkt"
 
 #: src/components/routes/event/Settings/Sections/AttendanceResponseSettings/index.tsx:39
 #: src/components/routes/event/Settings/Sections/EmbeddedRegistrationSettings/index.tsx:46
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:108
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:40
 msgid "Successfully Updated Settings"
 msgstr "Instellingen succesvol bijgewerkt"
@@ -13821,6 +13860,7 @@ msgstr "De taal van de klant"
 msgid "The maximum number of products for {0}is {1}"
 msgstr "Het maximum aantal producten voor {0}is {1}"
 
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:57
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:66
 msgid "The message cannot be empty"
 msgstr "Het bericht mag niet leeg zijn"
@@ -13865,6 +13905,10 @@ msgstr ""
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:191
 msgid "The personal confirmation link is not available yet: it will be left out of the message until it is."
 msgstr "De persoonlijke bevestigingslink is nog niet beschikbaar: hij wordt tot die tijd uit het bericht weggelaten."
+
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:193
+msgid "The personal link is only available when attendees can confirm or cancel their attendance (Sales tab). Until then, the link and its label are left out of the message."
+msgstr "De persoonlijke link is alleen beschikbaar als deelnemers hun aanwezigheid kunnen bevestigen of annuleren (tabblad Verkoop). Tot die tijd worden de link en het label uit het bericht weggelaten."
 
 #: src/components/routes/organizer/Sms/index.tsx:101
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
@@ -13938,6 +13982,10 @@ msgstr "De SMS-assistent is nog niet beschikbaar op dit platform."
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:86
 msgid "The SMS could not be sent"
 msgstr "De sms kon niet worden verzonden"
+
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:139
+msgid "The SMS messaging of this organizer is not configured yet. Set up the sending line to enable this option."
+msgstr "De sms-berichten van deze organisator zijn nog niet ingesteld. Stel de verzendlijn in om deze optie te activeren."
 
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:65
 msgid "The team"
@@ -14502,6 +14550,7 @@ msgid "TikTok"
 msgstr "TikTok"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:148
+#: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:120
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:129
 msgid "Time"
 msgstr "Tijd"
@@ -15563,7 +15612,7 @@ msgstr "VK"
 #: src/components/common/WaitlistTable/index.tsx:24
 #: src/components/modals/OfferWaitlistModal/index.tsx:162
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:71
-#: src/components/routes/organizer/Sms/labels.ts:56
+#: src/components/routes/organizer/Sms/labels.ts:58
 msgid "Waiting"
 msgstr "Wachtend"
 

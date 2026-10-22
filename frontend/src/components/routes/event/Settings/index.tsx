@@ -13,6 +13,7 @@ import {PlatformFeesSettings} from "./Sections/PlatformFeesSettings";
 import {WaitlistSettings} from "./Sections/WaitlistSettings";
 import {AttendanceResponseSettings} from "./Sections/AttendanceResponseSettings";
 import {EmbeddedRegistrationSettings} from "./Sections/EmbeddedRegistrationSettings";
+import {SmsConfirmationSettings} from "./Sections/SmsConfirmationSettings";
 import {DangerZoneSettings} from "./Sections/DangerZoneSettings";
 import {useGetAccount} from "../../../../queries/useGetAccount.ts";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
@@ -56,9 +57,10 @@ export const Settings = () => {
         },
         {
             id: 'emails' as TabId,
-            label: t({message: 'Emails', context: 'event settings tab'}),
+            label: t({message: 'Messages', context: 'event settings tab'}),
             sections: [
                 {id: 'email-settings', component: EmailSettings},
+                {id: 'sms-confirmation-settings', component: SmsConfirmationSettings},
             ],
         },
         {

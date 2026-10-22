@@ -53,7 +53,7 @@ class SmsCustomerDirectoryRepository implements SmsCustomerDirectoryRepositoryIn
             ));
     }
 
-    public function findActiveAttendeesWithPhone(int $eventId): Collection
+    public function findActiveAttendeesWithPhone(int $eventId, ?int $orderId = null): Collection
     {
         $phoneAnswer = fn () => DB::table('question_answers')
             ->join('questions', 'questions.id', '=', 'question_answers.question_id')
@@ -81,6 +81,7 @@ class SmsCustomerDirectoryRepository implements SmsCustomerDirectoryRepositoryIn
         return DB::table('attendees')
             ->join('orders', 'orders.id', '=', 'attendees.order_id')
             ->where('attendees.event_id', $eventId)
+            ->when($orderId !== null, fn ($query) => $query->where('attendees.order_id', $orderId))
             ->where('attendees.status', AttendeeStatus::ACTIVE->name)
             ->whereNull('attendees.deleted_at')
             ->whereNull('orders.deleted_at')

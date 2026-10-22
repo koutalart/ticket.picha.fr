@@ -156,6 +156,11 @@ class PartialUpdateEventSettingsHandler
 
                 'embedded_registration_enabled' => $eventSettingsDTO->settings['embedded_registration_enabled'] ?? $existingSettings->getEmbeddedRegistrationEnabled(),
 
+                'sms_registration_confirmation_enabled' => $eventSettingsDTO->settings['sms_registration_confirmation_enabled'] ?? $existingSettings->getSmsRegistrationConfirmationEnabled(),
+                'sms_registration_confirmation_message' => array_key_exists('sms_registration_confirmation_message', $eventSettingsDTO->settings)
+                    ? $eventSettingsDTO->settings['sms_registration_confirmation_message']
+                    : $existingSettings->getSmsRegistrationConfirmationMessage(),
+
                 'rich_footer_enabled' => $eventSettingsDTO->settings['rich_footer_enabled'] ?? $existingSettings->getRichFooterEnabled(),
                 'homepage_footer_settings' => array_key_exists('homepage_footer_settings', $eventSettingsDTO->settings)
                     ? $eventSettingsDTO->settings['homepage_footer_settings']

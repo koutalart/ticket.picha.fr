@@ -14,6 +14,11 @@ class SmsReminderMessageRenderer
 
     private const PATTERN = '/\{\s*(pr[eé]nom|[eé]v[eé]nement|date|heure|lien)\s*\}/iu';
 
+    /**
+     * A label introducing the personal link ("Gérer ma venue : {lien}"), removed with the link when there is none.
+     */
+    private const LABELLED_LINK_PATTERN = '/[^.!?\n:]*:[ \t]*\{\s*lien\s*\}/iu';
+
     private const LOCALE = 'fr';
 
     public function render(string $template, EventDomainObject $event, ?string $firstName, ?string $personalLink): string
@@ -26,6 +31,10 @@ class SmsReminderMessageRenderer
             'heure' => $start?->format('H\hi') ?? '',
             'lien' => trim((string) $personalLink),
         ];
+
+        if ($values['lien'] === '') {
+            $template = preg_replace(self::LABELLED_LINK_PATTERN, '', $template) ?? $template;
+        }
 
         $rendered = preg_replace_callback(self::PATTERN, function (array $match) use ($values) {
             return $values[$this->key($match[1])] ?? $match[0];

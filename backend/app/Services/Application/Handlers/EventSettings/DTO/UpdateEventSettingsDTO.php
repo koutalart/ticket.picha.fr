@@ -105,6 +105,9 @@ class UpdateEventSettingsDTO extends BaseDTO
 
         public readonly bool                    $embedded_registration_enabled = false,
 
+        public readonly bool                    $sms_registration_confirmation_enabled = false,
+        public readonly ?string                 $sms_registration_confirmation_message = null,
+
         public readonly bool                    $rich_footer_enabled = false,
         public readonly ?array                  $homepage_footer_settings = null,
         public readonly string                  $schema_event_type = 'Event',
