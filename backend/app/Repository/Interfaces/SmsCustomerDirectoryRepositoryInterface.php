@@ -25,5 +25,5 @@ interface SmsCustomerDirectoryRepositoryInterface
      *
      * @return Collection<int, SmsReminderAttendeeDTO>
      */
-    public function findActiveAttendeesWithPhone(int $eventId): Collection;
+    public function findActiveAttendeesWithPhone(int $eventId, ?int $orderId = null): Collection;
 }

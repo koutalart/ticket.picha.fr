@@ -97,6 +97,8 @@ class EventSettingsResource extends JsonResource
             'allow_attendee_attendance_response' => $this->getAllowAttendeeAttendanceResponse(),
 
             'embedded_registration_enabled' => $this->getEmbeddedRegistrationEnabled(),
+            'sms_registration_confirmation_enabled' => $this->getSmsRegistrationConfirmationEnabled(),
+            'sms_registration_confirmation_message' => $this->getSmsRegistrationConfirmationMessage(),
             'rich_footer_enabled' => $this->getRichFooterEnabled(),
             'homepage_footer_settings' => $this->getHomepageFooterSettings(),
             'schema_event_type' => $this->getSchemaEventType(),

@@ -41,6 +41,7 @@ class SmsAssistantReplyGenerator
         'HUMAN' => 'Équipe',
         'AGENT' => 'Assistant (relu par l\'équipe)',
         'CAMPAIGN' => 'SMS de campagne',
+        'AUTOMATIC' => 'SMS automatique',
     ];
 
     private const SYSTEM_PROMPT = <<<'PROMPT'

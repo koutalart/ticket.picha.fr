@@ -141,6 +141,9 @@ class UpdateEventSettingsRequest extends BaseRequest
 
             'embedded_registration_enabled' => ['boolean'],
 
+            'sms_registration_confirmation_enabled' => ['boolean'],
+            'sms_registration_confirmation_message' => ['nullable', 'string', 'max:1000'],
+
             'rich_footer_enabled' => ['boolean'],
             'homepage_footer_settings' => ['nullable', 'array'],
             'homepage_footer_settings.newsletter_enabled' => ['nullable', 'boolean'],
