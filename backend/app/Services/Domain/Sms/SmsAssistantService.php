@@ -74,8 +74,8 @@ class SmsAssistantService
     }
 
     /**
-     * Drafts a reply for a new customer SMS. Does nothing when the SMS is no longer the last message of the conversation,
-     * when the team is already handling the conversation, or when the customer replied STOP.
+     * Drafts a reply for a new customer SMS. Does nothing when the SMS is no longer the last message of the conversation
+     * or when the customer replied STOP. A conversation waiting for the team is only a signal: the assistant keeps working.
      *
      * @throws SmsAssistantUnavailableException
      * @throws SmsAssistantLimitReachedException
@@ -86,7 +86,7 @@ class SmsAssistantService
         $conversation = $this->conversationRepository->findFirstWhere([
             SmsConversationDomainObjectAbstract::ID => $conversationId,
         ]);
-        if ($conversation === null || $conversation->getStatus() === SmsConversationStatus::NEEDS_HUMAN->name) {
+        if ($conversation === null) {
             return null;
         }
 
