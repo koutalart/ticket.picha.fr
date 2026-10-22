@@ -2,6 +2,7 @@ import {Button} from "@mantine/core";
 import {IconArrowRight} from "@tabler/icons-react";
 import classes from './HomepageInfoMessage.module.scss';
 import React from "react";
+import {useIsEventImmersive} from "../EventImmersiveShell/EventImmersiveContext.ts";
 
 type StatusType =
     | 'info'
@@ -47,9 +48,10 @@ export const HomepageInfoMessage = ({
                                         status = 'info',
                                     }: HomepageInfoMessageProps) => {
     const emoji = getStatusEmoji(status);
+    const immersive = useIsEventImmersive();
 
     return (
-        <div className={classes.container}>
+        <div className={classes.container} data-immersive={immersive || undefined}>
             <div className={classes.card}>
                 <div className={classes.emojiContainer}>
                     <span className={classes.emoji}>{emoji}</span>

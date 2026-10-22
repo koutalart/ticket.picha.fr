@@ -6,9 +6,12 @@ import {Helmet} from "react-helmet-async";
 import {NavLink, useRouteError} from "react-router";
 import {PoweredByFooter} from "../PoweredByFooter";
 import {getAppName, getLogoForLightBackground} from "../../../utilites/branding.ts";
+import {useIsEventImmersive} from "../EventImmersiveShell/EventImmersiveContext.ts";
+import {HomepageInfoMessage} from "../HomepageInfoMessage";
 
-export const ErrorDisplay = () => {
+export const ErrorDisplay = ({eventUrl}: { eventUrl?: string }) => {
     const error = useRouteError() as any;
+    const immersive = useIsEventImmersive();
 
     const title = error?.status === 404
         ? t`Page not found`
@@ -19,6 +22,21 @@ export const ErrorDisplay = () => {
         : t`An error occurred while loading the page`;
 
     console.log('ErrorDisplay error:', error);
+
+    if (immersive) {
+        return (
+            <>
+                <Helmet title={title}/>
+                <HomepageInfoMessage
+                    status={error?.status === 404 ? 'not_found' : 'error'}
+                    message={title}
+                    subtitle={description}
+                    link={eventUrl}
+                    linkText={eventUrl ? t`Back to event page` : undefined}
+                />
+            </>
+        );
+    }
 
     return (
         <>
