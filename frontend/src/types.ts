@@ -284,6 +284,54 @@ export interface EventSettings {
     allow_attendee_attendance_response?: boolean;
 
     embedded_registration_enabled?: boolean;
+
+    rich_footer_enabled?: boolean;
+    homepage_footer_settings?: HomepageFooterSettings | null;
+    schema_event_type?: SchemaEventType;
+}
+
+export const SCHEMA_EVENT_TYPES = [
+    'Event',
+    'MusicEvent',
+    'TheaterEvent',
+    'ComedyEvent',
+    'SportsEvent',
+    'Festival',
+    'BusinessEvent',
+    'EducationEvent',
+    'SocialEvent',
+] as const;
+
+export type SchemaEventType = typeof SCHEMA_EVENT_TYPES[number];
+
+export interface HomepageFooterEventLink {
+    label: string;
+    url: string;
+}
+
+export interface HomepageFooterRelatedLink {
+    title: string;
+    url: string;
+    image_url?: string | null;
+}
+
+export interface NewsletterSubscriber {
+    id: IdParam;
+    email: string;
+    event_id?: IdParam | null;
+    event_title?: string | null;
+    consent_text: string;
+    consented_at: string;
+}
+
+export interface HomepageFooterSettings {
+    newsletter_enabled?: boolean;
+    newsletter_title?: string | null;
+    privacy_policy_url?: string | null;
+    terms_url?: string | null;
+    accessibility_url?: string | null;
+    event_links?: HomepageFooterEventLink[];
+    related_links?: HomepageFooterRelatedLink[];
 }
 
 export interface VenueAddress {

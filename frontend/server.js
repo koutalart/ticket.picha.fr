@@ -178,14 +178,59 @@ Sitemap: ${frontendUrl}/sitemap.xml
         res.status(200).send(renderMarketingSitemap(platformBaseUrl(req)));
     });
 
-    app.get('/llms.txt', async (req, res, next) => {
-        if (await resolveCustomDomain(normalizeHost(req.get('host')))) {
-            return next();
+    const fetchOrganizerForLlms = async (organizerId) => {
+        const apiUrl = process.env.VITE_API_URL_SERVER;
+        const options = {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(5000)};
+        const [organizerResponse, eventsResponse] = await Promise.all([
+            fetch(`${apiUrl}/public/organizers/${encodeURIComponent(organizerId)}`, options),
+            fetch(`${apiUrl}/public/organizers/${encodeURIComponent(organizerId)}/events?per_page=50&eventsStatus=upcoming`, options),
+        ]);
+        if (!organizerResponse.ok) {
+            return null;
+        }
+        return {
+            organizer: (await organizerResponse.json()).data,
+            events: eventsResponse.ok ? (await eventsResponse.json()).data || [] : [],
+        };
+    };
+
+    const sendOrganizerLlmsTxt = async (res, organizerId, origin, customDomain) => {
+        const data = await fetchOrganizerForLlms(organizerId);
+        if (!data?.organizer) {
+            return res.status(404).type('text/plain').send('Not found');
+        }
+        const {renderOrganizerLlmsTxt} = await loadServerEntry();
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.status(200).send(renderOrganizerLlmsTxt({origin, organizer: data.organizer, events: data.events, customDomain}));
+    };
+
+    app.get('/llms.txt', async (req, res) => {
+        const customDomain = await resolveCustomDomain(normalizeHost(req.get('host')));
+        if (customDomain) {
+            try {
+                return await sendOrganizerLlmsTxt(res, customDomain.id, `https://${customDomain.domain}`, true);
+            } catch (error) {
+                console.error(`Custom domain llms.txt failed for ${customDomain.domain}`, error);
+                return res.status(500).send('Internal server error');
+            }
         }
         const {renderLlmsTxt} = await loadServerEntry();
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.setHeader('Cache-Control', 'public, max-age=3600');
         res.status(200).send(renderLlmsTxt(platformBaseUrl(req)));
+    });
+
+    app.get(/^\/events\/(\d+)\/[^/]+\/llms\.txt$/, async (req, res, next) => {
+        if (await resolveCustomDomain(normalizeHost(req.get('host')))) {
+            return next();
+        }
+        try {
+            await sendOrganizerLlmsTxt(res, req.params[0], platformBaseUrl(req), false);
+        } catch (error) {
+            console.error('Organizer llms.txt failed', error);
+            res.status(500).send('Internal server error');
+        }
     });
 
     app.get('/sitemap.xml', async (req, res) => {

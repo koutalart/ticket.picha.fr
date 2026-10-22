@@ -97,6 +97,9 @@ class EventSettingsResource extends JsonResource
             'allow_attendee_attendance_response' => $this->getAllowAttendeeAttendanceResponse(),
 
             'embedded_registration_enabled' => $this->getEmbeddedRegistrationEnabled(),
+            'rich_footer_enabled' => $this->getRichFooterEnabled(),
+            'homepage_footer_settings' => $this->getHomepageFooterSettings(),
+            'schema_event_type' => $this->getSchemaEventType(),
         ];
     }
 }

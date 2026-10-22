@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\Events\CapacityChangedEvent;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Services\Application\Handlers\EventSettings\DTO\UpdateEventSettingsDTO;
+use HiEvents\Services\Domain\Event\HomepageFooterSettingsSanitizer;
 use HiEvents\Services\Infrastructure\HtmlPurifier\HtmlPurifierService;
 use Illuminate\Database\DatabaseManager;
 use Throwable;
@@ -18,6 +19,7 @@ class UpdateEventSettingsHandler
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
         private readonly HtmlPurifierService              $purifier,
         private readonly DatabaseManager                  $databaseManager,
+        private readonly HomepageFooterSettingsSanitizer  $footerSettingsSanitizer,
     )
     {
     }
@@ -116,6 +118,10 @@ class UpdateEventSettingsHandler
                     'allow_attendee_attendance_response' => $settings->allow_attendee_attendance_response,
 
                     'embedded_registration_enabled' => $settings->embedded_registration_enabled,
+
+                    'rich_footer_enabled' => $settings->rich_footer_enabled,
+                    'homepage_footer_settings' => $this->footerSettingsSanitizer->sanitize($settings->homepage_footer_settings),
+                    'schema_event_type' => $settings->schema_event_type,
                 ],
                 where: [
                     'event_id' => $settings->event_id,

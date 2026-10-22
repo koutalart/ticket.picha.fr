@@ -4,12 +4,12 @@ import {useParams} from "react-router";
 import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
 import {useUpdateEventSettings} from "../../../../mutations/useUpdateEventSettings.ts";
 import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx";
-import {EventSettings, HomepageThemeSettings, IdParam} from "../../../../types.ts";
+import {EventSettings, HomepageFooterSettings, HomepageThemeSettings, IdParam} from "../../../../types.ts";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {t} from "@lingui/macro";
 import {useForm} from "@mantine/form";
 import {Button, FileButton, Group, TextInput, Textarea, Accordion, Stack, Text} from "@mantine/core";
-import {IconColorPicker, IconHelp, IconLayoutNavbar, IconMaximize, IconPhoto, IconPalette, IconTrash, IconTypography, IconVideo} from "@tabler/icons-react";
+import {IconColorPicker, IconHelp, IconLayoutBottombar, IconLayoutNavbar, IconMaximize, IconPhoto, IconPalette, IconTrash, IconTypography, IconVideo} from "@tabler/icons-react";
 import {Tooltip} from "../../../common/Tooltip";
 import {CustomSelect} from "../../../common/CustomSelect";
 import {GET_EVENT_IMAGES_QUERY_KEY, useGetEventImages} from "../../../../queries/useGetEventImages.ts";
@@ -27,12 +27,15 @@ import {useDeleteEventImage} from "../../../../mutations/useDeleteEventImage.ts"
 import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
 import {toOrganizerCustomFont, useGetOrganizerFonts} from "../../../../queries/useGetOrganizerFonts.ts";
+import {cleanFooterSettings, FooterSettingsPanel} from "./FooterSettingsPanel.tsx";
 
 const MAX_COVER_VIDEO_BYTES = 15 * 1024 * 1024;
 
 interface FormValues {
     homepage_theme_settings: Partial<HomepageThemeSettings>;
     continue_button_text: string;
+    rich_footer_enabled: boolean;
+    homepage_footer_settings: HomepageFooterSettings;
 }
 
 const HomepageDesigner = () => {
@@ -72,6 +75,8 @@ const HomepageDesigner = () => {
                 font_family: DEFAULT_HOMEPAGE_FONT,
             },
             continue_button_text: '',
+            rich_footer_enabled: false,
+            homepage_footer_settings: {},
         }
     });
 
@@ -85,6 +90,8 @@ const HomepageDesigner = () => {
             form.setValues({
                 homepage_theme_settings: themeSettings,
                 continue_button_text: settings.continue_button_text,
+                rich_footer_enabled: !!settings.rich_footer_enabled,
+                homepage_footer_settings: settings.homepage_footer_settings || {},
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -109,6 +116,8 @@ const HomepageDesigner = () => {
         const eventSettings: Partial<EventSettings> = {
             homepage_theme_settings: validatedTheme,
             continue_button_text: values.continue_button_text,
+            rich_footer_enabled: values.rich_footer_enabled,
+            homepage_footer_settings: cleanFooterSettings(values.homepage_footer_settings),
             // Also update legacy fields for backward compatibility during transition
             homepage_primary_color: validatedTheme.accent,
             homepage_body_background_color: validatedTheme.background,
@@ -193,6 +202,8 @@ const HomepageDesigner = () => {
             const settingsToSend = {
                 homepage_theme_settings: themeSettings,
                 continue_button_text: form.values.continue_button_text,
+                rich_footer_enabled: form.values.rich_footer_enabled,
+                homepage_footer_settings: cleanFooterSettings(form.values.homepage_footer_settings),
             };
 
             const settingsJson = JSON.stringify(settingsToSend);
@@ -554,6 +565,25 @@ const HomepageDesigner = () => {
                                         </Stack>
                                     </fieldset>
                                 </form>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
+                        <Accordion.Item value="footer" className={classes.accordionItem}>
+                            <Accordion.Control icon={<IconLayoutBottombar size={20}/>}>
+                                <Text fw={500}>{t`Footer`}</Text>
+                            </Accordion.Control>
+                            <Accordion.Panel>
+                                <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending} className={classes.fieldset}>
+                                    <FooterSettingsPanel
+                                        enabled={form.values.rich_footer_enabled}
+                                        settings={form.values.homepage_footer_settings}
+                                        embeddedRegistrationActive={form.values.homepage_theme_settings.hero_layout === 'FULLSCREEN'
+                                            && !!eventSettingsQuery.data?.embedded_registration_enabled}
+                                        errors={form.errors}
+                                        onEnabledChange={(enabled) => form.setFieldValue('rich_footer_enabled', enabled)}
+                                        onSettingsChange={(settings) => form.setFieldValue('homepage_footer_settings', settings)}
+                                    />
+                                </fieldset>
                             </Accordion.Panel>
                         </Accordion.Item>
                     </Accordion>

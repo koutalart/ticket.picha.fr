@@ -46,6 +46,8 @@ import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 import {EmbeddedRegistration} from "../../routes/product-widget/EmbeddedRegistration";
 import {isEmbeddedRegistrationEnabled} from "../../../utilites/embeddedRegistration.ts";
+import {RichFooter} from "./RichFooter";
+import {EventFactSummary} from "../../common/EventFactSummary";
 
 const VIDEO_PAUSE_PROGRESS = 0.6;
 
@@ -59,6 +61,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const {event, promoCodeValid, promoCode} = loaderData;
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [contactModalOpen, setContactModalOpen] = useState(false);
+    const [cookieBannerReopened, setCookieBannerReopened] = useState(false);
     const ticketsSectionRef = useRef<HTMLElement>(null);
     const fullscreenHeroRef = useRef<HTMLElement>(null);
 
@@ -152,6 +155,12 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
             window.removeEventListener('resize', handleScroll);
         };
     }, []);
+
+    const handleCookieConsent = (granted: boolean) => {
+        onConsent(granted);
+        setCookieBannerReopened(false);
+        window.dispatchEvent(new CustomEvent('hi_consent_change', {detail: {granted}}));
+    };
 
     const scrollToTickets = () => {
         ticketsSectionRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
@@ -318,6 +327,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                 />
 
                 <div className={classes.container}>
+                    <EventFactSummary event={event} eventUrl={eventHomepageUrl(event)}/>
                     {isFullscreenHero && (
                         <section
                             className={classes.fullscreenHero}
@@ -396,7 +406,18 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             )}
                         />
                     )}
-                    {isEmbeddedRegistration ? (
+                    {isEmbeddedRegistration && event.settings?.rich_footer_enabled ? (
+                        <RichFooter
+                            event={event}
+                            organizer={organizer}
+                            organizerLogo={organizerLogo}
+                            socialLinks={socialLinks}
+                            websiteUrl={websiteUrl}
+                            onRegister={scrollToTickets}
+                            onContact={() => setContactModalOpen(true)}
+                            onManageCookies={() => setCookieBannerReopened(true)}
+                        />
+                    ) : isEmbeddedRegistration ? (
                         <footer className={classes.landingFooter}>
                             <div className={classes.landingFooterInner}>
                                 {organizer && (
@@ -832,8 +853,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         organizer={organizer}
                     />
                 </div>
-                {consentPending && (
-                    <CookieConsentBanner onConsent={onConsent}/>
+                {(consentPending || cookieBannerReopened) && (
+                    <CookieConsentBanner onConsent={handleCookieConsent}/>
                 )}
             </main>
         </>
