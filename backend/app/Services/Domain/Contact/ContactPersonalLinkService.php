@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\ContactDomainObject;
 use HiEvents\DomainObjects\Generated\ContactDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Repository\Interfaces\ContactRepositoryInterface;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
 
 /**
@@ -23,6 +24,7 @@ class ContactPersonalLinkService
 
     public function __construct(
         private readonly ContactRepositoryInterface $contactRepository,
+        private readonly PublicBaseUrlResolver $publicBaseUrlResolver,
     ) {}
 
     public static function normalizeCode(?string $code): ?string
@@ -88,11 +90,21 @@ class ContactPersonalLinkService
         return $path.'?'.http_build_query($query).$fragment;
     }
 
+    /**
+     * The organizer's own site (its active custom domain, as PublicBaseUrlResolver sees it), null when it only has the platform.
+     */
     public function getOrganizerSiteUrl(?OrganizerDomainObject $organizer): ?string
     {
-        $domain = strtolower(trim((string) $organizer?->getCustomDomain(), " \t\n\r\0\x0B/"));
-        $domain = preg_replace('~^https?://~', '', $domain);
+        return $this->siteUrlOrNull($this->publicBaseUrlResolver->forOrganizer($organizer));
+    }
 
-        return $domain === '' ? null : 'https://'.$domain.'/';
+    public function getOrganizerSiteUrlForId(int $organizerId): ?string
+    {
+        return $this->siteUrlOrNull($this->publicBaseUrlResolver->forOrganizerId($organizerId));
+    }
+
+    private function siteUrlOrNull(string $baseUrl): ?string
+    {
+        return $baseUrl === $this->publicBaseUrlResolver->platformUrl() ? null : rtrim($baseUrl, '/').'/';
     }
 }

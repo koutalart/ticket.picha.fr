@@ -10,6 +10,7 @@ import {t} from "@lingui/macro";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {formatAddress, getShortLocationDisplay} from "../../../utilites/addressUtilities.ts";
 import {organizerHomepagePath} from "../../../utilites/urlHelper.ts";
 import {StatusToggle} from "../../common/StatusToggle";
@@ -20,6 +21,8 @@ import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
+import {findOrganizerLogo, organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
+import {ssrLoaderBackground} from "../../../utilites/ssrLoader.ts";
 
 interface OrganizerHomepageProps {
     organizer?: Organizer;
@@ -81,7 +84,6 @@ export const OrganizerHomepage = ({
     };
 
     // Images
-    const organizerLogo = organizer.images?.find(img => img.type === 'ORGANIZER_LOGO');
     const organizerCover = organizer.images?.find(img => img.type === 'ORGANIZER_COVER');
 
     const events = eventsData?.data || [];
@@ -91,7 +93,14 @@ export const OrganizerHomepage = ({
     const themeSettings = validateThemeSettings(rawThemeSettings);
     const organizerFont = organizer?.custom_font;
     const cssVars = computeThemeVariables(themeSettings, organizerFont);
+    const organizerLogo = findOrganizerLogo(organizer.images, cssVars['--theme-surface']);
     const backgroundType = themeSettings.background_type;
+    const loaderLogo = organizerLogoUrl(organizer.images, ssrLoaderBackground({
+        background: themeSettings.background,
+        accent: themeSettings.accent,
+        mode: themeSettings.mode,
+        backgroundType,
+    }));
     const organizerFontActive = isOrganizerFontActive(themeSettings.font_family, organizerFont);
 
     useEffect(() => {
@@ -137,7 +146,7 @@ export const OrganizerHomepage = ({
                     accent={themeSettings.accent}
                     mode={themeSettings.mode}
                     backgroundType={backgroundType}
-                    logoUrl={organizerLogo?.url}
+                    logoUrl={loaderLogo}
                 />
 
                 {/* Background */}
@@ -307,6 +316,7 @@ export const OrganizerHomepage = ({
                                             <EventCard
                                                 key={event.id}
                                                 event={event as Event}
+                                                organizer={organizer}
                                                 primaryColor={themeSettings.accent}
                                             />
                                         ))}
@@ -341,11 +351,17 @@ export const OrganizerHomepage = ({
                     </div>
 
                     {/* Contact Modal */}
-                    <ContactOrganizerModal
-                        opened={contactModalOpen}
-                        onClose={() => setContactModalOpen(false)}
-                        organizer={organizer}
-                    />
+                    <PublicOverlayTheme
+                        accentColor={themeSettings.accent}
+                        mode={themeSettings.mode}
+                        fontFamily={cssVars['--theme-font-family']}
+                    >
+                        <ContactOrganizerModal
+                            opened={contactModalOpen}
+                            onClose={() => setContactModalOpen(false)}
+                            organizer={organizer}
+                        />
+                    </PublicOverlayTheme>
                 </div>
                 {consentPending && (
                     <CookieConsentBanner onConsent={onConsent}/>

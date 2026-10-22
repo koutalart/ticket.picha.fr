@@ -24,6 +24,8 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     final public const PROVIDER_TIMESTAMP = 'provider_timestamp';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const AUTO_REPLY_TO_MESSAGE_ID = 'auto_reply_to_message_id';
+    final public const AUTO_REPLY_TYPE = 'auto_reply_type';
 
     protected int $id;
     protected int $sms_conversation_id;
@@ -39,6 +41,8 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     protected ?string $provider_timestamp = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?int $auto_reply_to_message_id = null;
+    protected ?string $auto_reply_type = null;
 
     public function toArray(): array
     {
@@ -57,6 +61,8 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
                     'provider_timestamp' => $this->provider_timestamp ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'auto_reply_to_message_id' => $this->auto_reply_to_message_id ?? null,
+                    'auto_reply_type' => $this->auto_reply_type ?? null,
                 ];
     }
 
@@ -212,5 +218,27 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setAutoReplyToMessageId(?int $auto_reply_to_message_id): self
+    {
+        $this->auto_reply_to_message_id = $auto_reply_to_message_id;
+        return $this;
+    }
+
+    public function getAutoReplyToMessageId(): ?int
+    {
+        return $this->auto_reply_to_message_id;
+    }
+
+    public function setAutoReplyType(?string $auto_reply_type): self
+    {
+        $this->auto_reply_type = $auto_reply_type;
+        return $this;
+    }
+
+    public function getAutoReplyType(): ?string
+    {
+        return $this->auto_reply_type;
     }
 }

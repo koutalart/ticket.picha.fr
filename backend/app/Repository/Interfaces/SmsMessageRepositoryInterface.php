@@ -30,4 +30,12 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
      * @param  array<int, int>  $organizerIds
      */
     public function findLastOutboundOrganizerId(array $organizerIds, string $phone, string $since): ?int;
+
+    /**
+     * Whether one of the given organizers sent (or tried to send) an SMS to this number after the given message,
+     * or still has one waiting to leave since the given date.
+     *
+     * @param  array<int, int>  $organizerIds
+     */
+    public function hasOutboundToPhoneAfter(array $organizerIds, string $phone, int $afterMessageId, string $pendingSince): bool;
 }

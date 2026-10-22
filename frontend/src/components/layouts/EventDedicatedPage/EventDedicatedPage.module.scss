@@ -331,6 +331,20 @@
   padding: 0 16px 32px;
 }
 
+.page[data-mode='dark'] .footer {
+  --powered-by-link-color: var(--event-primary-text-color);
+}
+
+.page[data-mode='dark'],
+.immersive {
+  --event-body-font-weight: 400;
+
+  .intro {
+    color: var(--event-primary-text-color);
+    font-weight: 400;
+  }
+}
+
 .immersive {
   color: var(--event-primary-text-color);
 

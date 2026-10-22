@@ -1,7 +1,7 @@
 /* eslint-disable lingui/no-unlocalized-strings */
 import {Helmet} from "react-helmet-async";
 import {Event} from "../../../types";
-import {eventHomepageUrl, eventShareImageUrl, organizerHomepageUrl} from "../../../utilites/urlHelper.ts";
+import {eventHomepageUrl, eventShareImageUrl, organizerCanonicalUrl} from "../../../utilites/urlHelper.ts";
 import {
     buildEventBreadcrumbJsonLd,
     buildEventJsonLd,
@@ -20,7 +20,7 @@ export const EventDocumentHead = ({event}: EventDocumentHeadProps) => {
     const image = eventShareImageUrl(event);
     const url = eventHomepageUrl(event);
     const organizerUrl = event.organizer?.id && event.organizer?.slug
-        ? organizerHomepageUrl(event.organizer)
+        ? organizerCanonicalUrl(event.organizer)
         : undefined;
     const structuredDataUrls = {eventUrl: url, organizerUrl};
     const eventJsonLd = serializeJsonLd(buildEventJsonLd(event, structuredDataUrls));

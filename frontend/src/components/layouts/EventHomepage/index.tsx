@@ -23,6 +23,7 @@ import {Anchor} from "@mantine/core";
 import {t} from "@lingui/macro";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {
     formatAddress,
@@ -43,6 +44,8 @@ import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isDateInPast} from "../../../utilites/dates.ts";
 import {RichDescription} from "../../common/RichDescription";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
+import {organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
+import {ssrLoaderBackground} from "../../../utilites/ssrLoader.ts";
 import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 import {EmbeddedRegistration} from "../../routes/product-widget/EmbeddedRegistration";
 import {getEventProducts, isEmbeddedRegistrationEnabled} from "../../../utilites/embeddedRegistration.ts";
@@ -202,6 +205,12 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
         fontFamily: cssVars['--theme-font-family'],
     } as React.CSSProperties;
 
+    const overlayTheme = {
+        accentColor: themeSettings.accent,
+        mode: themeSettings.mode,
+        fontFamily: cssVars['--theme-font-family'],
+    };
+
     const coverImageData = eventCoverImage(event);
     const coverImage = coverImageData?.url;
     const coverVideo = event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO')?.url;
@@ -213,7 +222,16 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const heroBrandLogo = event?.images?.find((image) => image.type === 'EVENT_HERO_BRAND_LOGO')?.url;
     const organizer = event.organizer!;
     const organizerSocials = organizer?.settings?.social_media_handles;
-    const organizerLogo = imageUrl('ORGANIZER_LOGO', organizer?.images);
+    const organizerLogo = organizerLogoUrl(organizer?.images, cssVars['--theme-surface'])
+        ?? imageUrl('ORGANIZER_LOGO', organizer?.images);
+    const heroOrganizerLogo = organizerLogoUrl(organizer?.images, 'dark');
+    const footerOrganizerLogo = organizerLogoUrl(organizer?.images, themeSettings.accent);
+    const loaderOrganizerLogo = organizerLogoUrl(organizer?.images, ssrLoaderBackground({
+        background: themeSettings.background,
+        accent: themeSettings.accent,
+        mode: themeSettings.mode,
+        backgroundType,
+    }));
     const organizerLocation = organizer?.settings?.location_details;
     const websiteUrl = organizer?.website;
     const locationDetails = event.settings?.location_details;
@@ -310,7 +328,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                     accent={themeSettings.accent}
                     mode={themeSettings.mode}
                     backgroundType={backgroundType}
-                    logoUrl={organizerLogo}
+                    logoUrl={loaderOrganizerLogo}
                 />
 
                 {event && <EventDocumentHead event={event}/>}
@@ -375,8 +393,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                 ) : <span/>}
                                 {heroBrandLogo ? (
                                     <img src={heroBrandLogo} alt={organizer.name} className={classes.fullscreenBrandCustom}/>
-                                ) : organizerLogo && (
-                                    <img src={organizerLogo} alt={organizer.name} className={classes.fullscreenBrand}/>
+                                ) : heroOrganizerLogo && (
+                                    <img src={heroOrganizerLogo} alt={organizer.name} className={classes.fullscreenBrand}/>
                                 )}
                             </div>
                             <div className={classes.fullscreenCenter}>
@@ -447,7 +465,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         <RichFooter
                             event={event}
                             organizer={organizer}
-                            organizerLogo={organizerLogo}
+                            organizerLogo={footerOrganizerLogo}
                             socialLinks={socialLinks}
                             websiteUrl={websiteUrl}
                             onRegister={scrollToTickets}
@@ -573,16 +591,18 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                             )}
 
                                             <div className={classes.actionButtons}>
-                                                <ShareComponent
-                                                    title={'Check out this event: ' + event.title}
-                                                    text={'Check out this event: ' + event.title}
-                                                    url={eventHomepageUrl(event)}
-                                                    imageUrl={coverImage || undefined}
-                                                >
-                                                    <button className={classes.actionButton} title={t`Share`}>
-                                                        <IconShare/>
-                                                    </button>
-                                                </ShareComponent>
+                                                <PublicOverlayTheme {...overlayTheme}>
+                                                    <ShareComponent
+                                                        title={'Check out this event: ' + event.title}
+                                                        text={'Check out this event: ' + event.title}
+                                                        url={eventHomepageUrl(event)}
+                                                        imageUrl={coverImage || undefined}
+                                                    >
+                                                        <button className={classes.actionButton} title={t`Share`}>
+                                                            <IconShare/>
+                                                        </button>
+                                                    </ShareComponent>
+                                                </PublicOverlayTheme>
                                                 {/* Future enhancement: Favorite/Heart button */}
                                                 {/* <button className={`${classes.actionButton} ${classes.favoriteButton}`} title={t`Save`}>
                                                     <IconHeart />
@@ -884,11 +904,13 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                     )}
 
                     {/* Contact Modal */}
-                    <ContactOrganizerModal
-                        opened={contactModalOpen}
-                        onClose={() => setContactModalOpen(false)}
-                        organizer={organizer}
-                    />
+                    <PublicOverlayTheme {...overlayTheme}>
+                        <ContactOrganizerModal
+                            opened={contactModalOpen}
+                            onClose={() => setContactModalOpen(false)}
+                            organizer={organizer}
+                        />
+                    </PublicOverlayTheme>
                 </div>
                 {(consentPending || cookieBannerReopened) && (
                     <CookieConsentBanner onConsent={handleCookieConsent}/>

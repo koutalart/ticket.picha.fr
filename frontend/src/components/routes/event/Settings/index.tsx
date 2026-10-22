@@ -14,6 +14,7 @@ import {WaitlistSettings} from "./Sections/WaitlistSettings";
 import {AttendanceResponseSettings} from "./Sections/AttendanceResponseSettings";
 import {EmbeddedRegistrationSettings} from "./Sections/EmbeddedRegistrationSettings";
 import {SmsConfirmationSettings} from "./Sections/SmsConfirmationSettings";
+import {SmsCancellationSettings} from "./Sections/SmsCancellationSettings";
 import {DangerZoneSettings} from "./Sections/DangerZoneSettings";
 import {useGetAccount} from "../../../../queries/useGetAccount.ts";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
@@ -61,6 +62,7 @@ export const Settings = () => {
             sections: [
                 {id: 'email-settings', component: EmailSettings},
                 {id: 'sms-confirmation-settings', component: SmsConfirmationSettings},
+                {id: 'sms-cancellation-settings', component: SmsCancellationSettings},
             ],
         },
         {

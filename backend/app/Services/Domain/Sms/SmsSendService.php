@@ -66,6 +66,8 @@ class SmsSendService
             SmsMessageDomainObjectAbstract::SENT_BY_USER_ID => $sms->sentByUserId,
             SmsMessageDomainObjectAbstract::CONTENT => $sms->content,
             SmsMessageDomainObjectAbstract::STATUS => SmsMessageStatus::PENDING->name,
+            SmsMessageDomainObjectAbstract::AUTO_REPLY_TO_MESSAGE_ID => $sms->autoReplyToMessageId,
+            SmsMessageDomainObjectAbstract::AUTO_REPLY_TYPE => $sms->autoReplyType?->name,
         ]);
 
         $requestId = self::REQUEST_ID_PREFIX.$message->getId();
@@ -74,11 +76,13 @@ class SmsSendService
         ]);
 
         $this->conversationService->recordActivity($conversation, SmsMessageDirection::OUTBOUND, $sms->content, markUnread: false);
-        $this->conversationRepository->updateFromArray($conversation->getId(), [
-            SmsConversationDomainObjectAbstract::DRAFT_REPLY => null,
-            SmsConversationDomainObjectAbstract::DRAFT_SOURCE => null,
-            SmsConversationDomainObjectAbstract::DRAFT_GENERATED_AT => null,
-        ]);
+        if (! $sms->keepDraft) {
+            $this->conversationRepository->updateFromArray($conversation->getId(), [
+                SmsConversationDomainObjectAbstract::DRAFT_REPLY => null,
+                SmsConversationDomainObjectAbstract::DRAFT_SOURCE => null,
+                SmsConversationDomainObjectAbstract::DRAFT_GENERATED_AT => null,
+            ]);
+        }
 
         try {
             $providerId = $this->httpSmsClient->sendMessage(

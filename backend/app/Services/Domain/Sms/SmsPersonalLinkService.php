@@ -7,16 +7,15 @@ namespace HiEvents\Services\Domain\Sms;
 use HiEvents\DomainObjects\Enums\SmsMessageDirection;
 use HiEvents\DomainObjects\Generated\QrLinkDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsCampaignRecipientDomainObjectAbstract;
-use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\QrLinkDomainObject;
 use HiEvents\DomainObjects\SmsCampaignRecipientDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\Repository\Eloquent\Value\OrderAndDirection;
-use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Services\Domain\Contact\ContactPersonalLinkService;
 use HiEvents\Services\Domain\Contact\SmsContactResolver;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
 use Illuminate\Support\Collection;
 
@@ -31,9 +30,9 @@ class SmsPersonalLinkService
         private readonly SmsCampaignRecipientRepositoryInterface $recipientRepository,
         private readonly QrLinkRepositoryInterface $qrLinkRepository,
         private readonly QrLinkUrlService $qrLinkUrlService,
+        private readonly PublicBaseUrlResolver $publicBaseUrlResolver,
         private readonly SmsContactResolver $contactResolver,
         private readonly ContactPersonalLinkService $contactPersonalLinkService,
-        private readonly OrganizerRepositoryInterface $organizerRepository,
     ) {}
 
     /**
@@ -52,7 +51,11 @@ class SmsPersonalLinkService
             $shortId = $qrLink->getShortId();
             $sent = $sentUrls->first(fn (string $url) => $this->qrParam($url) === strtolower($shortId));
 
-            return $sent ?? $this->qrLinkUrlService->getPublicUrl($qrLink);
+            if ($sent !== null && ! $this->isPlatformUrlOfCustomDomainOrganizer($sent, $organizerId)) {
+                return $sent;
+            }
+
+            return $this->qrLinkUrlService->getPublicUrl($qrLink);
         }
 
         return $sentUrls->first(fn (string $url) => $this->qrParam($url) !== null);
@@ -68,9 +71,7 @@ class SmsPersonalLinkService
             return null;
         }
 
-        /** @var OrganizerDomainObject|null $organizer */
-        $organizer = $this->organizerRepository->findFirst($organizerId);
-        $baseUrl = $this->contactPersonalLinkService->getOrganizerSiteUrl($organizer)
+        $baseUrl = $this->contactPersonalLinkService->getOrganizerSiteUrlForId($organizerId)
             ?? $sentUrls->first(fn (string $url) => self::isTrackedSiteLink($url));
 
         return $baseUrl !== null ? $this->contactPersonalLinkService->getUrl($baseUrl, $contact) : null;
@@ -140,6 +141,14 @@ class SmsPersonalLinkService
                 return array_map(fn (string $url) => rtrim($url, '.,;:!?)'), $matches[0]);
             })
             ->values();
+    }
+
+    private function isPlatformUrlOfCustomDomainOrganizer(string $url, int $organizerId): bool
+    {
+        $platformHost = self::host($this->publicBaseUrlResolver->platformUrl());
+        $organizerHost = self::host($this->publicBaseUrlResolver->forOrganizerId($organizerId));
+
+        return $organizerHost !== $platformHost && self::host($url) === $platformHost;
     }
 
     private function qrParam(string $url): ?string

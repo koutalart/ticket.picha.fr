@@ -2,7 +2,7 @@
 @php /** @var string $code */ @endphp
 @php /** @var int $validityMinutes */ @endphp
 
-<x-mail::message>
+<x-mail::message :emailLogo="$emailLogo ?? null">
 # {{ __('Manage your attendance') }}
 
 {{ __('Hello') }},

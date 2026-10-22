@@ -6,6 +6,7 @@ import {IconMail, IconPlayerPlayFilled} from "@tabler/icons-react";
 import type {OrganizerTemplateProps} from "../index.ts";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
@@ -17,6 +18,7 @@ import {eventHomepagePath, eventHomepageUrl, organizerHomepagePath} from "../../
 import {buildEventJsonLd, getVenue} from "../Poster/eventData.ts";
 import {dateBlock, eventAccent, eventFlyer, TOUR_FALLBACK_ACCENT, tourCity, tourPrice} from "./tourData.ts";
 import classes from "./Tour.module.scss";
+import {findOrganizerLogo} from "../../../utilites/organizerLogo.ts";
 
 const DEFAULT_THEME_ACCENT = '#8b5cf6';
 const BACKGROUND = '#0e0c16';
@@ -68,7 +70,7 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
     const content = organizer.site_content || {};
     const themeAccent = organizer.settings?.homepage_theme_settings?.accent;
     const accent = themeAccent && themeAccent.toLowerCase() !== DEFAULT_THEME_ACCENT ? themeAccent : TOUR_FALLBACK_ACCENT;
-    const logo = organizer.images?.find(image => image.type === 'ORGANIZER_LOGO');
+    const logo = findOrganizerLogo(organizer.images, BACKGROUND);
     const cover = organizer.images?.find(image => image.type === 'ORGANIZER_COVER');
     const coverVideo = organizer.images?.find(image => image.type === 'ORGANIZER_COVER_VIDEO')?.url;
     const coverVideoMobile = organizer.images?.find(image => image.type === 'ORGANIZER_COVER_VIDEO_MOBILE')?.url;
@@ -133,7 +135,7 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                         '@context': 'https://schema.org',
                         '@graph': [
                             {'@type': 'Organization', name: organizer.name, url: canonicalUrl, logo: logo?.url},
-                            ...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event), organizer.name)),
+                            ...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event, organizer), organizer.name)),
                         ],
                     })}
                 </script>
@@ -432,7 +434,9 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                 </footer>
             </div>
 
-            <ContactOrganizerModal opened={contactModalOpen} onClose={() => setContactModalOpen(false)} organizer={organizer}/>
+            <PublicOverlayTheme accentColor={accent} mode="dark">
+                <ContactOrganizerModal opened={contactModalOpen} onClose={() => setContactModalOpen(false)} organizer={organizer}/>
+            </PublicOverlayTheme>
             {consentPending && <CookieConsentBanner onConsent={onConsent}/>}
         </>
     );

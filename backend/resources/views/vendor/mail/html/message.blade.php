@@ -1,9 +1,9 @@
 <x-mail::layout>
     {{-- Header --}}
     <x-slot:header>
-        <x-mail::header :url="config('app.email_logo_link_url')">
-            @if(isset($isFreeEvent) && $isFreeEvent && isset($organizerLogoUrl) && $organizerLogoUrl)
-                <img src="{{ $organizerLogoUrl }}" class="logo" alt="{{ $organizer->getName() ?? config('app.name') }}"
+        <x-mail::header :url="$logoLinkUrl ?? config('app.email_logo_link_url')">
+            @if(isset($emailLogo) && $emailLogo)
+                <img src="{{ $emailLogo->url }}" class="logo" alt="{{ $emailLogo->alt ?? config('app.name') }}"
                      style="max-width: 300px;">
             @elseif($appLogo = config('app.email_logo_url'))
                 <img src="{{ $appLogo }}" class="logo" alt="{{ config('app.name') }}"

@@ -14,6 +14,7 @@ import {showError, showSuccess} from "../../../../../../utilites/notifications.t
 import {SmsAssistantPreview} from "../../../../../../types.ts";
 
 const MAX_INSTRUCTIONS_LENGTH = 2000;
+const MAX_HOLDING_REPLY_LENGTH = 320;
 
 export const SmsAssistantSettings = () => {
     const {organizerId} = useParams();
@@ -30,6 +31,8 @@ export const SmsAssistantSettings = () => {
         initialValues: {
             assistant_enabled: true,
             assistant_instructions: '',
+            assistant_auto_send: false,
+            assistant_holding_reply: '',
         },
     });
 
@@ -38,6 +41,8 @@ export const SmsAssistantSettings = () => {
             form.setValues({
                 assistant_enabled: settings.assistant_enabled,
                 assistant_instructions: settings.assistant_instructions || '',
+                assistant_auto_send: !!settings.assistant_auto_send,
+                assistant_holding_reply: settings.assistant_holding_reply || '',
             });
         }
     }, [settingsQuery.isFetched]);
@@ -48,12 +53,16 @@ export const SmsAssistantSettings = () => {
             settings: {
                 assistant_enabled: values.assistant_enabled,
                 assistant_instructions: values.assistant_instructions.trim() || null,
+                assistant_auto_send: values.assistant_auto_send,
+                assistant_holding_reply: values.assistant_holding_reply.trim() || null,
             },
         }, {
             onSuccess: ({data}) => {
                 form.setValues({
                     assistant_enabled: data.assistant_enabled,
                     assistant_instructions: data.assistant_instructions || '',
+                    assistant_auto_send: !!data.assistant_auto_send,
+                    assistant_holding_reply: data.assistant_holding_reply || '',
                 });
                 showSuccess(t`Assistant settings saved`);
             },
@@ -79,7 +88,7 @@ export const SmsAssistantSettings = () => {
         <Card>
             <HeadingWithDescription
                 heading={t`SMS assistant`}
-                description={t`When a customer writes to you, the assistant prepares a suggested reply from your events, prices and the customer's orders. Nothing is sent automatically: you read the suggestion and click Send.`}
+                description={t`When a customer writes to you, the assistant prepares a suggested reply from your events, prices and the customer's orders. Unless you turn on automatic sending, nothing leaves without you: you read the suggestion and click Send.`}
             />
 
             {settingsQuery.isFetched && !isAvailable && (
@@ -112,6 +121,32 @@ export const SmsAssistantSettings = () => {
                         maxLength={MAX_INSTRUCTIONS_LENGTH}
                         mb="md"
                     />
+                    <Switch
+                        {...form.getInputProps('assistant_auto_send', {type: 'checkbox'})}
+                        label={t`Send the assistant's replies automatically`}
+                        description={t`Off by default. A few seconds after a customer SMS, the suggested reply leaves on its own, only for simple questions answered by your instructions and your data.`}
+                        disabled={!form.values.assistant_enabled}
+                        mb="xs"
+                    />
+                    {form.values.assistant_auto_send && (
+                        <>
+                            <Alert color="yellow" variant="light" mb="md">
+                                <Text size="sm">
+                                    {t`Safeguards: at most one automatic reply per customer SMS, nothing if you or your team already wrote to the contact after it, no reply to a simple "ok" or "thanks", and never after STOP. Complaints, place or invitation requests, press, minors, accessibility, refunds and any doubt stay a suggestion to validate: the customer only gets a holding reply that promises nothing, and the conversation stays "To handle".`}
+                                </Text>
+                            </Alert>
+                            <Textarea
+                                {...form.getInputProps('assistant_holding_reply')}
+                                label={t`Holding reply`}
+                                description={t`Used when the assistant cannot write one in your tone. Add your signature if you want one. Leave empty to use: "Good question, I am checking with the team and will get back to you very soon."`}
+                                autosize
+                                minRows={2}
+                                maxRows={6}
+                                maxLength={MAX_HOLDING_REPLY_LENGTH}
+                                mb="md"
+                            />
+                        </>
+                    )}
                     <Group mb="lg">
                         <Button type="submit" loading={updateMutation.isPending}>{t`Save`}</Button>
                     </Group>

@@ -25,6 +25,7 @@ enum ImageType
     case EVENT_HERO_SIGNATURE_LOGO;
     case EVENT_HERO_BRAND_LOGO;
     case EVENT_ARTIST_PHOTO;
+    case EVENT_EMAIL_LOGO;
 
     // Organizer images
     case ORGANIZER_LOGO;
@@ -48,6 +49,7 @@ enum ImageType
             self::EVENT_HERO_SIGNATURE_LOGO,
             self::EVENT_HERO_BRAND_LOGO,
             self::EVENT_ARTIST_PHOTO,
+            self::EVENT_EMAIL_LOGO,
         ];
     }
 
@@ -98,6 +100,7 @@ enum ImageType
             self::EVENT_HERO_SIGNATURE_LOGO->name => [100, 40],
             self::EVENT_HERO_BRAND_LOGO->name => [100, 40],
             self::EVENT_ARTIST_PHOTO->name => [200, 200],
+            self::EVENT_EMAIL_LOGO->name => [100, 40],
             self::ORGANIZER_LOGO->name => [100, 100],
             self::ORGANIZER_EMAIL_LOGO->name => [100, 100],
             self::ORGANIZER_COVER->name => [600, 50],

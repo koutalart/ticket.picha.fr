@@ -11,7 +11,7 @@ import {useUpdateEventSettings} from "../../../../../../mutations/useUpdateEvent
 import {useGetEventSettings} from "../../../../../../queries/useGetEventSettings.ts";
 import {useGetEvent} from "../../../../../../queries/useGetEvent.ts";
 import {useGetSmsSettings} from "../../../../../../queries/useGetSmsSettings.ts";
-import {getConfig} from "../../../../../../utilites/config.ts";
+import {publicBaseUrl} from "../../../../../../utilites/urlHelper.ts";
 import {countSmsSegments} from "../../../../organizer/Sms/smsSegments.ts";
 import {renderSmsTemplate} from "./renderSmsTemplate.ts";
 import classes from "./SmsConfirmationSettings.module.scss";
@@ -75,7 +75,7 @@ export const SmsConfirmationSettings = () => {
     const usesLink = /\{\s*lien\s*\}/i.test(message);
 
     const event = eventQuery.data;
-    const frontendUrl = (getConfig('VITE_FRONTEND_URL') || 'https://ticket.picha.fr').replace(/\/$/, '');
+    const frontendUrl = publicBaseUrl(event?.organizer);
     const preview = renderSmsTemplate(message, {
         firstName: SAMPLE_FIRST_NAME,
         eventTitle: event?.title ?? '',

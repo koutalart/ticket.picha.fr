@@ -318,7 +318,7 @@ class SendEventEmailMessagesService
     private function getOrderSummaryUrl(OrderDomainObject $order): string
     {
         return sprintf(
-            Url::getFrontEndUrlFromConfig(Url::ORDER_SUMMARY),
+            Url::getPublicFrontEndUrlForEventId(Url::ORDER_SUMMARY, $order->getEventId()),
             $order->getEventId(),
             $order->getShortId(),
         );
