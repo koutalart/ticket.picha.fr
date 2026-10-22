@@ -156,7 +156,7 @@ export const PosterTemplate = ({
         });
     }
     if ((sitePage === 'home' || sitePage === 'evenements') && !isPastEvents) {
-        jsonLdGraph.push(...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event), organizer.name)));
+        jsonLdGraph.push(...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event, organizer), organizer.name)));
     }
     if (sitePage === 'services') {
         jsonLdGraph.push(...(content.services || []).map(service => ({

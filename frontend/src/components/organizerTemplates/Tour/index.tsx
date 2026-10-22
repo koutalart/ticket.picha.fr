@@ -133,7 +133,7 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                         '@context': 'https://schema.org',
                         '@graph': [
                             {'@type': 'Organization', name: organizer.name, url: canonicalUrl, logo: logo?.url},
-                            ...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event), organizer.name)),
+                            ...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event, organizer), organizer.name)),
                         ],
                     })}
                 </script>

@@ -88,8 +88,8 @@ class AttendeeTicketMail extends BaseMail
                 'order' => $this->order,
                 'tickets' => $this->tickets,
                 'ticketUrl' => count($this->tickets) > 1
-                    ? sprintf(Url::getFrontEndUrlFromConfig(Url::ORDER_SUMMARY), $this->event->getId(), $this->order->getShortId())
-                    : sprintf(Url::getFrontEndUrlFromConfig(Url::ATTENDEE_TICKET), $this->event->getId(), $this->attendee->getShortId()),
+                    ? sprintf(Url::getPublicFrontEndUrlFromConfig(Url::ORDER_SUMMARY, $this->event), $this->event->getId(), $this->order->getShortId())
+                    : sprintf(Url::getPublicFrontEndUrlFromConfig(Url::ATTENDEE_TICKET, $this->event), $this->event->getId(), $this->attendee->getShortId()),
             ]
         );
     }

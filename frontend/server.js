@@ -71,6 +71,7 @@ async function main() {
     const CUSTOM_DOMAIN_HEADER = 'x-picha-custom-domain-organizer';
     const CUSTOM_DOMAIN_CACHE_TTL_MS = 60 * 1000;
     const PLATFORM_ONLY_PATHS = /^\/(manage|admin|auth|account|welcome|kiosk|profile)(\/|$|\?)/;
+    const PARTICIPANT_PATHS = ['/event/', '/events/', '/e/', '/checkout/', '/product/', '/venue/', '/my-tickets/', '/q/'];
     const customDomainCache = new Map();
 
     const normalizeHost = (host) => (host || '').toLowerCase().replace(/:\d+$/, '').replace(/^www\./, '');
@@ -206,10 +207,16 @@ Sitemap: ${frontendUrl}/sitemap.xml
         if (!data?.organizer) {
             return res.status(404).type('text/plain').send('Not found');
         }
+        const organizerDomain = data.organizer.custom_domain;
         const {renderOrganizerLlmsTxt} = await loadServerEntry();
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.setHeader('Cache-Control', 'public, max-age=3600');
-        res.status(200).send(renderOrganizerLlmsTxt({origin, organizer: data.organizer, events: data.events, customDomain}));
+        res.status(200).send(renderOrganizerLlmsTxt({
+            origin: organizerDomain ? `https://${organizerDomain}` : origin,
+            organizer: data.organizer,
+            events: data.events,
+            customDomain: customDomain || !!organizerDomain,
+        }));
     };
 
     app.get('/llms.txt', async (req, res) => {
@@ -368,7 +375,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 .join(" ");
 
             if (customDomain && platformUrl) {
-                for (const path of ['/event/', '/events/']) {
+                for (const path of PARTICIPANT_PATHS) {
                     helmetHtml = helmetHtml.split(`${platformUrl}${path}`).join(`https://${requestHost}${path}`);
                 }
             }

@@ -163,7 +163,7 @@ class EventDomainObject extends Generated\EventDomainObjectAbstract implements I
     public function getEventUrl(): string
     {
         return sprintf(
-            Url::getFrontEndUrlFromConfig(Url::EVENT_HOMEPAGE),
+            Url::getPublicFrontEndUrlFromConfig(Url::EVENT_HOMEPAGE, $this),
             $this->getId(),
             $this->getSlug()
         );

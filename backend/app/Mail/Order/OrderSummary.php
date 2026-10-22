@@ -60,6 +60,7 @@ class OrderSummary extends BaseMail
                     'renderedBody' => $this->renderedTemplate->body,
                     'renderedCta' => $this->renderedTemplate->cta,
                     'eventSettings' => $this->eventSettings,
+                    'event' => $this->event,
                 ]
             );
         }
@@ -74,7 +75,7 @@ class OrderSummary extends BaseMail
                 'organizer' => $this->organizer,
                 'ticketAttendees' => $this->ticketAttendees,
                 'orderUrl' => sprintf(
-                    Url::getFrontEndUrlFromConfig(Url::ORDER_SUMMARY),
+                    Url::getPublicFrontEndUrlFromConfig(Url::ORDER_SUMMARY, $this->event),
                     $this->event->getId(),
                     $this->order->getShortId(),
                 ),

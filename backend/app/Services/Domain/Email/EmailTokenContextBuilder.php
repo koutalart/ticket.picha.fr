@@ -63,7 +63,7 @@ class EmailTokenContextBuilder
             // Order object
             'order' => [
                 'url' => sprintf(
-                    Url::getFrontEndUrlFromConfig(Url::ORDER_SUMMARY),
+                    Url::getPublicFrontEndUrlFromConfig(Url::ORDER_SUMMARY, $event),
                     $event->getId(),
                     $order->getShortId()
                 ),
@@ -123,7 +123,7 @@ class EmailTokenContextBuilder
             'name' => $ticketName,
             'price' => $ticketPrice,
             'url' => sprintf(
-                Url::getFrontEndUrlFromConfig(Url::ATTENDEE_TICKET),
+                Url::getPublicFrontEndUrlFromConfig(Url::ATTENDEE_TICKET, $event),
                 $event->getId(),
                 $attendee->getShortId()
             ),

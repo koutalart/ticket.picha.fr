@@ -45,7 +45,7 @@ class OrderFailed extends BaseMail
                 'organizer' => $this->organizer,
                 'eventSettings' => $this->eventSettings,
                 'eventUrl' => sprintf(
-                    Url::getFrontEndUrlFromConfig(Url::EVENT_HOMEPAGE),
+                    Url::getPublicFrontEndUrlFromConfig(Url::EVENT_HOMEPAGE, $this->event),
                     $this->event->getId(),
                     $this->event->getSlug(),
                 )

@@ -107,7 +107,7 @@ export const OrderList = ({orders, event}: { orders: Order[], event: Event }) =>
                         {t`Message buyer`}
                     </Menu.Item>
                     <Menu.Item leftSection={<IconCopy size={14}/>} onClick={() => {
-                        clipboard.copy(eventCheckoutUrl(order.event_id, order.short_id, 'summary'));
+                        clipboard.copy(eventCheckoutUrl(order.event_id, order.short_id, 'summary', event.organizer));
                         showSuccess(t`Customer link copied to clipboard`);
                     }}>
                         {t`Copy customer link`}

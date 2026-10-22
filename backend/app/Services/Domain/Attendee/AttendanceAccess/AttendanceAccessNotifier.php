@@ -32,6 +32,7 @@ class AttendanceAccessNotifier
                     eventTitle: $event->getTitle(),
                     code: $code,
                     validityMinutes: (int) (AttendanceAccessCodeService::TTL_SECONDS / 60),
+                    event: $event,
                 ));
 
             return;

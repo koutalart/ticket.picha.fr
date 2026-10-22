@@ -13,6 +13,7 @@ use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\Repository\Eloquent\Value\OrderAndDirection;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
 use Illuminate\Support\Collection;
 
@@ -27,6 +28,7 @@ class SmsPersonalLinkService
         private readonly SmsCampaignRecipientRepositoryInterface $recipientRepository,
         private readonly QrLinkRepositoryInterface $qrLinkRepository,
         private readonly QrLinkUrlService $qrLinkUrlService,
+        private readonly PublicBaseUrlResolver $publicBaseUrlResolver,
     ) {}
 
     /**
@@ -40,7 +42,11 @@ class SmsPersonalLinkService
             $shortId = $qrLink->getShortId();
             $sent = $sentUrls->first(fn (string $url) => $this->qrParam($url) === strtolower($shortId));
 
-            return $sent ?? $this->qrLinkUrlService->getPublicUrl($qrLink);
+            if ($sent !== null && ! $this->isPlatformUrlOfCustomDomainOrganizer($sent, $organizerId)) {
+                return $sent;
+            }
+
+            return $this->qrLinkUrlService->getPublicUrl($qrLink);
         }
 
         return $sentUrls->first(fn (string $url) => $this->qrParam($url) !== null);
@@ -110,6 +116,14 @@ class SmsPersonalLinkService
                 return array_map(fn (string $url) => rtrim($url, '.,;:!?)'), $matches[0]);
             })
             ->values();
+    }
+
+    private function isPlatformUrlOfCustomDomainOrganizer(string $url, int $organizerId): bool
+    {
+        $platformHost = self::host($this->publicBaseUrlResolver->platformUrl());
+        $organizerHost = self::host($this->publicBaseUrlResolver->forOrganizerId($organizerId));
+
+        return $organizerHost !== $platformHost && self::host($url) === $platformHost;
     }
 
     private function qrParam(string $url): ?string

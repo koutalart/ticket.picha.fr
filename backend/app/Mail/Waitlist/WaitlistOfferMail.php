@@ -51,7 +51,7 @@ class WaitlistOfferMail extends BaseMail
                 'eventSettings' => $this->eventSettings,
                 'offerExpiresAtFormatted' => $this->formatOfferExpiry(),
                 'checkoutUrl' => sprintf(
-                    Url::getFrontEndUrlFromConfig(Url::ORDER_DETAILS, [
+                    Url::getPublicFrontEndUrlFromConfig(Url::ORDER_DETAILS, $this->event, [
                         'session_identifier' => $this->sessionIdentifier,
                         'waitlist' => 'true',
                     ]),
