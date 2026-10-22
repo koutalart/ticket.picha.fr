@@ -5,6 +5,7 @@ namespace HiEvents\Http\Request\Organizer\Settings;
 use HiEvents\DomainObjects\Enums\AttendeeDetailsCollectionMethod;
 use HiEvents\DomainObjects\Enums\HomepageBackgroundType;
 use HiEvents\DomainObjects\Enums\HomepageFontFamily;
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\Enums\OrganizerHomepageVisibility;
 use HiEvents\DomainObjects\Enums\TrackingPixelProvider;
 use HiEvents\Http\Request\BaseRequest;
@@ -145,6 +146,8 @@ class PartialUpdateOrganizerSettingsRequest extends BaseRequest
                 'max:'.OrganizerMailSenderResolver::MAX_SENDER_NAME_LENGTH,
                 'not_regex:'.OrganizerMailSenderResolver::FORBIDDEN_CHARACTERS_PATTERN,
             ],
+
+            'customer_address_form' => ['sometimes', 'nullable', Rule::in(CustomerAddressForm::valuesArray())],
         ];
     }
 
