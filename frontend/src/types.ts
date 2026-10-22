@@ -285,6 +285,9 @@ export interface EventSettings {
 
     sms_registration_confirmation_enabled?: boolean;
     sms_registration_confirmation_message?: string | null;
+    sms_cancellation_confirmation_enabled?: boolean;
+    sms_cancellation_confirmation_message?: string | null;
+    sms_cancellation_confirmation_on_organizer_cancel?: boolean;
 
     embedded_registration_enabled?: boolean;
 
