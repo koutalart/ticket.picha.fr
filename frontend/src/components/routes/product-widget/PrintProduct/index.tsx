@@ -8,11 +8,15 @@ import {useEffect} from "react";
 import {OnlineEventDetails} from "../../../common/OnlineEventDetails";
 import {t} from '@lingui/macro';
 import classes from '../PrintOrder/PrintOrder.module.scss';
+import {getFullscreenHero} from "../../../../utilites/fullscreenHero.ts";
+import {EventImmersiveShell} from "../../../common/EventImmersiveShell";
 
 const PrintProduct = () => {
     const {eventId, attendeeShortId} = useParams();
     const {data: event} = useGetEventPublic(eventId);
     const {data: attendee} = useGetAttendeePublic(eventId, String(attendeeShortId));
+
+    const immersive = getFullscreenHero(event).enabled;
 
     useEffect(() => {
         if (attendee && event) {
@@ -25,32 +29,35 @@ const PrintProduct = () => {
     }
 
     return (
-        <div className={classes.container}>
-            <h2 className={classes.title}>{t`Ticket for`} {event.title}</h2>
-            <div className={classes.ticketPage}>
-                <AttendeeTicket
-                    attendee={attendee as Attendee}
-                    product={attendee.product as Product}
-                    event={event}
-                    hideButtons
-                />
+        <EventImmersiveShell event={event} width="wide">
+            <div className={classes.container}>
+                <h2 className={classes.title}>{t`Ticket for`} {event.title}</h2>
+                <div className={classes.ticketPage}>
+                    <AttendeeTicket
+                        attendee={attendee as Attendee}
+                        product={attendee.product as Product}
+                        event={event}
+                        hideButtons
+                    />
 
-                {(event?.settings?.is_online_event && (
-                    <div style={{ marginTop: '32px', maxWidth: '900px', width: '100%' }}>
-                        <OnlineEventDetails eventSettings={event.settings}/>
+                    {(event?.settings?.is_online_event && (
+                        <div style={{ marginTop: '32px', maxWidth: '900px', width: '100%' }}>
+                            <OnlineEventDetails eventSettings={event.settings}/>
+                        </div>
+                    ))}
+                    
+                    <div className={classes.poweredBy}>
+                        <PoweredByFooter/>
                     </div>
-                ))}
-                
-                <div className={classes.poweredBy}>
-                    <PoweredByFooter/>
                 </div>
+                
+                {!immersive && (
+                    <div className={classes.webOnlyFooter}>
+                        <PoweredByFooter/>
+                    </div>
+                )}
             </div>
-            
-            {/* PoweredBy footer for web view only */}
-            <div className={classes.webOnlyFooter}>
-                <PoweredByFooter/>
-            </div>
-        </div>
+        </EventImmersiveShell>
     )
 }
 

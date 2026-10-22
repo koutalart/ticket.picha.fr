@@ -174,3 +174,34 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+.card[data-immersive] {
+  max-width: none;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+
+  .content {
+    padding: 0;
+  }
+
+  .title {
+    font-size: clamp(1.5rem, 3.4vw, 2.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  .meta {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .notice {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
