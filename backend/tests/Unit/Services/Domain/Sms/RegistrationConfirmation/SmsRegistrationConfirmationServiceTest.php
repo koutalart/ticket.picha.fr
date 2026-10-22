@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services\Domain\Sms\RegistrationConfirmation;
 
+use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
@@ -9,9 +10,11 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\DomainObjects\SmsOptOutDomainObject;
 use HiEvents\DomainObjects\SmsRegistrationConfirmationDomainObject;
+use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Exceptions\SmsGatewayException;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
+use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
@@ -59,6 +62,8 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
 
     private SmsSendService|MockInterface $sendService;
 
+    private AttendeeRepositoryInterface|MockInterface $attendeeRepository;
+
     private SmsRegistrationConfirmationService $service;
 
     /** @var SendSmsDTO[] */
@@ -69,6 +74,9 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
 
     /** @var array<int, array> */
     private array $updates = [];
+
+    /** @var array<int, array> */
+    private array $rows = [];
 
     protected function setUp(): void
     {
@@ -82,6 +90,10 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
         $this->confirmationRepository = Mockery::mock(SmsRegistrationConfirmationRepositoryInterface::class);
         $this->linkProvider = Mockery::mock(SmsReminderPersonalLinkProviderInterface::class);
         $this->sendService = Mockery::mock(SmsSendService::class);
+        $this->attendeeRepository = Mockery::mock(AttendeeRepositoryInterface::class);
+        $this->attendeeRepository->shouldReceive('findFirst')->andReturnUsing(
+            fn (int $id) => (new AttendeeDomainObject)->setId($id)->setStatus(AttendeeStatus::ACTIVE->name)
+        )->byDefault();
 
         $this->orderRepository->shouldReceive('findFirst')->with(self::ORDER_ID)->andReturn($this->order())->byDefault();
         $this->settingsRepository->shouldReceive('findFirstWhere')->with(['event_id' => self::EVENT_ID])->andReturn(
@@ -100,15 +112,24 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
             fn (int $attendeeId) => 'https://ticket.picha.fr/venue/8/a'.$attendeeId.'?code=x'
         )->byDefault();
 
-        $this->confirmationRepository->shouldReceive('findFirstWhere')->andReturnNull()->byDefault();
+        $this->confirmationRepository->shouldReceive('findFirstWhere')->andReturnUsing(
+            fn (array $where) => $this->findStoredConfirmation($where)
+        )->byDefault();
         $this->confirmationRepository->shouldReceive('create')->andReturnUsing(function (array $attributes) {
+            if (in_array($attributes['status'], ['SENDING', 'SENT'], true)
+                && $this->activeHolder($attributes['event_id'], $attributes['phone']) !== null) {
+                throw new UniqueConstraintViolationException('pgsql', 'insert', [], new \Exception('sms_registration_confirmations_one_per_phone'));
+            }
+
             $id = count($this->claims) + 1;
             $this->claims[$id] = $attributes;
+            $this->rows[$id] = $attributes;
 
             return (new SmsRegistrationConfirmationDomainObject)->setId($id)->setAttendeeId($attributes['attendee_id']);
         })->byDefault();
         $this->confirmationRepository->shouldReceive('updateFromArray')->andReturnUsing(function (int $id, array $attributes) {
             $this->updates[$id] = $attributes;
+            $this->rows[$id] = array_merge($this->rows[$id] ?? [], $attributes);
 
             return new SmsRegistrationConfirmationDomainObject;
         })->byDefault();
@@ -131,6 +152,7 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
             $this->sendService,
             new NullLogger,
             $this->customerLocaleResolver = new StaticCustomerLocaleResolver,
+            $this->attendeeRepository,
         );
     }
 
@@ -288,7 +310,7 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
     {
         $this->attendees([
             $this->attendee(1, '+262639250206', 'Awa'),
-            $this->attendee(2, '+262639250206', 'Ali'),
+            $this->attendee(2, '+262639250208', 'Ali'),
             $this->attendee(3, '+262639250207', null),
         ]);
 
@@ -335,11 +357,143 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
         $this->assertCount(1, $this->claims);
     }
 
+    public function test_two_attendees_with_the_same_phone_receive_a_single_confirmation(): void
+    {
+        $this->attendees([
+            $this->attendee(1, '0639 25 02 06', 'Awa'),
+            $this->attendee(2, '+262639250206', 'Ali'),
+        ]);
+
+        $result = $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame(1, $result->sent);
+        $this->assertSame(1, $result->alreadyConfirmedForPhone);
+        $this->assertCount(1, $this->sent);
+        $this->assertStringContainsString('Bonjour Awa,', $this->sent[0]->content);
+        $this->assertSame('SKIPPED', $this->claims[2]['status']);
+        $this->assertSame(2, $this->claims[2]['attendee_id']);
+        $this->assertSame('Déjà confirmé pour ce numéro', $this->claims[2]['failure_reason']);
+    }
+
+    public function test_a_number_confirmed_by_an_earlier_order_is_not_confirmed_again(): void
+    {
+        $this->storeConfirmation(attendeeId: 70, eventId: self::EVENT_ID, phone: '+262639250206', status: 'SENT');
+        $this->attendees([$this->attendee(1, '0639250206', 'Awa')]);
+
+        $result = $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame(0, $result->sent);
+        $this->assertSame(1, $result->alreadyConfirmedForPhone);
+        $this->assertSame([], $this->sent);
+    }
+
+    public function test_the_same_number_is_confirmed_again_for_another_event(): void
+    {
+        $this->storeConfirmation(attendeeId: 70, eventId: 99, phone: '+262639250206', status: 'SENT');
+        $this->attendees([$this->attendee(1, '+262639250206', 'Awa')]);
+
+        $result = $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame(1, $result->sent);
+        $this->assertSame(0, $result->alreadyConfirmedForPhone);
+    }
+
+    public function test_a_failed_confirmation_does_not_block_the_number(): void
+    {
+        $this->storeConfirmation(attendeeId: 70, eventId: self::EVENT_ID, phone: '+262639250206', status: 'FAILED');
+        $this->attendees([$this->attendee(1, '+262639250206', 'Awa')]);
+
+        $this->assertSame(1, $this->service->sendForOrder(self::ORDER_ID)->sent);
+    }
+
+    public function test_a_concurrent_order_that_took_the_number_first_wins(): void
+    {
+        $this->confirmationRepository->shouldReceive('findFirstWhere')->andReturnNull();
+        $this->confirmationRepository->shouldReceive('create')
+            ->with(Mockery::on(fn (array $attributes) => $attributes['status'] === 'SENDING'))
+            ->andThrow(new UniqueConstraintViolationException('pgsql', 'insert', [], new \Exception('sms_registration_confirmations_one_per_phone')));
+        $this->attendees([$this->attendee(1, '+262639250206', 'Awa')]);
+
+        $result = $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame([], $this->sent);
+        $this->assertSame(1, $result->alreadyConfirmedForPhone);
+        $this->assertSame('SKIPPED', $this->claims[1]['status']);
+    }
+
+    public function test_a_new_registration_after_a_cancellation_is_confirmed_again(): void
+    {
+        $holderId = $this->storeConfirmation(attendeeId: 70, eventId: self::EVENT_ID, phone: '+262639250206', status: 'SENT');
+        $this->attendeeRepository->shouldReceive('findFirst')->with(70)->andReturn(
+            (new AttendeeDomainObject)->setId(70)->setStatus(AttendeeStatus::CANCELLED->name)
+        );
+        $this->attendees([$this->attendee(1, '+262639250206', 'Awa')]);
+
+        $result = $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame(1, $result->sent);
+        $this->assertArrayHasKey('phone_released_at', $this->updates[$holderId]);
+        $this->assertSame('SENT', $this->rows[$holderId + 1]['status']);
+    }
+
+    public function test_the_number_stays_taken_while_the_confirmed_attendee_is_registered(): void
+    {
+        $holderId = $this->storeConfirmation(attendeeId: 70, eventId: self::EVENT_ID, phone: '+262639250206', status: 'SENT');
+        $this->attendees([$this->attendee(1, '+262639250206', 'Awa')]);
+
+        $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame([], $this->sent);
+        $this->assertArrayNotHasKey($holderId, $this->updates);
+    }
+
     public function test_order_eligibility(): void
     {
         $this->assertTrue(SmsRegistrationConfirmationService::isEligibleOrder($this->order()));
         $this->assertFalse(SmsRegistrationConfirmationService::isEligibleOrder($this->order()->setIsManuallyCreated(true)));
         $this->assertFalse(SmsRegistrationConfirmationService::isEligibleOrder($this->order()->setStatus(OrderStatus::RESERVED->name)));
+    }
+
+    private function storeConfirmation(int $attendeeId, int $eventId, string $phone, string $status): int
+    {
+        $id = count($this->claims) + 1;
+        $this->claims[$id] = $this->rows[$id] = [
+            'event_id' => $eventId,
+            'attendee_id' => $attendeeId,
+            'phone' => $phone,
+            'status' => $status,
+        ];
+
+        return $id;
+    }
+
+    private function findStoredConfirmation(array $where): ?SmsRegistrationConfirmationDomainObject
+    {
+        if (array_keys($where) === ['attendee_id']) {
+            foreach ($this->rows as $id => $claim) {
+                if ($claim['attendee_id'] === $where['attendee_id']) {
+                    return (new SmsRegistrationConfirmationDomainObject)->setId($id)->setAttendeeId($claim['attendee_id']);
+                }
+            }
+
+            return null;
+        }
+
+        return $this->activeHolder($where['event_id'], $where['phone']);
+    }
+
+    private function activeHolder(int $eventId, string $phone): ?SmsRegistrationConfirmationDomainObject
+    {
+        foreach ($this->rows as $id => $claim) {
+            if ($claim['event_id'] === $eventId
+                && $claim['phone'] === $phone
+                && in_array($claim['status'], ['SENDING', 'SENT'], true)
+                && ($claim['phone_released_at'] ?? null) === null) {
+                return (new SmsRegistrationConfirmationDomainObject)->setId($id)->setAttendeeId($claim['attendee_id']);
+            }
+        }
+
+        return null;
     }
 
     private function attendees(array $attendees): void

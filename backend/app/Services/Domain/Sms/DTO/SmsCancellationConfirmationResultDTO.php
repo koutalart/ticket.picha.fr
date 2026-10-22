@@ -14,5 +14,6 @@ class SmsCancellationConfirmationResultDTO extends BaseDataObject
         public readonly int $withoutValidPhone = 0,
         public readonly int $optedOut = 0,
         public readonly int $alreadySent = 0,
+        public readonly int $alreadyConfirmedForPhone = 0,
     ) {}
 }

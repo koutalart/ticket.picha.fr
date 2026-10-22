@@ -37,6 +37,7 @@ use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderMessageRenderer;
 use HiEvents\Services\Domain\Sms\SmsSendService;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Carbon;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -44,9 +45,16 @@ use Throwable;
  * Sends one SMS to a cancelled attendee, saying their registration is cancelled and their place released.
  * Only the participant's own cancellation sends it, unless the organizer also enabled it for their own cancellations.
  * Each attendee is claimed in sms_cancellation_confirmations before the call to PICHA SMS, so nobody receives it twice.
+ *
+ * Attendees sharing a phone number and cancelled together (within CANCELLATION_WAVE_MINUTES of each other) get a
+ * single SMS: the others are recorded as SKIPPED. The claim takes a lock on (event, phone) to settle concurrent jobs.
  */
 class SmsCancellationConfirmationService
 {
+    public const CANCELLATION_WAVE_MINUTES = 10;
+
+    public const SKIP_REASON_ALREADY_CONFIRMED_FOR_PHONE = 'Déjà confirmé pour ce numéro';
+
     public function __construct(
         private readonly AttendeeRepositoryInterface $attendeeRepository,
         private readonly OrderRepositoryInterface $orderRepository,
@@ -154,6 +162,7 @@ class SmsCancellationConfirmationService
         $withoutValidPhone = 0;
         $optedOut = 0;
         $alreadySent = 0;
+        $alreadyConfirmedForPhone = 0;
 
         foreach ($this->directoryRepository->findAttendeesWithPhone($event->getId(), $attendeeIds) as $attendee) {
             $phone = $attendee->phone !== null ? SmsPhoneNormalizer::normalize($attendee->phone) : null;
@@ -172,6 +181,12 @@ class SmsCancellationConfirmationService
             $confirmation = $this->claim($orderId, $event, $attendee, $phone, $source);
             if ($confirmation === null) {
                 $alreadySent++;
+
+                continue;
+            }
+
+            if ($confirmation->getStatus() === SmsCancellationConfirmationStatus::SKIPPED->name) {
+                $alreadyConfirmedForPhone++;
 
                 continue;
             }
@@ -213,6 +228,7 @@ class SmsCancellationConfirmationService
             withoutValidPhone: $withoutValidPhone,
             optedOut: $optedOut,
             alreadySent: $alreadySent,
+            alreadyConfirmedForPhone: $alreadyConfirmedForPhone,
         );
     }
 
@@ -238,15 +254,22 @@ class SmsCancellationConfirmationService
         }
 
         try {
-            return $this->confirmationRepository->create([
-                SmsCancellationConfirmationDomainObjectAbstract::ORGANIZER_ID => $event->getOrganizerId(),
-                SmsCancellationConfirmationDomainObjectAbstract::EVENT_ID => $event->getId(),
-                SmsCancellationConfirmationDomainObjectAbstract::ORDER_ID => $orderId,
-                SmsCancellationConfirmationDomainObjectAbstract::ATTENDEE_ID => $attendee->attendeeId,
-                SmsCancellationConfirmationDomainObjectAbstract::PHONE => $phone,
-                SmsCancellationConfirmationDomainObjectAbstract::CANCELLED_BY => $source->name,
-                SmsCancellationConfirmationDomainObjectAbstract::STATUS => SmsCancellationConfirmationStatus::SENDING->name,
-            ]);
+            return $this->confirmationRepository->createUnlessPhoneConfirmedSince(
+                [
+                    SmsCancellationConfirmationDomainObjectAbstract::ORGANIZER_ID => $event->getOrganizerId(),
+                    SmsCancellationConfirmationDomainObjectAbstract::EVENT_ID => $event->getId(),
+                    SmsCancellationConfirmationDomainObjectAbstract::ORDER_ID => $orderId,
+                    SmsCancellationConfirmationDomainObjectAbstract::ATTENDEE_ID => $attendee->attendeeId,
+                    SmsCancellationConfirmationDomainObjectAbstract::PHONE => $phone,
+                    SmsCancellationConfirmationDomainObjectAbstract::CANCELLED_BY => $source->name,
+                    SmsCancellationConfirmationDomainObjectAbstract::STATUS => SmsCancellationConfirmationStatus::SENDING->name,
+                ],
+                Carbon::now()->subMinutes(self::CANCELLATION_WAVE_MINUTES)->toDateTimeString(),
+                [
+                    SmsCancellationConfirmationDomainObjectAbstract::STATUS => SmsCancellationConfirmationStatus::SKIPPED->name,
+                    SmsCancellationConfirmationDomainObjectAbstract::FAILURE_REASON => self::SKIP_REASON_ALREADY_CONFIRMED_FOR_PHONE,
+                ],
+            );
         } catch (UniqueConstraintViolationException) {
             return null;
         }
