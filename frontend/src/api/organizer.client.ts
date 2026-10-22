@@ -203,6 +203,18 @@ export const organizerPublicClient = {
         );
         return response.data;
     },
+
+    subscribeToNewsletter: async (eventId: IdParam, data: {
+        email: string;
+        consent: boolean;
+        consent_text: string;
+    }) => {
+        const response = await publicApi.post<{ message: string }>(
+            `events/${eventId}/newsletter-subscriptions`,
+            data
+        );
+        return response.data;
+    },
 }
 
 export const organizerSettingsClient = {
