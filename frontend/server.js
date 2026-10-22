@@ -135,7 +135,14 @@ async function main() {
         const pages = ['', 'evenements', 'a-propos', ...(hasServices ? ['services'] : []), 'partenaires', 'contact'];
         const urls = [
             ...pages.map((page) => ({loc: `${origin}/${page}`, priority: page === '' ? '1.0' : '0.7', changefreq: 'weekly'})),
-            ...events.map((event) => ({loc: `${origin}/event/${event.id}/${event.slug}`, priority: '0.9', changefreq: 'daily'})),
+            ...events.flatMap((event) => [
+                {loc: `${origin}/event/${event.id}/${event.slug}`, priority: '0.9', changefreq: 'daily'},
+                ...(event.dedicated_pages || []).map((page) => ({
+                    loc: `${origin}/event/${event.id}/${event.slug}/${page}`,
+                    priority: '0.7',
+                    changefreq: 'weekly',
+                })),
+            ]),
         ];
 
         const body = urls.map(({loc, priority, changefreq}) =>
@@ -350,7 +357,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 render = (await dynamicImport(path.join(__dirname, "./dist/server/entry.server.js"))).render;
             }
 
-            const { appHtml, dehydratedState, helmetContext, locale, htmlLang } = await render(
+            const { appHtml, dehydratedState, helmetContext, locale, htmlLang, statusCode } = await render(
                 { req, res },
                 ssrManifest
             );
@@ -386,7 +393,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 .replace(/<!--render-helmet-->.*?<!--\/render-helmet-->/s, helmetHtml);
 
             res.setHeader("Content-Type", "text/html");
-            return res.status(200).end(html);
+            return res.status(statusCode || 200).end(html);
         } catch (error) {
             if (error instanceof Response) {
                 if (error.status >= 300 && error.status < 400) {
