@@ -2,6 +2,8 @@
 
 .main {
   position: relative;
+  min-width: 0;
+  max-width: 100%;
   // Use dvh (dynamic viewport height) with fallback for older browsers
   // This fixes iOS Safari where 100vh includes the address bar height,
   // causing content (like the Complete Order button) to be cut off
@@ -21,6 +23,7 @@
   }
 
   .innerContainer {
+    min-width: 0;
     max-width: 700px;
     margin: 0 auto;
   }
