@@ -73,6 +73,12 @@ use HiEvents\Repository\Eloquent\TaxAndFeeRepository;
 use HiEvents\Repository\Eloquent\TicketLookupTokenRepository;
 use HiEvents\Repository\Eloquent\UserRepository;
 use HiEvents\Repository\Eloquent\WaitlistEntryRepository;
+use HiEvents\Repository\Eloquent\ContactRepository;
+use HiEvents\Repository\Eloquent\ContactLinkVisitRepository;
+use HiEvents\Repository\Eloquent\ContactNoteRepository;
+use HiEvents\Repository\Eloquent\ContactTagRepository;
+use HiEvents\Repository\Eloquent\ContactTagAssignmentRepository;
+use HiEvents\Repository\Eloquent\ContactImportRepository;
 use HiEvents\Repository\Eloquent\WebhookLogRepository;
 use HiEvents\Repository\Eloquent\WebhookRepository;
 use HiEvents\Repository\Eloquent\CaseStudyStatsRepository;
@@ -146,6 +152,12 @@ use HiEvents\Repository\Interfaces\TaxAndFeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\TicketLookupTokenRepositoryInterface;
 use HiEvents\Repository\Interfaces\UserRepositoryInterface;
 use HiEvents\Repository\Interfaces\WaitlistEntryRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactLinkVisitRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactNoteRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactTagRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactTagAssignmentRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactImportRepositoryInterface;
 use HiEvents\Repository\Interfaces\WebhookLogRepositoryInterface;
 use HiEvents\Repository\Interfaces\WebhookRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -221,6 +233,12 @@ class RepositoryServiceProvider extends ServiceProvider
         TicketLookupTokenRepositoryInterface::class => TicketLookupTokenRepository::class,
         AccountMessagingTierRepositoryInterface::class => AccountMessagingTierRepository::class,
         WaitlistEntryRepositoryInterface::class => WaitlistEntryRepository::class,
+        ContactRepositoryInterface::class => ContactRepository::class,
+        ContactLinkVisitRepositoryInterface::class => ContactLinkVisitRepository::class,
+        ContactNoteRepositoryInterface::class => ContactNoteRepository::class,
+        ContactTagRepositoryInterface::class => ContactTagRepository::class,
+        ContactTagAssignmentRepositoryInterface::class => ContactTagAssignmentRepository::class,
+        ContactImportRepositoryInterface::class => ContactImportRepository::class,
         BoxOfficeSaleRepositoryInterface::class => BoxOfficeSaleRepository::class,
         EventBoxOfficeOperatorRepositoryInterface::class => EventBoxOfficeOperatorRepository::class,
         PrintJobRepositoryInterface::class => PrintJobRepository::class,

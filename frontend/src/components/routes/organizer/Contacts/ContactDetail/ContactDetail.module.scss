@@ -1,0 +1,124 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.identity {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--mantine-color-dimmed);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 6px 10px;
+  margin: 0;
+  font-size: 0.9rem;
+
+  dt {
+    color: var(--mantine-color-dimmed);
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.sectionLabel {
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  color: var(--mantine-color-dimmed);
+}
+
+.note {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--mantine-color-yellow-light);
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.noteMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--mantine-color-dimmed);
+}
+
+.timeline {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.timelineItem {
+  display: grid;
+  grid-template-columns: 110px 28px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  font-size: 0.9rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 28px minmax(0, 1fr);
+
+    .timelineDate {
+      grid-column: 2;
+      order: 2;
+    }
+  }
+}
+
+.timelineDate {
+  font-size: 0.8rem;
+  color: var(--mantine-color-dimmed);
+  font-variant-numeric: tabular-nums;
+}
+
+.timelineDetail {
+  font-size: 0.8rem;
+  color: var(--mantine-color-dimmed);
+}
+
+.consentDate {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: var(--mantine-color-dimmed);
+}

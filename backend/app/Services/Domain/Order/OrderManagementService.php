@@ -44,6 +44,7 @@ class OrderManagementService
         ?string                $sessionId = null,
         ?QrLinkDomainObject    $qrLink = null,
         ?array                 $trackingContext = null,
+        ?int                   $attributedContactId = null,
     ): OrderDomainObject
     {
         $reservedUntil = Carbon::now()->addMinutes($timeOutMinutes);
@@ -60,6 +61,7 @@ class OrderManagementService
             'promo_code' => $promoCode?->getCode(),
             'affiliate_id' => $affiliate?->getId(),
             'qr_link_id' => $qrLink?->getId(),
+            'attributed_contact_id' => $attributedContactId,
             'tracking_context' => $trackingContext,
             'locale' => $locale,
         ]);

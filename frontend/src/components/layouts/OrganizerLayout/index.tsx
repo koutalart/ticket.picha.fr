@@ -1,4 +1,5 @@
 import {
+    IconAddressBook,
     IconBrandStripe,
     IconCalendar,
     IconChartBar,
@@ -58,6 +59,12 @@ const OrganizerLayout = () => {
     const navItems: NavItem[] = [
         {link: 'dashboard', label: t`Home`, icon: IconHome, isActive: isDashboard},
         {link: 'events', label: t`Events`, icon: IconCalendar},
+        {
+            link: 'contacts',
+            label: t`Contacts`,
+            icon: IconAddressBook,
+            isActive: (isActive) => isActive || location.pathname.includes('/contacts/'),
+        },
         {
             link: 'reports',
             label: t`Reports`,
