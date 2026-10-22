@@ -30,6 +30,7 @@ class WaitlistConfirmationMail extends BaseMail
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: __("You're on the waitlist!"),
         );

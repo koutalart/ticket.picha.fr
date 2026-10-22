@@ -28,6 +28,7 @@ class PaymentSuccessButOrderExpiredMail extends BaseMail
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: __('We were unable to process your order'),
         );

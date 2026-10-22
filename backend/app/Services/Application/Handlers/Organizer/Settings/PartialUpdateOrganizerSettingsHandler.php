@@ -7,6 +7,7 @@ use HiEvents\DomainObjects\OrganizerSettingDomainObject;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSettingsRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Organizer\DTO\PartialUpdateOrganizerSettingsDTO;
+use HiEvents\Services\Domain\Mail\OrganizerMailSenderResolver;
 use Spatie\LaravelData\Data;
 
 class PartialUpdateOrganizerSettingsHandler
@@ -14,6 +15,7 @@ class PartialUpdateOrganizerSettingsHandler
     public function __construct(
         private readonly OrganizerSettingsRepositoryInterface $organizerSettingsRepository,
         private readonly OrganizerRepositoryInterface         $organizerRepository,
+        private readonly OrganizerMailSenderResolver          $organizerMailSenderResolver,
     )
     {
     }
@@ -99,6 +101,9 @@ class PartialUpdateOrganizerSettingsHandler
             'tracking_pixels' => $dto->getProvided('trackingPixels', $organizerSettings->getTrackingPixels()),
             'tracking_consent_acknowledged' => $dto->getProvided('trackingConsentAcknowledged', $organizerSettings->getTrackingConsentAcknowledged()),
             'meta_test_event_code' => $dto->getProvided('metaTestEventCode', $organizerSettings->getMetaTestEventCode()),
+            'email_sender_name' => $this->organizerMailSenderResolver->sanitize(
+                $dto->getProvided('emailSenderName', $organizerSettings->getEmailSenderName())
+            ),
         ], [
             'organizer_id' => $dto->organizerId,
             'id' => $organizerSettings->getId(),

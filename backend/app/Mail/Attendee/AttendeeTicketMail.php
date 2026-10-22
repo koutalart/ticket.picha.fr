@@ -53,6 +53,7 @@ class AttendeeTicketMail extends BaseMail
         ]);
 
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: $subject,
         );

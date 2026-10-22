@@ -623,6 +623,7 @@ export interface OrganizerSettings {
     meta_conversions_api_configured?: boolean;
     meta_test_event_code?: string | null;
     meta_conversions_api_token?: string | null;
+    email_sender_name?: string | null;
 }
 
 export interface TrackingPixelConfig {

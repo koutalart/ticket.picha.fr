@@ -33,6 +33,7 @@ class OrganizerSettingsResource extends BaseResource
             'tracking_consent_acknowledged' => $this->getTrackingConsentAcknowledged(),
             'meta_conversions_api_configured' => !empty($this->getMetaConversionsApiToken()),
             'meta_test_event_code' => $this->getMetaTestEventCode(),
+            'email_sender_name' => $this->getEmailSenderName(),
         ];
     }
 }

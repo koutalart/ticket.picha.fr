@@ -33,6 +33,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     final public const TRACKING_CONSENT_ACKNOWLEDGED = 'tracking_consent_acknowledged';
     final public const META_CONVERSIONS_API_TOKEN = 'meta_conversions_api_token';
     final public const META_TEST_EVENT_CODE = 'meta_test_event_code';
+    final public const EMAIL_SENDER_NAME = 'email_sender_name';
 
     protected int $id;
     protected int $organizer_id;
@@ -57,6 +58,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     protected bool $tracking_consent_acknowledged = false;
     protected ?string $meta_conversions_api_token = null;
     protected ?string $meta_test_event_code = null;
+    protected ?string $email_sender_name = null;
 
     public function toArray(): array
     {
@@ -84,6 +86,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
                     'tracking_consent_acknowledged' => $this->tracking_consent_acknowledged ?? null,
                     'meta_conversions_api_token' => $this->meta_conversions_api_token ?? null,
                     'meta_test_event_code' => $this->meta_test_event_code ?? null,
+                    'email_sender_name' => $this->email_sender_name ?? null,
                 ];
     }
 
@@ -339,5 +342,16 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     public function getMetaTestEventCode(): ?string
     {
         return $this->meta_test_event_code;
+    }
+
+    public function setEmailSenderName(?string $email_sender_name): self
+    {
+        $this->email_sender_name = $email_sender_name;
+        return $this;
+    }
+
+    public function getEmailSenderName(): ?string
+    {
+        return $this->email_sender_name;
     }
 }
