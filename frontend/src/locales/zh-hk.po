@@ -941,7 +941,7 @@ msgstr "附加信息"
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:132
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
-#: src/components/routes/organizer/Settings/index.tsx:47
+#: src/components/routes/organizer/Settings/index.tsx:48
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
 msgstr "地址"
@@ -1257,7 +1257,7 @@ msgstr "同呢個推廣夥伴關聯嘅電郵。推廣夥伴唔會收到通知。
 msgid "An error occurred while checking export status."
 msgstr "檢查導出狀態時發生錯誤。"
 
-#: src/components/common/ErrorDisplay/index.tsx:19
+#: src/components/common/ErrorDisplay/index.tsx:22
 msgid "An error occurred while loading the page"
 msgstr "加載頁面時出現錯誤"
 
@@ -1451,7 +1451,7 @@ msgstr "確定要刪除此範本嗎？此操作無法復原，郵件將回退到
 msgid "Are you sure you want to delete this webhook?"
 msgstr "您確定要刪除此 Webhook 嗎？"
 
-#: src/components/layouts/Checkout/index.tsx:359
+#: src/components/layouts/Checkout/index.tsx:367
 msgid "Are you sure you want to leave?"
 msgstr "您確定要離開嗎？"
 
@@ -1612,7 +1612,7 @@ msgstr "所有活動的出席率和簽到率"
 msgid "Attendance confirmation"
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:45
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:50
 msgid "Attendance confirmation unavailable"
 msgstr ""
 
@@ -1902,7 +1902,8 @@ msgstr "返回帳戶"
 msgid "Back to Event"
 msgstr "返回活動"
 
-#: src/components/layouts/Checkout/index.tsx:247
+#: src/components/common/ErrorDisplay/index.tsx:35
+#: src/components/layouts/Checkout/index.tsx:244
 msgid "Back to event page"
 msgstr "返回活動頁面"
 
@@ -1947,7 +1948,7 @@ msgstr "襟章 + 入場"
 msgid "Badge printing…"
 msgstr "正在列印名牌…"
 
-#: src/components/routes/organizer/Settings/index.tsx:35
+#: src/components/routes/organizer/Settings/index.tsx:36
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
 msgstr "基本資料"
@@ -2230,7 +2231,7 @@ msgstr ""
 msgid "Cancel the ticket"
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:194
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:200
 msgid "Cancel your registration?"
 msgstr ""
 
@@ -2406,7 +2407,7 @@ msgstr "僅簽到"
 msgid "Check Out"
 msgstr "簽出"
 
-#: src/components/layouts/Checkout/index.tsx:287
+#: src/components/layouts/Checkout/index.tsx:284
 msgid "Check out this event!"
 msgstr "看看這個活動吧！"
 
@@ -2590,6 +2591,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:45
 msgid "Choose the default setting for new events. This can be overridden for individual events."
 msgstr "為新活動選擇預設設置。這可以針對單個活動進行覆蓋。"
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:60
+msgid "Choose the name your attendees see when they receive your emails."
+msgstr ""
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:232
 msgid "Choose who is organizing this event."
@@ -3126,6 +3131,7 @@ msgstr "聯絡電郵"
 msgid "Contact email for support"
 msgstr "支援聯絡電郵"
 
+#: src/components/common/EventImmersiveFooter/index.tsx:25
 #: src/components/organizerTemplates/Poster/index.tsx:303
 msgid "Contact the organizer"
 msgstr ""
@@ -3774,7 +3780,7 @@ msgstr "危險區"
 
 #: src/components/common/AttendeeTable/index.tsx:384
 #: src/components/common/DangerZone/index.tsx:30
-#: src/components/routes/organizer/Settings/index.tsx:113
+#: src/components/routes/organizer/Settings/index.tsx:120
 msgid "Danger Zone"
 msgstr "危險區"
 
@@ -4150,7 +4156,7 @@ msgstr "下載檔案"
 msgid "Download invoice"
 msgstr "下載發票"
 
-#: src/components/layouts/Checkout/index.tsx:307
+#: src/components/layouts/Checkout/index.tsx:304
 msgid "Download Invoice"
 msgstr "下載發票"
 
@@ -4183,7 +4189,7 @@ msgid "Download the QR code alone, or a ready-to-share visual with the QR code o
 msgstr ""
 
 #: src/components/common/OrdersTable/index.tsx:99
-#: src/components/layouts/Checkout/index.tsx:96
+#: src/components/layouts/Checkout/index.tsx:98
 #: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Downloading Invoice"
 msgstr "正在下載發票"
@@ -4595,8 +4601,21 @@ msgstr "電子郵件未經驗證"
 msgid "Email Preview"
 msgstr "郵件預覽"
 
+#: src/components/routes/organizer/Settings/index.tsx:72
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:59
+msgid "Email sender"
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:66
+msgid "Email sender name"
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:48
+msgid "Email sender name updated"
+msgstr ""
+
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:336
-#: src/components/routes/organizer/Settings/index.tsx:71
+#: src/components/routes/organizer/Settings/index.tsx:78
 msgid "Email Templates"
 msgstr "郵件範本"
 
@@ -4853,7 +4872,7 @@ msgstr "設備租賃"
 
 #: src/components/common/OrdersTable/index.tsx:107
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
-#: src/components/layouts/Checkout/index.tsx:104
+#: src/components/layouts/Checkout/index.tsx:106
 #: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Error"
 msgstr "錯誤"
@@ -4959,7 +4978,7 @@ msgid "Event date display"
 msgstr "活動日期顯示"
 
 #: src/components/routes/account/ManageAccount/sections/EventDefaultsSettings/index.tsx:5
-#: src/components/routes/organizer/Settings/index.tsx:41
+#: src/components/routes/organizer/Settings/index.tsx:42
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:73
 msgid "Event Defaults"
 msgstr "事件默認值"
@@ -4998,7 +5017,7 @@ msgstr "活動海報"
 msgid "Event Full Address"
 msgstr "活動完整地址"
 
-#: src/components/layouts/Checkout/index.tsx:252
+#: src/components/layouts/Checkout/index.tsx:249
 msgid "Event Homepage"
 msgstr "活動主頁"
 
@@ -5290,7 +5309,7 @@ msgstr "失敗時間"
 msgid "Failed Jobs"
 msgstr "失敗任務"
 
-#: src/components/layouts/Checkout/index.tsx:119
+#: src/components/layouts/Checkout/index.tsx:121
 msgid "Failed to abandon order. Please try again."
 msgstr "放棄訂單失敗。請重試。"
 
@@ -5358,7 +5377,7 @@ msgid "Failed to delete template"
 msgstr "刪除範本失敗"
 
 #: src/components/common/OrdersTable/index.tsx:108
-#: src/components/layouts/Checkout/index.tsx:105
+#: src/components/layouts/Checkout/index.tsx:107
 #: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Failed to download invoice. Please try again."
 msgstr "下載發票失敗。請重試。"
@@ -6012,7 +6031,7 @@ msgstr "返回個人資料"
 msgid "Go to Event Page"
 msgstr "前往活動頁面"
 
-#: src/components/common/ErrorDisplay/index.tsx:67
+#: src/components/common/ErrorDisplay/index.tsx:85
 msgid "Go to home page"
 msgstr "返回主頁"
 
@@ -6107,7 +6126,7 @@ msgstr ""
 msgid "Header title"
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:115
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:121
 msgid "Hello {0},"
 msgstr ""
 
@@ -6378,11 +6397,11 @@ msgstr ""
 msgid "I haven't received my ticket, what should I do?"
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:165
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:171
 msgid "I'm coming"
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:177
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:183
 msgid "I'm no longer coming"
 msgstr ""
 
@@ -6762,7 +6781,7 @@ msgid "Invoice"
 msgstr "發票"
 
 #: src/components/common/OrdersTable/index.tsx:104
-#: src/components/layouts/Checkout/index.tsx:101
+#: src/components/layouts/Checkout/index.tsx:103
 #: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Invoice downloaded successfully"
 msgstr "發票下載成功"
@@ -6895,7 +6914,7 @@ msgstr ""
 msgid "Keep me updated on news and events from {0}"
 msgstr "讓我隨時了解來自 {0} 的新聞和活動"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:203
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:209
 msgid "Keep my place"
 msgstr ""
 
@@ -7149,7 +7168,7 @@ msgstr "連結已過期或無效"
 msgid "Link for computers (optional)"
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:35
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:38
 msgid "Link not valid"
 msgstr ""
 
@@ -7539,7 +7558,7 @@ msgstr "訊息級別"
 msgid "Messaging tier updated successfully"
 msgstr "訊息級別更新成功"
 
-#: src/components/routes/organizer/Settings/index.tsx:83
+#: src/components/routes/organizer/Settings/index.tsx:90
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:89
 msgid "Meta Conversions API"
 msgstr ""
@@ -7806,6 +7825,10 @@ msgstr ""
 #: src/components/routes/organizer/Sms/ConversationList.tsx:61
 msgid "Name or number"
 msgstr "姓名或號碼"
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:67
+msgid "Name shown as the sender of emails sent to your attendees. The sending address stays the platform one. Leave empty for PICHA Ticket."
+msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:238
 msgid "Name, e-mail, phone, order or ticket number — or scan the QR code"
@@ -8348,7 +8371,7 @@ msgstr "沒有 Webhooks"
 msgid "No Zebra printer IP is set for this station. Enter it to print, or open the tickets as PDF."
 msgstr "此售票點未設定 Zebra 打印機 IP。請輸入以列印，或以 PDF 開啟門票。"
 
-#: src/components/layouts/Checkout/index.tsx:369
+#: src/components/layouts/Checkout/index.tsx:377
 msgid "No, keep me here"
 msgstr "否，保留在此"
 
@@ -8665,7 +8688,7 @@ msgid "Online and box office sales"
 msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:158
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:64
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:71
 msgid "Online event"
 msgstr ""
 
@@ -9136,6 +9159,7 @@ msgstr "組織詳細信息"
 msgid "Organization Name"
 msgstr "組織名稱"
 
+#: src/components/common/EventImmersiveFooter/index.tsx:21
 #: src/components/routes/organizer/EventAssistant/index.tsx:488
 msgid "Organized by"
 msgstr ""
@@ -9200,7 +9224,7 @@ msgstr "找不到主辦單位"
 msgid "Organizer restored successfully"
 msgstr "主辦方已成功還原"
 
-#: src/components/routes/organizer/Settings/index.tsx:174
+#: src/components/routes/organizer/Settings/index.tsx:181
 msgid "Organizer Settings"
 msgstr "主辦單位設定"
 
@@ -9304,7 +9328,7 @@ msgstr "頁面"
 msgid "Page no longer available"
 msgstr "頁面不再可用"
 
-#: src/components/common/ErrorDisplay/index.tsx:14
+#: src/components/common/ErrorDisplay/index.tsx:17
 msgid "Page not found"
 msgstr "頁面未找到"
 
@@ -9721,7 +9745,7 @@ msgstr ""
 msgid "Physical presales"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/index.tsx:89
+#: src/components/routes/organizer/Settings/index.tsx:96
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:140
 msgid "PICHA SMS"
 msgstr "PICHA SMS"
@@ -9755,7 +9779,7 @@ msgstr "從您的付款中扣除 {0} 的平台費用"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:248
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
-#: src/components/routes/organizer/Settings/index.tsx:123
+#: src/components/routes/organizer/Settings/index.tsx:130
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:42
 msgid "Platform Fees"
 msgstr "平台費用"
@@ -9888,7 +9912,7 @@ msgstr "請提供圖片。"
 msgid "Please restart the checkout process."
 msgstr "請重新開始結賬流程。"
 
-#: src/components/layouts/Checkout/index.tsx:338
+#: src/components/layouts/Checkout/index.tsx:346
 msgid "Please return to the event page to start over."
 msgstr "請返回活動頁面重新開始。"
 
@@ -9936,7 +9960,7 @@ msgid "Please wait while we prepare your attendees for export..."
 msgstr "請稍候，我們正在準備導出您的與會者..."
 
 #: src/components/common/OrdersTable/index.tsx:100
-#: src/components/layouts/Checkout/index.tsx:97
+#: src/components/layouts/Checkout/index.tsx:99
 #: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Please wait while we prepare your invoice..."
 msgstr "請稍候，我們正在準備您的發票..."
@@ -10141,7 +10165,7 @@ msgstr "無法連接打印佇列"
 msgid "Print Ticket"
 msgstr "列印門票"
 
-#: src/components/layouts/Checkout/index.tsx:295
+#: src/components/layouts/Checkout/index.tsx:292
 #: src/components/routes/my-tickets/index.tsx:119
 msgid "Print Tickets"
 msgstr "打印票"
@@ -11175,7 +11199,7 @@ msgstr "重試任務"
 msgid "Return to Event"
 msgstr "返回活動"
 
-#: src/components/layouts/Checkout/index.tsx:345
+#: src/components/layouts/Checkout/index.tsx:353
 msgid "Return to Event Page"
 msgstr "返回活動頁面"
 
@@ -11349,6 +11373,7 @@ msgstr "舊金山"
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:526
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:116
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:132
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:72
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
@@ -11653,7 +11678,7 @@ msgstr ""
 msgid "See the recipients"
 msgstr "查看收件人"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:136
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:142
 msgid "See you soon! If your plans change, you can still let us know below."
 msgstr ""
 
@@ -11975,7 +12000,7 @@ msgstr "發送給每位參會者及其門票詳情"
 msgid "Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline."
 msgstr "發送至主辦方的電郵地址。每個對話每 15 分鐘最多一封電郵。手機離線時您總會收到電郵通知。"
 
-#: src/components/routes/organizer/Settings/index.tsx:65
+#: src/components/routes/organizer/Settings/index.tsx:66
 msgid "SEO"
 msgstr "SEO"
 
@@ -12313,12 +12338,12 @@ msgstr "短訊尚未連接。"
 msgid "SMS messages"
 msgstr "短訊訊息"
 
-#: src/components/routes/organizer/Settings/index.tsx:101
+#: src/components/routes/organizer/Settings/index.tsx:108
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:57
 msgid "SMS opt-out list"
 msgstr "短訊取消訂閱名單"
 
-#: src/components/routes/organizer/Settings/index.tsx:95
+#: src/components/routes/organizer/Settings/index.tsx:102
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:69
 msgid "SMS reply templates"
 msgstr "短訊快速回覆"
@@ -12335,7 +12360,7 @@ msgstr ""
 msgid "Snapchat"
 msgstr "Snapchat"
 
-#: src/components/routes/organizer/Settings/index.tsx:59
+#: src/components/routes/organizer/Settings/index.tsx:60
 msgid "Social Links"
 msgstr "社交連結"
 
@@ -12396,7 +12421,7 @@ msgstr "解決方案"
 msgid "Some tickets could not be printed."
 msgstr "部分門票未能列印。"
 
-#: src/components/common/ErrorDisplay/index.tsx:15
+#: src/components/common/ErrorDisplay/index.tsx:18
 #: src/components/routes/auth/AcceptInvitation/index.tsx:48
 #: src/components/routes/product-widget/CollectInformation/index.tsx:443
 #: src/components/routes/product-widget/Payment/PaymentMethods/Stripe/index.tsx:64
@@ -12678,7 +12703,7 @@ msgstr "小計"
 
 #: src/components/common/OrdersTable/index.tsx:103
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
-#: src/components/layouts/Checkout/index.tsx:100
+#: src/components/layouts/Checkout/index.tsx:102
 #: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Success"
 msgstr "成功"
@@ -13089,7 +13114,7 @@ msgstr ""
 msgid "Thank you {0}, your request has been received."
 msgstr "謝謝 {0}，我們已收到您的申請。"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:72
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:79
 msgid "Thank you, your attendance is confirmed."
 msgstr ""
 
@@ -13265,7 +13290,7 @@ msgstr ""
 msgid "The organizer font is no longer available. Upload at least the Regular (400) file or choose another font."
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:46
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:51
 msgid "The organizer has not enabled attendance confirmation for this event."
 msgstr ""
 
@@ -13282,7 +13307,7 @@ msgstr "找不到您正在尋找的主辦單位。頁面可能已被移動、刪
 msgid "The organizer's homepage and events will be served on this domain. The www. version is handled automatically."
 msgstr "主辦方的主頁和活動將在此域名上提供。www. 版本會自動處理。"
 
-#: src/components/common/ErrorDisplay/index.tsx:18
+#: src/components/common/ErrorDisplay/index.tsx:21
 msgid "The page you are looking for does not exist"
 msgstr "您要查找的頁面不存在"
 
@@ -13345,6 +13370,10 @@ msgstr "排程時間為必填項"
 #: src/components/modals/SendMessageModal/index.tsx:178
 msgid "The scheduled time must be in the future"
 msgstr "排程時間必須是將來的時間"
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:27
+msgid "The sender name cannot contain line breaks or angle brackets."
+msgstr ""
 
 #: src/components/organizerTemplates/Tour/index.tsx:108
 #: src/components/organizerTemplates/Tour/index.tsx:268
@@ -13653,7 +13682,7 @@ msgstr ""
 msgid "This organizer profile is not published yet"
 msgstr "呢個主辦方資料未發佈"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:36
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:39
 msgid "This personal link is not valid. Please use the link from your latest email."
 msgstr ""
 
@@ -13763,7 +13792,7 @@ msgstr "門票設計儲存成功"
 msgid "Ticket email has been resent to attendee"
 msgstr "門票電子郵件已重新發送給與會者"
 
-#: src/components/routes/product-widget/PrintProduct/index.tsx:29
+#: src/components/routes/product-widget/PrintProduct/index.tsx:34
 msgid "Ticket for"
 msgstr "門票："
 
@@ -13797,7 +13826,7 @@ msgstr "門票標誌"
 msgid "Ticket Name"
 msgstr "門票名稱"
 
-#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:22
+#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:25
 msgid "Ticket Not Found"
 msgstr "找不到門票"
 
@@ -13865,7 +13894,7 @@ msgstr "門票有售"
 msgid "Tickets concerned (all by default)"
 msgstr ""
 
-#: src/components/routes/product-widget/PrintOrder/index.tsx:27
+#: src/components/routes/product-widget/PrintOrder/index.tsx:33
 msgid "Tickets for"
 msgstr "門票"
 
@@ -13922,7 +13951,7 @@ msgstr ""
 msgid "Time left before the event"
 msgstr ""
 
-#: src/components/layouts/Checkout/index.tsx:271
+#: src/components/layouts/Checkout/index.tsx:268
 msgid "Time left:"
 msgstr "剩餘時間："
 
@@ -14091,7 +14120,7 @@ msgstr "按歸因來源追蹤帳戶增長和表現"
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "透過詳細報告追蹤銷售、收入和參加人數"
 
-#: src/components/routes/organizer/Settings/index.tsx:77
+#: src/components/routes/organizer/Settings/index.tsx:84
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
 msgid "Tracking & Analytics"
 msgstr ""
@@ -14855,7 +14884,7 @@ msgstr "查看訂單詳情"
 msgid "View registrations and resend tickets."
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:184
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:190
 msgid "View the event page"
 msgstr ""
 
@@ -14965,7 +14994,7 @@ msgstr "觀看影片"
 msgid "We accept JPG, PNG, WebP and HEIC images."
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:85
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:92
 msgid "We could not cancel your registration. Please try again."
 msgstr ""
 
@@ -14973,7 +15002,7 @@ msgstr ""
 msgid "We could not process your payment. Please try again or contact support."
 msgstr "我們無法處理您的付款。請重試或聯繫技術支持。"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:73
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:80
 msgid "We could not save your answer. Please try again."
 msgstr ""
 
@@ -14993,7 +15022,7 @@ msgstr "我們找不到與{0}匹配的任何門票"
 msgid "We couldn't find the order you're looking for. The link may have expired or the order details may have changed."
 msgstr "我們找不到您要查找的訂單。連結可能已過期或訂單詳情可能已更改。"
 
-#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:23
+#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:26
 msgid "We couldn't find the ticket you're looking for. The link may have expired or the ticket details may have changed."
 msgstr "我們找不到您要查找的門票。連結可能已過期或門票詳情可能已更改。"
 
@@ -15118,7 +15147,7 @@ msgstr "Webhook 將發送通知"
 #: src/components/layouts/Event/index.tsx:128
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
-#: src/components/routes/organizer/Settings/index.tsx:107
+#: src/components/routes/organizer/Settings/index.tsx:114
 #: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
@@ -15408,7 +15437,7 @@ msgstr "小工具預覽"
 msgid "Widget Settings"
 msgstr "小工具設定"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:152
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:158
 msgid "Will you be there? Your answer helps the organizer plan the event and offer free places to people on the waiting list."
 msgstr ""
 
@@ -15493,11 +15522,11 @@ msgstr "是"
 msgid "Yes - I have a valid EU VAT registration number"
 msgstr "是 - 我有有效的歐盟增值稅註冊號碼"
 
-#: src/components/layouts/Checkout/index.tsx:377
+#: src/components/layouts/Checkout/index.tsx:385
 msgid "Yes, cancel my order"
 msgstr "是，取消我的訂單"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:206
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:212
 msgid "Yes, cancel my registration"
 msgstr ""
 
@@ -15611,7 +15640,7 @@ msgstr "您沒有待處理的電子郵件更改。"
 msgid "You have reached your messaging limit."
 msgstr "您已達到訊息限制。"
 
-#: src/components/layouts/Checkout/index.tsx:335
+#: src/components/layouts/Checkout/index.tsx:343
 msgid "You have run out of time to complete your order."
 msgstr "您已超時，未能完成訂單。"
 
@@ -15723,7 +15752,7 @@ msgstr "您的賬户名稱會在活動頁面和電子郵件中使用。"
 msgid "Your affiliates have been exported successfully."
 msgstr "你嘅推廣夥伴已經成功匯出。"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:135
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:141
 msgid "Your attendance is confirmed."
 msgstr ""
 
@@ -15744,7 +15773,7 @@ msgstr "您的精彩網站 🎉"
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "您的簽到名單已成功建立。與您的簽到工作人員共享以下連結。"
 
-#: src/components/layouts/Checkout/index.tsx:362
+#: src/components/layouts/Checkout/index.tsx:370
 msgid "Your current order will be lost."
 msgstr "您當前的訂單將丟失。"
 
@@ -15825,7 +15854,7 @@ msgstr "您的姓名"
 msgid "Your new password must be at least 8 characters long."
 msgstr "您的新密碼必須至少為 8 個字元。"
 
-#: src/components/layouts/Checkout/index.tsx:264
+#: src/components/layouts/Checkout/index.tsx:261
 msgid "Your Order"
 msgstr "您的訂單"
 
@@ -15837,7 +15866,7 @@ msgstr "您的訂單詳情已更新。確認電郵已發送到新的電郵地址
 msgid "Your order has been cancelled"
 msgstr "您的訂單已被取消"
 
-#: src/components/layouts/Checkout/index.tsx:122
+#: src/components/layouts/Checkout/index.tsx:124
 msgid "Your order has been cancelled."
 msgstr "您的訂單已被取消。"
 
@@ -15899,7 +15928,7 @@ msgstr "您的 PICHA SMS 手機已離線。請檢查它是否開機、已連接�
 msgid "Your PICHA SMS phone went offline {0}. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "您的 PICHA SMS 手機已於{0}離線。請檢查它是否開機、已連接互聯網，以及 PICHA SMS 應用程式正在運行。"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:126
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:132
 msgid "Your place has been released for another person. Thank you for letting us know."
 msgstr ""
 
@@ -15927,15 +15956,15 @@ msgstr "您的退款正在處理中。"
 msgid "Your registration"
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:81
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:88
 msgid "Your registration has been cancelled."
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:125
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:131
 msgid "Your registration is cancelled."
 msgstr ""
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:117
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:123
 msgid "Your registration: {0}"
 msgstr ""
 
@@ -15960,7 +15989,7 @@ msgstr "您的 Stripe 賬户已連接並準備好處理支付。"
 msgid "Your teams run the welcome with the platform; we rent you ready-to-use equipment."
 msgstr "您的團隊使用平台負責接待；我們為您出租即用設備。"
 
-#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:34
+#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:38
 msgid "Your ticket for"
 msgstr "您的入場券"
 
@@ -15968,7 +15997,7 @@ msgstr "您的入場券"
 msgid "Your ticket was sent by e-mail. Lost it? Find it from the login page with your e-mail address."
 msgstr "門票已經以電郵寄出。找不到？請在登入頁面以電郵地址找回。"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:199
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:205
 msgid "Your ticket will be cancelled and your place will be offered to someone else. This cannot be undone."
 msgstr ""
 

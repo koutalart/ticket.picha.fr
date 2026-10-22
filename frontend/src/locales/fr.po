@@ -941,7 +941,7 @@ msgstr "Informations supplémentaires"
 #: src/components/common/QuestionsTable/index.tsx:66
 #: src/components/forms/QuestionForm/index.tsx:132
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:123
-#: src/components/routes/organizer/Settings/index.tsx:47
+#: src/components/routes/organizer/Settings/index.tsx:48
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:67
 msgid "Address"
 msgstr "Adresse"
@@ -1257,7 +1257,7 @@ msgstr "Une adresse e-mail à associer à cet affilié. L'affilié ne sera pas n
 msgid "An error occurred while checking export status."
 msgstr "Une erreur s'est produite lors de la vérification du statut d'exportation."
 
-#: src/components/common/ErrorDisplay/index.tsx:19
+#: src/components/common/ErrorDisplay/index.tsx:22
 msgid "An error occurred while loading the page"
 msgstr "Une erreur s'est produite lors du chargement de la page"
 
@@ -1451,7 +1451,7 @@ msgstr "Êtes-vous sûr de vouloir supprimer ce modèle ? Cette action ne peut p
 msgid "Are you sure you want to delete this webhook?"
 msgstr "Êtes-vous sûr de vouloir supprimer ce webhook ?"
 
-#: src/components/layouts/Checkout/index.tsx:359
+#: src/components/layouts/Checkout/index.tsx:367
 msgid "Are you sure you want to leave?"
 msgstr "Êtes-vous sûr de vouloir partir ?"
 
@@ -1612,7 +1612,7 @@ msgstr "Présence et taux d'enregistrement pour tous les événements"
 msgid "Attendance confirmation"
 msgstr "Confirmation de venue"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:45
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:50
 msgid "Attendance confirmation unavailable"
 msgstr "Confirmation de venue indisponible"
 
@@ -1902,7 +1902,8 @@ msgstr "Retour aux comptes"
 msgid "Back to Event"
 msgstr "Retour à l'événement"
 
-#: src/components/layouts/Checkout/index.tsx:247
+#: src/components/common/ErrorDisplay/index.tsx:35
+#: src/components/layouts/Checkout/index.tsx:244
 msgid "Back to event page"
 msgstr "Retour à la page de l'événement"
 
@@ -1947,7 +1948,7 @@ msgstr "Badge + entrée"
 msgid "Badge printing…"
 msgstr "Impression du badge…"
 
-#: src/components/routes/organizer/Settings/index.tsx:35
+#: src/components/routes/organizer/Settings/index.tsx:36
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:63
 msgid "Basic Information"
 msgstr "Informations de base"
@@ -2230,7 +2231,7 @@ msgstr "Annuler le rappel"
 msgid "Cancel the ticket"
 msgstr "Annuler le billet"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:194
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:200
 msgid "Cancel your registration?"
 msgstr "Annuler votre inscription ?"
 
@@ -2406,7 +2407,7 @@ msgstr "Enregistrement uniquement"
 msgid "Check Out"
 msgstr "Désenregistrer"
 
-#: src/components/layouts/Checkout/index.tsx:287
+#: src/components/layouts/Checkout/index.tsx:284
 msgid "Check out this event!"
 msgstr "Découvrez cet événement !"
 
@@ -2590,6 +2591,10 @@ msgstr "Choisissez la date et l'heure d'envoi"
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:45
 msgid "Choose the default setting for new events. This can be overridden for individual events."
 msgstr "Choisissez le paramètre par défaut pour les nouveaux événements. Ceci peut être modifié pour chaque événement."
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:60
+msgid "Choose the name your attendees see when they receive your emails."
+msgstr "Choisissez le nom que vos participants voient quand ils reçoivent vos e-mails."
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:232
 msgid "Choose who is organizing this event."
@@ -3126,6 +3131,7 @@ msgstr "E-mail de contact"
 msgid "Contact email for support"
 msgstr "Email de contact pour le support"
 
+#: src/components/common/EventImmersiveFooter/index.tsx:25
 #: src/components/organizerTemplates/Poster/index.tsx:303
 msgid "Contact the organizer"
 msgstr "Contacter l'organisateur"
@@ -3774,7 +3780,7 @@ msgstr "Zone dangereuse"
 
 #: src/components/common/AttendeeTable/index.tsx:384
 #: src/components/common/DangerZone/index.tsx:30
-#: src/components/routes/organizer/Settings/index.tsx:113
+#: src/components/routes/organizer/Settings/index.tsx:120
 msgid "Danger Zone"
 msgstr "Zone de Danger"
 
@@ -4150,7 +4156,7 @@ msgstr "Télécharger le fichier"
 msgid "Download invoice"
 msgstr "Télécharger la facture"
 
-#: src/components/layouts/Checkout/index.tsx:307
+#: src/components/layouts/Checkout/index.tsx:304
 msgid "Download Invoice"
 msgstr "Télécharger la facture"
 
@@ -4183,7 +4189,7 @@ msgid "Download the QR code alone, or a ready-to-share visual with the QR code o
 msgstr "Téléchargez le QR code seul, ou un visuel prêt à partager avec le QR code intégré."
 
 #: src/components/common/OrdersTable/index.tsx:99
-#: src/components/layouts/Checkout/index.tsx:96
+#: src/components/layouts/Checkout/index.tsx:98
 #: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Downloading Invoice"
 msgstr "Téléchargement de la facture"
@@ -4597,8 +4603,21 @@ msgstr "E-mail non vérifié"
 msgid "Email Preview"
 msgstr "Aperçu de l'e-mail"
 
+#: src/components/routes/organizer/Settings/index.tsx:72
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:59
+msgid "Email sender"
+msgstr "Expéditeur des e-mails"
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:66
+msgid "Email sender name"
+msgstr "Nom de l'expéditeur des e-mails"
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:48
+msgid "Email sender name updated"
+msgstr "Nom de l'expéditeur mis à jour"
+
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:336
-#: src/components/routes/organizer/Settings/index.tsx:71
+#: src/components/routes/organizer/Settings/index.tsx:78
 msgid "Email Templates"
 msgstr "Modèles d'e-mail"
 
@@ -4855,7 +4874,7 @@ msgstr "Location de matériel"
 
 #: src/components/common/OrdersTable/index.tsx:107
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
-#: src/components/layouts/Checkout/index.tsx:104
+#: src/components/layouts/Checkout/index.tsx:106
 #: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Error"
 msgstr "Erreur"
@@ -4961,7 +4980,7 @@ msgid "Event date display"
 msgstr "Affichage de la date de l'événement"
 
 #: src/components/routes/account/ManageAccount/sections/EventDefaultsSettings/index.tsx:5
-#: src/components/routes/organizer/Settings/index.tsx:41
+#: src/components/routes/organizer/Settings/index.tsx:42
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:73
 msgid "Event Defaults"
 msgstr "Valeurs par défaut des événements"
@@ -5000,7 +5019,7 @@ msgstr "Affiche de l'événement"
 msgid "Event Full Address"
 msgstr "Adresse Complète de l'Événement"
 
-#: src/components/layouts/Checkout/index.tsx:252
+#: src/components/layouts/Checkout/index.tsx:249
 msgid "Event Homepage"
 msgstr "Page d'accueil de l'événement"
 
@@ -5292,7 +5311,7 @@ msgstr "Échoué le"
 msgid "Failed Jobs"
 msgstr "Travaux échoués"
 
-#: src/components/layouts/Checkout/index.tsx:119
+#: src/components/layouts/Checkout/index.tsx:121
 msgid "Failed to abandon order. Please try again."
 msgstr "Échec de l'abandon de la commande. Veuillez réessayer."
 
@@ -5360,7 +5379,7 @@ msgid "Failed to delete template"
 msgstr "Échec de la suppression du modèle"
 
 #: src/components/common/OrdersTable/index.tsx:108
-#: src/components/layouts/Checkout/index.tsx:105
+#: src/components/layouts/Checkout/index.tsx:107
 #: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Failed to download invoice. Please try again."
 msgstr "Échec du téléchargement de la facture. Veuillez réessayer."
@@ -6014,7 +6033,7 @@ msgstr "Revenir au profil"
 msgid "Go to Event Page"
 msgstr "Aller à la page de l'événement"
 
-#: src/components/common/ErrorDisplay/index.tsx:67
+#: src/components/common/ErrorDisplay/index.tsx:85
 msgid "Go to home page"
 msgstr "Aller à la page d'accueil"
 
@@ -6109,7 +6128,7 @@ msgstr "Sous-titre de l'en-tête"
 msgid "Header title"
 msgstr "Titre de l'en-tête"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:115
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:121
 msgid "Hello {0},"
 msgstr "Bonjour {0},"
 
@@ -6380,11 +6399,11 @@ msgstr "J'ai un code d'invitation"
 msgid "I haven't received my ticket, what should I do?"
 msgstr "Je n'ai pas reçu mon billet, que faire ?"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:165
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:171
 msgid "I'm coming"
 msgstr "Je viens"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:177
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:183
 msgid "I'm no longer coming"
 msgstr "Je ne viens plus"
 
@@ -6764,7 +6783,7 @@ msgid "Invoice"
 msgstr "Facture"
 
 #: src/components/common/OrdersTable/index.tsx:104
-#: src/components/layouts/Checkout/index.tsx:101
+#: src/components/layouts/Checkout/index.tsx:103
 #: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Invoice downloaded successfully"
 msgstr "Facture téléchargée avec succès"
@@ -6897,7 +6916,7 @@ msgstr "Le garder"
 msgid "Keep me updated on news and events from {0}"
 msgstr "Me tenir informé des actualités et événements de {0}"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:203
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:209
 msgid "Keep my place"
 msgstr "Garder ma place"
 
@@ -7151,7 +7170,7 @@ msgstr "Lien expiré ou invalide"
 msgid "Link for computers (optional)"
 msgstr "Lien pour les ordinateurs (facultatif)"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:35
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:38
 msgid "Link not valid"
 msgstr "Lien non valide"
 
@@ -7541,7 +7560,7 @@ msgstr "Niveau de messagerie"
 msgid "Messaging tier updated successfully"
 msgstr "Niveau de messagerie mis à jour avec succès"
 
-#: src/components/routes/organizer/Settings/index.tsx:83
+#: src/components/routes/organizer/Settings/index.tsx:90
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:89
 msgid "Meta Conversions API"
 msgstr "API Conversions Meta"
@@ -7808,6 +7827,10 @@ msgstr "Nom du rappel"
 #: src/components/routes/organizer/Sms/ConversationList.tsx:61
 msgid "Name or number"
 msgstr "Nom ou numéro"
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:67
+msgid "Name shown as the sender of emails sent to your attendees. The sending address stays the platform one. Leave empty for PICHA Ticket."
+msgstr "Nom affiché comme expéditeur des e-mails envoyés à vos participants. L'adresse d'envoi reste celle de la plateforme. Laissez vide pour PICHA Ticket."
 
 #: src/components/routes/kiosk/Orders/index.tsx:238
 msgid "Name, e-mail, phone, order or ticket number — or scan the QR code"
@@ -8350,7 +8373,7 @@ msgstr "Aucun webhook"
 msgid "No Zebra printer IP is set for this station. Enter it to print, or open the tickets as PDF."
 msgstr "Aucune adresse IP d'imprimante Zebra n'est définie pour ce poste. Saisissez-la pour imprimer, ou ouvrez les billets en PDF."
 
-#: src/components/layouts/Checkout/index.tsx:369
+#: src/components/layouts/Checkout/index.tsx:377
 msgid "No, keep me here"
 msgstr "Non, rester ici"
 
@@ -8667,7 +8690,7 @@ msgid "Online and box office sales"
 msgstr "En ligne et guichet"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:158
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:64
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:71
 msgid "Online event"
 msgstr "Événement en ligne"
 
@@ -9138,6 +9161,7 @@ msgstr "Détails de l'organisation"
 msgid "Organization Name"
 msgstr "Nom de l'organisation"
 
+#: src/components/common/EventImmersiveFooter/index.tsx:21
 #: src/components/routes/organizer/EventAssistant/index.tsx:488
 msgid "Organized by"
 msgstr "Organisé par"
@@ -9202,7 +9226,7 @@ msgstr "Organisateur introuvable"
 msgid "Organizer restored successfully"
 msgstr "Organisateur restauré avec succès"
 
-#: src/components/routes/organizer/Settings/index.tsx:174
+#: src/components/routes/organizer/Settings/index.tsx:181
 msgid "Organizer Settings"
 msgstr "Paramètres de l'organisateur"
 
@@ -9306,7 +9330,7 @@ msgstr "Page"
 msgid "Page no longer available"
 msgstr "Page plus disponible"
 
-#: src/components/common/ErrorDisplay/index.tsx:14
+#: src/components/common/ErrorDisplay/index.tsx:17
 msgid "Page not found"
 msgstr "Page non trouvée"
 
@@ -9723,7 +9747,7 @@ msgstr "Photo"
 msgid "Physical presales"
 msgstr "Nombre de préventes physiques"
 
-#: src/components/routes/organizer/Settings/index.tsx:89
+#: src/components/routes/organizer/Settings/index.tsx:96
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:140
 msgid "PICHA SMS"
 msgstr "PICHA SMS"
@@ -9757,7 +9781,7 @@ msgstr "Frais de plateforme de {0} déduits de votre paiement"
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:248
 #: src/components/routes/event/Settings/Sections/PlatformFeesSettings/index.tsx:46
 #: src/components/routes/organizer/Reports/index.tsx:41
-#: src/components/routes/organizer/Settings/index.tsx:123
+#: src/components/routes/organizer/Settings/index.tsx:130
 #: src/components/routes/organizer/Settings/Sections/PlatformFeesSettings/index.tsx:42
 msgid "Platform Fees"
 msgstr "Frais de plateforme"
@@ -9890,7 +9914,7 @@ msgstr "Veuillez fournir une image."
 msgid "Please restart the checkout process."
 msgstr "Veuillez recommencer le processus de commande."
 
-#: src/components/layouts/Checkout/index.tsx:338
+#: src/components/layouts/Checkout/index.tsx:346
 msgid "Please return to the event page to start over."
 msgstr "Veuillez retourner sur la page de l'événement pour recommencer."
 
@@ -9938,7 +9962,7 @@ msgid "Please wait while we prepare your attendees for export..."
 msgstr "Veuillez patienter pendant que nous préparons l'exportation de vos participants..."
 
 #: src/components/common/OrdersTable/index.tsx:100
-#: src/components/layouts/Checkout/index.tsx:97
+#: src/components/layouts/Checkout/index.tsx:99
 #: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Please wait while we prepare your invoice..."
 msgstr "Veuillez patienter pendant que nous préparons votre facture..."
@@ -10143,7 +10167,7 @@ msgstr "File d'impression injoignable"
 msgid "Print Ticket"
 msgstr "Imprimer le billet"
 
-#: src/components/layouts/Checkout/index.tsx:295
+#: src/components/layouts/Checkout/index.tsx:292
 #: src/components/routes/my-tickets/index.tsx:119
 msgid "Print Tickets"
 msgstr "Imprimer les billets"
@@ -11179,7 +11203,7 @@ msgstr "Réessayer le travail"
 msgid "Return to Event"
 msgstr "Retour à l'événement"
 
-#: src/components/layouts/Checkout/index.tsx:345
+#: src/components/layouts/Checkout/index.tsx:353
 msgid "Return to Event Page"
 msgstr "Retourner à la page de l'événement"
 
@@ -11353,6 +11377,7 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:526
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:116
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:132
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:72
 #: src/components/routes/organizer/Settings/Sections/EventDefaults/index.tsx:103
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
@@ -11657,7 +11682,7 @@ msgstr "Voir les autres options de billetterie"
 msgid "See the recipients"
 msgstr "Voir les destinataires"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:136
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:142
 msgid "See you soon! If your plans change, you can still let us know below."
 msgstr "À bientôt ! Si vos plans changent, vous pouvez encore nous prévenir ci-dessous."
 
@@ -11979,7 +12004,7 @@ msgstr "Envoyé à chaque participant avec les détails de son billet"
 msgid "Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline."
 msgstr "Envoyé à l'adresse e-mail de l'organisateur. Au plus un e-mail par conversation toutes les 15 minutes. Vous êtes toujours prévenu par e-mail quand le téléphone passe hors ligne."
 
-#: src/components/routes/organizer/Settings/index.tsx:65
+#: src/components/routes/organizer/Settings/index.tsx:66
 msgid "SEO"
 msgstr "SEO"
 
@@ -12317,12 +12342,12 @@ msgstr "Les SMS ne sont pas encore connectés."
 msgid "SMS messages"
 msgstr "Messages SMS"
 
-#: src/components/routes/organizer/Settings/index.tsx:101
+#: src/components/routes/organizer/Settings/index.tsx:108
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:57
 msgid "SMS opt-out list"
 msgstr "Liste d'opposition SMS"
 
-#: src/components/routes/organizer/Settings/index.tsx:95
+#: src/components/routes/organizer/Settings/index.tsx:102
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:69
 msgid "SMS reply templates"
 msgstr "Réponses SMS toutes faites"
@@ -12339,7 +12364,7 @@ msgstr "SMS à envoyer"
 msgid "Snapchat"
 msgstr "Snapchat"
 
-#: src/components/routes/organizer/Settings/index.tsx:59
+#: src/components/routes/organizer/Settings/index.tsx:60
 msgid "Social Links"
 msgstr "Liens sociaux"
 
@@ -12400,7 +12425,7 @@ msgstr "Solutions"
 msgid "Some tickets could not be printed."
 msgstr "Certains billets n'ont pas pu être imprimés."
 
-#: src/components/common/ErrorDisplay/index.tsx:15
+#: src/components/common/ErrorDisplay/index.tsx:18
 #: src/components/routes/auth/AcceptInvitation/index.tsx:48
 #: src/components/routes/product-widget/CollectInformation/index.tsx:443
 #: src/components/routes/product-widget/Payment/PaymentMethods/Stripe/index.tsx:64
@@ -12682,7 +12707,7 @@ msgstr "Total"
 
 #: src/components/common/OrdersTable/index.tsx:103
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
-#: src/components/layouts/Checkout/index.tsx:100
+#: src/components/layouts/Checkout/index.tsx:102
 #: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Success"
 msgstr "Succès"
@@ -13093,7 +13118,7 @@ msgstr "Texte sous le QR code"
 msgid "Thank you {0}, your request has been received."
 msgstr "Merci {0}, votre demande est bien reçue."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:72
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:79
 msgid "Thank you, your attendance is confirmed."
 msgstr "Merci, votre venue est confirmée."
 
@@ -13269,7 +13294,7 @@ msgstr "La police de l'organisateur peut maintenant être choisie dans Typograph
 msgid "The organizer font is no longer available. Upload at least the Regular (400) file or choose another font."
 msgstr "La police de l'organisateur n'est plus disponible. Déposez au moins le fichier Regular (400) ou choisissez une autre police."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:46
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:51
 msgid "The organizer has not enabled attendance confirmation for this event."
 msgstr "L'organisateur n'a pas activé la confirmation de venue pour cet événement."
 
@@ -13286,7 +13311,7 @@ msgstr "L'organisateur que vous recherchez est introuvable. La page a peut-être
 msgid "The organizer's homepage and events will be served on this domain. The www. version is handled automatically."
 msgstr "La page d'accueil et les événements de l'organisateur seront servis sur ce domaine. La version www. est gérée automatiquement."
 
-#: src/components/common/ErrorDisplay/index.tsx:18
+#: src/components/common/ErrorDisplay/index.tsx:21
 msgid "The page you are looking for does not exist"
 msgstr "La page que vous recherchez n'existe pas"
 
@@ -13349,6 +13374,10 @@ msgstr "L'heure programmée est requise"
 #: src/components/modals/SendMessageModal/index.tsx:178
 msgid "The scheduled time must be in the future"
 msgstr "L'heure programmée doit être dans le futur"
+
+#: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:27
+msgid "The sender name cannot contain line breaks or angle brackets."
+msgstr "Le nom de l'expéditeur ne peut pas contenir de retour à la ligne ni de chevrons."
 
 #: src/components/organizerTemplates/Tour/index.tsx:108
 #: src/components/organizerTemplates/Tour/index.tsx:268
@@ -13657,7 +13686,7 @@ msgstr "Cet organisateur est introuvable. Choisissez votre organisateur dans le 
 msgid "This organizer profile is not published yet"
 msgstr "Ce profil d'organisateur n'est pas encore publié"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:36
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:39
 msgid "This personal link is not valid. Please use the link from your latest email."
 msgstr "Ce lien personnel n'est pas valide. Utilisez le lien de votre dernier e-mail."
 
@@ -13767,7 +13796,7 @@ msgstr "Design du billet enregistré avec succès"
 msgid "Ticket email has been resent to attendee"
 msgstr "L'e-mail du ticket a été renvoyé au participant"
 
-#: src/components/routes/product-widget/PrintProduct/index.tsx:29
+#: src/components/routes/product-widget/PrintProduct/index.tsx:34
 msgid "Ticket for"
 msgstr "Billet pour"
 
@@ -13801,7 +13830,7 @@ msgstr "Logos du billet (événement et sponsor)"
 msgid "Ticket Name"
 msgstr "Nom du billet"
 
-#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:22
+#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:25
 msgid "Ticket Not Found"
 msgstr "Billet introuvable"
 
@@ -13869,7 +13898,7 @@ msgstr "Billets disponibles"
 msgid "Tickets concerned (all by default)"
 msgstr "Billets concernés (tous par défaut)"
 
-#: src/components/routes/product-widget/PrintOrder/index.tsx:27
+#: src/components/routes/product-widget/PrintOrder/index.tsx:33
 msgid "Tickets for"
 msgstr "Billets pour"
 
@@ -13926,7 +13955,7 @@ msgstr "Horaires"
 msgid "Time left before the event"
 msgstr "Temps restant avant l'événement"
 
-#: src/components/layouts/Checkout/index.tsx:271
+#: src/components/layouts/Checkout/index.tsx:268
 msgid "Time left:"
 msgstr "Temps restant :"
 
@@ -14095,7 +14124,7 @@ msgstr "Suivez la croissance et les performances des comptes par source d'attrib
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "Suivez les ventes, les revenus et la fréquentation avec des rapports détaillés"
 
-#: src/components/routes/organizer/Settings/index.tsx:77
+#: src/components/routes/organizer/Settings/index.tsx:84
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
 msgid "Tracking & Analytics"
 msgstr "Suivi et statistiques"
@@ -14859,7 +14888,7 @@ msgstr "Voir les détails de la commande"
 msgid "View registrations and resend tickets."
 msgstr "Consultez les inscriptions et renvoyez les billets."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:184
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:190
 msgid "View the event page"
 msgstr "Voir la page de l'événement"
 
@@ -14969,7 +14998,7 @@ msgstr "Regarder les clips"
 msgid "We accept JPG, PNG, WebP and HEIC images."
 msgstr "Nous acceptons les images JPG, PNG, WebP et HEIC."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:85
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:92
 msgid "We could not cancel your registration. Please try again."
 msgstr "Nous n'avons pas pu annuler votre inscription. Veuillez réessayer."
 
@@ -14977,7 +15006,7 @@ msgstr "Nous n'avons pas pu annuler votre inscription. Veuillez réessayer."
 msgid "We could not process your payment. Please try again or contact support."
 msgstr "Nous n'avons pas pu traiter votre paiement. Veuillez réessayer ou contacter l'assistance."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:73
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:80
 msgid "We could not save your answer. Please try again."
 msgstr "Nous n'avons pas pu enregistrer votre réponse. Veuillez réessayer."
 
@@ -14997,7 +15026,7 @@ msgstr "Nous n'avons trouvé aucun billet correspondant à {0}"
 msgid "We couldn't find the order you're looking for. The link may have expired or the order details may have changed."
 msgstr "Nous n'avons pas trouvé la commande que vous recherchez. Le lien a peut-être expiré ou les détails de la commande ont changé."
 
-#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:23
+#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:26
 msgid "We couldn't find the ticket you're looking for. The link may have expired or the ticket details may have changed."
 msgstr "Nous n'avons pas trouvé le billet que vous recherchez. Le lien a peut-être expiré ou les détails du billet ont changé."
 
@@ -15122,7 +15151,7 @@ msgstr "Le webhook enverra des notifications"
 #: src/components/layouts/Event/index.tsx:128
 #: src/components/modals/DuplicateEventModal/index.tsx:33
 #: src/components/routes/event/Webhooks/index.tsx:32
-#: src/components/routes/organizer/Settings/index.tsx:107
+#: src/components/routes/organizer/Settings/index.tsx:114
 #: src/components/routes/organizer/Settings/Sections/WebhookSettings/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
@@ -15412,7 +15441,7 @@ msgstr "Aperçu du widget"
 msgid "Widget Settings"
 msgstr "Paramètres du widget"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:152
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:158
 msgid "Will you be there? Your answer helps the organizer plan the event and offer free places to people on the waiting list."
 msgstr "Serez-vous présent ? Votre réponse aide l'organisateur à préparer l'événement et à proposer les places libérées aux personnes en liste d'attente."
 
@@ -15497,11 +15526,11 @@ msgstr "Oui"
 msgid "Yes - I have a valid EU VAT registration number"
 msgstr "Oui - J'ai un numéro d'enregistrement TVA UE valide"
 
-#: src/components/layouts/Checkout/index.tsx:377
+#: src/components/layouts/Checkout/index.tsx:385
 msgid "Yes, cancel my order"
 msgstr "Oui, annuler ma commande"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:206
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:212
 msgid "Yes, cancel my registration"
 msgstr "Oui, annuler mon inscription"
 
@@ -15615,7 +15644,7 @@ msgstr "Vous n’avez aucun changement d’e-mail en attente."
 msgid "You have reached your messaging limit."
 msgstr "Vous avez atteint votre limite de messagerie."
 
-#: src/components/layouts/Checkout/index.tsx:335
+#: src/components/layouts/Checkout/index.tsx:343
 msgid "You have run out of time to complete your order."
 msgstr "Vous avez manqué de temps pour compléter votre commande."
 
@@ -15727,7 +15756,7 @@ msgstr "Le nom de votre compte est utilisé sur les pages d'événements et dans
 msgid "Your affiliates have been exported successfully."
 msgstr "Vos affiliés ont été exportés avec succès."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:135
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:141
 msgid "Your attendance is confirmed."
 msgstr "Votre venue est confirmée."
 
@@ -15748,7 +15777,7 @@ msgstr "Votre super site web 🎉"
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "Votre liste d'enregistrement a été créée avec succès. Partagez le lien ci-dessous avec votre personnel d'enregistrement."
 
-#: src/components/layouts/Checkout/index.tsx:362
+#: src/components/layouts/Checkout/index.tsx:370
 msgid "Your current order will be lost."
 msgstr "Votre commande actuelle sera perdue."
 
@@ -15829,7 +15858,7 @@ msgstr "Votre nom"
 msgid "Your new password must be at least 8 characters long."
 msgstr "Votre nouveau mot de passe doit comporter au moins 8 caractères."
 
-#: src/components/layouts/Checkout/index.tsx:264
+#: src/components/layouts/Checkout/index.tsx:261
 msgid "Your Order"
 msgstr "Votre commande"
 
@@ -15841,7 +15870,7 @@ msgstr "Les détails de votre commande ont été mis à jour. Un e-mail de confi
 msgid "Your order has been cancelled"
 msgstr "Votre commande a été annulée"
 
-#: src/components/layouts/Checkout/index.tsx:122
+#: src/components/layouts/Checkout/index.tsx:124
 msgid "Your order has been cancelled."
 msgstr "Votre commande a été annulée."
 
@@ -15903,7 +15932,7 @@ msgstr "Votre téléphone PICHA SMS est hors ligne. Vérifiez qu'il est allumé,
 msgid "Your PICHA SMS phone went offline {0}. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Votre téléphone PICHA SMS est passé hors ligne {0}. Vérifiez qu'il est allumé, connecté à internet et que l'application PICHA SMS est ouverte."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:126
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:132
 msgid "Your place has been released for another person. Thank you for letting us know."
 msgstr "Votre place a été libérée pour une autre personne. Merci de nous avoir prévenus."
 
@@ -15931,15 +15960,15 @@ msgstr "Votre remboursement est en cours de traitement."
 msgid "Your registration"
 msgstr "Votre inscription"
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:81
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:88
 msgid "Your registration has been cancelled."
 msgstr "Votre inscription a été annulée."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:125
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:131
 msgid "Your registration is cancelled."
 msgstr "Votre inscription est annulée."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:117
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:123
 msgid "Your registration: {0}"
 msgstr "Votre inscription : {0}"
 
@@ -15964,7 +15993,7 @@ msgstr "Votre compte Stripe est connecté et prêt à traiter les paiements."
 msgid "Your teams run the welcome with the platform; we rent you ready-to-use equipment."
 msgstr "Vos équipes gèrent l'accueil avec la plateforme ; nous vous louons le matériel prêt à l'emploi."
 
-#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:34
+#: src/components/routes/product-widget/AttendeeProductAndInformation/index.tsx:38
 msgid "Your ticket for"
 msgstr "Votre billet pour"
 
@@ -15972,7 +16001,7 @@ msgstr "Votre billet pour"
 msgid "Your ticket was sent by e-mail. Lost it? Find it from the login page with your e-mail address."
 msgstr "Votre billet vous a été envoyé par e-mail. Perdu ? Retrouvez-le depuis la page de connexion avec votre adresse e-mail."
 
-#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:199
+#: src/components/routes/product-widget/AttendeeAttendance/index.tsx:205
 msgid "Your ticket will be cancelled and your place will be offered to someone else. This cannot be undone."
 msgstr "Votre billet sera annulé et votre place proposée à une autre personne. Cette action est définitive."
 
