@@ -9,14 +9,18 @@ use HiEvents\DomainObjects\Enums\HomepageFontFamily;
 use HiEvents\DomainObjects\Enums\HomepageHeroLayout;
 use HiEvents\DomainObjects\Enums\PaymentProviders;
 use HiEvents\DomainObjects\Enums\PriceDisplayMode;
+use HiEvents\DomainObjects\Enums\SchemaEventType;
 use HiEvents\DomainObjects\Enums\TicketDateDisplayMode;
 use HiEvents\Http\Request\BaseRequest;
+use HiEvents\Services\Domain\Event\HomepageFooterSettingsSanitizer;
 use HiEvents\Validators\Rules\OrganizerFontAvailableRule;
 use HiEvents\Validators\Rules\RulesHelper;
 use Illuminate\Validation\Rule;
 
 class UpdateEventSettingsRequest extends BaseRequest
 {
+    private const FOOTER_URL_RULES = ['nullable', 'string', 'max:500', 'regex:' . HomepageFooterSettingsSanitizer::URL_PATTERN];
+
     // @todo these should all be required for the update request. They should only be nullable for the PATCH request
     public function rules(): array
     {
@@ -136,6 +140,22 @@ class UpdateEventSettingsRequest extends BaseRequest
             'allow_attendee_attendance_response' => ['boolean'],
 
             'embedded_registration_enabled' => ['boolean'],
+
+            'rich_footer_enabled' => ['boolean'],
+            'homepage_footer_settings' => ['nullable', 'array'],
+            'homepage_footer_settings.newsletter_enabled' => ['nullable', 'boolean'],
+            'homepage_footer_settings.newsletter_title' => ['nullable', 'string', 'max:120'],
+            'homepage_footer_settings.privacy_policy_url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.terms_url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.accessibility_url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.event_links' => ['nullable', 'array', 'max:' . HomepageFooterSettingsSanitizer::MAX_EVENT_LINKS],
+            'homepage_footer_settings.event_links.*.label' => ['nullable', 'string', 'max:60'],
+            'homepage_footer_settings.event_links.*.url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.related_links' => ['nullable', 'array', 'max:' . HomepageFooterSettingsSanitizer::MAX_RELATED_LINKS],
+            'homepage_footer_settings.related_links.*.title' => ['nullable', 'string', 'max:80'],
+            'homepage_footer_settings.related_links.*.url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.related_links.*.image_url' => self::FOOTER_URL_RULES,
+            'schema_event_type' => [Rule::in(SchemaEventType::valuesArray())],
         ];
     }
 
@@ -179,6 +199,12 @@ class UpdateEventSettingsRequest extends BaseRequest
             'homepage_theme_settings.mode.in' => __('The mode must be light or dark.'),
             'homepage_theme_settings.background_type.in' => __('The background type must be COLOR or MIRROR_COVER_IMAGE.'),
             'homepage_theme_settings.font_family.in' => __('The selected font is not supported.'),
+
+            'homepage_footer_settings.*.regex' => __('Please enter a link starting with https://'),
+            'homepage_footer_settings.event_links.*.url.regex' => __('Please enter a link starting with https://'),
+            'homepage_footer_settings.related_links.*.url.regex' => __('Please enter a link starting with https://'),
+            'homepage_footer_settings.related_links.*.image_url.regex' => __('Please enter a link starting with https://'),
+            'homepage_footer_settings.related_links.max' => __('You can add up to 3 links.'),
         ];
     }
 }

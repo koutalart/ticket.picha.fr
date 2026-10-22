@@ -155,6 +155,12 @@ class PartialUpdateEventSettingsHandler
                 'allow_attendee_attendance_response' => $eventSettingsDTO->settings['allow_attendee_attendance_response'] ?? $existingSettings->getAllowAttendeeAttendanceResponse(),
 
                 'embedded_registration_enabled' => $eventSettingsDTO->settings['embedded_registration_enabled'] ?? $existingSettings->getEmbeddedRegistrationEnabled(),
+
+                'rich_footer_enabled' => $eventSettingsDTO->settings['rich_footer_enabled'] ?? $existingSettings->getRichFooterEnabled(),
+                'homepage_footer_settings' => array_key_exists('homepage_footer_settings', $eventSettingsDTO->settings)
+                    ? $eventSettingsDTO->settings['homepage_footer_settings']
+                    : $existingSettings->getHomepageFooterSettings(),
+                'schema_event_type' => $eventSettingsDTO->settings['schema_event_type'] ?? $existingSettings->getSchemaEventType(),
             ]),
         );
     }
