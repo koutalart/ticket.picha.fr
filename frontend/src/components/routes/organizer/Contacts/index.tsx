@@ -35,13 +35,14 @@ import {withLoadingNotification} from "../../../../utilites/withLoadingNotificat
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {CreateContactModal} from "./CreateContactModal.tsx";
 import {ImportContactsModal} from "./ImportContactsModal.tsx";
+import {NewsletterSubscribersTab} from "./NewsletterSubscribersTab.tsx";
 import classes from "./Contacts.module.scss";
 
 type ColumnKey = 'email' | 'phone' | 'events' | 'attended' | 'last_order' | 'total' | 'email_consent' | 'sms_consent' | 'tags' | 'source';
 
 const DEFAULT_COLUMNS: ColumnKey[] = ['email', 'phone', 'events', 'last_order', 'total', 'email_consent', 'tags'];
 
-type Tab = 'all' | 'email_consent' | 'sms_consent';
+type Tab = 'all' | 'email_consent' | 'sms_consent' | 'subscribers';
 
 const Contacts = () => {
     const {organizerId} = useParams();
@@ -91,7 +92,7 @@ const Contacts = () => {
 
     const debouncedSearch = useDebouncedCallback((value: string) => updateParams({query: value.trim()}), 350);
 
-    const activeTab: Tab = filters.email_consent ? 'email_consent' : filters.sms_consent ? 'sms_consent' : 'all';
+    const activeTab: Tab = searchParams.get('tab') === 'subscribers' ? 'subscribers' : filters.email_consent ? 'email_consent' : filters.sms_consent ? 'sms_consent' : 'all';
 
     const activeFilters = [
         filters.event_id && {
@@ -204,6 +205,7 @@ const Contacts = () => {
             <Tabs
                 value={activeTab}
                 onChange={(value) => updateParams({
+                    tab: value === 'subscribers' ? 'subscribers' : null,
                     email_consent: value === 'email_consent' ? '1' : null,
                     sms_consent: value === 'sms_consent' ? '1' : null,
                 })}
@@ -213,202 +215,205 @@ const Contacts = () => {
                     <Tabs.Tab value="all">{t`All contacts`}</Tabs.Tab>
                     <Tabs.Tab value="email_consent">{t`Accept emails`}</Tabs.Tab>
                     <Tabs.Tab value="sms_consent">{t`Accept SMS`}</Tabs.Tab>
+                    <Tabs.Tab value="subscribers">{t`Newsletter subscribers`}</Tabs.Tab>
                 </Tabs.List>
             </Tabs>
 
-            <div className={classes.filters}>
-                <Menu shadow="md" width={280} position="bottom-start">
-                    <Menu.Target>
-                        <Button variant="default" rightSection={<IconChevronDown size={14}/>}>
-                            {t`Load an event or a tag`}
-                        </Button>
-                    </Menu.Target>
-                    <Menu.Dropdown className={classes.menuScroll}>
-                        <Menu.Label>{t`Came to an event`}</Menu.Label>
-                        {eventOptions.length === 0 && <Menu.Item disabled>{t`No events`}</Menu.Item>}
-                        {eventOptions.map(event => (
-                            <Menu.Item key={event.id} leftSection={<IconCalendarEvent size={14}/>}
-                                       onClick={() => updateParams({event_id: String(event.id)})}>
-                                {event.title}
-                            </Menu.Item>
-                        ))}
-                        <Menu.Divider/>
-                        <Menu.Label>{t`Tags`}</Menu.Label>
-                        {(tags ?? []).length === 0 && <Menu.Item disabled>{t`No tags yet`}</Menu.Item>}
-                        {(tags ?? []).map(tag => (
-                            <Menu.Item key={tag.id} leftSection={<IconTag size={14}/>}
-                                       rightSection={<span className={classes.menuCount}>{tag.contacts_count}</span>}
-                                       onClick={() => updateParams({tag_id: String(tag.id)})}>
-                                {tag.name}
-                            </Menu.Item>
-                        ))}
-                    </Menu.Dropdown>
-                </Menu>
-
-                <Menu shadow="md" width={240} position="bottom-start">
-                    <Menu.Target>
-                        <Button variant="default" leftSection={<IconFilter size={14}/>} rightSection={<IconChevronDown size={14}/>}>
-                            {t`Add filter`}
-                        </Button>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                        <Menu.Item leftSection={<IconTicket size={14}/>} onClick={() => updateParams({attended: '1'})}>
-                            {t`Came (scanned)`}
-                        </Menu.Item>
-                        <Menu.Item leftSection={<IconPhone size={14}/>} onClick={() => updateParams({has_phone: '1'})}>
-                            {t`With a phone number`}
-                        </Menu.Item>
-                    </Menu.Dropdown>
-                </Menu>
-
-                {activeFilters.map(filter => (
-                    <Badge key={filter.key} size="lg" variant="light" tt="none" className={classes.filterPill}
-                           rightSection={
-                               <IconX size={12} className={classes.pillClose} aria-label={t`Remove filter`}
-                                      onClick={() => updateParams({[filter.key]: null})}/>
-                           }>
-                        {filter.label}
-                    </Badge>
-                ))}
-            </div>
-
-            <div className={classes.countRow}>
-                <span className={classes.countText}>
-                    <Trans>{summary?.total ?? 0} contacts</Trans>
-                    {summary && (
-                        <span className={classes.countDetail}>
-                            {' · '}{t`${summary.email_consent} accept emails`}
-                            {' · '}{t`${summary.repeat_customers} came to 2 events or more`}
-                            {' · '}{formatCurrency(summary.total_spent, currency)}
-                        </span>
-                    )}
-                </span>
-                <Group gap="sm" className={classes.countActions}>
-                    <Menu shadow="md" width={220} closeOnItemClick={false} position="bottom-end">
+            {activeTab === 'subscribers' ? <NewsletterSubscribersTab/> : (<>
+                <div className={classes.filters}>
+                    <Menu shadow="md" width={280} position="bottom-start">
                         <Menu.Target>
-                            <Button variant="subtle" leftSection={<IconColumns size={16}/>}>{t`Customize columns`}</Button>
+                            <Button variant="default" rightSection={<IconChevronDown size={14}/>}>
+                                {t`Load an event or a tag`}
+                            </Button>
                         </Menu.Target>
-                        <Menu.Dropdown>
-                            {(Object.keys(columnLabels) as ColumnKey[]).map(column => (
-                                <Menu.Item key={column}>
-                                    <Checkbox
-                                        label={columnLabels[column]}
-                                        checked={visibleColumns.includes(column)}
-                                        onChange={() => setVisibleColumns(current => current.includes(column)
-                                            ? current.filter(item => item !== column)
-                                            : [...current, column])}
-                                    />
+                        <Menu.Dropdown className={classes.menuScroll}>
+                            <Menu.Label>{t`Came to an event`}</Menu.Label>
+                            {eventOptions.length === 0 && <Menu.Item disabled>{t`No events`}</Menu.Item>}
+                            {eventOptions.map(event => (
+                                <Menu.Item key={event.id} leftSection={<IconCalendarEvent size={14}/>}
+                                           onClick={() => updateParams({event_id: String(event.id)})}>
+                                    {event.title}
+                                </Menu.Item>
+                            ))}
+                            <Menu.Divider/>
+                            <Menu.Label>{t`Tags`}</Menu.Label>
+                            {(tags ?? []).length === 0 && <Menu.Item disabled>{t`No tags yet`}</Menu.Item>}
+                            {(tags ?? []).map(tag => (
+                                <Menu.Item key={tag.id} leftSection={<IconTag size={14}/>}
+                                           rightSection={<span className={classes.menuCount}>{tag.contacts_count}</span>}
+                                           onClick={() => updateParams({tag_id: String(tag.id)})}>
+                                    {tag.name}
                                 </Menu.Item>
                             ))}
                         </Menu.Dropdown>
                     </Menu>
-                    <Button variant="subtle" leftSection={<IconDownload size={16}/>} onClick={handleExport}>
-                        {t`Export (CSV)`}
-                    </Button>
-                    <TextInput
-                        className={classes.search}
-                        leftSection={<IconSearch size={16}/>}
-                        placeholder={t`Search`}
-                        aria-label={t`Search a name, an email or a phone number`}
-                        value={searchText}
-                        onChange={(event) => {
-                            setSearchText(event.currentTarget.value);
-                            debouncedSearch(event.currentTarget.value);
-                        }}
-                    />
-                </Group>
-            </div>
 
-            {selectedIds.length > 0 && (
-                <div className={classes.selectionBar}>
-                    <span>
-                        <Trans>{selectedIds.length} selected contacts</Trans>
+                    <Menu shadow="md" width={240} position="bottom-start">
+                        <Menu.Target>
+                            <Button variant="default" leftSection={<IconFilter size={14}/>} rightSection={<IconChevronDown size={14}/>}>
+                                {t`Add filter`}
+                            </Button>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                            <Menu.Item leftSection={<IconTicket size={14}/>} onClick={() => updateParams({attended: '1'})}>
+                                {t`Came (scanned)`}
+                            </Menu.Item>
+                            <Menu.Item leftSection={<IconPhone size={14}/>} onClick={() => updateParams({has_phone: '1'})}>
+                                {t`With a phone number`}
+                            </Menu.Item>
+                        </Menu.Dropdown>
+                    </Menu>
+
+                    {activeFilters.map(filter => (
+                        <Badge key={filter.key} size="lg" variant="light" tt="none" className={classes.filterPill}
+                               rightSection={
+                                   <IconX size={12} className={classes.pillClose} aria-label={t`Remove filter`}
+                                          onClick={() => updateParams({[filter.key]: null})}/>
+                               }>
+                            {filter.label}
+                        </Badge>
+                    ))}
+                </div>
+
+                <div className={classes.countRow}>
+                    <span className={classes.countText}>
+                        <Trans>{summary?.total ?? 0} contacts</Trans>
+                        {summary && (
+                            <span className={classes.countDetail}>
+                                {' · '}{t`${summary.email_consent} accept emails`}
+                                {' · '}{t`${summary.repeat_customers} came to 2 events or more`}
+                                {' · '}{formatCurrency(summary.total_spent, currency)}
+                            </span>
+                        )}
                     </span>
-                    <Group gap="xs">
-                        <TextInput
-                            size="xs"
-                            placeholder={t`Tag name`}
-                            value={tagName}
-                            onChange={(event) => setTagName(event.currentTarget.value)}
-                            onKeyDown={(event) => event.key === 'Enter' && handleAssignTag()}
-                        />
-                        <Button size="xs" leftSection={<IconTag size={14}/>} onClick={handleAssignTag}
-                                loading={assignTagMutation.isPending} disabled={!tagName.trim()}>
-                            {t`Add a tag`}
+                    <Group gap="sm" className={classes.countActions}>
+                        <Menu shadow="md" width={220} closeOnItemClick={false} position="bottom-end">
+                            <Menu.Target>
+                                <Button variant="subtle" leftSection={<IconColumns size={16}/>}>{t`Customize columns`}</Button>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                {(Object.keys(columnLabels) as ColumnKey[]).map(column => (
+                                    <Menu.Item key={column}>
+                                        <Checkbox
+                                            label={columnLabels[column]}
+                                            checked={visibleColumns.includes(column)}
+                                            onChange={() => setVisibleColumns(current => current.includes(column)
+                                                ? current.filter(item => item !== column)
+                                                : [...current, column])}
+                                        />
+                                    </Menu.Item>
+                                ))}
+                            </Menu.Dropdown>
+                        </Menu>
+                        <Button variant="subtle" leftSection={<IconDownload size={16}/>} onClick={handleExport}>
+                            {t`Export (CSV)`}
                         </Button>
+                        <TextInput
+                            className={classes.search}
+                            leftSection={<IconSearch size={16}/>}
+                            placeholder={t`Search`}
+                            aria-label={t`Search a name, an email or a phone number`}
+                            value={searchText}
+                            onChange={(event) => {
+                                setSearchText(event.currentTarget.value);
+                                debouncedSearch(event.currentTarget.value);
+                            }}
+                        />
                     </Group>
                 </div>
-            )}
 
-            <TableSkeleton isVisible={contactsQuery.isLoading}/>
+                {selectedIds.length > 0 && (
+                    <div className={classes.selectionBar}>
+                        <span>
+                            <Trans>{selectedIds.length} selected contacts</Trans>
+                        </span>
+                        <Group gap="xs">
+                            <TextInput
+                                size="xs"
+                                placeholder={t`Tag name`}
+                                value={tagName}
+                                onChange={(event) => setTagName(event.currentTarget.value)}
+                                onKeyDown={(event) => event.key === 'Enter' && handleAssignTag()}
+                            />
+                            <Button size="xs" leftSection={<IconTag size={14}/>} onClick={handleAssignTag}
+                                    loading={assignTagMutation.isPending} disabled={!tagName.trim()}>
+                                {t`Add a tag`}
+                            </Button>
+                        </Group>
+                    </div>
+                )}
 
-            {!contactsQuery.isLoading && contacts.length === 0 && (
-                <NoResultsSplash
-                    heading={t`No contacts yet`}
-                    subHeading={
-                        <p>{t`Your buyers and attendees appear here as soon as an order is confirmed. You can also import a file.`}</p>
-                    }
-                />
-            )}
+                <TableSkeleton isVisible={contactsQuery.isLoading}/>
 
-            {contacts.length > 0 && (
-                <div className={classes.tableCard}>
-                    <Table.ScrollContainer minWidth={720}>
-                        <Table highlightOnHover verticalSpacing="sm">
-                            <Table.Thead>
-                                <Table.Tr>
-                                    <Table.Th className={classes.checkboxCell}>
-                                        <Checkbox
-                                            aria-label={t`Select all`}
-                                            checked={allSelected}
-                                            indeterminate={!allSelected && selectedIds.length > 0}
-                                            onChange={() => setSelectedIds(allSelected ? [] : contacts.map(contact => contact.id))}
-                                        />
-                                    </Table.Th>
-                                    <Table.Th className={classes.headCell}>{t`Contact`}</Table.Th>
-                                    {columns.map(column => (
-                                        <Table.Th key={column} className={classes.headCell}>{columnLabels[column]}</Table.Th>
-                                    ))}
-                                </Table.Tr>
-                            </Table.Thead>
-                            <Table.Tbody>
-                                {contacts.map(contact => (
-                                    <Table.Tr key={contact.id}>
-                                        <Table.Td className={classes.checkboxCell}>
+                {!contactsQuery.isLoading && contacts.length === 0 && (
+                    <NoResultsSplash
+                        heading={t`No contacts yet`}
+                        subHeading={
+                            <p>{t`Your buyers and attendees appear here as soon as an order is confirmed. You can also import a file.`}</p>
+                        }
+                    />
+                )}
+
+                {contacts.length > 0 && (
+                    <div className={classes.tableCard}>
+                        <Table.ScrollContainer minWidth={720}>
+                            <Table highlightOnHover verticalSpacing="sm">
+                                <Table.Thead>
+                                    <Table.Tr>
+                                        <Table.Th className={classes.checkboxCell}>
                                             <Checkbox
-                                                aria-label={t`Select contact`}
-                                                checked={selectedIds.includes(contact.id)}
-                                                onChange={() => setSelectedIds(current => current.includes(contact.id)
-                                                    ? current.filter(item => item !== contact.id)
-                                                    : [...current, contact.id])}
+                                                aria-label={t`Select all`}
+                                                checked={allSelected}
+                                                indeterminate={!allSelected && selectedIds.length > 0}
+                                                onChange={() => setSelectedIds(allSelected ? [] : contacts.map(contact => contact.id))}
                                             />
-                                        </Table.Td>
-                                        <Table.Td>
-                                            <Anchor component={Link} underline="always" className={classes.name}
-                                                    to={`/manage/organizer/${organizerId}/contacts/${contact.id}`}>
-                                                {[contact.first_name, contact.last_name].filter(Boolean).join(' ') || contact.email || formatPhone(contact.phone)}
-                                            </Anchor>
-                                        </Table.Td>
-                                        {columns.map(column => <Table.Td key={column}>{cell(contact, column)}</Table.Td>)}
+                                        </Table.Th>
+                                        <Table.Th className={classes.headCell}>{t`Contact`}</Table.Th>
+                                        {columns.map(column => (
+                                            <Table.Th key={column} className={classes.headCell}>{columnLabels[column]}</Table.Th>
+                                        ))}
                                     </Table.Tr>
-                                ))}
-                            </Table.Tbody>
-                        </Table>
-                    </Table.ScrollContainer>
-                </div>
-            )}
+                                </Table.Thead>
+                                <Table.Tbody>
+                                    {contacts.map(contact => (
+                                        <Table.Tr key={contact.id}>
+                                            <Table.Td className={classes.checkboxCell}>
+                                                <Checkbox
+                                                    aria-label={t`Select contact`}
+                                                    checked={selectedIds.includes(contact.id)}
+                                                    onChange={() => setSelectedIds(current => current.includes(contact.id)
+                                                        ? current.filter(item => item !== contact.id)
+                                                        : [...current, contact.id])}
+                                                />
+                                            </Table.Td>
+                                            <Table.Td>
+                                                <Anchor component={Link} underline="always" className={classes.name}
+                                                        to={`/manage/organizer/${organizerId}/contacts/${contact.id}`}>
+                                                    {[contact.first_name, contact.last_name].filter(Boolean).join(' ') || contact.email || formatPhone(contact.phone)}
+                                                </Anchor>
+                                            </Table.Td>
+                                            {columns.map(column => <Table.Td key={column}>{cell(contact, column)}</Table.Td>)}
+                                        </Table.Tr>
+                                    ))}
+                                </Table.Tbody>
+                            </Table>
+                        </Table.ScrollContainer>
+                    </div>
+                )}
 
-            {pagination && (
-                <Pagination
-                    value={pagination.current_page}
-                    total={pagination.last_page}
-                    onChange={(page) => {
-                        const next = new URLSearchParams(searchParams);
-                        next.set('page', String(page));
-                        setSearchParams(next);
-                    }}
-                />
-            )}
+                {pagination && (
+                    <Pagination
+                        value={pagination.current_page}
+                        total={pagination.last_page}
+                        onChange={(page) => {
+                            const next = new URLSearchParams(searchParams);
+                            next.set('page', String(page));
+                            setSearchParams(next);
+                        }}
+                    />
+                )}
+            </>)}
 
             {modal === 'create' && <CreateContactModal organizerId={organizerId as IdParam} onClose={() => setModal(null)}/>}
             {modal === 'import' && <ImportContactsModal organizerId={organizerId as IdParam} onClose={() => setModal(null)}/>}
