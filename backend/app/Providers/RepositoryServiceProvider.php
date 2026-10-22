@@ -55,6 +55,7 @@ use HiEvents\Repository\Eloquent\SmsMessageRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRecipientRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRepository;
 use HiEvents\Repository\Eloquent\SmsOptOutRepository;
+use HiEvents\Repository\Eloquent\SmsCancellationConfirmationRepository;
 use HiEvents\Repository\Eloquent\SmsRegistrationConfirmationRepository;
 use HiEvents\Repository\Eloquent\OrganizerNewsletterSubscriberRepository;
 use HiEvents\Repository\Eloquent\SmsReplyTemplateRepository;
@@ -127,6 +128,7 @@ use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsCancellationConfirmationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsRegistrationConfirmationRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerNewsletterSubscriberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsReplyTemplateRepositoryInterface;
@@ -171,6 +173,7 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsMessageRepositoryInterface::class => SmsMessageRepository::class,
         SmsOptOutRepositoryInterface::class => SmsOptOutRepository::class,
         SmsRegistrationConfirmationRepositoryInterface::class => SmsRegistrationConfirmationRepository::class,
+        SmsCancellationConfirmationRepositoryInterface::class => SmsCancellationConfirmationRepository::class,
         OrganizerNewsletterSubscriberRepositoryInterface::class => OrganizerNewsletterSubscriberRepository::class,
         SmsCampaignRepositoryInterface::class => SmsCampaignRepository::class,
         SmsCampaignRecipientRepositoryInterface::class => SmsCampaignRecipientRepository::class,

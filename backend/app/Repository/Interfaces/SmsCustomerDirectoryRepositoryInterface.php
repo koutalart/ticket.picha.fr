@@ -26,4 +26,12 @@ interface SmsCustomerDirectoryRepositoryInterface
      * @return Collection<int, SmsReminderAttendeeDTO>
      */
     public function findActiveAttendeesWithPhone(int $eventId, ?int $orderId = null): Collection;
+
+    /**
+     * The given attendees of the event, whatever their status, with the phone given for them (same order of precedence).
+     *
+     * @param  int[]  $attendeeIds
+     * @return Collection<int, SmsReminderAttendeeDTO>
+     */
+    public function findAttendeesWithPhone(int $eventId, array $attendeeIds): Collection;
 }

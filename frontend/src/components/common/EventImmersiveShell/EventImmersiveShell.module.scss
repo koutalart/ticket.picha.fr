@@ -11,10 +11,6 @@
   color: #fff;
   background-color: transparent;
 
-  a:not([class]) {
-    color: var(--immersive-accent);
-  }
-
   @media print {
     min-height: 0;
     color: #000;
@@ -84,6 +80,10 @@
   align-items: center;
   width: 100%;
   padding: clamp(12px, 3vw, 32px) 16px 32px;
+
+  a:not([class]) {
+    color: var(--immersive-accent);
+  }
 
   @media print {
     padding: 0;

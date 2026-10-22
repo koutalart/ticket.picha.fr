@@ -27,6 +27,7 @@ import {hasActivePixels, trackPixelEvent} from "../../../utilites/trackingPixels
 import {rememberQrLinkCode} from "../../../utilites/qrAttribution.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {getAppName} from "../../../utilites/branding.ts";
+import {findOrganizerLogo} from "../../../utilites/organizerLogo.ts";
 
 const PLATFORM_ICONS: Record<QrLinkSocialPlatform, typeof IconWorld> = {
     instagram: IconBrandInstagram,
@@ -142,7 +143,7 @@ const QrLinkPage = () => {
     }
 
     const accent = qrLink.design?.foreground || getConfig('VITE_APP_PRIMARY_COLOR', '#40296C');
-    const logo = organizer?.images?.find(image => image.type === 'ORGANIZER_LOGO');
+    const logo = findOrganizerLogo(organizer?.images, 'light');
     const title = qrLink.title || qrLink.event_title || organizer?.name || qrLink.name;
     const organizerUrl = organizer?.slug && organizer.status === 'LIVE'
         ? `/events/${organizer.id}/${organizer.slug}?qr=${qrLink.short_id}&qrc=1`

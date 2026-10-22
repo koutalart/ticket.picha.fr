@@ -245,4 +245,61 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         self::assertStringContainsString('Lien personnel du client : https://innocent976.yt/?qr=iiekn0hg', $sent);
         self::assertSame('Si si, il en reste ! Ta place à 15 euros est ici : https://innocent976.yt/?qr=iiekn0hg 🎃', $result->reply);
     }
+
+    public function test_model_flags_whether_the_draft_may_leave_alone_and_writes_a_holding_reply(): void
+    {
+        $this->claude->shouldReceive('isConfigured')->andReturnTrue();
+        $this->claude->shouldReceive('askWithUsage')->once()->andReturnUsing(function (string $system, array $content, array $schema) use (&$sentSchema) {
+            $sentSchema = $schema;
+
+            return $this->answer([
+                'decision' => 'draft',
+                'reply' => 'Ça commence à 22h.',
+                'reason' => null,
+                'auto_send_safe' => true,
+                'holding_reply' => "Je vérifie avec l'équipe — je reviens vers vous très vite\n\nKultur'm via PICHA Ticket",
+            ]);
+        });
+
+        $result = $this->generator()->generate($this->request());
+
+        self::assertTrue($result->autoSendSafe);
+        self::assertSame("Je vérifie avec l'équipe, je reviens vers vous très vite\n\nKultur'm via PICHA Ticket", $result->holdingReply);
+        self::assertContains('auto_send_safe', $sentSchema['required']);
+        self::assertContains('holding_reply', $sentSchema['required']);
+    }
+
+    public function test_needs_human_keeps_its_holding_reply_but_never_flags_auto_send(): void
+    {
+        $this->claude->shouldReceive('isConfigured')->andReturnTrue();
+        $this->claude->shouldReceive('askWithUsage')->once()->andReturn($this->answer([
+            'decision' => 'needs_human',
+            'reply' => null,
+            'reason' => "Demande d'invitation",
+            'auto_send_safe' => true,
+            'holding_reply' => "Bonne question, je vérifie avec l'équipe et je reviens vers vous très vite 🎶",
+        ]));
+
+        $result = $this->generator()->generate($this->request());
+
+        self::assertSame(SmsAssistantOutcome::NEEDS_HUMAN, $result->outcome);
+        self::assertFalse($result->autoSendSafe);
+        self::assertSame("Bonne question, je vérifie avec l'équipe et je reviens vers vous très vite 🎶", $result->holdingReply);
+    }
+
+    public function test_holding_reply_with_a_link_or_a_missing_flag_is_ignored(): void
+    {
+        $this->claude->shouldReceive('isConfigured')->andReturnTrue();
+        $this->claude->shouldReceive('askWithUsage')->once()->andReturn($this->answer([
+            'decision' => 'draft',
+            'reply' => 'Ça commence à 22h.',
+            'reason' => null,
+            'holding_reply' => 'Je vérifie, en attendant voici le lien https://ticket.picha.fr',
+        ]));
+
+        $result = $this->generator()->generate($this->request());
+
+        self::assertFalse($result->autoSendSafe);
+        self::assertNull($result->holdingReply);
+    }
 }

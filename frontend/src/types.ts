@@ -285,6 +285,9 @@ export interface EventSettings {
 
     sms_registration_confirmation_enabled?: boolean;
     sms_registration_confirmation_message?: string | null;
+    sms_cancellation_confirmation_enabled?: boolean;
+    sms_cancellation_confirmation_message?: string | null;
+    sms_cancellation_confirmation_on_organizer_cancel?: boolean;
 
     embedded_registration_enabled?: boolean;
 
@@ -1469,6 +1472,8 @@ export interface OrganizerSmsSettings {
     assistant_available: boolean;
     assistant_enabled: boolean;
     assistant_instructions: string | null;
+    assistant_auto_send: boolean;
+    assistant_holding_reply: string | null;
     history_import: SmsHistoryImport;
 }
 
@@ -1538,6 +1543,8 @@ export interface SmsMessage {
     status: SmsMessageStatus;
     error_message: string | null;
     sent_by_user_id: number | null;
+    auto_sent?: boolean;
+    auto_reply_type?: 'ANSWER' | 'HOLDING' | null;
     provider_timestamp: string | null;
     created_at: string;
 }

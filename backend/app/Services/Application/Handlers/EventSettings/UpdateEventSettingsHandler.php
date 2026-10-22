@@ -121,6 +121,9 @@ class UpdateEventSettingsHandler
 
                     'sms_registration_confirmation_enabled' => $settings->sms_registration_confirmation_enabled,
                     'sms_registration_confirmation_message' => $this->smsMessage($settings->sms_registration_confirmation_message),
+                    'sms_cancellation_confirmation_enabled' => $settings->sms_cancellation_confirmation_enabled,
+                    'sms_cancellation_confirmation_message' => $this->smsMessage($settings->sms_cancellation_confirmation_message),
+                    'sms_cancellation_confirmation_on_organizer_cancel' => $settings->sms_cancellation_confirmation_on_organizer_cancel,
 
                     'rich_footer_enabled' => $settings->rich_footer_enabled,
                     'homepage_footer_settings' => $this->footerSettingsSanitizer->sanitize($settings->homepage_footer_settings),

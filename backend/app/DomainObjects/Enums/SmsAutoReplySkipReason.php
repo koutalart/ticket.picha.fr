@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace HiEvents\DomainObjects\Enums;
+
+enum SmsAutoReplySkipReason: string
+{
+    use BaseEnum;
+
+    case EMPTY_REPLY = 'EMPTY_REPLY';
+    case CONVERSATION_NOT_FOUND = 'CONVERSATION_NOT_FOUND';
+    case DISABLED = 'DISABLED';
+    case NEEDS_HUMAN = 'NEEDS_HUMAN';
+    case DRAFT_CHANGED = 'DRAFT_CHANGED';
+    case NOT_REPLYABLE = 'NOT_REPLYABLE';
+    case NOT_LATEST = 'NOT_LATEST';
+    case ACKNOWLEDGEMENT = 'ACKNOWLEDGEMENT';
+    case SENSITIVE = 'SENSITIVE';
+    case OPTED_OUT = 'OPTED_OUT';
+    case ALREADY_ANSWERED = 'ALREADY_ANSWERED';
+    case OUTBOUND_AFTER_MESSAGE = 'OUTBOUND_AFTER_MESSAGE';
+    case LINE_UNAVAILABLE = 'LINE_UNAVAILABLE';
+    case HOLDING_ALREADY_SENT = 'HOLDING_ALREADY_SENT';
+}

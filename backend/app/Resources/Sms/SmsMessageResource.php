@@ -22,6 +22,8 @@ class SmsMessageResource extends BaseResource
             'status' => $this->getStatus(),
             'error_message' => $this->getErrorMessage(),
             'sent_by_user_id' => $this->getSentByUserId(),
+            'auto_sent' => $this->getAutoReplyToMessageId() !== null,
+            'auto_reply_type' => $this->getAutoReplyType(),
             'provider_timestamp' => $this->getProviderTimestamp(),
             'created_at' => $this->getCreatedAt(),
         ];

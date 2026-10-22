@@ -80,6 +80,9 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const EVENT_PAGES = 'event_pages';
     final public const SMS_REGISTRATION_CONFIRMATION_ENABLED = 'sms_registration_confirmation_enabled';
     final public const SMS_REGISTRATION_CONFIRMATION_MESSAGE = 'sms_registration_confirmation_message';
+    final public const SMS_CANCELLATION_CONFIRMATION_ENABLED = 'sms_cancellation_confirmation_enabled';
+    final public const SMS_CANCELLATION_CONFIRMATION_MESSAGE = 'sms_cancellation_confirmation_message';
+    final public const SMS_CANCELLATION_CONFIRMATION_ON_ORGANIZER_CANCEL = 'sms_cancellation_confirmation_on_organizer_cancel';
 
     protected int $id;
     protected int $event_id;
@@ -151,6 +154,9 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected array|string|null $event_pages = null;
     protected bool $sms_registration_confirmation_enabled = false;
     protected ?string $sms_registration_confirmation_message = null;
+    protected bool $sms_cancellation_confirmation_enabled = false;
+    protected ?string $sms_cancellation_confirmation_message = null;
+    protected bool $sms_cancellation_confirmation_on_organizer_cancel = false;
 
     public function toArray(): array
     {
@@ -225,6 +231,9 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'event_pages' => $this->event_pages ?? null,
                     'sms_registration_confirmation_enabled' => $this->sms_registration_confirmation_enabled ?? null,
                     'sms_registration_confirmation_message' => $this->sms_registration_confirmation_message ?? null,
+                    'sms_cancellation_confirmation_enabled' => $this->sms_cancellation_confirmation_enabled ?? null,
+                    'sms_cancellation_confirmation_message' => $this->sms_cancellation_confirmation_message ?? null,
+                    'sms_cancellation_confirmation_on_organizer_cancel' => $this->sms_cancellation_confirmation_on_organizer_cancel ?? null,
                 ];
     }
 
@@ -997,5 +1006,38 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getSmsRegistrationConfirmationMessage(): ?string
     {
         return $this->sms_registration_confirmation_message;
+    }
+
+    public function setSmsCancellationConfirmationEnabled(bool $sms_cancellation_confirmation_enabled): self
+    {
+        $this->sms_cancellation_confirmation_enabled = $sms_cancellation_confirmation_enabled;
+        return $this;
+    }
+
+    public function getSmsCancellationConfirmationEnabled(): bool
+    {
+        return $this->sms_cancellation_confirmation_enabled;
+    }
+
+    public function setSmsCancellationConfirmationMessage(?string $sms_cancellation_confirmation_message): self
+    {
+        $this->sms_cancellation_confirmation_message = $sms_cancellation_confirmation_message;
+        return $this;
+    }
+
+    public function getSmsCancellationConfirmationMessage(): ?string
+    {
+        return $this->sms_cancellation_confirmation_message;
+    }
+
+    public function setSmsCancellationConfirmationOnOrganizerCancel(bool $sms_cancellation_confirmation_on_organizer_cancel): self
+    {
+        $this->sms_cancellation_confirmation_on_organizer_cancel = $sms_cancellation_confirmation_on_organizer_cancel;
+        return $this;
+    }
+
+    public function getSmsCancellationConfirmationOnOrganizerCancel(): bool
+    {
+        return $this->sms_cancellation_confirmation_on_organizer_cancel;
     }
 }
