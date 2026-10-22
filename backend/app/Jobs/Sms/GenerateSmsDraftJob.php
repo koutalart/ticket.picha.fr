@@ -8,6 +8,7 @@ use HiEvents\Exceptions\SmsAssistantFailedException;
 use HiEvents\Exceptions\SmsAssistantLimitReachedException;
 use HiEvents\Exceptions\SmsAssistantUnavailableException;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
+use HiEvents\Services\Domain\Sms\SmsAutoReplyService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -28,10 +29,10 @@ class GenerateSmsDraftJob implements ShouldQueue
         public readonly int $messageId,
     ) {}
 
-    public function handle(SmsAssistantService $assistantService, LoggerInterface $logger): void
+    public function handle(SmsAssistantService $assistantService, SmsAutoReplyService $autoReplyService, LoggerInterface $logger): void
     {
         try {
-            $assistantService->draftForInboundMessage($this->conversationId, $this->messageId);
+            $result = $assistantService->draftForInboundMessage($this->conversationId, $this->messageId);
         } catch (SmsAssistantUnavailableException|SmsAssistantLimitReachedException) {
             return;
         } catch (SmsAssistantFailedException) {
@@ -39,6 +40,10 @@ class GenerateSmsDraftJob implements ShouldQueue
                 'sms_conversation_id' => $this->conversationId,
                 'sms_message_id' => $this->messageId,
             ]);
+
+            return;
         }
+
+        $autoReplyService->queueIfEligible($this->conversationId, $this->messageId, $result);
     }
 }

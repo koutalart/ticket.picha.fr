@@ -13,5 +13,7 @@ class SmsAssistantResultDTO extends BaseDataObject
         public readonly SmsAssistantOutcome $outcome,
         public readonly ?string $reply,
         public readonly ?string $reason,
+        public readonly bool $autoSendSafe = false,
+        public readonly ?string $holdingReply = null,
     ) {}
 }

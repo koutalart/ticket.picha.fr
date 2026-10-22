@@ -1630,11 +1630,11 @@ msgstr "Configuração Atribuída"
 msgid "Assigned Tier"
 msgstr "Nível atribuído"
 
-#: src/components/routes/organizer/Sms/labels.ts:39
+#: src/components/routes/organizer/Sms/labels.ts:43
 msgid "Assistant"
 msgstr "Assistente"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:58
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:67
 msgid "Assistant settings saved"
 msgstr "Configurações do assistente salvas"
 
@@ -1868,7 +1868,7 @@ msgstr "A oferta automática está ativada"
 msgid "Auto-Process Waitlist"
 msgstr "Processar lista de espera automaticamente"
 
-#: src/components/routes/organizer/Sms/labels.ts:37
+#: src/components/routes/organizer/Sms/labels.ts:41
 msgid "Automatic message"
 msgstr "Envio automático"
 
@@ -2224,7 +2224,7 @@ msgstr "Scanner de câmera"
 #: src/components/routes/organizer/QrCodes/index.tsx:161
 #: src/components/routes/organizer/QrCodes/index.tsx:238
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:284
-#: src/components/routes/organizer/Sms/labels.ts:35
+#: src/components/routes/organizer/Sms/labels.ts:39
 msgid "Campaign"
 msgstr "Campanha"
 
@@ -2346,7 +2346,7 @@ msgstr "cancelado"
 #: src/components/routes/kiosk/Orders/index.tsx:180
 #: src/components/routes/kiosk/Orders/index.tsx:195
 #: src/components/routes/kiosk/Orders/index.tsx:260
-#: src/components/routes/organizer/Sms/labels.ts:85
+#: src/components/routes/organizer/Sms/labels.ts:89
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:106
 msgid "Cancelled"
 msgstr "Cancelado"
@@ -4135,7 +4135,7 @@ msgstr "Evento excluído"
 
 #: src/components/routes/organizer/Sms/CampaignList.tsx:43
 #: src/components/routes/organizer/Sms/labels.ts:22
-#: src/components/routes/organizer/Sms/labels.ts:52
+#: src/components/routes/organizer/Sms/labels.ts:56
 #: src/components/routes/organizer/Sms/ReminderList.tsx:68
 msgid "Delivered"
 msgstr "Entregue"
@@ -5494,8 +5494,8 @@ msgstr "Facebook"
 #: src/components/routes/admin/Messages/index.tsx:127
 #: src/components/routes/organizer/Sms/CampaignList.tsx:47
 #: src/components/routes/organizer/Sms/labels.ts:24
-#: src/components/routes/organizer/Sms/labels.ts:54
-#: src/components/routes/organizer/Sms/labels.ts:83
+#: src/components/routes/organizer/Sms/labels.ts:58
+#: src/components/routes/organizer/Sms/labels.ts:87
 #: src/components/routes/organizer/Sms/ReminderList.tsx:69
 msgid "Failed"
 msgstr "Falhou"
@@ -6378,8 +6378,8 @@ msgstr "Olá {FIRST_NAME}, um lembrete: {EVENT_TITLE} acontece em {EVENT_DATE} �
 msgid "Hello {SMS_FIRST_NAME_VARIABLE}, doors open at 7pm."
 msgstr "Olá {SMS_FIRST_NAME_VARIABLE}, os portões abrem às 19h."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:65
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:129
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:74
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:164
 msgid "Hello, how much is the entry and where is the party?"
 msgstr "Oi, quanto custa a entrada e onde é a festa?"
 
@@ -6512,6 +6512,14 @@ msgstr "Destacado"
 #: src/components/forms/ProductForm/index.tsx:553
 msgid "Highlighted products will have a different background color to make them stand out on the event page."
 msgstr "Os produtos em destaque terão uma cor de fundo diferente para se destacarem na página do evento."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:140
+msgid "Holding reply"
+msgstr "Resposta de espera"
+
+#: src/components/routes/organizer/Sms/labels.ts:34
+msgid "Holding reply sent automatically"
+msgstr "Resposta de espera enviada automaticamente"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:59
 #: src/components/organizerTemplates/Poster/index.tsx:73
@@ -6891,7 +6899,7 @@ msgstr "Pagamentos Instantâneos"
 msgid "Institutions and local authorities"
 msgstr "Instituições e órgãos públicos"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:107
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:116
 msgid "Instructions for the assistant"
 msgstr "Instruções para o assistente"
 
@@ -8813,7 +8821,7 @@ msgid "Not published: the page appears once it has content and is saved."
 msgstr "Não publicada: a página aparece assim que tiver conteúdo e for salva."
 
 #: src/components/routes/organizer/Sms/labels.ts:26
-#: src/components/routes/organizer/Sms/labels.ts:56
+#: src/components/routes/organizer/Sms/labels.ts:60
 msgid "Not sent (phone offline)"
 msgstr "Não enviado (telefone offline)"
 
@@ -8869,6 +8877,10 @@ msgstr "Números que responderam STOP ou que você adicionou manualmente. Eles n
 #: src/components/common/OrganizerReportTable/index.tsx:356
 msgid "of"
 msgstr "de"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:127
+msgid "Off by default. A few seconds after a customer SMS, the suggested reply leaves on its own, only for simple questions answered by your instructions and your data."
+msgstr "Desativado por padrão. Alguns segundos após o SMS de um cliente, a resposta sugerida sai sozinha, apenas para perguntas simples cobertas pelas suas instruções e pelos seus dados."
 
 #: src/components/common/WaitlistTable/index.tsx:132
 #: src/components/modals/OfferWaitlistModal/index.tsx:221
@@ -10512,8 +10524,8 @@ msgstr "Evite sobrevenda compartilhando estoque entre vários tipos de ingresso.
 #: src/components/routes/event/EventPages/index.tsx:353
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:198
 #: src/components/routes/event/TicketDesigner/index.tsx:219
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:121
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:141
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:156
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:176
 msgid "Preview"
 msgstr "Visualização"
 
@@ -11171,7 +11183,7 @@ msgstr "Reembolsado: {0}"
 msgid "Refunds"
 msgstr "Reembolsos"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:93
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:102
 msgid "Refunds, complaints, unusual requests and questions it cannot answer from your data are marked \"To handle\" with the reason, without a suggestion."
 msgstr "Reembolsos, reclamações, pedidos incomuns e perguntas sem resposta nos seus dados são marcados como \"A tratar\" com o motivo, sem sugestão."
 
@@ -11735,6 +11747,10 @@ msgstr ""
 msgid "Role"
 msgstr "Função"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:135
+msgid "Safeguards: at most one automatic reply per customer SMS, nothing if you or your team already wrote to the contact after it, no reply to a simple \"ok\" or \"thanks\", and never after STOP. Complaints, place or invitation requests, press, minors, accessibility, refunds and any doubt stay a suggestion to validate: the customer only gets a holding reply that promises nothing, and the conversation stays \"To handle\"."
+msgstr "Proteções: no máximo uma resposta automática por SMS do cliente, nada se você ou sua equipe já escreveram para o contato depois, nenhuma resposta a um simples \"ok\" ou \"obrigado\", e nunca depois de STOP. Reclamações, pedidos de ingressos ou convites, imprensa, menores, acessibilidade, reembolsos e qualquer dúvida ficam como sugestão a validar: o cliente recebe apenas uma resposta de espera que não promete nada, e a conversa fica \"A tratar\"."
+
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:473
 msgctxt "ticket card"
 msgid "Sale"
@@ -11861,7 +11877,7 @@ msgstr "São Francisco"
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:214
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:116
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:151
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:88
@@ -11984,8 +12000,8 @@ msgstr "Agendado"
 
 #: src/components/routes/admin/Messages/index.tsx:125
 #: src/components/routes/event/messages.tsx:62
-#: src/components/routes/organizer/Sms/labels.ts:48
-#: src/components/routes/organizer/Sms/labels.ts:87
+#: src/components/routes/organizer/Sms/labels.ts:52
+#: src/components/routes/organizer/Sms/labels.ts:91
 msgid "Scheduled"
 msgstr "Agendado"
 
@@ -12429,6 +12445,10 @@ msgstr "Enviar link de redefinição"
 msgid "Send Test"
 msgstr "Enviar teste"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:126
+msgid "Send the assistant's replies automatically"
+msgstr "Enviar automaticamente as respostas do assistente"
+
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:90
 msgid "Send ticket purchases to Meta directly from our servers. This is more reliable than the pixel alone (ad blockers, iOS restrictions) and improves your ad campaign measurement."
 msgstr ""
@@ -12457,7 +12477,7 @@ msgstr "Enviando"
 msgid "Sending date and time"
 msgstr "Data e horário de envio"
 
-#: src/components/routes/organizer/Sms/labels.ts:79
+#: src/components/routes/organizer/Sms/labels.ts:83
 msgid "Sending in progress"
 msgstr "Envio em andamento"
 
@@ -12484,11 +12504,15 @@ msgstr "enviados"
 
 #: src/components/routes/admin/Messages/index.tsx:123
 #: src/components/routes/organizer/Sms/labels.ts:20
-#: src/components/routes/organizer/Sms/labels.ts:50
-#: src/components/routes/organizer/Sms/labels.ts:81
+#: src/components/routes/organizer/Sms/labels.ts:54
+#: src/components/routes/organizer/Sms/labels.ts:85
 #: src/components/routes/organizer/Sms/ReminderList.tsx:67
 msgid "Sent"
 msgstr "Enviado"
+
+#: src/components/routes/organizer/Sms/labels.ts:34
+msgid "Sent automatically"
+msgstr "Enviado automaticamente"
 
 #: src/components/routes/admin/Messages/index.tsx:168
 #: src/components/routes/admin/Messages/index.tsx:305
@@ -12841,7 +12865,7 @@ msgstr "Smith"
 msgid "SMS"
 msgstr "SMS"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:81
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:90
 msgid "SMS assistant"
 msgstr "Assistente de SMS"
 
@@ -13425,11 +13449,11 @@ msgstr ""
 msgid "Successfully updated Webhook"
 msgstr "Webhook atualizado com sucesso"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:101
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:110
 msgid "Suggest replies to my customers' SMS"
 msgstr "Sugerir respostas aos SMS dos meus clientes"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:147
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:182
 msgid "Suggested reply"
 msgstr "Resposta sugerida"
 
@@ -13715,7 +13739,7 @@ msgstr ""
 msgid "The artists"
 msgstr "Os artistas"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:74
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:83
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:98
 msgid "The assistant could not suggest a reply. Please try again."
 msgstr "O assistente não conseguiu sugerir uma resposta. Tente novamente."
@@ -13974,7 +13998,7 @@ msgstr "O nome do remetente não pode conter quebras de linha nem colchetes angu
 msgid "The show"
 msgstr "O show"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:87
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:96
 msgid "The SMS assistant is not available on this platform yet."
 msgstr "O assistente de SMS ainda não está disponível nesta plataforma."
 
@@ -14615,7 +14639,7 @@ msgstr "A completar"
 msgid "To edit configurations, go to the Configurations section in the admin menu."
 msgstr "Para editar configurações, vá para a seção Configurações no menu de administração."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:152
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:187
 #: src/components/routes/organizer/Sms/ConversationList.tsx:72
 #: src/components/routes/organizer/Sms/customerSummary.ts:19
 #: src/components/routes/organizer/Sms/labels.ts:7
@@ -14646,7 +14670,7 @@ msgstr ""
 msgid "Toggle columns"
 msgstr "Alternar colunas"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:108
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:117
 msgid "Tone, what to say or never say, useful information. For example: use \"tu\", stay short and friendly, doors open at 10pm."
 msgstr "Tom, o que dizer ou nunca dizer, informações úteis. Por exemplo: tratar por você, ser breve e simpático, portas abertas às 22h."
 
@@ -14788,7 +14812,7 @@ msgstr "Desativar som"
 msgid "Turn sound on"
 msgstr "Ativar som"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:102
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:111
 msgid "Turned on by default. You can turn it off at any time."
 msgstr "Ativado por padrão. Você pode desativá-lo a qualquer momento."
 
@@ -15240,6 +15264,10 @@ msgstr "Para os textos"
 msgid "Used up"
 msgstr "Esgotado"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:141
+msgid "Used when the assistant cannot write one in your tone. Add your signature if you want one. Leave empty to use: \"Good question, I am checking with the team and will get back to you very soon.\""
+msgstr "Usada quando o assistente não consegue escrever uma no seu tom. Adicione sua assinatura se quiser. Deixe vazio para usar: \"Boa pergunta, vou verificar com a equipe e respondo muito em breve.\""
+
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:154
 msgid "User"
 msgstr "Usuário"
@@ -15611,7 +15639,7 @@ msgstr "VK"
 #: src/components/common/WaitlistTable/index.tsx:24
 #: src/components/modals/OfferWaitlistModal/index.tsx:162
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:71
-#: src/components/routes/organizer/Sms/labels.ts:58
+#: src/components/routes/organizer/Sms/labels.ts:62
 msgid "Waiting"
 msgstr "Aguardando"
 
@@ -15938,8 +15966,12 @@ msgid "When a check-in is deleted"
 msgstr "Quando um check-in é excluído"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:82
-msgid "When a customer writes to you, the assistant prepares a suggested reply from your events, prices and the customer's orders. Nothing is sent automatically: you read the suggestion and click Send."
-msgstr "Quando um cliente escreve para você, o assistente prepara uma resposta sugerida com base nos seus eventos, preços e pedidos do cliente. Nada é enviado automaticamente: você lê a sugestão e clica em Enviar."
+#~ msgid "When a customer writes to you, the assistant prepares a suggested reply from your events, prices and the customer's orders. Nothing is sent automatically: you read the suggestion and click Send."
+#~ msgstr "Quando um cliente escreve para você, o assistente prepara uma resposta sugerida com base nos seus eventos, preços e pedidos do cliente. Nada é enviado automaticamente: você lê a sugestão e clica em Enviar."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:91
+msgid "When a customer writes to you, the assistant prepares a suggested reply from your events, prices and the customer's orders. Unless you turn on automatic sending, nothing leaves without you: you read the suggestion and click Send."
+msgstr "Quando um cliente escreve para você, o assistente prepara uma resposta sugerida a partir dos seus eventos, preços e pedidos do cliente. A menos que você ative o envio automático, nada sai sem você: você lê a sugestão e clica em Enviar."
 
 #: src/components/forms/WebhookForm/index.tsx:105
 msgid "When a new attendee is created"
@@ -16147,7 +16179,7 @@ msgstr "Trabalhando..."
 msgid "Workshop"
 msgstr "Workshop"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:123
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:158
 msgid "Write a message as if you were a customer to see what the assistant would suggest with the instructions above."
 msgstr "Escreva uma mensagem como se fosse um cliente para ver o que o assistente sugeriria com as instruções acima."
 
