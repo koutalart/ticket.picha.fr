@@ -11,6 +11,7 @@ import {dynamicActivateLocale, toHtmlLang} from "./locales.ts";
 import {setSsrQueryClient} from "./utilites/ssrQueryClient.ts";
 
 export {renderLlmsTxt, renderMarketingSitemap} from "./marketing/pages.ts";
+export {renderOrganizerLlmsTxt} from "./marketing/organizerLlmsTxt.ts";
 
 const getLocale = (req: express.Request): string => {
     if (req.cookies.locale) {

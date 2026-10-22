@@ -104,6 +104,10 @@ class UpdateEventSettingsDTO extends BaseDTO
         public readonly bool                    $allow_attendee_attendance_response = false,
 
         public readonly bool                    $embedded_registration_enabled = false,
+
+        public readonly bool                    $rich_footer_enabled = false,
+        public readonly ?array                  $homepage_footer_settings = null,
+        public readonly string                  $schema_event_type = 'Event',
     )
     {
     }
@@ -199,6 +203,10 @@ class UpdateEventSettingsDTO extends BaseDTO
             age_restriction_minimum_age: 18,
 
             embedded_registration_enabled: false,
+
+            rich_footer_enabled: false,
+            homepage_footer_settings: null,
+            schema_event_type: 'Event',
         );
     }
 }

@@ -5,6 +5,7 @@ import {
     GenericPaginatedResponse,
     IdParam,
     Image,
+    NewsletterSubscriber,
     Order,
     Organizer,
     OrganizerFont,
@@ -203,7 +204,46 @@ export const organizerPublicClient = {
         );
         return response.data;
     },
+
+    subscribeToNewsletter: async (eventId: IdParam, data: {
+        email: string;
+        consent: boolean;
+        consent_text: string;
+    }) => {
+        const response = await publicApi.post<{ message: string }>(
+            `events/${eventId}/newsletter-subscriptions`,
+            data
+        );
+        return response.data;
+    },
 }
+
+export interface NewsletterSubscribersParams {
+    query?: string;
+    page?: number;
+    per_page?: number;
+}
+
+export const newsletterSubscriberClient = {
+    all: async (organizerId: IdParam, params: NewsletterSubscribersParams) => {
+        const response = await api.get<GenericPaginatedResponse<NewsletterSubscriber>>(
+            `organizers/${organizerId}/newsletter-subscribers`,
+            {params}
+        );
+        return response.data;
+    },
+
+    export: async (organizerId: IdParam, query?: string): Promise<Blob> => {
+        const response = await api.post(`organizers/${organizerId}/newsletter-subscribers/export`, {query}, {
+            responseType: 'blob'
+        });
+        return response.data;
+    },
+
+    delete: async (organizerId: IdParam, subscriberId: IdParam) => {
+        await api.delete(`organizers/${organizerId}/newsletter-subscribers/${subscriberId}`);
+    },
+};
 
 export const organizerSettingsClient = {
     partialUpdate: async (organizerId: IdParam, settings: Partial<OrganizerSettings>) => {
