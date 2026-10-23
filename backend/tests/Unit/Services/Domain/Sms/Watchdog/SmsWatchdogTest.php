@@ -53,9 +53,10 @@ class SmsWatchdogTest extends TestCase
         config([
             'services.sms_watchdog.alert_email' => 'owner@picha.test',
             'services.sms_watchdog.alert_phone' => null,
+            'services.sms_watchdog.alert_cooldown_minutes' => 0,
         ]);
 
-        DB::table('organizer_sms_settings')->update(['assistant_auto_send' => false]);
+        DB::table('organizer_sms_settings')->update(['api_key' => null, 'shared_line_settings_id' => null]);
 
         [$this->event] = $this->createEventWithProduct();
         $this->conversation = $this->conversationFor($this->event->organizer_id, self::PHONE);
@@ -83,7 +84,7 @@ class SmsWatchdogTest extends TestCase
 
     public function test_recent_answered_acknowledged_closed_or_opted_out_messages_are_not_reported(): void
     {
-        $this->inbound('Vous ouvrez à quelle heure ?', minutesAgo: 5);
+        $this->inbound('Vous ouvrez à quelle heure ?', minutesAgo: 3);
 
         $answered = $this->conversationFor($this->event->organizer_id, '+262639000001');
         $this->inbound('Il y a un parking ?', minutesAgo: 40, conversation: $answered);
@@ -198,12 +199,135 @@ class SmsWatchdogTest extends TestCase
         $this->assertSame('phone offline', $failedAnomalies[0]->excerpt);
     }
 
-    public function test_organizers_without_automatic_sending_are_not_watched(): void
+    public function test_organizers_without_an_sms_line_are_not_watched(): void
     {
-        DB::table('organizer_sms_settings')->where('organizer_id', $this->event->organizer_id)->update(['assistant_auto_send' => false]);
+        $this->settings()->update(['api_key' => null]);
         $this->inbound('Il reste des places ?', minutesAgo: 30);
 
         $this->assertSame([], $this->anomalies());
+    }
+
+    public function test_an_organizer_on_a_shared_line_is_watched(): void
+    {
+        [$lineEvent] = $this->createEventWithProduct();
+        $line = OrganizerSmsSetting::create([
+            'account_id' => $lineEvent->account_id,
+            'organizer_id' => $lineEvent->organizer_id,
+            'webhook_token' => Str::random(40),
+            'webhook_signing_key' => 'key',
+            'api_key' => 'line-key',
+            'from_number' => '+262639000000',
+        ]);
+        $this->settings()->update(['api_key' => null, 'from_number' => null, 'shared_line_settings_id' => $line->id]);
+        $this->inbound('Il reste des places ?', minutesAgo: 30);
+
+        $this->assertCount(1, $this->anomalies(SmsWatchdogAnomalyType::UNANSWERED_INBOUND));
+    }
+
+    public function test_an_organizer_without_automatic_sending_is_watched_with_the_draft_mode_delay(): void
+    {
+        $this->settings()->update(['assistant_auto_send' => false]);
+        $this->inbound('Il reste des places ?', minutesAgo: 7);
+        $late = $this->conversationFor($this->event->organizer_id, '+262639000007');
+        $this->inbound('Et le parking ?', minutesAgo: 11, conversation: $late);
+
+        $anomalies = $this->anomalies(SmsWatchdogAnomalyType::UNANSWERED_INBOUND);
+
+        $this->assertSame([$late->id], array_map(fn ($a) => $a->conversationId, $anomalies));
+        $this->assertSame(10, $anomalies[0]->thresholdMinutes);
+    }
+
+    public function test_an_automatic_sending_organizer_is_alerted_after_five_minutes(): void
+    {
+        $this->inbound('Il reste des places ?', minutesAgo: 6);
+        $this->inbound('Et le parking ?', minutesAgo: 3, conversation: $this->conversationFor($this->event->organizer_id, '+262639000008'));
+
+        $anomalies = $this->anomalies(SmsWatchdogAnomalyType::UNANSWERED_INBOUND);
+
+        $this->assertSame([$this->conversation->id], array_map(fn ($a) => $a->conversationId, $anomalies));
+        $this->assertSame(5, $anomalies[0]->thresholdMinutes);
+    }
+
+    public function test_reply_delays_are_configurable(): void
+    {
+        config(['services.sms_watchdog.reply_delay_auto_send_minutes' => 2]);
+        $this->inbound('Il reste des places ?', minutesAgo: 3);
+
+        $this->assertCount(1, $this->anomalies(SmsWatchdogAnomalyType::UNANSWERED_INBOUND));
+    }
+
+    public function test_a_draft_waiting_for_validation_is_reported_in_draft_mode(): void
+    {
+        $this->settings()->update(['assistant_auto_send' => false]);
+        $this->draft($this->conversation, minutesAgo: 12);
+        $recent = $this->conversationFor($this->event->organizer_id, '+262639000009');
+        $this->draft($recent, minutesAgo: 4);
+
+        $anomalies = $this->anomalies(SmsWatchdogAnomalyType::DRAFT_PENDING);
+
+        $this->assertSame([$this->conversation->id], array_map(fn ($a) => $a->conversationId, $anomalies));
+        $this->assertStringStartsWith('conversation:'.$this->conversation->id.':draft:', $anomalies[0]->key);
+        $this->assertSame('Oui, il reste des places.', $anomalies[0]->excerpt);
+    }
+
+    public function test_a_draft_followed_by_a_reply_or_in_a_closed_conversation_is_not_reported(): void
+    {
+        $this->settings()->update(['assistant_auto_send' => false]);
+        $this->draft($this->conversation, minutesAgo: 30);
+        $this->outbound('Oui, il reste des places.', minutesAgo: 20);
+        $closed = $this->conversationFor($this->event->organizer_id, '+262639000010', status: 'CLOSED');
+        $this->draft($closed, minutesAgo: 30);
+
+        $this->assertSame([], $this->anomalies(SmsWatchdogAnomalyType::DRAFT_PENDING));
+    }
+
+    public function test_drafts_are_not_checked_for_automatic_sending_or_without_the_assistant(): void
+    {
+        $this->draft($this->conversation, minutesAgo: 30);
+        $this->assertSame([], $this->anomalies(SmsWatchdogAnomalyType::DRAFT_PENDING));
+
+        $this->settings()->update(['assistant_auto_send' => false, 'assistant_enabled' => false]);
+        $this->assertSame([], $this->anomalies(SmsWatchdogAnomalyType::DRAFT_PENDING));
+    }
+
+    public function test_one_grouped_mail_per_run_for_all_organizers_to_every_recipient(): void
+    {
+        Mail::fake();
+        config(['services.sms_watchdog.alert_email' => ' support@picha.test, jo@picha.test ,not-an-email']);
+        [$otherEvent] = $this->createEventWithProduct();
+        $this->settingsFor($otherEvent->organizer_id, autoSend: false, accountId: $otherEvent->account_id);
+        $other = SmsConversation::create(['account_id' => $otherEvent->account_id, 'organizer_id' => $otherEvent->organizer_id, 'phone' => '+262639000011', 'status' => 'OPEN']);
+        $this->outbound('Votre billet', minutesAgo: 20, status: 'PENDING');
+        $this->inbound('Il reste des places ?', minutesAgo: 30, conversation: $other);
+
+        $result = $this->runAlerts();
+
+        $this->assertSame(2, $result->alerted);
+        Mail::assertQueuedCount(1);
+        Mail::assertQueued(SmsWatchdogAlertMail::class, fn (SmsWatchdogAlertMail $mail) => $mail->hasTo('support@picha.test')
+            && $mail->hasTo('jo@picha.test')
+            && ! $mail->hasTo('not-an-email'));
+    }
+
+    public function test_the_cooldown_holds_new_anomalies_for_the_next_mail(): void
+    {
+        Mail::fake();
+        config(['services.sms_watchdog.alert_cooldown_minutes' => 5]);
+        $this->outbound('Votre billet', minutesAgo: 20, status: 'PENDING');
+        $this->runAlerts();
+        Mail::assertQueuedCount(1);
+
+        Carbon::setTestNow(Carbon::now()->addMinutes(2));
+        $this->outbound('Rappel', minutesAgo: 1, status: 'FAILED');
+        $held = $this->runAlerts();
+
+        $this->assertSame(1, $held->deferred);
+        Mail::assertQueuedCount(1);
+        $this->assertNull(SmsWatchdogAlert::where('anomaly_type', 'FAILED_OUTBOUND')->sole()->alerted_at);
+
+        Carbon::setTestNow(Carbon::now()->addMinutes(4));
+        $this->assertSame(1, $this->runAlerts()->alerted);
+        Mail::assertQueuedCount(2);
     }
 
     public function test_an_anomaly_is_alerted_once_and_again_only_after_it_came_back(): void
@@ -330,14 +454,31 @@ class SmsWatchdogTest extends TestCase
         return $this->app->make(SmsWatchdogAlertService::class)->process($this->app->make(SmsWatchdogDetector::class)->detect());
     }
 
-    private function settingsFor(int $organizerId, bool $autoSend): void
+    private function settingsFor(int $organizerId, bool $autoSend, ?int $accountId = null): void
     {
         OrganizerSmsSetting::create([
-            'account_id' => $this->event->account_id,
+            'account_id' => $accountId ?? $this->event->account_id,
             'organizer_id' => $organizerId,
             'webhook_token' => Str::random(40),
             'webhook_signing_key' => 'key',
+            'api_key' => 'api-key',
+            'from_number' => '+262639123123',
+            'assistant_enabled' => true,
             'assistant_auto_send' => $autoSend,
+        ]);
+    }
+
+    private function settings(): OrganizerSmsSetting
+    {
+        return OrganizerSmsSetting::where('organizer_id', $this->event->organizer_id)->sole();
+    }
+
+    private function draft(SmsConversation $conversation, int $minutesAgo): void
+    {
+        $conversation->update([
+            'draft_reply' => 'Oui, il reste des places.',
+            'draft_source' => 'AGENT',
+            'draft_generated_at' => Carbon::now()->subMinutes($minutesAgo),
         ]);
     }
 

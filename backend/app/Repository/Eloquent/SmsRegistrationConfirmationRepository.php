@@ -26,12 +26,12 @@ class SmsRegistrationConfirmationRepository extends BaseRepository implements Sm
         return SmsRegistrationConfirmationDomainObject::class;
     }
 
-    public function findSentToAlreadyConfirmedPhoneSince(int $organizerId, string $since, int $limit): Collection
+    public function findSentToAlreadyConfirmedPhoneSince(array $organizerIds, string $since, int $limit): Collection
     {
         $sent = SmsRegistrationConfirmationStatus::SENT->name;
 
         $confirmations = SmsRegistrationConfirmation::query()
-            ->where('organizer_id', $organizerId)
+            ->whereIn('organizer_id', $organizerIds)
             ->where('status', $sent)
             ->where('created_at', '>=', $since)
             ->whereNull('phone_released_at')

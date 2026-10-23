@@ -40,24 +40,30 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
     public function hasOutboundToPhoneAfter(array $organizerIds, string $phone, int $afterMessageId, string $pendingSince): bool;
 
     /**
-     * Inbound SMS of the organizer received between the two dates that no outbound SMS of the conversation followed
-     * (failed or expired ones do not count), oldest first. Closed and opted out conversations are left aside.
+     * Inbound SMS of the given organizers received between the two dates that no outbound SMS of the conversation
+     * followed (failed or expired ones do not count). Closed and opted out conversations are left aside.
+     * The most recent ones within the limit, returned oldest first.
      *
+     * @param  array<int, int>  $organizerIds
      * @return Collection<int, SmsMessageDomainObject>
      */
-    public function findUnansweredInbound(int $organizerId, string $since, string $receivedBefore, int $limit): Collection;
+    public function findUnansweredInbound(array $organizerIds, string $since, string $receivedBefore, int $limit): Collection;
 
     /**
-     * The organizer's inbound SMS and replies (by the team or the assistant) created since the date, oldest first.
+     * Inbound SMS and replies (by the team or the assistant) of the given organizers created since the date.
+     * The most recent ones within the limit, returned oldest first.
      *
+     * @param  array<int, int>  $organizerIds
      * @return Collection<int, SmsMessageDomainObject>
      */
-    public function findRepliesTrafficSince(int $organizerId, string $since, int $limit): Collection;
+    public function findRepliesTrafficSince(array $organizerIds, string $since, int $limit): Collection;
 
     /**
-     * Outbound SMS created since the date that failed, expired, or are still pending since before the given date.
+     * Outbound SMS of the given organizers created since the date that failed, expired, or are still pending
+     * since before the given date. The most recent ones within the limit, returned oldest first.
      *
+     * @param  array<int, int>  $organizerIds
      * @return Collection<int, SmsMessageDomainObject>
      */
-    public function findUndeliveredOutbound(int $organizerId, string $since, string $pendingBefore, int $limit): Collection;
+    public function findUndeliveredOutbound(array $organizerIds, string $since, string $pendingBefore, int $limit): Collection;
 }

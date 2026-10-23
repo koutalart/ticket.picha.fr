@@ -20,10 +20,13 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Keeps one alert per anomaly: the platform owner is told once, and again only if the anomaly goes away and comes back.
- * Writes nothing but its own bookkeeping, and never sends an SMS to a participant.
+ * At most one e-mail per run, listing every new anomaly, and no more than one e-mail per cooldown: anomalies found
+ * meanwhile wait for the next e-mail. Writes nothing but its own bookkeeping, and never sends an SMS to a participant.
  */
 class SmsWatchdogAlertService
 {
+    public const DEFAULT_COOLDOWN_MINUTES = 5;
+
     public function __construct(
         private readonly SmsWatchdogAlertRepositoryInterface $alertRepository,
         private readonly Mailer $mailer,
@@ -33,79 +36,134 @@ class SmsWatchdogAlertService
 
     public function process(SmsWatchdogDetectionDTO $detection): SmsWatchdogRunResultDTO
     {
-        $now = Carbon::now('UTC')->toDateTimeString();
+        $now = Carbon::now('UTC');
+        $nowString = $now->toDateTimeString();
+        $detected = count($detection->anomalies);
 
-        $toAlert = [];
-        foreach ($detection->anomalies as $anomaly) {
-            $alert = $this->record($anomaly, $now);
-            if ($alert->getAlertedAt() === null) {
-                $toAlert[$alert->getId()] = $anomaly;
-            }
-        }
-
-        $resolved = $this->resolveGone($detection, $now);
+        $toAlert = $this->record($detection->anomalies, $nowString);
+        $resolved = $this->resolveGone($detection, $nowString);
 
         if ($toAlert === []) {
-            return new SmsWatchdogRunResultDTO(count($detection->anomalies), 0, $resolved);
+            return new SmsWatchdogRunResultDTO($detected, 0, $resolved);
         }
 
-        $recipient = $this->recipient();
-        if ($recipient === null) {
+        $lastAlertedAt = $this->alertRepository->findLastAlertedAt();
+        if ($lastAlertedAt !== null && Carbon::parse($lastAlertedAt, 'UTC')->greaterThan($now->copy()->subMinutes($this->cooldownMinutes()))) {
+            return new SmsWatchdogRunResultDTO($detected, 0, $resolved, deferred: count($toAlert));
+        }
+
+        $recipients = $this->recipients();
+        if ($recipients === []) {
             $this->logger->warning('SMS watchdog: anomalies found but no alert e-mail is configured', ['count' => count($toAlert)]);
 
-            return new SmsWatchdogRunResultDTO(count($detection->anomalies), 0, $resolved, recipientMissing: true);
+            return new SmsWatchdogRunResultDTO($detected, 0, $resolved, recipientMissing: true);
         }
 
         $this->mailer
-            ->to($recipient)
+            ->to($recipients)
             ->locale(CustomerLocale::get())
             ->send(new SmsWatchdogAlertMail(array_values($toAlert)));
 
         $this->alertRepository->updateWhere(
-            [SmsWatchdogAlertDomainObjectAbstract::ALERTED_AT => $now],
+            [SmsWatchdogAlertDomainObjectAbstract::ALERTED_AT => $nowString],
             [[SmsWatchdogAlertDomainObjectAbstract::ID, 'in', array_keys($toAlert)]],
         );
 
         $this->notifyBySms(count($toAlert));
 
-        return new SmsWatchdogRunResultDTO(count($detection->anomalies), count($toAlert), $resolved);
+        return new SmsWatchdogRunResultDTO($detected, count($toAlert), $resolved);
     }
 
-    private function record(SmsWatchdogAnomalyDTO $anomaly, string $now): SmsWatchdogAlertDomainObject
+    /**
+     * @return array<int, string>
+     */
+    public function recipients(): array
+    {
+        foreach (['services.sms_watchdog.alert_email', 'app.platform_support_email'] as $key) {
+            $emails = array_values(array_unique(array_filter(
+                array_map('trim', explode(',', (string) $this->config->get($key))),
+                fn (string $email) => filter_var($email, FILTER_VALIDATE_EMAIL) !== false
+                    && ! str_ends_with(strtolower($email), '@example.com'),
+            )));
+
+            if ($emails !== []) {
+                return $emails;
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Records the anomalies in a few queries and returns the ones not alerted yet, by alert id.
+     *
+     * @param  array<int, SmsWatchdogAnomalyDTO>  $anomalies
+     * @return array<int, SmsWatchdogAnomalyDTO>
+     */
+    private function record(array $anomalies, string $now): array
+    {
+        if ($anomalies === []) {
+            return [];
+        }
+
+        $existing = [];
+        foreach (array_chunk(array_values(array_unique(array_map(fn (SmsWatchdogAnomalyDTO $anomaly) => $anomaly->key, $anomalies))), 500) as $keys) {
+            foreach ($this->alertRepository->findWhereIn(SmsWatchdogAlertDomainObjectAbstract::ANOMALY_KEY, $keys) as $alert) {
+                /** @var SmsWatchdogAlertDomainObject $alert */
+                $existing[$alert->getAnomalyType().'|'.$alert->getAnomalyKey()] = $alert;
+            }
+        }
+
+        $toAlert = [];
+        $seenIds = [];
+        foreach ($anomalies as $anomaly) {
+            $alert = $existing[$anomaly->type->name.'|'.$anomaly->key] ?? null;
+
+            if ($alert === null) {
+                $alert = $this->create($anomaly, $now);
+            } elseif ($alert->getResolvedAt() !== null) {
+                $alert = $this->alertRepository->updateFromArray($alert->getId(), [
+                    SmsWatchdogAlertDomainObjectAbstract::FIRST_SEEN_AT => $now,
+                    SmsWatchdogAlertDomainObjectAbstract::LAST_SEEN_AT => $now,
+                    SmsWatchdogAlertDomainObjectAbstract::ALERTED_AT => null,
+                    SmsWatchdogAlertDomainObjectAbstract::RESOLVED_AT => null,
+                ]);
+            } else {
+                $seenIds[] = $alert->getId();
+            }
+
+            if ($alert->getAlertedAt() === null) {
+                $toAlert[$alert->getId()] = $anomaly;
+            }
+        }
+
+        foreach (array_chunk($seenIds, 500) as $ids) {
+            $this->alertRepository->updateWhere(
+                [SmsWatchdogAlertDomainObjectAbstract::LAST_SEEN_AT => $now],
+                [[SmsWatchdogAlertDomainObjectAbstract::ID, 'in', $ids]],
+            );
+        }
+
+        return $toAlert;
+    }
+
+    private function create(SmsWatchdogAnomalyDTO $anomaly, string $now): SmsWatchdogAlertDomainObject
     {
         $where = [
             SmsWatchdogAlertDomainObjectAbstract::ANOMALY_TYPE => $anomaly->type->name,
             SmsWatchdogAlertDomainObjectAbstract::ANOMALY_KEY => $anomaly->key,
         ];
 
-        /** @var SmsWatchdogAlertDomainObject|null $existing */
-        $existing = $this->alertRepository->findFirstWhere($where);
-
-        if ($existing === null) {
-            try {
-                return $this->alertRepository->create([
-                    ...$where,
-                    SmsWatchdogAlertDomainObjectAbstract::ORGANIZER_ID => $anomaly->organizerId,
-                    SmsWatchdogAlertDomainObjectAbstract::FIRST_SEEN_AT => $now,
-                    SmsWatchdogAlertDomainObjectAbstract::LAST_SEEN_AT => $now,
-                ]);
-            } catch (UniqueConstraintViolationException) {
-                $existing = $this->alertRepository->findFirstWhere($where);
-            }
-        }
-
-        if ($existing->getResolvedAt() !== null) {
-            return $this->alertRepository->updateFromArray($existing->getId(), [
+        try {
+            return $this->alertRepository->create([
+                ...$where,
+                SmsWatchdogAlertDomainObjectAbstract::ORGANIZER_ID => $anomaly->organizerId,
                 SmsWatchdogAlertDomainObjectAbstract::FIRST_SEEN_AT => $now,
                 SmsWatchdogAlertDomainObjectAbstract::LAST_SEEN_AT => $now,
-                SmsWatchdogAlertDomainObjectAbstract::ALERTED_AT => null,
-                SmsWatchdogAlertDomainObjectAbstract::RESOLVED_AT => null,
             ]);
+        } catch (UniqueConstraintViolationException) {
+            return $this->alertRepository->findFirstWhere($where);
         }
-
-        return $this->alertRepository->updateFromArray($existing->getId(), [
-            SmsWatchdogAlertDomainObjectAbstract::LAST_SEEN_AT => $now,
-        ]);
     }
 
     /**
@@ -113,42 +171,39 @@ class SmsWatchdogAlertService
      */
     private function resolveGone(SmsWatchdogDetectionDTO $detection, string $now): int
     {
-        $resolved = 0;
+        $stillThere = [];
+        foreach ($detection->anomalies as $anomaly) {
+            $stillThere[$anomaly->type->name][] = $anomaly->key;
+        }
 
+        $organizersByType = [];
         foreach ($detection->completeChecks as $organizerId => $types) {
             foreach ($types as $type) {
-                $stillThere = [];
-                foreach ($detection->anomalies as $anomaly) {
-                    if ($anomaly->organizerId === $organizerId && $anomaly->type->name === $type) {
-                        $stillThere[] = $anomaly->key;
-                    }
-                }
-
-                $resolved += $this->alertRepository->updateWhere(
-                    [SmsWatchdogAlertDomainObjectAbstract::RESOLVED_AT => $now],
-                    [
-                        SmsWatchdogAlertDomainObjectAbstract::ORGANIZER_ID => $organizerId,
-                        SmsWatchdogAlertDomainObjectAbstract::ANOMALY_TYPE => $type,
-                        [SmsWatchdogAlertDomainObjectAbstract::RESOLVED_AT, 'null', null],
-                        [SmsWatchdogAlertDomainObjectAbstract::ANOMALY_KEY, 'not in', $stillThere],
-                    ],
-                );
+                $organizersByType[$type][] = $organizerId;
             }
+        }
+
+        $resolved = 0;
+        foreach ($organizersByType as $type => $organizerIds) {
+            $resolved += $this->alertRepository->updateWhere(
+                [SmsWatchdogAlertDomainObjectAbstract::RESOLVED_AT => $now],
+                [
+                    SmsWatchdogAlertDomainObjectAbstract::ANOMALY_TYPE => $type,
+                    [SmsWatchdogAlertDomainObjectAbstract::ORGANIZER_ID, 'in', $organizerIds],
+                    [SmsWatchdogAlertDomainObjectAbstract::RESOLVED_AT, 'null', null],
+                    [SmsWatchdogAlertDomainObjectAbstract::ANOMALY_KEY, 'not in', $stillThere[$type] ?? []],
+                ],
+            );
         }
 
         return $resolved;
     }
 
-    private function recipient(): ?string
+    private function cooldownMinutes(): int
     {
-        foreach (['services.sms_watchdog.alert_email', 'app.platform_support_email'] as $key) {
-            $email = trim((string) $this->config->get($key));
-            if (filter_var($email, FILTER_VALIDATE_EMAIL) !== false && ! str_ends_with(strtolower($email), '@example.com')) {
-                return $email;
-            }
-        }
+        $value = $this->config->get('services.sms_watchdog.alert_cooldown_minutes');
 
-        return null;
+        return max(0, $value === null || $value === '' ? self::DEFAULT_COOLDOWN_MINUTES : (int) $value);
     }
 
     /**

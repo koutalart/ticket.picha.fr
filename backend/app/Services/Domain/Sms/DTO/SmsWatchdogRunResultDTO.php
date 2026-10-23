@@ -13,5 +13,6 @@ class SmsWatchdogRunResultDTO extends BaseDataObject
         public readonly int $alerted = 0,
         public readonly int $resolved = 0,
         public readonly bool $recipientMissing = false,
+        public readonly int $deferred = 0,
     ) {}
 }

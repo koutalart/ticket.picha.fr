@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace HiEvents\Repository\Eloquent;
 
+use HiEvents\DomainObjects\Enums\SmsDraftSource;
+use HiEvents\DomainObjects\Enums\SmsMessageDirection;
 use HiEvents\DomainObjects\Generated\SmsConversationDomainObjectAbstract;
 use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\DomainObjects\Status\SmsConversationStatus;
+use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Models\SmsConversation;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
@@ -176,5 +179,32 @@ class SmsConversationRepository extends BaseRepository implements SmsConversatio
             ->where('events.organizer_id', $organizerId)
             ->whereNull('orders.deleted_at')
             ->whereNull('events.deleted_at');
+    }
+
+    public function findWaitingAgentDrafts(array $organizerIds, string $since, string $generatedBefore, int $limit): Collection
+    {
+        if ($organizerIds === []) {
+            return collect();
+        }
+
+        $conversations = SmsConversation::query()
+            ->whereIn('organizer_id', $organizerIds)
+            ->where('draft_source', SmsDraftSource::AGENT->name)
+            ->whereNotNull('draft_reply')
+            ->where('draft_generated_at', '>=', $since)
+            ->where('draft_generated_at', '<=', $generatedBefore)
+            ->where('status', '!=', SmsConversationStatus::CLOSED->name)
+            ->whereNotExists(fn (Builder $reply) => $reply
+                ->selectRaw('1')
+                ->from('sms_messages')
+                ->whereColumn('sms_messages.sms_conversation_id', 'sms_conversations.id')
+                ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+                ->whereColumn('sms_messages.created_at', '>=', 'sms_conversations.draft_generated_at')
+                ->whereNotIn('sms_messages.status', [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name]))
+            ->orderBy('draft_generated_at')
+            ->limit($limit)
+            ->get();
+
+        return $this->handleResults($conversations);
     }
 }

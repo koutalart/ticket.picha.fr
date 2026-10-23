@@ -14,9 +14,10 @@ interface SmsRegistrationConfirmationRepositoryInterface extends RepositoryInter
 {
     /**
      * Confirmations sent since the date while an earlier confirmation had already been sent to the same phone
-     * for the same event and that phone was not released yet.
+     * for the same event and that phone was not released yet, for the given organizers.
      *
+     * @param  array<int, int>  $organizerIds
      * @return Collection<int, SmsRegistrationConfirmationDomainObject>
      */
-    public function findSentToAlreadyConfirmedPhoneSince(int $organizerId, string $since, int $limit): Collection;
+    public function findSentToAlreadyConfirmedPhoneSince(array $organizerIds, string $since, int $limit): Collection;
 }
