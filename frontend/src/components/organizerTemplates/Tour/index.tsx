@@ -7,7 +7,6 @@ import type {OrganizerTemplateProps} from "../index.ts";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
 import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
-import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
@@ -56,7 +55,7 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
     const [scrolled, setScrolled] = useState(false);
     const [playing, setPlaying] = useState<string | null>(null);
     const [contactModalOpen, setContactModalOpen] = useState(false);
-    const {consentPending, onConsent} = useOrganizerTrackingPixels(organizer.settings?.tracking_pixels);
+    useOrganizerTrackingPixels(organizer.settings?.tracking_pixels);
 
     useReveal(rootRef);
 
@@ -437,7 +436,6 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
             <PublicOverlayTheme accentColor={accent} mode="dark">
                 <ContactOrganizerModal opened={contactModalOpen} onClose={() => setContactModalOpen(false)} organizer={organizer}/>
             </PublicOverlayTheme>
-            {consentPending && <CookieConsentBanner onConsent={onConsent}/>}
         </>
     );
 };

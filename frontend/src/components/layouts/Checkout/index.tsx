@@ -22,7 +22,6 @@ import {detectMode} from "../../../utilites/themeUtils.ts";
 import {CheckoutThemeProvider} from "./CheckoutThemeProvider.tsx";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
-import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {useGetEventPublic} from "../../../queries/useGetEventPublic.ts";
 import {getFullscreenHero} from "../../../utilites/fullscreenHero.ts";
 import {buildHomepageFontStack, isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
@@ -171,7 +170,7 @@ const Checkout = () => {
         }
     }, [organizerFontStack, publicFontFamily, publicOrganizerFont]);
 
-    const {consentPending, consentGranted, onConsent} = useOrganizerTrackingPixels(
+    const {consentGranted} = useOrganizerTrackingPixels(
         publicEvent?.organizer?.settings?.tracking_pixels
     );
 
@@ -387,9 +386,6 @@ const Checkout = () => {
                     </Group>
                 </div>
             </Modal>
-            {consentPending && (
-                <CookieConsentBanner onConsent={onConsent}/>
-            )}
         </CheckoutThemeProvider>
     );
 }

@@ -11,6 +11,7 @@ import {
 import {api} from "./client.ts";
 import {queryParamsHelper} from "../utilites/queryParamsHelper.ts";
 import {getStoredSessionIdentifier} from "../utilites/checkoutSession.ts";
+import type {AttributionTrackingContext} from "../utilites/attribution";
 
 export interface OrderDetails {
     first_name: string,
@@ -55,12 +56,7 @@ export interface ProductFormPayload {
     session_identifier?: string,
 }
 
-export interface OrderTrackingContext {
-    consent: true,
-    fbp?: string | null,
-    fbc?: string | null,
-    event_source_url?: string,
-}
+export type OrderTrackingContext = AttributionTrackingContext;
 
 export interface RefundOrderPayload {
     amount: number;

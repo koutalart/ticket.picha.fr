@@ -35,7 +35,7 @@ import {StatusToggle} from "../../common/StatusToggle";
 import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
-import {CookieConsentBanner} from "../../common/CookieConsentBanner";
+import {openConsentPreferences} from "../../../utilites/trackingPixels/consent.ts";
 import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
 import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {ShareComponent} from "../../common/ShareIcon";
@@ -66,7 +66,6 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const {event, promoCodeValid, promoCode} = loaderData;
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [contactModalOpen, setContactModalOpen] = useState(false);
-    const [cookieBannerReopened, setCookieBannerReopened] = useState(false);
     const ticketsSectionRef = useRef<HTMLElement>(null);
     const fullscreenHeroRef = useRef<HTMLElement>(null);
     const [attendanceAccessOpen, setAttendanceAccessOpen] = useState(false);
@@ -74,7 +73,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const {attendanceEnabled, registered: registeredOnDevice, forget: forgetRegistration} = useRegisteredOnDevice(event);
     const openAttendanceAccess = () => setAttendanceAccessOpen(true);
 
-    const {consentPending, consentGranted, onConsent} = useOrganizerTrackingPixels(
+    const {consentGranted} = useOrganizerTrackingPixels(
         event?.organizer?.settings?.tracking_pixels
     );
 
@@ -164,12 +163,6 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
             window.removeEventListener('resize', handleScroll);
         };
     }, []);
-
-    const handleCookieConsent = (granted: boolean) => {
-        onConsent(granted);
-        setCookieBannerReopened(false);
-        window.dispatchEvent(new CustomEvent('hi_consent_change', {detail: {granted}}));
-    };
 
     const scrollToTickets = () => {
         ticketsSectionRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
@@ -470,7 +463,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             websiteUrl={websiteUrl}
                             onRegister={scrollToTickets}
                             onContact={() => setContactModalOpen(true)}
-                            onManageCookies={() => setCookieBannerReopened(true)}
+                            onManageCookies={openConsentPreferences}
                         />
                     ) : isEmbeddedRegistration ? (
                         <footer className={classes.landingFooter}>
@@ -912,9 +905,6 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         />
                     </PublicOverlayTheme>
                 </div>
-                {(consentPending || cookieBannerReopened) && (
-                    <CookieConsentBanner onConsent={handleCookieConsent}/>
-                )}
             </main>
         </>
     );

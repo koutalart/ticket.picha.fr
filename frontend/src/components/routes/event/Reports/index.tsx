@@ -1,7 +1,7 @@
 import {PageTitle} from "../../../common/PageTitle";
 import {t} from "@lingui/macro";
 import {PageBody} from "../../../common/PageBody";
-import {IconChartBar, IconChevronRight, IconReportMoney, IconTicket} from "@tabler/icons-react";
+import {IconChartBar, IconChevronRight, IconReportMoney, IconRoute, IconTicket} from "@tabler/icons-react";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
 import {isFreeEvent} from "../../../../utilites/eventPricing.ts";
 import classes from './Reports.module.scss';
@@ -28,6 +28,12 @@ const Reports = () => {
             description: t`Registrations day by day`,
             icon: <Avatar size={40} color={'#00a3e0'}><IconChartBar/></Avatar>
         },
+        {
+            id: ReportTypes.SalesBySource,
+            title: t`Registrations by source`,
+            description: t`QR codes, SMS, campaign links and referring sites that bring registrations`,
+            icon: <Avatar size={40} color={'#0f9d76'}><IconRoute/></Avatar>
+        },
     ] : [
         {
             id: ReportTypes.ProductSales,
@@ -46,6 +52,12 @@ const Reports = () => {
             title: t`Promo Codes Report`,
             description: t`Promo code usage and discount breakdown`,
             icon: <Avatar size={40} color={'#634fc0'}><IconReportMoney/></Avatar>
+        },
+        {
+            id: ReportTypes.SalesBySource,
+            title: t`Sales by source`,
+            description: t`Orders, tickets, revenue and visits per QR code, SMS, campaign link and referring site`,
+            icon: <Avatar size={40} color={'#0f9d76'}><IconRoute/></Avatar>
         }
     ];
 

@@ -261,7 +261,9 @@ const confidentialite: LegalDocument = {
                     (art. 6.1.b) ;</li>
                 <li>Comptabilité et facturation : obligation légale (art. 6.1.c) ;</li>
                 <li>Sécurité du service et prévention de la fraude : intérêt légitime (art. 6.1.f) ;</li>
-                <li>Communications marketing et traceurs non essentiels : consentement (art. 6.1.a), retirable
+                <li>Mesure d'audience exemptée (origine des visites et des ventes) : intérêt légitime
+                    (art. 6.1.f), avec droit d'opposition ;</li>
+                <li>Communications marketing et traceurs publicitaires : consentement (art. 6.1.a), retirable
                     à tout moment.</li>
             </ul>
 
@@ -337,25 +339,81 @@ const cookies: LegalDocument = {
                     lien personnel, l'accès à votre venue demande toujours un code envoyé à votre e-mail ou à
                     votre téléphone, et il s'efface après la fin de l'événement ;
                 </li>
-                <li>Mémorisation de votre choix sur les cookies.</li>
+                <li>
+                    Mémorisation de votre choix sur les cookies (cookie <code>hi_tracking_consent</code> :
+                    vos choix par catégorie, la date et la version du bandeau, conservé 6 mois).
+                </li>
             </ul>
 
-            <h2>2. Traceurs soumis à consentement</h2>
+            <h2>2. Mesure d'audience exemptée de consentement</h2>
             <p>
-                Un organisateur peut activer des outils de mesure d'audience ou des pixels publicitaires sur
-                ses pages d'événement. Ils ne sont chargés qu'après votre accord via le bandeau cookies.
+                Pour savoir quels canaux amènent des visites et des ventes (QR code, SMS, lien de campagne,
+                site référent), nous enregistrons sur l'appareil, pour le site visité uniquement (y compris
+                le domaine propre d'un organisateur) :
+            </p>
+            <ul>
+                <li>
+                    <code>picha_attribution</code> (stockage local, 90 jours) : paramètres de campagne utm
+                    (source, support, campagne, contenu, terme), domaine du site référent et page d'arrivée,
+                    pour la première et la dernière visite ;
+                </li>
+                <li>
+                    <code>picha_qr_link</code> et <code>picha_contact_link</code> (stockage local, 30 jours) :
+                    code du QR code ou du lien personnel utilisé pour arriver sur la page.
+                </li>
+            </ul>
+            <p>
+                Ces données ne contiennent aucun identifiant publicitaire, ne sont pas recoupées avec
+                d'autres traitements et servent uniquement à produire des statistiques pour l'organisateur.
+                Elles sont rattachées à la commande lorsque vous achetez un billet. Conformément aux lignes
+                directrices de la CNIL, elles ne nécessitent pas votre consentement, mais vous pouvez vous y
+                opposer à tout moment en désactivant « Mesure d'audience exemptée » dans « Gérer mes
+                traceurs ».
             </p>
 
-            <h2>3. Durée</h2>
+            <h2>3. Publicité et marketing (avec votre consentement)</h2>
             <p>
-                Votre choix est conservé 6 mois ; les traceurs soumis à consentement ont une durée de vie
-                maximale de 13 mois.
+                Uniquement si vous acceptez la catégorie « Publicité et marketing », pour mesurer les résultats
+                des publicités de l'organisateur :
+            </p>
+            <ul>
+                <li>
+                    <code>_fbp</code> et <code>_fbc</code> (cookies, 90 jours) : identifiants Meta (Facebook,
+                    Instagram) créés à partir du paramètre fbclid d'un clic sur une publicité ;
+                </li>
+                <li>
+                    <code>_gcl_aw</code> (cookie, 90 jours) : identifiant Google Ads créé à partir du paramètre
+                    gclid ;
+                </li>
+                <li>
+                    <code>picha_ad_clicks</code> (stockage local, 90 jours) : identifiants de clic publicitaire
+                    reçus dans l'adresse de la page (fbclid, gclid, wbraid, gbraid, ttclid) ;
+                </li>
+                <li>
+                    Pixels et outils de mesure qu'un organisateur peut activer sur ses pages (Meta, Google,
+                    TikTok), qui peuvent déposer leurs propres traceurs.
+                </li>
+            </ul>
+            <p>
+                Lors d'une commande, ces identifiants sont enregistrés avec celle-ci et peuvent être transmis à
+                Meta (API Conversions) pour mesurer l'efficacité des publicités. Sans votre consentement, aucun
+                de ces traceurs n'est déposé ni transmis. Si vous retirez votre consentement, ils sont supprimés
+                de votre appareil.
             </p>
 
-            <h2>4. Gérer vos choix</h2>
+            <h2>4. Durée</h2>
             <p>
-                Vous pouvez modifier votre choix à tout moment en supprimant les cookies de ce site depuis les
-                réglages de votre navigateur : le bandeau vous sera de nouveau proposé.
+                Votre choix est conservé 6 mois, puis le bandeau vous est de nouveau proposé. Les données de
+                mesure d'audience et les identifiants publicitaires sont conservés 90 jours sur votre appareil ;
+                les traceurs déposés par les outils des organisateurs ont une durée de vie maximale de 13 mois.
+            </p>
+
+            <h2>5. Gérer vos choix</h2>
+            <p>
+                Le bandeau vous permet d'accepter, de refuser ou de personnaliser votre choix, refuser étant
+                aussi simple qu'accepter. Vous pouvez le modifier à tout moment avec le lien « Gérer mes
+                traceurs » en bas des pages d'événement, ou en supprimant les cookies et les données de ce site
+                depuis les réglages de votre navigateur : le bandeau vous sera de nouveau proposé.
             </p>
         </>
     ),

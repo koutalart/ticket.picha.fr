@@ -2,13 +2,12 @@ import React, {useState} from "react";
 import {Event} from "../../../types.ts";
 import {RichFooter} from "../../layouts/EventHomepage/RichFooter";
 import {ContactOrganizerModal} from "../ContactOrganizerModal";
-import {CookieConsentBanner} from "../CookieConsentBanner";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
 import {getFullscreenHero} from "../../../utilites/fullscreenHero.ts";
 import {imageUrl} from "../../../utilites/urlHelper.ts";
 import {eventRegistrationPath} from "../../../utilites/eventPages.ts";
-import {setConsentState, updateGoogleConsentMode} from "../../../utilites/trackingPixels/consent.ts";
+import {openConsentPreferences} from "../../../utilites/trackingPixels/consent.ts";
 import classes from "./EventRichFooter.module.scss";
 
 export const hasEventRichFooter = (event?: Event): boolean =>
@@ -34,7 +33,6 @@ export const getOrganizerSocialLinks = (event: Event) => {
  */
 export const EventRichFooter = ({event}: { event: Event }) => {
     const [contactOpen, setContactOpen] = useState(false);
-    const [cookieBannerOpen, setCookieBannerOpen] = useState(false);
     const organizer = event.organizer!;
 
     const themeSettings = validateThemeSettings(event.settings?.homepage_theme_settings);
@@ -44,13 +42,6 @@ export const EventRichFooter = ({event}: { event: Event }) => {
         '--event-accent-contrast': cssVars['--theme-accent-contrast'],
         '--theme-font-family': cssVars['--theme-font-family'],
     } as React.CSSProperties;
-
-    const handleCookieConsent = (granted: boolean) => {
-        setConsentState(granted ? 'granted' : 'denied');
-        updateGoogleConsentMode(granted);
-        setCookieBannerOpen(false);
-        window.dispatchEvent(new CustomEvent('hi_consent_change', {detail: {granted}}));
-    };
 
     return (
         <div className={classes.wrapper} style={style}>
@@ -64,14 +55,13 @@ export const EventRichFooter = ({event}: { event: Event }) => {
                     window.location.href = eventRegistrationPath(event);
                 }}
                 onContact={() => setContactOpen(true)}
-                onManageCookies={() => setCookieBannerOpen(true)}
+                onManageCookies={openConsentPreferences}
             />
             <ContactOrganizerModal
                 opened={contactOpen}
                 onClose={() => setContactOpen(false)}
                 organizer={organizer}
             />
-            {cookieBannerOpen && <CookieConsentBanner onConsent={handleCookieConsent}/>}
         </div>
     );
 };

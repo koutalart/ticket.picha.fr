@@ -1,5 +1,5 @@
 import {isSsr} from "./helpers.ts";
-import {getConsentState} from "./trackingPixels/consent.ts";
+import {getAttributionTrackingContext} from "./attribution";
 import {OrderTrackingContext} from "../api/order.client.ts";
 import {qrLinkClientPublic} from "../api/qr-link.client.ts";
 
@@ -81,18 +81,4 @@ export const getQrLinkCode = (): string | null => {
     }
 };
 
-const readCookie = (name: string): string | null => {
-    const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-    return match ? decodeURIComponent(match[1]) : null;
-};
-
-export const getOrderTrackingContext = (): OrderTrackingContext | null => {
-    if (isSsr() || getConsentState() !== 'granted') return null;
-
-    return {
-        consent: true,
-        fbp: readCookie('_fbp'),
-        fbc: readCookie('_fbc'),
-        event_source_url: window.location.href,
-    };
-};
+export const getOrderTrackingContext = (): OrderTrackingContext | null => getAttributionTrackingContext();

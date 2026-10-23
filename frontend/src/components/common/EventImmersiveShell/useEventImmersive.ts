@@ -4,6 +4,7 @@ import {getFullscreenHero} from "../../../utilites/fullscreenHero.ts";
 import {buildHomepageFontStack, isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
 import {getContrastColor, hexToRgb} from "../../../utilites/themeUtils.ts";
+import {useConsentBannerTheme} from "../../../utilites/consentBannerTheme.ts";
 
 const DEFAULT_ACCENT = '#8b5cf6';
 
@@ -24,6 +25,8 @@ export const useEventImmersive = (event?: Event) => {
     const rgb = hexToRgb(accent);
     const accentTint = rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.16)` : 'rgba(255, 255, 255, 0.1)';
     const fontStack = buildHomepageFontStack(fontFamily, organizerFont);
+
+    useConsentBannerTheme(enabled ? accent : undefined, 'dark', fontStack);
 
     const style = {
         '--immersive-accent': accent,
