@@ -50,6 +50,10 @@ return [
         'alert_cooldown_minutes' => env('SMS_WATCHDOG_ALERT_COOLDOWN_MINUTES', 5),
     ],
 
+    'organizer_calendars' => [
+        'media_keys' => array_values(array_filter(array_map('trim', explode(',', (string) env('ORGANIZER_CALENDAR_MEDIA_KEYS', 'vignette,media'))))),
+    ],
+
     'meta' => [
         'graph_api_version' => env('META_GRAPH_API_VERSION', 'v24.0'),
         'timeout_seconds' => (int) env('META_CONVERSIONS_API_TIMEOUT', 10),

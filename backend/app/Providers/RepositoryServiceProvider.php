@@ -62,6 +62,10 @@ use HiEvents\Repository\Eloquent\SmsReplyTemplateRepository;
 use HiEvents\Repository\Eloquent\SmsLineFormerMemberRepository;
 use HiEvents\Repository\Eloquent\SmsUnattributedMessageRepository;
 use HiEvents\Repository\Eloquent\SmsWatchdogAlertRepository;
+use HiEvents\Repository\Eloquent\OrganizerCalendarAccessRepository;
+use HiEvents\Repository\Eloquent\OrganizerCalendarCodeRepository;
+use HiEvents\Repository\Eloquent\OrganizerCalendarMediaRepository;
+use HiEvents\Repository\Eloquent\OrganizerCalendarRepository;
 use HiEvents\Repository\Eloquent\QrLinkRepository;
 use HiEvents\Repository\Eloquent\QrLinkVisitRepository;
 use HiEvents\Repository\Eloquent\QuestionAndAnswerViewRepository;
@@ -143,6 +147,10 @@ use HiEvents\Repository\Interfaces\SmsReplyTemplateRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsLineFormerMemberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsWatchdogAlertRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerCalendarAccessRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerCalendarCodeRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerCalendarMediaRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerCalendarRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkVisitRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionAndAnswerViewRepositoryInterface;
@@ -198,6 +206,10 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsLineFormerMemberRepositoryInterface::class => SmsLineFormerMemberRepository::class,
         SmsUnattributedMessageRepositoryInterface::class => SmsUnattributedMessageRepository::class,
         SmsWatchdogAlertRepositoryInterface::class => SmsWatchdogAlertRepository::class,
+        OrganizerCalendarRepositoryInterface::class => OrganizerCalendarRepository::class,
+        OrganizerCalendarMediaRepositoryInterface::class => OrganizerCalendarMediaRepository::class,
+        OrganizerCalendarCodeRepositoryInterface::class => OrganizerCalendarCodeRepository::class,
+        OrganizerCalendarAccessRepositoryInterface::class => OrganizerCalendarAccessRepository::class,
         QrLinkVisitRepositoryInterface::class => QrLinkVisitRepository::class,
         OrderItemRepositoryInterface::class => OrderItemRepository::class,
         QuestionRepositoryInterface::class => QuestionRepository::class,

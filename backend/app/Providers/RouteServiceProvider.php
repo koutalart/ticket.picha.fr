@@ -41,6 +41,23 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perHour(20)->by($request->route('order_short_id') ?? $request->ip());
         });
 
+        RateLimiter::for('organizer-calendar-code', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
+
+        RateLimiter::for('organizer-calendar-verify', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
+
+        RateLimiter::for('organizer-calendar-read', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
+        });
+
+        // Media pages load many images and videos (with several Range requests each): own budget, outside the global api limit.
+        RateLimiter::for('organizer-calendar-media', function (Request $request) {
+            return Limit::perMinute(1200)->by($request->ip());
+        });
+
         $this->routes(function () {
             Route::middleware('api')
                 ->group(base_path('routes/api.php'));

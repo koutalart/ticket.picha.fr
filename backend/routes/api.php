@@ -139,6 +139,13 @@ use HiEvents\Http\Actions\Organizers\Font\UploadOrganizerFontAction;
 use HiEvents\Http\Actions\Questions\Files\DownloadQuestionAnswerFileAction;
 use HiEvents\Http\Actions\Questions\Public\UploadQuestionAnswerFilePublicAction;
 use HiEvents\Services\Domain\Question\File\QuestionAnswerFileUrlGenerator;
+use HiEvents\Http\Actions\OrganizerCalendars\DownloadOrganizerCalendarMediaActionPublic;
+use HiEvents\Http\Actions\OrganizerCalendars\GetOrganizerCalendarActionPublic;
+use HiEvents\Http\Actions\OrganizerCalendars\GetOrganizerCalendarPageActionPublic;
+use HiEvents\Http\Actions\OrganizerCalendars\RequestOrganizerCalendarCodeActionPublic;
+use HiEvents\Http\Actions\OrganizerCalendars\VerifyOrganizerCalendarCodeActionPublic;
+use HiEvents\Services\Domain\OrganizerCalendar\OrganizerCalendarMediaUrlGenerator;
+use HiEvents\Services\Domain\OrganizerCalendar\OrganizerCalendarResolver;
 use HiEvents\Http\Actions\Events\CoverVideo\UploadEventCoverVideoAction;
 use HiEvents\Http\Actions\Events\Images\CreateEventImageAction;
 use HiEvents\Http\Actions\Events\Images\DeleteEventImageAction;
@@ -764,6 +771,24 @@ $router->prefix('/public')->group(
         $router->post('/contact-links/{code}/visits', RecordContactLinkVisitPublicAction::class)
             ->where('code', '[A-Za-z0-9]{6,16}')
             ->middleware('throttle:60,1');
+
+        // Private organizer calendars (one-time SMS code, then 12 h access key in the X-Acces-Calendrier header)
+        $router->post('/calendriers/{slug}/code', RequestOrganizerCalendarCodeActionPublic::class)
+            ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN)
+            ->middleware('throttle:organizer-calendar-code');
+        $router->post('/calendriers/{slug}/verifier', VerifyOrganizerCalendarCodeActionPublic::class)
+            ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN)
+            ->middleware('throttle:organizer-calendar-verify');
+        $router->get('/calendriers/{slug}', GetOrganizerCalendarActionPublic::class)
+            ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN)
+            ->middleware('throttle:organizer-calendar-read');
+        $router->get('/calendriers/{slug}/page', GetOrganizerCalendarPageActionPublic::class)
+            ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN);
+        $router->get('/calendriers/{slug}/medias/{media_id}/{file_name}', DownloadOrganizerCalendarMediaActionPublic::class)
+            ->where(['slug' => OrganizerCalendarResolver::SLUG_PATTERN, 'media_id' => '[0-9]+', 'file_name' => '[A-Za-z0-9._-]+'])
+            ->withoutMiddleware('throttle:api')
+            ->middleware(['signed:relative', 'throttle:organizer-calendar-media'])
+            ->name(OrganizerCalendarMediaUrlGenerator::ROUTE_NAME);
 
         // Demo requests
         $router->post('/demo-requests', SendDemoRequestPublicAction::class)

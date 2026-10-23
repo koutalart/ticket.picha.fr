@@ -357,6 +357,36 @@ Sitemap: ${frontendUrl}/sitemap.xml
         return next();
     });
 
+    // Private organizer calendar: the page shell imported with calendar:import, relayed as is.
+    // Served here so its relative /api calls stay on the same origin, custom domains included.
+    const CALENDAR_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+    app.get('/calendrier/:slug', async (req, res, next) => {
+        const {slug} = req.params;
+        if (!CALENDAR_SLUG.test(slug) || slug.length > 100) {
+            return next();
+        }
+
+        try {
+            const response = await fetch(
+                `${process.env.VITE_API_URL_SERVER}/public/calendriers/${encodeURIComponent(slug)}/page`,
+                {headers: {Accept: 'text/html'}, signal: AbortSignal.timeout(5000)}
+            );
+
+            if (response.ok) {
+                res.setHeader('Cache-Control', 'no-store');
+                res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+                res.setHeader('Referrer-Policy', 'no-referrer');
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                return res.status(200).send(await response.text());
+            }
+        } catch (error) {
+            console.error(`Calendar page failed for ${slug}`, error);
+        }
+
+        res.setHeader('Cache-Control', 'no-store');
+        return next();
+    });
+
     app.get('/sitemap-events-:page.xml', sitemapEventsHandler);
     app.get('/sitemap-organizers-:page.xml', sitemapOrganizersHandler);
 
