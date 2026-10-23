@@ -5,7 +5,11 @@ namespace HiEvents\Services\Domain\Order;
 use Brick\Money\Currency;
 use HiEvents\DomainObjects\AccountConfigurationDomainObject;
 use HiEvents\DomainObjects\AccountVatSettingDomainObject;
+use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
+use HiEvents\DomainObjects\OrderItemDomainObject;
+use HiEvents\DomainObjects\ProductDomainObject;
+use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\Order\DTO\ApplicationFeeValuesDTO;
 use HiEvents\Services\Domain\Order\Vat\VatRateDeterminationService;
 use HiEvents\Services\Infrastructure\CurrencyConversion\CurrencyConversionClientInterface;
@@ -18,6 +22,7 @@ class OrderApplicationFeeCalculationService
         private readonly Repository                        $config,
         private readonly CurrencyConversionClientInterface $currencyConversionClient,
         private readonly VatRateDeterminationService       $vatRateDeterminationService,
+        private readonly ProductRepositoryInterface        $productRepository,
     )
     {
     }
@@ -29,17 +34,20 @@ class OrderApplicationFeeCalculationService
     ): ?ApplicationFeeValuesDTO
     {
         $currency = $order->getCurrency();
-        $quantityPurchased = $this->getChargeableQuantityPurchased($order);
 
         if (!$this->config->get('app.saas_mode_enabled')) {
             return null;
         }
 
+        $chargeableItems = $this->getChargeableItems($order);
+        $quantityPurchased = $this->getChargeableQuantityPurchased($chargeableItems);
+        $chargeableTotal = $this->getChargeableTotal($order, $chargeableItems);
+
         $fixedFee = $this->getConvertedFixedFee($accountConfiguration, $currency);
         $percentageFee = $accountConfiguration->getPercentageApplicationFee();
 
         $netApplicationFee = MoneyValue::fromFloat(
-            amount: ($fixedFee->toFloat() * $quantityPurchased) + ($order->getTotalGross() * $percentageFee / 100),
+            amount: ($fixedFee->toFloat() * $quantityPurchased) + ($chargeableTotal * $percentageFee / 100),
             currency: $currency
         );
 
@@ -75,10 +83,63 @@ class OrderApplicationFeeCalculationService
         );
     }
 
-    private function getChargeableQuantityPurchased(OrderDomainObject $order): int
+    /**
+     * Required products (is_required) never carry a platform fee.
+     *
+     * @return OrderItemDomainObject[]
+     */
+    private function getChargeableItems(OrderDomainObject $order): array
+    {
+        $items = collect($order->getOrderItems() ?? []);
+        $requiredProductIds = $this->getRequiredProductIds($items->all());
+
+        return $items
+            ->reject(fn(OrderItemDomainObject $item) => in_array($item->getProductId(), $requiredProductIds, true))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param OrderItemDomainObject[] $items
+     * @return int[]
+     */
+    private function getRequiredProductIds(array $items): array
+    {
+        $productIds = array_values(array_unique(array_filter(
+            array_map(static fn(OrderItemDomainObject $item) => $item->getProductId(), $items)
+        )));
+
+        if ($productIds === []) {
+            return [];
+        }
+
+        return $this->productRepository
+            ->findWhereIn(ProductDomainObjectAbstract::ID, $productIds)
+            ->filter(fn(ProductDomainObject $product) => $product->getIsRequired())
+            ->map(fn(ProductDomainObject $product) => $product->getId())
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param OrderItemDomainObject[] $chargeableItems
+     */
+    private function getChargeableTotal(OrderDomainObject $order, array $chargeableItems): float
+    {
+        $excludedTotal = collect($order->getOrderItems() ?? [])
+            ->reject(fn(OrderItemDomainObject $item) => in_array($item, $chargeableItems, true))
+            ->sum(fn(OrderItemDomainObject $item) => (float)$item->getTotalGross());
+
+        return max(0.0, (float)$order->getTotalGross() - $excludedTotal);
+    }
+
+    /**
+     * @param OrderItemDomainObject[] $chargeableItems
+     */
+    private function getChargeableQuantityPurchased(array $chargeableItems): int
     {
         $quantityPurchased = 0;
-        foreach ($order->getOrderItems() as $item) {
+        foreach ($chargeableItems as $item) {
             if ($item->getPrice() > 0) {
                 $quantityPurchased += $item->getQuantity();
             }

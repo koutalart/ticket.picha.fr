@@ -5,6 +5,7 @@ namespace Tests\Unit\Services\Domain\Order;
 use HiEvents\DomainObjects\AccountConfigurationDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
+use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\Order\OrderApplicationFeeCalculationService;
 use HiEvents\Services\Domain\Order\Vat\VatRateDeterminationService;
 use HiEvents\Services\Infrastructure\CurrencyConversion\CurrencyConversionClientInterface;
@@ -27,7 +28,8 @@ class OrderApplicationFeeCalculationServiceTest extends TestCase
         $this->service = new OrderApplicationFeeCalculationService(
             $this->config,
             $this->currencyConversionClient,
-            $this->vatRateDeterminationService
+            $this->vatRateDeterminationService,
+            $this->createMock(ProductRepositoryInterface::class),
         );
     }
 
