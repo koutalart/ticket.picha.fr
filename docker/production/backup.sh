@@ -58,7 +58,7 @@ mv "$DB_FILE.part" "$DB_FILE"
 
 # Fichiers téléversés (logos, couvertures, sponsors) : volume backend_storage.
 # Une seule archive par jour : les sauvegardes faites avant chaque mise en ligne ne gardent que la base.
-TODAY_FILES=$(ls -t "$BACKUP_DIR"/picha-ticket-files-"${STAMP%-*}"-*.tar.gz 2>/dev/null | head -1)
+TODAY_FILES=$(ls -t "$BACKUP_DIR"/picha-ticket-files-"${STAMP%-*}"-*.tar.gz 2>/dev/null | head -1 || true)
 if [ -n "$TODAY_FILES" ] && [ "${FORCE_FILES_BACKUP:-0}" != "1" ]; then
     FILES_FILE="$TODAY_FILES (archive du jour réutilisée)"
 else
