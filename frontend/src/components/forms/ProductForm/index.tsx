@@ -482,6 +482,18 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                             <NumberInput {...form.getInputProps('max_per_order')} label={t`Maximum Per Order`}
                                          placeholder="10"/>
                         </InputGroup>
+                        <Switch
+                            mt={15}
+                            {...form.getInputProps('is_required', {type: 'checkbox'})}
+                            label={t`Required product (added to every order)`}
+                            description={t`Added automatically, in a locked quantity, to every online order that contains at least one ticket. The quantity is the minimum per order (1 if empty). Not applied at the box office or when adding an attendee manually. If the product is not available (sold out, hidden, outside its sale dates), the order goes through without it.`}
+                        />
+                        {form.values.is_required && Number(form.values.max_per_order) > 0
+                            && Number(form.values.max_per_order) < Math.max(1, Number(form.values.min_per_order) || 0) && (
+                            <Alert mt={10} color={'red'} icon={<IconInfoCircle/>}>
+                                {t`For a required product, the maximum per order must be at least the minimum per order.`}
+                            </Alert>
+                        )}
                     </Fieldset>
 
                     <Fieldset legend={

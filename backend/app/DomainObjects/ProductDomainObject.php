@@ -22,6 +22,11 @@ class ProductDomainObject extends Generated\ProductDomainObjectAbstract implemen
 
     private ?bool $isScannable = null;
 
+    public function getRequiredQuantity(): int
+    {
+        return max(1, (int) $this->getMinPerOrder());
+    }
+
     public function isScannable(): ?bool
     {
         return $this->isScannable;

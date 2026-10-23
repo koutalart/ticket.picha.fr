@@ -1,6 +1,7 @@
 import {Event, Product, ProductPrice, Question, QuestionType} from "../types.ts";
 import {getFullscreenHero} from "./fullscreenHero.ts";
 import {Constants} from "../constants.ts";
+import {eventHasRequiredProducts} from "./requiredProducts.ts";
 
 export const SUPPORTED_EMBEDDED_QUESTION_TYPES: string[] = [
     QuestionType.SINGLE_LINE_TEXT,
@@ -26,7 +27,8 @@ export const isFreeEvent = (event?: Event): boolean => {
 export const isEmbeddedRegistrationEnabled = (event?: Event): boolean =>
     !!event?.settings?.embedded_registration_enabled
     && getFullscreenHero(event).enabled
-    && isFreeEvent(event);
+    && isFreeEvent(event)
+    && !eventHasRequiredProducts(getEventProducts(event));
 
 const getFreeAvailablePrice = (product: Product): ProductPrice | undefined =>
     product.prices?.find(price => Number(price.price) <= 0 && price.is_available !== false && !price.is_sold_out);

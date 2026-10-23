@@ -20,6 +20,7 @@ export const productUpdatePayload = (product: Product, timezone: string, overrid
     is_hidden_without_promo_code: product.is_hidden_without_promo_code,
     is_visible_at_box_office: product.is_visible_at_box_office ?? true,
     is_sales_paused: product.is_sales_paused ?? false,
+    is_required: product.is_required ?? false,
     type: product.type,
     tax_and_fee_ids: product.taxes_and_fees?.map((tax) => String(tax.id)) ?? [],
     is_hidden: product.is_hidden,

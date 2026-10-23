@@ -43,6 +43,7 @@ import {promoCodeClientPublic} from "../../../../api/promo-code.client.ts";
 import {IconChevronRight, IconX} from "@tabler/icons-react"
 import {getSessionIdentifier} from "../../../../utilites/sessionIdentifier.ts";
 import {Constants} from "../../../../constants.ts";
+import {applyRequiredProducts, isEnforceableRequiredProduct} from "../../../../utilites/requiredProducts.ts";
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
 import {customDomainOrigin} from "../../../../utilites/urlHelper.ts";
 
@@ -356,6 +357,16 @@ const SelectProducts = (props: SelectProductsProps) => {
         selectSinglePrice(formIndexOfProduct(only.product.id), only.priceIndex);
     }, [singleSelection, form.values.products?.length, selectableOptions.length, requestedCategory]);
 
+    useEffect(() => {
+        if (singleSelection) {
+            return;
+        }
+        const nextProducts = applyRequiredProducts(products, form.values.products);
+        if (nextProducts !== form.values.products) {
+            form.setFieldValue('products', nextProducts);
+        }
+    }, [form.values.products, singleSelection]);
+
     const handleProductSelection = (values: Omit<ProductFormPayload, "session_identifier">) => {
         if (values && selectedProductQuantitySum > 0) {
             productMutation.mutate({
@@ -539,6 +550,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                                                 .map((n) => n.toString());
                                             quantityRange.unshift("0");
 
+                                            const isRequiredProduct = !singleSelection && isEnforceableRequiredProduct(product);
                                             const isProductCollapsed = collapsedProducts[Number(product.id)] ?? product.start_collapsed;
                                             const toggleCollapse = () => {
                                                 setCollapsedProducts(prev => ({
@@ -563,6 +575,11 @@ const SelectProducts = (props: SelectProductsProps) => {
                                                                 {product.title}
                                                             </h3>
                                                             <div className={'hi-product-title-metadata'}>
+                                                                {isRequiredProduct && (
+                                                                    <span className={'hi-product-required-badge'}>
+                                                                        {t`Included by default`}
+                                                                    </span>
+                                                                )}
                                                                 {(product.is_available && !!product.quantity_available) && (
                                                                     <>
                                                                         {product.quantity_available === Constants.INFINITE_TICKETS && (
@@ -600,7 +617,13 @@ const SelectProducts = (props: SelectProductsProps) => {
                                                                 form={form}
                                                                 singleSelection={singleSelection}
                                                                 onSelectPrice={(priceIndex) => selectSinglePrice(currentProductIndex, priceIndex)}
+                                                                isQuantityLocked={isRequiredProduct}
                                                             />
+                                                            {isRequiredProduct && (
+                                                                <div className={'hi-product-required-hint'}>
+                                                                    {t`Added automatically to every order with a ticket.`}
+                                                                </div>
+                                                            )}
                                                         </div>
 
                                                         {product.max_per_order && form.values.products && isObjectEmpty(form.errors) && (form.values.products[currentProductIndex]?.quantities.reduce((acc, {quantity}) => acc + Number(quantity), 0) > product.max_per_order) && (

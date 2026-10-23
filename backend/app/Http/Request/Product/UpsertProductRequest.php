@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\Http\Request\BaseRequest;
 use HiEvents\Validators\Rules\RulesHelper;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class UpsertProductRequest extends BaseRequest
 {
@@ -39,6 +40,7 @@ class UpsertProductRequest extends BaseRequest
             'is_hidden_without_promo_code' => 'boolean',
             'is_visible_at_box_office' => 'boolean',
             'is_sales_paused' => 'boolean',
+            'is_required' => 'boolean',
             'type' => ['required', Rule::in(ProductPriceType::valuesArray())],
             'product_type' => ['required', Rule::in(ProductType::valuesArray())],
             'tax_and_fee_ids' => 'array',
@@ -48,6 +50,25 @@ class UpsertProductRequest extends BaseRequest
             'waitlist_enabled' => 'boolean|nullable',
             'unlock_after_product_id' => 'integer|nullable',
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            if (!$this->boolean('is_required')) {
+                return;
+            }
+
+            $requiredQuantity = max(1, (int) $this->input('min_per_order'));
+            $maxPerOrder = $this->input('max_per_order');
+
+            if ($maxPerOrder !== null && $maxPerOrder !== '' && (int) $maxPerOrder < $requiredQuantity) {
+                $validator->errors()->add(
+                    'max_per_order',
+                    __('For a required product, the maximum per order must be at least :quantity.', ['quantity' => $requiredQuantity]),
+                );
+            }
+        });
     }
 
     public function messages(): array

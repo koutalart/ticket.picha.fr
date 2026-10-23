@@ -516,6 +516,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $product->shouldReceive('getProductPrices')->andReturn($productPrices);
 
         $this->productRepository->shouldReceive('loadRelation')->andReturnSelf();
+        $this->productRepository->shouldReceive('findWhere')->andReturn(collect())->byDefault();
         $this->productRepository->shouldReceive('findWhereIn')->andReturn(
             (new Collection([$product]))->merge($extraProducts ?? collect())
         );
