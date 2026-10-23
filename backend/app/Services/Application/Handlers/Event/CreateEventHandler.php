@@ -12,6 +12,7 @@ use HiEvents\Services\Domain\CheckInList\DefaultCheckInListService;
 use HiEvents\Services\Domain\Event\CreateEventService;
 use HiEvents\Services\Domain\ProductCategory\CreateProductCategoryService;
 use HiEvents\Services\Domain\Organizer\OrganizerFetchService;
+use HiEvents\Services\Domain\Sms\Reminder\SmsDefaultRemindersService;
 use HiEvents\Jobs\Event\Webhook\DispatchEventWebhookJob;
 use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
 use Illuminate\Database\DatabaseManager;
@@ -25,6 +26,7 @@ class CreateEventHandler
         private readonly CreateProductCategoryService $createProductCategoryService,
         private readonly DatabaseManager              $databaseManager,
         private readonly DefaultCheckInListService    $defaultCheckInListService,
+        private readonly SmsDefaultRemindersService   $defaultRemindersService,
     )
     {
     }
@@ -35,7 +37,11 @@ class CreateEventHandler
      */
     public function handle(CreateEventDTO $eventData): EventDomainObject
     {
-        return $this->databaseManager->transaction(fn() => $this->createEvent($eventData));
+        $event = $this->databaseManager->transaction(fn() => $this->createEvent($eventData));
+
+        $this->defaultRemindersService->createForEventSafely($event);
+
+        return $event;
     }
 
     /**

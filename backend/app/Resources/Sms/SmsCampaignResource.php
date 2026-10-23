@@ -40,6 +40,8 @@ class SmsCampaignResource extends BaseResource
             'completed_at' => $this->getCompletedAt(),
             'failure_reason' => $this->getFailureReason(),
             'event_timezone' => $this->getEvent()?->getTimezone(),
+            'auto_key' => $this->getAutoKey(),
+            'auto_edited' => $this->getAutoEdited(),
         ];
     }
 }

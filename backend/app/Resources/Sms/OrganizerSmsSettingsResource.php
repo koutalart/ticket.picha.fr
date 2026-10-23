@@ -34,6 +34,7 @@ class OrganizerSmsSettingsResource extends BaseResource
             'assistant_instructions' => $settings->getAssistantInstructions(),
             'assistant_auto_send' => $settings->getAssistantAutoSend(),
             'assistant_holding_reply' => $settings->getAssistantHoldingReply(),
+            'sms_default_reminders_enabled' => $this->defaultRemindersEnabled,
             'history_import' => [
                 'status' => $settings->getHistoryImportStatus(),
                 'started_at' => $settings->getHistoryImportStartedAt(),

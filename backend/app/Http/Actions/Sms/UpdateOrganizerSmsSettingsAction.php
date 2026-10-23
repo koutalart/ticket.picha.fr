@@ -41,6 +41,7 @@ class UpdateOrganizerSmsSettingsAction extends BaseAction
                 assistantInstructions: array_key_exists('assistant_instructions', $validated) ? $validated['assistant_instructions'] : Optional::create(),
                 assistantAutoSend: array_key_exists('assistant_auto_send', $validated) ? (bool) $validated['assistant_auto_send'] : Optional::create(),
                 assistantHoldingReply: array_key_exists('assistant_holding_reply', $validated) ? $validated['assistant_holding_reply'] : Optional::create(),
+                defaultRemindersEnabled: array_key_exists('sms_default_reminders_enabled', $validated) ? (bool) $validated['sms_default_reminders_enabled'] : Optional::create(),
             ));
         } catch (InvalidSmsPhoneNumberException $exception) {
             throw ValidationException::withMessages(['from_number' => $exception->getMessage()]);

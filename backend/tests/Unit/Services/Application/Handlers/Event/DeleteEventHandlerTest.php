@@ -8,6 +8,7 @@ use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Event\DeleteEventHandler;
 use HiEvents\Services\Application\Handlers\Event\DTO\DeleteEventDTO;
 use HiEvents\Services\Domain\Event\EventDeletionService;
+use HiEvents\Services\Domain\Sms\Reminder\SmsDefaultRemindersService;
 use Illuminate\Database\DatabaseManager;
 use Mockery as m;
 use Tests\TestCase;
@@ -37,7 +38,8 @@ class DeleteEventHandlerTest extends TestCase
             $databaseManager,
         );
 
-        $this->handler = new DeleteEventHandler($this->eventDeletionService);
+        $this->defaultRemindersService = m::mock(SmsDefaultRemindersService::class);
+        $this->handler = new DeleteEventHandler($this->eventDeletionService, $this->defaultRemindersService);
 
         $orderRepository->shouldReceive('countWhere')
             ->byDefault()
@@ -55,6 +57,7 @@ class DeleteEventHandlerTest extends TestCase
     }
 
     private OrderRepositoryInterface $orderRepository;
+    private SmsDefaultRemindersService|m\MockInterface $defaultRemindersService;
     private EventRepositoryInterface $eventRepository;
 
     public function testDeleteEventSuccessfully(): void
@@ -68,6 +71,10 @@ class DeleteEventHandlerTest extends TestCase
             ->once()
             ->with(['id' => 1, 'account_id' => 10])
             ->andReturn(1);
+
+        $this->defaultRemindersService->shouldReceive('cancelPendingForEventSafely')
+            ->once()
+            ->with(1, false);
 
         $dto = new DeleteEventDTO(eventId: 1, accountId: 10);
 
@@ -84,6 +91,8 @@ class DeleteEventHandlerTest extends TestCase
             ->andReturn(5);
 
         $dto = new DeleteEventDTO(eventId: 1, accountId: 10);
+
+        $this->defaultRemindersService->shouldNotReceive('cancelPendingForEventSafely');
 
         $this->expectException(CannotDeleteEntityException::class);
 
