@@ -19,7 +19,6 @@ import {computeThemeVariables, validateThemeSettings} from "../../../utilites/th
 import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
 import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
-import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {findOrganizerLogo, organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
 import {ssrLoaderBackground} from "../../../utilites/ssrLoader.ts";
@@ -51,7 +50,7 @@ export const OrganizerHomepage = ({
     const navigate = useNavigate();
     const [contactModalOpen, setContactModalOpen] = useState(false);
 
-    const {consentPending, onConsent} = useOrganizerTrackingPixels(
+    useOrganizerTrackingPixels(
         organizer?.settings?.tracking_pixels
     );
 
@@ -363,9 +362,6 @@ export const OrganizerHomepage = ({
                         />
                     </PublicOverlayTheme>
                 </div>
-                {consentPending && (
-                    <CookieConsentBanner onConsent={onConsent}/>
-                )}
             </main>
         </>
     );

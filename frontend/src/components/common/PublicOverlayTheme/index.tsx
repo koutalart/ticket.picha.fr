@@ -12,6 +12,7 @@ import {
 import {useIsomorphicEffect} from "@mantine/hooks";
 import {getContrastColor} from "../../../utilites/themeUtils.ts";
 import {createAccentPalette, getPublicPalette, PublicThemeMode, readableAccent} from "./palette.ts";
+import {useConsentBannerTheme} from "../../../utilites/consentBannerTheme.ts";
 
 export const PUBLIC_OVERLAY_ROOT_ATTRIBUTE = 'data-public-overlay-root';
 
@@ -76,6 +77,7 @@ const buildOverlayVariables = (
  */
 export const PublicOverlayTheme = ({accentColor, mode, fontFamily, children}: PropsWithChildren<PublicOverlayThemeProps>) => {
     const parentTheme = useMantineTheme();
+    useConsentBannerTheme(accentColor, mode, fontFamily);
     const [root] = useState<HTMLDivElement | null>(() => (
         typeof document === 'undefined' ? null : document.createElement('div')
     ));

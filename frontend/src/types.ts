@@ -1281,6 +1281,7 @@ export enum ReportTypes {
     ProductSales = 'product_sales',
     DailySales = 'daily_sales_report',
     PromoCodes = 'promo_codes_report',
+    SalesBySource = 'sales_by_source_report',
 }
 
 export enum OrganizerReportTypes {

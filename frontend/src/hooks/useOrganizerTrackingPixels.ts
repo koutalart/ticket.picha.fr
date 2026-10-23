@@ -1,13 +1,10 @@
-import {useEffect, useMemo, useState, useCallback, useRef} from 'react';
+import {useEffect, useMemo, useState, useRef} from 'react';
 import {TrackingPixelConfig} from '../types';
 import {initializeTrackingPixels, trackPageView, cleanup} from '../utilites/trackingPixels';
-import {getConsentState, setConsentState, isConsentPending, initGoogleConsentMode, updateGoogleConsentMode} from '../utilites/trackingPixels/consent';
-import {getConfig} from '../utilites/config';
+import {CONSENT_CHANGE_EVENT, getConsentState, initGoogleConsentMode} from '../utilites/trackingPixels/consent';
 
 interface UseOrganizerTrackingPixelsReturn {
-    consentPending: boolean;
     consentGranted: boolean;
-    onConsent: (granted: boolean) => void;
 }
 
 export function useOrganizerTrackingPixels(
@@ -34,7 +31,7 @@ export function useOrganizerTrackingPixels(
         }
     }, [hasPixels]);
 
-    // Listen for consent changes from the global banner
+    // Listen for consent changes from the consent banner
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
@@ -43,8 +40,8 @@ export function useOrganizerTrackingPixels(
             setConsentGranted(granted === true);
         };
 
-        window.addEventListener('hi_consent_change', handler);
-        return () => window.removeEventListener('hi_consent_change', handler);
+        window.addEventListener(CONSENT_CHANGE_EVENT, handler);
+        return () => window.removeEventListener(CONSENT_CHANGE_EVENT, handler);
     }, []);
 
     // Initialize pixels when consent is granted
@@ -64,19 +61,5 @@ export function useOrganizerTrackingPixels(
         };
     }, [pixelsKey, consentGranted]);
 
-    const onConsent = useCallback((granted: boolean) => {
-        setConsentState(granted ? 'granted' : 'denied');
-        updateGoogleConsentMode(granted);
-        setConsentGranted(granted);
-    }, []);
-
-    // Don't show per-page banner if the global banner is already handling consent
-    const globalBannerEnabled = getConfig('VITE_COOKIE_CONSENT_ENABLED') === 'true';
-    const showBanner = hasPixels && !globalBannerEnabled && isConsentPending();
-
-    return {
-        consentPending: showBanner,
-        consentGranted,
-        onConsent,
-    };
+    return {consentGranted};
 }

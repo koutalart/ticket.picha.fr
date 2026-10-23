@@ -9,7 +9,6 @@ import type {OrganizerSitePage} from "../../../routeLoaders/organizerSitePageLoa
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
 import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
-import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {getConfig} from "../../../utilites/config.ts";
@@ -46,7 +45,7 @@ export const PosterTemplate = ({
     const location = useLocation();
     const [contactModalOpen, setContactModalOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
-    const {consentPending, onConsent} = useOrganizerTrackingPixels(organizer.settings?.tracking_pixels);
+    useOrganizerTrackingPixels(organizer.settings?.tracking_pixels);
 
     useEffect(() => setMenuOpen(false), [location.pathname]);
 
@@ -327,7 +326,6 @@ export const PosterTemplate = ({
                     organizer={organizer}
                 />
             </PublicOverlayTheme>
-            {consentPending && <CookieConsentBanner onConsent={onConsent}/>}
         </>
     );
 };

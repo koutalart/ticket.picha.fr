@@ -17,6 +17,7 @@ import {hasEventRichFooter} from "../../common/EventRichFooter";
 import {EventDedicatedPageHead} from "./EventDedicatedPageHead.tsx";
 import classes from "./EventDedicatedPage.module.scss";
 import {organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
+import {useConsentBannerTheme} from "../../../utilites/consentBannerTheme.ts";
 
 interface LoaderData {
     event: Event;
@@ -57,6 +58,7 @@ export const EventDedicatedPage = () => {
     const cssVars = computeThemeVariables(themeSettings, organizerFont);
     const organizerFontActive = isOrganizerFontActive(themeSettings.font_family, organizerFont);
     const immersive = useEventImmersive(event);
+    useConsentBannerTheme(immersive.enabled ? undefined : themeSettings.accent, themeSettings.mode, cssVars['--theme-font-family']);
 
     useEffect(() => {
         ensureHomepageFontLoaded(themeSettings.font_family, organizerFont);

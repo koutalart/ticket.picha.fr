@@ -1,4 +1,4 @@
-import React, {FC, PropsWithChildren, useCallback, useEffect, useSyncExternalStore} from "react";
+import React, {FC, PropsWithChildren, useEffect, useSyncExternalStore} from "react";
 import {MantineProvider} from "@mantine/core";
 import {Notifications} from "@mantine/notifications";
 import {i18n} from "@lingui/core";
@@ -21,8 +21,8 @@ import {isSsr} from "./utilites/helpers.ts";
 import {StartupChecks} from "./StartupChecks.tsx";
 import {ThirdPartyScripts} from "./components/common/ThirdPartyScripts";
 import {getConfig} from "./utilites/config.ts";
-import {CookieConsentBanner} from "./components/common/CookieConsentBanner";
-import {isConsentPending, setConsentState, updateGoogleConsentMode} from "./utilites/trackingPixels/consent";
+import {ConsentManager} from "./components/common/ConsentManager";
+import {captureAttribution} from "./utilites/attribution";
 import {captureQrLinkCodeFromUrl} from "./utilites/qrAttribution";
 import {captureContactCodeFromUrl} from "./utilites/contactLinkAttribution";
 import "./utilites/dateLocales.ts";
@@ -49,17 +49,9 @@ export const App: FC<
         getCustomerAddressForm,
         getCustomerAddressForm,
     );
-    const showGlobalConsentBanner = getConfig('VITE_COOKIE_CONSENT_ENABLED') === 'true'
-        && !isSsr() && isConsentPending();
-
-    const handleGlobalConsent = useCallback((granted: boolean) => {
-        setConsentState(granted ? 'granted' : 'denied');
-        updateGoogleConsentMode(granted);
-        window.dispatchEvent(new CustomEvent('hi_consent_change', {detail: {granted}}));
-    }, []);
-
     useEffect(() => {
         setIsLoadedOnBrowser(!isSsr());
+        captureAttribution();
         captureQrLinkCodeFromUrl();
         captureContactCodeFromUrl();
     }, []);
@@ -114,9 +106,7 @@ export const App: FC<
                                     </React.Fragment>
                                 </ModalsProvider>
                                 <Notifications/>
-                                {showGlobalConsentBanner && (
-                                    <CookieConsentBanner onConsent={handleGlobalConsent}/>
-                                )}
+                                <ConsentManager/>
                             </HydrationBoundary>
                         </QueryClientProvider>
                         </DatesProvider>
