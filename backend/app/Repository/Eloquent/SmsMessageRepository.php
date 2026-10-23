@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace HiEvents\Repository\Eloquent;
 
+use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\Enums\SmsMessageDirection;
 use HiEvents\DomainObjects\Generated\SmsMessageDomainObjectAbstract;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
+use HiEvents\DomainObjects\Status\SmsConversationStatus;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\Models\SmsMessage;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -90,5 +94,69 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
                     ->where('sms_messages.status', SmsMessageStatus::PENDING->name)
                     ->where('sms_messages.created_at', '>=', $pendingSince)))
             ->exists();
+    }
+
+    public function findUnansweredInbound(int $organizerId, string $since, string $receivedBefore, int $limit): Collection
+    {
+        $messages = SmsMessage::query()
+            ->select('sms_messages.*')
+            ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
+            ->where('sms_messages.organizer_id', $organizerId)
+            ->where('sms_messages.direction', SmsMessageDirection::INBOUND->name)
+            ->where('sms_messages.created_at', '>=', $since)
+            ->where('sms_messages.created_at', '<=', $receivedBefore)
+            ->whereRaw('COALESCE(sms_messages.provider_timestamp, sms_messages.created_at) >= ?', [$since])
+            ->where('sms_conversations.status', '!=', SmsConversationStatus::CLOSED->name)
+            ->whereNotExists(fn (Builder $reply) => $reply
+                ->selectRaw('1')
+                ->from('sms_messages as reply')
+                ->whereColumn('reply.sms_conversation_id', 'sms_messages.sms_conversation_id')
+                ->whereColumn('reply.id', '>', 'sms_messages.id')
+                ->where('reply.direction', SmsMessageDirection::OUTBOUND->name)
+                ->whereNotIn('reply.status', [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name]))
+            ->whereNotExists(fn (Builder $optOut) => $optOut
+                ->selectRaw('1')
+                ->from('sms_opt_outs')
+                ->whereColumn('sms_opt_outs.organizer_id', 'sms_conversations.organizer_id')
+                ->whereColumn('sms_opt_outs.phone', 'sms_conversations.phone'))
+            ->orderBy('sms_messages.id')
+            ->limit($limit)
+            ->get();
+
+        return $this->handleResults($messages);
+    }
+
+    public function findRepliesTrafficSince(int $organizerId, string $since, int $limit): Collection
+    {
+        $messages = SmsMessage::query()
+            ->where(SmsMessageDomainObjectAbstract::ORGANIZER_ID, $organizerId)
+            ->where(SmsMessageDomainObjectAbstract::CREATED_AT, '>=', $since)
+            ->where(fn (EloquentBuilder $query) => $query
+                ->where(SmsMessageDomainObjectAbstract::DIRECTION, SmsMessageDirection::INBOUND->name)
+                ->orWhereIn(SmsMessageDomainObjectAbstract::AUTHOR_TYPE, [SmsMessageAuthorType::HUMAN->name, SmsMessageAuthorType::AGENT->name])
+                ->orWhereNotNull(SmsMessageDomainObjectAbstract::AUTO_REPLY_TO_MESSAGE_ID))
+            ->orderBy(SmsMessageDomainObjectAbstract::ID)
+            ->limit($limit)
+            ->get();
+
+        return $this->handleResults($messages);
+    }
+
+    public function findUndeliveredOutbound(int $organizerId, string $since, string $pendingBefore, int $limit): Collection
+    {
+        $messages = SmsMessage::query()
+            ->where(SmsMessageDomainObjectAbstract::ORGANIZER_ID, $organizerId)
+            ->where(SmsMessageDomainObjectAbstract::DIRECTION, SmsMessageDirection::OUTBOUND->name)
+            ->where(SmsMessageDomainObjectAbstract::CREATED_AT, '>=', $since)
+            ->where(fn (EloquentBuilder $query) => $query
+                ->whereIn(SmsMessageDomainObjectAbstract::STATUS, [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name])
+                ->orWhere(fn (EloquentBuilder $pending) => $pending
+                    ->where(SmsMessageDomainObjectAbstract::STATUS, SmsMessageStatus::PENDING->name)
+                    ->where(SmsMessageDomainObjectAbstract::CREATED_AT, '<=', $pendingBefore)))
+            ->orderBy(SmsMessageDomainObjectAbstract::ID)
+            ->limit($limit)
+            ->get();
+
+        return $this->handleResults($messages);
     }
 }

@@ -38,4 +38,26 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
      * @param  array<int, int>  $organizerIds
      */
     public function hasOutboundToPhoneAfter(array $organizerIds, string $phone, int $afterMessageId, string $pendingSince): bool;
+
+    /**
+     * Inbound SMS of the organizer received between the two dates that no outbound SMS of the conversation followed
+     * (failed or expired ones do not count), oldest first. Closed and opted out conversations are left aside.
+     *
+     * @return Collection<int, SmsMessageDomainObject>
+     */
+    public function findUnansweredInbound(int $organizerId, string $since, string $receivedBefore, int $limit): Collection;
+
+    /**
+     * The organizer's inbound SMS and replies (by the team or the assistant) created since the date, oldest first.
+     *
+     * @return Collection<int, SmsMessageDomainObject>
+     */
+    public function findRepliesTrafficSince(int $organizerId, string $since, int $limit): Collection;
+
+    /**
+     * Outbound SMS created since the date that failed, expired, or are still pending since before the given date.
+     *
+     * @return Collection<int, SmsMessageDomainObject>
+     */
+    public function findUndeliveredOutbound(int $organizerId, string $since, string $pendingBefore, int $limit): Collection;
 }

@@ -39,6 +39,11 @@ return [
         'shared_line_attribution_days' => (int) env('HTTPSMS_SHARED_LINE_ATTRIBUTION_DAYS', 30),
     ],
 
+    'sms_watchdog' => [
+        'alert_email' => env('SMS_WATCHDOG_ALERT_EMAIL'),
+        'alert_phone' => env('SMS_WATCHDOG_ALERT_PHONE'),
+    ],
+
     'meta' => [
         'graph_api_version' => env('META_GRAPH_API_VERSION', 'v24.0'),
         'timeout_seconds' => (int) env('META_CONVERSIONS_API_TIMEOUT', 10),
