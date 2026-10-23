@@ -1,6 +1,8 @@
 import { Navigate, RouteObject } from "react-router";
 import ErrorPage from "./error-page.tsx";
 import { publicEventRouteLoader } from "./routeLoaders/publicEventRouteLoader.ts";
+import { eventDedicatedPageRouteLoader } from "./routeLoaders/eventDedicatedPageRouteLoader.ts";
+import { EVENT_PAGE_SLUGS } from "./utilites/eventPages.ts";
 import { publicOrganizerRouteLoader } from "./routeLoaders/publicOrganizerRouteLoader.ts";
 import { qrLinkPageLoader } from "./routeLoaders/qrLinkPageLoader.ts";
 import { organizerPreviewRouteLoader } from "./routeLoaders/organizerPreviewRouteLoader.ts";
@@ -13,6 +15,14 @@ import {
 } from "./routeLoaders/organizerSitePageLoader.ts";
 
 export const router: RouteObject[] = [
+    {
+        path: "manage/profile/confirm-email-address/:token",
+        errorElement: <ErrorPage />,
+        async lazy() {
+            const ConfirmEmailAddress = await import("./components/routes/profile/ConfirmEmailAddress");
+            return { Component: ConfirmEmailAddress.default };
+        }
+    },
     {
         path: "",
         loader: customDomainHomeLoader,
@@ -105,13 +115,6 @@ export const router: RouteObject[] = [
                 async lazy() {
                     const ConfirmEmailChange = await import("./components/routes/profile/ConfirmEmailChange");
                     return { Component: ConfirmEmailChange.default };
-                }
-            },
-            {
-                path: "profile/confirm-email-address/:token",
-                async lazy() {
-                    const ConfirmEmailAddress = await import("./components/routes/profile/ConfirmEmailAddress");
-                    return { Component: ConfirmEmailAddress.default };
                 }
             },
         ]
@@ -314,6 +317,20 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "contacts",
+                async lazy() {
+                    const Contacts = await import("./components/routes/organizer/Contacts");
+                    return { Component: Contacts.default };
+                }
+            },
+            {
+                path: "contacts/:contactId",
+                async lazy() {
+                    const ContactDetail = await import("./components/routes/organizer/Contacts/ContactDetail");
+                    return { Component: ContactDetail.default };
+                }
+            },
+            {
                 path: "organizer-homepage-designer",
                 async lazy() {
                     const OrganizerHomepageDesigner = await import("./components/routes/organizer/OrganizerHomepageDesigner");
@@ -326,6 +343,17 @@ export const router: RouteObject[] = [
                     const QrCodes = await import("./components/routes/organizer/QrCodes");
                     return { Component: QrCodes.default };
                 }
+            },
+            {
+                path: "sms",
+                async lazy() {
+                    const Sms = await import("./components/routes/organizer/Sms");
+                    return { Component: Sms.default };
+                }
+            },
+            {
+                path: "subscribers",
+                element: <Navigate to="../contacts?tab=subscribers" replace/>,
             },
             {
                 path: "webhooks",
@@ -475,6 +503,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "pages",
+                async lazy() {
+                    const EventPages = await import("./components/routes/event/EventPages");
+                    return { Component: EventPages.default };
+                }
+            },
+            {
                 path: "ticket-designer",
                 async lazy() {
                     const TicketDesigner = await import("./components/routes/event/TicketDesigner");
@@ -620,6 +655,15 @@ export const router: RouteObject[] = [
         },
         errorElement: <ErrorPage />,
     },
+    ...EVENT_PAGE_SLUGS.map((page): RouteObject => ({
+        path: `/event/:eventId/:eventSlug/${page}`,
+        loader: eventDedicatedPageRouteLoader(page),
+        async lazy() {
+            const EventDedicatedPage = await import("./components/layouts/EventDedicatedPage");
+            return { Component: EventDedicatedPage.default };
+        },
+        errorElement: <ErrorPage />,
+    })),
     {
         path: "/widget/:eventId",
         async lazy() {
@@ -671,6 +715,14 @@ export const router: RouteObject[] = [
         async lazy() {
             const PrintOrder = await import("./components/routes/product-widget/PrintOrder");
             return { Component: PrintOrder.default };
+        },
+        errorElement: <ErrorPage />
+    },
+    {
+        path: "/venue/:eventId/:attendeeShortId",
+        async lazy() {
+            const AttendeeAttendance = await import("./components/routes/product-widget/AttendeeAttendance");
+            return { Component: AttendeeAttendance.default };
         },
         errorElement: <ErrorPage />
     },

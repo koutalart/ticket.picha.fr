@@ -1,4 +1,4 @@
-import React, {FC, PropsWithChildren, useCallback, useEffect} from "react";
+import React, {FC, PropsWithChildren, useCallback, useEffect, useSyncExternalStore} from "react";
 import {MantineProvider} from "@mantine/core";
 import {Notifications} from "@mantine/notifications";
 import {i18n} from "@lingui/core";
@@ -24,7 +24,9 @@ import {getConfig} from "./utilites/config.ts";
 import {CookieConsentBanner} from "./components/common/CookieConsentBanner";
 import {isConsentPending, setConsentState, updateGoogleConsentMode} from "./utilites/trackingPixels/consent";
 import {captureQrLinkCodeFromUrl} from "./utilites/qrAttribution";
+import {captureContactCodeFromUrl} from "./utilites/contactLinkAttribution";
 import "./utilites/dateLocales.ts";
+import {getCustomerAddressForm, subscribeToCustomerAddressForm} from "./locales.ts";
 import {getAppName} from "./utilites/branding.ts";
 
 declare global {
@@ -42,6 +44,11 @@ export const App: FC<
     }>
 > = (props) => {
     const [isLoadedOnBrowser, setIsLoadedOnBrowser] = React.useState(false);
+    const customerAddressForm = useSyncExternalStore(
+        subscribeToCustomerAddressForm,
+        getCustomerAddressForm,
+        getCustomerAddressForm,
+    );
     const showGlobalConsentBanner = getConfig('VITE_COOKIE_CONSENT_ENABLED') === 'true'
         && !isSsr() && isConsentPending();
 
@@ -54,6 +61,7 @@ export const App: FC<
     useEffect(() => {
         setIsLoadedOnBrowser(!isSsr());
         captureQrLinkCodeFromUrl();
+        captureContactCodeFromUrl();
     }, []);
 
     return (
@@ -101,7 +109,9 @@ export const App: FC<
                                               href={getConfig("VITE_APP_FAVICON", "/favicon.svg")}
                                         />
                                     </Helmet>
-                                    {props.children}
+                                    <React.Fragment key={customerAddressForm}>
+                                        {props.children}
+                                    </React.Fragment>
                                 </ModalsProvider>
                                 <Notifications/>
                                 {showGlobalConsentBanner && (

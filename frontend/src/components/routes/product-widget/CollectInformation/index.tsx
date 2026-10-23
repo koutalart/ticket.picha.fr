@@ -28,7 +28,7 @@ import {getConfig} from "../../../../utilites/config.ts";
 import {HomepageInfoMessage} from "../../../common/HomepageInfoMessage";
 import {InlineOrderSummary} from "../../../common/InlineOrderSummary";
 import {eventCheckoutPath, eventHomepagePath} from "../../../../utilites/urlHelper.ts";
-import {showInfo} from "../../../../utilites/notifications.tsx";
+import {showError, showInfo} from "../../../../utilites/notifications.tsx";
 import countries from "../../../../../data/countries.json";
 import classes from "./CollectInformation.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
@@ -76,6 +76,13 @@ export const CollectInformation = () => {
     const requireBillingAddress = event?.settings?.require_billing_address;
     const isPerOrderCollection = event?.settings?.attendee_details_collection_method === 'PER_ORDER';
     const allowCopyToAllAttendees = event?.settings?.allow_copy_details_to_all_attendees ?? true;
+    const ageRestrictionRule = event?.settings?.age_restriction_rule ?? 'NONE';
+    const isAgeCheckEnabled = ageRestrictionRule === 'ACCOMPANIED_MINORS' || ageRestrictionRule === 'MINIMUM_AGE';
+    const ageLimit = event?.settings?.age_restriction_minimum_age ?? 18;
+    const ageRestrictionHint = ageRestrictionRule === 'MINIMUM_AGE'
+        ? t`This event is restricted to attendees aged ${ageLimit} or over.`
+        : t`Attendees under ${ageLimit} must be accompanied by an adult registered in the same order.`;
+    const todayIsoDate = new Date().toISOString().slice(0, 10);
     const isFreeEvent = !!order
         && !order.is_payment_required
         && (orderItems?.length ?? 0) > 0
@@ -111,6 +118,7 @@ export const CollectInformation = () => {
                 email_confirmation: "",
                 product_price_id: "",
                 product_id: "",
+                birth_date: "",
                 questions: {},
             }],
         },
@@ -125,6 +133,13 @@ export const CollectInformation = () => {
                     const product = values.products[index];
                     if (product && product.email !== value) {
                         return t`Email addresses do not match`;
+                    }
+                    return null;
+                },
+                birth_date: (value, _values, path) => {
+                    const index = parseInt(path.split('.')[1]);
+                    if (isAgeCheckEnabled && getTicketAttendeeIndices().includes(index) && !value) {
+                        return t`Date of birth is required`;
                     }
                     return null;
                 },
@@ -243,6 +258,10 @@ export const CollectInformation = () => {
         onError: (error: any) => {
             if (error?.response?.data?.errors && Object.keys(error?.response?.data?.errors).length > 0) {
                 form.setErrors(error.response.data.errors);
+                const firstError = Object.values(error.response.data.errors).flat()[0];
+                if (firstError) {
+                    showError(String(firstError));
+                }
             } else if (error?.response?.data?.message) {
                 notifications.show({
                     message: error?.response?.data?.message,
@@ -284,6 +303,7 @@ export const CollectInformation = () => {
                     last_name: "",
                     email: "",
                     email_confirmation: "",
+                    birth_date: "",
                     questions: productIdToQuestionMap.get(orderItem?.product_id)?.map((question: Question) => {
                         return {
                             question_id: question.id,
@@ -311,7 +331,7 @@ export const CollectInformation = () => {
     }
 
     const handleSubmit = (values: any) => {
-        if (isFreeEvent) {
+        if (isFreeEvent && !isPerOrderCollection) {
             const firstTicketIndex = getFirstTicketAttendeeIndex();
             const firstParticipant = firstTicketIndex >= 0 ? values.products?.[firstTicketIndex] : null;
             if (firstParticipant) {
@@ -457,7 +477,7 @@ export const CollectInformation = () => {
                     <InlineOrderSummary event={event} order={order} defaultExpanded={true}/>
                 )}
 
-                {!isFreeEvent && (
+                {(!isFreeEvent || isPerOrderCollection) && (
                     <>
                 <h2 className={classes.sectionHeading}>
                     {t`Your Details`}
@@ -616,12 +636,13 @@ export const CollectInformation = () => {
                     const product = products?.find(product => product!.id === orderItem.product_id);
                     const productRequiresDetails = product?.product_type === 'TICKET' && !isPerOrderCollection;
                     const productHasQuestions = productQuestions?.some(question => question.product_ids?.includes(orderItem.product_id));
+                    const productRequiresBirthDate = product?.product_type === 'TICKET' && isAgeCheckEnabled;
 
                     if (!product) {
                         return null;
                     }
 
-                    if (!productRequiresDetails && !productHasQuestions) {
+                    if (!productRequiresDetails && !productHasQuestions && !productRequiresBirthDate) {
                         // Still increment productIndex for each item in the quantity
                         // to maintain correct form field indices
                         productIndex += orderItem.quantity ?? 0;
@@ -725,6 +746,19 @@ export const CollectInformation = () => {
                                                     />
                                                 </InputGroup>
                                             </>
+                                        )}
+
+                                        {productRequiresBirthDate && (
+                                            <InputGroup>
+                                                <TextInput
+                                                    withAsterisk
+                                                    type={"date"}
+                                                    label={t`Date of birth`}
+                                                    description={ageRestrictionHint}
+                                                    max={todayIsoDate}
+                                                    {...form.getInputProps(`products.${currentProductIndex}.birth_date`)}
+                                                />
+                                            </InputGroup>
                                         )}
 
                                         {productQuestions &&

@@ -155,7 +155,7 @@ export const OrdersTable = ({orders, event}: OrdersTableProps) => {
                         <Menu.Item onClick={() => handleModalClick(order.id, messageModal)}
                                    leftSection={<IconSend size={14}/>}>{t`Message buyer`}</Menu.Item>
                         <Menu.Item onClick={() => {
-                                       const url = eventCheckoutUrl(order.event_id, order.short_id, 'summary');
+                                       const url = eventCheckoutUrl(order.event_id, order.short_id, 'summary', event.organizer);
                                        clipboard.copy(url);
                                        showSuccess(t`Customer link copied to clipboard`);
                                    }}

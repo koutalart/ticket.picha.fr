@@ -10,6 +10,7 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Helper\IdHelper;
 use HiEvents\Mail\Order\OrderDetailsChangedMail;
 use HiEvents\Repository\Eloquent\Value\Relationship;
@@ -26,6 +27,7 @@ class SelfServiceEditOrderService
         private readonly EventRepositoryInterface $eventRepository,
         private readonly OrderAuditLogService $orderAuditLogService,
         private readonly SendOrderDetailsService $sendOrderDetailsService,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     public function editOrder(
@@ -143,7 +145,7 @@ class SelfServiceEditOrderService
     ): void {
         $changedFields = $this->formatChangedFields($oldValues, $newValues);
 
-        Mail::to($oldEmail)->locale(CustomerLocale::get())->queue(new OrderDetailsChangedMail(
+        Mail::to($oldEmail)->locale($this->customerLocaleResolver->forEvent($event))->queue(new OrderDetailsChangedMail(
             event: $event,
             organizer: $event->getOrganizer(),
             eventSettings: $event->getEventSettings(),

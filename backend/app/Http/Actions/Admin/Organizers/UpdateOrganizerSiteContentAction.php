@@ -72,6 +72,7 @@ class UpdateOrganizerSiteContentAction extends BaseAction
             'practical' => 'nullable|array|max:6',
             'practical.*.title' => 'required|string|max:80',
             'practical.*.text' => 'nullable|string|max:400',
+            'redirect_to_current_event' => 'nullable|boolean',
         ]);
 
         try {

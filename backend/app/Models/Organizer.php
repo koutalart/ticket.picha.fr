@@ -29,6 +29,11 @@ class Organizer extends BaseModel
         return $this->hasOne(OrganizerSetting::class);
     }
 
+    public function organizer_fonts(): HasMany
+    {
+        return $this->hasMany(OrganizerFont::class);
+    }
+
     public function webhooks(): HasMany
     {
         return $this->hasMany(Webhook::class);

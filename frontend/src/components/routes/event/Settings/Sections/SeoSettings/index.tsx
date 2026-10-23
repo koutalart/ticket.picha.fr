@@ -1,9 +1,9 @@
 import {t} from "@lingui/macro";
-import {Button, Switch, TextInput} from "@mantine/core";
+import {Button, Select, Switch, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {useParams} from "react-router";
 import {useEffect} from "react";
-import {EventSettings} from "../../../../../../types.ts";
+import {EventSettings, SchemaEventType} from "../../../../../../types.ts";
 import {Card} from "../../../../../common/Card";
 import {showSuccess} from "../../../../../../utilites/notifications.tsx";
 import {useFormErrorResponseHandler} from "../../../../../../hooks/useFormErrorResponseHandler.tsx";
@@ -27,6 +27,7 @@ export const SeoSettings = () => {
             seo_title: '',
             seo_description: '',
             seo_keywords: '',
+            schema_event_type: 'Event' as SchemaEventType,
         }
     });
     const formErrorHandle = useFormErrorResponseHandler();
@@ -38,6 +39,7 @@ export const SeoSettings = () => {
                 seo_title: eventSettingsQuery.data.seo_title,
                 seo_description: eventSettingsQuery.data.seo_description,
                 seo_keywords: eventSettingsQuery.data.seo_keywords,
+                schema_event_type: eventSettingsQuery.data.schema_event_type || 'Event',
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -81,6 +83,23 @@ export const SeoSettings = () => {
                         description={t`Comma seperated keywords that describe the event. These will be used by search engines to help categorize and index the event`}
                         label={t`SEO Keywords`}
                         placeholder={t`Amazing, Event, Keywords...`}
+                    />
+                    <Select
+                        {...form.getInputProps('schema_event_type')}
+                        label={t`Event type`}
+                        description={t`Helps search engines and AI assistants understand your event. Leave "Event" if no other type fits.`}
+                        allowDeselect={false}
+                        data={[
+                            {value: 'Event', label: t`Event`},
+                            {value: 'MusicEvent', label: t`Concert or music event`},
+                            {value: 'TheaterEvent', label: t`Theatre or show`},
+                            {value: 'ComedyEvent', label: t`Comedy show`},
+                            {value: 'SportsEvent', label: t`Sports event`},
+                            {value: 'Festival', label: t`Festival`},
+                            {value: 'BusinessEvent', label: t`Professional event`},
+                            {value: 'EducationEvent', label: t`Training or conference`},
+                            {value: 'SocialEvent', label: t`Social or community event`},
+                        ]}
                     />
                     {eventImagesQuery.isFetched && (
                         <ImageUploadDropzone

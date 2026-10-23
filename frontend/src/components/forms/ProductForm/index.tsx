@@ -1,6 +1,14 @@
 import {t, Trans} from "@lingui/macro";
 import {UseFormReturnType} from "@mantine/form";
-import {Event, Product, ProductPriceType, TaxAndFee, TaxAndFeeCalculationType, TaxAndFeeType} from "../../../types.ts";
+import {
+    Event,
+    Product,
+    ProductPriceType,
+    ProductType,
+    TaxAndFee,
+    TaxAndFeeCalculationType,
+    TaxAndFeeType
+} from "../../../types.ts";
 import {
     ActionIcon,
     Alert,
@@ -40,6 +48,7 @@ import {CustomSelect, ItemProps} from "../../common/CustomSelect";
 import {formatCurrency, getCurrencySymbol} from "../../../utilites/currency.ts";
 import {useGetEvent} from "../../../queries/useGetEvent.ts";
 import {useGetTaxesAndFees} from "../../../queries/useGetTaxesAndFees.ts";
+import {useGetEventProductCategories} from "../../../queries/useGetProductCategories.ts";
 import {Card} from "../../common/Card";
 import classes from './ProductForm.module.scss';
 import {Fieldset} from "../../common/Fieldset";
@@ -185,6 +194,12 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
     const isDonationProduct = form.values.type === 'DONATION';
     const {data: event} = useGetEvent(eventId);
     const {data: taxesAndFees} = useGetTaxesAndFees();
+    const {data: productCategories} = useGetEventProductCategories(eventId);
+
+    const unlockSourceOptions: ComboboxItem[] = (productCategories?.data ?? [])
+        .flatMap((category) => category.products ?? [])
+        .filter((candidate) => candidate.product_type === ProductType.Ticket && String(candidate.id) !== String(product?.id))
+        .map((candidate) => ({value: String(candidate.id), label: candidate.title}));
 
     const handleTaxOrFeeCreated = (taxOrFee: TaxAndFee) => {
         const currentIds = form.values.tax_and_fee_ids || [];
@@ -481,6 +496,17 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                             <DateTimeInput {...form.getInputProps('sale_end_date')}
                                        label={t`Sale End Date`}/>
                         </InputGroup>
+                        <Select
+                            mt={15}
+                            clearable
+                            label={t`Open this ticket when this ticket is sold out`}
+                            description={t`Until the selected ticket is sold out, this ticket stays hidden online and at the box office. It opens automatically the moment the last place is taken.`}
+                            placeholder={t`None`}
+                            data={unlockSourceOptions}
+                            value={form.values.unlock_after_product_id ? String(form.values.unlock_after_product_id) : null}
+                            onChange={(value) => form.setFieldValue('unlock_after_product_id', value ? Number(value) : null)}
+                            error={form.errors.unlock_after_product_id}
+                        />
                     </Fieldset>
 
                     <Fieldset legend={

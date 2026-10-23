@@ -5,7 +5,7 @@
 
 @php /** @see \HiEvents\Mail\Order\PaymentSuccessButOrderExpiredMail */ @endphp
 
-<x-mail::message>
+<x-mail::message :emailLogo="$emailLogo ?? null">
 {{ __('Hello') }},
 
 <p>

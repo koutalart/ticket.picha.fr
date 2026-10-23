@@ -24,7 +24,7 @@
 
 <x-mail::message
     :isFreeEvent="$isFreeEvent ?? false"
-    :organizerLogoUrl="$organizerLogoUrl ?? null"
+    :emailLogo="$emailLogo ?? null"
     :organizer="$organizer ?? null"
 >
 # {{ $event->getTitle() }} 🎉

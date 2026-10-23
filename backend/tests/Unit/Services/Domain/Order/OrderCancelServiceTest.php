@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Event;
 use Mockery as m;
 use Tests\TestCase;
 use Throwable;
+use Tests\Unit\Support\StaticCustomerLocaleResolver;
 
 class OrderCancelServiceTest extends TestCase
 {
@@ -70,6 +71,7 @@ class OrderCancelServiceTest extends TestCase
             productQuantityService: $this->productQuantityService,
             domainEventDispatcherService: $this->domainEventDispatcherService,
             eventStatisticsCancellationService: $this->eventStatisticsCancellationService,
+            customerLocaleResolver: new StaticCustomerLocaleResolver,
         );
     }
 

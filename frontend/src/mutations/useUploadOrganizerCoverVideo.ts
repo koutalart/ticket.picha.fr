@@ -7,10 +7,11 @@ export const useUploadOrganizerCoverVideo = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({organizerId, video}: {
+        mutationFn: ({organizerId, video, mobile = false}: {
             organizerId: IdParam,
             video: File,
-        }) => organizerClient.uploadCoverVideo(organizerId, video),
+            mobile?: boolean,
+        }) => organizerClient.uploadCoverVideo(organizerId, video, mobile),
 
         onSuccess: (_, variables) => queryClient.invalidateQueries({
             queryKey: [GET_ORGANIZER_QUERY_KEY, variables.organizerId],

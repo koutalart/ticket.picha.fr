@@ -5,6 +5,7 @@ import {
     IdParam,
     Order,
     QueryFilters,
+    QuestionAnswerFileUpload,
     StripePaymentIntent
 } from "../types.ts";
 import {api} from "./client.ts";
@@ -49,6 +50,7 @@ export interface ProductFormPayload {
     promo_code: string | null,
     affiliate_code?: string | null,
     qr_link_code?: string | null,
+    contact_code?: string | null,
     tracking_context?: OrderTrackingContext | null,
     session_identifier?: string,
 }
@@ -204,6 +206,19 @@ export const orderClientPublic = {
         );
 
         return new Blob([response.data]);
+    },
+
+    uploadQuestionFile: async (eventId: IdParam, orderShortId: IdParam, questionId: IdParam, file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('question_id', String(questionId));
+
+        const response = await publicApi.post<GenericDataResponse<QuestionAnswerFileUpload>>(
+            withSessionIdentifier(`events/${eventId}/order/${orderShortId}/question-files`),
+            formData,
+            {headers: {'Content-Type': 'multipart/form-data'}},
+        );
+        return response.data;
     },
 
     abandonOrder: async (eventId: IdParam, orderShortId: IdParam) => {

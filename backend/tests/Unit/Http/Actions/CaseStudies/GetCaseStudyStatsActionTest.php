@@ -55,4 +55,24 @@ class GetCaseStudyStatsActionTest extends TestCase
         $this->getJson('/public/case-study-stats?event_ids=4;DROP', ['Authorization' => 'Bearer secret-token'])
             ->assertUnprocessable();
     }
+
+    public function test_finds_events_ended_since_a_date(): void
+    {
+        config(['app.case_study_stats_token' => 'secret-token']);
+        $this->handler->shouldReceive('findEventIdsEndedSince')->once()->with('2026-10-12', 20)->andReturn([7, 13]);
+        $this->handler->shouldReceive('handle')->once()->with([7, 13])->andReturn([]);
+
+        $this->getJson('/public/case-study-stats?ended_since=2026-10-12', ['Authorization' => 'Bearer secret-token'])
+            ->assertOk()
+            ->assertExactJson(['data' => []]);
+    }
+
+    public function test_requires_event_ids_or_ended_since(): void
+    {
+        config(['app.case_study_stats_token' => 'secret-token']);
+        $this->handler->shouldNotReceive('handle');
+
+        $this->getJson('/public/case-study-stats', ['Authorization' => 'Bearer secret-token'])->assertUnprocessable();
+        $this->getJson('/public/case-study-stats?ended_since=12-10-2026', ['Authorization' => 'Bearer secret-token'])->assertUnprocessable();
+    }
 }

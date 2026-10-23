@@ -1,0 +1,803 @@
+@use "../../../../styles/mixins.scss";
+
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+$text: #fff;
+$text-soft: rgba(255, 255, 255, 0.78);
+$text-muted: rgba(255, 255, 255, 0.6);
+$line: rgba(255, 255, 255, 0.4);
+$accent: var(--event-primary-color, #b8963e);
+$error: #ffb4a8;
+
+.root {
+  position: relative;
+  z-index: 1;
+  color: $text;
+  font-family: var(--theme-font-family, inherit);
+  @include mixins.immersive-scrim;
+}
+
+.panel {
+  max-width: 720px;
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: clamp(48px, 14vh, 140px) 20px clamp(28px, 5vh, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  scroll-margin-top: 0;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.1rem;
+  color: $text-soft;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $text-soft;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  svg {
+    color: $accent;
+  }
+}
+
+.progress {
+  position: relative;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  margin-bottom: clamp(32px, 6vh, 56px);
+}
+
+.progressBar {
+  position: absolute;
+  inset: 0;
+  background: $accent;
+  transform-origin: left center;
+  transition: transform 0.5s $ease;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.form {
+  display: block;
+  margin-bottom: clamp(36px, 7vh, 72px);
+}
+
+.stage {
+  position: relative;
+}
+
+@keyframes stepInForward {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes stepInBackward {
+  from {
+    opacity: 0;
+    transform: translateY(-28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+$step-ease: cubic-bezier(0.45, 0, 0.2, 1);
+$step-leave-duration: 420ms;
+$step-enter-duration: 480ms;
+$step-enter-delay: 160ms;
+$step-shift: 56px;
+
+@keyframes stepLeaveUp {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  55% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, -$step-shift, 0);
+  }
+}
+
+@keyframes stepLeaveDown {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  55% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, $step-shift, 0);
+  }
+}
+
+@keyframes stepEnterFromBelow {
+  from {
+    opacity: 0;
+    transform: translate3d(0, $step-shift, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes stepEnterFromAbove {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -$step-shift, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.step {
+  outline: none;
+  display: flex;
+  flex-direction: column;
+
+  &[data-phase="leave"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    animation: stepLeaveUp $step-leave-duration $step-ease both;
+  }
+
+  &[data-phase="leave"][data-direction="backward"] {
+    animation-name: stepLeaveDown;
+  }
+
+  &[data-phase="enter"] {
+    animation: stepEnterFromBelow $step-enter-duration $step-ease $step-enter-delay both;
+  }
+
+  &[data-phase="enter"][data-direction="backward"] {
+    animation-name: stepEnterFromAbove;
+  }
+}
+
+.consents {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 22px;
+  max-width: 560px;
+}
+
+.consent {
+  --checkbox-size: 18px;
+}
+
+.consentBody {
+  align-items: flex-start;
+}
+
+.consentInput {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.consentLabel {
+  font-family: var(--theme-font-family, inherit);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: $text-soft;
+  cursor: pointer;
+}
+
+.stepTitle,
+.questionLabel {
+  display: block;
+  margin: 0 0 10px;
+  font-family: var(--theme-font-family, inherit);
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  color: $text !important;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+}
+
+.stepHelp {
+  margin: 0 0 28px;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  color: $text-soft;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.fieldStack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.field {
+  --input-bd: transparent;
+}
+
+.fieldLabel {
+  font-family: var(--theme-font-family, inherit);
+  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+  font-weight: 600;
+  color: $text;
+  margin-bottom: 4px;
+}
+
+.fieldRequired {
+  color: $accent;
+  margin-left: 2px;
+}
+
+.fieldDescription {
+  color: $text-muted;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: $text;
+  }
+}
+
+.fieldInput {
+  font-family: var(--theme-font-family, inherit);
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem) !important;
+  height: auto !important;
+  min-height: 52px;
+  padding: 10px 2px !important;
+  color: $text !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 2px solid $line !important;
+  border-radius: 0 !important;
+  transition: border-color 0.2s ease;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  &:focus,
+  &:focus-visible {
+    border-bottom-color: $accent !important;
+    outline: none;
+  }
+
+  &[data-error] {
+    border-bottom-color: $error !important;
+  }
+
+  &[type="date"] {
+    color-scheme: dark;
+  }
+}
+
+textarea.fieldInput {
+  padding-top: 12px !important;
+}
+
+.fieldError {
+  color: $error;
+  font-size: 0.95rem;
+  margin-top: 8px;
+}
+
+.selectDropdown {
+  background: #141a2b;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: $text;
+  font-family: var(--theme-font-family, inherit);
+}
+
+.selectOption {
+  font-size: 1.05rem;
+  padding: 10px 12px;
+  color: $text;
+
+  &[data-combobox-selected],
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &[data-checked] {
+    color: $accent;
+  }
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  max-width: 560px;
+}
+
+.choiceCard {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.32);
+  color: $text;
+  text-align: left;
+  font-family: var(--theme-font-family, inherit);
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.11);
+  }
+
+  &[data-checked] {
+    border-color: $accent;
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+.choiceInner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.choiceIndicator {
+  flex: none;
+  margin-top: 2px;
+  --checkbox-color: var(--event-primary-color);
+  --radio-color: var(--event-primary-color);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.choiceText {
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  line-height: 1.4;
+}
+
+.participants {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.participant {
+  padding: 18px 20px 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  animation: stepInForward 0.4s $ease both;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.participantHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.participantNumber {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: $accent;
+  color: var(--event-accent-contrast, #000);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.participantTitle {
+  flex: 1;
+  margin: 0;
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+  font-weight: 700;
+}
+
+.participantTag {
+  margin-left: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $text-muted;
+}
+
+.participantQuestion {
+  margin-top: 2px;
+
+  .choices {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .choiceCard {
+    width: auto;
+    min-width: 110px;
+  }
+}
+
+.removeButton {
+  color: $text-soft;
+
+  &:hover {
+    color: $text;
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.addRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.55);
+  background: transparent;
+  color: $text;
+  font-family: var(--theme-font-family, inherit);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $accent;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 3px;
+  }
+}
+
+.addHint {
+  font-size: 0.9rem;
+  color: $text-muted;
+}
+
+.summary {
+  margin: 8px 0 24px;
+  display: grid;
+  gap: 16px;
+
+  div {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+
+  dt {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $text-muted;
+    padding-top: 3px;
+  }
+
+  dd {
+    margin: 0;
+    font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+}
+
+.summaryLine {
+  display: block;
+}
+
+.optIn {
+  margin-top: 4px;
+  --checkbox-color: var(--event-primary-color);
+}
+
+.optInLabel {
+  color: $text-soft;
+  font-size: 0.95rem;
+}
+
+.preCheckout {
+  margin-top: 18px;
+  color: $text-soft;
+  font-size: 0.95rem;
+}
+
+.tosNotice {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  color: $text-muted;
+
+  a {
+    color: $text;
+  }
+}
+
+.stepError {
+  margin-top: 22px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(255, 90, 70, 0.16);
+  border: 1px solid rgba(255, 140, 120, 0.5);
+  color: #ffe2dc;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+}
+
+.nav {
+  margin-top: clamp(28px, 5vh, 44px);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+}
+
+.nextButton {
+  height: 54px;
+  padding: 0 28px;
+  border-radius: 999px;
+  background: $accent;
+  color: var(--event-accent-contrast, #000);
+  font-family: var(--theme-font-family, inherit);
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: 0;
+  transition: transform 0.15s ease, filter 0.2s ease;
+
+  &:hover {
+    background: $accent;
+    filter: brightness(1.08);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 600px) {
+    flex: 1 1 auto;
+  }
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 54px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  background: transparent;
+  color: $text;
+  font-family: var(--theme-font-family, inherit);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.enterHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: $text-muted;
+
+  @media (hover: none) {
+    display: none;
+  }
+}
+
+.codeRow {
+  margin-top: auto;
+  padding-top: 18px;
+  font-size: 0.95rem;
+  color: $text-soft;
+}
+
+.alreadyRegisteredRow {
+  padding-top: 14px;
+  font-size: 0.95rem;
+  color: $text-soft;
+}
+
+.linkButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $text-soft;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+
+  &:hover {
+    color: $text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 3px;
+  }
+}
+
+.codeForm {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+}
+
+.codeField {
+  flex: 1 1 220px;
+  max-width: 320px;
+
+  input {
+    text-transform: uppercase;
+    font-size: 1.1rem !important;
+    min-height: 44px;
+  }
+}
+
+.codeApply {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1.5px solid $accent;
+  background: transparent;
+  color: $text;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.codeApplied {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  color: $text;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step,
+  .step[data-phase],
+  .participant {
+    animation: none !important;
+  }
+
+  .progressBar {
+    transition: none;
+  }
+}
+
+.comingSoon {
+  max-width: 960px;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+}
+
+.comingSoonTitle {
+  margin: 0;
+  font-size: clamp(1.9rem, 4.4vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}

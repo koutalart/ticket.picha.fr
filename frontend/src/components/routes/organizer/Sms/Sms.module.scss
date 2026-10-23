@@ -1,0 +1,399 @@
+.pageHeader {
+  margin-bottom: 16px;
+}
+
+.pageTitle {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.pageIntro {
+  margin: 0;
+  max-width: 680px;
+  font-size: 14px;
+  color: var(--mantine-color-dimmed);
+}
+
+.inbox {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr) 260px;
+  height: calc(100vh - 220px);
+  min-height: 480px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-body);
+  overflow: hidden;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 280px minmax(0, 1fr);
+
+    .templateMenu {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.customerColumn {
+      display: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+
+    .threadColumn {
+      display: none;
+    }
+
+    &[data-has-selection] {
+      .listColumn {
+        display: none;
+      }
+
+      .threadColumn {
+        display: flex;
+        height: auto;
+      }
+
+      .messages {
+        flex: none;
+        max-height: 55dvh;
+      }
+    }
+
+    margin-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.listColumn {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--mantine-color-default-border);
+}
+
+.listFilters {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.listItems {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.listItem {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+
+  &:hover {
+    background: var(--mantine-color-default-hover);
+  }
+
+  &[data-active] {
+    background: var(--mantine-primary-color-light);
+  }
+
+  &[data-unread] .listItemName,
+  &[data-unread] .listItemPreview {
+    font-weight: 700;
+    color: var(--mantine-color-text);
+  }
+}
+
+.listItemTop,
+.listItemBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.listItemName {
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listItemDate,
+.listItemPhone {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--mantine-color-dimmed);
+}
+
+.listItemPreview {
+  font-size: 13px;
+  color: var(--mantine-color-dimmed);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.threadColumn {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.threadHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.threadTitle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  &:hover .threadName {
+    text-decoration: underline;
+  }
+}
+
+.threadName {
+  color: var(--mantine-primary-color-filled);
+}
+
+.customerSheet {
+  display: flex;
+  flex-direction: column;
+}
+
+.customerSummary {
+  padding: 10px 12px;
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-primary-color-light);
+}
+
+.backButton {
+  display: none;
+
+  @media (max-width: 760px) {
+    display: inline-flex;
+  }
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--mantine-color-gray-0);
+
+  @mixin dark {
+    background: var(--mantine-color-dark-8);
+  }
+}
+
+.bubbleRow {
+  display: flex;
+
+  &[data-direction='OUTBOUND'] {
+    justify-content: flex-end;
+  }
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--mantine-color-body);
+  border: 1px solid var(--mantine-color-default-border);
+
+  &[data-direction='OUTBOUND'] {
+    background: var(--mantine-primary-color-filled);
+    border-color: transparent;
+    color: var(--mantine-color-white);
+
+    .bubbleMeta {
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  &[data-failed] {
+    background: var(--mantine-color-red-light);
+    color: var(--mantine-color-text);
+
+    .bubbleMeta {
+      color: var(--mantine-color-red-text);
+    }
+  }
+}
+
+.bubbleContent {
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bubbleMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--mantine-color-dimmed);
+}
+
+.statusIcon {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+
+  &[data-status='FAILED'],
+  &[data-status='EXPIRED'] {
+    color: var(--mantine-color-red-text);
+  }
+}
+
+.bubbleError {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.composer {
+  padding: 12px;
+  border-top: 1px solid var(--mantine-color-default-border);
+}
+
+.composerFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.composerActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+
+  .composerSend {
+    margin-left: 4px;
+  }
+}
+
+.customerColumn {
+  padding: 16px;
+  border-left: 1px solid var(--mantine-color-default-border);
+  overflow-y: auto;
+}
+
+.orders {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viewSwitch {
+  margin-bottom: 16px;
+}
+
+.campaigns {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campaign {
+  padding: 16px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-body);
+}
+
+.campaignHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.campaignName {
+  margin: 0 0 2px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.campaignKpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.kpi {
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--mantine-color-default-hover);
+}
+
+.kpiValue {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.kpiLabel {
+  font-size: 12px;
+  color: var(--mantine-color-dimmed);
+}
+
+.recipientName {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.reminderIntro {
+  flex: 1 1 320px;
+  max-width: 640px;
+}
+
+.reminderPreview {
+  padding: 12px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+}
+
+.reminderSample {
+  margin: 4px 0 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--mantine-color-default-hover);
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

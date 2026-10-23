@@ -11,7 +11,7 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\StripePaymentDomainObject;
 use HiEvents\Exceptions\Stripe\StripeClientConfigurationException;
-use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Mail\Order\PaymentSuccessButOrderExpiredMail;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -30,7 +30,7 @@ readonly class StripeRefundExpiredOrderService
         private LoggerInterface $logger,
         private EventRepositoryInterface $eventRepository,
         private StripeClientFactory $stripeClientFactory,
-
+        private CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     /**
@@ -67,7 +67,7 @@ readonly class StripeRefundExpiredOrderService
 
         $this->mailer
             ->to($order->getEmail())
-            ->locale(CustomerLocale::get())
+            ->locale($this->customerLocaleResolver->forEvent($event))
             ->send(new PaymentSuccessButOrderExpiredMail(
                 order: $order,
                 event: $event,

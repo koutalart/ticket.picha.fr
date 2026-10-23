@@ -16,10 +16,13 @@ use HiEvents\Services\Infrastructure\Meta\MetaConversionsApiClient;
 use Mockery;
 use Mockery\MockInterface;
 use Psr\Log\NullLogger;
+use Tests\Support\FakesPublicBaseUrl;
 use Tests\TestCase;
 
 class MetaPurchaseConversionServiceTest extends TestCase
 {
+    use FakesPublicBaseUrl;
+
     private OrderRepositoryInterface|MockInterface $orderRepository;
 
     private EventRepositoryInterface|MockInterface $eventRepository;
@@ -38,6 +41,7 @@ class MetaPurchaseConversionServiceTest extends TestCase
         $this->eventRepository = Mockery::mock(EventRepositoryInterface::class);
         $this->settingsRepository = Mockery::mock(OrganizerSettingsRepositoryInterface::class);
         $this->client = Mockery::mock(MetaConversionsApiClient::class);
+        $this->fakePublicBaseUrl();
 
         $this->service = new MetaPurchaseConversionService(
             $this->orderRepository,

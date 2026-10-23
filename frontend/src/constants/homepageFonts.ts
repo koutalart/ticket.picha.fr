@@ -1,3 +1,5 @@
+import {OrganizerCustomFont} from "../types.ts";
+
 export interface HomepageFontDefinition {
     value: string;
     label: string;
@@ -52,7 +54,42 @@ export const getHomepageFont = (value: string | null | undefined): HomepageFontD
     return FONT_LOOKUP[DEFAULT_HOMEPAGE_FONT];
 };
 
-export const buildHomepageFontStack = (value: string | null | undefined): string => {
+/**
+ * Special value stored in homepage_theme_settings.font_family to use the font files uploaded by the organizer.
+ * Kept in sync with HomepageFontFamily::OrganizerFont on the backend.
+ */
+export const ORGANIZER_FONT_VALUE = 'organizer_font';
+
+export const ORGANIZER_FONT_FALLBACK = 'Montserrat';
+
+const organizerFontFallbackStack = `'${ORGANIZER_FONT_FALLBACK}', sans-serif`;
+
+export const hasUsableOrganizerFont = (
+    organizerFont: OrganizerCustomFont | null | undefined,
+): organizerFont is OrganizerCustomFont => {
+    return !!organizerFont?.family_name && !!organizerFont.files?.some(file => file.weight === 400);
+};
+
+export const isOrganizerFontActive = (
+    value: string | null | undefined,
+    organizerFont: OrganizerCustomFont | null | undefined,
+): organizerFont is OrganizerCustomFont => {
+    return value === ORGANIZER_FONT_VALUE && hasUsableOrganizerFont(organizerFont);
+};
+
+export const sanitizeFontFamilyName = (name: string): string => name.replace(/[^\p{L}\p{N} _.-]/gu, '').trim();
+
+export const buildHomepageFontStack = (
+    value: string | null | undefined,
+    organizerFont?: OrganizerCustomFont | null,
+): string => {
+    if (value === ORGANIZER_FONT_VALUE) {
+        if (hasUsableOrganizerFont(organizerFont)) {
+            return `'${sanitizeFontFamilyName(organizerFont.family_name)}', ${organizerFontFallbackStack}`;
+        }
+        return organizerFontFallbackStack;
+    }
+
     const font = getHomepageFont(value);
     return `'${font.value}', ${font.stack}`;
 };

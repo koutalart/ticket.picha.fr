@@ -8,6 +8,7 @@ import {
     IconEye,
     IconEyeOff,
     IconBrowser,
+    IconFiles,
     IconMailCheck,
     IconMailForward,
     IconPaint,
@@ -99,6 +100,7 @@ const EventLayout = () => {
         {label: t({message: 'Setup', context: 'event menu'})},
         {link: 'settings', label: t({message: 'Settings', context: 'event menu'}), icon: IconSettings},
         {link: 'homepage-designer', label: t({message: 'Event page', context: 'event menu'}), icon: IconBrowser},
+        {link: 'pages', label: t({message: 'Event pages', context: 'event menu'}), icon: IconFiles},
         {link: 'products', label: t({message: 'Tickets', context: 'event menu'}), icon: IconTicket},
         {link: 'questions', label: t`Registration Questions`, icon: IconUserQuestion},
 

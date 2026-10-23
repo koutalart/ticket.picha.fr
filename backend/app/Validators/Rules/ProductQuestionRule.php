@@ -50,6 +50,7 @@ class ProductQuestionRule extends BaseQuestionRule
     protected function validateQuestions(mixed $products): array
     {
         $validationMessages = [];
+        $usedFileIds = [];
 
         foreach ($products as $productIndex => $productRequestData) {
             $productDomainObject = $this->getProductDomainObject($productRequestData['product_id']);
@@ -91,6 +92,7 @@ class ProductQuestionRule extends BaseQuestionRule
                 }
 
                 $validationMessages = $this->validateResponseLength($questionDomainObject, $response, $key, $validationMessages);
+                $validationMessages = $this->validateFileAnswer($questionDomainObject, $answer, $key, $validationMessages, $usedFileIds);
             }
         }
 

@@ -11,6 +11,10 @@ import {MiscSettings} from "./Sections/MiscSettings";
 import {PaymentAndInvoicingSettings} from "./Sections/PaymentSettings";
 import {PlatformFeesSettings} from "./Sections/PlatformFeesSettings";
 import {WaitlistSettings} from "./Sections/WaitlistSettings";
+import {AttendanceResponseSettings} from "./Sections/AttendanceResponseSettings";
+import {EmbeddedRegistrationSettings} from "./Sections/EmbeddedRegistrationSettings";
+import {SmsConfirmationSettings} from "./Sections/SmsConfirmationSettings";
+import {SmsCancellationSettings} from "./Sections/SmsCancellationSettings";
 import {DangerZoneSettings} from "./Sections/DangerZoneSettings";
 import {useGetAccount} from "../../../../queries/useGetAccount.ts";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
@@ -46,15 +50,19 @@ export const Settings = () => {
             label: t({message: 'Sales', context: 'event settings tab'}),
             sections: [
                 {id: 'homepage-settings', component: HomepageAndCheckoutSettings},
+                {id: 'embedded-registration-settings', component: EmbeddedRegistrationSettings},
                 {id: 'payment-settings', component: PaymentAndInvoicingSettings},
                 {id: 'waitlist-settings', component: WaitlistSettings},
+                {id: 'attendance-response-settings', component: AttendanceResponseSettings},
             ],
         },
         {
             id: 'emails' as TabId,
-            label: t({message: 'Emails', context: 'event settings tab'}),
+            label: t({message: 'Messages', context: 'event settings tab'}),
             sections: [
                 {id: 'email-settings', component: EmailSettings},
+                {id: 'sms-confirmation-settings', component: SmsConfirmationSettings},
+                {id: 'sms-cancellation-settings', component: SmsCancellationSettings},
             ],
         },
         {

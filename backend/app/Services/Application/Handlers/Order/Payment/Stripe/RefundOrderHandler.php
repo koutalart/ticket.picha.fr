@@ -16,7 +16,7 @@ use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderRefundStatus;
 use HiEvents\DomainObjects\StripePaymentDomainObject;
 use HiEvents\Exceptions\RefundNotPossibleException;
-use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Mail\Order\OrderRefunded;
 use HiEvents\Repository\Eloquent\Value\Relationship;
@@ -48,6 +48,7 @@ class RefundOrderHandler
         private readonly StripeClientFactory $stripeClientFactory,
         private readonly AttendeeRepositoryInterface $attendeeRepository,
         private readonly PartialEditAttendeeHandler $partialEditAttendeeHandler,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     /**
@@ -125,7 +126,7 @@ class RefundOrderHandler
 
         $this->mailer
             ->to($order->getEmail())
-            ->locale(CustomerLocale::get())
+            ->locale($this->customerLocaleResolver->forEvent($event))
             ->send(new OrderRefunded(
                 order: $order,
                 event: $event,

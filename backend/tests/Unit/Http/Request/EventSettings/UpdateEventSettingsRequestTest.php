@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Http\Request\EventSettings;
 
+use HiEvents\DomainObjects\Enums\HomepageHeroLayout;
 use HiEvents\DomainObjects\Enums\TicketDateDisplayMode;
 use HiEvents\Http\Request\EventSettings\UpdateEventSettingsRequest;
 use Illuminate\Support\Facades\Validator;
@@ -72,5 +73,51 @@ class UpdateEventSettingsRequestTest extends TestCase
         );
 
         $this->assertFalse($validator->errors()->has('allow_copy_details_to_all_attendees'));
+    }
+
+    public function test_valid_hero_layouts_are_accepted(): void
+    {
+        foreach (HomepageHeroLayout::valuesArray() as $layout) {
+            $validator = Validator::make(
+                ['homepage_theme_settings' => ['hero_layout' => $layout]],
+                (new UpdateEventSettingsRequest)->rules()
+            );
+
+            $this->assertFalse($validator->errors()->has('homepage_theme_settings.hero_layout'));
+        }
+    }
+
+    public function test_invalid_hero_layout_is_rejected(): void
+    {
+        $validator = Validator::make(
+            ['homepage_theme_settings' => ['hero_layout' => 'NOT_A_LAYOUT']],
+            (new UpdateEventSettingsRequest)->rules()
+        );
+
+        $this->assertTrue($validator->errors()->has('homepage_theme_settings.hero_layout'));
+    }
+
+    public function test_hero_title_and_tagline_are_accepted(): void
+    {
+        $validator = Validator::make(
+            ['homepage_theme_settings' => [
+                'hero_title' => "Le\nConcert des\nGénérations",
+                'hero_tagline' => "Célébrées avec Kultur'm",
+            ]],
+            (new UpdateEventSettingsRequest)->rules()
+        );
+
+        $this->assertFalse($validator->errors()->has('homepage_theme_settings.hero_title'));
+        $this->assertFalse($validator->errors()->has('homepage_theme_settings.hero_tagline'));
+    }
+
+    public function test_too_long_hero_title_is_rejected(): void
+    {
+        $validator = Validator::make(
+            ['homepage_theme_settings' => ['hero_title' => str_repeat('a', 121)]],
+            (new UpdateEventSettingsRequest)->rules()
+        );
+
+        $this->assertTrue($validator->errors()->has('homepage_theme_settings.hero_title'));
     }
 }

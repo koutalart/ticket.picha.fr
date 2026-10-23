@@ -6,17 +6,19 @@ import {IconMail, IconPlayerPlayFilled} from "@tabler/icons-react";
 import type {OrganizerTemplateProps} from "../index.ts";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
-import {useDeferredCoverVideo} from "../../../hooks/useDeferredCoverVideo.ts";
+import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
-import {ssrLoaderCss} from "../../../utilites/ssrLoader.ts";
+import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {eventHomepagePath, eventHomepageUrl, organizerHomepagePath} from "../../../utilites/urlHelper.ts";
 import {buildEventJsonLd, getVenue} from "../Poster/eventData.ts";
 import {dateBlock, eventAccent, eventFlyer, TOUR_FALLBACK_ACCENT, tourCity, tourPrice} from "./tourData.ts";
 import classes from "./Tour.module.scss";
+import {findOrganizerLogo} from "../../../utilites/organizerLogo.ts";
 
 const DEFAULT_THEME_ACCENT = '#8b5cf6';
 const BACKGROUND = '#0e0c16';
@@ -68,10 +70,11 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
     const content = organizer.site_content || {};
     const themeAccent = organizer.settings?.homepage_theme_settings?.accent;
     const accent = themeAccent && themeAccent.toLowerCase() !== DEFAULT_THEME_ACCENT ? themeAccent : TOUR_FALLBACK_ACCENT;
-    const logo = organizer.images?.find(image => image.type === 'ORGANIZER_LOGO');
+    const logo = findOrganizerLogo(organizer.images, BACKGROUND);
     const cover = organizer.images?.find(image => image.type === 'ORGANIZER_COVER');
     const coverVideo = organizer.images?.find(image => image.type === 'ORGANIZER_COVER_VIDEO')?.url;
-    const videoAllowed = useDeferredCoverVideo(coverVideo);
+    const coverVideoMobile = organizer.images?.find(image => image.type === 'ORGANIZER_COVER_VIDEO_MOBILE')?.url;
+    const coverVideoSource = useCoverVideoSource(coverVideo, coverVideoMobile);
 
     const events = eventsData?.data || [];
     const cities = events.map(tourCity);
@@ -132,12 +135,12 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                         '@context': 'https://schema.org',
                         '@graph': [
                             {'@type': 'Organization', name: organizer.name, url: canonicalUrl, logo: logo?.url},
-                            ...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event), organizer.name)),
+                            ...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event, organizer), organizer.name)),
                         ],
                     })}
                 </script>
             </Helmet>
-            <style>{ssrLoaderCss({background: BACKGROUND, accent, logoUrl: logo?.url})}</style>
+            <SsrLoaderStyle background={BACKGROUND} accent={accent} logoUrl={logo?.url}/>
 
             <div ref={rootRef} className={classes.page} style={{'--tour-accent': accent} as React.CSSProperties}>
                 <header className={`${classes.nav} ${scrolled ? classes.navSolid : ''}`}>
@@ -153,8 +156,8 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                 <main id="top">
                     {(coverVideo || cover) && (
                         <section className={classes.hero}>
-                            {coverVideo && videoAllowed ? (
-                                <video src={coverVideo} poster={cover?.url} aria-label={organizer.name}
+                            {coverVideoSource ? (
+                                <video src={coverVideoSource} poster={cover?.url} aria-label={organizer.name}
                                        autoPlay muted loop playsInline preload="metadata"/>
                             ) : cover ? (
                                 <img src={cover.url} alt={organizer.name} fetchPriority="high"/>
@@ -431,7 +434,9 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                 </footer>
             </div>
 
-            <ContactOrganizerModal opened={contactModalOpen} onClose={() => setContactModalOpen(false)} organizer={organizer}/>
+            <PublicOverlayTheme accentColor={accent} mode="dark">
+                <ContactOrganizerModal opened={contactModalOpen} onClose={() => setContactModalOpen(false)} organizer={organizer}/>
+            </PublicOverlayTheme>
             {consentPending && <CookieConsentBanner onConsent={onConsent}/>}
         </>
     );

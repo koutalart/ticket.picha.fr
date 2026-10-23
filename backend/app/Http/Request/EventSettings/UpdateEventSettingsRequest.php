@@ -2,18 +2,25 @@
 
 namespace HiEvents\Http\Request\EventSettings;
 
+use HiEvents\DomainObjects\Enums\AgeRestrictionRule;
 use HiEvents\DomainObjects\Enums\AttendeeDetailsCollectionMethod;
 use HiEvents\DomainObjects\Enums\HomepageBackgroundType;
 use HiEvents\DomainObjects\Enums\HomepageFontFamily;
+use HiEvents\DomainObjects\Enums\HomepageHeroLayout;
 use HiEvents\DomainObjects\Enums\PaymentProviders;
 use HiEvents\DomainObjects\Enums\PriceDisplayMode;
+use HiEvents\DomainObjects\Enums\SchemaEventType;
 use HiEvents\DomainObjects\Enums\TicketDateDisplayMode;
 use HiEvents\Http\Request\BaseRequest;
+use HiEvents\Services\Domain\Event\HomepageFooterSettingsSanitizer;
+use HiEvents\Validators\Rules\OrganizerFontAvailableRule;
 use HiEvents\Validators\Rules\RulesHelper;
 use Illuminate\Validation\Rule;
 
 class UpdateEventSettingsRequest extends BaseRequest
 {
+    private const FOOTER_URL_RULES = ['nullable', 'string', 'max:500', 'regex:' . HomepageFooterSettingsSanitizer::URL_PATTERN];
+
     // @todo these should all be required for the update request. They should only be nullable for the PATCH request
     public function rules(): array
     {
@@ -105,14 +112,58 @@ class UpdateEventSettingsRequest extends BaseRequest
             'homepage_theme_settings.background' => ['nullable', 'string', ...RulesHelper::HEX_COLOR],
             'homepage_theme_settings.mode' => ['nullable', 'string', Rule::in(['light', 'dark'])],
             'homepage_theme_settings.background_type' => ['nullable', 'string', Rule::in(HomepageBackgroundType::valuesArray())],
-            'homepage_theme_settings.font_family' => ['nullable', 'string', Rule::in(HomepageFontFamily::valuesArray())],
+            'homepage_theme_settings.font_family' => [
+                'nullable',
+                'string',
+                Rule::in(HomepageFontFamily::valuesArray()),
+                OrganizerFontAvailableRule::forEvent($this->route('event_id')),
+            ],
+            'homepage_theme_settings.hero_layout' => ['nullable', 'string', Rule::in(HomepageHeroLayout::valuesArray())],
+            'homepage_theme_settings.hero_title' => ['nullable', 'string', 'max:120'],
+            'homepage_theme_settings.hero_subtitle' => ['nullable', 'string', 'max:120'],
+            'homepage_theme_settings.hero_tagline' => ['nullable', 'string', 'max:80'],
 
             // Self-service settings
             'allow_attendee_self_edit' => ['boolean'],
+            'single_product_per_order' => ['boolean'],
+            'choose_category_first' => ['boolean'],
+
+            // Age restriction settings
+            'age_restriction_rule' => [Rule::in(AgeRestrictionRule::valuesArray())],
+            'age_restriction_minimum_age' => ['integer', 'min:1', 'max:99'],
 
             // Waitlist settings
             'waitlist_auto_process' => ['boolean'],
             'waitlist_offer_timeout_minutes' => ['nullable', 'integer', 'min:1', 'max:10080'],
+
+            // Attendance response settings
+            'allow_attendee_attendance_response' => ['boolean'],
+
+            'embedded_registration_enabled' => ['boolean'],
+
+            'sms_registration_confirmation_enabled' => ['boolean'],
+            'sms_registration_confirmation_message' => ['nullable', 'string', 'max:1000'],
+            'sms_cancellation_confirmation_enabled' => ['boolean'],
+            'sms_cancellation_confirmation_message' => ['nullable', 'string', 'max:1000'],
+            'sms_cancellation_confirmation_on_organizer_cancel' => ['boolean'],
+
+            'ticket_footer_use_organizer_domain' => ['boolean'],
+
+            'rich_footer_enabled' => ['boolean'],
+            'homepage_footer_settings' => ['nullable', 'array'],
+            'homepage_footer_settings.newsletter_enabled' => ['nullable', 'boolean'],
+            'homepage_footer_settings.newsletter_title' => ['nullable', 'string', 'max:120'],
+            'homepage_footer_settings.privacy_policy_url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.terms_url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.accessibility_url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.event_links' => ['nullable', 'array', 'max:' . HomepageFooterSettingsSanitizer::MAX_EVENT_LINKS],
+            'homepage_footer_settings.event_links.*.label' => ['nullable', 'string', 'max:60'],
+            'homepage_footer_settings.event_links.*.url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.related_links' => ['nullable', 'array', 'max:' . HomepageFooterSettingsSanitizer::MAX_RELATED_LINKS],
+            'homepage_footer_settings.related_links.*.title' => ['nullable', 'string', 'max:80'],
+            'homepage_footer_settings.related_links.*.url' => self::FOOTER_URL_RULES,
+            'homepage_footer_settings.related_links.*.image_url' => self::FOOTER_URL_RULES,
+            'schema_event_type' => [Rule::in(SchemaEventType::valuesArray())],
         ];
     }
 
@@ -156,6 +207,12 @@ class UpdateEventSettingsRequest extends BaseRequest
             'homepage_theme_settings.mode.in' => __('The mode must be light or dark.'),
             'homepage_theme_settings.background_type.in' => __('The background type must be COLOR or MIRROR_COVER_IMAGE.'),
             'homepage_theme_settings.font_family.in' => __('The selected font is not supported.'),
+
+            'homepage_footer_settings.*.regex' => __('Please enter a link starting with https://'),
+            'homepage_footer_settings.event_links.*.url.regex' => __('Please enter a link starting with https://'),
+            'homepage_footer_settings.related_links.*.url.regex' => __('Please enter a link starting with https://'),
+            'homepage_footer_settings.related_links.*.image_url.regex' => __('Please enter a link starting with https://'),
+            'homepage_footer_settings.related_links.max' => __('You can add up to 3 links.'),
         ];
     }
 }

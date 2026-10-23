@@ -9,7 +9,7 @@ import {showSuccess} from "../../../../utilites/notifications.tsx";
 import {t} from "@lingui/macro";
 import {useForm} from "@mantine/form";
 import {Accordion, Button, Group, Stack, Text} from "@mantine/core";
-import {IconColorPicker, IconHelp, IconPalette, IconPhoto, IconTypography} from "@tabler/icons-react";
+import {IconColorPicker, IconHelp, IconLetterCase, IconPalette, IconPhoto, IconTypography} from "@tabler/icons-react";
 import {Tooltip} from "../../../common/Tooltip";
 import {LoadingMask} from "../../../common/LoadingMask";
 import {CustomSelect} from "../../../common/CustomSelect";
@@ -23,6 +23,8 @@ import {ThemeFontControl} from "../../../common/ThemeFontControl";
 import {computeThemeVariables, validateThemeSettings} from "../../../../utilites/themeUtils.ts";
 import {DEFAULT_HOMEPAGE_FONT} from "../../../../constants/homepageFonts.ts";
 import {OrganizerPageActions} from "../../../common/OrganizerPageActions";
+import {OrganizerFontManager} from "../../../common/OrganizerFontManager";
+import {toOrganizerCustomFont, useGetOrganizerFonts} from "../../../../queries/useGetOrganizerFonts.ts";
 
 interface FormValues {
     homepage_theme_settings: Partial<HomepageThemeSettings>;
@@ -33,6 +35,8 @@ const OrganizerHomepageDesigner = () => {
     const organizerSettingsQuery = useGetOrganizerSettings(organizerId);
     const organizerQuery = useGetOrganizer(organizerId);
     const updateMutation = useUpdateOrganizerSettings();
+    const organizerFontsQuery = useGetOrganizerFonts(organizerId);
+    const organizerFont = toOrganizerCustomFont(organizerFontsQuery.data);
 
     const organizerData = organizerQuery.data;
 
@@ -296,8 +300,18 @@ const OrganizerHomepageDesigner = () => {
                                             font_family: fontFamily,
                                         })}
                                         disabled={organizerSettingsQuery.isLoading || updateMutation.isPending}
+                                        organizerFont={organizerFont}
                                     />
                                 </fieldset>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
+                        <Accordion.Item value="organizer-font" className={classes.accordionItem}>
+                            <Accordion.Control icon={<IconLetterCase size={20}/>}>
+                                <Text fw={500}>{t`Organizer font`}</Text>
+                            </Accordion.Control>
+                            <Accordion.Panel>
+                                {organizerId && <OrganizerFontManager organizerId={organizerId}/>}
                             </Accordion.Panel>
                         </Accordion.Item>
                     </Accordion>

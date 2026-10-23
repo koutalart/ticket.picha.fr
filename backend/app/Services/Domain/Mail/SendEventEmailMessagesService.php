@@ -12,6 +12,7 @@ use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\MessageStatus;
 use HiEvents\Exceptions\UnableToSendMessageException;
 use HiEvents\Helper\KioskSentinelEmail;
+use HiEvents\Helper\Url;
 use HiEvents\Jobs\Event\SendEventEmailJob;
 use HiEvents\Mail\Event\EventMessage;
 use HiEvents\Repository\Eloquent\Value\Relationship;
@@ -21,13 +22,21 @@ use HiEvents\Repository\Interfaces\MessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\UserRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Message\DTO\SendMessageDTO;
+use HiEvents\Services\Domain\Attendee\AttendanceUrlMessageVariableRenderer;
+use HiEvents\Services\Domain\Attendee\AttendeeAttendanceLinkGenerator;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Log\Logger;
 
 class SendEventEmailMessagesService
 {
+    private const ATTENDEE_COLUMNS = ['id', 'event_id', 'short_id', 'first_name', 'last_name', 'email'];
+
     private array $sentEmails = [];
+
+    private bool $hasAttendanceVariable = false;
+
+    private bool $attendanceLinksEnabled = false;
 
     public function __construct(
         private readonly OrderRepositoryInterface $orderRepository,
@@ -37,6 +46,8 @@ class SendEventEmailMessagesService
         private readonly UserRepositoryInterface $userRepository,
         private readonly Logger $logger,
         private readonly Dispatcher $dispatcher,
+        private readonly AttendeeAttendanceLinkGenerator $attendanceLinkGenerator,
+        private readonly AttendanceUrlMessageVariableRenderer $attendanceUrlRenderer,
     ) {}
 
     /**
@@ -64,6 +75,10 @@ class SendEventEmailMessagesService
 
             throw new UnableToSendMessageException($message);
         }
+
+        $this->hasAttendanceVariable = $this->attendanceUrlRenderer->containsVariable($messageData->message);
+        $this->attendanceLinksEnabled = $this->hasAttendanceVariable
+            && (bool) $event->getEventSettings()?->getAllowAttendeeAttendanceResponse();
 
         switch ($messageData->type) {
             case MessageTypeEnum::INDIVIDUAL_ATTENDEES:
@@ -94,7 +109,7 @@ class SendEventEmailMessagesService
             additionalWhere: [
                 'event_id' => $messageData->event_id,
             ],
-            columns: ['first_name', 'last_name', 'email']
+            columns: self::ATTENDEE_COLUMNS
         );
 
         $this->emailAttendees($attendees, $messageData, $event);
@@ -109,7 +124,7 @@ class SendEventEmailMessagesService
                 'event_id' => $messageData->event_id,
                 'status' => AttendeeStatus::ACTIVE->name,
             ],
-            columns: ['first_name', 'last_name', 'email']
+            columns: self::ATTENDEE_COLUMNS
         );
 
         $this->emailAttendees($attendees, $messageData, $event);
@@ -131,6 +146,7 @@ class SendEventEmailMessagesService
             fullName: $order->getFullName(),
             messageData: $messageData,
             event: $event,
+            messageHtml: $this->renderMessage($messageData, $this->getOrderSummaryUrl($order)),
         );
     }
 
@@ -151,17 +167,26 @@ class SendEventEmailMessagesService
                 return;
             }
 
-            if (in_array($attendee->getEmail(), $sentEmails, true)) {
+            $dedupeKey = $this->attendanceLinksEnabled
+                ? 'attendee-' . $attendee->getId()
+                : $attendee->getEmail();
+
+            if (in_array($dedupeKey, $sentEmails, true)) {
                 return;
             }
 
-            $sentEmails[] = $attendee->getEmail();
+            $sentEmails[] = $dedupeKey;
 
             $this->sendMessage(
                 emailAddress: $attendee->getEmail(),
                 fullName: $attendee->getFullName(),
                 messageData: $messageData,
                 event: $event,
+                messageHtml: $this->renderMessage(
+                    $messageData,
+                    $this->attendanceLinksEnabled ? $this->attendanceLinkGenerator->getAttendanceUrl($attendee) : null,
+                ),
+                dedupeKey: $dedupeKey,
             );
         });
     }
@@ -194,7 +219,7 @@ class SendEventEmailMessagesService
                 'event_id' => $messageData->event_id,
                 'status' => AttendeeStatus::ACTIVE->name,
             ],
-            columns: ['first_name', 'last_name', 'email']
+            columns: self::ATTENDEE_COLUMNS
         );
 
         $this->emailAttendees($attendees, $messageData, $event);
@@ -213,6 +238,7 @@ class SendEventEmailMessagesService
             fullName: $user->getFullName(),
             messageData: $messageData,
             event: $event,
+            messageHtml: $this->renderMessage($messageData, null),
         );
     }
 
@@ -240,6 +266,7 @@ class SendEventEmailMessagesService
                 fullName: $order->getFullName(),
                 messageData: $messageData,
                 event: $event,
+                messageHtml: $this->renderMessage($messageData, $this->getOrderSummaryUrl($order)),
             );
         });
     }
@@ -249,8 +276,12 @@ class SendEventEmailMessagesService
         string $fullName,
         SendMessageDTO $messageData,
         EventDomainObject $event,
+        ?string $messageHtml = null,
+        ?string $dedupeKey = null,
     ): void {
-        if (in_array($emailAddress, $this->sentEmails, true)) {
+        $dedupeKey ??= $emailAddress;
+
+        if (in_array($dedupeKey, $this->sentEmails, true)) {
             return;
         }
 
@@ -261,12 +292,35 @@ class SendEventEmailMessagesService
                 eventMessage: new EventMessage(
                     event: $event,
                     eventSettings: $event->getEventSettings(),
-                    messageData: $messageData
+                    messageData: $messageData,
+                    messageHtml: $messageHtml,
                 ),
                 messageData: $messageData,
             )
         );
 
-        $this->sentEmails[] = $emailAddress;
+        $this->sentEmails[] = $dedupeKey;
+    }
+
+    private function renderMessage(SendMessageDTO $messageData, ?string $attendanceUrl): ?string
+    {
+        if (! $this->hasAttendanceVariable) {
+            return null;
+        }
+
+        if (! $this->attendanceLinksEnabled) {
+            return $this->attendanceUrlRenderer->strip($messageData->message);
+        }
+
+        return $this->attendanceUrlRenderer->render($messageData->message, $attendanceUrl);
+    }
+
+    private function getOrderSummaryUrl(OrderDomainObject $order): string
+    {
+        return sprintf(
+            Url::getPublicFrontEndUrlForEventId(Url::ORDER_SUMMARY, $order->getEventId()),
+            $order->getEventId(),
+            $order->getShortId(),
+        );
     }
 }

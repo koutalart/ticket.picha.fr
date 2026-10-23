@@ -3,17 +3,22 @@ import BasicSettings from "./Sections/BasicSettings";
 import { SocialLinks } from "./Sections/SocialLinks";
 import { AddressSettings } from "./Sections/AddressSettings";
 import EmailTemplateSettings from "./Sections/EmailTemplateSettings";
+import { EmailSenderSettings } from "./Sections/EmailSenderSettings";
+import { CustomerAddressFormSettings } from "./Sections/CustomerAddressFormSettings";
 import { EventDefaults } from "./Sections/EventDefaults";
 import { PlatformFeesSettings } from "./Sections/PlatformFeesSettings";
 import { DangerZoneSettings } from "./Sections/DangerZoneSettings";
 import { TrackingPixelSettings } from "./Sections/TrackingPixelSettings";
 import { WebhookSettings } from "./Sections/WebhookSettings";
 import { MetaConversionsApiSettings } from "./Sections/MetaConversionsApiSettings";
+import { SmsSettings } from "./Sections/SmsSettings";
+import { SmsReplyTemplates } from "./Sections/SmsReplyTemplates";
+import { SmsOptOuts } from "./Sections/SmsOptOuts";
 import { PageBody } from "../../../common/PageBody";
 import { PageTitle } from "../../../common/PageTitle";
 import { t } from "@lingui/macro";
 import { Box, Group, NavLink as MantineNavLink, Stack } from "@mantine/core";
-import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconWebhook, IconBrandMeta } from "@tabler/icons-react";
+import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconWebhook, IconBrandMeta, IconMessage, IconMessageBolt, IconBan, IconSend, IconMessageCircle } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "../../../common/Card";
@@ -64,6 +69,18 @@ const Settings = () => {
                 component: SeoSettings
             },
             {
+                id: 'customer-address-form',
+                label: t`Tone with customers`,
+                icon: IconMessageCircle,
+                component: CustomerAddressFormSettings,
+            },
+            {
+                id: 'email-sender',
+                label: t`Email sender`,
+                icon: IconSend,
+                component: EmailSenderSettings,
+            },
+            {
                 id: 'email-templates',
                 label: t`Email Templates`,
                 icon: IconMail,
@@ -80,6 +97,24 @@ const Settings = () => {
                 label: t`Meta Conversions API`,
                 icon: IconBrandMeta,
                 component: MetaConversionsApiSettings,
+            },
+            {
+                id: 'sms',
+                label: t`PICHA SMS`,
+                icon: IconMessage,
+                component: SmsSettings,
+            },
+            {
+                id: 'sms-reply-templates',
+                label: t`SMS reply templates`,
+                icon: IconMessageBolt,
+                component: SmsReplyTemplates,
+            },
+            {
+                id: 'sms-opt-outs',
+                label: t`SMS opt-out list`,
+                icon: IconBan,
+                component: SmsOptOuts,
             },
             {
                 id: 'webhooks',

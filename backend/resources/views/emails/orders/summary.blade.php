@@ -8,7 +8,7 @@
 
 @php /** @see \HiEvents\Mail\Order\OrderSummary */ @endphp
 
-<x-mail::message>
+<x-mail::message :emailLogo="$emailLogo ?? null">
 # {{ __('Your Order is Confirmed! ') }} 🎉
 
 @if($order->isOrderAwaitingOfflinePayment() === false)

@@ -5,6 +5,7 @@ namespace Tests\Unit\Services\Domain\Order;
 use HiEvents\DomainObjects\CapacityAssignmentDomainObject;
 use HiEvents\DomainObjects\Enums\ProductPriceType;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\Status\EventStatus;
@@ -15,6 +16,7 @@ use HiEvents\Services\Domain\Order\OrderCreateRequestValidationService;
 use HiEvents\Services\Domain\Product\AvailableProductQuantitiesFetchService;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesDTO;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesResponseDTO;
+use HiEvents\Services\Domain\Product\ProductUnlockService;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Mockery;
@@ -43,6 +45,7 @@ class OrderCreateRequestValidationServiceTest extends TestCase
             $this->promoCodeRepository,
             $this->eventRepository,
             $this->availabilityService,
+            new ProductUnlockService($this->productRepository, $this->availabilityService),
         );
     }
 
@@ -185,6 +188,67 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $this->service->validateRequestData($eventId, $data);
     }
 
+    public function testLockedProductIsRejectedWhileSourceProductIsAvailable(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 10,
+            priceIds: [101],
+            priceLabels: [null],
+            availabilities: [
+                ['price_id' => 101, 'quantity_available' => 50, 'quantity_reserved' => 0],
+            ],
+            extraAvailabilities: [
+                ['product_id' => 20, 'price_id' => 201, 'quantity_available' => 1, 'quantity_reserved' => 0],
+            ],
+            unlockAfterProductId: 20,
+        );
+
+        try {
+            $this->service->validateRequestData(1, $this->singleProductOrder(10, 101));
+            $this->fail('A locked product must be rejected');
+        } catch (ValidationException $e) {
+            $this->assertSame(
+                __(':product is not on sale yet', ['product' => 'Test Product']),
+                $e->errors()['products.0'][0],
+            );
+        }
+    }
+
+    public function testLockedProductIsAcceptedOnceSourceProductIsSoldOut(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 10,
+            priceIds: [101],
+            priceLabels: [null],
+            availabilities: [
+                ['price_id' => 101, 'quantity_available' => 50, 'quantity_reserved' => 0],
+            ],
+            extraAvailabilities: [
+                ['product_id' => 20, 'price_id' => 201, 'quantity_available' => 0, 'quantity_reserved' => 3],
+            ],
+            unlockAfterProductId: 20,
+        );
+
+        $this->service->validateRequestData(1, $this->singleProductOrder(10, 101));
+        $this->assertTrue(true);
+    }
+
+    private function singleProductOrder(int $productId, int $priceId): array
+    {
+        return [
+            'products' => [
+                [
+                    'product_id' => $productId,
+                    'quantities' => [
+                        ['price_id' => $priceId, 'quantity' => 1],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function testUnrelatedOverReservedCapacityDoesNotBlockSelectedProduct(): void
     {
         $eventId = 1;
@@ -235,6 +299,175 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testSingleProductPerOrderAllowsOneRegistration(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 10,
+            priceIds: [101],
+            priceLabels: ['Candidat'],
+            availabilities: [
+                ['price_id' => 101, 'quantity_available' => 5, 'quantity_reserved' => 0],
+            ],
+            singleProductPerOrder: true,
+        );
+
+        $this->service->validateRequestData(1, [
+            'products' => [
+                ['product_id' => 10, 'quantities' => [['price_id' => 101, 'quantity' => 1]]],
+            ],
+        ]);
+        $this->assertTrue(true);
+    }
+
+    public function testSingleProductPerOrderRejectsTwoOfTheSameProduct(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 10,
+            priceIds: [101],
+            priceLabels: ['Candidat'],
+            availabilities: [
+                ['price_id' => 101, 'quantity_available' => 5, 'quantity_reserved' => 0],
+            ],
+            singleProductPerOrder: true,
+        );
+
+        $this->expectException(ValidationException::class);
+
+        $this->service->validateRequestData(1, [
+            'products' => [
+                ['product_id' => 10, 'quantities' => [['price_id' => 101, 'quantity' => 2]]],
+            ],
+        ]);
+    }
+
+    public function testSingleProductPerOrderRejectsOneOfEachAcrossProducts(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 10,
+            priceIds: [101],
+            priceLabels: ['Candidat'],
+            availabilities: [
+                ['price_id' => 101, 'quantity_available' => 5, 'quantity_reserved' => 0],
+            ],
+            extraAvailabilities: [
+                ['product_id' => 20, 'price_id' => 201, 'quantity_available' => 5, 'quantity_reserved' => 0],
+            ],
+            singleProductPerOrder: true,
+        );
+
+        try {
+            $this->service->validateRequestData(1, [
+                'products' => [
+                    ['product_id' => 10, 'quantities' => [['price_id' => 101, 'quantity' => 1]]],
+                    ['product_id' => 20, 'quantities' => [['price_id' => 201, 'quantity' => 1]]],
+                ],
+            ]);
+            $this->fail('Expected a ValidationException');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('products', $e->errors());
+            $this->assertSame(
+                __('Only one registration per order is allowed for this event.'),
+                $e->errors()['products'][0],
+            );
+        }
+    }
+
+    public function testMultipleProductsAllowedWhenSingleProductPerOrderIsOff(): void
+    {
+        $secondProductPrice = Mockery::mock(ProductPriceDomainObject::class);
+        $secondProductPrice->shouldReceive('getId')->andReturn(201);
+        $secondProductPrice->shouldReceive('getLabel')->andReturn(null);
+
+        $secondProduct = Mockery::mock(ProductDomainObject::class);
+        $secondProduct->shouldReceive('getUnlockAfterProductId')->andReturn(null);
+        $secondProduct->shouldReceive('getId')->andReturn(20);
+        $secondProduct->shouldReceive('getProductType')->andReturn('TICKET');
+        $secondProduct->shouldReceive('getEventId')->andReturn(1);
+        $secondProduct->shouldReceive('getTitle')->andReturn('Exposant');
+        $secondProduct->shouldReceive('getMaxPerOrder')->andReturn(100);
+        $secondProduct->shouldReceive('getMinPerOrder')->andReturn(1);
+        $secondProduct->shouldReceive('isSoldOut')->andReturn(false);
+        $secondProduct->shouldReceive('getIsSalesPaused')->andReturn(false);
+        $secondProduct->shouldReceive('getIsHidden')->andReturn(false);
+        $secondProduct->shouldReceive('getType')->andReturn(ProductPriceType::TIERED->name);
+        $secondProduct->shouldReceive('getProductPrices')->andReturn(new Collection([$secondProductPrice]));
+
+        $this->setupMocks(
+            eventId: 1,
+            productId: 10,
+            priceIds: [101],
+            priceLabels: ['Candidat'],
+            availabilities: [
+                ['price_id' => 101, 'quantity_available' => 5, 'quantity_reserved' => 0],
+            ],
+            extraAvailabilities: [
+                ['product_id' => 20, 'price_id' => 201, 'quantity_available' => 5, 'quantity_reserved' => 0],
+            ],
+            extraProducts: new Collection([$secondProduct]),
+        );
+
+        $this->service->validateRequestData(1, [
+            'products' => [
+                ['product_id' => 10, 'quantities' => [['price_id' => 101, 'quantity' => 2]]],
+                ['product_id' => 20, 'quantities' => [['price_id' => 201, 'quantity' => 1]]],
+            ],
+        ]);
+        $this->assertTrue(true);
+    }
+
+    public function testOptionAloneIsRejectedWhenTheEventSellsTickets(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 13,
+            priceIds: [131],
+            priceLabels: [null],
+            availabilities: [
+                ['price_id' => 131, 'quantity_available' => 50, 'quantity_reserved' => 0],
+            ],
+            productType: 'GENERAL',
+        );
+        $this->productRepository->shouldReceive('findFirstWhere')
+            ->with(['event_id' => 1, 'product_type' => 'TICKET'])
+            ->andReturn(Mockery::mock(ProductDomainObject::class));
+
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('This option can only be ordered together with a ticket.');
+
+        $this->service->validateRequestData(1, [
+            'products' => [
+                ['product_id' => 13, 'quantities' => [['price_id' => 131, 'quantity' => 1]]],
+            ],
+        ]);
+    }
+
+    public function testOptionAloneIsAllowedWhenTheEventSellsNoTickets(): void
+    {
+        $this->setupMocks(
+            eventId: 1,
+            productId: 13,
+            priceIds: [131],
+            priceLabels: [null],
+            availabilities: [
+                ['price_id' => 131, 'quantity_available' => 50, 'quantity_reserved' => 0],
+            ],
+            productType: 'GENERAL',
+        );
+        $this->productRepository->shouldReceive('findFirstWhere')
+            ->with(['event_id' => 1, 'product_type' => 'TICKET'])
+            ->andReturnNull();
+
+        $this->service->validateRequestData(1, [
+            'products' => [
+                ['product_id' => 13, 'quantities' => [['price_id' => 131, 'quantity' => 1]]],
+            ],
+        ]);
+        $this->assertTrue(true);
+    }
+
     private function setupMocks(
         int   $eventId,
         int   $productId,
@@ -243,13 +476,21 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         array $availabilities,
         ?Collection $capacities = null,
         array $extraAvailabilities = [],
+        bool  $singleProductPerOrder = false,
+        ?Collection $extraProducts = null,
+        ?int $unlockAfterProductId = null,
+        string $productType = 'TICKET',
     ): void
     {
         $event = Mockery::mock(EventDomainObject::class);
         $event->shouldReceive('getId')->andReturn($eventId);
         $event->shouldReceive('getStatus')->andReturn(EventStatus::LIVE->name);
         $event->shouldReceive('getCurrency')->andReturn('USD');
+        $event->shouldReceive('getEventSettings')->andReturn(
+            (new EventSettingDomainObject())->setSingleProductPerOrder($singleProductPerOrder)
+        );
 
+        $this->eventRepository->shouldReceive('loadRelation')->with(EventSettingDomainObject::class)->andReturnSelf();
         $this->eventRepository->shouldReceive('findById')->with($eventId)->andReturn($event);
 
         $productPrices = new Collection();
@@ -268,12 +509,16 @@ class OrderCreateRequestValidationServiceTest extends TestCase
         $product->shouldReceive('getMinPerOrder')->andReturn(1);
         $product->shouldReceive('isSoldOut')->andReturn(false);
         $product->shouldReceive('getIsSalesPaused')->andReturn(false);
+        $product->shouldReceive('getUnlockAfterProductId')->andReturn($unlockAfterProductId);
         $product->shouldReceive('getIsHidden')->andReturn(false);
+        $product->shouldReceive('getProductType')->andReturn($productType);
         $product->shouldReceive('getType')->andReturn(ProductPriceType::TIERED->name);
         $product->shouldReceive('getProductPrices')->andReturn($productPrices);
 
         $this->productRepository->shouldReceive('loadRelation')->andReturnSelf();
-        $this->productRepository->shouldReceive('findWhereIn')->andReturn(new Collection([$product]));
+        $this->productRepository->shouldReceive('findWhereIn')->andReturn(
+            (new Collection([$product]))->merge($extraProducts ?? collect())
+        );
 
         $quantityDTOs = collect();
         foreach ($availabilities as $avail) {

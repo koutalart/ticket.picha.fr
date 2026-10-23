@@ -25,11 +25,13 @@ class OrderRefunded extends BaseMail
     )
     {
         parent::__construct();
+        $this->useEventEmailLogo($this->event, $this->organizer);
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: __('You\'ve received a refund'),
         );

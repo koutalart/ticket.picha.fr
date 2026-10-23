@@ -7,6 +7,7 @@ namespace HiEvents\Services\Domain\Ticket;
 use Carbon\Carbon;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\Enums\ImageType;
+use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
@@ -15,6 +16,7 @@ use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\Ticket\DTO\TicketDataDTO;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Collection;
@@ -58,7 +60,10 @@ class TicketDataFactory
     public function forPreview(int $eventId): TicketDataDTO
     {
         [$event, $organizer] = $this->loadEvent($eventId);
-        $product = $this->productRepository->findFirstWhere(['event_id' => $eventId]);
+        $product = $this->productRepository->findFirstWhere([
+            'event_id' => $eventId,
+            'product_type' => ProductType::TICKET->name,
+        ]);
 
         return $this->build(
             event: $event,
@@ -98,6 +103,9 @@ class TicketDataFactory
     ): TicketDataDTO {
         $settings = $this->eventSettingsRepository->findFirstWhere(['event_id' => $event->getId()]);
         [$date, $time] = $this->eventDateAndTime($event, $this->dateDisplayMode($settings?->getTicketDesignSettings()));
+        $footerDomain = $settings?->getTicketFooterUseOrganizerDomain()
+            ? PublicBaseUrlResolver::activeCustomDomain($organizer)
+            : null;
 
         return new TicketDataDTO(
             publicId: $publicId,
@@ -113,6 +121,11 @@ class TicketDataFactory
             sponsorLogo: $this->readImage($event->getImages(), ImageType::TICKET_SPONSOR_LOGO),
             sponsorName: $this->sponsorName($settings?->getTicketDesignSettings()),
             status: $status,
+            footerDomain: $footerDomain,
+            footerLogo: $footerDomain !== null
+                ? $this->readImage($organizer?->getImages(), ImageType::ORGANIZER_EMAIL_LOGO)
+                    ?? $this->readImage($organizer?->getImages(), ImageType::ORGANIZER_LOGO)
+                : null,
         );
     }
 

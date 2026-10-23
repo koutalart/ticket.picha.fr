@@ -3,6 +3,7 @@ import {
     IconCopyPlus,
     IconDots,
     IconLock,
+    IconLockOpen,
     IconPencil,
     IconReceipt,
     IconSend,
@@ -279,6 +280,10 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     const salesProgress = getSalesProgress();
 
     const channel = getChannel(product);
+    const unlockSourceTitle = product.unlock_after_product_id
+        ? categories.flatMap((item) => item.products ?? [])
+            .find((candidate) => String(candidate.id) === String(product.unlock_after_product_id))?.title
+        : undefined;
     const singlePrice = product.prices?.length === 1 && product.type !== ProductPriceType.Tiered;
     const priceEditable = singlePrice && product.type === ProductPriceType.Paid;
 
@@ -327,6 +332,11 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                             )}
                             {product.type === ProductPriceType.Donation && <span className={classes.extraTag}>{t`Donation`}</span>}
                             {product.waitlist_enabled && <span className={classes.extraTag}>{t`Waitlist Enabled`}</span>}
+                            {unlockSourceTitle && (
+                                <span className={classes.extraTag}>
+                                    <IconLockOpen size={12}/> {t`Opens when "${unlockSourceTitle}" is sold out`}
+                                </span>
+                            )}
                             {product.is_highlighted && (
                                 <span className={classes.extraTag}><IconSparkles size={12}/> {t`Highlighted`}</span>
                             )}

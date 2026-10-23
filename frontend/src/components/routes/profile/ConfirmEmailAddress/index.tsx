@@ -1,40 +1,54 @@
-import {useNavigate, useParams} from "react-router";
-import {useGetMe} from "../../../../queries/useGetMe";
-import {Card} from "../../../common/Card";
-import {showError, showSuccess} from "../../../../utilites/notifications";
+import {useEffect, useRef, useState} from "react";
+import {Link, useParams} from "react-router";
 import {t} from "@lingui/macro";
-import {useConfirmEmailAddress} from "../../../../mutations/useConfirmEmailAddress";
-import {useEffect} from "react";
+import {Button, Container, Stack, Text, Title} from "@mantine/core";
+import {publicApi} from "../../../../api/public-client.ts";
 
+type Status = 'pending' | 'confirmed' | 'error';
+
+/**
+ * Opened from the email link, often on another device: works without being logged in,
+ * the encrypted token in the link is enough.
+ */
 const ConfirmEmailAddress = () => {
     const {token} = useParams();
-    const {data: userData, isFetched} = useGetMe();
-    const navigate = useNavigate();
-    const confirmEmailAddressMutation = useConfirmEmailAddress();
+    const [status, setStatus] = useState<Status>('pending');
+    const [message, setMessage] = useState<string | null>(null);
+    const sent = useRef(false);
 
-    const confirmEmail = () => {
-
-        if (!userData?.id) {
+    useEffect(() => {
+        if (sent.current || !token) {
             return;
         }
-
-        confirmEmailAddressMutation.mutate({token: (token as string), userId: userData?.id}, {
-            onSuccess: () => {
-                showSuccess(t`Successfully confirmed email address`);
-                navigate('/manage/events');
-            },
-            onError: () => {
-                showError(t`Error confirming email address`);
-            }
-        });
-    };
-
-    useEffect(() => confirmEmail(), [isFetched]);
+        sent.current = true;
+        publicApi.post(`auth/confirm-email/${token}`)
+            .then(() => setStatus('confirmed'))
+            .catch((error) => {
+                setMessage(error?.response?.data?.message ?? null);
+                setStatus('error');
+            });
+    }, [token]);
 
     return (
-        <Card style={{marginTop: 'var(--hi-spacing-lg)'}}>
-            <p>{t`Confirming email address...`}</p>
-        </Card>
+        <Container size="xs" py="xl">
+            <Stack align="center" gap="md" ta="center">
+                {status === 'pending' && <Text>{t`Confirming email address...`}</Text>}
+                {status === 'confirmed' && (
+                    <>
+                        <Title order={2}>{t`Email address confirmed`}</Title>
+                        <Text c="dimmed">{t`Your account is confirmed. You can now publish your events.`}</Text>
+                        <Button component={Link} to="/manage/events">{t`Go to my events`}</Button>
+                    </>
+                )}
+                {status === 'error' && (
+                    <>
+                        <Title order={2}>{t`Error confirming email address`}</Title>
+                        <Text c="dimmed">{message ?? t`The email confirmation link is invalid.`}</Text>
+                        <Button component={Link} to="/manage/events" variant="light">{t`Go to my events`}</Button>
+                    </>
+                )}
+            </Stack>
+        </Container>
     );
 };
 

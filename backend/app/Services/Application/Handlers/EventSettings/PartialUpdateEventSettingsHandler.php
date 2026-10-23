@@ -141,9 +141,38 @@ class PartialUpdateEventSettingsHandler
                 // Self-service settings
                 'allow_attendee_self_edit' => $eventSettingsDTO->settings['allow_attendee_self_edit'] ?? $existingSettings->getAllowAttendeeSelfEdit(),
 
+                'single_product_per_order' => $eventSettingsDTO->settings['single_product_per_order'] ?? $existingSettings->getSingleProductPerOrder(),
+                'choose_category_first' => $eventSettingsDTO->settings['choose_category_first'] ?? $existingSettings->getChooseCategoryFirst(),
+
+                'age_restriction_rule' => $eventSettingsDTO->settings['age_restriction_rule'] ?? $existingSettings->getAgeRestrictionRule(),
+                'age_restriction_minimum_age' => $eventSettingsDTO->settings['age_restriction_minimum_age'] ?? $existingSettings->getAgeRestrictionMinimumAge(),
+
                 // Waitlist settings
                 'waitlist_auto_process' => $eventSettingsDTO->settings['waitlist_auto_process'] ?? $existingSettings->getWaitlistAutoProcess(),
                 'waitlist_offer_timeout_minutes' => $eventSettingsDTO->settings['waitlist_offer_timeout_minutes'] ?? $existingSettings->getWaitlistOfferTimeoutMinutes(),
+
+                // Attendance response settings
+                'allow_attendee_attendance_response' => $eventSettingsDTO->settings['allow_attendee_attendance_response'] ?? $existingSettings->getAllowAttendeeAttendanceResponse(),
+
+                'embedded_registration_enabled' => $eventSettingsDTO->settings['embedded_registration_enabled'] ?? $existingSettings->getEmbeddedRegistrationEnabled(),
+
+                'sms_registration_confirmation_enabled' => $eventSettingsDTO->settings['sms_registration_confirmation_enabled'] ?? $existingSettings->getSmsRegistrationConfirmationEnabled(),
+                'sms_registration_confirmation_message' => array_key_exists('sms_registration_confirmation_message', $eventSettingsDTO->settings)
+                    ? $eventSettingsDTO->settings['sms_registration_confirmation_message']
+                    : $existingSettings->getSmsRegistrationConfirmationMessage(),
+                'sms_cancellation_confirmation_enabled' => $eventSettingsDTO->settings['sms_cancellation_confirmation_enabled'] ?? $existingSettings->getSmsCancellationConfirmationEnabled(),
+                'sms_cancellation_confirmation_message' => array_key_exists('sms_cancellation_confirmation_message', $eventSettingsDTO->settings)
+                    ? $eventSettingsDTO->settings['sms_cancellation_confirmation_message']
+                    : $existingSettings->getSmsCancellationConfirmationMessage(),
+                'sms_cancellation_confirmation_on_organizer_cancel' => $eventSettingsDTO->settings['sms_cancellation_confirmation_on_organizer_cancel'] ?? $existingSettings->getSmsCancellationConfirmationOnOrganizerCancel(),
+
+                'ticket_footer_use_organizer_domain' => $eventSettingsDTO->settings['ticket_footer_use_organizer_domain'] ?? $existingSettings->getTicketFooterUseOrganizerDomain(),
+
+                'rich_footer_enabled' => $eventSettingsDTO->settings['rich_footer_enabled'] ?? $existingSettings->getRichFooterEnabled(),
+                'homepage_footer_settings' => array_key_exists('homepage_footer_settings', $eventSettingsDTO->settings)
+                    ? $eventSettingsDTO->settings['homepage_footer_settings']
+                    : $existingSettings->getHomepageFooterSettings(),
+                'schema_event_type' => $eventSettingsDTO->settings['schema_event_type'] ?? $existingSettings->getSchemaEventType(),
             ]),
         );
     }

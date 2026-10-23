@@ -62,6 +62,8 @@ readonly class EventStatsFetchService
               AND deleted_at IS NULL;
         SQL, ['eventId' => $eventId]);
 
+        $attendanceResponses = $this->getAttendanceResponseStats($eventId);
+
         // Use the results to populate the response DTO
         return new EventStatsResponseDTO(
             daily_stats: $this->getDailyEventStats($requestData),
@@ -78,6 +80,8 @@ readonly class EventStatsFetchService
             total_awaiting_payment: (float) $awaitingPayment->total,
             orders_awaiting_payment: (int) $awaitingPayment->orders,
             check_in_stats: $this->getCheckedInStats($eventId),
+            total_attendance_confirmed: (int) $attendanceResponses->confirmed_count,
+            total_cancelled_by_attendee: (int) $attendanceResponses->cancelled_count,
         );
     }
 
@@ -181,6 +185,18 @@ readonly class EventStatsFetchService
             $adjustedStart->format('Y-m-d H:i:s'),
             $endDate->format('Y-m-d H:i:s'),
         ];
+    }
+
+    private function getAttendanceResponseStats(int $eventId): object
+    {
+        return $this->db->selectOne(<<<SQL
+            SELECT
+                COUNT(*) FILTER (WHERE status = 'ACTIVE' AND attendance_confirmed_at IS NOT NULL) AS confirmed_count,
+                COUNT(*) FILTER (WHERE status = 'CANCELLED' AND cancelled_by_attendee_at IS NOT NULL) AS cancelled_count
+            FROM attendees
+            WHERE event_id = :eventId
+              AND deleted_at IS NULL;
+        SQL, ['eventId' => $eventId]);
     }
 
     public function getCheckedInStats(int $eventId): EventCheckInStatsResponseDTO

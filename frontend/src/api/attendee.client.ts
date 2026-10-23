@@ -1,5 +1,5 @@
 import {api} from "./client";
-import {Attendee, GenericDataResponse, GenericPaginatedResponse, IdParam, QueryFilters} from "../types";
+import {Attendee, AttendanceAccessLink, AttendeeAttendance, GenericDataResponse, GenericPaginatedResponse, IdParam, QueryFilters} from "../types";
 import {queryParamsHelper} from "../utilites/queryParamsHelper.ts";
 import {publicApi} from "./public-client.ts";
 import {SupportedLocales} from "../locales.ts";
@@ -62,6 +62,13 @@ export const attendeesClient = {
 
         return new Blob([response.data]);
     },
+    exportEntryControlList: async (eventId: IdParam): Promise<Blob> => {
+        const response = await api.post(`events/${eventId}/attendees/export-entry-control`, {}, {
+            responseType: 'blob',
+        });
+
+        return new Blob([response.data]);
+    },
     resendTicket: async (eventId: IdParam, attendeeId: IdParam) => {
         return await api.post(`events/${eventId}/attendees/${attendeeId}/resend-ticket`);
     },
@@ -70,6 +77,41 @@ export const attendeesClient = {
 export const attendeeClientPublic = {
     findByShortId: async (eventId: IdParam, attendeeShortId: string) => {
         const response = await publicApi.get<GenericDataResponse<Partial<Attendee>>>(`events/${eventId}/attendees/${attendeeShortId}`);
+        return response.data;
+    },
+    getAttendance: async (eventId: IdParam, attendeeShortId: string, code: string) => {
+        const response = await publicApi.get<GenericDataResponse<AttendeeAttendance>>(
+            `events/${eventId}/attendees/${attendeeShortId}/attendance`,
+            {params: {code}},
+        );
+        return response.data;
+    },
+    confirmAttendance: async (eventId: IdParam, attendeeShortId: string, code: string) => {
+        const response = await publicApi.post<GenericDataResponse<AttendeeAttendance>>(
+            `events/${eventId}/attendees/${attendeeShortId}/attendance/confirm`,
+            {code},
+        );
+        return response.data;
+    },
+    cancelAttendance: async (eventId: IdParam, attendeeShortId: string, code: string) => {
+        const response = await publicApi.post<GenericDataResponse<AttendeeAttendance>>(
+            `events/${eventId}/attendees/${attendeeShortId}/attendance/cancel`,
+            {code},
+        );
+        return response.data;
+    },
+    requestAttendanceAccess: async (eventId: IdParam, contact: string) => {
+        const response = await publicApi.post<{ message: string }>(
+            `events/${eventId}/attendance-access`,
+            {contact},
+        );
+        return response.data;
+    },
+    verifyAttendanceAccess: async (eventId: IdParam, contact: string, code: string) => {
+        const response = await publicApi.post<GenericDataResponse<AttendanceAccessLink[]>>(
+            `events/${eventId}/attendance-access/verify`,
+            {contact, code},
+        );
         return response.data;
     },
 }

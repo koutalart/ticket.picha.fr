@@ -3,6 +3,7 @@
 namespace HiEvents\Services\Application\Handlers\Organizer;
 
 use HiEvents\DomainObjects\ImageDomainObject;
+use HiEvents\DomainObjects\OrganizerFontDomainObject;
 use HiEvents\DomainObjects\OrganizerSettingDomainObject;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 
@@ -19,6 +20,7 @@ class GetPublicOrganizerHandler
         return $this->organizerRepository
             ->loadRelation(ImageDomainObject::class)
             ->loadRelation(OrganizerSettingDomainObject::class)
+            ->loadRelation(OrganizerFontDomainObject::class)
             ->findById($organizerId);
     }
 }

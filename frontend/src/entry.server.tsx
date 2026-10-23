@@ -7,10 +7,13 @@ import {App} from "./App";
 import {setAuthToken} from "./utilites/apiClient.ts";
 import {createStaticHandler, createStaticRouter, StaticRouterProvider} from "react-router";
 import {i18n} from "@lingui/core";
-import {dynamicActivateLocale, toHtmlLang} from "./locales.ts";
+import {dynamicActivateLocale, initCustomerAddressForm, toHtmlLang} from "./locales.ts";
+import {resolveCustomerAddressForm} from "./utilites/customerAddressForm.ts";
 import {setSsrQueryClient} from "./utilites/ssrQueryClient.ts";
+import {getCustomDomainOrganizer} from "./utilites/customDomain.ts";
 
 export {renderLlmsTxt, renderMarketingSitemap} from "./marketing/pages.ts";
+export {renderOrganizerLlmsTxt} from "./marketing/organizerLlmsTxt.ts";
 
 const getLocale = (req: express.Request): string => {
     if (req.cookies.locale) {
@@ -53,6 +56,12 @@ export async function render(params: {
         throw context;
     }
 
+    const customerAddressForm = await resolveCustomerAddressForm(
+        new URL(remixRequest.url).pathname,
+        queryClient,
+        getCustomDomainOrganizer(remixRequest),
+    );
+    initCustomerAddressForm(customerAddressForm);
     await dynamicActivateLocale(getLocale(params.req));
 
     const routerWithContext = createStaticRouter(dataRoutes, context);
@@ -81,6 +90,8 @@ export async function render(params: {
         helmetContext,
         locale: i18n.locale,
         htmlLang: toHtmlLang(i18n.locale),
+        customerAddressForm,
+        statusCode: context.statusCode === 404 ? 404 : 200,
     };
 }
 

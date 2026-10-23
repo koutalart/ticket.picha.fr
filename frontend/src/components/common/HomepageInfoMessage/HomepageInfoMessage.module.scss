@@ -109,3 +109,40 @@ $transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: underline;
   }
 }
+
+.container[data-immersive] {
+  min-height: calc(100vh - 260px);
+  min-height: calc(100dvh - 260px);
+
+  .card {
+    max-width: 480px;
+    background: rgba(10, 10, 10, 0.5);
+    border-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  }
+
+  .emojiContainer {
+    background: var(--immersive-accent-tint, rgba(255, 255, 255, 0.1));
+  }
+
+  .title,
+  .button {
+    font-family: var(--immersive-font-family, $font-display);
+  }
+
+  .title {
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    color: rgba(255, 255, 255, 0.74);
+  }
+
+  .button {
+    background: var(--immersive-accent) !important;
+    color: var(--immersive-accent-contrast) !important;
+  }
+}

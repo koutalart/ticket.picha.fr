@@ -31,6 +31,25 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'httpsms' => [
+        'base_url' => env('HTTPSMS_BASE_URL', 'https://api.httpsms.com/v1'),
+        'timeout_seconds' => (int) env('HTTPSMS_TIMEOUT_SECONDS', 15),
+        'reminder_batch_size' => (int) env('HTTPSMS_REMINDER_BATCH_SIZE', 200),
+        'reminder_pause_ms' => (int) env('HTTPSMS_REMINDER_PAUSE_MS', 250),
+        'shared_line_attribution_days' => (int) env('HTTPSMS_SHARED_LINE_ATTRIBUTION_DAYS', 30),
+        'detached_line_transition_days' => (int) env('HTTPSMS_DETACHED_LINE_TRANSITION_DAYS', 30),
+    ],
+
+    'sms_watchdog' => [
+        'alert_email' => env('SMS_WATCHDOG_ALERT_EMAIL'),
+        'alert_phone' => env('SMS_WATCHDOG_ALERT_PHONE'),
+        'reply_delay_minutes' => env('SMS_WATCHDOG_REPLY_DELAY_MINUTES', 10),
+        'reply_delay_auto_send_minutes' => env('SMS_WATCHDOG_REPLY_DELAY_AUTO_SEND_MINUTES', 5),
+        'draft_pending_minutes' => env('SMS_WATCHDOG_DRAFT_PENDING_MINUTES', 10),
+        'pending_minutes' => env('SMS_WATCHDOG_PENDING_MINUTES', 15),
+        'alert_cooldown_minutes' => env('SMS_WATCHDOG_ALERT_COOLDOWN_MINUTES', 5),
+    ],
+
     'meta' => [
         'graph_api_version' => env('META_GRAPH_API_VERSION', 'v24.0'),
         'timeout_seconds' => (int) env('META_CONVERSIONS_API_TIMEOUT', 10),
@@ -61,5 +80,7 @@ return [
     'anthropic' => [
         'api_key' => env('ANTHROPIC_API_KEY'),
         'model' => env('ANTHROPIC_MODEL', 'claude-opus-5-5'),
+        // SMS reply assistant: maximum Claude calls per organizer and per day (0 = no limit).
+        'sms_assistant_daily_limit' => (int) env('SMS_ASSISTANT_DAILY_LIMIT', 150),
     ],
 ];

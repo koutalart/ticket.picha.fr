@@ -5,6 +5,10 @@ namespace Tests\Unit\Services\Application\Handlers\Order;
 use Carbon\Carbon;
 use Exception;
 use HiEvents\DomainObjects\AttendeeDomainObject;
+use HiEvents\DomainObjects\Enums\AgeRestrictionRule;
+use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\Exceptions\AttendeeAgeRestrictionException;
+use HiEvents\Services\Domain\Attendee\AttendeeAgeRestrictionService;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
@@ -13,6 +17,7 @@ use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Repository\Interfaces\AffiliateRepositoryInterface;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
@@ -22,6 +27,10 @@ use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderOrderDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderProductDataDTO;
 use HiEvents\Services\Domain\Product\ProductQuantityUpdateService;
+use HiEvents\Services\Domain\Question\File\QuestionAnswerFileService;
+use HiEvents\DomainObjects\QuestionAnswerDomainObject;
+use HiEvents\DomainObjects\QuestionAnswerFileDomainObject;
+use HiEvents\Services\Application\Handlers\Order\DTO\OrderQuestionsDTO;
 use HiEvents\Services\Infrastructure\DomainEvents\DomainEventDispatcherService;
 use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
 use HiEvents\Services\Infrastructure\DomainEvents\Events\OrderEvent;
@@ -50,6 +59,8 @@ class CompleteOrderHandlerTest extends TestCase
     private AffiliateRepositoryInterface|MockInterface $affiliateRepository;
     private EventSettingsRepositoryInterface $eventSettingsRepository;
     private CheckoutSessionManagementService|MockInterface $sessionManagementService;
+    private QuestionAnswerFileService|MockInterface $questionAnswerFileService;
+    private EventRepositoryInterface|MockInterface $eventRepository;
 
     protected function setUp(): void
     {
@@ -69,6 +80,9 @@ class CompleteOrderHandlerTest extends TestCase
         $this->eventSettingsRepository = Mockery::mock(EventSettingsRepositoryInterface::class);
         $this->sessionManagementService = Mockery::mock(CheckoutSessionManagementService::class);
         $this->sessionManagementService->shouldReceive('verifySession')->andReturn(true)->byDefault();
+        $this->questionAnswerFileService = Mockery::mock(QuestionAnswerFileService::class);
+        $this->questionAnswerFileService->shouldReceive('getUnattachedFilesForOrder')->andReturn(new Collection())->byDefault();
+        $this->eventRepository = Mockery::mock(EventRepositoryInterface::class);
 
         $this->completeOrderHandler = new CompleteOrderHandler(
             $this->orderRepository,
@@ -80,6 +94,9 @@ class CompleteOrderHandlerTest extends TestCase
             $this->domainEventDispatcherService,
             $this->eventSettingsRepository,
             $this->sessionManagementService,
+            $this->questionAnswerFileService,
+            $this->eventRepository,
+            new AttendeeAgeRestrictionService(),
         );
     }
 
@@ -274,7 +291,119 @@ class CompleteOrderHandlerTest extends TestCase
         $this->completeOrderHandler->handle($orderShortId, $orderData);
     }
 
-    private function createMockCompleteOrderDTO(): CompleteOrderDTO
+    public function testFileAnswerIsStoredWithFilenameAndAttachedToTheAnswer(): void
+    {
+        $order = $this->createMockOrder();
+        $file = (new QuestionAnswerFileDomainObject())
+            ->setId(42)
+            ->setOrderId(1)
+            ->setQuestionId(7)
+            ->setOriginalFilename('cv.pdf');
+
+        $orderData = new CompleteOrderDTO(
+            order: new CompleteOrderOrderDTO(
+                first_name: 'John',
+                last_name: 'Doe',
+                email: 'john@example.com',
+                questions: new Collection([new OrderQuestionsDTO(question_id: 7, response: ['answer' => 42])]),
+            ),
+            products: new Collection([new CompleteOrderProductDataDTO(
+                product_price_id: 1,
+                first_name: 'John',
+                last_name: 'Doe',
+                email: 'john@example.com'
+            )]),
+            event_id: 1,
+        );
+
+        $this->orderRepository->shouldReceive('findByShortId')->andReturn($order);
+        $this->orderRepository->shouldReceive('loadRelation')->andReturnSelf();
+        $this->orderRepository->shouldReceive('updateFromArray')->andReturn($this->createMockOrder());
+        $this->productPriceRepository->shouldReceive('findWhereIn')->andReturn(new Collection([$this->createMockProductPrice()]));
+        $this->attendeeRepository->shouldReceive('insert')->andReturn(true);
+        $this->attendeeRepository->shouldReceive('findWhereIn')->andReturn(new Collection([$this->createMockAttendee()]));
+        $this->eventSettingsRepository->shouldReceive('findFirstWhere')->andReturn($this->createMockEventSetting());
+
+        $this->productQuantityUpdateService->shouldReceive('updateQuantitiesFromOrder')->zeroOrMoreTimes();
+        $this->domainEventDispatcherService->shouldReceive('dispatch')->zeroOrMoreTimes();
+
+        $this->questionAnswerFileService->shouldReceive('getUnattachedFilesForOrder')->with(1)->andReturn(new Collection([$file]));
+        $this->questionAnswerFileService->shouldReceive('getUnattachedFileForAnswer')->once()->with(1, 7, 42)->andReturn($file);
+        $this->questionAnswerFileService->shouldReceive('buildAnswer')->once()->with($file)->andReturn(['file_id' => 42, 'name' => 'cv.pdf']);
+        $this->questionAnswerFileService->shouldReceive('attachToAnswer')->once()->with(42, 99);
+
+        $this->questionAnswersRepository->shouldReceive('create')
+            ->once()
+            ->with([
+                'question_id' => 7,
+                'answer' => ['file_id' => 42, 'name' => 'cv.pdf'],
+                'order_id' => 1,
+            ])
+            ->andReturn((new QuestionAnswerDomainObject())->setId(99));
+
+        $this->completeOrderHandler->handle('ABC123', $orderData);
+
+        $this->assertTrue(true);
+    }
+
+    public function testMinorAloneIsRejectedWhenMinorsMustBeAccompanied(): void
+    {
+        $this->prepareAgeRestrictedOrder(AgeRestrictionRule::ACCOMPANIED_MINORS);
+        $this->attendeeRepository->shouldNotReceive('insert');
+
+        try {
+            $this->completeOrderHandler->handle('ABC123', $this->createMockCompleteOrderDTO('2012-05-01'));
+            $this->fail('An age restriction exception was expected');
+        } catch (AttendeeAgeRestrictionException $e) {
+            $this->assertArrayHasKey('products.0.birth_date', $e->getErrors());
+        }
+    }
+
+    public function testMissingBirthDateIsRejectedWhenAgeRuleIsActive(): void
+    {
+        $this->prepareAgeRestrictedOrder(AgeRestrictionRule::MINIMUM_AGE);
+        $this->attendeeRepository->shouldNotReceive('insert');
+
+        $this->expectException(AttendeeAgeRestrictionException::class);
+
+        $this->completeOrderHandler->handle('ABC123', $this->createMockCompleteOrderDTO());
+    }
+
+    public function testAdultIsAcceptedAndBirthDateIsStored(): void
+    {
+        $this->prepareAgeRestrictedOrder(AgeRestrictionRule::MINIMUM_AGE);
+        $this->orderRepository->shouldReceive('updateFromArray')->andReturn($this->createMockOrder());
+        $this->attendeeRepository->shouldReceive('insert')
+            ->once()
+            ->withArgs(fn(array $inserts) => $inserts[0]['birth_date'] === '1990-03-15')
+            ->andReturn(true);
+        $this->attendeeRepository->shouldReceive('findWhereIn')->andReturn(new Collection([$this->createMockAttendee()]));
+        $this->productQuantityUpdateService->shouldReceive('updateQuantitiesFromOrder');
+
+        $this->completeOrderHandler->handle('ABC123', $this->createMockCompleteOrderDTO('1990-03-15'));
+
+        $this->assertTrue(true);
+    }
+
+    private function prepareAgeRestrictedOrder(AgeRestrictionRule $rule): void
+    {
+        $this->orderRepository->shouldReceive('findByShortId')->with('ABC123')->andReturn($this->createMockOrder());
+        $this->orderRepository->shouldReceive('loadRelation')->andReturnSelf();
+        $this->productPriceRepository->shouldReceive('findWhereIn')->andReturn(new Collection([$this->createMockProductPrice()]));
+        $this->eventSettingsRepository->shouldReceive('findFirstWhere')->andReturn(
+            $this->createMockEventSetting()
+                ->setAgeRestrictionRule($rule->value)
+                ->setAgeRestrictionMinimumAge(18)
+        );
+        $this->eventRepository->shouldReceive('findById')->with(1)->andReturn(
+            (new EventDomainObject())
+                ->setId(1)
+                ->setTimezone('Indian/Mayotte')
+                ->setStartDate('2026-12-20 16:00:00')
+        );
+    }
+
+    private function createMockCompleteOrderDTO(?string $birthDate = null): CompleteOrderDTO
     {
         $orderDTO = new CompleteOrderOrderDTO(
             first_name: 'John',
@@ -287,7 +416,8 @@ class CompleteOrderHandlerTest extends TestCase
             product_price_id: 1,
             first_name: 'John',
             last_name: 'Doe',
-            email: 'john@example.com'
+            email: 'john@example.com',
+            birth_date: $birthDate,
         );
 
         return new CompleteOrderDTO(

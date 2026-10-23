@@ -5,6 +5,7 @@ namespace HiEvents\Services\Application\Handlers\Question;
 use HiEvents\Exceptions\CannotDeleteEntityException;
 use HiEvents\Repository\Interfaces\QuestionAnswerRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
+use HiEvents\Services\Domain\Question\File\QuestionAnswerFileService;
 use Illuminate\Database\DatabaseManager;
 use Throwable;
 
@@ -14,6 +15,7 @@ readonly class DeleteQuestionHandler
         private QuestionRepositoryInterface       $questionRepository,
         private QuestionAnswerRepositoryInterface $questionAnswersRepository,
         private DatabaseManager                   $databaseManager,
+        private QuestionAnswerFileService         $questionAnswerFileService,
     )
     {
     }
@@ -47,6 +49,8 @@ readonly class DeleteQuestionHandler
         $this->questionAnswersRepository->deleteWhere([
             'question_id' => $questionId,
         ]);
+
+        $this->questionAnswerFileService->deleteFilesForQuestion($questionId);
 
         $this->questionRepository->deleteWhere([
             'id' => $questionId,

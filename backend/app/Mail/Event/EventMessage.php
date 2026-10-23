@@ -17,15 +17,18 @@ class EventMessage extends BaseMail
     public function __construct(
         private readonly EventDomainObject $event,
         private readonly EventSettingDomainObject $eventSettings,
-        private readonly SendMessageDTO $messageData
+        private readonly SendMessageDTO $messageData,
+        private readonly ?string $messageHtml = null,
     )
     {
         parent::__construct();
+        $this->useEventEmailLogo($this->event);
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: $this->messageData->subject,
         );
@@ -37,6 +40,7 @@ class EventMessage extends BaseMail
             markdown: 'emails.event.message',
             with: [
                 'messageData' => $this->messageData,
+                'messageHtml' => $this->messageHtml ?? $this->messageData->message,
                 'event' => $this->event,
                 'eventSettings' => $this->eventSettings,
             ]

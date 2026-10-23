@@ -88,10 +88,24 @@ class EventSettingsResourcePublic extends JsonResource
 
             // Self-service settings
             'allow_attendee_self_edit' => $this->getAllowAttendeeSelfEdit(),
+            'single_product_per_order' => $this->getSingleProductPerOrder(),
+            'choose_category_first' => $this->getChooseCategoryFirst(),
+
+            // Age restriction settings
+            'age_restriction_rule' => $this->getAgeRestrictionRule(),
+            'age_restriction_minimum_age' => $this->getAgeRestrictionMinimumAge(),
 
             // Waitlist settings
             'waitlist_auto_process' => $this->getWaitlistAutoProcess(),
             'waitlist_offer_timeout_minutes' => $this->getWaitlistOfferTimeoutMinutes(),
+
+            // Attendance response settings
+            'allow_attendee_attendance_response' => $this->getAllowAttendeeAttendanceResponse(),
+
+            'embedded_registration_enabled' => $this->getEmbeddedRegistrationEnabled(),
+            'rich_footer_enabled' => $this->getRichFooterEnabled(),
+            'homepage_footer_settings' => $this->getHomepageFooterSettings(),
+            'schema_event_type' => $this->getSchemaEventType(),
         ];
     }
 }

@@ -52,6 +52,10 @@ class EventResourcePublic extends BaseResource
                 condition: !is_null($this->getProductCategories()) && $this->getProductCategories()->isNotEmpty(),
                 value: fn() => ProductCategoryResourcePublic::collection($this->getProductCategories()),
             ),
+            'dedicated_pages' => $this->when(
+                condition: !is_null($this->getEventSettings()),
+                value: fn() => $this->getEventSettings()->getAvailableEventPages(),
+            ),
             'settings' => $this->when(
                 condition: !is_null($this->getEventSettings()),
                 value: fn() => new EventSettingsResourcePublic(

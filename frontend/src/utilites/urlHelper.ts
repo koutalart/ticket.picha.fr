@@ -17,16 +17,56 @@ export const organizerHomepagePath = (organizer: Organizer) => {
     return `/events/${organizer?.id}/${organizer?.slug}`;
 }
 
+type PublicUrlOwner = Pick<Organizer, 'custom_domain'> | null | undefined;
+
+const platformBaseUrl = () => String(getConfig('VITE_FRONTEND_URL') ?? '').replace(/\/$/, '');
+
+/**
+ * Origin of the organizer's own domain (https://mayottela1ere.fr), or null when it sells on the platform.
+ */
+export const customDomainOrigin = (organizer: PublicUrlOwner): string | null => {
+    const domain = organizer?.custom_domain?.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
+    return domain ? `https://${domain}` : null;
+}
+
+/**
+ * Base of every link aimed at participants: the organizer's own domain when it has one, the platform otherwise.
+ */
+export const publicBaseUrl = (organizer?: PublicUrlOwner): string => {
+    return customDomainOrigin(organizer) ?? platformBaseUrl();
+}
+
+/**
+ * Moves an absolute link to a participant page of the platform onto the organizer's own domain.
+ */
+export const toParticipantUrl = (url: string, organizer?: PublicUrlOwner): string => {
+    const origin = customDomainOrigin(organizer);
+    const platform = platformBaseUrl();
+    if (!origin || !platform || !url || !url.startsWith(platform)) {
+        return url;
+    }
+    const rest = url.slice(platform.length);
+    return rest === '' || /^[/?#]/.test(rest) ? origin + (rest || '/') : url;
+}
+
 export const organizerHomepageUrl = (organizer: Organizer) => {
-    return getConfig('VITE_FRONTEND_URL') + organizerHomepagePath(organizer);
+    return publicBaseUrl(organizer) + organizerHomepagePath(organizer);
 }
 
-export const eventCheckoutUrl = (eventId: IdParam, orderShortId: IdParam, subPage = '') => {
-    return getConfig('VITE_FRONTEND_URL') + eventCheckoutPath(eventId, orderShortId, subPage);
+/**
+ * Canonical address of the organizer page: the root of its own domain when it has one.
+ */
+export const organizerCanonicalUrl = (organizer: Organizer) => {
+    const origin = customDomainOrigin(organizer);
+    return origin ? `${origin}/` : organizerHomepageUrl(organizer);
 }
 
-export const eventHomepageUrl = (event: Event) => {
-    return getConfig('VITE_FRONTEND_URL') + eventHomepagePath(event);
+export const eventCheckoutUrl = (eventId: IdParam, orderShortId: IdParam, subPage = '', organizer?: PublicUrlOwner) => {
+    return publicBaseUrl(organizer) + eventCheckoutPath(eventId, orderShortId, subPage);
+}
+
+export const eventHomepageUrl = (event: Event, organizer?: PublicUrlOwner) => {
+    return publicBaseUrl(event?.organizer ?? organizer) + eventHomepagePath(event);
 }
 
 export const eventShareImageUrl = (event: Event) => {
