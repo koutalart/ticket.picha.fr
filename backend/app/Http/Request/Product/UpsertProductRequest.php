@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Http\Request\Product;
 
 use HiEvents\DomainObjects\Enums\ProductPriceType;
+use HiEvents\DomainObjects\Enums\RequiredQuantityMode;
 use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\Http\Request\BaseRequest;
 use HiEvents\Validators\Rules\RulesHelper;
@@ -41,6 +42,7 @@ class UpsertProductRequest extends BaseRequest
             'is_visible_at_box_office' => 'boolean',
             'is_sales_paused' => 'boolean',
             'is_required' => 'boolean',
+            'required_quantity_mode' => ['nullable', Rule::in(RequiredQuantityMode::valuesArray())],
             'type' => ['required', Rule::in(ProductPriceType::valuesArray())],
             'product_type' => ['required', Rule::in(ProductType::valuesArray())],
             'tax_and_fee_ids' => 'array',
@@ -55,7 +57,8 @@ class UpsertProductRequest extends BaseRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            if (!$this->boolean('is_required')) {
+            if (!$this->boolean('is_required')
+                || $this->input('required_quantity_mode') === RequiredQuantityMode::PER_TICKET->name) {
                 return;
             }
 

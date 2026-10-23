@@ -122,9 +122,9 @@ export const getEmbeddedCheckoutLines = (event?: Event): EmbeddedCheckoutLine[] 
         }))
         .filter(line => line.max > 0);
 
-export const getRequiredCheckoutItems = (event?: Event): EmbeddedCheckoutItem[] =>
+export const getRequiredCheckoutItems = (event: Event | undefined, ticketQuantity: number): EmbeddedCheckoutItem[] =>
     getEventProducts(event).flatMap(product => {
-        const selection = getRequiredProductSelection(product);
+        const selection = getRequiredProductSelection(product, ticketQuantity);
         return selection ? [{
             key: lineKey(product, selection.price),
             product,

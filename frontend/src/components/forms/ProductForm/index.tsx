@@ -5,6 +5,7 @@ import {
     Product,
     ProductPriceType,
     ProductType,
+    RequiredQuantityMode,
     TaxAndFee,
     TaxAndFeeCalculationType,
     TaxAndFeeType
@@ -15,8 +16,10 @@ import {
     Button,
     Collapse,
     ComboboxItem,
+    Group,
     MultiSelect,
     NumberInput,
+    Radio,
     SegmentedControl,
     Select,
     Switch,
@@ -486,9 +489,26 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                             mt={15}
                             {...form.getInputProps('is_required', {type: 'checkbox'})}
                             label={t`Required product (added to every order)`}
-                            description={t`Added automatically, in a locked quantity, to every online order that contains at least one ticket. The quantity is the minimum per order (1 if empty). Not applied at the box office or when adding an attendee manually. If the product is not available (sold out, hidden, outside its sale dates), the order goes through without it.`}
+                            description={t`Added automatically, in a locked quantity, to every online order that contains at least one ticket. Not applied at the box office or when adding an attendee manually. If the product is not available (sold out, hidden, outside its sale dates), the order goes through without it.`}
                         />
-                        {form.values.is_required && Number(form.values.max_per_order) > 0
+                        {form.values.is_required && (
+                            <Radio.Group
+                                mt={15}
+                                value={form.values.required_quantity_mode ?? 'PER_ORDER'}
+                                onChange={(value) => form.setFieldValue('required_quantity_mode', value as RequiredQuantityMode)}
+                                label={t`Quantity`}
+                                description={form.values.required_quantity_mode === 'PER_TICKET'
+                                    ? t`One per ticket: the quantity follows the number of tickets in the order (3 tickets, 3 included). The maximum per order does not apply.`
+                                    : t`One per order: the quantity is the minimum per order (1 if empty), whatever the number of tickets.`}
+                            >
+                                <Group mt={8}>
+                                    <Radio value="PER_ORDER" label={t`1 per order`}/>
+                                    <Radio value="PER_TICKET" label={t`1 per ticket`}/>
+                                </Group>
+                            </Radio.Group>
+                        )}
+                        {form.values.is_required && form.values.required_quantity_mode !== 'PER_TICKET'
+                            && Number(form.values.max_per_order) > 0
                             && Number(form.values.max_per_order) < Math.max(1, Number(form.values.min_per_order) || 0) && (
                             <Alert mt={10} color={'red'} icon={<IconInfoCircle/>}>
                                 {t`For a required product, the maximum per order must be at least the minimum per order.`}

@@ -148,6 +148,85 @@ class RequiredProductOrderValidationTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testPerTicketRequiredProductNeedsOnePerTicket(): void
+    {
+        $this->arrange(requiredProduct: $this->perTicketRequiredProduct());
+
+        $this->service->validateRequestData(self::EVENT_ID, $this->order(ticketQuantity: 3, requiredQuantity: 3));
+
+        $this->assertTrue(true);
+    }
+
+    public function testPerTicketRequiredProductWithWrongQuantityIsRejected(): void
+    {
+        foreach ([1, 2, 4] as $requiredQuantity) {
+            $this->setUp();
+            $this->arrange(requiredProduct: $this->perTicketRequiredProduct());
+
+            try {
+                $this->service->validateRequestData(self::EVENT_ID, $this->order(ticketQuantity: 3, requiredQuantity: $requiredQuantity));
+                $this->fail('Expected a ValidationException for quantity ' . $requiredQuantity);
+            } catch (ValidationException $e) {
+                $this->assertSame(
+                    __(':product is included once per ticket (expected quantity: :quantity).', ['product' => 'Option sérénité', 'quantity' => 3]),
+                    $e->errors()['products'][0],
+                );
+            }
+        }
+    }
+
+    public function testPerTicketRequiredProductMissingIsRejected(): void
+    {
+        $this->arrange(requiredProduct: $this->perTicketRequiredProduct());
+
+        $this->expectException(ValidationException::class);
+
+        $this->service->validateRequestData(self::EVENT_ID, $this->order(ticketQuantity: 2));
+    }
+
+    public function testPerTicketRequiredProductWithoutTicketIsNotForced(): void
+    {
+        $this->arrange(requiredProduct: $this->perTicketRequiredProduct(), eventSellsTickets: false);
+
+        $this->service->validateRequestData(self::EVENT_ID, [
+            'products' => [
+                ['product_id' => self::MERCH_ID, 'quantities' => [['price_id' => self::MERCH_PRICE_ID, 'quantity' => 1]]],
+            ],
+        ]);
+
+        $this->assertTrue(true);
+    }
+
+    public function testUnavailablePerTicketRequiredProductIsSkipped(): void
+    {
+        $this->arrange(requiredProduct: $this->perTicketRequiredProduct()->setIsSalesPaused(true));
+        $this->service->validateRequestData(self::EVENT_ID, $this->order(ticketQuantity: 3));
+
+        $this->setUp();
+        $this->arrange(requiredProduct: $this->perTicketRequiredProduct(), requiredQuantityAvailable: 0);
+        $this->service->validateRequestData(self::EVENT_ID, $this->order(ticketQuantity: 3));
+
+        $this->assertTrue(true);
+    }
+
+    public function testPerTicketRequiredProductIsCappedByItsStock(): void
+    {
+        $this->arrange(requiredProduct: $this->perTicketRequiredProduct(), requiredQuantityAvailable: 2);
+
+        $this->service->validateRequestData(self::EVENT_ID, $this->order(ticketQuantity: 3, requiredQuantity: 2));
+
+        $this->assertTrue(true);
+    }
+
+    public function testPerOrderRequiredProductKeepsItsMaximumPerOrder(): void
+    {
+        $this->arrange(requiredProduct: $this->requiredProduct());
+
+        $this->expectException(ValidationException::class);
+
+        $this->service->validateRequestData(self::EVENT_ID, $this->order(ticketQuantity: 3, requiredQuantity: 3));
+    }
+
     public function testRequiredQuantityDefaultsToOne(): void
     {
         $this->assertSame(1, (new ProductDomainObject())->setMinPerOrder(null)->getRequiredQuantity());
@@ -184,6 +263,11 @@ class RequiredProductOrderValidationTest extends TestCase
             ->setIsRequired(true)
             ->setMinPerOrder($minPerOrder)
             ->setMaxPerOrder($maxPerOrder);
+    }
+
+    private function perTicketRequiredProduct(): ProductDomainObject
+    {
+        return $this->requiredProduct(minPerOrder: 1, maxPerOrder: 1)->setRequiredQuantityMode('PER_TICKET');
     }
 
     private function product(int $id, int $priceId, string $title, string $productType, float $price): ProductDomainObject

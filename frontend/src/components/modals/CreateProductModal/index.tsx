@@ -35,6 +35,7 @@ export const CreateProductModal = ({onClose, selectedCategoryId = undefined}: Cr
             is_hidden: false,
             is_visible_at_box_office: false,
             is_required: false,
+            required_quantity_mode: 'PER_ORDER',
             is_highlighted: false,
             highlight_message: undefined,
             waitlist_enabled: null,

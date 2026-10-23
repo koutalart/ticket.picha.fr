@@ -288,7 +288,8 @@ msgstr "{分}分钟和{秒}秒钟"
 msgid "{organizerName}'s first event"
 msgstr "{组织者名称}的首次活动"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1246
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1335
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1352
 msgid "{participantsCount} of {maxParticipants} places"
 msgstr ""
 
@@ -345,6 +346,10 @@ msgstr ""
 msgid "+ {0} awaiting payment collection"
 msgstr ""
 
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1086
+msgid "+ service fees, detailed before payment"
+msgstr "+ 服务费，付款前详细列出"
+
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:98
 msgid "+1 234 567 890"
 msgstr "+1 234 567 890"
@@ -361,7 +366,7 @@ msgstr "<0>签到列表帮助您按日期、区域或票务类型管理活动入
 msgid "<0>https://</0>your-website.com"
 msgstr "<0>https://</0>your-website.com"
 
-#: src/components/forms/ProductForm/index.tsx:349
+#: src/components/forms/ProductForm/index.tsx:352
 msgid "<0>Please enter the price excluding taxes and fees.</0><1>Taxes and fees can be added below.</1>"
 msgstr "<0>请输入不含税费的价格。</0><1>税费可以在下方添加。</1>"
 
@@ -369,7 +374,7 @@ msgstr "<0>请输入不含税费的价格。</0><1>税费可以在下方添加�
 msgid "<0>Set a single total attendance limit that applies to multiple ticket types at once.</0><1>For example, if you link a <2>Day Pass</2> and a <3>Full Weekend</3> ticket, they will both draw from the same pool of spots. Once the limit is reached, all linked tickets automatically stop selling.</1>"
 msgstr "<0>设置一个单一的总人数上限，同时适用于多个票种。</0><1>例如，如果你将<2>单日票</2>和<3>全周末票</3>关联起来，它们将共享同一个名额池。一旦达到上限，所有关联的票种将自动停止销售。</1>"
 
-#: src/components/forms/ProductForm/index.tsx:366
+#: src/components/forms/ProductForm/index.tsx:369
 msgid "<0>The number of products available for this product</0><1>This value can be overridden if there are <2>Capacity Limits</2> associated with this product.</1>"
 msgstr "<0>该产品的可用数量</0><1>如果该产品有相关的<2>容量限制</2>，此值可以被覆盖。</1>"
 
@@ -418,6 +423,14 @@ msgstr "活动前1天"
 #: src/components/modals/SendMessageModal/index.tsx:116
 msgid "1 hour before event"
 msgstr "活动前1小时"
+
+#: src/components/forms/ProductForm/index.tsx:505
+msgid "1 per order"
+msgstr "每单 1 个"
+
+#: src/components/forms/ProductForm/index.tsx:506
+msgid "1 per ticket"
+msgstr "每张门票 1 个"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:659
 msgid "1 ticket"
@@ -502,7 +515,7 @@ msgstr "费用，如预订费或服务费"
 msgid "A few details are missing, they're marked in red."
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1161
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1239
 msgid "A few details for each participant."
 msgstr "每位参与者的一些信息。"
 
@@ -608,7 +621,7 @@ msgid "A token is saved. Paste a new one to replace it."
 msgstr ""
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:190
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:499
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:502
 msgid "A valid email is required"
 msgstr ""
 
@@ -859,7 +872,8 @@ msgstr ""
 msgid "Add a note"
 msgstr "添加备注"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1243
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1332
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1349
 msgid "Add a participant"
 msgstr ""
 
@@ -963,7 +977,7 @@ msgstr "添加线下支付的说明（例如，银行转账详情、支票寄送
 msgid "Add New"
 msgstr "添加新内容"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1289
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1398
 msgid "Add one"
 msgstr "增加一个名额"
 
@@ -1012,7 +1026,7 @@ msgstr "添加机票"
 msgid "Add tickets with the + buttons."
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:400
+#: src/components/forms/ProductForm/index.tsx:403
 msgid "Add tier"
 msgstr "增加层级"
 
@@ -1045,13 +1059,21 @@ msgstr ""
 msgid "Add your social media handles and website URL. These will be displayed on your public organizer page."
 msgstr "添加您的社交媒体账号和网站链接。这些信息将显示在您的公开组织者页面上。"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:624
+#: src/components/routes/product-widget/SelectProducts/index.tsx:626
 msgid "Added automatically to every order with a ticket."
 msgstr "自动添加到每个包含门票的订单中。"
 
+#: src/components/forms/ProductForm/index.tsx:492
+msgid "Added automatically, in a locked quantity, to every online order that contains at least one ticket. Not applied at the box office or when adding an attendee manually. If the product is not available (sold out, hidden, outside its sale dates), the order goes through without it."
+msgstr "以锁定数量自动添加到每个至少包含一张门票的在线订单中。不适用于售票处或手动添加参会者。如果该产品不可用（售罄、隐藏、不在销售期内），订单将不包含该产品而照常完成。"
+
 #: src/components/forms/ProductForm/index.tsx:489
-msgid "Added automatically, in a locked quantity, to every online order that contains at least one ticket. The quantity is the minimum per order (1 if empty). Not applied at the box office or when adding an attendee manually. If the product is not available (sold out, hidden, outside its sale dates), the order goes through without it."
-msgstr "以锁定数量自动添加到每个至少包含一张门票的在线订单中。数量为每单最少数量（为空时为 1）。不适用于售票处或手动添加参会者。如果该产品不可用（售罄、隐藏、不在销售期内），订单将不包含该产品而照常完成。"
+#~ msgid "Added automatically, in a locked quantity, to every online order that contains at least one ticket. The quantity is the minimum per order (1 if empty). Not applied at the box office or when adding an attendee manually. If the product is not available (sold out, hidden, outside its sale dates), the order goes through without it."
+#~ msgstr "以锁定数量自动添加到每个至少包含一张门票的在线订单中。数量为每单最少数量（为空时为 1）。不适用于售票处或手动添加参会者。如果该产品不可用（售罄、隐藏、不在销售期内），订单将不包含该产品而照常完成。"
+
+#: src/components/routes/product-widget/SelectProducts/index.tsx:625
+msgid "Added automatically, one per ticket."
+msgstr "自动添加，每张门票一个。"
 
 #: src/components/routes/organizer/Contacts/index.tsx:127
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
@@ -1312,7 +1334,7 @@ msgstr "允许参与者通过订单确认邮件中的安全链接更新他们的
 msgid "Allow buyers to copy their details to all attendees"
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:549
+#: src/components/forms/ProductForm/index.tsx:569
 msgid "Allow customers to join a waitlist when this product is sold out"
 msgstr "允许客户在该产品售罄时加入候补名单"
 
@@ -1356,8 +1378,8 @@ msgid "Already Refunded"
 msgstr "已退款"
 
 #: src/components/layouts/EventHomepage/AttendanceAccess/index.tsx:43
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:989
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1659
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1048
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1765
 msgid "Already registered? Manage my attendance"
 msgstr ""
 
@@ -1429,7 +1451,7 @@ msgstr "加载页面时出现错误"
 msgid "An optional description of this category to display on the event page."
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:572
+#: src/components/forms/ProductForm/index.tsx:592
 msgid "An optional message to display on the highlighted product, e.g. \"Selling fast 🔥\" or \"Best value\""
 msgstr "在突出显示的产品上显示的可选消息,例如\"热卖中🔥\"或\"超值优惠\""
 
@@ -1503,7 +1525,7 @@ msgstr "外观"
 msgid "Application Fees Configuration"
 msgstr "应用费用配置"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:687
+#: src/components/routes/product-widget/SelectProducts/index.tsx:689
 msgid "applied"
 msgstr "应用"
 
@@ -1516,11 +1538,11 @@ msgid "Applies to 1 product"
 msgstr "适用于1个产品"
 
 #: src/components/common/FilterModal/index.tsx:284
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1517
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1623
 msgid "Apply"
 msgstr "应用"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:715
+#: src/components/routes/product-widget/SelectProducts/index.tsx:717
 msgid "Apply Promo Code"
 msgstr "应用促销代码"
 
@@ -1720,7 +1742,7 @@ msgstr ""
 msgid "Artists on the line-up"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1104
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1182
 msgid "As shown on your identity document."
 msgstr ""
 
@@ -1770,7 +1792,7 @@ msgstr "协会和专业网络"
 msgid "At least one event type must be selected"
 msgstr "必须选择至少一种事件类型"
 
-#: src/components/forms/ProductForm/index.tsx:309
+#: src/components/forms/ProductForm/index.tsx:312
 msgid "At the box office"
 msgstr ""
 
@@ -1947,7 +1969,7 @@ msgid "attendees since 2019"
 msgstr ""
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:84
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:275
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:292
 msgid "Attendees under {ageLimit} must be accompanied by an adult registered in the same order."
 msgstr ""
 
@@ -2311,7 +2333,7 @@ msgid "By card. The final price is shown before payment."
 msgstr "刷卡支付。付款前显示最终价格。"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:828
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1430
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1536
 #: src/components/routes/product-widget/Payment/index.tsx:165
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "继续操作即表示您同意<0>{0}服务条款</0>"
@@ -2438,7 +2460,7 @@ msgstr "我们可以在没有陪同服务的情况下自行使用平台吗？"
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:246
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1527
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1633
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:85
 #: src/utilites/confirmationDialog.tsx:17
@@ -2592,7 +2614,7 @@ msgstr ""
 msgid "Categories allow you to group products together. For example, you might have a category for \"Tickets\" and another for \"Merchandise\"."
 msgstr "类别允许您将产品分组。例如，您可以有一个“门票”类别和另一个“商品”类别。"
 
-#: src/components/forms/ProductForm/index.tsx:329
+#: src/components/forms/ProductForm/index.tsx:332
 msgid "Categories help you organize your products. This title will be displayed on the public event page."
 msgstr "类别帮助您组织产品。此标题将在公共活动页面上显示。"
 
@@ -2685,7 +2707,7 @@ msgstr "查看您的邮箱"
 msgid "Check your inbox! If tickets are associated with this email, you'll receive a link to view them."
 msgstr "请检查您的收件箱！如果此邮箱有关联的票，您将收到查看链接。"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1361
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1467
 msgid "Check your order before continuing to payment."
 msgstr "继续付款前请核对您的订单。"
 
@@ -2836,7 +2858,7 @@ msgstr "选择账户"
 msgid "Choose an event"
 msgstr "选择活动"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1050
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1128
 msgid "Choose an option"
 msgstr ""
 
@@ -2844,11 +2866,11 @@ msgstr ""
 msgid "Choose an Organizer"
 msgstr "选择一个组织者"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:485
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:488
 msgid "Choose at least {min} for {title}."
 msgstr "{title} 至少选择 {min} 个。"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:467
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:470
 msgid "Choose at least one ticket."
 msgstr "请至少选择一张票。"
 
@@ -2884,7 +2906,7 @@ msgstr "为新活动选择默认设置。这可以针对单个活动进行覆盖
 msgid "Choose the name your attendees see when they receive your emails."
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1256
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1368
 msgid "Choose the number of places for each ticket."
 msgstr "为每种票选择名额数量。"
 
@@ -2951,7 +2973,7 @@ msgstr "已点击"
 msgid "Clicks on the page"
 msgstr ""
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:720
+#: src/components/routes/product-widget/SelectProducts/index.tsx:722
 msgid "close"
 msgstr "关闭"
 
@@ -2961,7 +2983,7 @@ msgstr "关闭"
 #: src/components/modals/JoinWaitlistModal/index.tsx:130
 #: src/components/modals/RefundOrderModal/index.tsx:210
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:308
-#: src/components/routes/product-widget/SelectProducts/index.tsx:721
+#: src/components/routes/product-widget/SelectProducts/index.tsx:723
 msgid "Close"
 msgstr "关闭"
 
@@ -2994,7 +3016,7 @@ msgstr "已关闭"
 msgid "Code"
 msgstr "代码"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1487
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1593
 msgid "Code {promoCode} applied"
 msgstr "已使用优惠码 {promoCode}"
 
@@ -3027,7 +3049,7 @@ msgstr ""
 msgid "Collaborate with your team to create amazing events together."
 msgstr "与您的团队协作，共同创建精彩的活动。"
 
-#: src/components/forms/ProductForm/index.tsx:536
+#: src/components/forms/ProductForm/index.tsx:556
 msgid "Collapse this product when the event page is initially loaded"
 msgstr "当活动页面初始加载时折叠此产品"
 
@@ -3258,7 +3280,7 @@ msgstr "确认"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:518
 #: src/components/routes/product-widget/CollectInformation/index.tsx:741
 #: src/components/routes/product-widget/CollectInformation/index.tsx:742
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1141
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1219
 msgid "Confirm Email Address"
 msgstr "确认电子邮件地址"
 
@@ -3267,7 +3289,7 @@ msgstr "确认电子邮件地址"
 msgid "Confirm Email Change"
 msgstr "确认电子邮件更改"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1586
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1692
 msgid "Confirm my registration"
 msgstr ""
 
@@ -3428,8 +3450,8 @@ msgstr ""
 #: src/components/organizerTemplates/Tour/index.tsx:428
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:67
 #: src/components/routes/organizer/Contacts/index.tsx:372
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1338
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1398
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1444
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1504
 msgid "Contact"
 msgstr "联系"
 
@@ -3511,7 +3533,7 @@ msgstr "内容"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:425
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:249
 #: src/components/routes/organizer/EventAssistant/index.tsx:513
-#: src/components/routes/product-widget/SelectProducts/index.tsx:673
+#: src/components/routes/product-widget/SelectProducts/index.tsx:675
 msgid "Continue"
 msgstr "继续"
 
@@ -3538,7 +3560,7 @@ msgstr "继续创建活动"
 msgid "Continue to next step"
 msgstr "继续下一步"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1586
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1692
 msgid "Continue to payment"
 msgstr "继续付款"
 
@@ -3878,7 +3900,7 @@ msgstr "创建新密码"
 msgid "Create Organizer"
 msgstr "创建组织器"
 
-#: src/components/modals/CreateProductModal/index.tsx:93
+#: src/components/modals/CreateProductModal/index.tsx:94
 msgid "Create Product"
 msgstr "创建产品"
 
@@ -3892,7 +3914,7 @@ msgstr "创建促销代码"
 msgid "Create Question"
 msgstr "创建问题"
 
-#: src/components/forms/ProductForm/index.tsx:460
+#: src/components/forms/ProductForm/index.tsx:463
 #: src/components/modals/CreateTaxOrFeeModal/index.tsx:53
 msgid "Create Tax or Fee"
 msgstr "创建税费"
@@ -3913,7 +3935,7 @@ msgstr ""
 msgid "Create the QR codes of this campaign: poster, flyer, story..."
 msgstr ""
 
-#: src/components/modals/CreateProductModal/index.tsx:85
+#: src/components/modals/CreateProductModal/index.tsx:86
 msgid "Create Ticket or Product"
 msgstr "创建门票或产品"
 
@@ -4241,12 +4263,12 @@ msgstr ""
 #: src/components/common/AttendeeDetails/index.tsx:44
 #: src/components/common/QuestionsTable/index.tsx:373
 #: src/components/routes/product-widget/CollectInformation/index.tsx:756
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1217
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1306
 msgid "Date of birth"
 msgstr ""
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:142
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:519
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:522
 msgid "Date of birth is required"
 msgstr ""
 
@@ -4428,7 +4450,7 @@ msgid "Denmark"
 msgstr "丹麦"
 
 #: src/components/forms/ProductCategoryForm/index.tsx:39
-#: src/components/forms/ProductForm/index.tsx:320
+#: src/components/forms/ProductForm/index.tsx:323
 #: src/components/forms/TaxAndFeeForm/index.tsx:81
 #: src/components/modals/DuplicateEventModal/index.tsx:116
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:266
@@ -4570,7 +4592,7 @@ msgstr ""
 msgid "Donation"
 msgstr "捐赠"
 
-#: src/components/forms/ProductForm/index.tsx:175
+#: src/components/forms/ProductForm/index.tsx:178
 msgid "Donation / Pay what you'd like product"
 msgstr "捐赠 / 自由定价产品"
 
@@ -4699,8 +4721,8 @@ msgstr "复制活动"
 msgid "Duplicate Options"
 msgstr "复制选项"
 
-#: src/components/modals/DuplicateProductModal/index.tsx:119
-#: src/components/modals/DuplicateProductModal/index.tsx:123
+#: src/components/modals/DuplicateProductModal/index.tsx:121
+#: src/components/modals/DuplicateProductModal/index.tsx:125
 msgid "Duplicate Product"
 msgstr "复制产品"
 
@@ -4780,7 +4802,7 @@ msgstr "每个人将收到一封包含预留名额的电子邮件，以完成购
 msgid "Each purchase carries the same identifier as the pixel event, so Meta counts it only once."
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:97
+#: src/components/forms/ProductForm/index.tsx:100
 msgid "Early bird"
 msgstr "早起的鸟儿"
 
@@ -4867,8 +4889,8 @@ msgstr "编辑订单详情"
 msgid "Edit Organizer"
 msgstr "编辑组织器"
 
-#: src/components/modals/EditProductModal/index.tsx:112
-#: src/components/modals/EditProductModal/index.tsx:120
+#: src/components/modals/EditProductModal/index.tsx:114
+#: src/components/modals/EditProductModal/index.tsx:122
 msgid "Edit Product"
 msgstr "编辑产品"
 
@@ -4993,7 +5015,7 @@ msgstr "电子邮件地址"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:510
 #: src/components/routes/product-widget/CollectInformation/index.tsx:732
 #: src/components/routes/product-widget/CollectInformation/index.tsx:733
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1132
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1210
 msgid "Email Address"
 msgstr "电子邮件地址"
 
@@ -5008,7 +5030,7 @@ msgstr "邮箱地址已复制到剪贴板"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:128
 #: src/components/routes/product-widget/CollectInformation/index.tsx:135
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:504
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:507
 msgid "Email addresses do not match"
 msgstr "电子邮件地址不匹配"
 
@@ -5160,7 +5182,7 @@ msgstr "启用此容量以在达到限制时停止产品销售"
 msgid "Enable this template for sending emails"
 msgstr "启用此模板发送邮件"
 
-#: src/components/forms/ProductForm/index.tsx:551
+#: src/components/forms/ProductForm/index.tsx:571
 msgid "Enable Waitlist"
 msgstr "启用候补名单"
 
@@ -5290,7 +5312,7 @@ msgstr ""
 msgid "Enter the font name first (letters, numbers, spaces, dots, hyphens and underscores)."
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1161
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1239
 msgid "Enter the name of each participant."
 msgstr "请填写每位参与者的姓名。"
 
@@ -6128,10 +6150,10 @@ msgstr "费用处理"
 
 #: src/components/common/InlineOrderSummary/index.tsx:143
 #: src/components/common/OrdersTable/index.tsx:364
-#: src/components/forms/ProductForm/index.tsx:449
+#: src/components/forms/ProductForm/index.tsx:452
 #: src/components/routes/event/Reports/DailySalesReport/index.tsx:49
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:54
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1379
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1485
 msgid "Fees"
 msgstr "费用"
 
@@ -6144,8 +6166,8 @@ msgid "Fees Bypassed"
 msgstr "费用已绕过"
 
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1269
-msgid "fees included"
-msgstr "含手续费"
+#~ msgid "fees included"
+#~ msgstr "含手续费"
 
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:98
 #: src/components/routes/landing/DemoRequestForm/index.tsx:64
@@ -6275,8 +6297,8 @@ msgstr "姓名"
 #: src/components/routes/auth/Register/index.tsx:90
 #: src/components/routes/product-widget/CollectInformation/index.tsx:493
 #: src/components/routes/product-widget/CollectInformation/index.tsx:716
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1108
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1201
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1186
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1290
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:53
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:53
 #: src/components/routes/profile/ManageProfile/index.tsx:152
@@ -6293,7 +6315,7 @@ msgstr "名字为必填项"
 msgid "First name must be between 1 and 50 characters"
 msgstr "名字必须在 1 至 50 个字符之间"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:493
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:496
 msgid "First name must be under 40 characters"
 msgstr ""
 
@@ -6383,7 +6405,7 @@ msgstr ""
 msgid "For {0}"
 msgstr "用于 {0}"
 
-#: src/components/forms/ProductForm/index.tsx:494
+#: src/components/forms/ProductForm/index.tsx:514
 msgid "For a required product, the maximum per order must be at least the minimum per order."
 msgstr "对于必选产品，每单最多数量必须不少于每单最少数量。"
 
@@ -6423,7 +6445,7 @@ msgstr ""
 #: src/components/routes/kiosk/Orders/index.tsx:289
 #: src/components/routes/kiosk/Orders/index.tsx:330
 #: src/components/routes/organizer/EventAssistant/index.tsx:433
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1267
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1379
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:67
 msgid "Free"
 msgstr "免费"
@@ -6441,16 +6463,16 @@ msgstr "免费（无需付款）"
 msgid "Free or paid tickets: your sales revenue is paid to you every Monday"
 msgstr "免费或付费门票：您的售票收入每周一打款给您"
 
-#: src/components/forms/ProductForm/index.tsx:169
+#: src/components/forms/ProductForm/index.tsx:172
 msgid "Free Product"
 msgstr "免费产品"
 
-#: src/components/forms/ProductForm/index.tsx:171
+#: src/components/forms/ProductForm/index.tsx:174
 msgid "Free product, no payment information required"
 msgstr "免费产品，无需付款信息"
 
 #: src/components/layouts/EventHomepage/AttendanceAccess/index.tsx:24
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1608
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1714
 #: src/components/routes/product-widget/EmbeddedRegistration/SaleCountdown.tsx:67
 msgid "Free registration"
 msgstr ""
@@ -6540,7 +6562,7 @@ msgstr "GDPR"
 msgid "GDPR compliant"
 msgstr "符合 GDPR"
 
-#: src/components/forms/ProductForm/index.tsx:154
+#: src/components/forms/ProductForm/index.tsx:157
 msgid "General"
 msgstr "常规"
 
@@ -6713,8 +6735,8 @@ msgstr "已有 {0} 的门票"
 msgid "Has not replied yet"
 msgstr "尚未回复"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1541
-#: src/components/routes/product-widget/SelectProducts/index.tsx:682
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1647
+#: src/components/routes/product-widget/SelectProducts/index.tsx:684
 msgid "Have a promo code?"
 msgstr "有促销代码吗？"
 
@@ -6819,7 +6841,7 @@ msgid "Hidden ticket(s) unlocked by this code"
 msgstr ""
 
 #: src/components/routes/product-widget/SelectProducts/index.tsx:533
-#: src/components/routes/product-widget/SelectProducts/index.tsx:647
+#: src/components/routes/product-widget/SelectProducts/index.tsx:649
 msgid "Hide"
 msgstr "隐藏"
 
@@ -6831,23 +6853,23 @@ msgstr "隐藏答案"
 msgid "Hide getting started page"
 msgstr "隐藏入门页面"
 
-#: src/components/forms/ProductForm/index.tsx:416
+#: src/components/forms/ProductForm/index.tsx:419
 msgid "Hide Options"
 msgstr "隐藏选项"
 
-#: src/components/forms/ProductForm/index.tsx:534
+#: src/components/forms/ProductForm/index.tsx:554
 msgid "Hide product after sale end date"
 msgstr "在销售结束日期后隐藏产品"
 
-#: src/components/forms/ProductForm/index.tsx:532
+#: src/components/forms/ProductForm/index.tsx:552
 msgid "Hide product before sale start date"
 msgstr "在销售开始日期前隐藏产品"
 
-#: src/components/forms/ProductForm/index.tsx:546
+#: src/components/forms/ProductForm/index.tsx:566
 msgid "Hide product unless user has applicable promo code"
 msgstr "除非用户有适用的促销代码，否则隐藏产品"
 
-#: src/components/forms/ProductForm/index.tsx:540
+#: src/components/forms/ProductForm/index.tsx:560
 msgid "Hide product when sold out"
 msgstr "售罄时隐藏产品"
 
@@ -6868,32 +6890,32 @@ msgstr ""
 msgid "Hide this question"
 msgstr "隐藏此问题"
 
-#: src/components/forms/ProductForm/index.tsx:121
+#: src/components/forms/ProductForm/index.tsx:124
 msgid "Hide this tier from users"
 msgstr "向用户隐藏此层级"
 
-#: src/components/forms/ProductForm/index.tsx:119
+#: src/components/forms/ProductForm/index.tsx:122
 msgid "Hiding a product will prevent users from seeing it on the event page."
 msgstr "隐藏产品将防止用户在活动页面上看到它。"
 
-#: src/components/forms/ProductForm/index.tsx:559
+#: src/components/forms/ProductForm/index.tsx:579
 msgid "Highlight"
 msgstr "突出显示"
 
-#: src/components/forms/ProductForm/index.tsx:571
+#: src/components/forms/ProductForm/index.tsx:591
 msgid "Highlight Message"
 msgstr "突出显示消息"
 
-#: src/components/forms/ProductForm/index.tsx:564
+#: src/components/forms/ProductForm/index.tsx:584
 msgid "Highlight this product"
 msgstr "突出显示此产品"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:341
-#: src/components/forms/ProductForm/index.tsx:426
+#: src/components/forms/ProductForm/index.tsx:429
 msgid "Highlighted"
 msgstr "已突出显示"
 
-#: src/components/forms/ProductForm/index.tsx:565
+#: src/components/forms/ProductForm/index.tsx:585
 msgid "Highlighted products will have a different background color to make them stand out on the event page."
 msgstr "突出显示的产品将具有不同的背景色，使其在活动页面上脱颖而出。"
 
@@ -6969,7 +6991,7 @@ msgstr "客户收到报价后完成购买的时限。留空表示无时间限制
 msgid "How many minutes the customer has to complete their order. We recommend at least 15 minutes"
 msgstr "客户有多少分钟来完成订单。我们建议至少 15 分钟"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1255
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1367
 msgid "How many participants?"
 msgstr "有多少位参与者？"
 
@@ -7030,7 +7052,7 @@ msgstr "我确认这是与此活动相关的交易消息"
 msgid "I don't have a poster yet"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1541
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1647
 msgid "I have an invitation code"
 msgstr ""
 
@@ -7226,8 +7248,8 @@ msgstr "包含您的在线活动的连接详细信息。这些信息将在订单
 msgid "Include tax and fees in the price"
 msgstr "价格中包含税费"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1016
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1329
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1094
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1435
 #: src/components/routes/product-widget/SelectProducts/index.tsx:580
 msgid "Included by default"
 msgstr "默认包含"
@@ -7376,11 +7398,11 @@ msgstr "电话号码无效"
 msgid "Invalid VAT number format"
 msgstr "无效的增值税号格式"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1509
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1615
 msgid "Invitation code"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1488
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1594
 msgid "Invitation code {promoCode} applied: {0}"
 msgstr ""
 
@@ -7641,7 +7663,7 @@ msgstr "售票处"
 msgid "Kiosk operators"
 msgstr "售票亭操作员"
 
-#: src/components/forms/ProductForm/index.tsx:96
+#: src/components/forms/ProductForm/index.tsx:99
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:259
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:82
 msgid "Label"
@@ -7740,8 +7762,8 @@ msgstr "姓氏"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:500
 #: src/components/routes/product-widget/CollectInformation/index.tsx:722
 #: src/components/routes/product-widget/CollectInformation/index.tsx:723
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1115
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1207
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1193
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1296
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:60
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:60
 #: src/components/routes/profile/ManageProfile/index.tsx:154
@@ -7753,7 +7775,7 @@ msgstr "姓氏"
 msgid "Last name is required"
 msgstr "姓氏为必填项"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:494
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:497
 msgid "Last name must be under 40 characters"
 msgstr ""
 
@@ -8008,7 +8030,7 @@ msgstr "正在加载 Webhook"
 #: src/components/common/ReportTable/index.tsx:210
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:87
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:93
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1602
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1708
 msgid "Loading..."
 msgstr "加载中..."
 
@@ -8226,11 +8248,15 @@ msgstr "最大消息数 / 24小时"
 msgid "Max Recipients / Message"
 msgstr "最大收件人数 / 消息"
 
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1356
+msgid "Maximum number of places reached for this order."
+msgstr "此订单已达到最大名额。"
+
 #: src/components/forms/PromoCodeForm/index.tsx:135
 msgid "Maximum number of uses"
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:482
+#: src/components/forms/ProductForm/index.tsx:485
 msgid "Maximum Per Order"
 msgstr "每份订单的最高限额"
 
@@ -8360,11 +8386,11 @@ msgstr ""
 msgid "min"
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:480
+#: src/components/forms/ProductForm/index.tsx:483
 msgid "Minimum Per Order"
 msgstr "每次订购的最低数量"
 
-#: src/components/forms/ProductForm/index.tsx:347
+#: src/components/forms/ProductForm/index.tsx:350
 msgid "Minimum Price"
 msgstr "最低价格"
 
@@ -8519,7 +8545,7 @@ msgstr ""
 msgid "Multi line text box"
 msgstr "多行文本框"
 
-#: src/components/forms/ProductForm/index.tsx:183
+#: src/components/forms/ProductForm/index.tsx:186
 msgid "Multiple price options. Perfect for early bird products etc."
 msgstr "多种价格选项。非常适合早鸟产品等。"
 
@@ -8582,7 +8608,7 @@ msgstr "Nam placerat elementum..."
 #: src/components/forms/CheckInListForm/index.tsx:38
 #: src/components/forms/ProductCategoryForm/index.tsx:17
 #: src/components/forms/ProductCategoryForm/index.tsx:18
-#: src/components/forms/ProductForm/index.tsx:292
+#: src/components/forms/ProductForm/index.tsx:295
 #: src/components/forms/TaxAndFeeForm/index.tsx:61
 #: src/components/modals/DuplicateEventModal/index.tsx:110
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:285
@@ -8740,7 +8766,7 @@ msgstr "新闻通讯订阅者"
 msgid "Newsletter title"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1586
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1692
 msgid "Next"
 msgstr ""
 
@@ -9177,7 +9203,7 @@ msgid "No restriction"
 msgstr ""
 
 #: src/components/common/NoResultsSplash/index.tsx:24
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1051
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1129
 msgid "No results"
 msgstr "无结果"
 
@@ -9276,7 +9302,7 @@ msgstr "不需要。平台在浏览器中运行，支持电脑、平板和手机
 msgid "Non-VAT registered businesses or individuals: Irish VAT at 23% applies"
 msgstr "未注册增值税的企业或个人:适用23%的爱尔兰增值税"
 
-#: src/components/forms/ProductForm/index.tsx:516
+#: src/components/forms/ProductForm/index.tsx:536
 #: src/components/routes/product-widget/CollectInformation/index.tsx:558
 msgid "None"
 msgstr "无"
@@ -9543,6 +9569,14 @@ msgstr ""
 msgid "One answer per order"
 msgstr ""
 
+#: src/components/forms/ProductForm/index.tsx:502
+msgid "One per order: the quantity is the minimum per order (1 if empty), whatever the number of tickets."
+msgstr "每单一个：数量为每单最少数量（为空时为 1），与门票数量无关。"
+
+#: src/components/forms/ProductForm/index.tsx:501
+msgid "One per ticket: the quantity follows the number of tickets in the order (3 tickets, 3 included). The maximum per order does not apply."
+msgstr "每张门票一个：数量随订单中的门票数量变化（3 张门票，包含 3 个）。每单最多数量不适用。"
+
 #: src/components/routes/landing/index.tsx:423
 msgid "One platform for every type of event"
 msgstr "适用于各类活动的一站式平台"
@@ -9585,7 +9619,7 @@ msgid "Ongoing"
 msgstr "持续进行"
 
 #: src/components/common/EventCard/index.tsx:93
-#: src/components/forms/ProductForm/index.tsx:308
+#: src/components/forms/ProductForm/index.tsx:311
 #: src/components/routes/event/EventDashboard/index.tsx:34
 #: src/components/routes/event/EventDashboard/index.tsx:82
 #: src/components/routes/event/EventDashboard/index.tsx:136
@@ -9720,7 +9754,7 @@ msgstr "打开客户档案"
 msgid "Open the event flyer"
 msgstr "打开活动海报"
 
-#: src/components/forms/ProductForm/index.tsx:514
+#: src/components/forms/ProductForm/index.tsx:534
 msgid "Open this ticket when this ticket is sold out"
 msgstr "当此门票售罄时开放本门票"
 
@@ -9818,7 +9852,7 @@ msgstr "选项"
 msgid "or"
 msgstr "或"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1590
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1696
 msgid "or press Enter"
 msgstr ""
 
@@ -9934,11 +9968,11 @@ msgstr "订单等待线下支付"
 msgid "Order Last Name"
 msgstr "订单姓氏"
 
-#: src/components/forms/ProductForm/index.tsx:476
+#: src/components/forms/ProductForm/index.tsx:479
 msgid "Order Limits"
 msgstr "订单限制"
 
-#: src/components/forms/ProductForm/index.tsx:424
+#: src/components/forms/ProductForm/index.tsx:427
 msgid "Order limits set"
 msgstr "订单限制已设置"
 
@@ -10325,7 +10359,7 @@ msgstr ""
 msgid "Paid Accounts"
 msgstr "付费账户"
 
-#: src/components/forms/ProductForm/index.tsx:163
+#: src/components/forms/ProductForm/index.tsx:166
 msgid "Paid Product"
 msgstr "付费产品"
 
@@ -10355,13 +10389,13 @@ msgstr "部分退款:{0}"
 msgid "Participant {0}"
 msgstr "参与者 {0}"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1181
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1259
 msgid "Participant {participantNumber}"
 msgstr ""
 
 #: src/components/common/StatBoxes/index.tsx:78
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1342
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1403
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1448
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1509
 msgid "Participants"
 msgstr ""
 
@@ -10812,7 +10846,7 @@ msgstr "请选择参会人数"
 msgid "Please choose an event type"
 msgstr "请选择活动类型"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:502
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:505
 msgid "Please confirm your email address"
 msgstr ""
 
@@ -10841,7 +10875,7 @@ msgid "Please enter a valid image URL that points to an image."
 msgstr "请输入指向图像的有效图片网址。"
 
 #: src/components/common/CheckoutQuestion/index.tsx:123
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:457
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:460
 msgid "Please enter a valid phone number (digits, spaces, +, -, ( ) only, minimum 8 characters)"
 msgstr ""
 
@@ -11104,13 +11138,13 @@ msgstr "预览"
 msgid "Preview checkout form"
 msgstr "预览结账表单"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1577
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1683
 msgid "Previous"
 msgstr ""
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:406
-#: src/components/forms/ProductForm/index.tsx:92
-#: src/components/forms/ProductForm/index.tsx:347
+#: src/components/forms/ProductForm/index.tsx:95
+#: src/components/forms/ProductForm/index.tsx:350
 msgid "Price"
 msgstr "价格"
 
@@ -11130,11 +11164,11 @@ msgstr "未设置价格"
 msgid "Price of the ticket"
 msgstr "门票价格"
 
-#: src/components/forms/ProductForm/index.tsx:383
+#: src/components/forms/ProductForm/index.tsx:386
 msgid "Price Tiers"
 msgstr "价格层级"
 
-#: src/components/forms/ProductForm/index.tsx:267
+#: src/components/forms/ProductForm/index.tsx:270
 msgid "Price Type"
 msgstr "价格类型"
 
@@ -11252,7 +11286,7 @@ msgstr ""
 msgid "Product"
 msgstr "产品"
 
-#: src/components/forms/ProductForm/index.tsx:328
+#: src/components/forms/ProductForm/index.tsx:331
 msgid "Product Category"
 msgstr "产品类别"
 
@@ -11272,7 +11306,7 @@ msgstr "产品已删除"
 msgid "Product deleted successfully"
 msgstr "产品删除成功"
 
-#: src/components/forms/ProductForm/index.tsx:275
+#: src/components/forms/ProductForm/index.tsx:278
 msgid "Product Price Type"
 msgstr "产品价格类型"
 
@@ -11289,8 +11323,8 @@ msgstr "产品销售、收入和税费明细"
 msgid "Product Tier"
 msgstr "产品等级"
 
-#: src/components/forms/ProductForm/index.tsx:252
-#: src/components/forms/ProductForm/index.tsx:260
+#: src/components/forms/ProductForm/index.tsx:255
+#: src/components/forms/ProductForm/index.tsx:263
 msgid "Product Type"
 msgstr "产品类型"
 
@@ -11337,7 +11371,7 @@ msgid "Promo {promo_code} code applied"
 msgstr "已使用促销 {promo_code} 代码"
 
 #: src/components/common/OrderDetails/index.tsx:89
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1509
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1615
 msgid "Promo code"
 msgstr "优惠码"
 
@@ -11345,7 +11379,7 @@ msgstr "优惠码"
 msgid "Promo Code"
 msgstr "促销代码"
 
-#: src/components/forms/ProductForm/index.tsx:544
+#: src/components/forms/ProductForm/index.tsx:564
 msgid "Promo Code page"
 msgstr "促销代码页面"
 
@@ -11487,17 +11521,18 @@ msgstr ""
 msgid "Qty"
 msgstr "数量"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1306
+#: src/components/forms/ProductForm/index.tsx:499
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1415
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:85
 msgid "Quantity"
 msgstr "数量"
 
-#: src/components/forms/ProductForm/index.tsx:104
-#: src/components/forms/ProductForm/index.tsx:364
+#: src/components/forms/ProductForm/index.tsx:107
+#: src/components/forms/ProductForm/index.tsx:367
 msgid "Quantity Available"
 msgstr "可用数量"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1273
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1382
 msgid "Quantity for {label}"
 msgstr "{label} 的数量"
 
@@ -11599,7 +11634,7 @@ msgstr "阅读案例"
 msgid "Reading your poster…"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1321
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1427
 msgid "Ready to confirm?"
 msgstr ""
 
@@ -11836,10 +11871,10 @@ msgstr "已报名"
 msgid "Registered people"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:979
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1324
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1599
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1608
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1038
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1430
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1705
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1714
 msgid "Registration"
 msgstr ""
 
@@ -11867,7 +11902,7 @@ msgstr "报名将于 {day} {time} 开放"
 msgid "Registration page in your colors"
 msgstr "使用您品牌色彩的报名页面"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1614
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1720
 msgid "Registration progress"
 msgstr ""
 
@@ -11959,7 +11994,7 @@ msgstr "已提醒"
 msgid "Reminders"
 msgstr ""
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:691
+#: src/components/routes/product-widget/SelectProducts/index.tsx:693
 msgid "remove"
 msgstr "去除"
 
@@ -11976,9 +12011,10 @@ msgstr "去除"
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:149
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:176
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:118
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1190
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1491
-#: src/components/routes/product-widget/SelectProducts/index.tsx:692
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1268
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1279
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1597
+#: src/components/routes/product-widget/SelectProducts/index.tsx:694
 msgid "Remove"
 msgstr "移除"
 
@@ -11999,11 +12035,12 @@ msgstr "移除文件"
 msgid "Remove filter"
 msgstr "移除筛选"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1279
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1388
 msgid "Remove one"
 msgstr "减少一个名额"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1189
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1267
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1278
 msgid "Remove participant {participantNumber}"
 msgstr ""
 
@@ -12167,7 +12204,7 @@ msgstr "要求账单地址"
 msgid "Required"
 msgstr "必填"
 
-#: src/components/forms/ProductForm/index.tsx:488
+#: src/components/forms/ProductForm/index.tsx:491
 msgid "Required product (added to every order)"
 msgstr "必选产品（添加到每个订单）"
 
@@ -12387,8 +12424,8 @@ msgctxt "ticket card"
 msgid "Sale"
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:113
-#: src/components/forms/ProductForm/index.tsx:509
+#: src/components/forms/ProductForm/index.tsx:116
+#: src/components/forms/ProductForm/index.tsx:529
 msgid "Sale End Date"
 msgstr "销售结束日期"
 
@@ -12396,20 +12433,20 @@ msgstr "销售结束日期"
 msgid "Sale ended {0}"
 msgstr "销售已于{0}结束"
 
-#: src/components/forms/ProductForm/index.tsx:502
+#: src/components/forms/ProductForm/index.tsx:522
 msgid "Sale Period"
 msgstr "销售期"
 
-#: src/components/forms/ProductForm/index.tsx:425
+#: src/components/forms/ProductForm/index.tsx:428
 msgid "Sale period set"
 msgstr "销售期已设置"
 
-#: src/components/forms/ProductForm/index.tsx:427
+#: src/components/forms/ProductForm/index.tsx:430
 msgid "Sale period, order limits, visibility"
 msgstr "销售期、订单限制、可见性"
 
-#: src/components/forms/ProductForm/index.tsx:109
-#: src/components/forms/ProductForm/index.tsx:507
+#: src/components/forms/ProductForm/index.tsx:112
+#: src/components/forms/ProductForm/index.tsx:527
 msgid "Sale Start Date"
 msgstr "销售开始日期"
 
@@ -12838,7 +12875,7 @@ msgstr ""
 msgid "See the events"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1562
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1668
 msgid "See the other ticket options"
 msgstr ""
 
@@ -12905,7 +12942,7 @@ msgstr "选择参会者组"
 msgid "Select Camera"
 msgstr "选择相机"
 
-#: src/components/forms/ProductForm/index.tsx:331
+#: src/components/forms/ProductForm/index.tsx:334
 msgid "Select category..."
 msgstr "选择类别..."
 
@@ -13010,7 +13047,7 @@ msgstr "选择哪些事件将触发此 Webhook"
 msgid "Select which fee configuration applies to this account. Fixed fees are converted to the order currency at checkout."
 msgstr "选择适用于此账户的费用配置。固定费用将在结账时转换为订单货币。"
 
-#: src/components/forms/ProductForm/index.tsx:444
+#: src/components/forms/ProductForm/index.tsx:447
 msgid "Select..."
 msgstr "选择..."
 
@@ -13023,7 +13060,7 @@ msgstr "已选择"
 msgid "Self-service"
 msgstr "自主使用"
 
-#: src/components/forms/ProductForm/index.tsx:573
+#: src/components/forms/ProductForm/index.tsx:593
 msgid "Selling fast 🔥"
 msgstr "热卖中 🔥"
 
@@ -13256,7 +13293,7 @@ msgstr "会话"
 msgid "Session, cart, language and the memory of your choice. Required for the site to work."
 msgstr "会话、购物车、语言以及您的选择记录。网站运行所必需。"
 
-#: src/components/forms/ProductForm/index.tsx:177
+#: src/components/forms/ProductForm/index.tsx:180
 msgid "Set a minimum price and let users pay more if they choose"
 msgstr "设定最低价格，用户可选择支付更高的价格"
 
@@ -13392,7 +13429,7 @@ msgstr ""
 msgid "Show all platforms ({0} more with values)"
 msgstr "显示所有平台（另有 {0} 个包含值）"
 
-#: src/components/forms/ProductForm/index.tsx:538
+#: src/components/forms/ProductForm/index.tsx:558
 msgid "Show available product quantity"
 msgstr "显示可用产品数量"
 
@@ -13413,7 +13450,7 @@ msgid "Show marketing opt-in checkbox by default"
 msgstr "默认显示营销订阅复选框"
 
 #: src/components/routes/product-widget/SelectProducts/index.tsx:533
-#: src/components/routes/product-widget/SelectProducts/index.tsx:646
+#: src/components/routes/product-widget/SelectProducts/index.tsx:648
 msgid "Show more"
 msgstr "显示更多"
 
@@ -13700,7 +13737,7 @@ msgstr "出了点问题。请稍后再试。"
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:37
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:64
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:79
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:578
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:581
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
 msgid "Something went wrong. Please try again."
@@ -13764,7 +13801,7 @@ msgstr ""
 msgid "Standard"
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:165
+#: src/components/forms/ProductForm/index.tsx:168
 msgid "Standard product with a fixed price"
 msgstr "固定价格的标准产品"
 
@@ -13870,8 +13907,8 @@ msgstr "状态"
 msgid "Stay informed"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1618
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1623
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1724
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1729
 msgid "Step {currentStepNumber} of {totalSteps}"
 msgstr ""
 
@@ -13997,7 +14034,7 @@ msgstr "成功确认电子邮件更改"
 msgid "Successfully created attendee"
 msgstr "成功创建与会者"
 
-#: src/components/modals/CreateProductModal/index.tsx:59
+#: src/components/modals/CreateProductModal/index.tsx:60
 msgid "Successfully Created Product"
 msgstr "产品创建成功"
 
@@ -14010,7 +14047,7 @@ msgstr "成功创建促销代码"
 msgid "Successfully Created Question"
 msgstr "成功创建问题"
 
-#: src/components/modals/DuplicateProductModal/index.tsx:105
+#: src/components/modals/DuplicateProductModal/index.tsx:107
 msgid "Successfully Duplicated Product"
 msgstr "产品复制成功"
 
@@ -14095,7 +14132,7 @@ msgstr "平台费用默认设置更新成功"
 msgid "Successfully Updated Platform Fee Settings"
 msgstr "平台费用设置更新成功"
 
-#: src/components/modals/EditProductModal/index.tsx:101
+#: src/components/modals/EditProductModal/index.tsx:103
 msgid "Successfully updated product"
 msgstr ""
 
@@ -14200,7 +14237,7 @@ msgstr "切换组织者"
 msgid "System Default"
 msgstr "系统默认"
 
-#: src/components/forms/ProductForm/index.tsx:293
+#: src/components/forms/ProductForm/index.tsx:296
 msgid "T-shirt"
 msgstr "T恤衫"
 
@@ -14299,9 +14336,9 @@ msgid "Tax Summary"
 msgstr "税务摘要"
 
 #: src/components/common/InlineOrderSummary/index.tsx:176
-#: src/components/forms/ProductForm/index.tsx:446
+#: src/components/forms/ProductForm/index.tsx:449
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:48
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1385
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1491
 msgid "Taxes"
 msgstr "税收"
 
@@ -14309,16 +14346,16 @@ msgstr "税收"
 msgid "Taxes & fees applied"
 msgstr "已应用税费"
 
-#: src/components/forms/ProductForm/index.tsx:438
-#: src/components/forms/ProductForm/index.tsx:443
+#: src/components/forms/ProductForm/index.tsx:441
+#: src/components/forms/ProductForm/index.tsx:446
 msgid "Taxes and Fees"
 msgstr "税费"
 
-#: src/components/forms/ProductForm/index.tsx:423
+#: src/components/forms/ProductForm/index.tsx:426
 msgid "Taxes configured"
 msgstr "税费已配置"
 
-#: src/components/forms/ProductForm/index.tsx:416
+#: src/components/forms/ProductForm/index.tsx:419
 msgid "Taxes, Fees, Visibility, Sale Period, Product Highlight & Order Limits"
 msgstr "税费、费用、可见性、销售期、产品亮点和订单限制"
 
@@ -14432,9 +14469,9 @@ msgstr ""
 msgid "Thanks for your support as we continue to grow and improve our platform!"
 msgstr "感谢您在我们持续发展和改进平台期间的支持！"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:859
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:869
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:876
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:918
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:928
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:935
 #: src/components/routes/product-widget/SelectProducts/index.tsx:200
 #: src/components/routes/product-widget/SelectProducts/index.tsx:286
 msgid "That promo code is invalid"
@@ -14596,7 +14633,7 @@ msgstr "您点击的链接无效。"
 msgid "The locale of the customer"
 msgstr "客户的语言"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:631
+#: src/components/routes/product-widget/SelectProducts/index.tsx:633
 msgid "The maximum number of products for {0}is {1}"
 msgstr "{0}的最大产品数量是{1}"
 
@@ -14908,7 +14945,7 @@ msgstr "此签到列表尚未激活"
 msgid "This check-in list is not yet active and is not available for check-ins."
 msgstr "此签到列表尚未激活，不能用于签到。"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:892
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:951
 msgid "This code does not unlock any invitation for this event."
 msgstr ""
 
@@ -14933,11 +14970,11 @@ msgid "This event is not published yet"
 msgstr "此活动尚未发布"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:83
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:274
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:291
 msgid "This event is restricted to attendees aged {ageLimit} or over."
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:448
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:451
 msgid "This field is required"
 msgstr ""
 
@@ -14950,13 +14987,13 @@ msgid "This information will be shown on the payment page, order summary page, a
 msgstr "这些信息将显示在支付页面、订单摘要页面和订单确认电子邮件中。"
 
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:195
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:876
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:887
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:902
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:935
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:946
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:961
 msgid "This invitation code is not valid."
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:156
+#: src/components/forms/ProductForm/index.tsx:159
 msgid "This is a general product, like a t-shirt or a mug. No ticket will be issued"
 msgstr "这是一种常规产品，例如T恤或杯子。不发行门票"
 
@@ -15065,7 +15102,7 @@ msgstr "此预览显示您的邮件使用示例数据的外观。实际邮件将
 msgid "This product cannot be deleted because it is associated with an order. You can hide it instead."
 msgstr "此产品无法删除，因为它与订单关联。您可以将其隐藏。"
 
-#: src/components/forms/ProductForm/index.tsx:150
+#: src/components/forms/ProductForm/index.tsx:153
 msgid "This product is a ticket. Buyers will be issued a ticket upon purchase"
 msgstr "此产品为门票。购买后买家将收到门票"
 
@@ -15077,7 +15114,7 @@ msgstr "此产品已售罄"
 msgid "This QR code is no longer active"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1164
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1242
 msgid "This registration is for one person."
 msgstr ""
 
@@ -15097,7 +15134,7 @@ msgstr ""
 msgid "This ticket cannot be checked in."
 msgstr "此门票无法签到。"
 
-#: src/components/forms/ProductForm/index.tsx:314
+#: src/components/forms/ProductForm/index.tsx:317
 msgid "This ticket is currently sold both online and at the box office. Choose one channel."
 msgstr ""
 
@@ -15125,7 +15162,7 @@ msgstr "入场券"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:59
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:60
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:61
-#: src/components/forms/ProductForm/index.tsx:148
+#: src/components/forms/ProductForm/index.tsx:151
 #: src/components/modals/CreateAttendeeModal/index.tsx:132
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:120
 #: src/components/routes/event/Reports/ProductSalesReport/index.tsx:22
@@ -15309,15 +15346,15 @@ msgstr "等待中的门票"
 msgid "Tickets: {0}"
 msgstr "门票：{0}"
 
-#: src/components/forms/ProductForm/index.tsx:85
+#: src/components/forms/ProductForm/index.tsx:88
 msgid "Tier {0}"
 msgstr "{0}级"
 
-#: src/components/forms/ProductForm/index.tsx:181
+#: src/components/forms/ProductForm/index.tsx:184
 msgid "Tiered Product"
 msgstr "分层产品"
 
-#: src/components/forms/ProductForm/index.tsx:282
+#: src/components/forms/ProductForm/index.tsx:285
 msgid "Tiered products allow you to offer multiple price options for the same product. This is perfect for early bird products, or offering different price options for different groups of people."
 msgstr "分层产品允许您为同一产品提供多种价格选项。这非常适合早鸟产品，或为不同人群提供不同的价格选项。\" # zh-cn"
 
@@ -15453,8 +15490,8 @@ msgstr "顶级组织者（过去14天）"
 #: src/components/common/InlineOrderSummary/index.tsx:206
 #: src/components/common/OrderSummary/index.tsx:92
 #: src/components/routes/organizer/Contacts/index.tsx:116
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1313
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1390
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1082
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1496
 msgid "Total"
 msgstr "总计"
 
@@ -15629,7 +15666,7 @@ msgstr "无法签到参与者"
 msgid "Unable to check out attendee"
 msgstr "无法签退参与者"
 
-#: src/components/modals/CreateProductModal/index.tsx:68
+#: src/components/modals/CreateProductModal/index.tsx:69
 msgid "Unable to create product. Please check the your details"
 msgstr "无法创建产品。请检查您的详细信息"
 
@@ -15657,7 +15694,7 @@ msgstr "无法删除快捷回复"
 msgid "Unable to delete the subscriber"
 msgstr ""
 
-#: src/components/modals/DuplicateProductModal/index.tsx:113
+#: src/components/modals/DuplicateProductModal/index.tsx:115
 msgid "Unable to duplicate product. Please check the your details"
 msgstr "无法复制产品。请检查您的详细信息"
 
@@ -15794,8 +15831,8 @@ msgstr "未知错误"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:464
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:467
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:43
-#: src/components/forms/ProductForm/index.tsx:102
-#: src/components/forms/ProductForm/index.tsx:361
+#: src/components/forms/ProductForm/index.tsx:105
+#: src/components/forms/ProductForm/index.tsx:364
 #: src/components/forms/PromoCodeForm/index.tsx:133
 #: src/components/modals/OfferWaitlistModal/index.tsx:189
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:853
@@ -15849,7 +15886,7 @@ msgstr "已退订 (STOP)"
 msgid "Until {0}"
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:515
+#: src/components/forms/ProductForm/index.tsx:535
 msgid "Until the selected ticket is sold out, this ticket stays hidden online and at the box office. It opens automatically the moment the last place is taken."
 msgstr "在所选门票售罄之前，本门票在线上和售票处均保持隐藏。最后一个名额被占用时将自动开放。"
 
@@ -16372,11 +16409,11 @@ msgstr ""
 msgid "VIP check-in list"
 msgstr "VIP签到列表"
 
-#: src/components/forms/ProductForm/index.tsx:293
+#: src/components/forms/ProductForm/index.tsx:296
 msgid "VIP Ticket"
 msgstr "贵宾票"
 
-#: src/components/forms/ProductForm/index.tsx:527
+#: src/components/forms/ProductForm/index.tsx:547
 msgid "Visibility"
 msgstr "可见性"
 
@@ -16680,7 +16717,7 @@ msgstr "欢迎来到 {0}，{1} 👋"
 msgid "Welcome to {0}, here's a listing of all your events"
 msgstr "欢迎来到 {0}，这是您所有活动的列表"
 
-#: src/components/forms/ProductForm/index.tsx:281
+#: src/components/forms/ProductForm/index.tsx:284
 msgid "What are Tiered Products?"
 msgstr "什么是分层产品？"
 
@@ -16696,7 +16733,7 @@ msgstr ""
 msgid "What is a Category?"
 msgstr "什么是类别？"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1103
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1181
 msgid "What is your name?"
 msgstr ""
 
@@ -16852,7 +16889,7 @@ msgstr "启用后，Stripe Connect交易将不收取应用费用。用于不支�
 msgid "When offline payments are enabled, users will be able to complete their orders and receive their tickets. Their tickets will clearly indicate the order is not paid, and the check-in tool will notify the check-in staff if an order requires payment."
 msgstr "启用线下支付后，用户可以完成订单并收到门票。他们的门票将清楚地显示订单未支付，签到工具会通知签到工作人员订单是否需要支付。"
 
-#: src/components/forms/ProductForm/index.tsx:298
+#: src/components/forms/ProductForm/index.tsx:301
 msgid "Where is it sold?"
 msgstr ""
 
@@ -16860,7 +16897,7 @@ msgstr ""
 msgid "Where it all began."
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1126
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1204
 msgid "Where should we send your tickets?"
 msgstr ""
 
@@ -16888,7 +16925,7 @@ msgstr ""
 msgid "Who fills in the details?"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1158
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1236
 msgid "Who is coming?"
 msgstr ""
 
@@ -16942,13 +16979,13 @@ msgid "Working"
 msgstr "工作"
 
 #: src/components/modals/CreateProductCategoryModal/index.tsx:60
-#: src/components/modals/CreateProductModal/index.tsx:93
+#: src/components/modals/CreateProductModal/index.tsx:94
 #: src/components/modals/CreatePromoCodeModal/index.tsx:56
 #: src/components/modals/CreateQuestionModal/index.tsx:75
 #: src/components/modals/DuplicateEventModal/index.tsx:178
-#: src/components/modals/DuplicateProductModal/index.tsx:123
+#: src/components/modals/DuplicateProductModal/index.tsx:125
 #: src/components/modals/EditProductCategoryModal/index.tsx:71
-#: src/components/modals/EditProductModal/index.tsx:120
+#: src/components/modals/EditProductModal/index.tsx:122
 #: src/components/modals/EditPromoCodeModal/index.tsx:84
 #: src/components/modals/EditQuestionModal/index.tsx:101
 #: src/components/modals/JoinWaitlistModal/index.tsx:188
@@ -17014,7 +17051,7 @@ msgstr "是，取消我的订单"
 msgid "Yes, cancel my registration"
 msgstr ""
 
-#: src/components/forms/ProductForm/index.tsx:468
+#: src/components/forms/ProductForm/index.tsx:471
 msgid "Yes, remove them"
 msgstr "是的，移除它们"
 
@@ -17030,7 +17067,7 @@ msgstr ""
 msgid "Yes. Your teams can run the welcome themselves and only rent the equipment you need."
 msgstr "可以。您的团队可自行负责接待，只需租用所需设备。"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1180
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1258
 msgid "you"
 msgstr ""
 
@@ -17063,7 +17100,7 @@ msgstr "您处于离线状态"
 msgid "You are registered"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:483
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:486
 msgid "You can choose up to {max} for {title}."
 msgstr "{title} 最多可选择 {max} 个。"
 
@@ -17071,11 +17108,11 @@ msgstr "{title} 最多可选择 {max} 个。"
 msgid "You can configure additional service fees and taxes in your account settings."
 msgstr "您可以在账户设置中配置额外的服务费和税费。"
 
-#: src/components/forms/ProductForm/index.tsx:542
+#: src/components/forms/ProductForm/index.tsx:562
 msgid "You can create a promo code which targets this product on the"
 msgstr "您可以创建一个促销代码，针对该产品"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1163
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1241
 msgid "You can register up to {maxParticipants} people, including yourself."
 msgstr ""
 
@@ -17091,7 +17128,7 @@ msgstr "如有需要，您仍然可以手动提供门票。"
 msgid "You cannot archive the last active organizer on your account."
 msgstr "您无法归档账户中最后一个活跃的主办方。"
 
-#: src/components/forms/ProductForm/index.tsx:246
+#: src/components/forms/ProductForm/index.tsx:249
 msgid "You cannot change the product type as there are attendees associated with this product."
 msgstr "您无法更改产品类型，因为有与该产品关联的参会者。"
 
@@ -17104,7 +17141,7 @@ msgstr "您无法为未支付订单的与会者签到。此设置可在活动设
 msgid "You cannot delete the last category."
 msgstr "您不能删除最后一个类别。"
 
-#: src/components/forms/ProductForm/index.tsx:75
+#: src/components/forms/ProductForm/index.tsx:78
 msgid "You cannot delete this price tier because there are already products sold for this tier. You can hide it instead."
 msgstr "您无法删除此价格层，因为此层已有售出的产品。您可以将其隐藏。"
 
@@ -17136,7 +17173,7 @@ msgstr "您已达到消息限制。"
 msgid "You have run out of time to complete your order."
 msgstr "您已超时，未能完成订单。"
 
-#: src/components/forms/ProductForm/index.tsx:466
+#: src/components/forms/ProductForm/index.tsx:469
 msgid "You have taxes and fees added to a Free Product. Would you like to remove them?"
 msgstr "您已向免费产品添加了税费。您想要删除它们吗？"
 
@@ -17160,7 +17197,7 @@ msgstr "您必须同意条款和条件"
 msgid "You must create a ticket before you can manually add an attendee."
 msgstr "必须先创建机票，然后才能手动添加与会者。"
 
-#: src/components/forms/ProductForm/index.tsx:78
+#: src/components/forms/ProductForm/index.tsx:81
 msgid "You must have at least one price tier"
 msgstr "您必须至少有一个价格等级"
 
@@ -17359,7 +17396,7 @@ msgstr "您的姓名"
 msgid "Your new password must be at least 8 characters long."
 msgstr "您的新密码长度必须至少为8个字符。"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1360
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1466
 msgid "Your order"
 msgstr "您的订单"
 
@@ -17522,7 +17559,7 @@ msgstr ""
 msgid "Your tickets have been confirmed."
 msgstr "您的门票已确认。"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1127
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1205
 msgid "Your tickets will be sent to this address."
 msgstr ""
 
