@@ -15,7 +15,8 @@ Conversation officielle : « Amis Raid Rando Mayotte » (local_fc8ea893), dupliq
 | Téléphone public | 06 39 68 96 91 |
 | Facebook | Amis Raid Rando Mayotte |
 | Partenaire | Ville de Mamoudzou |
-| Compte / organisateur | pas encore créés au 23/10/2026 |
+| Compte / organisateur | compte 3 (Innocent Event) / organisateur 14, créé le 23/10/2026 |
+| Encaissement | Stripe du compte Innocent Event (pas encore connecté au 23/10), Innocent Event reverse ensuite à l'association |
 | Frais de plateforme | payés par l'acheteur (0,99 €/billet) |
 
 Les coordonnées bancaires du client ne sont pas versionnées ici.
