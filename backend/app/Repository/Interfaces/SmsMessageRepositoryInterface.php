@@ -25,11 +25,12 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
     public function findLatestForConversation(int $conversationId, int $limit): Collection;
 
     /**
-     * The organizer, among the given ones, who sent the most recent SMS to this number since the given date.
+     * The organizer, among the given ones, who sent the most recent SMS to this number since the given date,
+     * from the given line when one is given.
      *
      * @param  array<int, int>  $organizerIds
      */
-    public function findLastOutboundOrganizerId(array $organizerIds, string $phone, string $since): ?int;
+    public function findLastOutboundOrganizerId(array $organizerIds, string $phone, string $since, ?int $lineSettingsId = null): ?int;
 
     /**
      * Whether one of the given organizers sent (or tried to send) an SMS to this number after the given message,

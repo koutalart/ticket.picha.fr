@@ -75,8 +75,7 @@ class SmsAutoReplyServiceTest extends TestCase
         $this->conversationService->shouldReceive('isOptedOut')->andReturnFalse()->byDefault();
 
         $this->lineService = Mockery::mock(SmsLineService::class);
-        $this->lineService->shouldReceive('resolveLine')->andReturnUsing(fn () => $this->settings)->byDefault();
-        $this->lineService->shouldReceive('members')->andReturnUsing(fn () => collect([$this->settings]))->byDefault();
+        $this->lineService->shouldReceive('relatedOrganizerIds')->andReturnUsing(fn () => [$this->settings->getOrganizerId()])->byDefault();
     }
 
     public function test_simple_answer_within_the_instructions_can_leave_on_its_own(): void
@@ -240,9 +239,7 @@ class SmsAutoReplyServiceTest extends TestCase
     public function test_shared_line_checks_the_sms_of_every_organizer_of_the_line(): void
     {
         $this->settings->setSharedLineSettingsId(30);
-        $line = (new OrganizerSmsSettingDomainObject)->setId(30)->setOrganizerId(4);
-        $this->lineService->shouldReceive('resolveLine')->andReturn($line);
-        $this->lineService->shouldReceive('members')->with($line)->andReturn(collect([$line, $this->settings]));
+        $this->lineService->shouldReceive('relatedOrganizerIds')->with($this->settings, Mockery::any())->andReturn([4, 8]);
         $this->messageRepository->shouldReceive('hasOutboundToPhoneAfter')->once()
             ->withArgs(fn (array $organizerIds) => $organizerIds === [4, 8])
             ->andReturnTrue();
@@ -252,7 +249,7 @@ class SmsAutoReplyServiceTest extends TestCase
 
     public function test_unavailable_shared_line_sends_nothing(): void
     {
-        $this->lineService->shouldReceive('resolveLine')->andThrow(new SmsGatewayNotConfiguredException('no line'));
+        $this->lineService->shouldReceive('relatedOrganizerIds')->andThrow(new SmsGatewayNotConfiguredException('no line'));
 
         $this->assertSkipped(SmsAutoReplySkipReason::LINE_UNAVAILABLE, self::REPLY, self::HOLDING);
     }

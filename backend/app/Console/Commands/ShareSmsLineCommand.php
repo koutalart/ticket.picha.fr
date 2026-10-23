@@ -28,7 +28,7 @@ class ShareSmsLineCommand extends Command
         try {
             if ($this->option('detach')) {
                 $this->lineService->detach($organizerId);
-                $this->info(sprintf('Organizer %d no longer uses a shared line.', $organizerId));
+                $this->info(sprintf('Organizer %d no longer uses a shared line (former member for %d days). To give it its own line in the same step, use sms:detach-line.', $organizerId, $this->lineService->transitionWindowDays()));
 
                 return self::SUCCESS;
             }

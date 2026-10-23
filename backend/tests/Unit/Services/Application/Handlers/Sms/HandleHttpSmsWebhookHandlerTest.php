@@ -68,7 +68,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->assistantService = Mockery::mock(SmsAssistantService::class);
         $this->assistantService->shouldReceive('queueDraftIfEligible')->byDefault();
         $this->lineService = Mockery::mock(SmsLineService::class);
-        $this->lineService->shouldReceive('members')->andReturnUsing(fn ($line) => collect([$line]))->byDefault();
+        $this->lineService->shouldReceive('candidates')->andReturnUsing(fn ($line) => collect([$line]))->byDefault();
         $this->unattributedService = Mockery::mock(SmsUnattributedSmsService::class);
         $this->unattributedService->shouldReceive('isKnown')->andReturnFalse()->byDefault();
 
@@ -260,7 +260,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
         $this->lineService->shouldNotReceive('attributeInbound');
         $this->unattributedService->shouldNotReceive('record');
-        $this->inboundService->shouldReceive('recordInbound')->once()->with($this->settings, Mockery::any())->andReturn($message);
+        $this->inboundService->shouldReceive('recordInbound')->once()->with($this->settings, Mockery::any(), false, 1)->andReturn($message);
         $this->alertService->shouldReceive('notifyInbound')->once()->with($this->settings, $message);
 
         $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
@@ -274,10 +274,10 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
         $this->lineService->shouldReceive('attributeInbound')
             ->once()
-            ->withArgs(fn ($members, string $phone) => $members->count() === 2 && $phone === '+262639123456')
+            ->withArgs(fn ($line, $members, string $phone) => $line === $this->settings && $members->count() === 2 && $phone === '+262639123456')
             ->andReturn($this->member);
         $this->unattributedService->shouldNotReceive('record');
-        $this->inboundService->shouldReceive('recordInbound')->once()->with($this->member, Mockery::any())->andReturn($message);
+        $this->inboundService->shouldReceive('recordInbound')->once()->with($this->member, Mockery::any(), false, 1)->andReturn($message);
         $this->alertService->shouldReceive('notifyInbound')->once()->with($this->member, $message);
         $this->assistantService->shouldReceive('queueDraftIfEligible')->once()->with($this->member, $message);
 
@@ -362,7 +362,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
     private function expectSharedLine(): void
     {
-        $this->lineService->shouldReceive('members')->with($this->settings)->andReturn(collect([$this->settings, $this->member]));
+        $this->lineService->shouldReceive('candidates')->with($this->settings)->andReturn(collect([$this->settings, $this->member]));
     }
 
     private function expectVerified(): void

@@ -22,6 +22,7 @@ use HiEvents\Repository\Interfaces\SmsRegistrationConfirmationRepositoryInterfac
 use HiEvents\Services\Domain\Sms\DTO\SmsWatchdogAnomalyDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsWatchdogDetectionDTO;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
+use HiEvents\Services\Domain\Sms\SmsLineService;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -99,7 +100,11 @@ class SmsWatchdogDetector
 
     public function detect(): SmsWatchdogDetectionDTO
     {
-        $settings = $this->settingsRepository->findWithSmsLine(self::MAX_ORGANIZERS);
+        $transitionDays = max(1, (int) $this->config->get('services.httpsms.detached_line_transition_days', SmsLineService::DEFAULT_TRANSITION_DAYS));
+        $settings = $this->settingsRepository->findWithSmsLine(
+            self::MAX_ORGANIZERS,
+            Carbon::now('UTC')->subDays($transitionDays)->toDateTimeString(),
+        );
         $organizerIds = $settings
             ->map(fn (OrganizerSmsSettingDomainObject $setting) => $setting->getOrganizerId())
             ->unique()

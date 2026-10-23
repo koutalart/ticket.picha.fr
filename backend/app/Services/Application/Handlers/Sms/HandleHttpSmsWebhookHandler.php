@@ -150,13 +150,13 @@ class HandleHttpSmsWebhookHandler
                 timestamp: $data['timestamp'] ?? null,
             );
 
-            $members = $this->lineService->members($settings);
-            $target = $members->count() > 1 ? $this->attributeInbound($settings, $members, $sms) : $settings;
+            $candidates = $this->lineService->candidates($settings);
+            $target = $candidates->count() > 1 ? $this->attributeInbound($settings, $candidates, $sms) : $settings;
             if ($target === null) {
                 return;
             }
 
-            $message = $this->inboundService->recordInbound($target, $sms);
+            $message = $this->inboundService->recordInbound($target, $sms, lineSettingsId: $settings->getId());
 
             if ($message !== null) {
                 $this->alertService->notifyInbound($target, $message);
@@ -176,7 +176,7 @@ class HandleHttpSmsWebhookHandler
             return;
         }
 
-        $members = $this->lineService->members($settings);
+        $members = $this->lineService->candidates($settings);
         $organizerIds = $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all();
 
         $this->campaignDeliveryService->applyProviderStatus(
@@ -195,12 +195,13 @@ class HandleHttpSmsWebhookHandler
             requestId: isset($data['request_id']) && $data['request_id'] !== '' ? (string) $data['request_id'] : null,
             errorMessage: $data['error_message'] ?? null,
             timestamp: $data['timestamp'] ?? null,
-        ), organizerIds: $organizerIds);
+        ), organizerIds: $organizerIds, lineSettingsId: $settings->getId());
     }
 
     /**
-     * On a line shared by several organizers, the SMS goes to the organizer who wrote last to the number.
-     * When nobody did within the attribution window, it is kept for the platform and no organizer sees it.
+     * On a line shared by several organizers, or recently left by one, the SMS goes to the organizer who wrote last to
+     * the number from this line. When nobody did within the attribution window, the only member of the line gets it;
+     * on a line shared by several members it is kept for the platform and no organizer sees it.
      *
      * @param  Collection<int, OrganizerSmsSettingDomainObject>  $members
      *
@@ -218,7 +219,7 @@ class HandleHttpSmsWebhookHandler
             throw new InvalidSmsPhoneNumberException(__('Invalid phone number'));
         }
 
-        $target = $this->lineService->attributeInbound($members, $phone);
+        $target = $this->lineService->attributeInbound($line, $members, $phone);
         if ($target !== null) {
             return $target;
         }

@@ -137,7 +137,7 @@ class SmsUnattributedSmsService
             OrganizerSmsSettingDomainObjectAbstract::ID => $unattributed->getLineSettingsId(),
         ]);
 
-        $target = $line === null ? null : $this->lineService->members($line)
+        $target = $line === null ? null : $this->lineService->candidates($line)
             ->first(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId() === $organizerId);
 
         if ($target === null) {
@@ -150,7 +150,7 @@ class SmsUnattributedSmsService
                 contact: $unattributed->getPhone(),
                 content: $unattributed->getContent(),
                 timestamp: $unattributed->getProviderTimestamp(),
-            ));
+            ), lineSettingsId: $unattributed->getLineSettingsId());
 
             if ($message === null) {
                 throw new SmsSharedLineException(__('This SMS is already in an organizer inbox'));

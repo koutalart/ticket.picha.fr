@@ -92,7 +92,7 @@ class SmsInboundServiceTest extends TestCase
 
         $this->conversationService->shouldReceive('recordActivity')
             ->once()
-            ->with($this->conversation, SmsMessageDirection::INBOUND, 'Il reste des places ?', true, null);
+            ->with($this->conversation, SmsMessageDirection::INBOUND, 'Il reste des places ?', true, null, 1);
         $this->optOutRepository->shouldNotReceive('create');
         $this->optOutRepository->shouldNotReceive('deleteWhere');
 
@@ -204,7 +204,7 @@ class SmsInboundServiceTest extends TestCase
 
         $this->conversationService->shouldReceive('recordActivity')
             ->once()
-            ->with($this->conversation, SmsMessageDirection::OUTBOUND, 'Halloween le 31/10', false, null);
+            ->with($this->conversation, SmsMessageDirection::OUTBOUND, 'Halloween le 31/10', false, null, 1);
 
         $this->service->recordOutboundEvent($this->settings, $this->outbound(SmsMessageStatus::SENT, 'test-halloween'));
     }
@@ -232,7 +232,7 @@ class SmsInboundServiceTest extends TestCase
 
         $this->conversationService->shouldReceive('recordActivity')
             ->once()
-            ->with($this->conversation, SmsMessageDirection::INBOUND, 'Merci', false, '2026-10-21 08:00:00');
+            ->with($this->conversation, SmsMessageDirection::INBOUND, 'Merci', false, '2026-10-21 08:00:00', 1);
 
         $this->service->recordInbound($this->settings, $this->inbound('Merci'), fromHistory: true);
     }
@@ -245,7 +245,7 @@ class SmsInboundServiceTest extends TestCase
 
         $this->conversationService->shouldReceive('recordActivity')
             ->once()
-            ->with($this->conversation, SmsMessageDirection::OUTBOUND, 'Halloween le 31/10', false, '2026-10-21 07:00:00');
+            ->with($this->conversation, SmsMessageDirection::OUTBOUND, 'Halloween le 31/10', false, '2026-10-21 07:00:00', 1);
 
         $this->service->recordOutboundEvent(
             $this->settings,

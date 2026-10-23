@@ -19,5 +19,6 @@ class SendSmsDTO extends BaseDataObject
         public readonly ?int $autoReplyToMessageId = null,
         public readonly ?SmsAutoReplyType $autoReplyType = null,
         public readonly bool $keepDraft = false,
+        public readonly bool $replyInConversation = false,
     ) {}
 }

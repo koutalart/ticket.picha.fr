@@ -54,7 +54,7 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
         return $this->handleResults($messages)->reverse()->values();
     }
 
-    public function findLastOutboundOrganizerId(array $organizerIds, string $phone, string $since): ?int
+    public function findLastOutboundOrganizerId(array $organizerIds, string $phone, string $since, ?int $lineSettingsId = null): ?int
     {
         if ($organizerIds === []) {
             return null;
@@ -63,6 +63,7 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
         $sentAt = 'COALESCE(sms_messages.provider_timestamp, sms_messages.created_at)';
 
         $organizerId = SmsMessage::query()
+            ->when($lineSettingsId !== null, fn (EloquentBuilder $query) => $query->where('sms_messages.line_settings_id', $lineSettingsId))
             ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
             ->whereIn('sms_messages.organizer_id', $organizerIds)
             ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
