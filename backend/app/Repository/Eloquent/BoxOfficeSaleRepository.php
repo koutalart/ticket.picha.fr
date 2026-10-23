@@ -307,4 +307,17 @@ class BoxOfficeSaleRepository extends BaseRepository implements BoxOfficeSaleRep
 
         return $items;
     }
+
+    public function findPhonesByEventId(int $eventId): array
+    {
+        return BoxOfficeSale::query()
+            ->where('event_id', $eventId)
+            ->whereNotNull('order_id')
+            ->whereNotNull('phone')
+            ->where('phone', '<>', '')
+            ->orderBy('id')
+            ->pluck('phone', 'order_id')
+            ->map(fn($phone) => (string)$phone)
+            ->all();
+    }
 }

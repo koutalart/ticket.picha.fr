@@ -19,12 +19,20 @@ enum ImageType
     case TICKET_SPONSOR_LOGO;
     case EVENT_SHARE_IMAGE;
     case EVENT_COVER_VIDEO;
+    case EVENT_COVER_VIDEO_MOBILE;
     case EVENT_FLYER;
+    case EVENT_HERO_PARTNER_LOGO;
+    case EVENT_HERO_SIGNATURE_LOGO;
+    case EVENT_HERO_BRAND_LOGO;
+    case EVENT_ARTIST_PHOTO;
+    case EVENT_EMAIL_LOGO;
 
     // Organizer images
     case ORGANIZER_LOGO;
+    case ORGANIZER_EMAIL_LOGO;
     case ORGANIZER_COVER;
     case ORGANIZER_COVER_VIDEO;
+    case ORGANIZER_COVER_VIDEO_MOBILE;
     case QR_POSTER_BACKGROUND;
 
     public static function eventImageTypes(): array
@@ -35,7 +43,13 @@ enum ImageType
             self::TICKET_SPONSOR_LOGO,
             self::EVENT_SHARE_IMAGE,
             self::EVENT_COVER_VIDEO,
+            self::EVENT_COVER_VIDEO_MOBILE,
             self::EVENT_FLYER,
+            self::EVENT_HERO_PARTNER_LOGO,
+            self::EVENT_HERO_SIGNATURE_LOGO,
+            self::EVENT_HERO_BRAND_LOGO,
+            self::EVENT_ARTIST_PHOTO,
+            self::EVENT_EMAIL_LOGO,
         ];
     }
 
@@ -43,10 +57,27 @@ enum ImageType
     {
         return [
             self::ORGANIZER_LOGO,
+            self::ORGANIZER_EMAIL_LOGO,
             self::ORGANIZER_COVER,
             self::ORGANIZER_COVER_VIDEO,
+            self::ORGANIZER_COVER_VIDEO_MOBILE,
             self::QR_POSTER_BACKGROUND,
         ];
+    }
+
+    public static function coverVideoTypes(): array
+    {
+        return [
+            self::EVENT_COVER_VIDEO,
+            self::EVENT_COVER_VIDEO_MOBILE,
+            self::ORGANIZER_COVER_VIDEO,
+            self::ORGANIZER_COVER_VIDEO_MOBILE,
+        ];
+    }
+
+    public function isCoverVideo(): bool
+    {
+        return in_array($this, self::coverVideoTypes(), true);
     }
 
     public static function genericImageTypes(): array
@@ -65,7 +96,13 @@ enum ImageType
             self::TICKET_SPONSOR_LOGO->name => [100, 40],
             self::EVENT_SHARE_IMAGE->name => [600, 315],
             self::EVENT_FLYER->name => [600, 600],
+            self::EVENT_HERO_PARTNER_LOGO->name => [100, 40],
+            self::EVENT_HERO_SIGNATURE_LOGO->name => [100, 40],
+            self::EVENT_HERO_BRAND_LOGO->name => [100, 40],
+            self::EVENT_ARTIST_PHOTO->name => [200, 200],
+            self::EVENT_EMAIL_LOGO->name => [100, 40],
             self::ORGANIZER_LOGO->name => [100, 100],
+            self::ORGANIZER_EMAIL_LOGO->name => [100, 100],
             self::ORGANIZER_COVER->name => [600, 50],
             self::QR_POSTER_BACKGROUND->name => [600, 600],
         ];

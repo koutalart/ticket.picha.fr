@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router";
 import {LoadingOverlay} from "@mantine/core";
-import {Event, HomepageThemeSettings} from "../../../types.ts";
+import {Event, HomepageFooterSettings, HomepageThemeSettings} from "../../../types.ts";
 import {useGetEventPublic} from "../../../queries/useGetEventPublic.ts";
 import {EventNotAvailable} from "../EventHomepage/EventNotAvailable";
 import EventHomepage from "../EventHomepage";
@@ -9,6 +9,8 @@ import EventHomepage from "../EventHomepage";
 interface PreviewSettings {
     homepage_theme_settings?: Partial<HomepageThemeSettings>;
     continue_button_text?: string;
+    rich_footer_enabled?: boolean;
+    homepage_footer_settings?: HomepageFooterSettings | null;
 }
 
 const EventHomepagePreview = () => {
@@ -45,6 +47,8 @@ const EventHomepagePreview = () => {
                 ...event.settings,
                 homepage_theme_settings: previewSettings.homepage_theme_settings as HomepageThemeSettings || event.settings.homepage_theme_settings,
                 continue_button_text: previewSettings.continue_button_text ?? event.settings.continue_button_text,
+                rich_footer_enabled: previewSettings.rich_footer_enabled ?? event.settings.rich_footer_enabled,
+                homepage_footer_settings: previewSettings.homepage_footer_settings ?? event.settings.homepage_footer_settings,
             }
         };
     }

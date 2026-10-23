@@ -31,6 +31,9 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const HISTORY_IMPORT_FINISHED_AT = 'history_import_finished_at';
     final public const HISTORY_IMPORT_COUNT = 'history_import_count';
     final public const HISTORY_IMPORT_ERROR = 'history_import_error';
+    final public const SHARED_LINE_SETTINGS_ID = 'shared_line_settings_id';
+    final public const ASSISTANT_AUTO_SEND = 'assistant_auto_send';
+    final public const ASSISTANT_HOLDING_REPLY = 'assistant_holding_reply';
 
     protected int $id;
     protected int $account_id;
@@ -53,6 +56,9 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $history_import_finished_at = null;
     protected ?int $history_import_count = null;
     protected ?string $history_import_error = null;
+    protected ?int $shared_line_settings_id = null;
+    protected bool $assistant_auto_send = false;
+    protected ?string $assistant_holding_reply = null;
 
     public function toArray(): array
     {
@@ -78,6 +84,9 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'history_import_finished_at' => $this->history_import_finished_at ?? null,
                     'history_import_count' => $this->history_import_count ?? null,
                     'history_import_error' => $this->history_import_error ?? null,
+                    'shared_line_settings_id' => $this->shared_line_settings_id ?? null,
+                    'assistant_auto_send' => $this->assistant_auto_send ?? null,
+                    'assistant_holding_reply' => $this->assistant_holding_reply ?? null,
                 ];
     }
 
@@ -310,5 +319,38 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getHistoryImportError(): ?string
     {
         return $this->history_import_error;
+    }
+
+    public function setSharedLineSettingsId(?int $shared_line_settings_id): self
+    {
+        $this->shared_line_settings_id = $shared_line_settings_id;
+        return $this;
+    }
+
+    public function getSharedLineSettingsId(): ?int
+    {
+        return $this->shared_line_settings_id;
+    }
+
+    public function setAssistantAutoSend(bool $assistant_auto_send): self
+    {
+        $this->assistant_auto_send = $assistant_auto_send;
+        return $this;
+    }
+
+    public function getAssistantAutoSend(): bool
+    {
+        return $this->assistant_auto_send;
+    }
+
+    public function setAssistantHoldingReply(?string $assistant_holding_reply): self
+    {
+        $this->assistant_holding_reply = $assistant_holding_reply;
+        return $this;
+    }
+
+    public function getAssistantHoldingReply(): ?string
+    {
+        return $this->assistant_holding_reply;
     }
 }

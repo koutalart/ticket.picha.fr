@@ -22,6 +22,7 @@ use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderPaymentStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Events\OrderStatusChangedEvent;
+use HiEvents\Exceptions\AttendeeAgeRestrictionException;
 use HiEvents\Exceptions\InvalidQuestionAnswerFileException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Exceptions\UnauthorizedException;
@@ -29,6 +30,7 @@ use HiEvents\Helper\IdHelper;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AffiliateRepositoryInterface;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
@@ -38,6 +40,7 @@ use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderOrderDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderProductDataDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\CreatedProductDataDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\OrderQuestionsDTO;
+use HiEvents\Services\Domain\Attendee\AttendeeAgeRestrictionService;
 use HiEvents\Services\Domain\Payment\Stripe\EventHandlers\PaymentIntentSucceededHandler;
 use HiEvents\Services\Domain\Product\ProductQuantityUpdateService;
 use HiEvents\Services\Domain\Question\File\QuestionAnswerFileService;
@@ -69,12 +72,14 @@ class CompleteOrderHandler
         private readonly EventSettingsRepositoryInterface  $eventSettingsRepository,
         private readonly CheckoutSessionManagementService  $sessionManagementService,
         private readonly QuestionAnswerFileService         $questionAnswerFileService,
+        private readonly EventRepositoryInterface          $eventRepository,
+        private readonly AttendeeAgeRestrictionService     $attendeeAgeRestrictionService,
     )
     {
     }
 
     /**
-     * @throws ResourceNotFoundException|ResourceConflictException|RuntimeException|InvalidQuestionAnswerFileException
+     * @throws ResourceNotFoundException|ResourceConflictException|RuntimeException|InvalidQuestionAnswerFileException|AttendeeAgeRestrictionException
      */
     public function handle(string $orderShortId, CompleteOrderDTO $orderData): OrderDomainObject
     {
@@ -87,6 +92,7 @@ class CompleteOrderHandler
             $orderDTO = $orderData->order;
 
             $order = $this->getOrder($orderShortId);
+            $this->validateAttendeeAges($order, $orderData->products, $eventSettings);
             $this->uploadedFiles = $this->questionAnswerFileService->getUnattachedFilesForOrder($order->getId());
 
             $updatedOrder = $this->updateOrder($order, $orderDTO);
@@ -184,6 +190,7 @@ class CompleteOrderHandler
                 AttendeeDomainObjectAbstract::PUBLIC_ID => IdHelper::publicId(IdHelper::ATTENDEE_PREFIX),
                 AttendeeDomainObjectAbstract::SHORT_ID => $shortId,
                 AttendeeDomainObjectAbstract::LOCALE => $order->getLocale(),
+                AttendeeDomainObjectAbstract::BIRTH_DATE => $this->attendeeAgeRestrictionService->normalizeBirthDate($attendee->birth_date),
             ];
 
             $createdProductData->push(new CreatedProductDataDTO(
@@ -426,6 +433,43 @@ class CompleteOrderHandler
                 __('The number of attendees does not match the number of tickets in the order')
             );
         }
+    }
+
+    /**
+     * @param Collection<CompleteOrderProductDataDTO> $orderProducts
+     * @throws AttendeeAgeRestrictionException
+     */
+    private function validateAttendeeAges(
+        OrderDomainObject        $order,
+        Collection               $orderProducts,
+        EventSettingDomainObject $eventSettings,
+    ): void
+    {
+        if (!$this->attendeeAgeRestrictionService->isEnabled($eventSettings)) {
+            return;
+        }
+
+        $birthDates = [];
+
+        foreach ($orderProducts as $index => $productData) {
+            $orderItem = $order->getOrderItems()?->first(
+                fn(OrderItemDomainObject $orderItem) => $orderItem->getProductPriceId() === $productData->product_price_id
+            );
+
+            if ($orderItem?->getProductType() !== ProductType::TICKET->name) {
+                continue;
+            }
+
+            $birthDates[$index] = $productData->birth_date;
+        }
+
+        $this->attendeeAgeRestrictionService->validate(
+            settings: $eventSettings,
+            referenceDate: $this->attendeeAgeRestrictionService->getReferenceDate(
+                $this->eventRepository->findById($order->getEventId())
+            ),
+            birthDatesByProductIndex: $birthDates,
+        );
     }
 
     private function getProductTypeFromPriceId(int $priceId, Collection $orderItems): string

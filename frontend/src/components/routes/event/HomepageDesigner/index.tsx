@@ -4,12 +4,12 @@ import {useParams} from "react-router";
 import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
 import {useUpdateEventSettings} from "../../../../mutations/useUpdateEventSettings.ts";
 import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx";
-import {EventSettings, HomepageThemeSettings, IdParam} from "../../../../types.ts";
+import {EventSettings, HomepageFooterSettings, HomepageThemeSettings, IdParam} from "../../../../types.ts";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {t} from "@lingui/macro";
 import {useForm} from "@mantine/form";
-import {Button, FileButton, Group, TextInput, Accordion, Stack, Text} from "@mantine/core";
-import {IconColorPicker, IconHelp, IconPhoto, IconPalette, IconTrash, IconTypography, IconVideo} from "@tabler/icons-react";
+import {Button, FileButton, Group, TextInput, Textarea, Accordion, Stack, Text} from "@mantine/core";
+import {IconColorPicker, IconHelp, IconLayoutBottombar, IconLayoutNavbar, IconMaximize, IconPhoto, IconPalette, IconTrash, IconTypography, IconVideo} from "@tabler/icons-react";
 import {Tooltip} from "../../../common/Tooltip";
 import {CustomSelect} from "../../../common/CustomSelect";
 import {GET_EVENT_IMAGES_QUERY_KEY, useGetEventImages} from "../../../../queries/useGetEventImages.ts";
@@ -25,12 +25,17 @@ import {DEFAULT_HOMEPAGE_FONT} from "../../../../constants/homepageFonts.ts";
 import {useUploadEventCoverVideo} from "../../../../mutations/useUploadEventCoverVideo.ts";
 import {useDeleteEventImage} from "../../../../mutations/useDeleteEventImage.ts";
 import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
+import {useGetEvent} from "../../../../queries/useGetEvent.ts";
+import {toOrganizerCustomFont, useGetOrganizerFonts} from "../../../../queries/useGetOrganizerFonts.ts";
+import {cleanFooterSettings, FooterSettingsPanel} from "./FooterSettingsPanel.tsx";
 
 const MAX_COVER_VIDEO_BYTES = 15 * 1024 * 1024;
 
 interface FormValues {
     homepage_theme_settings: Partial<HomepageThemeSettings>;
     continue_button_text: string;
+    rich_footer_enabled: boolean;
+    homepage_footer_settings: HomepageFooterSettings;
 }
 
 const HomepageDesigner = () => {
@@ -38,6 +43,9 @@ const HomepageDesigner = () => {
     const eventSettingsQuery = useGetEventSettings(eventId);
     const eventImagesQuery = useGetEventImages(eventId);
     const updateMutation = useUpdateEventSettings();
+    const eventQuery = useGetEvent(eventId);
+    const organizerFontsQuery = useGetOrganizerFonts(eventQuery.data?.organizer_id);
+    const organizerFont = toOrganizerCustomFont(organizerFontsQuery.data);
 
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const lastSentSettings = useRef<string | null>(null);
@@ -49,7 +57,11 @@ const HomepageDesigner = () => {
 
     const existingCover = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER');
     const existingCoverVideo = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER_VIDEO');
+    const existingCoverVideoMobile = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER_VIDEO_MOBILE');
     const existingFlyer = eventImagesQuery.data?.find((image) => image.type === 'EVENT_FLYER');
+    const existingHeroPartnerLogo = eventImagesQuery.data?.find((image) => image.type === 'EVENT_HERO_PARTNER_LOGO');
+    const existingHeroSignatureLogo = eventImagesQuery.data?.find((image) => image.type === 'EVENT_HERO_SIGNATURE_LOGO');
+    const existingHeroBrandLogo = eventImagesQuery.data?.find((image) => image.type === 'EVENT_HERO_BRAND_LOGO');
     const uploadCoverVideo = useUploadEventCoverVideo();
     const deleteEventImage = useDeleteEventImage();
 
@@ -63,6 +75,8 @@ const HomepageDesigner = () => {
                 font_family: DEFAULT_HOMEPAGE_FONT,
             },
             continue_button_text: '',
+            rich_footer_enabled: false,
+            homepage_footer_settings: {},
         }
     });
 
@@ -76,6 +90,8 @@ const HomepageDesigner = () => {
             form.setValues({
                 homepage_theme_settings: themeSettings,
                 continue_button_text: settings.continue_button_text,
+                rich_footer_enabled: !!settings.rich_footer_enabled,
+                homepage_footer_settings: settings.homepage_footer_settings || {},
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -100,6 +116,8 @@ const HomepageDesigner = () => {
         const eventSettings: Partial<EventSettings> = {
             homepage_theme_settings: validatedTheme,
             continue_button_text: values.continue_button_text,
+            rich_footer_enabled: values.rich_footer_enabled,
+            homepage_footer_settings: cleanFooterSettings(values.homepage_footer_settings),
             // Also update legacy fields for backward compatibility during transition
             homepage_primary_color: validatedTheme.accent,
             homepage_body_background_color: validatedTheme.background,
@@ -128,7 +146,7 @@ const HomepageDesigner = () => {
         });
     };
 
-    const handleCoverVideo = (file: File | null) => {
+    const handleCoverVideo = (file: File | null, mobile = false) => {
         if (!file) {
             return;
         }
@@ -140,8 +158,8 @@ const HomepageDesigner = () => {
             showError(t`The video must not be larger than 15 MB.`);
             return;
         }
-        uploadCoverVideo.mutate({eventId, video: file}, {
-            onSuccess: () => showSuccess(t`Cover video saved`),
+        uploadCoverVideo.mutate({eventId, video: file, mobile}, {
+            onSuccess: () => showSuccess(mobile ? t`Mobile video saved` : t`Cover video saved`),
             onError: (error: any) => showError(error?.response?.data?.errors?.video?.[0]
                 || error?.response?.data?.message
                 || t`The video could not be saved. Please try again.`),
@@ -160,6 +178,23 @@ const HomepageDesigner = () => {
         });
     };
 
+    const removeCoverVideoMobile = () => {
+        if (!existingCoverVideoMobile?.id) {
+            return;
+        }
+        confirmationDialog(t`Remove the mobile video? Phones will play the main cover video instead.`, () => {
+            deleteEventImage.mutate({eventId, imageId: existingCoverVideoMobile.id}, {
+                onSuccess: () => showSuccess(t`Mobile video removed`),
+                onError: () => showError(t`Something went wrong. Please try again.`),
+            });
+        });
+    };
+
+    const isUploadingCoverVideo = (mobile: boolean) =>
+        uploadCoverVideo.isPending && !!uploadCoverVideo.variables?.mobile === mobile;
+    const isDeletingImage = (imageId?: IdParam) =>
+        deleteEventImage.isPending && deleteEventImage.variables?.imageId === imageId;
+
     const sendSettingsToIframe = () => {
         if (iframeRef.current?.contentWindow && iframeLoaded) {
             const themeSettings = validateThemeSettings(form.values.homepage_theme_settings);
@@ -167,6 +202,8 @@ const HomepageDesigner = () => {
             const settingsToSend = {
                 homepage_theme_settings: themeSettings,
                 continue_button_text: form.values.continue_button_text,
+                rich_footer_enabled: form.values.rich_footer_enabled,
+                homepage_footer_settings: cleanFooterSettings(form.values.homepage_footer_settings),
             };
 
             const settingsJson = JSON.stringify(settingsToSend);
@@ -193,6 +230,14 @@ const HomepageDesigner = () => {
         form.setFieldValue('homepage_theme_settings', {
             ...form.values.homepage_theme_settings,
             background_type: value as 'COLOR' | 'MIRROR_COVER_IMAGE',
+        });
+    };
+
+    const handleHeroLayoutChange = (heroLayout: string | string[]) => {
+        const value = Array.isArray(heroLayout) ? heroLayout[0] : heroLayout;
+        form.setFieldValue('homepage_theme_settings', {
+            ...form.values.homepage_theme_settings,
+            hero_layout: value as 'CARD' | 'FULLSCREEN',
         });
     };
 
@@ -252,17 +297,17 @@ const HomepageDesigner = () => {
                                                    muted loop playsInline autoPlay/>
                                         )}
                                         <Group gap="xs">
-                                            <FileButton onChange={handleCoverVideo} accept="video/mp4,video/webm">
+                                            <FileButton onChange={(file) => handleCoverVideo(file)} accept="video/mp4,video/webm">
                                                 {(props) => (
                                                     <Button {...props} variant="light" leftSection={<IconVideo size={16}/>}
-                                                            loading={uploadCoverVideo.isPending}>
+                                                            loading={isUploadingCoverVideo(false)}>
                                                         {existingCoverVideo ? t`Replace the video` : t`Add a video`}
                                                     </Button>
                                                 )}
                                             </FileButton>
                                             {existingCoverVideo && (
                                                 <Button variant="subtle" color="red" leftSection={<IconTrash size={16}/>}
-                                                        loading={deleteEventImage.isPending} onClick={removeCoverVideo}>
+                                                        loading={isDeletingImage(existingCoverVideo.id)} onClick={removeCoverVideo}>
                                                     {t`Remove`}
                                                 </Button>
                                             )}
@@ -271,6 +316,37 @@ const HomepageDesigner = () => {
                                             {t`Optional. Replaces the cover image at the top of the page, without sound.`}
                                         </Text>
                                     </div>
+
+                                    {(existingCoverVideo || existingCoverVideoMobile) && (
+                                        <div>
+                                            <Text fw={500} size="sm" mb="xs">{t`Video for mobile (optional)`}</Text>
+                                            {existingCoverVideoMobile?.url && (
+                                                <video className={classes.coverVideoPreview} src={existingCoverVideoMobile.url}
+                                                       muted loop playsInline autoPlay/>
+                                            )}
+                                            <Group gap="xs">
+                                                <FileButton onChange={(file) => handleCoverVideo(file, true)}
+                                                            accept="video/mp4,video/webm">
+                                                    {(props) => (
+                                                        <Button {...props} variant="light" leftSection={<IconVideo size={16}/>}
+                                                                loading={isUploadingCoverVideo(true)}>
+                                                            {existingCoverVideoMobile ? t`Replace the video` : t`Add a video`}
+                                                        </Button>
+                                                    )}
+                                                </FileButton>
+                                                {existingCoverVideoMobile && (
+                                                    <Button variant="subtle" color="red" leftSection={<IconTrash size={16}/>}
+                                                            loading={isDeletingImage(existingCoverVideoMobile.id)}
+                                                            onClick={removeCoverVideoMobile}>
+                                                        {t`Remove`}
+                                                    </Button>
+                                                )}
+                                            </Group>
+                                            <Text size="xs" c="dimmed" mt={6}>
+                                                {t`Lighter version, for example 720p, used on phones.`}
+                                            </Text>
+                                        </div>
+                                    )}
 
                                     <div>
                                         <Group justify={'space-between'} mb="xs">
@@ -298,6 +374,56 @@ const HomepageDesigner = () => {
                                             </Text>
                                         )}
                                     </div>
+
+                                    {form.values.homepage_theme_settings.hero_layout === 'FULLSCREEN' && (
+                                        <>
+                                            <div>
+                                                <Text fw={500} size="sm" mb="xs">{t`Header partner logo`}</Text>
+                                                <ImageUploadDropzone
+                                                    imageType="EVENT_HERO_PARTNER_LOGO"
+                                                    entityId={eventId}
+                                                    onUploadSuccess={handleImageChange}
+                                                    onDeleteSuccess={handleImageChange}
+                                                    existingImageData={{
+                                                        url: existingHeroPartnerLogo?.url,
+                                                        id: existingHeroPartnerLogo?.id,
+                                                    }}
+                                                    helpText={t`Shown at the top left of the full screen header. Use a PNG with a transparent background, light enough to read on the video.`}
+                                                    displayMode="compact"
+                                                />
+                                            </div>
+                                            <div>
+                                                <Text fw={500} size="sm" mb="xs">{t`Header logo, light version`}</Text>
+                                                <ImageUploadDropzone
+                                                    imageType="EVENT_HERO_BRAND_LOGO"
+                                                    entityId={eventId}
+                                                    onUploadSuccess={handleImageChange}
+                                                    onDeleteSuccess={handleImageChange}
+                                                    existingImageData={{
+                                                        url: existingHeroBrandLogo?.url,
+                                                        id: existingHeroBrandLogo?.id,
+                                                    }}
+                                                    helpText={t`Shown at the top right, as is. Without it, your organizer logo is shown in white.`}
+                                                    displayMode="compact"
+                                                />
+                                            </div>
+                                            <div>
+                                                <Text fw={500} size="sm" mb="xs">{t`Header signature logo`}</Text>
+                                                <ImageUploadDropzone
+                                                    imageType="EVENT_HERO_SIGNATURE_LOGO"
+                                                    entityId={eventId}
+                                                    onUploadSuccess={handleImageChange}
+                                                    onDeleteSuccess={handleImageChange}
+                                                    existingImageData={{
+                                                        url: existingHeroSignatureLogo?.url,
+                                                        id: existingHeroSignatureLogo?.id,
+                                                    }}
+                                                    helpText={t`Shown after the header signature, for example the producer's logo. PNG with a transparent background.`}
+                                                    displayMode="compact"
+                                                />
+                                            </div>
+                                        </>
+                                    )}
                                 </Stack>
                             </Accordion.Panel>
                         </Accordion.Item>
@@ -310,6 +436,65 @@ const HomepageDesigner = () => {
                                 <form onSubmit={form.onSubmit(handleSubmit)}>
                                     <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending} className={classes.fieldset}>
                                         <Stack gap="md">
+                                            <CustomSelect
+                                                optionList={[
+                                                    {
+                                                        icon: <IconLayoutNavbar/>,
+                                                        label: t`Classic`,
+                                                        value: 'CARD',
+                                                        description: t`The cover is shown at the top of the event card`,
+                                                    },
+                                                    {
+                                                        icon: <IconMaximize/>,
+                                                        label: t`Full screen`,
+                                                        value: 'FULLSCREEN',
+                                                        description: t`The cover video or image fills the screen, with your logo in the center and a link to the tickets at the bottom`,
+                                                        disabled: !existingCover && !existingCoverVideo,
+                                                    },
+                                                ]}
+                                                label={t`Header layout`}
+                                                name={'homepage_theme_settings.hero_layout'}
+                                                value={form.values.homepage_theme_settings.hero_layout || 'CARD'}
+                                                onChange={handleHeroLayoutChange}
+                                            />
+
+                                            {form.values.homepage_theme_settings.hero_layout === 'FULLSCREEN' && (
+                                                <>
+                                                    <Textarea
+                                                        label={t`Header title`}
+                                                        description={t`Shown in the center of the video. One line per row. Leave empty to use the event name.`}
+                                                        autosize
+                                                        minRows={3}
+                                                        maxLength={120}
+                                                        value={form.values.homepage_theme_settings.hero_title || ''}
+                                                        onChange={(e) => form.setFieldValue('homepage_theme_settings', {
+                                                            ...form.values.homepage_theme_settings,
+                                                            hero_title: e.currentTarget.value,
+                                                        })}
+                                                    />
+                                                    <TextInput
+                                                        label={t`Header subtitle`}
+                                                        description={t`Optional. A line under the title, for example a second event on the same evening.`}
+                                                        maxLength={120}
+                                                        value={form.values.homepage_theme_settings.hero_subtitle || ''}
+                                                        onChange={(e) => form.setFieldValue('homepage_theme_settings', {
+                                                            ...form.values.homepage_theme_settings,
+                                                            hero_subtitle: e.currentTarget.value,
+                                                        })}
+                                                    />
+                                                    <TextInput
+                                                        label={t`Header signature`}
+                                                        description={t`A short line under the title, for example the producer or a partner.`}
+                                                        maxLength={80}
+                                                        value={form.values.homepage_theme_settings.hero_tagline || ''}
+                                                        onChange={(e) => form.setFieldValue('homepage_theme_settings', {
+                                                            ...form.values.homepage_theme_settings,
+                                                            hero_tagline: e.currentTarget.value,
+                                                        })}
+                                                    />
+                                                </>
+                                            )}
+
                                             <CustomSelect
                                                 optionList={[
                                                     {
@@ -356,6 +541,7 @@ const HomepageDesigner = () => {
                                             font_family: fontFamily,
                                         })}
                                         disabled={eventSettingsQuery.isLoading || updateMutation.isPending}
+                                        organizerFont={organizerFont}
                                     />
                                 </fieldset>
                             </Accordion.Panel>
@@ -379,6 +565,25 @@ const HomepageDesigner = () => {
                                         </Stack>
                                     </fieldset>
                                 </form>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
+                        <Accordion.Item value="footer" className={classes.accordionItem}>
+                            <Accordion.Control icon={<IconLayoutBottombar size={20}/>}>
+                                <Text fw={500}>{t`Footer`}</Text>
+                            </Accordion.Control>
+                            <Accordion.Panel>
+                                <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending} className={classes.fieldset}>
+                                    <FooterSettingsPanel
+                                        enabled={form.values.rich_footer_enabled}
+                                        settings={form.values.homepage_footer_settings}
+                                        embeddedRegistrationActive={form.values.homepage_theme_settings.hero_layout === 'FULLSCREEN'
+                                            && !!eventSettingsQuery.data?.embedded_registration_enabled}
+                                        errors={form.errors}
+                                        onEnabledChange={(enabled) => form.setFieldValue('rich_footer_enabled', enabled)}
+                                        onSettingsChange={(settings) => form.setFieldValue('homepage_footer_settings', settings)}
+                                    />
+                                </fieldset>
                             </Accordion.Panel>
                         </Accordion.Item>
                     </Accordion>

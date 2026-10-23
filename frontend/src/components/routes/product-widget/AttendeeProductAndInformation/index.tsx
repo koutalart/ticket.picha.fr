@@ -9,6 +9,8 @@ import {PoweredByFooter} from "../../../common/PoweredByFooter";
 import {OnlineEventDetails} from "../../../common/OnlineEventDetails";
 import {HomepageInfoMessage} from "../../../common/HomepageInfoMessage";
 import classes from './AttendeeProductAndInformation.module.scss';
+import {getFullscreenHero} from "../../../../utilites/fullscreenHero.ts";
+import {EventImmersiveShell} from "../../../common/EventImmersiveShell";
 
 export const AttendeeProductAndInformation = () => {
     const {eventId, attendeeShortId} = useParams();
@@ -17,11 +19,13 @@ export const AttendeeProductAndInformation = () => {
 
     if (eventError || attendeeError) {
         return (
-            <HomepageInfoMessage
-                status="not_found"
-                message={t`Ticket Not Found`}
-                subtitle={t`We couldn't find the ticket you're looking for. The link may have expired or the ticket details may have changed.`}
-            />
+            <EventImmersiveShell event={event} panel={false}>
+                <HomepageInfoMessage
+                    status="not_found"
+                    message={t`Ticket Not Found`}
+                    subtitle={t`We couldn't find the ticket you're looking for. The link may have expired or the ticket details may have changed.`}
+                />
+            </EventImmersiveShell>
         );
     }
 
@@ -29,8 +33,8 @@ export const AttendeeProductAndInformation = () => {
         return null;
     }
 
-    return (
-        <Container>
+    const content = (
+        <>
             <h2 className={classes.title}>{t`Your ticket for`} {event.title}</h2>
 
             <AttendeeTicket
@@ -41,7 +45,20 @@ export const AttendeeProductAndInformation = () => {
             />
 
             {(event?.settings?.is_online_event && <OnlineEventDetails eventSettings={event.settings}/>)}
+        </>
+    );
 
+    if (getFullscreenHero(event).enabled) {
+        return (
+            <EventImmersiveShell event={event} width="wide">
+                {content}
+            </EventImmersiveShell>
+        );
+    }
+
+    return (
+        <Container>
+            {content}
             <PoweredByFooter/>
         </Container>
     )

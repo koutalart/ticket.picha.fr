@@ -9,12 +9,9 @@ use HiEvents\Events\CapacityChangedEvent;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\PartialEditAttendeeDTO;
-use HiEvents\Services\Domain\EventStatistics\EventStatisticsCancellationService;
+use HiEvents\Services\Domain\Attendee\AttendeeCancellationService;
 use HiEvents\Services\Domain\EventStatistics\EventStatisticsReactivationService;
 use HiEvents\Services\Domain\Product\ProductQuantityUpdateService;
-use HiEvents\Services\Infrastructure\DomainEvents\DomainEventDispatcherService;
-use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
-use HiEvents\Services\Infrastructure\DomainEvents\Events\AttendeeEvent;
 use Illuminate\Database\DatabaseManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -27,8 +24,7 @@ class PartialEditAttendeeHandler
         private readonly OrderRepositoryInterface           $orderRepository,
         private readonly ProductQuantityUpdateService       $productQuantityService,
         private readonly DatabaseManager                    $databaseManager,
-        private readonly DomainEventDispatcherService       $domainEventDispatcherService,
-        private readonly EventStatisticsCancellationService $eventStatisticsCancellationService,
+        private readonly AttendeeCancellationService        $attendeeCancellationService,
         private readonly EventStatisticsReactivationService $eventStatisticsReactivationService,
         private readonly LoggerInterface                    $logger,
     )
@@ -58,30 +54,29 @@ class PartialEditAttendeeHandler
 
         $statusIsUpdated = $data->status && $data->status !== $attendee->getStatus();
 
-        if ($statusIsUpdated) {
+        if ($statusIsUpdated && $data->status === AttendeeStatus::CANCELLED->name) {
+            $this->attendeeCancellationService->cancel($attendee);
+        } elseif ($statusIsUpdated) {
             $this->adjustProductQuantity($data, $attendee);
             $this->adjustEventStatistics($data, $attendee);
         }
 
-        if ($statusIsUpdated && $data->status === AttendeeStatus::CANCELLED->name) {
-            $this->domainEventDispatcherService->dispatch(
-                new AttendeeEvent(
-                    type: DomainEventType::ATTENDEE_CANCELLED,
-                    attendeeId: $attendee->getId(),
-                )
-            );
+        $attributes = [
+            'status' => $data->status
+                ? strtoupper($data->status)
+                : $attendee->getStatus(),
+            'first_name' => $data->first_name ?? $attendee->getFirstName(),
+            'last_name' => $data->last_name ?? $attendee->getLastName(),
+            'email' => $data->email ?? $attendee->getEmail(),
+        ];
+
+        if ($statusIsUpdated && $data->status === AttendeeStatus::ACTIVE->name) {
+            $attributes['cancelled_by_attendee_at'] = null;
         }
 
         return $this->attendeeRepository->updateByIdWhere(
             id: $data->attendee_id,
-            attributes: [
-                'status' => $data->status
-                    ? strtoupper($data->status)
-                    : $attendee->getStatus(),
-                'first_name' => $data->first_name ?? $attendee->getFirstName(),
-                'last_name' => $data->last_name ?? $attendee->getLastName(),
-                'email' => $data->email ?? $attendee->getEmail(),
-            ],
+            attributes: $attributes,
             where: [
                 'event_id' => $data->event_id,
             ]);
@@ -98,15 +93,6 @@ class PartialEditAttendeeHandler
             event(new CapacityChangedEvent(
                 eventId: $attendee->getEventId(),
                 direction: CapacityChangeDirection::DECREASED,
-                productId: $attendee->getProductId(),
-                productPriceId: $attendee->getProductPriceId(),
-            ));
-        } elseif ($data->status === AttendeeStatus::CANCELLED->name) {
-            $this->productQuantityService->decreaseQuantitySold($attendee->getProductPriceId());
-
-            event(new CapacityChangedEvent(
-                eventId: $attendee->getEventId(),
-                direction: CapacityChangeDirection::INCREASED,
                 productId: $attendee->getProductId(),
                 productPriceId: $attendee->getProductPriceId(),
             ));
@@ -134,12 +120,7 @@ class PartialEditAttendeeHandler
             return;
         }
 
-        if ($data->status === AttendeeStatus::CANCELLED->name) {
-            $this->eventStatisticsCancellationService->decrementForCancelledAttendee(
-                eventId: $attendee->getEventId(),
-                orderDate: $order->getCreatedAt()
-            );
-        } elseif ($data->status === AttendeeStatus::ACTIVE->name) {
+        if ($data->status === AttendeeStatus::ACTIVE->name) {
             $this->eventStatisticsReactivationService->incrementForReactivatedAttendee(
                 eventId: $attendee->getEventId(),
                 orderDate: $order->getCreatedAt()

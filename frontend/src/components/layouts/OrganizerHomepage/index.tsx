@@ -10,15 +10,18 @@ import {t} from "@lingui/macro";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {formatAddress, getShortLocationDisplay} from "../../../utilites/addressUtilities.ts";
 import {organizerHomepagePath} from "../../../utilites/urlHelper.ts";
 import {StatusToggle} from "../../common/StatusToggle";
 import {Pagination} from "../../common/Pagination";
 import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
-import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
+import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
+import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
-import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
+import {findOrganizerLogo, organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
+import {ssrLoaderBackground} from "../../../utilites/ssrLoader.ts";
 
 interface OrganizerHomepageProps {
     organizer?: Organizer;
@@ -47,7 +50,7 @@ export const OrganizerHomepage = ({
     const navigate = useNavigate();
     const [contactModalOpen, setContactModalOpen] = useState(false);
 
-    const {consentPending, onConsent} = useOrganizerTrackingPixels(
+    useOrganizerTrackingPixels(
         organizer?.settings?.tracking_pixels
     );
 
@@ -80,7 +83,6 @@ export const OrganizerHomepage = ({
     };
 
     // Images
-    const organizerLogo = organizer.images?.find(img => img.type === 'ORGANIZER_LOGO');
     const organizerCover = organizer.images?.find(img => img.type === 'ORGANIZER_COVER');
 
     const events = eventsData?.data || [];
@@ -88,12 +90,21 @@ export const OrganizerHomepage = ({
     // Theme settings
     const rawThemeSettings = organizer?.settings?.homepage_theme_settings;
     const themeSettings = validateThemeSettings(rawThemeSettings);
-    const cssVars = computeThemeVariables(themeSettings);
+    const organizerFont = organizer?.custom_font;
+    const cssVars = computeThemeVariables(themeSettings, organizerFont);
+    const organizerLogo = findOrganizerLogo(organizer.images, cssVars['--theme-surface']);
     const backgroundType = themeSettings.background_type;
+    const loaderLogo = organizerLogoUrl(organizer.images, ssrLoaderBackground({
+        background: themeSettings.background,
+        accent: themeSettings.accent,
+        mode: themeSettings.mode,
+        backgroundType,
+    }));
+    const organizerFontActive = isOrganizerFontActive(themeSettings.font_family, organizerFont);
 
     useEffect(() => {
-        ensureHomepageFontLoaded(themeSettings.font_family);
-    }, [themeSettings.font_family]);
+        ensureHomepageFontLoaded(themeSettings.font_family, organizerFont);
+    }, [themeSettings.font_family, organizerFont]);
 
     const themeStyles = {
         '--organizer-bg-color': themeSettings.background,
@@ -127,13 +138,14 @@ export const OrganizerHomepage = ({
             )}
 
             {organizer && <OrganizerDocumentHead organizer={organizer}/>}
-            <main className={classes.pageWrapper} style={themeStyles} data-mode={themeSettings.mode}>
+            <main className={classes.pageWrapper} style={themeStyles} data-mode={themeSettings.mode}
+                  {...(organizerFontActive ? {[ORGANIZER_FONT_ATTRIBUTE]: ''} : {})}>
                 <SsrLoaderStyle
                     background={themeSettings.background}
                     accent={themeSettings.accent}
                     mode={themeSettings.mode}
                     backgroundType={backgroundType}
-                    logoUrl={organizerLogo?.url}
+                    logoUrl={loaderLogo}
                 />
 
                 {/* Background */}
@@ -303,6 +315,7 @@ export const OrganizerHomepage = ({
                                             <EventCard
                                                 key={event.id}
                                                 event={event as Event}
+                                                organizer={organizer}
                                                 primaryColor={themeSettings.accent}
                                             />
                                         ))}
@@ -337,15 +350,18 @@ export const OrganizerHomepage = ({
                     </div>
 
                     {/* Contact Modal */}
-                    <ContactOrganizerModal
-                        opened={contactModalOpen}
-                        onClose={() => setContactModalOpen(false)}
-                        organizer={organizer}
-                    />
+                    <PublicOverlayTheme
+                        accentColor={themeSettings.accent}
+                        mode={themeSettings.mode}
+                        fontFamily={cssVars['--theme-font-family']}
+                    >
+                        <ContactOrganizerModal
+                            opened={contactModalOpen}
+                            onClose={() => setContactModalOpen(false)}
+                            organizer={organizer}
+                        />
+                    </PublicOverlayTheme>
                 </div>
-                {consentPending && (
-                    <CookieConsentBanner onConsent={onConsent}/>
-                )}
             </main>
         </>
     );

@@ -32,6 +32,9 @@ class AttendeeResource extends JsonResource
             'short_id' => $this->getShortId(),
             'locale' => $this->getLocale(),
             'notes' => $this->getNotes(),
+            'birth_date' => $this->getBirthDate(),
+            'attendance_confirmed_at' => $this->getAttendanceConfirmedAt(),
+            'cancelled_by_attendee_at' => $this->getCancelledByAttendeeAt(),
             'product' => $this->when(
                 !is_null($this->getProduct()),
                 fn() => new ProductResource($this->getProduct()),

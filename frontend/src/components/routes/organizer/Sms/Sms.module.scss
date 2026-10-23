@@ -53,9 +53,16 @@
 
       .threadColumn {
         display: flex;
-        height: calc(100vh - 200px);
+        height: auto;
+      }
+
+      .messages {
+        flex: none;
+        max-height: 55dvh;
       }
     }
+
+    margin-bottom: calc(88px + env(safe-area-inset-bottom));
   }
 }
 
@@ -275,17 +282,22 @@
 
 .composerFooter {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .composerActions {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
+
+  .composerSend {
+    margin-left: 4px;
+  }
 }
 
 .customerColumn {
@@ -363,4 +375,25 @@
 .recipientName {
   font-weight: 600;
   font-size: 14px;
+}
+
+.reminderIntro {
+  flex: 1 1 320px;
+  max-width: 640px;
+}
+
+.reminderPreview {
+  padding: 12px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+}
+
+.reminderSample {
+  margin: 4px 0 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--mantine-color-default-hover);
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }

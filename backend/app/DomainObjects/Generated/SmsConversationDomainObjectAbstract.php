@@ -13,6 +13,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     final public const ID = 'id';
     final public const ACCOUNT_ID = 'account_id';
     final public const ORGANIZER_ID = 'organizer_id';
+    final public const LINE_SETTINGS_ID = 'line_settings_id';
     final public const PHONE = 'phone';
     final public const CONTACT_NAME = 'contact_name';
     final public const STATUS = 'status';
@@ -25,12 +26,13 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     final public const DRAFT_GENERATED_AT = 'draft_generated_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
-    final public const INBOUND_NOTIFIED_AT = 'inbound_notified_at';
     final public const NEEDS_HUMAN_REASON = 'needs_human_reason';
+    final public const INBOUND_NOTIFIED_AT = 'inbound_notified_at';
 
     protected int $id;
     protected int $account_id;
     protected int $organizer_id;
+    protected ?int $line_settings_id = null;
     protected string $phone;
     protected ?string $contact_name = null;
     protected string $status = 'OPEN';
@@ -43,8 +45,8 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     protected ?string $draft_generated_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
-    protected ?string $inbound_notified_at = null;
     protected ?string $needs_human_reason = null;
+    protected ?string $inbound_notified_at = null;
 
     public function toArray(): array
     {
@@ -52,6 +54,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
                     'id' => $this->id ?? null,
                     'account_id' => $this->account_id ?? null,
                     'organizer_id' => $this->organizer_id ?? null,
+                    'line_settings_id' => $this->line_settings_id ?? null,
                     'phone' => $this->phone ?? null,
                     'contact_name' => $this->contact_name ?? null,
                     'status' => $this->status ?? null,
@@ -64,8 +67,8 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
                     'draft_generated_at' => $this->draft_generated_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
-                    'inbound_notified_at' => $this->inbound_notified_at ?? null,
                     'needs_human_reason' => $this->needs_human_reason ?? null,
+                    'inbound_notified_at' => $this->inbound_notified_at ?? null,
                 ];
     }
 
@@ -100,6 +103,17 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     public function getOrganizerId(): int
     {
         return $this->organizer_id;
+    }
+
+    public function setLineSettingsId(?int $line_settings_id): self
+    {
+        $this->line_settings_id = $line_settings_id;
+        return $this;
+    }
+
+    public function getLineSettingsId(): ?int
+    {
+        return $this->line_settings_id;
     }
 
     public function setPhone(string $phone): self
@@ -234,17 +248,6 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
         return $this->updated_at;
     }
 
-    public function setInboundNotifiedAt(?string $inbound_notified_at): self
-    {
-        $this->inbound_notified_at = $inbound_notified_at;
-        return $this;
-    }
-
-    public function getInboundNotifiedAt(): ?string
-    {
-        return $this->inbound_notified_at;
-    }
-
     public function setNeedsHumanReason(?string $needs_human_reason): self
     {
         $this->needs_human_reason = $needs_human_reason;
@@ -254,5 +257,16 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     public function getNeedsHumanReason(): ?string
     {
         return $this->needs_human_reason;
+    }
+
+    public function setInboundNotifiedAt(?string $inbound_notified_at): self
+    {
+        $this->inbound_notified_at = $inbound_notified_at;
+        return $this;
+    }
+
+    public function getInboundNotifiedAt(): ?string
+    {
+        return $this->inbound_notified_at;
     }
 }

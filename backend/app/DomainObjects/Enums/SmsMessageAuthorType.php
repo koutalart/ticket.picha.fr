@@ -12,4 +12,5 @@ enum SmsMessageAuthorType: string
     case HUMAN = 'HUMAN';
     case AGENT = 'AGENT';
     case CAMPAIGN = 'CAMPAIGN';
+    case AUTOMATIC = 'AUTOMATIC';
 }

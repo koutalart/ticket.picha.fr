@@ -6,6 +6,7 @@ const config: LinguiConfig = {
         "zh-cn", // Mandarin Chinese (Simplified)
         "es", // Spanish
         "fr", // French
+        "fr-tu", // French, informal address (tutoiement), falls back to fr
         "nl", // Dutch
 		"hu", // Hungarian
         "pt-br", // Portuguese (Brazil)
@@ -34,6 +35,7 @@ const config: LinguiConfig = {
     sourceLocale: "en",
     format: "po",
     fallbackLocales: {
+       "fr-tu": "fr",
        default: "en",
     }
 };

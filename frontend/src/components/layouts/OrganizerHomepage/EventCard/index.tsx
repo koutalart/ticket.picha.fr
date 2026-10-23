@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from "react-router";
-import {Event} from "../../../../types.ts";
+import {Event, Organizer} from "../../../../types.ts";
 import classes from './EventCard.module.scss';
 import {formatDateWithLocale} from "../../../../utilites/dates.ts";
 import {t} from "@lingui/macro";
@@ -15,11 +15,12 @@ import {IconCalendar, IconClock, IconMapPin, IconTicket, IconWifi} from '@tabler
 interface EventCardProps {
     event: Event;
     primaryColor?: string;
+    organizer?: Organizer;
 }
 
 const placeholderEmojis = ['🎉', '🎪', '🎸', '🎨', '🌟'];
 
-export const EventCard: React.FC<EventCardProps> = ({event, primaryColor = '#8b5cf6'}) => {
+export const EventCard: React.FC<EventCardProps> = ({event, primaryColor = '#8b5cf6', organizer}) => {
     const dateTextColor = isLightColor(primaryColor) ? '#000000' : '#ffffff';
 
     const emojiIndex = event.id ? Number(event.id) % placeholderEmojis.length : 0;
@@ -114,7 +115,7 @@ export const EventCard: React.FC<EventCardProps> = ({event, primaryColor = '#8b5
                                 <ShareComponent
                                     title={event.title}
                                     text={event.description_preview || ''}
-                                    url={eventHomepageUrl(event)}
+                                    url={eventHomepageUrl(event, organizer)}
                                     hideShareButtonText={true}
                                     className={classes.shareIcon}
                                 />

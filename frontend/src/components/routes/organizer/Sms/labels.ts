@@ -1,5 +1,5 @@
 import {t} from "@lingui/macro";
-import {SmsCampaignRecipientStatus, SmsConversationStatus, SmsMessage} from "../../../../types.ts";
+import {SmsCampaignRecipientStatus, SmsCampaignStatus, SmsConversationStatus, SmsMessage} from "../../../../types.ts";
 
 export const conversationStatusLabel = (status: SmsConversationStatus): string => {
     switch (status) {
@@ -30,9 +30,15 @@ export const messageStatusLabel = (message: SmsMessage): string | null => {
 };
 
 export const messageAuthorLabel = (message: SmsMessage): string | null => {
+    if (message.auto_sent) {
+        return message.auto_reply_type === 'HOLDING' ? t`Holding reply sent automatically` : t`Sent automatically`;
+    }
+
     switch (message.author_type) {
         case 'CAMPAIGN':
             return t`Campaign`;
+        case 'AUTOMATIC':
+            return t`Automatic message`;
         case 'AGENT':
             return t`Assistant`;
         default:
@@ -68,5 +74,35 @@ export const recipientStatusColor = (status: SmsCampaignRecipientStatus): string
             return 'red';
         default:
             return 'gray';
+    }
+};
+
+export const reminderStatusLabel = (status: SmsCampaignStatus | null): string => {
+    switch (status) {
+        case 'PROCESSING':
+            return t`Sending in progress`;
+        case 'SENT':
+            return t`Sent`;
+        case 'FAILED':
+            return t`Failed`;
+        case 'CANCELLED':
+            return t`Cancelled`;
+        default:
+            return t`Scheduled`;
+    }
+};
+
+export const reminderStatusColor = (status: SmsCampaignStatus | null): string => {
+    switch (status) {
+        case 'PROCESSING':
+            return 'blue';
+        case 'SENT':
+            return 'teal';
+        case 'FAILED':
+            return 'red';
+        case 'CANCELLED':
+            return 'gray';
+        default:
+            return 'yellow';
     }
 };

@@ -18,12 +18,17 @@ class CreateImageHandler
 {
     private const IMAGES_TYPES_WITH_ONLY_ONE_IMAGE_ALLOWED = [
         ImageType::ORGANIZER_LOGO,
+        ImageType::ORGANIZER_EMAIL_LOGO,
         ImageType::ORGANIZER_COVER,
         ImageType::EVENT_COVER,
         ImageType::TICKET_LOGO,
         ImageType::TICKET_SPONSOR_LOGO,
         ImageType::EVENT_SHARE_IMAGE,
         ImageType::EVENT_FLYER,
+        ImageType::EVENT_HERO_PARTNER_LOGO,
+        ImageType::EVENT_HERO_SIGNATURE_LOGO,
+        ImageType::EVENT_HERO_BRAND_LOGO,
+        ImageType::EVENT_EMAIL_LOGO,
     ];
 
     public function __construct(

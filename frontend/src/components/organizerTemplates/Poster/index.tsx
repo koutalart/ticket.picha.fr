@@ -8,7 +8,7 @@ import type {OrganizerTemplateProps} from "../index.ts";
 import type {OrganizerSitePage} from "../../../routeLoaders/organizerSitePageLoader.ts";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
-import {CookieConsentBanner} from "../../common/CookieConsentBanner";
+import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {getConfig} from "../../../utilites/config.ts";
@@ -24,6 +24,7 @@ import {ServicesPage} from "./pages/ServicesPage.tsx";
 import {ContactPage} from "./pages/ContactPage.tsx";
 import classes from "./Poster.module.scss";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
+import {findOrganizerLogo} from "../../../utilites/organizerLogo.ts";
 
 const DEFAULT_POSTER_ACCENT = '#E4173D';
 
@@ -44,13 +45,13 @@ export const PosterTemplate = ({
     const location = useLocation();
     const [contactModalOpen, setContactModalOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
-    const {consentPending, onConsent} = useOrganizerTrackingPixels(organizer.settings?.tracking_pixels);
+    useOrganizerTrackingPixels(organizer.settings?.tracking_pixels);
 
     useEffect(() => setMenuOpen(false), [location.pathname]);
 
     const content = organizer.site_content || {};
     const accent = getAccent(organizer);
-    const logo = organizer.images?.find(image => image.type === 'ORGANIZER_LOGO');
+    const logo = findOrganizerLogo(organizer.images, 'dark');
     const events = eventsData?.data || [];
     const isFirstPage = !eventsData || eventsData.meta.current_page === 1;
     const featured = !isPastEvents && isFirstPage ? events[0] : undefined;
@@ -156,7 +157,7 @@ export const PosterTemplate = ({
         });
     }
     if ((sitePage === 'home' || sitePage === 'evenements') && !isPastEvents) {
-        jsonLdGraph.push(...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event), organizer.name)));
+        jsonLdGraph.push(...events.map(event => buildEventJsonLd(event, eventHomepageUrl(event, organizer), organizer.name)));
     }
     if (sitePage === 'services') {
         jsonLdGraph.push(...(content.services || []).map(service => ({
@@ -318,12 +319,13 @@ export const PosterTemplate = ({
                 )}
             </div>
 
-            <ContactOrganizerModal
-                opened={contactModalOpen}
-                onClose={() => setContactModalOpen(false)}
-                organizer={organizer}
-            />
-            {consentPending && <CookieConsentBanner onConsent={onConsent}/>}
+            <PublicOverlayTheme accentColor={accent} mode="dark">
+                <ContactOrganizerModal
+                    opened={contactModalOpen}
+                    onClose={() => setContactModalOpen(false)}
+                    organizer={organizer}
+                />
+            </PublicOverlayTheme>
         </>
     );
 };

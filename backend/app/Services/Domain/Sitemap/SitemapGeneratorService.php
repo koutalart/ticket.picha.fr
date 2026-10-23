@@ -112,6 +112,15 @@ class SitemapGeneratorService
         $writer->writeElement('changefreq', $isUpcoming ? self::CHANGEFREQ_DAILY : self::CHANGEFREQ_WEEKLY);
         $writer->writeElement('priority', $isUpcoming ? self::PRIORITY_HIGH : self::PRIORITY_LOW);
         $writer->endElement();
+
+        foreach ($event->getEventSettings()?->getAvailableEventPages() ?? [] as $pageSlug) {
+            $writer->startElement('url');
+            $writer->writeElement('loc', $eventUrl . '/' . $pageSlug);
+            $writer->writeElement('lastmod', $lastMod);
+            $writer->writeElement('changefreq', self::CHANGEFREQ_WEEKLY);
+            $writer->writeElement('priority', $isUpcoming ? self::PRIORITY_MEDIUM : self::PRIORITY_LOW);
+            $writer->endElement();
+        }
     }
 
     private function isEventUpcoming(EventDomainObject $event, Carbon $now): bool

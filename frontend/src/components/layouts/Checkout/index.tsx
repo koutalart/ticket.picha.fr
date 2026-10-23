@@ -22,8 +22,17 @@ import {detectMode} from "../../../utilites/themeUtils.ts";
 import {CheckoutThemeProvider} from "./CheckoutThemeProvider.tsx";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
-import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {useGetEventPublic} from "../../../queries/useGetEventPublic.ts";
+import {getFullscreenHero} from "../../../utilites/fullscreenHero.ts";
+import {buildHomepageFontStack, isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
+import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
+import {
+    EventImmersiveBackdrop,
+    EventImmersiveBrandBar,
+    EventImmersiveContext,
+    EventImmersiveSignature
+} from "../../common/EventImmersiveShell";
+import {EventImmersiveFooter} from "../../common/EventImmersiveFooter";
 
 const DEFAULT_ACCENT = '#8b5cf6';
 
@@ -32,6 +41,7 @@ const Checkout = () => {
     const {data: order} = useGetOrderPublic(eventId, orderShortId, ['event']);
     const event = order?.event;
     const {data: publicEvent} = useGetEventPublic(eventId, !!eventId);
+    const fullscreenHero = getFullscreenHero(publicEvent);
     const navigate = useNavigate();
     const location = useLocation();
     const orderIsCompleted = order?.status === 'COMPLETED';
@@ -147,7 +157,20 @@ const Checkout = () => {
         }
     }, [blocker.state]);
 
-    const {consentPending, consentGranted, onConsent} = useOrganizerTrackingPixels(
+    const publicFontFamily = publicEvent?.settings?.homepage_theme_settings?.font_family;
+    const publicOrganizerFont = publicEvent?.organizer?.custom_font;
+    const organizerFontActive = isOrganizerFontActive(publicFontFamily, publicOrganizerFont);
+    const organizerFontStack = organizerFontActive || fullscreenHero.enabled
+        ? buildHomepageFontStack(publicFontFamily, publicOrganizerFont)
+        : undefined;
+
+    useEffect(() => {
+        if (organizerFontStack) {
+            ensureHomepageFontLoaded(publicFontFamily, publicOrganizerFont);
+        }
+    }, [organizerFontStack, publicFontFamily, publicOrganizerFont]);
+
+    const {consentGranted} = useOrganizerTrackingPixels(
         publicEvent?.organizer?.settings?.tracking_pixels
     );
 
@@ -187,12 +210,31 @@ const Checkout = () => {
     const homepageSettings = event?.settings?.homepage_theme_settings;
     const accentColor = homepageSettings?.accent || DEFAULT_ACCENT;
     // Mode is derived from the homepage background color (light homepage = light checkout)
-    const checkoutMode = homepageSettings?.mode || detectMode(homepageSettings?.background || '#ffffff');
+    const checkoutMode = fullscreenHero.enabled
+        ? 'dark'
+        : homepageSettings?.mode || detectMode(homepageSettings?.background || '#ffffff');
 
     return (
-        <CheckoutThemeProvider accentColor={accentColor} mode={checkoutMode}>
-            <div className={classes.container} data-mode={checkoutMode}>
+        <CheckoutThemeProvider accentColor={accentColor} mode={checkoutMode} fontFamily={organizerFontStack}>
+            <div className={classes.container} data-mode={checkoutMode} data-immersive={fullscreenHero.enabled || undefined}
+                 style={organizerFontStack ? {fontFamily: organizerFontStack} : undefined}
+                 {...(organizerFontActive ? {[ORGANIZER_FONT_ATTRIBUTE]: ''} : {})}>
+                {fullscreenHero.enabled && (
+                    <EventImmersiveBackdrop
+                        coverVideo={fullscreenHero.coverVideo}
+                        coverVideoMobile={fullscreenHero.coverVideoMobile}
+                        coverImage={fullscreenHero.coverImage}
+                    />
+                )}
                 <div className={classes.mainContent}>
+                    {fullscreenHero.enabled && (
+                        <EventImmersiveBrandBar
+                            partnerLogo={fullscreenHero.partnerLogo}
+                            brandLogo={fullscreenHero.brandLogo}
+                            organizerLogo={fullscreenHero.organizerLogo}
+                            organizerName={publicEvent?.organizer?.name}
+                        />
+                    )}
                     <header className={classes.header}>
                         {(event) && (
                             <div className={classes.actionBar}>
@@ -239,7 +281,7 @@ const Checkout = () => {
                                             <ShareComponent
                                                 title={event.title}
                                                 text={t`Check out this event!`}
-                                                url={eventHomepageUrl(event)}
+                                                url={eventHomepageUrl(event, publicEvent?.organizer)}
                                                 hideShareButtonText={isMobile}
                                             />
 
@@ -273,7 +315,18 @@ const Checkout = () => {
                             </div>
                         )}
                     </header>
-                    <Outlet/>
+                    <EventImmersiveContext.Provider value={fullscreenHero.enabled}>
+                        <Outlet/>
+                    </EventImmersiveContext.Provider>
+                    {fullscreenHero.enabled && publicEvent && (
+                        <>
+                            <EventImmersiveSignature
+                                tagline={fullscreenHero.settings.hero_tagline}
+                                signatureLogo={fullscreenHero.signatureLogo}
+                            />
+                            <EventImmersiveFooter event={publicEvent}/>
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -333,9 +386,6 @@ const Checkout = () => {
                     </Group>
                 </div>
             </Modal>
-            {consentPending && (
-                <CookieConsentBanner onConsent={onConsent}/>
-            )}
         </CheckoutThemeProvider>
     );
 }

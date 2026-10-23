@@ -36,6 +36,7 @@ class StartSmsHistoryImportHandler
             settings: $settings,
             webhookUrl: $this->settingsService->getWebhookUrl($settings),
             assistantAvailable: $this->assistantService->isAvailable(),
+            sharedLine: $this->settingsService->findSharedLine($settings),
         );
     }
 }

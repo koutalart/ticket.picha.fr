@@ -8,10 +8,11 @@ export const useUploadEventCoverVideo = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({eventId, video}: {
+        mutationFn: ({eventId, video, mobile = false}: {
             eventId: IdParam,
             video: File,
-        }) => eventsClient.uploadEventCoverVideo(eventId, video),
+            mobile?: boolean,
+        }) => eventsClient.uploadEventCoverVideo(eventId, video, mobile),
 
         onSuccess: (_, variables) => Promise.all([
             queryClient.invalidateQueries({queryKey: [GET_EVENT_IMAGES_QUERY_KEY, variables.eventId]}),

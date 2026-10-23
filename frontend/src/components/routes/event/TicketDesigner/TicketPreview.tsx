@@ -114,6 +114,7 @@ export const TicketPreview = ({settings, eventId, logoUrl}: TicketPreviewProps) 
                 imageSrc={ticketPreviewImageUrl(eventId, [
                     ...(event.images || []).map(image => image.id),
                     eventSettings?.ticket_design_settings?.date_display_mode,
+                    eventSettings?.ticket_footer_use_organizer_domain ? 'domain' : '',
                     logoUrl,
                 ].join('-'))}
             />

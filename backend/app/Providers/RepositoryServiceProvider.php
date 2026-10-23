@@ -46,6 +46,7 @@ use HiEvents\Repository\Eloquent\ProductPriceRepository;
 use HiEvents\Repository\Eloquent\ProductRepository;
 use HiEvents\Repository\Eloquent\PromoCodeRepository;
 use HiEvents\Repository\Eloquent\QrCampaignRepository;
+use HiEvents\Repository\Eloquent\OrganizerFontRepository;
 use HiEvents\Repository\Eloquent\OrganizerSmsSettingRepository;
 use HiEvents\Repository\Eloquent\SmsAssistantCallRepository;
 use HiEvents\Repository\Eloquent\SmsConversationRepository;
@@ -54,7 +55,13 @@ use HiEvents\Repository\Eloquent\SmsMessageRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRecipientRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRepository;
 use HiEvents\Repository\Eloquent\SmsOptOutRepository;
+use HiEvents\Repository\Eloquent\SmsCancellationConfirmationRepository;
+use HiEvents\Repository\Eloquent\SmsRegistrationConfirmationRepository;
+use HiEvents\Repository\Eloquent\OrganizerNewsletterSubscriberRepository;
 use HiEvents\Repository\Eloquent\SmsReplyTemplateRepository;
+use HiEvents\Repository\Eloquent\SmsLineFormerMemberRepository;
+use HiEvents\Repository\Eloquent\SmsUnattributedMessageRepository;
+use HiEvents\Repository\Eloquent\SmsWatchdogAlertRepository;
 use HiEvents\Repository\Eloquent\QrLinkRepository;
 use HiEvents\Repository\Eloquent\QrLinkVisitRepository;
 use HiEvents\Repository\Eloquent\QuestionAndAnswerViewRepository;
@@ -68,6 +75,12 @@ use HiEvents\Repository\Eloquent\TaxAndFeeRepository;
 use HiEvents\Repository\Eloquent\TicketLookupTokenRepository;
 use HiEvents\Repository\Eloquent\UserRepository;
 use HiEvents\Repository\Eloquent\WaitlistEntryRepository;
+use HiEvents\Repository\Eloquent\ContactRepository;
+use HiEvents\Repository\Eloquent\ContactLinkVisitRepository;
+use HiEvents\Repository\Eloquent\ContactNoteRepository;
+use HiEvents\Repository\Eloquent\ContactTagRepository;
+use HiEvents\Repository\Eloquent\ContactTagAssignmentRepository;
+use HiEvents\Repository\Eloquent\ContactImportRepository;
 use HiEvents\Repository\Eloquent\WebhookLogRepository;
 use HiEvents\Repository\Eloquent\WebhookRepository;
 use HiEvents\Repository\Eloquent\CaseStudyStatsRepository;
@@ -114,6 +127,7 @@ use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerFontRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
@@ -122,7 +136,13 @@ use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsCancellationConfirmationRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsRegistrationConfirmationRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerNewsletterSubscriberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsReplyTemplateRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsLineFormerMemberRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsWatchdogAlertRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkVisitRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionAndAnswerViewRepositoryInterface;
@@ -136,6 +156,12 @@ use HiEvents\Repository\Interfaces\TaxAndFeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\TicketLookupTokenRepositoryInterface;
 use HiEvents\Repository\Interfaces\UserRepositoryInterface;
 use HiEvents\Repository\Interfaces\WaitlistEntryRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactLinkVisitRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactNoteRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactTagRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactTagAssignmentRepositoryInterface;
+use HiEvents\Repository\Interfaces\ContactImportRepositoryInterface;
 use HiEvents\Repository\Interfaces\WebhookLogRepositoryInterface;
 use HiEvents\Repository\Interfaces\WebhookRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -157,14 +183,21 @@ class RepositoryServiceProvider extends ServiceProvider
         QrLinkRepositoryInterface::class => QrLinkRepository::class,
         QrCampaignRepositoryInterface::class => QrCampaignRepository::class,
         OrganizerSmsSettingRepositoryInterface::class => OrganizerSmsSettingRepository::class,
+        OrganizerFontRepositoryInterface::class => OrganizerFontRepository::class,
         SmsConversationRepositoryInterface::class => SmsConversationRepository::class,
         SmsCustomerDirectoryRepositoryInterface::class => SmsCustomerDirectoryRepository::class,
         SmsMessageRepositoryInterface::class => SmsMessageRepository::class,
         SmsOptOutRepositoryInterface::class => SmsOptOutRepository::class,
+        SmsRegistrationConfirmationRepositoryInterface::class => SmsRegistrationConfirmationRepository::class,
+        SmsCancellationConfirmationRepositoryInterface::class => SmsCancellationConfirmationRepository::class,
+        OrganizerNewsletterSubscriberRepositoryInterface::class => OrganizerNewsletterSubscriberRepository::class,
         SmsCampaignRepositoryInterface::class => SmsCampaignRepository::class,
         SmsCampaignRecipientRepositoryInterface::class => SmsCampaignRecipientRepository::class,
         SmsAssistantCallRepositoryInterface::class => SmsAssistantCallRepository::class,
         SmsReplyTemplateRepositoryInterface::class => SmsReplyTemplateRepository::class,
+        SmsLineFormerMemberRepositoryInterface::class => SmsLineFormerMemberRepository::class,
+        SmsUnattributedMessageRepositoryInterface::class => SmsUnattributedMessageRepository::class,
+        SmsWatchdogAlertRepositoryInterface::class => SmsWatchdogAlertRepository::class,
         QrLinkVisitRepositoryInterface::class => QrLinkVisitRepository::class,
         OrderItemRepositoryInterface::class => OrderItemRepository::class,
         QuestionRepositoryInterface::class => QuestionRepository::class,
@@ -206,6 +239,12 @@ class RepositoryServiceProvider extends ServiceProvider
         TicketLookupTokenRepositoryInterface::class => TicketLookupTokenRepository::class,
         AccountMessagingTierRepositoryInterface::class => AccountMessagingTierRepository::class,
         WaitlistEntryRepositoryInterface::class => WaitlistEntryRepository::class,
+        ContactRepositoryInterface::class => ContactRepository::class,
+        ContactLinkVisitRepositoryInterface::class => ContactLinkVisitRepository::class,
+        ContactNoteRepositoryInterface::class => ContactNoteRepository::class,
+        ContactTagRepositoryInterface::class => ContactTagRepository::class,
+        ContactTagAssignmentRepositoryInterface::class => ContactTagAssignmentRepository::class,
+        ContactImportRepositoryInterface::class => ContactImportRepository::class,
         BoxOfficeSaleRepositoryInterface::class => BoxOfficeSaleRepository::class,
         EventBoxOfficeOperatorRepositoryInterface::class => EventBoxOfficeOperatorRepository::class,
         PrintJobRepositoryInterface::class => PrintJobRepository::class,

@@ -4,12 +4,14 @@ namespace HiEvents\Services\Application\Handlers\TicketLookup;
 
 use Carbon\Carbon;
 use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
+use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\Status\OrderStatus;
-use HiEvents\Helper\CustomerLocale;
 use HiEvents\Mail\TicketLookup\TicketLookupEmail;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\TicketLookupTokenRepositoryInterface;
 use HiEvents\Services\Application\Handlers\TicketLookup\DTO\SendTicketLookupEmailDTO;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Infrastructure\TokenGenerator\TokenGeneratorService;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Database\DatabaseManager;
@@ -28,6 +30,8 @@ class SendTicketLookupEmailHandler
         private readonly Mailer $mailer,
         private readonly LoggerInterface $logger,
         private readonly DatabaseManager $databaseManager,
+        private readonly PublicBaseUrlResolver $publicBaseUrlResolver,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {
     }
 
@@ -48,10 +52,14 @@ class SendTicketLookupEmailHandler
         }
 
         $orderCount = $orders->count();
+        $publicBaseUrl = $this->publicBaseUrl($orders);
+        $locale = $this->customerLocaleResolver->forEventIds(
+            $orders->map(fn (OrderDomainObject $order) => $order->getEventId())
+        );
 
-        $this->databaseManager->transaction(function () use ($email, $orderCount) {
+        $this->databaseManager->transaction(function () use ($email, $orderCount, $publicBaseUrl, $locale) {
             $token = $this->generateAndSaveToken($email);
-            $this->sendTicketLookupEmail($email, $token, $orderCount);
+            $this->sendTicketLookupEmail($email, $token, $orderCount, $publicBaseUrl, $locale);
         });
     }
 
@@ -63,6 +71,22 @@ class SendTicketLookupEmailHandler
                 [OrderDomainObjectAbstract::STATUS, '=', OrderStatus::COMPLETED->name],
             ],
         );
+    }
+
+    /**
+     * The organizer's own domain when every order belongs to an organizer that has one, null for the platform.
+     */
+    private function publicBaseUrl(Collection $orders): ?string
+    {
+        $baseUrls = $orders
+            ->map(fn (OrderDomainObject $order) => $order->getEventId())
+            ->unique()
+            ->map(fn (int $eventId) => $this->publicBaseUrlResolver->forEventId($eventId))
+            ->unique();
+
+        $baseUrl = $baseUrls->count() === 1 ? $baseUrls->first() : null;
+
+        return $baseUrl !== $this->publicBaseUrlResolver->platformUrl() ? $baseUrl : null;
     }
 
     private function generateAndSaveToken(string $email): string
@@ -79,7 +103,7 @@ class SendTicketLookupEmailHandler
         return $token;
     }
 
-    private function sendTicketLookupEmail(string $email, string $token, int $orderCount): void
+    private function sendTicketLookupEmail(string $email, string $token, int $orderCount, ?string $publicBaseUrl, string $locale): void
     {
         $this->logger->info('Sending ticket lookup email', [
             'email' => $email,
@@ -88,11 +112,12 @@ class SendTicketLookupEmailHandler
 
         $this->mailer
             ->to($email)
-            ->locale(CustomerLocale::get())
+            ->locale($locale)
             ->queue(new TicketLookupEmail(
                 email: $email,
                 token: $token,
                 orderCount: $orderCount,
+                publicBaseUrl: $publicBaseUrl,
             ));
     }
 }

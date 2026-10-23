@@ -7,6 +7,7 @@ import {getAttendeeProductTitle} from "../../../utilites/products.ts";
 import {SupportedLocales} from "../../../locales.ts";
 import {getLocaleName} from "../../../utilites/localeNames.ts";
 import {relativeDate} from "../../../utilites/dates.ts";
+import dayjs from "dayjs";
 
 export const AttendeeDetails = ({attendee}: { attendee: Attendee }) => {
     return (
@@ -37,6 +38,16 @@ export const AttendeeDetails = ({attendee}: { attendee: Attendee }) => {
                     {getAttendeeProductTitle(attendee, attendee.product as Product)}
                 </div>
             </div>
+            {attendee.birth_date && (
+                <div className={classes.block}>
+                    <div className={classes.title}>
+                        {t`Date of birth`}
+                    </div>
+                    <div className={classes.amount}>
+                        {dayjs(attendee.birth_date).format('DD/MM/YYYY')}
+                    </div>
+                </div>
+            )}
             <div className={classes.block}>
                 <div className={classes.title}>
                     {t`Language`}

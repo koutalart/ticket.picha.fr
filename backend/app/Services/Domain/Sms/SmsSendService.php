@@ -32,6 +32,7 @@ class SmsSendService
         private readonly SmsConversationRepositoryInterface $conversationRepository,
         private readonly SmsConversationService $conversationService,
         private readonly HttpSmsClient $httpSmsClient,
+        private readonly SmsLineService $lineService,
     ) {}
 
     /**
@@ -42,7 +43,8 @@ class SmsSendService
      */
     public function send(SendSmsDTO $sms): SmsMessageDomainObject
     {
-        $settings = $this->getConfiguredSettings($sms->organizerId);
+        $settings = $this->findSettings($sms->organizerId);
+        $line = $this->getConfiguredLine($settings);
 
         $phone = SmsPhoneNormalizer::normalize($sms->phone);
         if ($phone === null) {
@@ -54,6 +56,9 @@ class SmsSendService
         }
 
         $conversation = $this->conversationService->findOrCreate($settings, $phone);
+        if ($sms->replyInConversation) {
+            $line = $this->lineService->replyLine($settings, $conversation, $line);
+        }
 
         /** @var SmsMessageDomainObject $message */
         $message = $this->messageRepository->create([
@@ -64,6 +69,9 @@ class SmsSendService
             SmsMessageDomainObjectAbstract::SENT_BY_USER_ID => $sms->sentByUserId,
             SmsMessageDomainObjectAbstract::CONTENT => $sms->content,
             SmsMessageDomainObjectAbstract::STATUS => SmsMessageStatus::PENDING->name,
+            SmsMessageDomainObjectAbstract::AUTO_REPLY_TO_MESSAGE_ID => $sms->autoReplyToMessageId,
+            SmsMessageDomainObjectAbstract::AUTO_REPLY_TYPE => $sms->autoReplyType?->name,
+            SmsMessageDomainObjectAbstract::LINE_SETTINGS_ID => $line->getId(),
         ]);
 
         $requestId = self::REQUEST_ID_PREFIX.$message->getId();
@@ -71,17 +79,25 @@ class SmsSendService
             SmsMessageDomainObjectAbstract::REQUEST_ID => $requestId,
         ]);
 
-        $this->conversationService->recordActivity($conversation, SmsMessageDirection::OUTBOUND, $sms->content, markUnread: false);
-        $this->conversationRepository->updateFromArray($conversation->getId(), [
-            SmsConversationDomainObjectAbstract::DRAFT_REPLY => null,
-            SmsConversationDomainObjectAbstract::DRAFT_SOURCE => null,
-            SmsConversationDomainObjectAbstract::DRAFT_GENERATED_AT => null,
-        ]);
+        $this->conversationService->recordActivity(
+            $conversation,
+            SmsMessageDirection::OUTBOUND,
+            $sms->content,
+            markUnread: false,
+            lineSettingsId: $line->getId(),
+        );
+        if (! $sms->keepDraft) {
+            $this->conversationRepository->updateFromArray($conversation->getId(), [
+                SmsConversationDomainObjectAbstract::DRAFT_REPLY => null,
+                SmsConversationDomainObjectAbstract::DRAFT_SOURCE => null,
+                SmsConversationDomainObjectAbstract::DRAFT_GENERATED_AT => null,
+            ]);
+        }
 
         try {
             $providerId = $this->httpSmsClient->sendMessage(
-                apiKey: (string) $settings->getApiKey(),
-                from: (string) $settings->getFromNumber(),
+                apiKey: (string) $line->getApiKey(),
+                from: (string) $line->getFromNumber(),
                 to: $phone,
                 content: $sms->content,
                 requestId: $requestId,
@@ -103,17 +119,33 @@ class SmsSendService
     /**
      * @throws SmsGatewayNotConfiguredException
      */
-    private function getConfiguredSettings(int $organizerId): OrganizerSmsSettingDomainObject
+    private function findSettings(int $organizerId): OrganizerSmsSettingDomainObject
     {
         /** @var OrganizerSmsSettingDomainObject|null $settings */
         $settings = $this->settingsRepository->findFirstWhere([
             OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ID => $organizerId,
         ]);
 
-        if ($settings === null || ! $settings->getApiKey() || ! $settings->getFromNumber()) {
+        if ($settings === null) {
             throw new SmsGatewayNotConfiguredException(__('SMS sending is not configured. Add your PICHA SMS API key and sending number in Settings.'));
         }
 
         return $settings;
+    }
+
+    /**
+     * The line the organizer sends with: its own settings, or the line it shares with other organizers.
+     *
+     * @throws SmsGatewayNotConfiguredException
+     */
+    private function getConfiguredLine(OrganizerSmsSettingDomainObject $settings): OrganizerSmsSettingDomainObject
+    {
+        $line = $this->lineService->resolveLine($settings);
+
+        if (! $line->getApiKey() || ! $line->getFromNumber()) {
+            throw new SmsGatewayNotConfiguredException(__('SMS sending is not configured. Add your PICHA SMS API key and sending number in Settings.'));
+        }
+
+        return $line;
     }
 }

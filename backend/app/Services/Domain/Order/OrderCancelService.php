@@ -10,7 +10,7 @@ use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Events\CapacityChangedEvent;
-use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Mail\Order\OrderCancelled;
 use HiEvents\Repository\Eloquent\Value\Relationship;
@@ -37,6 +37,7 @@ class OrderCancelService
         private readonly ProductQuantityUpdateService $productQuantityService,
         private readonly DomainEventDispatcherService $domainEventDispatcherService,
         private readonly EventStatisticsCancellationService $eventStatisticsCancellationService,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     /**
@@ -60,7 +61,7 @@ class OrderCancelService
             if (! KioskSentinelEmail::isKioskSentinelEmail($order->getEmail())) {
                 $this->mailer
                     ->to($order->getEmail())
-                    ->locale(CustomerLocale::get())
+                    ->locale($this->customerLocaleResolver->forEvent($event))
                     ->send(new OrderCancelled(
                         order: $order,
                         event: $event,

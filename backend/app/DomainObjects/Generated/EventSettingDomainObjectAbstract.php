@@ -70,6 +70,20 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const WAITLIST_OFFER_TIMEOUT_MINUTES = 'waitlist_offer_timeout_minutes';
     final public const SINGLE_PRODUCT_PER_ORDER = 'single_product_per_order';
     final public const CHOOSE_CATEGORY_FIRST = 'choose_category_first';
+    final public const AGE_RESTRICTION_RULE = 'age_restriction_rule';
+    final public const AGE_RESTRICTION_MINIMUM_AGE = 'age_restriction_minimum_age';
+    final public const ALLOW_ATTENDEE_ATTENDANCE_RESPONSE = 'allow_attendee_attendance_response';
+    final public const EMBEDDED_REGISTRATION_ENABLED = 'embedded_registration_enabled';
+    final public const RICH_FOOTER_ENABLED = 'rich_footer_enabled';
+    final public const HOMEPAGE_FOOTER_SETTINGS = 'homepage_footer_settings';
+    final public const SCHEMA_EVENT_TYPE = 'schema_event_type';
+    final public const EVENT_PAGES = 'event_pages';
+    final public const SMS_REGISTRATION_CONFIRMATION_ENABLED = 'sms_registration_confirmation_enabled';
+    final public const SMS_REGISTRATION_CONFIRMATION_MESSAGE = 'sms_registration_confirmation_message';
+    final public const SMS_CANCELLATION_CONFIRMATION_ENABLED = 'sms_cancellation_confirmation_enabled';
+    final public const SMS_CANCELLATION_CONFIRMATION_MESSAGE = 'sms_cancellation_confirmation_message';
+    final public const SMS_CANCELLATION_CONFIRMATION_ON_ORGANIZER_CANCEL = 'sms_cancellation_confirmation_on_organizer_cancel';
+    final public const TICKET_FOOTER_USE_ORGANIZER_DOMAIN = 'ticket_footer_use_organizer_domain';
 
     protected int $id;
     protected int $event_id;
@@ -131,6 +145,20 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected ?int $waitlist_offer_timeout_minutes = null;
     protected bool $single_product_per_order = false;
     protected bool $choose_category_first = false;
+    protected string $age_restriction_rule = 'NONE';
+    protected int $age_restriction_minimum_age = 18;
+    protected bool $allow_attendee_attendance_response = false;
+    protected bool $embedded_registration_enabled = false;
+    protected bool $rich_footer_enabled = false;
+    protected array|string|null $homepage_footer_settings = null;
+    protected string $schema_event_type = 'Event';
+    protected array|string|null $event_pages = null;
+    protected bool $sms_registration_confirmation_enabled = false;
+    protected ?string $sms_registration_confirmation_message = null;
+    protected bool $sms_cancellation_confirmation_enabled = false;
+    protected ?string $sms_cancellation_confirmation_message = null;
+    protected bool $sms_cancellation_confirmation_on_organizer_cancel = false;
+    protected bool $ticket_footer_use_organizer_domain = false;
 
     public function toArray(): array
     {
@@ -195,6 +223,20 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'waitlist_offer_timeout_minutes' => $this->waitlist_offer_timeout_minutes ?? null,
                     'single_product_per_order' => $this->single_product_per_order ?? null,
                     'choose_category_first' => $this->choose_category_first ?? null,
+                    'age_restriction_rule' => $this->age_restriction_rule ?? null,
+                    'age_restriction_minimum_age' => $this->age_restriction_minimum_age ?? null,
+                    'allow_attendee_attendance_response' => $this->allow_attendee_attendance_response ?? null,
+                    'embedded_registration_enabled' => $this->embedded_registration_enabled ?? null,
+                    'rich_footer_enabled' => $this->rich_footer_enabled ?? null,
+                    'homepage_footer_settings' => $this->homepage_footer_settings ?? null,
+                    'schema_event_type' => $this->schema_event_type ?? null,
+                    'event_pages' => $this->event_pages ?? null,
+                    'sms_registration_confirmation_enabled' => $this->sms_registration_confirmation_enabled ?? null,
+                    'sms_registration_confirmation_message' => $this->sms_registration_confirmation_message ?? null,
+                    'sms_cancellation_confirmation_enabled' => $this->sms_cancellation_confirmation_enabled ?? null,
+                    'sms_cancellation_confirmation_message' => $this->sms_cancellation_confirmation_message ?? null,
+                    'sms_cancellation_confirmation_on_organizer_cancel' => $this->sms_cancellation_confirmation_on_organizer_cancel ?? null,
+                    'ticket_footer_use_organizer_domain' => $this->ticket_footer_use_organizer_domain ?? null,
                 ];
     }
 
@@ -857,5 +899,159 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getChooseCategoryFirst(): bool
     {
         return $this->choose_category_first;
+    }
+
+    public function setAgeRestrictionRule(string $age_restriction_rule): self
+    {
+        $this->age_restriction_rule = $age_restriction_rule;
+        return $this;
+    }
+
+    public function getAgeRestrictionRule(): string
+    {
+        return $this->age_restriction_rule;
+    }
+
+    public function setAgeRestrictionMinimumAge(int $age_restriction_minimum_age): self
+    {
+        $this->age_restriction_minimum_age = $age_restriction_minimum_age;
+        return $this;
+    }
+
+    public function getAgeRestrictionMinimumAge(): int
+    {
+        return $this->age_restriction_minimum_age;
+    }
+
+    public function setAllowAttendeeAttendanceResponse(bool $allow_attendee_attendance_response): self
+    {
+        $this->allow_attendee_attendance_response = $allow_attendee_attendance_response;
+        return $this;
+    }
+
+    public function getAllowAttendeeAttendanceResponse(): bool
+    {
+        return $this->allow_attendee_attendance_response;
+    }
+
+    public function setEmbeddedRegistrationEnabled(bool $embedded_registration_enabled): self
+    {
+        $this->embedded_registration_enabled = $embedded_registration_enabled;
+        return $this;
+    }
+
+    public function getEmbeddedRegistrationEnabled(): bool
+    {
+        return $this->embedded_registration_enabled;
+    }
+
+    public function setRichFooterEnabled(bool $rich_footer_enabled): self
+    {
+        $this->rich_footer_enabled = $rich_footer_enabled;
+        return $this;
+    }
+
+    public function getRichFooterEnabled(): bool
+    {
+        return $this->rich_footer_enabled;
+    }
+
+    public function setHomepageFooterSettings(array|string|null $homepage_footer_settings): self
+    {
+        $this->homepage_footer_settings = $homepage_footer_settings;
+        return $this;
+    }
+
+    public function getHomepageFooterSettings(): array|string|null
+    {
+        return $this->homepage_footer_settings;
+    }
+
+    public function setSchemaEventType(string $schema_event_type): self
+    {
+        $this->schema_event_type = $schema_event_type;
+        return $this;
+    }
+
+    public function getSchemaEventType(): string
+    {
+        return $this->schema_event_type;
+    }
+
+    public function setEventPages(array|string|null $event_pages): self
+    {
+        $this->event_pages = $event_pages;
+        return $this;
+    }
+
+    public function getEventPages(): array|string|null
+    {
+        return $this->event_pages;
+    }
+
+    public function setSmsRegistrationConfirmationEnabled(bool $sms_registration_confirmation_enabled): self
+    {
+        $this->sms_registration_confirmation_enabled = $sms_registration_confirmation_enabled;
+        return $this;
+    }
+
+    public function getSmsRegistrationConfirmationEnabled(): bool
+    {
+        return $this->sms_registration_confirmation_enabled;
+    }
+
+    public function setSmsRegistrationConfirmationMessage(?string $sms_registration_confirmation_message): self
+    {
+        $this->sms_registration_confirmation_message = $sms_registration_confirmation_message;
+        return $this;
+    }
+
+    public function getSmsRegistrationConfirmationMessage(): ?string
+    {
+        return $this->sms_registration_confirmation_message;
+    }
+
+    public function setSmsCancellationConfirmationEnabled(bool $sms_cancellation_confirmation_enabled): self
+    {
+        $this->sms_cancellation_confirmation_enabled = $sms_cancellation_confirmation_enabled;
+        return $this;
+    }
+
+    public function getSmsCancellationConfirmationEnabled(): bool
+    {
+        return $this->sms_cancellation_confirmation_enabled;
+    }
+
+    public function setSmsCancellationConfirmationMessage(?string $sms_cancellation_confirmation_message): self
+    {
+        $this->sms_cancellation_confirmation_message = $sms_cancellation_confirmation_message;
+        return $this;
+    }
+
+    public function getSmsCancellationConfirmationMessage(): ?string
+    {
+        return $this->sms_cancellation_confirmation_message;
+    }
+
+    public function setSmsCancellationConfirmationOnOrganizerCancel(bool $sms_cancellation_confirmation_on_organizer_cancel): self
+    {
+        $this->sms_cancellation_confirmation_on_organizer_cancel = $sms_cancellation_confirmation_on_organizer_cancel;
+        return $this;
+    }
+
+    public function getSmsCancellationConfirmationOnOrganizerCancel(): bool
+    {
+        return $this->sms_cancellation_confirmation_on_organizer_cancel;
+    }
+
+    public function setTicketFooterUseOrganizerDomain(bool $ticket_footer_use_organizer_domain): self
+    {
+        $this->ticket_footer_use_organizer_domain = $ticket_footer_use_organizer_domain;
+        return $this;
+    }
+
+    public function getTicketFooterUseOrganizerDomain(): bool
+    {
+        return $this->ticket_footer_use_organizer_domain;
     }
 }

@@ -6,6 +6,7 @@ namespace HiEvents\Services\Domain\Sms;
 
 use HiEvents\DomainObjects\Generated\SmsCampaignDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsCampaignRecipientDomainObjectAbstract;
+use HiEvents\DomainObjects\SmsCampaignDomainObject;
 use HiEvents\DomainObjects\SmsCampaignRecipientDomainObject;
 use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
@@ -29,19 +30,19 @@ class SmsCampaignDeliveryService
         private readonly SmsCampaignRepositoryInterface $campaignRepository,
     ) {}
 
+    /**
+     * @param  array<int, int>  $organizerIds  the organizers of the line that received the status
+     */
     public function applyProviderStatus(
-        int $organizerId,
+        array $organizerIds,
         string $providerMessageId,
         SmsCampaignRecipientStatus $status,
         ?string $failureReason = null,
         ?string $timestamp = null,
     ): bool {
-        /** @var SmsCampaignRecipientDomainObject|null $recipient */
-        $recipient = $this->recipientRepository->findFirstWhere([
-            SmsCampaignRecipientDomainObjectAbstract::PROVIDER_MESSAGE_ID => $providerMessageId,
-        ]);
+        $recipient = $this->findRecipient($providerMessageId);
 
-        if ($recipient === null || ! $this->belongsToOrganizer($recipient, $organizerId)) {
+        if ($recipient === null || ! in_array($this->campaignOrganizerId($recipient), $organizerIds, true)) {
             return false;
         }
 
@@ -98,12 +99,34 @@ class SmsCampaignDeliveryService
         return $nextRank > $currentRank;
     }
 
-    private function belongsToOrganizer(SmsCampaignRecipientDomainObject $recipient, int $organizerId): bool
+    /**
+     * The organizer, among the given ones, whose campaign sent this message.
+     *
+     * @param  array<int, int>  $organizerIds
+     */
+    public function findCampaignOrganizerId(array $organizerIds, string $providerMessageId): ?int
     {
-        return $this->campaignRepository->findFirstWhere([
+        $recipient = $this->findRecipient($providerMessageId);
+        $organizerId = $recipient === null ? null : $this->campaignOrganizerId($recipient);
+
+        return $organizerId !== null && in_array($organizerId, $organizerIds, true) ? $organizerId : null;
+    }
+
+    private function findRecipient(string $providerMessageId): ?SmsCampaignRecipientDomainObject
+    {
+        return $this->recipientRepository->findFirstWhere([
+            SmsCampaignRecipientDomainObjectAbstract::PROVIDER_MESSAGE_ID => $providerMessageId,
+        ]);
+    }
+
+    private function campaignOrganizerId(SmsCampaignRecipientDomainObject $recipient): ?int
+    {
+        /** @var SmsCampaignDomainObject|null $campaign */
+        $campaign = $this->campaignRepository->findFirstWhere([
             SmsCampaignDomainObjectAbstract::ID => $recipient->getSmsCampaignId(),
-            SmsCampaignDomainObjectAbstract::ORGANIZER_ID => $organizerId,
-        ]) !== null;
+        ]);
+
+        return $campaign?->getOrganizerId();
     }
 
     private function parseTimestamp(?string $timestamp): string

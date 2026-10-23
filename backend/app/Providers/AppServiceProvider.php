@@ -7,6 +7,11 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Helper\CustomerLocale;
+use HiEvents\Services\Infrastructure\Translation\FallbackLocaleMessageSelector;
+use HiEvents\Services\Infrastructure\Translation\FallbackLocaleTranslationLoader;
+use Illuminate\Contracts\Translation\Loader;
+use Illuminate\Translation\Translator;
 use HiEvents\Models\Event;
 use HiEvents\Models\Organizer;
 use HiEvents\Services\Infrastructure\CurrencyConversion\CurrencyConversionClientInterface;
@@ -20,6 +25,11 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Stripe\StripeClient;
 use HiEvents\Services\Infrastructure\Stripe\StripeConfigurationService;
+use HiEvents\Services\Domain\Sms\CancellationConfirmation\ContactSmsCancellationLinkProvider;
+use HiEvents\Services\Domain\Sms\CancellationConfirmation\SmsCancellationLinkProviderInterface;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
+use HiEvents\Services\Domain\Sms\Reminder\AttendanceSmsReminderPersonalLinkProvider;
+use HiEvents\Services\Domain\Sms\Reminder\SmsReminderPersonalLinkProviderInterface;
 use HiEvents\Services\Infrastructure\Printing\ZebraNetworkPrinter;
 use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
 use HiEvents\Services\Infrastructure\Stripe\StripeClientFactory;
@@ -32,6 +42,19 @@ class AppServiceProvider extends ServiceProvider
         $this->bindStripeServices();
         $this->bindCurrencyConversionClient();
         $this->app->bind(ZebraPrinterClientInterface::class, ZebraNetworkPrinter::class);
+        $this->app->bind(SmsReminderPersonalLinkProviderInterface::class, AttendanceSmsReminderPersonalLinkProvider::class);
+        $this->app->bind(SmsCancellationLinkProviderInterface::class, ContactSmsCancellationLinkProvider::class);
+        $this->app->scoped(PublicBaseUrlResolver::class);
+        $this->registerLocaleVariants();
+    }
+
+    private function registerLocaleVariants(): void
+    {
+        $this->app->extend('translation.loader', fn (Loader $loader) => new FallbackLocaleTranslationLoader($loader, CustomerLocale::FALLBACKS));
+        $this->app->extend('translator', fn (Translator $translator) => tap(
+            $translator,
+            fn (Translator $translator) => $translator->setSelector(new FallbackLocaleMessageSelector(CustomerLocale::FALLBACKS)),
+        ));
     }
 
     /**

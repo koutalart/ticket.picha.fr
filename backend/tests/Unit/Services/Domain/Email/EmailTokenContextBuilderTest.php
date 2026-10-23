@@ -12,15 +12,20 @@ use HiEvents\DomainObjects\Enums\PaymentProviders;
 use HiEvents\Services\Domain\Email\EmailTokenContextBuilder;
 use Illuminate\Support\Collection;
 use Mockery;
+use Tests\Support\FakesPublicBaseUrl;
 use Tests\TestCase;
 
 class EmailTokenContextBuilderTest extends TestCase
 {
+    use FakesPublicBaseUrl;
+
     private EmailTokenContextBuilder $contextBuilder;
 
     protected function setUp(): void
     {
         parent::setUp();
+        config(['app.frontend_url' => 'https://ticket.picha.fr']);
+        $this->fakePublicBaseUrl([8 => 'mayottela1ere.fr'], [9 => 1, 14 => 8]);
         $this->contextBuilder = new EmailTokenContextBuilder();
     }
 
@@ -89,6 +94,7 @@ class EmailTokenContextBuilderTest extends TestCase
         // Test attendee context
         $this->assertEquals('Jane Smith', $context['attendee']['name']);
         $this->assertEquals('jane@example.com', $context['attendee']['email']);
+        $this->assertSame('', $context['attendee']['attendance_url']);
 
         // Test ticket context
         $this->assertEquals('General Admission', $context['ticket']['name']);
@@ -181,9 +187,11 @@ class EmailTokenContextBuilderTest extends TestCase
         ]);
     }
 
-    private function createMockEvent(): EventDomainObject
+    private function createMockEvent(int $organizerId = 1): EventDomainObject
     {
         return Mockery::mock(EventDomainObject::class, [
+            'getOrganizer' => null,
+            'getOrganizerId' => $organizerId,
             'getTitle' => 'Amazing Event',
             'getDescription' => 'This is an amazing event',
             'getStartDate' => '2024-02-15 19:00:00',
@@ -202,13 +210,66 @@ class EmailTokenContextBuilderTest extends TestCase
         ]);
     }
 
-    private function createMockEventSettings(): EventSettingDomainObject
+    public function test_attendee_ticket_context_includes_attendance_url_when_enabled(): void
+    {
+        $context = $this->contextBuilder->buildAttendeeTicketContext(
+            $this->createMockAttendee(),
+            $this->createMockOrder(),
+            $this->createMockEvent(),
+            $this->createMockOrganizer(),
+            $this->createMockEventSettings(allowAttendanceResponse: true),
+        );
+
+        $this->assertStringContainsString('/venue/9/ATT123?code=', $context['attendee']['attendance_url']);
+    }
+
+    public function test_links_stay_on_the_organizer_custom_domain(): void
+    {
+        $attendee = Mockery::mock(AttendeeDomainObject::class, [
+            'getFirstName' => 'Jane',
+            'getLastName' => 'Smith',
+            'getEmail' => 'jane@example.com',
+            'getProductPriceId' => 123,
+            'getShortId' => 'ATT123',
+            'getId' => 77,
+            'getEventId' => 14,
+        ]);
+
+        $context = $this->contextBuilder->buildAttendeeTicketContext(
+            $attendee,
+            $this->createMockOrder(),
+            $this->createMockEvent(organizerId: 8),
+            $this->createMockOrganizer(),
+            $this->createMockEventSettings(allowAttendanceResponse: true),
+        );
+
+        $this->assertStringStartsWith('https://mayottela1ere.fr/checkout/1/', $context['order']['url']);
+        $this->assertSame('https://mayottela1ere.fr/product/1/ATT123', $context['ticket']['url']);
+        $this->assertStringStartsWith('https://mayottela1ere.fr/venue/14/ATT123?code=', $context['attendee']['attendance_url']);
+    }
+
+    public function test_links_use_the_platform_without_custom_domain(): void
+    {
+        $context = $this->contextBuilder->buildAttendeeTicketContext(
+            $this->createMockAttendee(),
+            $this->createMockOrder(),
+            $this->createMockEvent(),
+            $this->createMockOrganizer(),
+            $this->createMockEventSettings(allowAttendanceResponse: true),
+        );
+
+        $this->assertStringStartsWith('https://ticket.picha.fr/checkout/1/', $context['order']['url']);
+        $this->assertStringStartsWith('https://ticket.picha.fr/venue/9/ATT123?code=', $context['attendee']['attendance_url']);
+    }
+
+    private function createMockEventSettings(bool $allowAttendanceResponse = false): EventSettingDomainObject
     {
         return Mockery::mock(EventSettingDomainObject::class, [
             'getSupportEmail' => 'support@event.com',
             'getOfflinePaymentInstructions' => 'Pay by bank transfer',
             'getPostCheckoutMessage' => 'Thank you for your purchase!',
             'getLocationDetails' => null,
+            'getAllowAttendeeAttendanceResponse' => $allowAttendanceResponse,
         ]);
     }
 
@@ -220,6 +281,8 @@ class EmailTokenContextBuilderTest extends TestCase
             'getEmail' => 'jane@example.com',
             'getProductPriceId' => 123,
             'getShortId' => 'ATT123',
+            'getId' => 77,
+            'getEventId' => 9,
         ]);
     }
 

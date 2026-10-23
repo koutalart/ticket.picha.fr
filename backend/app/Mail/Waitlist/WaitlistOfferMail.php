@@ -28,11 +28,13 @@ class WaitlistOfferMail extends BaseMail
     )
     {
         parent::__construct();
+        $this->useEventEmailLogo($this->event, $this->organizer);
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: __('A spot has opened up for :event!', ['event' => $this->event->getTitle()]),
         );
@@ -50,7 +52,7 @@ class WaitlistOfferMail extends BaseMail
                 'eventSettings' => $this->eventSettings,
                 'offerExpiresAtFormatted' => $this->formatOfferExpiry(),
                 'checkoutUrl' => sprintf(
-                    Url::getFrontEndUrlFromConfig(Url::ORDER_DETAILS, [
+                    Url::getPublicFrontEndUrlFromConfig(Url::ORDER_DETAILS, $this->event, [
                         'session_identifier' => $this->sessionIdentifier,
                         'waitlist' => 'true',
                     ]),

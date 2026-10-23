@@ -35,6 +35,7 @@ class SmsContactSyncServiceTest extends TestCase
         $this->settingsRepository = Mockery::mock(OrganizerSmsSettingRepositoryInterface::class);
         $this->organizerRepository = Mockery::mock(OrganizerRepositoryInterface::class);
         $this->directoryRepository = Mockery::mock(SmsCustomerDirectoryRepositoryInterface::class);
+        $this->directoryRepository->shouldReceive('findConversationNames')->andReturn([])->byDefault();
         $this->client = Mockery::mock(HttpSmsClient::class);
 
         $this->service = new SmsContactSyncService(
@@ -130,6 +131,47 @@ class SmsContactSyncServiceTest extends TestCase
         $this->service->syncAll();
     }
 
+    public function test_conversation_name_takes_priority_over_order_name(): void
+    {
+        $this->givenSettings([[4, 'uk_a']]);
+        $this->givenCustomers(4, [['0639250206', 'Prévente', 'Innocent Event', 'presale@example.com']]);
+        $this->directoryRepository->shouldReceive('findConversationNames')->with(4)->andReturn([
+            '+262639250206' => 'Deejay Innocent',
+        ]);
+        $this->client->shouldReceive('listContacts')->andReturn([
+            $this->managedContact('c1', 'Prévente Innocent Event', '+262639250206', '4'),
+        ]);
+
+        $this->client->shouldReceive('updateContact')->once()->with('uk_a', 'c1', Mockery::on(
+            fn (array $contact) => $contact['name'] === 'Deejay Innocent'
+                && $contact['emails'] === ['presale@example.com']
+        ));
+        $this->client->shouldNotReceive('createContacts');
+
+        $result = $this->service->syncAll();
+
+        $this->assertSame(1, $result->updated);
+    }
+
+    public function test_named_conversation_without_order_becomes_a_contact(): void
+    {
+        $this->givenSettings([[4, 'uk_a']]);
+        $this->givenCustomers(4, []);
+        $this->directoryRepository->shouldReceive('findConversationNames')->with(4)->andReturn([
+            '+262639000002' => 'Tonton Ali',
+        ]);
+        $this->client->shouldReceive('listContacts')->andReturn([]);
+
+        $this->client->shouldReceive('createContacts')->once()->with('uk_a', [[
+            'name' => 'Tonton Ali',
+            'phone_numbers' => ['+262639000002'],
+            'emails' => [],
+            'properties' => ['picha_sync' => '1', 'picha_organizers' => '4'],
+        ]]);
+
+        $this->service->syncAll();
+    }
+
     public function test_never_overrides_a_manually_created_contact(): void
     {
         $this->givenSettings([[4, 'uk_a']]);
@@ -183,6 +225,31 @@ class SmsContactSyncServiceTest extends TestCase
         ));
 
         $this->service->syncAll();
+    }
+
+    public function test_shared_line_member_contacts_are_never_written_to_the_line(): void
+    {
+        $this->settingsRepository->shouldReceive('findWhere')->andReturn(collect([
+            (new OrganizerSmsSettingDomainObject)->setId(1)->setOrganizerId(4)->setApiKey('uk_line'),
+            (new OrganizerSmsSettingDomainObject)->setId(2)->setOrganizerId(8)->setApiKey('uk_line')->setSharedLineSettingsId(1),
+        ]));
+        $this->organizerRepository->shouldReceive('findWhereIn')
+            ->with('id', [4])
+            ->andReturn(collect([(new OrganizerDomainObject)->setId(4)->setName('Innocent Event')]));
+        $this->givenCustomers(4, [['0639123456', 'Awa', 'Madi', null]]);
+        $this->directoryRepository->shouldNotReceive('findCustomersWithPhone')->with(8);
+        $this->directoryRepository->shouldNotReceive('findConversationNames')->with(8);
+        $this->client->shouldReceive('listContacts')->andReturn([]);
+
+        $this->client->shouldReceive('createContacts')->once()->with('uk_line', Mockery::on(
+            fn (array $contacts) => count($contacts) === 1
+                && $contacts[0]['name'] === 'Awa Madi'
+                && $contacts[0]['properties']['picha_organizers'] === '4'
+        ));
+
+        $result = $this->service->syncAll();
+
+        $this->assertSame(1, $result->accounts);
     }
 
     public function test_separate_accounts_only_receive_their_own_customers(): void

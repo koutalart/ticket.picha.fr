@@ -71,6 +71,7 @@ async function main() {
     const CUSTOM_DOMAIN_HEADER = 'x-picha-custom-domain-organizer';
     const CUSTOM_DOMAIN_CACHE_TTL_MS = 60 * 1000;
     const PLATFORM_ONLY_PATHS = /^\/(manage|admin|auth|account|welcome|kiosk|profile)(\/|$|\?)/;
+    const PARTICIPANT_PATHS = ['/event/', '/events/', '/e/', '/checkout/', '/product/', '/venue/', '/my-tickets/', '/q/'];
     const customDomainCache = new Map();
 
     const normalizeHost = (host) => (host || '').toLowerCase().replace(/:\d+$/, '').replace(/^www\./, '');
@@ -105,6 +106,59 @@ async function main() {
         return cached?.organizer ?? null;
     };
 
+    // Participant pages opened on the platform for an organizer that has its own domain are moved onto that domain.
+    // Checkout steps before the summary stay where they are: the checkout session lives in the tab's sessionStorage.
+    const EVENT_PARTICIPANT_PATH = /^\/(?:event|e)\/(\d+)\/(?!preview(?:\/|$))[^/]+(?:\/[^/]+)?\/?$|^\/checkout\/(\d+)\/[^/]+\/summary\/?$|^\/(?:product|venue)\/(\d+)\/[^/]+(?:\/print)?\/?$|^\/order\/(\d+)\/[^/]+\/print\/?$/;
+    const eventDomainCache = new Map();
+
+    const resolveEventCustomDomain = async (eventId) => {
+        const cached = eventDomainCache.get(eventId);
+        if (cached && cached.expiresAt > Date.now()) {
+            return cached.domain;
+        }
+
+        try {
+            const response = await fetch(
+                `${process.env.VITE_API_URL_SERVER}/public/events/${encodeURIComponent(eventId)}`,
+                {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(5000)}
+            );
+
+            if (response.ok || response.status === 404) {
+                const domain = response.ok
+                    ? normalizeHost((await response.json()).data?.organizer?.custom_domain || '') || null
+                    : null;
+                eventDomainCache.set(eventId, {domain, expiresAt: Date.now() + CUSTOM_DOMAIN_CACHE_TTL_MS});
+                return domain;
+            }
+        } catch (error) {
+            console.error(`Event custom domain lookup failed for event ${eventId}`, error);
+        }
+
+        return cached?.domain ?? null;
+    };
+
+    const isPublicPlatformHost = (host) => !!platformHost
+        && host === platformHost
+        && platformHost !== 'localhost'
+        && platformHost.includes('.')
+        && !/^[\d.]+$/.test(platformHost);
+
+    const participantCustomDomainRedirect = async (req, requestHost) => {
+        if (req.method !== 'GET' || !isPublicPlatformHost(requestHost)) {
+            return null;
+        }
+
+        const match = req.originalUrl.split('?')[0].match(EVENT_PARTICIPANT_PATH);
+        const eventId = match?.slice(1).find(Boolean);
+        if (!eventId) {
+            return null;
+        }
+
+        const domain = await resolveEventCustomDomain(eventId);
+
+        return domain && domain !== platformHost ? `https://${domain}${req.originalUrl}` : null;
+    };
+
     const SERVER_ONLY_ENV_KEYS = new Set(['VITE_API_URL_SERVER']);
 
     const getViteEnvironmentVariables = (overrides = {}) => {
@@ -135,7 +189,14 @@ async function main() {
         const pages = ['', 'evenements', 'a-propos', ...(hasServices ? ['services'] : []), 'partenaires', 'contact'];
         const urls = [
             ...pages.map((page) => ({loc: `${origin}/${page}`, priority: page === '' ? '1.0' : '0.7', changefreq: 'weekly'})),
-            ...events.map((event) => ({loc: `${origin}/event/${event.id}/${event.slug}`, priority: '0.9', changefreq: 'daily'})),
+            ...events.flatMap((event) => [
+                {loc: `${origin}/event/${event.id}/${event.slug}`, priority: '0.9', changefreq: 'daily'},
+                ...(event.dedicated_pages || []).map((page) => ({
+                    loc: `${origin}/event/${event.id}/${event.slug}/${page}`,
+                    priority: '0.7',
+                    changefreq: 'weekly',
+                })),
+            ]),
         ];
 
         const body = urls.map(({loc, priority, changefreq}) =>
@@ -178,14 +239,65 @@ Sitemap: ${frontendUrl}/sitemap.xml
         res.status(200).send(renderMarketingSitemap(platformBaseUrl(req)));
     });
 
-    app.get('/llms.txt', async (req, res, next) => {
-        if (await resolveCustomDomain(normalizeHost(req.get('host')))) {
-            return next();
+    const fetchOrganizerForLlms = async (organizerId) => {
+        const apiUrl = process.env.VITE_API_URL_SERVER;
+        const options = {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(5000)};
+        const [organizerResponse, eventsResponse] = await Promise.all([
+            fetch(`${apiUrl}/public/organizers/${encodeURIComponent(organizerId)}`, options),
+            fetch(`${apiUrl}/public/organizers/${encodeURIComponent(organizerId)}/events?per_page=50&eventsStatus=upcoming`, options),
+        ]);
+        if (!organizerResponse.ok) {
+            return null;
+        }
+        return {
+            organizer: (await organizerResponse.json()).data,
+            events: eventsResponse.ok ? (await eventsResponse.json()).data || [] : [],
+        };
+    };
+
+    const sendOrganizerLlmsTxt = async (res, organizerId, origin, customDomain) => {
+        const data = await fetchOrganizerForLlms(organizerId);
+        if (!data?.organizer) {
+            return res.status(404).type('text/plain').send('Not found');
+        }
+        const organizerDomain = data.organizer.custom_domain;
+        const {renderOrganizerLlmsTxt} = await loadServerEntry();
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.status(200).send(renderOrganizerLlmsTxt({
+            origin: organizerDomain ? `https://${organizerDomain}` : origin,
+            organizer: data.organizer,
+            events: data.events,
+            customDomain: customDomain || !!organizerDomain,
+        }));
+    };
+
+    app.get('/llms.txt', async (req, res) => {
+        const customDomain = await resolveCustomDomain(normalizeHost(req.get('host')));
+        if (customDomain) {
+            try {
+                return await sendOrganizerLlmsTxt(res, customDomain.id, `https://${customDomain.domain}`, true);
+            } catch (error) {
+                console.error(`Custom domain llms.txt failed for ${customDomain.domain}`, error);
+                return res.status(500).send('Internal server error');
+            }
         }
         const {renderLlmsTxt} = await loadServerEntry();
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.setHeader('Cache-Control', 'public, max-age=3600');
         res.status(200).send(renderLlmsTxt(platformBaseUrl(req)));
+    });
+
+    app.get(/^\/events\/(\d+)\/[^/]+\/llms\.txt$/, async (req, res, next) => {
+        if (await resolveCustomDomain(normalizeHost(req.get('host')))) {
+            return next();
+        }
+        try {
+            await sendOrganizerLlmsTxt(res, req.params[0], platformBaseUrl(req), false);
+        } catch (error) {
+            console.error('Organizer llms.txt failed', error);
+            res.status(500).send('Internal server error');
+        }
     });
 
     app.get('/sitemap.xml', async (req, res) => {
@@ -290,6 +402,13 @@ Sitemap: ${frontendUrl}/sitemap.xml
             }
 
             req.headers[CUSTOM_DOMAIN_HEADER] = JSON.stringify(customDomain);
+        } else {
+            const participantRedirect = await participantCustomDomainRedirect(req, requestHost);
+            if (participantRedirect) {
+                res.setHeader('Cache-Control', 'no-store');
+                res.redirect(302, participantRedirect);
+                return;
+            }
         }
 
         try {
@@ -305,7 +424,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 render = (await dynamicImport(path.join(__dirname, "./dist/server/entry.server.js"))).render;
             }
 
-            const { appHtml, dehydratedState, helmetContext, locale, htmlLang } = await render(
+            const { appHtml, dehydratedState, helmetContext, locale, htmlLang, statusCode, customerAddressForm } = await render(
                 { req, res },
                 ssrManifest
             );
@@ -316,7 +435,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 .join(" ");
 
             if (customDomain && platformUrl) {
-                for (const path of ['/event/', '/events/']) {
+                for (const path of PARTICIPANT_PATHS) {
                     helmetHtml = helmetHtml.split(`${platformUrl}${path}`).join(`https://${requestHost}${path}`);
                 }
             }
@@ -333,7 +452,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
             }
 
             const html = template
-                .replace('<html lang="en">', `<html lang="${htmlLang}" data-locale="${locale}">`)
+                .replace('<html lang="en">', `<html lang="${htmlLang}" data-locale="${locale}"${customerAddressForm === 'tu' ? ' data-address-form="tu"' : ''}>`)
                 .replace("<!--head-snippets-->", headSnippets.join("\n"))
                 .replace("<!--app-html-->", appHtml)
                 .replace("<!--dehydrated-state-->", `<script>window.__REHYDRATED_STATE__ = ${stringifiedState}</script>`)
@@ -341,7 +460,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 .replace(/<!--render-helmet-->.*?<!--\/render-helmet-->/s, helmetHtml);
 
             res.setHeader("Content-Type", "text/html");
-            return res.status(200).end(html);
+            return res.status(statusCode || 200).end(html);
         } catch (error) {
             if (error instanceof Response) {
                 if (error.status >= 300 && error.status < 400) {

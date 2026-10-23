@@ -55,6 +55,27 @@ class SmsSettingsService
         ]);
     }
 
+    /**
+     * The settings holding the httpSMS line this organizer sends with, when it uses a line shared by another organizer.
+     */
+    public function findSharedLine(OrganizerSmsSettingDomainObject $settings): ?OrganizerSmsSettingDomainObject
+    {
+        if ($settings->getSharedLineSettingsId() === null) {
+            return null;
+        }
+
+        /** @var OrganizerSmsSettingDomainObject|null $line */
+        $line = $this->settingsRepository->findFirstWhere([
+            OrganizerSmsSettingDomainObjectAbstract::ID => $settings->getSharedLineSettingsId(),
+        ]);
+
+        if ($line === null || $line->getSharedLineSettingsId() !== null || $line->getId() === $settings->getId()) {
+            return null;
+        }
+
+        return $line;
+    }
+
     public function getWebhookUrl(OrganizerSmsSettingDomainObject $settings): string
     {
         return Url::getApiUrl(self::WEBHOOK_PATH.$settings->getWebhookToken());

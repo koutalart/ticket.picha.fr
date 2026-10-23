@@ -493,3 +493,23 @@ $lavender: #efe9fb;
     opacity: 0.3;
   }
 }
+
+.statLink {
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mantine-color-primary-6, #6d28d9);
+    outline-offset: 4px;
+  }
+}
+
+.statValueHighlight {
+  color: var(--mantine-color-primary-6, #6d28d9);
+}

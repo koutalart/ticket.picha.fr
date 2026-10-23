@@ -1,27 +1,95 @@
 export type ConsentState = 'granted' | 'denied' | 'pending';
 
-const CONSENT_COOKIE = 'hi_tracking_consent';
-const CONSENT_MAX_AGE = 365 * 24 * 60 * 60; // 1 year
+export type ConsentCategory = 'necessary' | 'audience' | 'marketing';
 
-export function getConsentState(): ConsentState {
-    if (typeof document === 'undefined') return 'pending';
-
-    const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${CONSENT_COOKIE}=([^;]*)`));
-    if (!match) return 'pending';
-
-    const value = match[1];
-    if (value === 'granted' || value === 'denied') return value;
-    return 'pending';
+export interface ConsentChoice {
+    marketing: boolean;
+    audience: boolean;
+    version: number;
+    timestamp: number;
 }
 
-export function setConsentState(state: 'granted' | 'denied'): void {
-    if (typeof document === 'undefined') return;
-    const secure = window.location?.protocol === 'https:' ? ';Secure' : '';
-    document.cookie = `${CONSENT_COOKIE}=${state};path=/;max-age=${CONSENT_MAX_AGE};SameSite=Lax${secure}`;
+/**
+ * Bump when the purposes or the list of advertising tools change: visitors are asked again.
+ */
+export const CONSENT_VERSION = 2;
+
+export const CONSENT_CHANGE_EVENT = 'hi_consent_change';
+export const CONSENT_OPEN_EVENT = 'picha_consent_open';
+
+const CONSENT_COOKIE = 'hi_tracking_consent';
+const CONSENT_MAX_AGE = 182 * 24 * 60 * 60; // 6 months, CNIL recommendation
+const CHOICE_PATTERN = /^v(\d{1,3})\.(\d{10,13})\.([01])\.([01])$/;
+
+const readConsentCookie = (): string | null => {
+    if (typeof document === 'undefined') return null;
+    const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${CONSENT_COOKIE}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : null;
+};
+
+/**
+ * The visitor's choice on this host, or null when the banner must be shown. A refusal given with the
+ * previous banner (cookie value "denied") is kept; an older acceptance is asked again because the
+ * purposes changed.
+ */
+export function getConsentChoice(): ConsentChoice | null {
+    const value = readConsentCookie();
+    if (!value) return null;
+
+    if (value === 'denied') {
+        return {marketing: false, audience: true, version: 1, timestamp: 0};
+    }
+
+    const match = value.match(CHOICE_PATTERN);
+    if (!match || Number(match[1]) !== CONSENT_VERSION) return null;
+
+    return {
+        version: Number(match[1]),
+        timestamp: Number(match[2]),
+        marketing: match[3] === '1',
+        audience: match[4] === '1',
+    };
+}
+
+export function getConsentState(): ConsentState {
+    const choice = getConsentChoice();
+    if (!choice) return 'pending';
+    return choice.marketing ? 'granted' : 'denied';
 }
 
 export function isConsentPending(): boolean {
-    return getConsentState() === 'pending';
+    return getConsentChoice() === null;
+}
+
+export function isAudienceMeasurementAllowed(): boolean {
+    return getConsentChoice()?.audience ?? true;
+}
+
+export function getGrantedCategories(choice: ConsentChoice | null = getConsentChoice()): ConsentCategory[] {
+    return [
+        'necessary',
+        ...(choice?.audience ?? true ? ['audience' as const] : []),
+        ...(choice?.marketing ? ['marketing' as const] : []),
+    ];
+}
+
+export function writeConsentChoice(choice: { marketing: boolean; audience: boolean }): ConsentChoice {
+    const saved: ConsentChoice = {...choice, version: CONSENT_VERSION, timestamp: Date.now()};
+    if (typeof document === 'undefined') return saved;
+
+    const secure = window.location?.protocol === 'https:' ? ';Secure' : '';
+    const value = `v${saved.version}.${saved.timestamp}.${saved.marketing ? 1 : 0}.${saved.audience ? 1 : 0}`;
+    document.cookie = `${CONSENT_COOKIE}=${value};path=/;max-age=${CONSENT_MAX_AGE};SameSite=Lax${secure}`;
+
+    return saved;
+}
+
+/**
+ * Asks the consent manager to show the banner with the detailed choices ("Gérer mes traceurs").
+ */
+export function openConsentPreferences(): void {
+    if (typeof window === 'undefined') return;
+    window.dispatchEvent(new CustomEvent(CONSENT_OPEN_EVENT));
 }
 
 /**

@@ -5,6 +5,7 @@ import {
     IconBuilding,
     IconCalendar,
     IconCalendarEvent,
+    IconCalendarQuestion,
     IconCash,
     IconCheck,
     IconClock,
@@ -46,9 +47,14 @@ import {useEditOrderPublic} from "../../../../mutations/useEditOrderPublic";
 import {useResendAttendeeTicketPublic} from "../../../../mutations/useResendAttendeeTicketPublic";
 import {useResendOrderConfirmationPublic} from "../../../../mutations/useResendOrderConfirmationPublic";
 
-import {Attendee, Event, Order, Product} from "../../../../types.ts";
+import {Attendee, Event, Order, OrganizerCustomFont, Product} from "../../../../types.ts";
 import classes from './OrderSummaryAndProducts.module.scss';
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
+import {markRegisteredOnDevice} from "../../../../utilites/rememberedVenue.ts";
+import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
+import {getFullscreenHero} from "../../../../utilites/fullscreenHero.ts";
+import {buildHomepageFontStack} from "../../../../constants/homepageFonts.ts";
+import {ensureHomepageFontLoaded} from "../../../../utilites/fontLoader.ts";
 // Purchase tracking is handled by the parent Checkout layout
 
 const PaymentStatus = ({order}: { order: Order }) => {
@@ -78,12 +84,14 @@ const GuestListItem = ({
     attendee,
     event,
     allowSelfEdit,
+    allowAttendanceResponse,
     onEditClick,
     onResendClick,
 }: {
     attendee: Attendee;
     event: Event;
     allowSelfEdit: boolean;
+    allowAttendanceResponse: boolean;
     onEditClick: () => void;
     onResendClick: () => void;
 }) => {
@@ -96,11 +104,26 @@ const GuestListItem = ({
                 <div className={classes.guestName}>
                     {attendee.first_name} {attendee.last_name}
                     {isCancelled && <span className={classes.cancelledBadge}>{t`Cancelled`}</span>}
+                    {!isCancelled && allowAttendanceResponse && attendee.attendance_confirmed_at && (
+                        <span className={classes.confirmedBadge}>{t`Attendance confirmed`}</span>
+                    )}
                 </div>
                 <div className={classes.guestDetails}>
                     <span className={classes.guestEmail}>{attendee.email}</span>
                     <span className={classes.guestProduct}>{productTitle}</span>
                 </div>
+                {!isCancelled && allowAttendanceResponse && attendee.attendance_code && (
+                    <Button
+                        component="a"
+                        href={`/venue/${event.id}/${attendee.short_id}?code=${encodeURIComponent(attendee.attendance_code)}`}
+                        size="xs"
+                        variant="light"
+                        mt={8}
+                        leftSection={<IconCalendarQuestion size={14}/>}
+                    >
+                        {t`Confirm or cancel my attendance`}
+                    </Button>
+                )}
             </div>
             <div className={classes.guestActions}>
                 <Tooltip label={t`View Ticket`}>
@@ -155,6 +178,36 @@ const DetailItem = ({icon: Icon, label, value}: { icon: any, label: string, valu
         </Group>
     </div>
 );
+
+const FullscreenWelcomeHeader = ({order, event, heroTitle, heroSubtitle, fontFamily, organizerFont, isFree}: {
+    order: Order;
+    event: Event;
+    heroTitle?: string;
+    heroSubtitle?: string;
+    fontFamily?: string;
+    organizerFont?: OrganizerCustomFont | null;
+    isFree: boolean;
+}) => {
+    useEffect(() => {
+        ensureHomepageFontLoaded(fontFamily, organizerFont);
+    }, [fontFamily, organizerFont]);
+
+    const titleLines = (heroTitle?.trim() || event.title).split('\n').map((line) => line.trim()).filter(Boolean);
+
+    return (
+    <div className={classes.fullscreenWelcome} style={{fontFamily: buildHomepageFontStack(fontFamily, organizerFont)}}>
+        <div className={classes.fullscreenWelcomeEyebrow}>
+            {isFree ? t`Registration confirmed` : t`Order confirmed`}
+        </div>
+        <h1 className={classes.fullscreenWelcomeTitle}>{titleLines.join(' ')}</h1>
+        {heroSubtitle?.trim() && <div className={classes.fullscreenWelcomeSubtitle}>{heroSubtitle}</div>}
+        <div className={classes.fullscreenWelcomeDate}><EventDateRange event={event}/></div>
+        <div className={classes.fullscreenWelcomeEmail}>
+            {t`Confirmation sent to`} <strong>{order.email}</strong>
+        </div>
+    </div>
+    );
+};
 
 const WelcomeHeader = ({order, event, allowSelfEdit}: { order: Order; event: Event; allowSelfEdit: boolean }) => {
     const isCompleted = order.status === 'COMPLETED';
@@ -402,6 +455,8 @@ export const OrderSummaryAndProducts = () => {
     const {eventId, orderShortId} = useParams();
     const location = useLocation();
     const {data: order, isFetched: orderIsFetched, isError} = useGetOrderPublic(eventId, orderShortId, ['event']);
+    const {data: publicEvent} = useGetEventPublic(eventId, !!eventId);
+    const fullscreenHero = getFullscreenHero(publicEvent);
     const event = order?.event;
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -422,6 +477,13 @@ export const OrderSummaryAndProducts = () => {
     const resendOrderConfirmationMutation = useResendOrderConfirmationPublic();
 
     const allowSelfEdit = event?.settings?.allow_attendee_self_edit ?? true;
+    const allowAttendanceResponse = !!event?.settings?.allow_attendee_attendance_response && order?.status === 'COMPLETED';
+
+    useEffect(() => {
+        if (allowAttendanceResponse && event && order?.attendees?.some(attendee => attendee.status !== 'CANCELLED')) {
+            markRegisteredOnDevice(event);
+        }
+    }, [allowAttendanceResponse, event?.id, order?.short_id]);
     // Keep the financial summary collapsed for free events; paid orders keep the existing behavior.
     const isFreeOrder = !order?.is_payment_required
         && (order?.order_items?.length ?? 0) > 0
@@ -565,7 +627,19 @@ export const OrderSummaryAndProducts = () => {
     return (
         <>
             <CheckoutContent>
-                <WelcomeHeader order={order} event={event} allowSelfEdit={allowSelfEdit}/>
+                {fullscreenHero.enabled && order.status === 'COMPLETED' ? (
+                    <FullscreenWelcomeHeader
+                        order={order}
+                        event={event}
+                        heroTitle={fullscreenHero.settings.hero_title}
+                        heroSubtitle={fullscreenHero.settings.hero_subtitle}
+                        fontFamily={fullscreenHero.settings.font_family}
+                        organizerFont={publicEvent?.organizer?.custom_font}
+                        isFree={!!isFreeOrder}
+                    />
+                ) : (
+                    <WelcomeHeader order={order} event={event} allowSelfEdit={allowSelfEdit}/>
+                )}
 
                 {emailUpdated && (
                     <Alert
@@ -639,6 +713,7 @@ export const OrderSummaryAndProducts = () => {
                                         attendee={attendee}
                                         event={event}
                                         allowSelfEdit={allowSelfEdit}
+                                        allowAttendanceResponse={allowAttendanceResponse}
                                         onEditClick={() => setEditingAttendee(attendee)}
                                         onResendClick={() => handleResendAttendeeTicket(attendee)}
                                     />
@@ -648,7 +723,7 @@ export const OrderSummaryAndProducts = () => {
                     </>
                 )}
 
-                <PoweredByFooter/>
+                {!fullscreenHero.enabled && <PoweredByFooter/>}
             </CheckoutContent>
 
             {editingAttendee && (

@@ -1,4 +1,4 @@
-import {HomepageThemeSettings} from "../types.ts";
+import {HomepageThemeSettings, OrganizerCustomFont} from "../types.ts";
 import {buildHomepageFontStack, DEFAULT_HOMEPAGE_FONT} from "../constants/homepageFonts.ts";
 
 export interface DerivedThemeColors {
@@ -134,8 +134,23 @@ export function getAccentMuted(accent: string, mode: 'light' | 'dark'): string {
     return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
 }
 
-export function computeThemeVariables(settings: HomepageThemeSettings): ThemeCSSVariables {
-    const derived = getDerivedColors(settings.mode);
+export function mixWithWhite(hex: string, ratio: number): string | null {
+    const rgb = hexToRgb(hex);
+    if (!rgb) {
+        return null;
+    }
+    const channel = (value: number) => Math.round(value + (255 - value) * ratio).toString(16).padStart(2, '0');
+    return `#${channel(rgb.r)}${channel(rgb.g)}${channel(rgb.b)}`;
+}
+
+export function computeThemeVariables(
+    settings: HomepageThemeSettings,
+    organizerFont?: OrganizerCustomFont | null,
+): ThemeCSSVariables {
+    const baseDerived = getDerivedColors(settings.mode);
+    const derived = settings.mode === 'dark'
+        ? {...baseDerived, surface: mixWithWhite(settings.background, 0.07) || baseDerived.surface}
+        : baseDerived;
     const accentContrast = getContrastColor(settings.accent);
     const accentSoft = getAccentSoft(settings.accent, settings.mode);
     const accentMuted = getAccentMuted(settings.accent, settings.mode);
@@ -154,7 +169,7 @@ export function computeThemeVariables(settings: HomepageThemeSettings): ThemeCSS
         '--theme-accent-tint-10': `color-mix(in srgb, ${settings.accent} 10%, ${derived.surface})`,
         '--theme-accent-tint-15': `color-mix(in srgb, ${settings.accent} 15%, ${derived.surface})`,
         '--theme-accent-tint-20': `color-mix(in srgb, ${settings.accent} 20%, ${derived.surface})`,
-        '--theme-font-family': buildHomepageFontStack(settings.font_family),
+        '--theme-font-family': buildHomepageFontStack(settings.font_family, organizerFont),
     };
 }
 
@@ -165,17 +180,53 @@ export function getDefaultThemeSettings(): HomepageThemeSettings {
         mode: 'light',
         background_type: 'COLOR',
         font_family: DEFAULT_HOMEPAGE_FONT,
+        hero_layout: 'CARD',
+    };
+}
+
+const toSixDigitHex = (value: unknown): string | undefined => {
+    if (typeof value !== 'string') {
+        return undefined;
+    }
+    const match = value.trim().match(/^#([0-9a-f]{6})(?:[0-9a-f]{2})?$/i);
+    return match ? `#${match[1]}` : undefined;
+};
+
+/**
+ * Older themes (e.g. the « Midnight » preset) were stored with homepage_* keys
+ * instead of accent / background / mode.
+ */
+function fromLegacyTheme(settings: Record<string, unknown>): Partial<HomepageThemeSettings> {
+    const textColor = toSixDigitHex(settings.homepage_primary_text_color);
+    const background = toSixDigitHex(settings.homepage_content_background_color)
+        || toSixDigitHex(settings.homepage_background_color);
+    const accent = toSixDigitHex(settings.homepage_primary_color);
+    const mode: 'light' | 'dark' | undefined = textColor
+        ? (isLightColor(textColor) ? 'dark' : 'light')
+        : undefined;
+
+    return {
+        ...(settings as Partial<HomepageThemeSettings>),
+        background: background,
+        accent: accent,
+        mode: mode,
     };
 }
 
 export function validateThemeSettings(
-    settings: Partial<HomepageThemeSettings> | null | undefined
+    rawSettings: Partial<HomepageThemeSettings> | null | undefined
 ): HomepageThemeSettings {
     const defaults = getDefaultThemeSettings();
 
-    if (!settings) {
+    if (!rawSettings) {
         return defaults;
     }
+
+    const isLegacy = !rawSettings.background && !rawSettings.accent
+        && ('homepage_primary_color' in rawSettings || 'homepage_background_color' in rawSettings);
+    const settings = isLegacy
+        ? fromLegacyTheme(rawSettings as Record<string, unknown>)
+        : rawSettings;
 
     return {
         accent: settings.accent || defaults.accent,
@@ -183,6 +234,10 @@ export function validateThemeSettings(
         mode: settings.mode || detectMode(settings.background || defaults.background),
         background_type: settings.background_type || defaults.background_type,
         font_family: settings.font_family || defaults.font_family,
+        hero_layout: settings.hero_layout || defaults.hero_layout,
+        hero_title: settings.hero_title || undefined,
+        hero_subtitle: settings.hero_subtitle || undefined,
+        hero_tagline: settings.hero_tagline || undefined,
     };
 }
 

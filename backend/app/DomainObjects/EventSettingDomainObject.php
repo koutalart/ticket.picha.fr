@@ -3,6 +3,7 @@
 namespace HiEvents\DomainObjects;
 
 use HiEvents\DataTransferObjects\AddressDTO;
+use HiEvents\DomainObjects\Enums\EventPageType;
 use HiEvents\Helper\AddressHelper;
 
 class EventSettingDomainObject extends Generated\EventSettingDomainObjectAbstract
@@ -22,6 +23,31 @@ class EventSettingDomainObject extends Generated\EventSettingDomainObjectAbstrac
     {$this->getEmailFooterMessage()}
 </div>
 HTML;
+    }
+
+    /**
+     * @return string[] Slugs of the dedicated event pages that have content, in display order
+     */
+    public function getAvailableEventPages(): array
+    {
+        $pages = $this->getEventPages();
+
+        if (is_string($pages)) {
+            $pages = json_decode($pages, true);
+        }
+
+        if (!is_array($pages)) {
+            return [];
+        }
+
+        $available = [];
+        foreach (EventPageType::cases() as $pageType) {
+            if (!empty($pages[$pageType->contentKey()])) {
+                $available[] = $pageType->value;
+            }
+        }
+
+        return $available;
     }
 
     public function getAddressString(): string

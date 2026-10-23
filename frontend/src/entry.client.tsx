@@ -4,7 +4,14 @@ import {createBrowserRouter, matchRoutes, RouterProvider} from "react-router-dom
 import {router} from "./router";
 import {App} from "./App";
 import {queryClient} from "./utilites/queryClient";
-import {dynamicActivateLocale, getClientLocale, getSupportedLocale,} from "./locales.ts";
+import {
+    dynamicActivateLocale,
+    getClientLocale,
+    getSupportedLocale,
+    initCustomerAddressForm,
+    setCustomerAddressForm,
+} from "./locales.ts";
+import {resolveCustomerAddressForm} from "./utilites/customerAddressForm.ts";
 import {setupScrollManagement} from "./utilites/scrollManagement.ts";
 
 declare global {
@@ -18,6 +25,7 @@ const dehydratedState = window.__REHYDRATED_STATE__;
 async function initClientApp() {
     const rawLocale = getClientLocale();
     const locale = getSupportedLocale(rawLocale);
+    initCustomerAddressForm(document.documentElement.dataset.addressForm);
     await dynamicActivateLocale(locale);
 
     // Resolve lazy-loaded routes before hydration
@@ -34,12 +42,21 @@ async function initClientApp() {
     const browserRouter = createBrowserRouter(router);
     setupScrollManagement(browserRouter);
 
+    const syncCustomerAddressForm = (pathname: string) => {
+        resolveCustomerAddressForm(pathname, queryClient, window.__CUSTOM_DOMAIN_ORGANIZER__).then((form) => {
+            if (window.location.pathname === pathname) {
+                setCustomerAddressForm(form);
+            }
+        });
+    };
+
     let lastPathname = window.location.pathname;
     browserRouter.subscribe((state) => {
         if (state.navigation.state !== "idle" || state.location.pathname === lastPathname) {
             return;
         }
         lastPathname = state.location.pathname;
+        syncCustomerAddressForm(state.location.pathname);
         if (state.historyAction === "PUSH" && !state.location.hash) {
             window.scrollTo(0, 0);
         }

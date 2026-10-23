@@ -22,11 +22,13 @@ class AttendeeDetailsChangedMail extends BaseMail
         private readonly array $changedFields,
     ) {
         parent::__construct();
+        $this->useEventEmailLogo($this->event, $this->organizer);
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: __('Your Ticket Details Have Been Changed'),
         );

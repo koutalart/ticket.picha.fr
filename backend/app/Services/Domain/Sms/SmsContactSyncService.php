@@ -39,12 +39,17 @@ class SmsContactSyncService
         private readonly LoggerInterface $logger,
     ) {}
 
+    /**
+     * Organizers using a line shared by another organizer are skipped: the contacts of a shared httpSMS account
+     * are common to every organizer of the line, so only the line owner customers are written there.
+     */
     public function syncAll(bool $dryRun = false): SmsContactSyncResultDTO
     {
         /** @var Collection<int, OrganizerSmsSettingDomainObject> $settings */
         $settings = $this->settingsRepository
             ->findWhere([[OrganizerSmsSettingDomainObjectAbstract::API_KEY, 'not null', null]])
-            ->filter(fn (OrganizerSmsSettingDomainObject $setting) => trim((string) $setting->getApiKey()) !== '');
+            ->filter(fn (OrganizerSmsSettingDomainObject $setting) => trim((string) $setting->getApiKey()) !== '')
+            ->filter(fn (OrganizerSmsSettingDomainObject $setting) => $setting->getSharedLineSettingsId() === null);
 
         if ($settings->isEmpty()) {
             return new SmsContactSyncResultDTO;
@@ -140,17 +145,30 @@ class SmsContactSyncService
     private function buildDesiredContacts(Collection $organizerIds, Collection $organizerNames, bool $labelOrganizers): array
     {
         $byPhone = [];
+        $conversationNames = [];
+
+        foreach ($organizerIds as $organizerId) {
+            foreach ($this->directoryRepository->findConversationNames($organizerId) as $rawPhone => $name) {
+                $phone = self::canonicalPhone(SmsPhoneNormalizer::normalize((string) $rawPhone));
+                if ($phone !== null) {
+                    $conversationNames[$phone] ??= $name;
+                    $byPhone[$phone] ??= ['name' => $name, 'email' => null, 'organizers' => []];
+                    $byPhone[$phone]['organizers'][$organizerId] = $organizerNames->get($organizerId, '');
+                }
+            }
+        }
 
         foreach ($organizerIds as $organizerId) {
             foreach ($this->directoryRepository->findCustomersWithPhone($organizerId) as $customer) {
                 $phone = self::canonicalPhone(SmsPhoneNormalizer::normalize($customer->phone));
-                $name = trim(($customer->firstName ?? '').' '.($customer->lastName ?? ''));
+                $name = $conversationNames[$phone ?? ''] ?? trim(($customer->firstName ?? '').' '.($customer->lastName ?? ''));
 
                 if ($phone === null || $name === '') {
                     continue;
                 }
 
-                $byPhone[$phone] ??= ['name' => $name, 'email' => $customer->email, 'organizers' => []];
+                $byPhone[$phone] ??= ['name' => $name, 'email' => null, 'organizers' => []];
+                $byPhone[$phone]['email'] ??= $customer->email;
                 $byPhone[$phone]['organizers'][$organizerId] = $organizerNames->get($organizerId, '');
             }
         }

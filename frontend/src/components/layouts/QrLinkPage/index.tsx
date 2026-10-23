@@ -22,11 +22,12 @@ import {QrLinkPageLoaderData} from "../../../routeLoaders/qrLinkPageLoader.ts";
 import {QrLinkSocialLink, QrLinkSocialPlatform} from "../../../types.ts";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels.ts";
-import {CookieConsentBanner} from "../../common/CookieConsentBanner";
 import {hasActivePixels, trackPixelEvent} from "../../../utilites/trackingPixels";
 import {rememberQrLinkCode} from "../../../utilites/qrAttribution.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {getAppName} from "../../../utilites/branding.ts";
+import {findOrganizerLogo} from "../../../utilites/organizerLogo.ts";
+import {useConsentBannerTheme} from "../../../utilites/consentBannerTheme.ts";
 
 const PLATFORM_ICONS: Record<QrLinkSocialPlatform, typeof IconWorld> = {
     instagram: IconBrandInstagram,
@@ -86,7 +87,8 @@ const recordClick = (shortId: string, target: string) => {
 
 const QrLinkPage = () => {
     const {qrLink, organizer} = useLoaderData() as QrLinkPageLoaderData;
-    const {consentPending, consentGranted, onConsent} = useOrganizerTrackingPixels(organizer?.settings?.tracking_pixels);
+    const {consentGranted} = useOrganizerTrackingPixels(organizer?.settings?.tracking_pixels);
+    useConsentBannerTheme(qrLink?.design?.foreground || getConfig('VITE_APP_PRIMARY_COLOR', '#40296C') as string, 'light');
 
     const socialLinks = useMemo<QrLinkSocialLink[]>(() => {
         if (qrLink?.social_links?.length) {
@@ -142,7 +144,7 @@ const QrLinkPage = () => {
     }
 
     const accent = qrLink.design?.foreground || getConfig('VITE_APP_PRIMARY_COLOR', '#40296C');
-    const logo = organizer?.images?.find(image => image.type === 'ORGANIZER_LOGO');
+    const logo = findOrganizerLogo(organizer?.images, 'light');
     const title = qrLink.title || qrLink.event_title || organizer?.name || qrLink.name;
     const organizerUrl = organizer?.slug && organizer.status === 'LIVE'
         ? `/events/${organizer.id}/${organizer.slug}?qr=${qrLink.short_id}&qrc=1`
@@ -199,7 +201,6 @@ const QrLinkPage = () => {
                     {t`Powered by`} <a href="/">{getAppName()}</a>
                 </footer>
             </main>
-            {consentPending && <CookieConsentBanner onConsent={onConsent}/>}
         </div>
     );
 };

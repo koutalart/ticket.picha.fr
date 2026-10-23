@@ -38,6 +38,7 @@ class CreateOrderActionPublic extends BaseAction
     {
         $this->orderCreateRequestValidationService->validateRequestData($eventId, $request->all());
         $sessionId = $this->sessionIdentifierService->getSessionId();
+        $qrLinkCode = is_string($request->input('qr_link_code')) ? $request->input('qr_link_code') : null;
 
         $order = $this->orderHandler->handle(
             eventId: $eventId,
@@ -45,11 +46,13 @@ class CreateOrderActionPublic extends BaseAction
                 'is_user_authenticated' => $this->isUserAuthenticated(),
                 'promo_code' => $request->input('promo_code'),
                 'affiliate_code' => $request->input('affiliate_code'),
-                'qr_link_code' => is_string($request->input('qr_link_code')) ? $request->input('qr_link_code') : null,
+                'qr_link_code' => $qrLinkCode,
+                'contact_code' => is_string($request->input('contact_code')) ? $request->input('contact_code') : null,
                 'tracking_context' => $this->trackingContextFactory->create(
                     input: is_array($request->input('tracking_context')) ? $request->input('tracking_context') : null,
                     ipAddress: $request->ip(),
                     userAgent: $request->userAgent(),
+                    qrCode: $qrLinkCode,
                 ),
                 'products' => ProductOrderDetailsDTO::collectionFromArray($request->input('products')),
                 'session_identifier' => $sessionId,

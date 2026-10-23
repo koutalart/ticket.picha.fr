@@ -81,6 +81,10 @@ export interface HomepageThemeSettings {
     mode: 'light' | 'dark';
     background_type: 'COLOR' | 'MIRROR_COVER_IMAGE';
     font_family?: string;
+    hero_layout?: 'CARD' | 'FULLSCREEN';
+    hero_title?: string;
+    hero_subtitle?: string;
+    hero_tagline?: string;
 }
 
 export interface LoginResponse {
@@ -187,7 +191,7 @@ export interface Image {
     lqip_base64?: string | null;
 }
 
-export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_FLYER' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_COVER_VIDEO' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
+export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_COVER_VIDEO_MOBILE' | 'EVENT_FLYER' | 'EVENT_HERO_PARTNER_LOGO' | 'EVENT_HERO_SIGNATURE_LOGO' | 'EVENT_HERO_BRAND_LOGO' | 'EVENT_ARTIST_PHOTO' | 'EVENT_EMAIL_LOGO' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_EMAIL_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_COVER_VIDEO' | 'ORGANIZER_COVER_VIDEO_MOBILE' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
 
 export type PaymentProvider = 'STRIPE' | 'OFFLINE';
 
@@ -266,12 +270,79 @@ export interface EventSettings {
 
     choose_category_first?: boolean;
 
+    // Age restriction settings
+    age_restriction_rule?: AgeRestrictionRule;
+    age_restriction_minimum_age?: number;
+
     // Simplified homepage theme settings (new 2-color + mode system)
     homepage_theme_settings?: HomepageThemeSettings;
 
     // Waitlist settings
     waitlist_auto_process?: boolean;
     waitlist_offer_timeout_minutes?: number | null;
+
+    allow_attendee_attendance_response?: boolean;
+
+    sms_registration_confirmation_enabled?: boolean;
+    sms_registration_confirmation_message?: string | null;
+    sms_cancellation_confirmation_enabled?: boolean;
+    sms_cancellation_confirmation_message?: string | null;
+    sms_cancellation_confirmation_on_organizer_cancel?: boolean;
+
+    ticket_footer_use_organizer_domain?: boolean;
+
+    embedded_registration_enabled?: boolean;
+
+    rich_footer_enabled?: boolean;
+    homepage_footer_settings?: HomepageFooterSettings | null;
+    schema_event_type?: SchemaEventType;
+}
+
+export const SCHEMA_EVENT_TYPES = [
+    'Event',
+    'MusicEvent',
+    'TheaterEvent',
+    'ComedyEvent',
+    'SportsEvent',
+    'Festival',
+    'BusinessEvent',
+    'EducationEvent',
+    'SocialEvent',
+] as const;
+
+export type SchemaEventType = typeof SCHEMA_EVENT_TYPES[number];
+
+export interface HomepageFooterEventLink {
+    label: string;
+    url: string;
+}
+
+export interface HomepageFooterRelatedLink {
+    title: string;
+    url: string;
+    image_url?: string | null;
+}
+
+export type NewsletterSubscriberSource = 'FOOTER' | 'REGISTRATION';
+
+export interface NewsletterSubscriber {
+    id: IdParam;
+    email: string;
+    source: NewsletterSubscriberSource;
+    event_id?: IdParam | null;
+    event_title?: string | null;
+    consent_text: string;
+    consented_at: string;
+}
+
+export interface HomepageFooterSettings {
+    newsletter_enabled?: boolean;
+    newsletter_title?: string | null;
+    privacy_policy_url?: string | null;
+    terms_url?: string | null;
+    accessibility_url?: string | null;
+    event_links?: HomepageFooterEventLink[];
+    related_links?: HomepageFooterRelatedLink[];
 }
 
 export interface VenueAddress {
@@ -341,6 +412,39 @@ export interface Event extends EventBase {
     location_details?: VenueAddress;
     statistics?: EventStatistics;
     attributes?: { name: string; value: string; is_public?: boolean }[];
+    dedicated_pages?: EventPageSlug[];
+}
+
+export type EventPageSlug = 'artistes' | 'infos-pratiques' | 'faq';
+
+export type EventArtistLinkType = 'instagram' | 'facebook' | 'tiktok' | 'youtube' | 'spotify' | 'website';
+
+export interface EventArtist {
+    name: string;
+    slug?: string | null;
+    kind?: 'PERSON' | 'GROUP' | null;
+    image_id?: IdParam | null;
+    photo_url?: string | null;
+    bio?: string | null;
+    song?: string | null;
+    links?: Partial<Record<EventArtistLinkType, string>>;
+}
+
+export interface EventPageSection {
+    title: string;
+    content?: string | null;
+}
+
+export interface EventFaqItem {
+    question: string;
+    answer: string;
+}
+
+export interface EventPages {
+    available_pages?: EventPageSlug[];
+    artists: EventArtist[];
+    practical_info: EventPageSection[];
+    faq: EventFaqItem[];
 }
 
 export interface EventStatistics {
@@ -366,6 +470,21 @@ export interface EventDailyStats {
     orders_created: number;
 }
 
+export interface QuestionAnswerDistributionOption {
+    label: string;
+    count: number;
+    percentage: number;
+}
+
+export interface QuestionAnswerDistribution {
+    question_id: number;
+    title: string;
+    type: string;
+    belongs_to: 'ORDER' | 'PRODUCT';
+    total_responses: number;
+    options: QuestionAnswerDistributionOption[];
+}
+
 export interface CheckInStats {
     total_checked_in_attendees: number;
     total_attendees: number;
@@ -389,6 +508,8 @@ export interface EventStats {
     total_refunded: number;
     total_awaiting_payment?: number;
     orders_awaiting_payment?: number;
+    total_attendance_confirmed?: number;
+    total_cancelled_by_attendee?: number;
 }
 
 export interface OrganizerStats {
@@ -450,6 +571,29 @@ export interface Organizer {
     settings?: OrganizerSettings;
     location_details?: VenueAddress;
     status?: OrganizerStatus;
+    custom_font?: OrganizerCustomFont | null;
+}
+
+export type OrganizerFontFormat = 'woff2' | 'woff' | 'truetype' | 'opentype';
+
+export interface OrganizerCustomFontFile {
+    weight: number;
+    format: OrganizerFontFormat;
+    url: string;
+}
+
+export interface OrganizerCustomFont {
+    family_name: string;
+    files: OrganizerCustomFontFile[];
+}
+
+export interface OrganizerFont extends OrganizerCustomFontFile {
+    id: IdParam;
+    organizer_id: IdParam;
+    family_name: string;
+    file_name: string;
+    size: number;
+    updated_at?: string;
 }
 
 export interface OrganizerSettings {
@@ -490,7 +634,11 @@ export interface OrganizerSettings {
     meta_conversions_api_configured?: boolean;
     meta_test_event_code?: string | null;
     meta_conversions_api_token?: string | null;
+    email_sender_name?: string | null;
+    customer_address_form?: CustomerAddressForm;
 }
+
+export type CustomerAddressForm = 'vous' | 'tu';
 
 export interface TrackingPixelConfig {
     provider: string;
@@ -733,6 +881,8 @@ export interface ProductCategory {
     selection_label?: string | null;
 }
 
+export type AgeRestrictionRule = 'NONE' | 'ACCOMPANIED_MINORS' | 'MINIMUM_AGE';
+
 export interface Attendee {
     id?: number;
     product_id: number;
@@ -744,6 +894,7 @@ export interface Attendee {
     last_name: string;
     email: string | null;
     notes?: string;
+    birth_date?: string | null;
     order?: Order;
     public_id: string;
     short_id: string;
@@ -754,6 +905,27 @@ export interface Attendee {
     locale?: SupportedLocales;
     check_in?: AttendeeCheckIn; // Use in contexts where a single check is expected, like dealing with a check-in list
     check_ins?: AttendeeCheckIn[];
+    attendance_confirmed_at?: string | null;
+    cancelled_by_attendee_at?: string | null;
+    attendance_code?: string;
+}
+
+export interface AttendanceAccessLink {
+    short_id: string;
+    first_name: string;
+    code: string;
+}
+
+export interface AttendeeAttendance {
+    short_id: string;
+    first_name: string;
+    last_name: string;
+    status: Attendee['status'];
+    product_title?: string | null;
+    attendance_confirmed_at: string | null;
+    cancelled_by_attendee_at: string | null;
+    can_respond: boolean;
+    blocking_reason: string | null;
 }
 
 export type PublicCheckIn = Pick<AttendeeCheckIn, 'id' | 'order_id' | 'attendee_id' | 'check_in_list_id' | 'product_id' | 'event_id'>;
@@ -867,6 +1039,7 @@ export interface Question {
     product_ids?: number[];
     belongs_to: string;
     is_hidden: boolean;
+    order?: number;
 }
 
 export interface CapacityAssignment {
@@ -1108,6 +1281,7 @@ export enum ReportTypes {
     ProductSales = 'product_sales',
     DailySales = 'daily_sales_report',
     PromoCodes = 'promo_codes_report',
+    SalesBySource = 'sales_by_source_report',
 }
 
 export enum OrganizerReportTypes {
@@ -1290,13 +1464,14 @@ export interface EnqueueKioskPrintJobsResponse {
 export type SmsConversationStatus = 'OPEN' | 'NEEDS_HUMAN' | 'CLOSED';
 export type SmsMessageStatus = 'RECEIVED' | 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED' | 'EXPIRED';
 export type SmsMessageDirection = 'INBOUND' | 'OUTBOUND';
-export type SmsMessageAuthorType = 'CONTACT' | 'HUMAN' | 'AGENT' | 'CAMPAIGN';
+export type SmsMessageAuthorType = 'CONTACT' | 'HUMAN' | 'AGENT' | 'CAMPAIGN' | 'AUTOMATIC';
 export type SmsConversationFilter = 'all' | 'unread' | 'needs_human';
 
 export interface OrganizerSmsSettings {
     provider: string;
     api_key_configured: boolean;
     from_number: string | null;
+    shared_line: boolean;
     webhook_url: string;
     webhook_signing_key: string;
     last_webhook_received_at: string | null;
@@ -1306,6 +1481,8 @@ export interface OrganizerSmsSettings {
     assistant_available: boolean;
     assistant_enabled: boolean;
     assistant_instructions: string | null;
+    assistant_auto_send: boolean;
+    assistant_holding_reply: string | null;
     history_import: SmsHistoryImport;
 }
 
@@ -1375,6 +1552,8 @@ export interface SmsMessage {
     status: SmsMessageStatus;
     error_message: string | null;
     sent_by_user_id: number | null;
+    auto_sent?: boolean;
+    auto_reply_type?: 'ANSWER' | 'HOLDING' | null;
     provider_timestamp: string | null;
     created_at: string;
 }
@@ -1413,6 +1592,30 @@ export interface SmsCampaign {
     orders_count: number;
     revenue_gross: number;
     created_at: string;
+    type: SmsCampaignType;
+    status: SmsCampaignStatus | null;
+    scheduled_at: string | null;
+    started_at: string | null;
+    completed_at: string | null;
+    failure_reason: string | null;
+    event_timezone: string | null;
+}
+
+export type SmsCampaignType = 'IMPORTED' | 'REMINDER';
+
+export type SmsCampaignStatus = 'SCHEDULED' | 'PROCESSING' | 'SENT' | 'FAILED' | 'CANCELLED';
+
+export interface SmsReminderPreview {
+    recipients_count: number;
+    sms_count: number;
+    sample_message: string | null;
+    active_attendees_count: number;
+    without_valid_phone_count: number;
+    opted_out_count: number;
+    shared_phone_count: number;
+    personal_link_available: boolean;
+    event_timezone: string;
+    scheduled_at: string | null;
 }
 
 export interface SmsCampaignRecipient {

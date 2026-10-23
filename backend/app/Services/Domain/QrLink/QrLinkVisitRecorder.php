@@ -40,8 +40,8 @@ class QrLinkVisitRecorder
             'device_type' => $userAgent->deviceType,
             'os' => $userAgent->os,
             'browser' => $userAgent->browser,
-            'country_code' => $this->normalizeCountryCode($context->countryCode),
-            'referrer_host' => $this->referrerHost($context->referrer),
+            'country_code' => VisitContextNormalizer::countryCode($context->countryCode),
+            'referrer_host' => VisitContextNormalizer::referrerHost($context->referrer),
             'created_at' => Carbon::now('UTC')->toDateTimeString(),
         ]);
 
@@ -64,19 +64,5 @@ class QrLinkVisitRecorder
         $target = strtolower(preg_replace('/[^a-zA-Z0-9_-]/', '', $target));
 
         return $target === '' ? null : substr($target, 0, 30);
-    }
-
-    private function normalizeCountryCode(?string $countryCode): ?string
-    {
-        $countryCode = strtoupper(trim((string) $countryCode));
-
-        return preg_match('/^[A-Z]{2}$/', $countryCode) && $countryCode !== 'XX' ? $countryCode : null;
-    }
-
-    private function referrerHost(?string $referrer): ?string
-    {
-        $host = $referrer ? parse_url($referrer, PHP_URL_HOST) : null;
-
-        return $host ? substr(strtolower(preg_replace('/^www\./', '', $host)), 0, 255) : null;
     }
 }

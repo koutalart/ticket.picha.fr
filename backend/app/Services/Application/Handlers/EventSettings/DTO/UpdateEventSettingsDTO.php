@@ -4,6 +4,7 @@ namespace HiEvents\Services\Application\Handlers\EventSettings\DTO;
 
 use HiEvents\DataTransferObjects\AddressDTO;
 use HiEvents\DataTransferObjects\BaseDTO;
+use HiEvents\DomainObjects\Enums\AgeRestrictionRule;
 use HiEvents\DomainObjects\Enums\AttendeeDetailsCollectionMethod;
 use HiEvents\DomainObjects\Enums\HomepageBackgroundType;
 use HiEvents\DomainObjects\Enums\PaymentProviders;
@@ -91,9 +92,30 @@ class UpdateEventSettingsDTO extends BaseDTO
         public readonly bool                    $single_product_per_order = false,
         public readonly bool                    $choose_category_first = false,
 
+        // Age restriction settings
+        public readonly ?AgeRestrictionRule     $age_restriction_rule = null,
+        public readonly ?int                    $age_restriction_minimum_age = null,
+
         // Waitlist settings
         public readonly ?bool                   $waitlist_auto_process = null,
         public readonly ?int                    $waitlist_offer_timeout_minutes = null,
+
+        // Attendance response settings
+        public readonly bool                    $allow_attendee_attendance_response = false,
+
+        public readonly bool                    $embedded_registration_enabled = false,
+
+        public readonly bool                    $sms_registration_confirmation_enabled = false,
+        public readonly ?string                 $sms_registration_confirmation_message = null,
+        public readonly bool                    $sms_cancellation_confirmation_enabled = false,
+        public readonly ?string                 $sms_cancellation_confirmation_message = null,
+        public readonly bool                    $sms_cancellation_confirmation_on_organizer_cancel = false,
+
+        public readonly bool                    $ticket_footer_use_organizer_domain = false,
+
+        public readonly bool                    $rich_footer_enabled = false,
+        public readonly ?array                  $homepage_footer_settings = null,
+        public readonly string                  $schema_event_type = 'Event',
     )
     {
     }
@@ -184,6 +206,15 @@ class UpdateEventSettingsDTO extends BaseDTO
             single_product_per_order: false,
 
             choose_category_first: false,
+
+            age_restriction_rule: AgeRestrictionRule::NONE,
+            age_restriction_minimum_age: 18,
+
+            embedded_registration_enabled: false,
+
+            rich_footer_enabled: false,
+            homepage_footer_settings: null,
+            schema_event_type: 'Event',
         );
     }
 }

@@ -6,11 +6,16 @@ import {useGetOrderPublic} from "../../../../queries/useGetOrderPublic.ts";
 import {t} from "@lingui/macro";
 import {useEffect} from "react";
 import classes from './PrintOrder.module.scss';
+import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
+import {getFullscreenHero} from "../../../../utilites/fullscreenHero.ts";
+import {EventImmersiveShell} from "../../../common/EventImmersiveShell";
 
 export const PrintOrder = () => {
     const {eventId, orderShortId} = useParams();
     const {data: order} = useGetOrderPublic(eventId, orderShortId, ['event']);
     const event = order?.event;
+    const {data: publicEvent} = useGetEventPublic(eventId, !!eventId);
+    const immersive = getFullscreenHero(publicEvent).enabled;
 
     useEffect(() => {
         if (order && event) {
@@ -23,27 +28,30 @@ export const PrintOrder = () => {
     }
 
     return (
-        <div className={classes.container}>
-            <h2 className={classes.title}>{t`Tickets for`} {event.title}</h2>
-            {order.attendees?.map((attendee) => {
-                return (
-                    <div key={attendee.id} className={classes.ticketPage}>
-                        <AttendeeTicket
-                            attendee={attendee}
-                            product={attendee.product as Product}
-                            event={event}
-                            hideButtons
-                            showPoweredBy
-                        />
+        <EventImmersiveShell event={publicEvent} width="wide">
+            <div className={classes.container}>
+                <h2 className={classes.title}>{t`Tickets for`} {event.title}</h2>
+                {order.attendees?.map((attendee) => {
+                    return (
+                        <div key={attendee.id} className={classes.ticketPage}>
+                            <AttendeeTicket
+                                attendee={attendee}
+                                product={attendee.product as Product}
+                                event={event}
+                                hideButtons
+                                showPoweredBy
+                            />
+                        </div>
+                    );
+                })}
+                
+                {!immersive && (
+                    <div className={classes.webOnlyFooter}>
+                        <PoweredByFooter/>
                     </div>
-                );
-            })}
-            
-            {/* PoweredBy footer for web view only */}
-            <div className={classes.webOnlyFooter}>
-                <PoweredByFooter/>
+                )}
             </div>
-        </div>
+        </EventImmersiveShell>
     );
 }
 

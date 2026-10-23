@@ -91,6 +91,7 @@ class CompleteOrderValidator extends BaseValidator
                 $products,
                 $eventSettings->getAttendeeDetailsCollectionMethod(),
             ))->setUploadedFiles($uploadedFiles),
+            'products.*.birth_date' => ['nullable', 'date_format:Y-m-d'],
             ...$addressRules
         ];
     }
@@ -123,6 +124,7 @@ class CompleteOrderValidator extends BaseValidator
             'order.address.city.required' => __('City is required'),
             'order.address.zip_or_postal_code.required' => __('Zip or postal code is required'),
             'order.address.country.required' => __('Country is required'),
+            'products.*.birth_date.date_format' => __('Please enter a valid date of birth.'),
         ];
     }
 }

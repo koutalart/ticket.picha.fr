@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Application\Handlers\Sms;
 
+use HiEvents\DomainObjects\Enums\SmsAutoReplyType;
 use HiEvents\DomainObjects\Enums\SmsDraftSource;
 use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\Generated\SmsConversationDomainObjectAbstract;
 use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
+use HiEvents\DomainObjects\Status\SmsConversationStatus;
 use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Exceptions\SmsGatewayException;
@@ -17,6 +19,7 @@ use HiEvents\Exceptions\SmsRecipientOptedOutException;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Services\Domain\Sms\DTO\SendSmsDTO;
 use HiEvents\Services\Domain\Sms\SmsSendService;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 class SendSmsReplyHandler
 {
@@ -31,8 +34,16 @@ class SendSmsReplyHandler
      * @throws SmsRecipientOptedOutException
      * @throws InvalidSmsPhoneNumberException
      * @throws SmsGatewayException
+     * @throws UniqueConstraintViolationException when this customer SMS already got its automatic reply
      */
-    public function handle(int $organizerId, int $conversationId, string $content, int $userId): SmsMessageDomainObject
+    public function handle(
+        int $organizerId,
+        int $conversationId,
+        string $content,
+        ?int $userId,
+        ?int $autoReplyToMessageId = null,
+        ?SmsAutoReplyType $autoReplyType = null,
+    ): SmsMessageDomainObject
     {
         /** @var SmsConversationDomainObject|null $conversation */
         $conversation = $this->conversationRepository->findFirstWhere([
@@ -46,15 +57,30 @@ class SendSmsReplyHandler
 
         $content = trim($content);
 
-        return $this->sendService->send(new SendSmsDTO(
+        $message = $this->sendService->send(new SendSmsDTO(
             organizerId: $organizerId,
             phone: $conversation->getPhone(),
             content: $content,
-            authorType: $this->isUnchangedAgentDraft($conversation, $content)
+            authorType: $autoReplyToMessageId !== null || $this->isUnchangedAgentDraft($conversation, $content)
                 ? SmsMessageAuthorType::AGENT
                 : SmsMessageAuthorType::HUMAN,
             sentByUserId: $userId,
+            autoReplyToMessageId: $autoReplyToMessageId,
+            autoReplyType: $autoReplyType,
+            keepDraft: $autoReplyType === SmsAutoReplyType::HOLDING,
+            replyInConversation: true,
         ));
+
+        if ($conversation->getStatus() === SmsConversationStatus::NEEDS_HUMAN->name && $autoReplyType !== SmsAutoReplyType::HOLDING) {
+            $this->conversationRepository->updateWhere([
+                SmsConversationDomainObjectAbstract::STATUS => SmsConversationStatus::OPEN->name,
+                SmsConversationDomainObjectAbstract::NEEDS_HUMAN_REASON => null,
+            ], [
+                SmsConversationDomainObjectAbstract::ID => $conversation->getId(),
+            ]);
+        }
+
+        return $message;
     }
 
     private function isUnchangedAgentDraft(SmsConversationDomainObject $conversation, string $content): bool

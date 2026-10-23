@@ -25,11 +25,13 @@ class WaitlistOfferExpiredMail extends BaseMail
     )
     {
         parent::__construct();
+        $this->useEventEmailLogo($this->event, $this->organizer);
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->organizerSender($this->event->getOrganizerId()),
             replyTo: $this->eventSettings->getSupportEmail(),
             subject: __('Your waitlist offer has expired'),
         );
@@ -46,7 +48,7 @@ class WaitlistOfferExpiredMail extends BaseMail
                 'organizer' => $this->organizer,
                 'eventSettings' => $this->eventSettings,
                 'eventUrl' => sprintf(
-                    Url::getFrontEndUrlFromConfig(Url::EVENT_HOMEPAGE),
+                    Url::getPublicFrontEndUrlFromConfig(Url::EVENT_HOMEPAGE, $this->event),
                     $this->event->getId(),
                     $this->event->getSlug(),
                 ) . '?clear_waitlist=true',

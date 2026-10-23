@@ -50,6 +50,7 @@ class SmsHistoryImportService
         private readonly SmsInboundService $inboundService,
         private readonly SmsMessageRepositoryInterface $messageRepository,
         private readonly OrganizerSmsSettingRepositoryInterface $settingsRepository,
+        private readonly SmsLineService $lineService,
         private readonly LoggerInterface $logger,
     ) {}
 
@@ -60,6 +61,7 @@ class SmsHistoryImportService
     public function markStarted(OrganizerSmsSettingDomainObject $settings): OrganizerSmsSettingDomainObject
     {
         $this->assertConfigured($settings);
+        $this->assertNotShared($settings);
 
         if ($this->isRunning($settings)) {
             throw new ResourceConflictException(__('The SMS history is already being imported'));
@@ -89,6 +91,7 @@ class SmsHistoryImportService
 
         try {
             $this->assertConfigured($settings);
+            $this->assertNotShared($settings);
 
             $threads = $this->httpSmsClient->listMessageThreads(
                 (string) $settings->getApiKey(),
@@ -129,7 +132,9 @@ class SmsHistoryImportService
 
     public function markFailed(int $settingsId, Throwable $exception): void
     {
-        $message = $exception instanceof SmsGatewayException || $exception instanceof SmsGatewayNotConfiguredException
+        $message = $exception instanceof SmsGatewayException
+            || $exception instanceof SmsGatewayNotConfiguredException
+            || $exception instanceof ResourceConflictException
             ? $exception->getMessage()
             : __('Unexpected error');
 
@@ -292,6 +297,18 @@ class SmsHistoryImportService
     {
         if (! $settings->getApiKey() || ! $settings->getFromNumber()) {
             throw new SmsGatewayNotConfiguredException(__('Add your PICHA SMS API key and sending number first'));
+        }
+    }
+
+    /**
+     * The history of a shared line mixes the conversations of several organizers, it cannot be given to one of them.
+     *
+     * @throws ResourceConflictException
+     */
+    private function assertNotShared(OrganizerSmsSettingDomainObject $settings): void
+    {
+        if ($this->lineService->isShared($settings)) {
+            throw new ResourceConflictException(__('The SMS history cannot be imported on a line shared by several organizers'));
         }
     }
 }

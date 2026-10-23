@@ -1,0 +1,132 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+
+  @media (min-width: 1280px) {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: start;
+  }
+}
+
+.editor {
+  min-width: 0;
+}
+
+.fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: stretch;
+
+  > button {
+    align-self: flex-start;
+  }
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: 10px;
+  background: var(--mantine-color-body);
+}
+
+.itemToolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.itemNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--mantine-color-gray-1);
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.itemLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.artistFields {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 14px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.artistPhoto {
+  min-width: 0;
+}
+
+.artistMain {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.previewColumn {
+  min-width: 0;
+
+  @media (min-width: 1280px) {
+    position: sticky;
+    top: 16px;
+  }
+}
+
+.previewHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.preview {
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  padding: 20px;
+  border-radius: 14px;
+  background: var(--event-bg-color);
+  color: var(--event-primary-text-color);
+
+  @media (max-width: 1279px) {
+    max-height: none;
+  }
+}

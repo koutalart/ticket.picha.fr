@@ -7,7 +7,7 @@
 
 @php /** @see \HiEvents\Mail\Waitlist\WaitlistOfferMail */ @endphp
 
-<x-mail::message>
+<x-mail::message :emailLogo="$emailLogo ?? null">
 # {{ __('A spot has opened up!') }}
 
 {{ __('Hello') }},

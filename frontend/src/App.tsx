@@ -1,4 +1,4 @@
-import React, {FC, PropsWithChildren, useCallback, useEffect} from "react";
+import React, {FC, PropsWithChildren, useEffect, useSyncExternalStore} from "react";
 import {MantineProvider} from "@mantine/core";
 import {Notifications} from "@mantine/notifications";
 import {i18n} from "@lingui/core";
@@ -21,10 +21,12 @@ import {isSsr} from "./utilites/helpers.ts";
 import {StartupChecks} from "./StartupChecks.tsx";
 import {ThirdPartyScripts} from "./components/common/ThirdPartyScripts";
 import {getConfig} from "./utilites/config.ts";
-import {CookieConsentBanner} from "./components/common/CookieConsentBanner";
-import {isConsentPending, setConsentState, updateGoogleConsentMode} from "./utilites/trackingPixels/consent";
+import {ConsentManager} from "./components/common/ConsentManager";
+import {captureAttribution} from "./utilites/attribution";
 import {captureQrLinkCodeFromUrl} from "./utilites/qrAttribution";
+import {captureContactCodeFromUrl} from "./utilites/contactLinkAttribution";
 import "./utilites/dateLocales.ts";
+import {getCustomerAddressForm, subscribeToCustomerAddressForm} from "./locales.ts";
 import {getAppName} from "./utilites/branding.ts";
 
 declare global {
@@ -42,18 +44,16 @@ export const App: FC<
     }>
 > = (props) => {
     const [isLoadedOnBrowser, setIsLoadedOnBrowser] = React.useState(false);
-    const showGlobalConsentBanner = getConfig('VITE_COOKIE_CONSENT_ENABLED') === 'true'
-        && !isSsr() && isConsentPending();
-
-    const handleGlobalConsent = useCallback((granted: boolean) => {
-        setConsentState(granted ? 'granted' : 'denied');
-        updateGoogleConsentMode(granted);
-        window.dispatchEvent(new CustomEvent('hi_consent_change', {detail: {granted}}));
-    }, []);
-
+    const customerAddressForm = useSyncExternalStore(
+        subscribeToCustomerAddressForm,
+        getCustomerAddressForm,
+        getCustomerAddressForm,
+    );
     useEffect(() => {
         setIsLoadedOnBrowser(!isSsr());
+        captureAttribution();
         captureQrLinkCodeFromUrl();
+        captureContactCodeFromUrl();
     }, []);
 
     return (
@@ -101,12 +101,12 @@ export const App: FC<
                                               href={getConfig("VITE_APP_FAVICON", "/favicon.svg")}
                                         />
                                     </Helmet>
-                                    {props.children}
+                                    <React.Fragment key={customerAddressForm}>
+                                        {props.children}
+                                    </React.Fragment>
                                 </ModalsProvider>
                                 <Notifications/>
-                                {showGlobalConsentBanner && (
-                                    <CookieConsentBanner onConsent={handleGlobalConsent}/>
-                                )}
+                                <ConsentManager/>
                             </HydrationBoundary>
                         </QueryClientProvider>
                         </DatesProvider>

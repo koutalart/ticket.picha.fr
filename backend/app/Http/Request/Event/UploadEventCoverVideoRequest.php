@@ -17,6 +17,7 @@ class UploadEventCoverVideoRequest extends FormRequest
                 'max:'.self::MAX_SIZE_KB,
                 'mimetypes:video/mp4,video/webm',
             ],
+            'mobile' => ['sometimes', 'boolean'],
         ];
     }
 

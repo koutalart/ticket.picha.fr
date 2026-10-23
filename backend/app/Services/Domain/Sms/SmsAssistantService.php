@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Sms;
 
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\Enums\SmsAssistantOutcome;
 use HiEvents\DomainObjects\Enums\SmsAssistantTrigger;
 use HiEvents\DomainObjects\Enums\SmsDraftSource;
@@ -27,6 +28,7 @@ use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
+use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Services\Domain\Sms\DTO\SmsAssistantRequestDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsAssistantResultDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsAssistantThreadMessageDTO;
@@ -44,6 +46,8 @@ class SmsAssistantService
         private readonly SmsConversationRepositoryInterface $conversationRepository,
         private readonly SmsMessageRepositoryInterface $messageRepository,
         private readonly OrganizerRepositoryInterface $organizerRepository,
+        private readonly SmsPersonalLinkService $personalLinkService,
+        private readonly CustomerLocaleResolver $customerLocaleResolver,
     ) {}
 
     public function isAvailable(): bool
@@ -73,8 +77,8 @@ class SmsAssistantService
     }
 
     /**
-     * Drafts a reply for a new customer SMS. Does nothing when the SMS is no longer the last message of the conversation,
-     * when the team is already handling the conversation, or when the customer replied STOP.
+     * Drafts a reply for a new customer SMS. Does nothing when the SMS is no longer the last message of the conversation
+     * or when the customer replied STOP. A conversation waiting for the team is only a signal: the assistant keeps working.
      *
      * @throws SmsAssistantUnavailableException
      * @throws SmsAssistantLimitReachedException
@@ -85,7 +89,7 @@ class SmsAssistantService
         $conversation = $this->conversationRepository->findFirstWhere([
             SmsConversationDomainObjectAbstract::ID => $conversationId,
         ]);
-        if ($conversation === null || $conversation->getStatus() === SmsConversationStatus::NEEDS_HUMAN->name) {
+        if ($conversation === null) {
             return null;
         }
 
@@ -162,6 +166,7 @@ class SmsAssistantService
             )]),
             customerOrders: collect(),
             events: $this->catalogService->getUpcomingEvents($organizerId),
+            tutoiement: $this->isTutoiement($organizerId),
         ));
     }
 
@@ -196,6 +201,8 @@ class SmsAssistantService
             ))->values(),
             customerOrders: $this->conversationRepository->findOrdersByPhone($organizerId, $conversation->getPhone()),
             events: $this->catalogService->getUpcomingEvents($organizerId),
+            personalLink: $this->personalLinkService->findForContact($organizerId, $conversation->getPhone(), $messages),
+            tutoiement: $this->isTutoiement($organizerId),
         ));
 
         $this->conversationRepository->updateFromArray($conversation->getId(), $result->outcome === SmsAssistantOutcome::DRAFT
@@ -220,6 +227,11 @@ class SmsAssistantService
         return $this->settingsRepository->findFirstWhere([
             OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ID => $organizerId,
         ]);
+    }
+
+    private function isTutoiement(int $organizerId): bool
+    {
+        return $this->customerLocaleResolver->addressFormForOrganizerId($organizerId) === CustomerAddressForm::TU;
     }
 
     private function findOrganizer(int $organizerId): OrganizerDomainObject

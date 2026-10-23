@@ -21,6 +21,7 @@ import {
     ProductPriceQuantityFormValue
 } from "../../../../api/order.client.ts";
 import {getOrderTrackingContext, getQrLinkCode} from "../../../../utilites/qrAttribution.ts";
+import {getContactCode} from "../../../../utilites/contactLinkAttribution.ts";
 import {useForm} from "@mantine/form";
 import {range, useInputState, useResizeObserver} from "@mantine/hooks";
 import React, {useEffect, useMemo, useRef, useState} from "react";
@@ -43,6 +44,7 @@ import {IconChevronRight, IconX} from "@tabler/icons-react"
 import {getSessionIdentifier} from "../../../../utilites/sessionIdentifier.ts";
 import {Constants} from "../../../../constants.ts";
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
+import {customDomainOrigin} from "../../../../utilites/urlHelper.ts";
 
 const AFFILIATE_EXPIRY_DAYS = 30;
 
@@ -154,6 +156,7 @@ const SelectProducts = (props: SelectProductsProps) => {
         mutationFn: (orderData: ProductFormPayload) => orderClientPublic.create(Number(eventId), {
             ...orderData,
             qr_link_code: getQrLinkCode(),
+            contact_code: getContactCode(),
             tracking_context: getOrderTrackingContext(),
         }),
 
@@ -162,7 +165,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                 const url = '/checkout/' + eventId + '/' + data.data.short_id + '/details' + '?session_identifier=' + data.data.session_identifier;
                 if (props.widgetMode === 'embedded') {
                     window.open(
-                        url + '&utm_source=embedded_widget',
+                        (customDomainOrigin(event?.organizer) ?? '') + url + '&utm_source=embedded_widget',
                         '_blank'
                     );
                     setOrderInProcessOverlayVisible(true);

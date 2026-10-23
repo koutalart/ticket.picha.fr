@@ -5,8 +5,10 @@ import {
     GenericPaginatedResponse,
     IdParam,
     Image,
+    NewsletterSubscriber,
     Order,
     Organizer,
+    OrganizerFont,
     OrganizerSettings,
     OrganizerStats,
     QueryFilters,
@@ -35,15 +37,47 @@ export const organizerClient = {
         return response.data;
     },
 
-    uploadCoverVideo: async (organizerId: IdParam, video: File) => {
+    uploadCoverVideo: async (organizerId: IdParam, video: File, mobile = false) => {
         const formData = new FormData();
         formData.append('video', video);
+        if (mobile) {
+            formData.append('mobile', '1');
+        }
         const response = await api.post<GenericDataResponse<Image>>('organizers/' + organizerId + '/cover-video', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
         return response.data;
+    },
+
+    getFonts: async (organizerId: IdParam) => {
+        const response = await api.get<GenericDataResponse<OrganizerFont[]>>('organizers/' + organizerId + '/fonts');
+        return response.data;
+    },
+
+    uploadFont: async (organizerId: IdParam, file: File, weight: number, familyName: string) => {
+        const formData = new FormData();
+        formData.append('font_file', file);
+        formData.append('weight', String(weight));
+        formData.append('family_name', familyName);
+        const response = await api.post<GenericDataResponse<OrganizerFont>>('organizers/' + organizerId + '/fonts', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data;
+    },
+
+    updateFontFamily: async (organizerId: IdParam, familyName: string) => {
+        const response = await api.put<GenericDataResponse<OrganizerFont[]>>('organizers/' + organizerId + '/fonts/family', {
+            family_name: familyName,
+        });
+        return response.data;
+    },
+
+    deleteFont: async (organizerId: IdParam, fontId: IdParam) => {
+        await api.delete('organizers/' + organizerId + '/fonts/' + fontId);
     },
 
     delete: async (organizerId: IdParam) => {
@@ -170,7 +204,46 @@ export const organizerPublicClient = {
         );
         return response.data;
     },
+
+    subscribeToNewsletter: async (eventId: IdParam, data: {
+        email: string;
+        consent: boolean;
+        consent_text: string;
+    }) => {
+        const response = await publicApi.post<{ message: string }>(
+            `events/${eventId}/newsletter-subscriptions`,
+            data
+        );
+        return response.data;
+    },
 }
+
+export interface NewsletterSubscribersParams {
+    query?: string;
+    page?: number;
+    per_page?: number;
+}
+
+export const newsletterSubscriberClient = {
+    all: async (organizerId: IdParam, params: NewsletterSubscribersParams) => {
+        const response = await api.get<GenericPaginatedResponse<NewsletterSubscriber>>(
+            `organizers/${organizerId}/newsletter-subscribers`,
+            {params}
+        );
+        return response.data;
+    },
+
+    export: async (organizerId: IdParam, query?: string): Promise<Blob> => {
+        const response = await api.post(`organizers/${organizerId}/newsletter-subscribers/export`, {query}, {
+            responseType: 'blob'
+        });
+        return response.data;
+    },
+
+    delete: async (organizerId: IdParam, subscriberId: IdParam) => {
+        await api.delete(`organizers/${organizerId}/newsletter-subscribers/${subscriberId}`);
+    },
+};
 
 export const organizerSettingsClient = {
     partialUpdate: async (organizerId: IdParam, settings: Partial<OrganizerSettings>) => {

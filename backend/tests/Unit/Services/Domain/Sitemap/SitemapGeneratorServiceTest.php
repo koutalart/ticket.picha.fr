@@ -6,6 +6,7 @@ namespace Tests\Unit\Services\Domain\Sitemap;
 
 use Carbon\Carbon;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Services\Domain\Sitemap\SitemapGeneratorService;
 use Illuminate\Support\Collection;
@@ -283,6 +284,48 @@ class SitemapGeneratorServiceTest extends TestCase
         $this->assertTrue($dom->loadXML($xml));
     }
 
+    public function testGenerateEventsSitemapIncludesDedicatedPagesWithContent(): void
+    {
+        Carbon::setTestNow('2026-10-22 10:00:00');
+
+        $settings = (new EventSettingDomainObject())->setEventPages([
+            'artists' => [['name' => 'Méli', 'slug' => 'meli']],
+            'practical_info' => [],
+            'faq' => [['question' => 'Est-ce gratuit ?', 'answer' => '<p>Oui</p>']],
+        ]);
+
+        $event = $this->createMockEvent(
+            id: 14,
+            title: 'Le Concert des Générations',
+            startDate: '2026-11-14 16:15:00',
+            updatedAt: '2026-10-20 12:00:00',
+            settings: $settings,
+        );
+
+        $xml = $this->service->generateEventsSitemap(new Collection([$event]), 'https://ticket.example.com');
+
+        $this->assertStringContainsString('<loc>https://ticket.example.com/event/14/le-concert-des-generations</loc>', $xml);
+        $this->assertStringContainsString('<loc>https://ticket.example.com/event/14/le-concert-des-generations/artistes</loc>', $xml);
+        $this->assertStringContainsString('<loc>https://ticket.example.com/event/14/le-concert-des-generations/faq</loc>', $xml);
+        $this->assertStringNotContainsString('/infos-pratiques', $xml);
+        $this->assertTrue((new \DOMDocument())->loadXML($xml));
+    }
+
+    public function testGenerateEventsSitemapSkipsDedicatedPagesWhenEmpty(): void
+    {
+        $event = $this->createMockEvent(
+            id: 14,
+            title: 'Le Concert des Générations',
+            startDate: '2026-11-14 16:15:00',
+            updatedAt: '2026-10-20 12:00:00',
+            settings: new EventSettingDomainObject(),
+        );
+
+        $xml = $this->service->generateEventsSitemap(new Collection([$event]), 'https://ticket.example.com');
+
+        $this->assertSame(1, substr_count($xml, '<url>'));
+    }
+
     public function testGenerateOrganizersSitemapWithEmptyCollection(): void
     {
         $organizers = new Collection([]);
@@ -334,13 +377,20 @@ class SitemapGeneratorServiceTest extends TestCase
         $this->assertTrue($dom->loadXML($xml));
     }
 
-    private function createMockEvent(int $id, string $title, ?string $startDate, ?string $updatedAt): EventDomainObject
+    private function createMockEvent(
+        int                       $id,
+        string                    $title,
+        ?string                   $startDate,
+        ?string                   $updatedAt,
+        ?EventSettingDomainObject $settings = null,
+    ): EventDomainObject
     {
         $event = m::mock(EventDomainObject::class);
         $event->shouldReceive('getId')->andReturn($id);
         $event->shouldReceive('getTitle')->andReturn($title);
         $event->shouldReceive('getStartDate')->andReturn($startDate);
         $event->shouldReceive('getUpdatedAt')->andReturn($updatedAt);
+        $event->shouldReceive('getEventSettings')->andReturn($settings);
 
         return $event;
     }

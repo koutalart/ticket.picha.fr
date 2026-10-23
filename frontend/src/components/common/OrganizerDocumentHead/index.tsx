@@ -1,7 +1,7 @@
 /* eslint-disable lingui/no-unlocalized-strings */
 import {Helmet} from "react-helmet-async";
 import {Organizer} from "../../../types";
-import {organizerHomepageUrl} from "../../../utilites/urlHelper.ts";
+import {organizerCanonicalUrl} from "../../../utilites/urlHelper.ts";
 
 interface OrganizerDocumentHeadProps {
     organizer: Organizer;
@@ -15,7 +15,7 @@ export const OrganizerDocumentHead = ({organizer}: OrganizerDocumentHeadProps) =
     const logoImage = organizer.images?.find(img => img.type === 'ORGANIZER_LOGO')?.url;
     const coverImage = organizer.images?.find(img => img.type === 'ORGANIZER_COVER')?.url;
     const image = coverImage || logoImage;
-    const url = organizerHomepageUrl(organizer);
+    const url = organizerCanonicalUrl(organizer);
 
     const address = organizerSettings?.location_details ? {
         "@type": "http://schema.org/PostalAddress",

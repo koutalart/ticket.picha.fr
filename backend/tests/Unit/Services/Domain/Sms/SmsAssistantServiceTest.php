@@ -22,10 +22,12 @@ use HiEvents\Services\Domain\Sms\SmsAssistantEventCatalogService;
 use HiEvents\Services\Domain\Sms\SmsAssistantReplyGenerator;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
+use HiEvents\Services\Domain\Sms\SmsPersonalLinkService;
 use Illuminate\Support\Facades\Bus;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
+use Tests\Unit\Support\StaticCustomerLocaleResolver;
 
 class SmsAssistantServiceTest extends TestCase
 {
@@ -43,6 +45,8 @@ class SmsAssistantServiceTest extends TestCase
 
     private OrganizerRepositoryInterface|MockInterface $organizerRepository;
 
+    private SmsPersonalLinkService|MockInterface $personalLinkService;
+
     private SmsAssistantService $service;
 
     protected function setUp(): void
@@ -56,6 +60,8 @@ class SmsAssistantServiceTest extends TestCase
         $this->conversationRepository = Mockery::mock(SmsConversationRepositoryInterface::class);
         $this->messageRepository = Mockery::mock(SmsMessageRepositoryInterface::class);
         $this->organizerRepository = Mockery::mock(OrganizerRepositoryInterface::class);
+        $this->personalLinkService = Mockery::mock(SmsPersonalLinkService::class);
+        $this->personalLinkService->shouldReceive('findForContact')->andReturn('https://innocent976.yt/?qr=abc')->byDefault();
 
         $this->service = new SmsAssistantService(
             $this->generator,
@@ -65,6 +71,8 @@ class SmsAssistantServiceTest extends TestCase
             $this->conversationRepository,
             $this->messageRepository,
             $this->organizerRepository,
+            $this->personalLinkService,
+            new StaticCustomerLocaleResolver,
         );
     }
 
@@ -113,6 +121,7 @@ class SmsAssistantServiceTest extends TestCase
             ->withArgs(fn (SmsAssistantRequestDTO $request) => $request->trigger === SmsAssistantTrigger::INBOUND
                 && $request->conversationId === 3
                 && $request->instructions === 'Tutoie.'
+                && $request->personalLink === 'https://innocent976.yt/?qr=abc'
                 && $request->thread->count() === 2)
             ->andReturn(new SmsAssistantResultDTO(SmsAssistantOutcome::DRAFT, 'Salut ! Ça commence à 22h.', null));
 
@@ -156,12 +165,17 @@ class SmsAssistantServiceTest extends TestCase
         self::assertNull($this->service->draftForInboundMessage(3, 9));
     }
 
-    public function test_conversation_already_handled_by_the_team_is_skipped(): void
+    public function test_conversation_waiting_for_the_team_still_gets_a_draft(): void
     {
-        $this->conversationRepository->shouldReceive('findFirstWhere')->andReturn($this->conversation()->setStatus('NEEDS_HUMAN'));
-        $this->generator->shouldNotReceive('generate');
+        $this->conversationRepository->shouldReceive('findFirstWhere')->once()->andReturn($this->conversation()->setStatus('NEEDS_HUMAN'));
+        $this->expectDraftContext();
+        $this->generator->shouldReceive('generate')->once()
+            ->andReturn(new SmsAssistantResultDTO(SmsAssistantOutcome::DRAFT, 'Les artistes seront annoncés bientôt.', null));
+        $this->conversationRepository->shouldReceive('updateFromArray')->once();
 
-        self::assertNull($this->service->draftForInboundMessage(3, 9));
+        $result = $this->service->draftForInboundMessage(3, 9);
+
+        self::assertSame(SmsAssistantOutcome::DRAFT, $result->outcome);
     }
 
     public function test_regenerate_requires_the_assistant_to_be_on(): void
@@ -172,6 +186,32 @@ class SmsAssistantServiceTest extends TestCase
 
         $this->expectException(SmsAssistantUnavailableException::class);
         $this->service->regenerate($this->conversation());
+    }
+
+    public function test_conversation_on_a_shared_line_only_uses_its_own_organizer_data(): void
+    {
+        $this->generator->shouldReceive('isConfigured')->andReturnTrue();
+        $this->conversationRepository->shouldReceive('findFirstWhere')->andReturn($this->conversation()->setOrganizerId(8));
+        $this->settingsRepository->shouldReceive('findFirstWhere')->with(['organizer_id' => 8])->andReturn(
+            (new OrganizerSmsSettingDomainObject)->setId(2)->setOrganizerId(8)->setSharedLineSettingsId(1)->setAssistantInstructions('Vouvoie.')
+        );
+        $this->conversationService->shouldReceive('isOptedOut')->with(8, '+262639123456')->andReturnFalse();
+        $this->conversationRepository->shouldReceive('findOrdersByPhone')->once()->with(8, '+262639123456')->andReturn(collect());
+        $this->catalogService->shouldReceive('getUpcomingEvents')->once()->with(8)->andReturn(collect());
+        $this->personalLinkService->shouldReceive('findForContact')->once()->withArgs(fn (int $organizerId) => $organizerId === 8)->andReturnNull();
+        $this->organizerRepository->shouldReceive('findById')->with(8)->andReturn(
+            (new OrganizerDomainObject)->setId(8)->setName('Mayotte La 1ère')->setTimezone('Indian/Mayotte'),
+        );
+        $this->messageRepository->shouldReceive('findLatestForConversation')->with(3, 20)->andReturn(collect([$this->inbound(9, 'Il reste des places ?')]));
+
+        $this->generator->shouldReceive('generate')->once()
+            ->withArgs(fn (SmsAssistantRequestDTO $request) => $request->organizerId === 8
+                && $request->organizerName === 'Mayotte La 1ère'
+                && $request->instructions === 'Vouvoie.')
+            ->andReturn(new SmsAssistantResultDTO(SmsAssistantOutcome::DRAFT, 'Bonjour, oui.', null));
+        $this->conversationRepository->shouldReceive('updateFromArray')->once();
+
+        $this->service->draftForInboundMessage(3, 9);
     }
 
     private function expectDraftContext(): void
@@ -201,6 +241,8 @@ class SmsAssistantServiceTest extends TestCase
             $this->conversationRepository,
             $this->messageRepository,
             $this->organizerRepository,
+            $this->personalLinkService,
+            new StaticCustomerLocaleResolver,
         );
     }
 

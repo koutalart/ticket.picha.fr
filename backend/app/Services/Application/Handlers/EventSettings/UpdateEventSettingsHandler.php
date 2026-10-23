@@ -2,11 +2,13 @@
 
 namespace HiEvents\Services\Application\Handlers\EventSettings;
 
+use HiEvents\DomainObjects\Enums\AgeRestrictionRule;
 use HiEvents\DomainObjects\Enums\CapacityChangeDirection;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\Events\CapacityChangedEvent;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Services\Application\Handlers\EventSettings\DTO\UpdateEventSettingsDTO;
+use HiEvents\Services\Domain\Event\HomepageFooterSettingsSanitizer;
 use HiEvents\Services\Infrastructure\HtmlPurifier\HtmlPurifierService;
 use Illuminate\Database\DatabaseManager;
 use Throwable;
@@ -17,6 +19,7 @@ class UpdateEventSettingsHandler
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
         private readonly HtmlPurifierService              $purifier,
         private readonly DatabaseManager                  $databaseManager,
+        private readonly HomepageFooterSettingsSanitizer  $footerSettingsSanitizer,
     )
     {
     }
@@ -104,9 +107,29 @@ class UpdateEventSettingsHandler
                     'single_product_per_order' => $settings->single_product_per_order,
                     'choose_category_first' => $settings->choose_category_first,
 
+                    'age_restriction_rule' => ($settings->age_restriction_rule ?? AgeRestrictionRule::NONE)->value,
+                    'age_restriction_minimum_age' => $settings->age_restriction_minimum_age ?? 18,
+
                     // Waitlist settings
                     'waitlist_auto_process' => $settings->waitlist_auto_process,
                     'waitlist_offer_timeout_minutes' => $settings->waitlist_offer_timeout_minutes,
+
+                    // Attendance response settings
+                    'allow_attendee_attendance_response' => $settings->allow_attendee_attendance_response,
+
+                    'embedded_registration_enabled' => $settings->embedded_registration_enabled,
+
+                    'sms_registration_confirmation_enabled' => $settings->sms_registration_confirmation_enabled,
+                    'sms_registration_confirmation_message' => $this->smsMessage($settings->sms_registration_confirmation_message),
+                    'sms_cancellation_confirmation_enabled' => $settings->sms_cancellation_confirmation_enabled,
+                    'sms_cancellation_confirmation_message' => $this->smsMessage($settings->sms_cancellation_confirmation_message),
+                    'sms_cancellation_confirmation_on_organizer_cancel' => $settings->sms_cancellation_confirmation_on_organizer_cancel,
+
+                    'ticket_footer_use_organizer_domain' => $settings->ticket_footer_use_organizer_domain,
+
+                    'rich_footer_enabled' => $settings->rich_footer_enabled,
+                    'homepage_footer_settings' => $this->footerSettingsSanitizer->sanitize($settings->homepage_footer_settings),
+                    'schema_event_type' => $settings->schema_event_type,
                 ],
                 where: [
                     'event_id' => $settings->event_id,
@@ -127,5 +150,15 @@ class UpdateEventSettingsHandler
         }
 
         return $result;
+    }
+
+    /**
+     * Plain text sent by SMS: tags are removed, the purifier would encode the characters.
+     */
+    private function smsMessage(?string $message): ?string
+    {
+        $message = trim(strip_tags((string) $message));
+
+        return $message === '' ? null : $message;
     }
 }

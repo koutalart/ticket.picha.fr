@@ -22,6 +22,10 @@ use HiEvents\Http\Actions\Sms\DeleteSmsReplyTemplateAction;
 use HiEvents\Http\Actions\Sms\GetSmsOptOutsAction;
 use HiEvents\Http\Actions\Sms\AddSmsOptOutAction;
 use HiEvents\Http\Actions\Sms\RemoveSmsOptOutAction;
+use HiEvents\Http\Actions\Sms\GetSmsRemindersAction;
+use HiEvents\Http\Actions\Sms\ScheduleSmsReminderAction;
+use HiEvents\Http\Actions\Sms\PreviewSmsReminderAction;
+use HiEvents\Http\Actions\Sms\CancelSmsReminderAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -35,10 +39,17 @@ use HiEvents\Http\Actions\Affiliates\ExportAffiliatesAction;
 use HiEvents\Http\Actions\Affiliates\GetAffiliateAction;
 use HiEvents\Http\Actions\Affiliates\GetAffiliatesAction;
 use HiEvents\Http\Actions\Affiliates\UpdateAffiliateAction;
+use HiEvents\Http\Actions\Attendees\Attendance\CancelAttendeeAttendanceActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\ConfirmAttendeeAttendanceActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\GetAttendeeAttendanceActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\RequestAttendanceAccessCodeActionPublic;
+use HiEvents\Http\Actions\Attendees\Attendance\VerifyAttendanceAccessCodeActionPublic;
+use HiEvents\Http\Actions\Common\GetServerTimeActionPublic;
 use HiEvents\Http\Actions\Attendees\CheckInAttendeeAction;
 use HiEvents\Http\Actions\Attendees\CreateAttendeeAction;
 use HiEvents\Http\Actions\Attendees\EditAttendeeAction;
 use HiEvents\Http\Actions\Attendees\ExportAttendeesAction;
+use HiEvents\Http\Actions\Attendees\ExportAttendeeEntryControlListAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeActionPublic;
 use HiEvents\Http\Actions\Organizers\Settings\TestMetaConversionsApiAction;
@@ -53,6 +64,7 @@ use HiEvents\Http\Actions\QrLinks\GetQrLinkPosterAction;
 use HiEvents\Http\Actions\QrLinks\GetQrLinkStatsAction;
 use HiEvents\Http\Actions\QrLinks\Public\GetQrLinkPublicAction;
 use HiEvents\Http\Actions\QrLinks\Public\RecordQrLinkVisitPublicAction;
+use HiEvents\Http\Actions\Contacts\Public\RecordContactLinkVisitPublicAction;
 use HiEvents\Http\Actions\QrLinks\UpdateQrLinkAction;
 use HiEvents\Http\Actions\Tickets\GetAttendeeTicketImageActionPublic;
 use HiEvents\Http\Actions\Tickets\GetEventTicketPreviewImageAction;
@@ -114,9 +126,16 @@ use HiEvents\Http\Actions\EventAssistant\ResearchEventDescriptionAction;
 use HiEvents\Http\Actions\Events\DuplicateEventAction;
 use HiEvents\Http\Actions\Events\GetEventAction;
 use HiEvents\Http\Actions\Events\GetEventPublicAction;
+use HiEvents\Http\Actions\Events\Pages\GetEventPagesAction;
+use HiEvents\Http\Actions\Events\Pages\GetEventPagesPublicAction;
+use HiEvents\Http\Actions\Events\Pages\UpdateEventPagesAction;
 use HiEvents\Http\Actions\Events\GetEventsAction;
 use HiEvents\Http\Actions\Events\GetOrganizerEventsPublicAction;
 use HiEvents\Http\Actions\Organizers\CoverVideo\UploadOrganizerCoverVideoAction;
+use HiEvents\Http\Actions\Organizers\Font\DeleteOrganizerFontAction;
+use HiEvents\Http\Actions\Organizers\Font\GetOrganizerFontsAction;
+use HiEvents\Http\Actions\Organizers\Font\UpdateOrganizerFontFamilyAction;
+use HiEvents\Http\Actions\Organizers\Font\UploadOrganizerFontAction;
 use HiEvents\Http\Actions\Questions\Files\DownloadQuestionAnswerFileAction;
 use HiEvents\Http\Actions\Questions\Public\UploadQuestionAnswerFilePublicAction;
 use HiEvents\Services\Domain\Question\File\QuestionAnswerFileUrlGenerator;
@@ -180,8 +199,28 @@ use HiEvents\Http\Actions\Organizers\GetOrganizerEventsAction;
 use HiEvents\Http\Actions\Organizers\GetOrganizersAction;
 use HiEvents\Http\Actions\Organizers\GetPublicOrganizerAction;
 use HiEvents\Http\Actions\Organizers\GetOrganizerByCustomDomainPublicAction;
+use HiEvents\Http\Actions\Organizers\Contacts\CreateContactAction;
+use HiEvents\Http\Actions\Organizers\Contacts\UploadContactImportAction;
+use HiEvents\Http\Actions\Organizers\Contacts\RunContactImportAction;
+use HiEvents\Http\Actions\Organizers\Contacts\RevertContactImportAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactsAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactsSummaryAction;
+use HiEvents\Http\Actions\Organizers\Contacts\ExportContactsAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactTagsAction;
+use HiEvents\Http\Actions\Organizers\Contacts\AssignContactTagAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactAction;
+use HiEvents\Http\Actions\Organizers\Contacts\UpdateContactAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactTimelineAction;
+use HiEvents\Http\Actions\Organizers\Contacts\GetContactNotesAction;
+use HiEvents\Http\Actions\Organizers\Contacts\CreateContactNoteAction;
+use HiEvents\Http\Actions\Organizers\Contacts\DeleteContactNoteAction;
+use HiEvents\Http\Actions\Organizers\Contacts\RemoveContactTagAction;
 use HiEvents\Http\Actions\Organizers\Orders\GetOrganizerOrdersAction;
 use HiEvents\Http\Actions\Organizers\Public\SendOrganizerContactMessagePublicAction;
+use HiEvents\Http\Actions\Organizers\Public\SubscribeToOrganizerNewsletterPublicAction;
+use HiEvents\Http\Actions\Organizers\Newsletter\DeleteOrganizerNewsletterSubscriberAction;
+use HiEvents\Http\Actions\Organizers\Newsletter\ExportOrganizerNewsletterSubscribersAction;
+use HiEvents\Http\Actions\Organizers\Newsletter\GetOrganizerNewsletterSubscribersAction;
 use HiEvents\Http\Actions\DemoRequests\SendDemoRequestPublicAction;
 use HiEvents\Http\Actions\CaseStudies\GetCaseStudyStatsAction;
 use HiEvents\Http\Actions\Organizers\Settings\GetOrganizerSettingsAction;
@@ -220,6 +259,7 @@ use HiEvents\Http\Actions\Questions\EditQuestionAnswerAction;
 use HiEvents\Http\Actions\Questions\ExportQuestionAnswersAction;
 use HiEvents\Http\Actions\Questions\GetQuestionAction;
 use HiEvents\Http\Actions\Questions\GetQuestionsAction;
+use HiEvents\Http\Actions\Questions\GetQuestionAnswerDistributionAction;
 use HiEvents\Http\Actions\Questions\GetQuestionsPublicAction;
 use HiEvents\Http\Actions\Questions\SortQuestionsAction;
 use HiEvents\Http\Actions\Reports\ExportOrganizerReportAction;
@@ -356,6 +396,10 @@ $router->middleware(['auth:api'])->group(
         // This is POST instead of PUT because you can't upload files via PUT in PHP (at least not easily)
         $router->post('/organizers/{organizer_id}', EditOrganizerAction::class);
         $router->post('/organizers/{organizer_id}/cover-video', UploadOrganizerCoverVideoAction::class);
+        $router->get('/organizers/{organizer_id}/fonts', GetOrganizerFontsAction::class);
+        $router->post('/organizers/{organizer_id}/fonts', UploadOrganizerFontAction::class);
+        $router->put('/organizers/{organizer_id}/fonts/family', UpdateOrganizerFontFamilyAction::class);
+        $router->delete('/organizers/{organizer_id}/fonts/{font_id}', DeleteOrganizerFontAction::class);
         $router->put('/organizers/{organizer_id}/status', UpdateOrganizerStatusAction::class);
         $router->delete('/organizers/{organizer_id}', DeleteOrganizerAction::class);
         $router->get('/organizers/{organizer_id}/deletion-status', GetOrganizerDeletionStatusAction::class);
@@ -364,6 +408,22 @@ $router->middleware(['auth:api'])->group(
         $router->get('/organizers/{organizer_id}/events', GetOrganizerEventsAction::class);
         $router->get('/organizers/{organizer_id}/stats', GetOrganizerStatsAction::class);
         $router->get('/organizers/{organizer_id}/orders', GetOrganizerOrdersAction::class);
+        $router->get('/organizers/{organizer_id}/contacts', GetContactsAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/summary', GetContactsSummaryAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/export', ExportContactsAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/tags', GetContactTagsAction::class);
+        $router->post('/organizers/{organizer_id}/contacts/tags', AssignContactTagAction::class);
+        $router->post('/organizers/{organizer_id}/contacts', CreateContactAction::class);
+        $router->post('/organizers/{organizer_id}/contacts/imports/upload', UploadContactImportAction::class);
+        $router->post('/organizers/{organizer_id}/contacts/imports', RunContactImportAction::class);
+        $router->delete('/organizers/{organizer_id}/contacts/imports/{import_id}', RevertContactImportAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/{contact_id}', GetContactAction::class);
+        $router->put('/organizers/{organizer_id}/contacts/{contact_id}', UpdateContactAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/{contact_id}/timeline', GetContactTimelineAction::class);
+        $router->get('/organizers/{organizer_id}/contacts/{contact_id}/notes', GetContactNotesAction::class);
+        $router->post('/organizers/{organizer_id}/contacts/{contact_id}/notes', CreateContactNoteAction::class);
+        $router->delete('/organizers/{organizer_id}/contacts/{contact_id}/notes/{note_id}', DeleteContactNoteAction::class);
+        $router->delete('/organizers/{organizer_id}/contacts/{contact_id}/tags/{tag_id}', RemoveContactTagAction::class);
         $router->get('/organizers/{organizer_id}/settings', GetOrganizerSettingsAction::class);
         $router->patch('/organizers/{organizer_id}/settings', PartialUpdateOrganizerSettingsAction::class);
         $router->post('/organizers/{organizer_id}/settings/meta-conversions-api/test', TestMetaConversionsApiAction::class)
@@ -390,6 +450,13 @@ $router->middleware(['auth:api'])->group(
         $router->get('/organizers/{organizer_id}/sms/campaigns', GetSmsCampaignsAction::class);
         $router->get('/organizers/{organizer_id}/sms/campaigns/{campaign_id}/recipients', GetSmsCampaignRecipientsAction::class)
             ->where('campaign_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/sms/reminders', GetSmsRemindersAction::class);
+        $router->post('/organizers/{organizer_id}/sms/reminders', ScheduleSmsReminderAction::class)
+            ->middleware('throttle:20,1');
+        $router->post('/organizers/{organizer_id}/sms/reminders/preview', PreviewSmsReminderAction::class)
+            ->middleware('throttle:60,1');
+        $router->post('/organizers/{organizer_id}/sms/reminders/{reminder_id}/cancel', CancelSmsReminderAction::class)
+            ->where('reminder_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/sms/conversations/{conversation_id}', GetSmsConversationAction::class)
             ->where('conversation_id', '[0-9]+');
         $router->patch('/organizers/{organizer_id}/sms/conversations/{conversation_id}', UpdateSmsConversationAction::class)
@@ -402,6 +469,11 @@ $router->middleware(['auth:api'])->group(
             ->middleware('throttle:20,1');
         $router->post('/organizers/{organizer_id}/sms/assistant/preview', PreviewSmsAssistantAction::class)
             ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/newsletter-subscribers', GetOrganizerNewsletterSubscribersAction::class);
+        $router->post('/organizers/{organizer_id}/newsletter-subscribers/export', ExportOrganizerNewsletterSubscribersAction::class)
+            ->middleware('throttle:10,1');
+        $router->delete('/organizers/{organizer_id}/newsletter-subscribers/{subscriber_id}', DeleteOrganizerNewsletterSubscriberAction::class)
+            ->where('subscriber_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/qr-campaigns', GetQrCampaignsAction::class);
         $router->post('/organizers/{organizer_id}/qr-campaigns', CreateQrCampaignAction::class);
         $router->put('/organizers/{organizer_id}/qr-campaigns/{qr_campaign_id}', UpdateQrCampaignAction::class);
@@ -470,6 +542,7 @@ $router->middleware(['auth:api'])->group(
 
         // Stats
         $router->get('/events/{event_id}/stats', GetEventStatsAction::class);
+        $router->get('/events/{event_id}/stats/question-answers', GetQuestionAnswerDistributionAction::class);
 
         // Email Templates - Event level
         $router->get('/events/{eventId}/email-templates', GetEventEmailTemplatesAction::class);
@@ -485,6 +558,7 @@ $router->middleware(['auth:api'])->group(
         $router->put('/events/{event_id}/attendees/{attendee_id}', EditAttendeeAction::class);
         $router->patch('/events/{event_id}/attendees/{attendee_id}', PartialEditAttendeeAction::class);
         $router->post('/events/{event_id}/attendees/export', ExportAttendeesAction::class);
+        $router->post('/events/{event_id}/attendees/export-entry-control', ExportAttendeeEntryControlListAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/resend-ticket', ResendAttendeeTicketAction::class);
         $router->post('/events/{event_id}/attendees/{attendee_public_id}/check_in', CheckInAttendeeAction::class);
 
@@ -568,6 +642,8 @@ $router->middleware(['auth:api'])->group(
         $router->get('/events/{event_id}/settings', GetEventSettingsAction::class);
         $router->put('/events/{event_id}/settings', EditEventSettingsAction::class);
         $router->patch('/events/{event_id}/settings', PartialEditEventSettingsAction::class);
+        $router->get('/events/{event_id}/pages', GetEventPagesAction::class);
+        $router->put('/events/{event_id}/pages', UpdateEventPagesAction::class);
         $router->get('/events/{event_id}/settings/platform-fee-preview', GetPlatformFeePreviewAction::class);
 
         // Capacity Assignments
@@ -668,6 +744,7 @@ $router->prefix('/public')->group(
     function (Router $router): void {
         // Events
         $router->get('/events/{event_id}', GetEventPublicAction::class);
+        $router->get('/events/{event_id}/pages', GetEventPagesPublicAction::class);
 
         // Organizers
         $router->get('/organizers/{organizer_id}', GetPublicOrganizerAction::class);
@@ -681,6 +758,11 @@ $router->prefix('/public')->group(
             ->where('short_id', '[A-Za-z0-9]{4,32}');
         $router->post('/qr-links/{short_id}/visits', RecordQrLinkVisitPublicAction::class)
             ->where('short_id', '[A-Za-z0-9]{4,32}')
+            ->middleware('throttle:60,1');
+
+        // Personal contact links (?c=)
+        $router->post('/contact-links/{code}/visits', RecordContactLinkVisitPublicAction::class)
+            ->where('code', '[A-Za-z0-9]{6,16}')
             ->middleware('throttle:60,1');
 
         // Demo requests
@@ -708,6 +790,20 @@ $router->prefix('/public')->group(
         $router->get('/events/{event_id}/attendees/{attendee_short_id}', GetAttendeeActionPublic::class);
         $router->get('/events/{event_id}/attendees/{attendee_short_id}/ticket.png', GetAttendeeTicketImageActionPublic::class)
             ->middleware('throttle:60,1');
+        $router->get('/events/{event_id}/attendees/{attendee_short_id}/attendance', GetAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:30,1');
+        $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/confirm', ConfirmAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/cancel', CancelAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/attendance-access', RequestAttendanceAccessCodeActionPublic::class)
+            ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/attendance-access/verify', VerifyAttendanceAccessCodeActionPublic::class)
+            ->middleware('throttle:10,1');
+
+        // Newsletter
+        $router->post('/events/{event_id}/newsletter-subscriptions', SubscribeToOrganizerNewsletterPublicAction::class)
+            ->middleware('throttle:5,1');
 
         // Waitlist
         $router->post('/events/{event_id}/waitlist', CreateWaitlistEntryActionPublic::class)
@@ -740,6 +836,10 @@ $router->prefix('/public')->group(
 
         // Color themes
         $router->get('/color-themes', GetColorThemesAction::class);
+
+        // Server time
+        $router->get('/server-time', GetServerTimeActionPublic::class)
+            ->middleware('throttle:60,1');
 
         // Ticket Lookup
         $router->post('/ticket-lookup', SendTicketLookupEmailAction::class)

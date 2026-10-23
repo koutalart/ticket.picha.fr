@@ -13,8 +13,8 @@ import {
 import {formatCurrency} from "../../../../utilites/currency.ts";
 import {eventHomepagePath} from "../../../../utilites/urlHelper.ts";
 import {Countdown} from "../Countdown.tsx";
-import {getCoverUrl, getCoverVideoUrl, getVenue} from "../eventData.ts";
-import {useDeferredCoverVideo} from "../../../../hooks/useDeferredCoverVideo.ts";
+import {getCoverUrl, getCoverVideoUrl, getMobileCoverVideoUrl, getVenue} from "../eventData.ts";
+import {useCoverVideoSource} from "../../../../hooks/useCoverVideoSource.ts";
 import {getFaq} from "../faq.ts";
 import {longDate, PartnerLogos, PosterEventCard, PosterPageProps, SectionHead, StatsBand, stripHtml, time} from "../shared.tsx";
 import classes from "../Poster.module.scss";
@@ -25,7 +25,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
     const otherEvents = featured ? events.slice(1) : events;
     const featuredCover = featured ? getCoverUrl(featured) : undefined;
     const featuredVideo = featured ? getCoverVideoUrl(featured) : undefined;
-    const videoAllowed = useDeferredCoverVideo(featuredVideo);
+    const featuredVideoSource = useCoverVideoSource(featuredVideo, featured ? getMobileCoverVideoUrl(featured) : undefined);
     const venue = featured ? getVenue(featured) : undefined;
     const bookingPath = featured ? eventHomepagePath(featured) : '';
     const allSoldOut = tiers.length > 0 && tiers.every(tier => tier.soldOut);
@@ -75,8 +75,8 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
 
                         {(featuredCover || featuredVideo) && (
                             <Link to={bookingPath} className={classes.heroPoster} aria-label={t`Book ${featured.title}`}>
-                                {featuredVideo && videoAllowed ? (
-                                    <video src={featuredVideo} poster={featuredCover} autoPlay muted loop playsInline
+                                {featuredVideoSource ? (
+                                    <video src={featuredVideoSource} poster={featuredCover} autoPlay muted loop playsInline
                                            preload="metadata" aria-label={t`Poster of ${featured.title}`}/>
                                 ) : featuredCover && (
                                     <img src={featuredCover} alt={t`Poster of ${featured.title}`}/>
