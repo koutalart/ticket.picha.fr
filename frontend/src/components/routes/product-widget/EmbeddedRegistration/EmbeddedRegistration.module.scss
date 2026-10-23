@@ -1,14 +1,36 @@
 @use "../../../../styles/mixins.scss";
 
 $ease: cubic-bezier(0.22, 1, 0.36, 1);
-$text: #fff;
-$text-soft: rgba(255, 255, 255, 0.78);
-$text-muted: rgba(255, 255, 255, 0.6);
-$line: rgba(255, 255, 255, 0.4);
+$text: var(--er-text);
+$text-soft: var(--er-text-soft);
+$text-muted: var(--er-text-muted);
+$line: var(--er-veil-40);
 $accent: var(--event-primary-color, #b8963e);
-$error: #ffb4a8;
+$error: var(--er-error);
 
 .root {
+  --er-text: #fff;
+  --er-text-soft: rgba(255, 255, 255, 0.78);
+  --er-text-muted: rgba(255, 255, 255, 0.6);
+  --er-error: #ffb4a8;
+  --er-alert-bg: rgba(255, 90, 70, 0.16);
+  --er-alert-border: rgba(255, 140, 120, 0.5);
+  --er-alert-text: #ffe2dc;
+  --er-dropdown-bg: #141a2b;
+  --er-title-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+  --er-color-scheme: dark;
+  --er-veil-06: rgba(255, 255, 255, 0.06);
+  --er-veil-08: rgba(255, 255, 255, 0.08);
+  --er-veil-10: rgba(255, 255, 255, 0.1);
+  --er-veil-11: rgba(255, 255, 255, 0.11);
+  --er-veil-14: rgba(255, 255, 255, 0.14);
+  --er-veil-16: rgba(255, 255, 255, 0.16);
+  --er-veil-18: rgba(255, 255, 255, 0.18);
+  --er-veil-32: rgba(255, 255, 255, 0.32);
+  --er-veil-35: rgba(255, 255, 255, 0.35);
+  --er-veil-40: rgba(255, 255, 255, 0.4);
+  --er-veil-55: rgba(255, 255, 255, 0.55);
+  --er-veil-60: rgba(255, 255, 255, 0.6);
   position: relative;
   z-index: 1;
   color: $text;
@@ -60,7 +82,7 @@ $error: #ffb4a8;
   position: relative;
   height: 3px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--er-veil-18);
   overflow: hidden;
   margin-bottom: clamp(32px, 6vh, 56px);
 }
@@ -217,7 +239,7 @@ $step-shift: 56px;
 
 .consentInput {
   background: transparent;
-  border-color: rgba(255, 255, 255, 0.6);
+  border-color: var(--er-veil-60);
   cursor: pointer;
 }
 
@@ -240,7 +262,7 @@ $step-shift: 56px;
   letter-spacing: -0.015em;
   text-wrap: balance;
   color: $text !important;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+  text-shadow: var(--er-title-shadow);
 }
 
 .stepHelp {
@@ -311,7 +333,7 @@ $step-shift: 56px;
   transition: border-color 0.2s ease;
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--er-veil-40);
   }
 
   &:focus,
@@ -325,7 +347,7 @@ $step-shift: 56px;
   }
 
   &[type="date"] {
-    color-scheme: dark;
+    color-scheme: var(--er-color-scheme);
   }
 }
 
@@ -340,20 +362,20 @@ textarea.fieldInput {
 }
 
 .selectDropdown {
-  background: #141a2b;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: $text;
+  background: var(--er-dropdown-bg, #141a2b);
+  border: 1px solid var(--er-veil-16, rgba(255, 255, 255, 0.16));
+  color: var(--er-text, #fff);
   font-family: var(--theme-font-family, inherit);
 }
 
 .selectOption {
   font-size: 1.05rem;
   padding: 10px 12px;
-  color: $text;
+  color: var(--er-text, #fff);
 
   &[data-combobox-selected],
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--er-veil-10, rgba(255, 255, 255, 0.1));
   }
 
   &[data-checked] {
@@ -373,20 +395,20 @@ textarea.fieldInput {
   display: block;
   width: 100%;
   padding: 14px 18px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1.5px solid rgba(255, 255, 255, 0.32);
+  background: var(--er-veil-06);
+  border: 1.5px solid var(--er-veil-32);
   color: $text;
   text-align: left;
   font-family: var(--theme-font-family, inherit);
   transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.11);
+    background: var(--er-veil-11);
   }
 
   &[data-checked] {
     border-color: $accent;
-    background: rgba(255, 255, 255, 0.14);
+    background: var(--er-veil-14);
   }
 
   &:focus-visible {
@@ -411,7 +433,7 @@ textarea.fieldInput {
   --checkbox-color: var(--event-primary-color);
   --radio-color: var(--event-primary-color);
   background: transparent;
-  border-color: rgba(255, 255, 255, 0.6);
+  border-color: var(--er-veil-60);
 }
 
 .choiceText {
@@ -431,8 +453,8 @@ textarea.fieldInput {
 .participant {
   padding: 18px 20px 20px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--er-veil-06);
+  border: 1px solid var(--er-veil-16);
   animation: stepInForward 0.4s $ease both;
   display: flex;
   flex-direction: column;
@@ -494,7 +516,7 @@ textarea.fieldInput {
 
   &:hover {
     color: $text;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--er-veil-10);
   }
 }
 
@@ -512,7 +534,7 @@ textarea.fieldInput {
   gap: 8px;
   padding: 12px 18px;
   border-radius: 999px;
-  border: 1.5px dashed rgba(255, 255, 255, 0.55);
+  border: 1.5px dashed var(--er-veil-55);
   background: transparent;
   color: $text;
   font-family: var(--theme-font-family, inherit);
@@ -523,7 +545,7 @@ textarea.fieldInput {
 
   &:hover:not(:disabled) {
     border-color: $accent;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--er-veil-08);
   }
 
   &:disabled {
@@ -552,7 +574,7 @@ textarea.fieldInput {
     grid-template-columns: 140px 1fr;
     gap: 12px;
     padding-bottom: 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    border-bottom: 1px solid var(--er-veil-14);
 
     @media (max-width: 600px) {
       grid-template-columns: 1fr;
@@ -611,9 +633,9 @@ textarea.fieldInput {
   margin-top: 22px;
   padding: 12px 16px;
   border-radius: 12px;
-  background: rgba(255, 90, 70, 0.16);
-  border: 1px solid rgba(255, 140, 120, 0.5);
-  color: #ffe2dc;
+  background: var(--er-alert-bg);
+  border: 1px solid var(--er-alert-border);
+  color: var(--er-alert-text);
   display: flex;
   flex-wrap: wrap;
   gap: 8px 16px;
@@ -650,7 +672,7 @@ textarea.fieldInput {
   }
 
   &:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid $text;
     outline-offset: 3px;
   }
 
@@ -666,7 +688,7 @@ textarea.fieldInput {
   height: 54px;
   padding: 0 18px;
   border-radius: 999px;
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border: 1.5px solid var(--er-veil-35);
   background: transparent;
   color: $text;
   font-family: var(--theme-font-family, inherit);
@@ -675,7 +697,7 @@ textarea.fieldInput {
   cursor: pointer;
 
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--er-veil-08);
   }
 
   &:focus-visible {
@@ -800,4 +822,302 @@ textarea.fieldInput {
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
+}
+
+.lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--er-veil-06);
+  border: 1px solid var(--er-veil-16);
+  min-width: 0;
+}
+
+.lineLocked {
+  border-style: dashed;
+}
+
+.lineInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lineTitle {
+  font-size: clamp(1rem, 1.7vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.linePrice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text-soft;
+}
+
+.lineNote {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: $text-muted;
+}
+
+.requiredBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: $accent;
+  color: var(--event-accent-contrast, #000);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.stepper {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stepperButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--er-veil-35);
+  background: transparent;
+  color: $text;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $accent;
+    background: var(--er-veil-08);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+}
+
+.stepperValue {
+  min-width: 32px;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.runningTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 0 4px;
+  font-size: 1.05rem;
+  color: $text-soft;
+
+  strong {
+    font-size: 1.35rem;
+    color: $text;
+  }
+}
+
+.receipt {
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: var(--er-veil-06);
+  border: 1px solid var(--er-veil-16);
+}
+
+.receiptLines {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-bottom: 1px solid var(--er-veil-14);
+}
+
+.receiptLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 1rem;
+}
+
+.receiptLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.receiptAmount {
+  flex: none;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.receiptTotals {
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  dt {
+    color: $text-soft;
+  }
+
+  dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.receiptTotal {
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--er-veil-14);
+  font-size: 1.25rem;
+  font-weight: 700;
+
+  dt {
+    color: $text !important;
+  }
+}
+
+.summaryCode {
+  margin: 14px 0 22px;
+  font-size: 0.95rem;
+  color: $text-soft;
+}
+
+.participantProduct {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $text-muted;
+}
+
+.root[data-variant="card"] {
+  --er-text: var(--event-primary-text-color, #1a1a1a);
+  --er-text-soft: var(--event-secondary-color, rgba(0, 0, 0, 0.7));
+  --er-text-muted: var(--event-secondary-text-color, rgba(0, 0, 0, 0.55));
+  --er-error: #c92a2a;
+  --er-alert-bg: rgba(224, 49, 49, 0.08);
+  --er-alert-border: rgba(224, 49, 49, 0.4);
+  --er-alert-text: #a51d1d;
+  --er-dropdown-bg: var(--event-content-bg-color, #fff);
+  --er-title-shadow: none;
+  --er-color-scheme: light;
+  --er-veil-06: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 6%, transparent);
+  --er-veil-08: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 8%, transparent);
+  --er-veil-10: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 10%, transparent);
+  --er-veil-11: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 11%, transparent);
+  --er-veil-14: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 14%, transparent);
+  --er-veil-16: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 16%, transparent);
+  --er-veil-18: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 18%, transparent);
+  --er-veil-32: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 32%, transparent);
+  --er-veil-35: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 35%, transparent);
+  --er-veil-40: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 40%, transparent);
+  --er-veil-55: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 55%, transparent);
+  --er-veil-60: color-mix(in srgb, var(--event-primary-text-color, #1a1a1a) 60%, transparent);
+  z-index: auto;
+
+  &::before {
+    display: none;
+  }
+
+  .panel {
+    max-width: none;
+    min-height: 0;
+    padding: 0;
+  }
+
+  .stepTitle,
+  .questionLabel {
+    font-size: clamp(1.35rem, 2.6vw, 1.75rem) !important;
+  }
+
+  .stepHelp {
+    margin-bottom: 20px;
+    font-size: 1rem;
+  }
+
+  .progress {
+    margin-bottom: 28px;
+  }
+
+  .form {
+    margin-bottom: 20px;
+  }
+
+  .fieldInput {
+    font-size: 1.15rem !important;
+    min-height: 46px;
+  }
+
+  .nav {
+    margin-top: 28px;
+  }
+
+  .nextButton,
+  .backButton {
+    height: 50px;
+  }
+
+  .codeRow {
+    margin-top: 0;
+  }
+}
+
+:global(main[data-mode="dark"]) .root[data-variant="card"] {
+  --er-error: #ffb4a8;
+  --er-alert-bg: rgba(255, 90, 70, 0.16);
+  --er-alert-border: rgba(255, 140, 120, 0.5);
+  --er-alert-text: #ffe2dc;
+  --er-color-scheme: dark;
 }
