@@ -19,6 +19,8 @@ abstract class OrganizerCalendarDomainObjectAbstract extends \HiEvents\DomainObj
     final public const FRONT_HTML = 'front_html';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const ADMIN_CODE_HASH = 'admin_code_hash';
+    final public const ADMIN_CODE_CREATED_AT = 'admin_code_created_at';
 
     protected int $id;
     protected int $organizer_id;
@@ -29,6 +31,8 @@ abstract class OrganizerCalendarDomainObjectAbstract extends \HiEvents\DomainObj
     protected ?string $front_html = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?string $admin_code_hash = null;
+    protected ?string $admin_code_created_at = null;
 
     public function toArray(): array
     {
@@ -42,6 +46,8 @@ abstract class OrganizerCalendarDomainObjectAbstract extends \HiEvents\DomainObj
                     'front_html' => $this->front_html ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'admin_code_hash' => $this->admin_code_hash ?? null,
+                    'admin_code_created_at' => $this->admin_code_created_at ?? null,
                 ];
     }
 
@@ -142,5 +148,27 @@ abstract class OrganizerCalendarDomainObjectAbstract extends \HiEvents\DomainObj
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setAdminCodeHash(?string $admin_code_hash): self
+    {
+        $this->admin_code_hash = $admin_code_hash;
+        return $this;
+    }
+
+    public function getAdminCodeHash(): ?string
+    {
+        return $this->admin_code_hash;
+    }
+
+    public function setAdminCodeCreatedAt(?string $admin_code_created_at): self
+    {
+        $this->admin_code_created_at = $admin_code_created_at;
+        return $this;
+    }
+
+    public function getAdminCodeCreatedAt(): ?string
+    {
+        return $this->admin_code_created_at;
     }
 }

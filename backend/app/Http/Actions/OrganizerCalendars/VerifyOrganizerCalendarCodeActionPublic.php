@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 /**
+ * Accepts in "code" either the 6 digit SMS code or the calendar admin code (16 characters or more).
  * The access key is returned as "jeton": a field named "token" would be read by jwt-auth as a session token.
  */
 class VerifyOrganizerCalendarCodeActionPublic extends BaseAction
@@ -25,7 +26,7 @@ class VerifyOrganizerCalendarCodeActionPublic extends BaseAction
     public function __invoke(VerifyOrganizerCalendarCodeRequest $request, string $slug): JsonResponse|Response
     {
         try {
-            $grant = $this->handler->handle(
+            $verified = $this->handler->handle(
                 $slug,
                 (string) $request->validated('code'),
                 (string) $this->getClientIp($request),
@@ -41,9 +42,14 @@ class VerifyOrganizerCalendarCodeActionPublic extends BaseAction
             throw ValidationException::withMessages(['code' => $exception->getMessage()]);
         }
 
-        return $this->jsonResponse([
-            'jeton' => $grant->accessKey,
-            'expire_le' => $grant->expiresAt->toIso8601String(),
-        ])->header('Cache-Control', 'no-store');
+        $response = [
+            'jeton' => $verified->grant->accessKey,
+            'expire_le' => $verified->grant->expiresAt->toIso8601String(),
+        ];
+        if ($verified->admin) {
+            $response['admin'] = true;
+        }
+
+        return $this->jsonResponse($response)->header('Cache-Control', 'no-store');
     }
 }
