@@ -23,6 +23,7 @@ class StartSmsHistoryImportHandlerTest extends TestCase
         $settingsService->shouldReceive('getOrCreate')->with(10, 4)->andReturn($settings);
         $settingsService->shouldReceive('getWebhookUrl')->andReturn('https://example.test/webhook');
         $settingsService->shouldReceive('findSharedLine')->andReturnNull();
+        $settingsService->shouldReceive('defaultRemindersEnabled')->andReturnFalse();
 
         $importService = Mockery::mock(SmsHistoryImportService::class);
         $importService->shouldReceive('markStarted')->once()->with($settings)->andReturn($settings);

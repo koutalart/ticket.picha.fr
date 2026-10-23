@@ -34,6 +34,7 @@ class CreateDefaultOrganizerSettingsService
             'default_attendee_details_collection_method' => AttendeeDetailsCollectionMethod::PER_ORDER->name,
             'default_show_marketing_opt_in' => true,
             'default_allow_attendee_self_edit' => true,
+            'sms_default_reminders_enabled' => true,
         ]);
     }
 }

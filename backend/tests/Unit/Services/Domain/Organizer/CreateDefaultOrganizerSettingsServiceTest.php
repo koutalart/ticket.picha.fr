@@ -5,9 +5,11 @@ namespace Tests\Unit\Services\Domain\Organizer;
 use HiEvents\DomainObjects\Enums\AttendeeDetailsCollectionMethod;
 use HiEvents\DomainObjects\Enums\PriceDisplayMode;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\DomainObjects\OrganizerSettingDomainObject;
 use HiEvents\Repository\Interfaces\OrganizerSettingsRepositoryInterface;
 use HiEvents\Services\Application\Handlers\EventSettings\DTO\UpdateEventSettingsDTO;
 use HiEvents\Services\Domain\Organizer\CreateDefaultOrganizerSettingsService;
+use Illuminate\Support\Facades\DB;
 use Mockery;
 use Tests\TestCase;
 
@@ -53,6 +55,28 @@ class CreateDefaultOrganizerSettingsServiceTest extends TestCase
 
         (new CreateDefaultOrganizerSettingsService($repository))
             ->createOrganizerSettings((new OrganizerDomainObject)->setId(7));
+    }
+
+    public function test_new_organizers_get_the_default_sms_reminders(): void
+    {
+        $repository = Mockery::mock(OrganizerSettingsRepositoryInterface::class);
+        $repository->shouldReceive('create')
+            ->once()
+            ->with(Mockery::on(static fn (array $attributes) => $attributes['sms_default_reminders_enabled'] === true));
+
+        (new CreateDefaultOrganizerSettingsService($repository))
+            ->createOrganizerSettings((new OrganizerDomainObject)->setId(7));
+    }
+
+    public function test_existing_organizers_keep_the_default_sms_reminders_off(): void
+    {
+        $default = DB::table('information_schema.columns')
+            ->where('table_name', 'organizer_settings')
+            ->where('column_name', 'sms_default_reminders_enabled')
+            ->value('column_default');
+
+        $this->assertSame('false', $default);
+        $this->assertFalse((new OrganizerSettingDomainObject)->getSmsDefaultRemindersEnabled());
     }
 
     public function test_new_events_show_taxes_and_fees_separately_and_allow_self_edit(): void

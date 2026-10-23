@@ -1487,6 +1487,7 @@ export interface OrganizerSmsSettings {
     assistant_instructions: string | null;
     assistant_auto_send: boolean;
     assistant_holding_reply: string | null;
+    sms_default_reminders_enabled: boolean;
     history_import: SmsHistoryImport;
 }
 
@@ -1603,6 +1604,8 @@ export interface SmsCampaign {
     completed_at: string | null;
     failure_reason: string | null;
     event_timezone: string | null;
+    auto_key?: string | null;
+    auto_edited?: boolean;
 }
 
 export type SmsCampaignType = 'IMPORTED' | 'REMINDER';

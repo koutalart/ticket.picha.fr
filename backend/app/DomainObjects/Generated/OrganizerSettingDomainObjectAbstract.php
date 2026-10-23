@@ -35,6 +35,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     final public const META_TEST_EVENT_CODE = 'meta_test_event_code';
     final public const EMAIL_SENDER_NAME = 'email_sender_name';
     final public const CUSTOMER_ADDRESS_FORM = 'customer_address_form';
+    final public const SMS_DEFAULT_REMINDERS_ENABLED = 'sms_default_reminders_enabled';
 
     protected int $id;
     protected int $organizer_id;
@@ -53,7 +54,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     protected array|string|null $location_details = null;
     protected string $default_attendee_details_collection_method = 'PER_TICKET';
     protected bool $default_show_marketing_opt_in = true;
-    protected bool $default_pass_platform_fee_to_buyer = false;
+    protected bool $default_pass_platform_fee_to_buyer = true;
     protected bool $default_allow_attendee_self_edit = true;
     protected array|string|null $tracking_pixels = null;
     protected bool $tracking_consent_acknowledged = false;
@@ -61,6 +62,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     protected ?string $meta_test_event_code = null;
     protected ?string $email_sender_name = null;
     protected string $customer_address_form = 'vous';
+    protected bool $sms_default_reminders_enabled = false;
 
     public function toArray(): array
     {
@@ -90,6 +92,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
                     'meta_test_event_code' => $this->meta_test_event_code ?? null,
                     'email_sender_name' => $this->email_sender_name ?? null,
                     'customer_address_form' => $this->customer_address_form ?? null,
+                    'sms_default_reminders_enabled' => $this->sms_default_reminders_enabled ?? null,
                 ];
     }
 
@@ -367,5 +370,16 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     public function getCustomerAddressForm(): string
     {
         return $this->customer_address_form;
+    }
+
+    public function setSmsDefaultRemindersEnabled(bool $sms_default_reminders_enabled): self
+    {
+        $this->sms_default_reminders_enabled = $sms_default_reminders_enabled;
+        return $this;
+    }
+
+    public function getSmsDefaultRemindersEnabled(): bool
+    {
+        return $this->sms_default_reminders_enabled;
     }
 }

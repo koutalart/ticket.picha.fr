@@ -7,6 +7,7 @@ use HiEvents\Exceptions\AccountNotVerifiedException;
 use HiEvents\Repository\Interfaces\AccountRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Event\DTO\UpdateEventStatusDTO;
+use HiEvents\Services\Domain\Sms\Reminder\SmsDefaultRemindersService;
 use HiEvents\DomainObjects\Status\EventStatus;
 use HiEvents\Jobs\Event\Webhook\DispatchEventWebhookJob;
 use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
@@ -21,6 +22,7 @@ readonly class UpdateEventStatusHandler
         private AccountRepositoryInterface $accountRepository,
         private LoggerInterface            $logger,
         private DatabaseManager            $databaseManager,
+        private SmsDefaultRemindersService $defaultRemindersService,
     )
     {
     }
@@ -30,9 +32,15 @@ readonly class UpdateEventStatusHandler
      */
     public function handle(UpdateEventStatusDTO $updateEventStatusDTO): EventDomainObject
     {
-        return $this->databaseManager->transaction(function () use ($updateEventStatusDTO) {
+        $event = $this->databaseManager->transaction(function () use ($updateEventStatusDTO) {
             return $this->updateEventStatus($updateEventStatusDTO);
         });
+
+        if ($updateEventStatusDTO->status === EventStatus::ARCHIVED->name) {
+            $this->defaultRemindersService->cancelPendingForEventSafely($event->getId());
+        }
+
+        return $event;
 
     }
 
