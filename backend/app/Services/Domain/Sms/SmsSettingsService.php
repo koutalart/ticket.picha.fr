@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Sms;
 
+use HiEvents\DomainObjects\Generated\OrganizerSettingDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\OrganizerSmsSettingDomainObjectAbstract;
+use HiEvents\DomainObjects\OrganizerSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
 use HiEvents\Helper\Url;
+use HiEvents\Repository\Interfaces\OrganizerSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Str;
@@ -17,6 +20,7 @@ class SmsSettingsService
 
     public function __construct(
         private readonly OrganizerSmsSettingRepositoryInterface $settingsRepository,
+        private readonly OrganizerSettingsRepositoryInterface $organizerSettingsRepository,
     ) {}
 
     public function getOrCreate(int $accountId, int $organizerId): OrganizerSmsSettingDomainObject
@@ -74,6 +78,24 @@ class SmsSettingsService
         }
 
         return $line;
+    }
+
+    public function defaultRemindersEnabled(int $organizerId): bool
+    {
+        /** @var OrganizerSettingDomainObject|null $settings */
+        $settings = $this->organizerSettingsRepository->findFirstWhere([
+            OrganizerSettingDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+        ]);
+
+        return (bool) $settings?->getSmsDefaultRemindersEnabled();
+    }
+
+    public function setDefaultRemindersEnabled(int $organizerId, bool $enabled): void
+    {
+        $this->organizerSettingsRepository->updateWhere(
+            attributes: [OrganizerSettingDomainObjectAbstract::SMS_DEFAULT_REMINDERS_ENABLED => $enabled],
+            where: [OrganizerSettingDomainObjectAbstract::ORGANIZER_ID => $organizerId],
+        );
     }
 
     public function getWebhookUrl(OrganizerSmsSettingDomainObject $settings): string

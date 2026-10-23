@@ -14,6 +14,7 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
     final public const ACCOUNT_ID = 'account_id';
     final public const ORGANIZER_ID = 'organizer_id';
     final public const EVENT_ID = 'event_id';
+    final public const CREATED_BY_USER_ID = 'created_by_user_id';
     final public const NAME = 'name';
     final public const MESSAGE = 'message';
     final public const CREATED_AT = 'created_at';
@@ -25,12 +26,14 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
     final public const STARTED_AT = 'started_at';
     final public const COMPLETED_AT = 'completed_at';
     final public const FAILURE_REASON = 'failure_reason';
-    final public const CREATED_BY_USER_ID = 'created_by_user_id';
+    final public const AUTO_KEY = 'auto_key';
+    final public const AUTO_EDITED = 'auto_edited';
 
     protected int $id;
     protected int $account_id;
     protected int $organizer_id;
     protected ?int $event_id = null;
+    protected ?int $created_by_user_id = null;
     protected string $name;
     protected ?string $message = null;
     protected ?string $created_at = null;
@@ -42,7 +45,8 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
     protected ?string $started_at = null;
     protected ?string $completed_at = null;
     protected ?string $failure_reason = null;
-    protected ?int $created_by_user_id = null;
+    protected ?string $auto_key = null;
+    protected bool $auto_edited = false;
 
     public function toArray(): array
     {
@@ -51,6 +55,7 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
                     'account_id' => $this->account_id ?? null,
                     'organizer_id' => $this->organizer_id ?? null,
                     'event_id' => $this->event_id ?? null,
+                    'created_by_user_id' => $this->created_by_user_id ?? null,
                     'name' => $this->name ?? null,
                     'message' => $this->message ?? null,
                     'created_at' => $this->created_at ?? null,
@@ -62,7 +67,8 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
                     'started_at' => $this->started_at ?? null,
                     'completed_at' => $this->completed_at ?? null,
                     'failure_reason' => $this->failure_reason ?? null,
-                    'created_by_user_id' => $this->created_by_user_id ?? null,
+                    'auto_key' => $this->auto_key ?? null,
+                    'auto_edited' => $this->auto_edited ?? null,
                 ];
     }
 
@@ -108,6 +114,17 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
     public function getEventId(): ?int
     {
         return $this->event_id;
+    }
+
+    public function setCreatedByUserId(?int $created_by_user_id): self
+    {
+        $this->created_by_user_id = $created_by_user_id;
+        return $this;
+    }
+
+    public function getCreatedByUserId(): ?int
+    {
+        return $this->created_by_user_id;
     }
 
     public function setName(string $name): self
@@ -231,14 +248,25 @@ abstract class SmsCampaignDomainObjectAbstract extends \HiEvents\DomainObjects\A
         return $this->failure_reason;
     }
 
-    public function setCreatedByUserId(?int $created_by_user_id): self
+    public function setAutoKey(?string $auto_key): self
     {
-        $this->created_by_user_id = $created_by_user_id;
+        $this->auto_key = $auto_key;
         return $this;
     }
 
-    public function getCreatedByUserId(): ?int
+    public function getAutoKey(): ?string
     {
-        return $this->created_by_user_id;
+        return $this->auto_key;
+    }
+
+    public function setAutoEdited(bool $auto_edited): self
+    {
+        $this->auto_edited = $auto_edited;
+        return $this;
+    }
+
+    public function getAutoEdited(): bool
+    {
+        return $this->auto_edited;
     }
 }

@@ -26,6 +26,7 @@ export interface SmsSettingsRequest {
     assistant_instructions?: string | null;
     assistant_auto_send?: boolean;
     assistant_holding_reply?: string | null;
+    sms_default_reminders_enabled?: boolean;
 }
 
 export interface SmsConversationsParams {
@@ -43,6 +44,12 @@ export interface SmsReminderRequest {
     event_id: IdParam;
     message: string;
     send_at?: string | null;
+    name?: string | null;
+}
+
+export interface SmsReminderUpdateRequest {
+    message: string;
+    send_at: string;
     name?: string | null;
 }
 
@@ -72,6 +79,10 @@ export const smsClient = {
     },
     scheduleReminder: async (organizerId: IdParam, reminder: SmsReminderRequest) => {
         const response = await api.post<GenericDataResponse<SmsCampaign>>(`organizers/${organizerId}/sms/reminders`, reminder);
+        return response.data;
+    },
+    updateReminder: async (organizerId: IdParam, reminderId: IdParam, reminder: SmsReminderUpdateRequest) => {
+        const response = await api.put<GenericDataResponse<SmsCampaign>>(`organizers/${organizerId}/sms/reminders/${reminderId}`, reminder);
         return response.data;
     },
     cancelReminder: async (organizerId: IdParam, reminderId: IdParam) => {

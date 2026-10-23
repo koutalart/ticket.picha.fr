@@ -14,5 +14,6 @@ class OrganizerSmsSettingsViewDTO extends BaseDataObject
         public readonly string $webhookUrl,
         public readonly bool $assistantAvailable,
         public readonly ?OrganizerSmsSettingDomainObject $sharedLine = null,
+        public readonly bool $defaultRemindersEnabled = false,
     ) {}
 }

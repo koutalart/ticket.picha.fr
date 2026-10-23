@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {t, Trans} from "@lingui/macro";
 import {Alert, Badge, Button, Group, Skeleton, Text} from "@mantine/core";
-import {IconCalendarPlus, IconUsers, IconX} from "@tabler/icons-react";
+import {IconCalendarPlus, IconPencil, IconUsers, IconX} from "@tabler/icons-react";
 import {IdParam, SmsCampaign} from "../../../../types.ts";
 import {useGetSmsReminders} from "../../../../queries/useGetSmsReminders.ts";
 import {useCancelSmsReminder} from "../../../../mutations/useCancelSmsReminder.ts";
@@ -24,6 +24,7 @@ export const ReminderList = ({organizerId, canSend, defaultCurrency, defaultTime
     const remindersQuery = useGetSmsReminders(organizerId);
     const cancelMutation = useCancelSmsReminder();
     const [formOpen, setFormOpen] = useState(false);
+    const [editing, setEditing] = useState<SmsCampaign | null>(null);
     const [selected, setSelected] = useState<SmsCampaign | null>(null);
     const [confirmingId, setConfirmingId] = useState<number | null>(null);
     const reminders = remindersQuery.data ?? [];
@@ -78,6 +79,9 @@ export const ReminderList = ({organizerId, canSend, defaultCurrency, defaultTime
                                     <Badge variant="light" color={reminderStatusColor(reminder.status)}>
                                         {reminderStatusLabel(reminder.status)}
                                     </Badge>
+                                    {reminder.auto_key && !reminder.auto_edited && (
+                                        <Badge variant="outline" color="gray">{t`Automatic`}</Badge>
+                                    )}
                                 </Group>
                                 <Text size="sm" c="dimmed">
                                     {reminder.event_title && <Trans>For {reminder.event_title}</Trans>}
@@ -91,6 +95,11 @@ export const ReminderList = ({organizerId, canSend, defaultCurrency, defaultTime
                                 <Button variant="light" leftSection={<IconUsers size={16}/>} onClick={() => setSelected(reminder)}>
                                     {t`See the recipients`}
                                 </Button>
+                                {reminder.status === 'SCHEDULED' && confirmingId !== reminder.id && (
+                                    <Button variant="light" leftSection={<IconPencil size={16}/>} onClick={() => setEditing(reminder)}>
+                                        {t`Edit`}
+                                    </Button>
+                                )}
                                 {reminder.status === 'SCHEDULED' && confirmingId !== reminder.id && (
                                     <Button variant="subtle" color="red" leftSection={<IconX size={16}/>} onClick={() => setConfirmingId(reminder.id)}>
                                         {t`Cancel the reminder`}
@@ -128,6 +137,15 @@ export const ReminderList = ({organizerId, canSend, defaultCurrency, defaultTime
             })}
 
             {formOpen && <ReminderFormModal organizerId={organizerId} onClose={() => setFormOpen(false)}/>}
+
+            {editing && (
+                <ReminderFormModal
+                    key={editing.id}
+                    organizerId={organizerId}
+                    reminder={editing}
+                    onClose={() => setEditing(null)}
+                />
+            )}
 
             <CampaignRecipientsDrawer
                 organizerId={organizerId}

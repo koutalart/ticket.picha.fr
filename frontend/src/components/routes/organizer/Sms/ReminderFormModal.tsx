@@ -4,10 +4,12 @@ import {Alert, Button, Group, Select, Skeleton, Stack, Text, Textarea, TextInput
 import {useForm} from "@mantine/form";
 import {useDebouncedValue} from "@mantine/hooks";
 import {IconCalendarTime} from "@tabler/icons-react";
-import {IdParam} from "../../../../types.ts";
+import {IdParam, SmsCampaign} from "../../../../types.ts";
 import {useGetOrganizerEvents} from "../../../../queries/useGetOrganizerEvents.ts";
 import {usePreviewSmsReminder} from "../../../../mutations/usePreviewSmsReminder.ts";
 import {useScheduleSmsReminder} from "../../../../mutations/useScheduleSmsReminder.ts";
+import {useUpdateSmsReminder} from "../../../../mutations/useUpdateSmsReminder.ts";
+import {utcToTz} from "../../../../utilites/dates.ts";
 import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx";
 import {showSuccess} from "../../../../utilites/notifications.tsx";
 import {formatNumber} from "../../../../utilites/helpers.ts";
@@ -28,6 +30,7 @@ const PERSONAL_LINK = '{lien}';
 
 interface ReminderFormModalProps {
     organizerId: IdParam;
+    reminder?: SmsCampaign | null;
     onClose: () => void;
 }
 
@@ -38,10 +41,12 @@ interface FormValues {
     name: string;
 }
 
-export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps) => {
+export const ReminderFormModal = ({organizerId, reminder, onClose}: ReminderFormModalProps) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const previewMutation = usePreviewSmsReminder();
     const scheduleMutation = useScheduleSmsReminder();
+    const updateMutation = useUpdateSmsReminder();
+    const isEditing = !!reminder;
     const formErrorHandle = useFormErrorResponseHandler();
     const eventsQuery = useGetOrganizerEvents(organizerId, {
         perPage: 100,
@@ -50,20 +55,30 @@ export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps
     });
 
     const events = eventsQuery.data?.data || [];
-    const eventOptions = useMemo(() => events.map(event => ({
-        value: String(event.id),
-        label: event.title,
-    })), [eventsQuery.data]);
+    const eventOptions = useMemo(() => {
+        const options = events.map(event => ({
+            value: String(event.id),
+            label: event.title,
+        }));
+
+        if (reminder?.event_id && !options.some(option => option.value === String(reminder.event_id))) {
+            options.unshift({value: String(reminder.event_id), label: reminder.event_title || ''});
+        }
+
+        return options;
+    }, [eventsQuery.data, reminder]);
 
     const defaultMessage = t`Hello ${FIRST_NAME}, a reminder: ${EVENT_TITLE} takes place on ${EVENT_DATE} at ${EVENT_TIME}. See you soon!`;
     const {addressForm} = useOrganizerCustomerAddressForm(organizerId);
 
     const form = useForm<FormValues>({
         initialValues: {
-            event_id: null,
-            send_at: '',
-            message: defaultMessage,
-            name: '',
+            event_id: reminder?.event_id ? String(reminder.event_id) : null,
+            send_at: reminder?.scheduled_at
+                ? utcToTz(reminder.scheduled_at, reminder.event_timezone || 'UTC') || ''
+                : '',
+            message: reminder?.message ?? defaultMessage,
+            name: reminder?.name ?? '',
         },
         validate: {
             event_id: (value) => value ? null : t`Choose an event`,
@@ -73,13 +88,13 @@ export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps
     });
 
     useEffect(() => {
-        if (addressForm === 'tu' && form.values.message === defaultMessage) {
+        if (!isEditing && addressForm === 'tu' && form.values.message === defaultMessage) {
             form.setFieldValue('message', SMS_REMINDER_TU);
         }
     }, [addressForm]);
 
     const selectedEvent = events.find(event => String(event.id) === form.values.event_id);
-    const timezone = previewMutation.data?.data.event_timezone || selectedEvent?.timezone;
+    const timezone = previewMutation.data?.data.event_timezone || selectedEvent?.timezone || reminder?.event_timezone;
     const [debouncedEventId] = useDebouncedValue(form.values.event_id, 300);
     const [debouncedMessage] = useDebouncedValue(form.values.message, 600);
 
@@ -108,6 +123,25 @@ export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps
     };
 
     const submit = (values: FormValues) => {
+        if (reminder) {
+            updateMutation.mutate({
+                organizerId,
+                reminderId: reminder.id,
+                reminder: {
+                    message: values.message,
+                    send_at: values.send_at.replace('T', ' '),
+                    name: values.name.trim() || null,
+                },
+            }, {
+                onSuccess: () => {
+                    showSuccess(t`Reminder updated`);
+                    onClose();
+                },
+                onError: (error) => formErrorHandle(form, error),
+            });
+            return;
+        }
+
         scheduleMutation.mutate({
             organizerId,
             reminder: {
@@ -142,7 +176,7 @@ export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps
     ];
 
     return (
-        <Modal opened onClose={onClose} heading={t`Schedule an SMS reminder`}>
+        <Modal opened onClose={onClose} heading={isEditing ? t`Edit the SMS reminder` : t`Schedule an SMS reminder`}>
             <form onSubmit={form.onSubmit(submit)}>
                 <Stack gap="md">
                     <Select
@@ -151,6 +185,7 @@ export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps
                         data={eventOptions}
                         searchable
                         required
+                        disabled={isEditing}
                         nothingFoundMessage={t`No event found`}
                         {...form.getInputProps('event_id')}
                     />
@@ -247,9 +282,9 @@ export const ReminderFormModal = ({organizerId, onClose}: ReminderFormModalProps
                         <Button
                             type="submit"
                             leftSection={<IconCalendarTime size={16}/>}
-                            loading={scheduleMutation.isPending}
+                            loading={scheduleMutation.isPending || updateMutation.isPending}
                         >
-                            {t`Schedule`}
+                            {isEditing ? t`Save` : t`Schedule`}
                         </Button>
                     </Group>
                 </Stack>

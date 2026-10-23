@@ -24,7 +24,7 @@ const VIEW_PARAM = 'view';
 
 type SmsView = 'conversations' | 'campaigns' | 'reminders';
 
-const VIEWS: SmsView[] = ['conversations', 'campaigns', 'reminders'];
+const VIEWS: SmsView[] = ['conversations', 'reminders', 'campaigns'];
 
 const Sms = () => {
     const {organizerId} = useParams();
@@ -109,8 +109,8 @@ const Sms = () => {
                 onChange={(value) => changeView(value as SmsView)}
                 data={[
                     {value: 'conversations', label: t`Conversations`},
-                    {value: 'campaigns', label: t`Campaigns`},
                     {value: 'reminders', label: t`Reminders`},
+                    {value: 'campaigns', label: t`Campaigns`},
                 ]}
             />
 
