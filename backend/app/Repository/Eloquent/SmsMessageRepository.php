@@ -96,12 +96,12 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->exists();
     }
 
-    public function findUnansweredInbound(int $organizerId, string $since, string $receivedBefore, int $limit): Collection
+    public function findUnansweredInbound(array $organizerIds, string $since, string $receivedBefore, int $limit): Collection
     {
         $messages = SmsMessage::query()
             ->select('sms_messages.*')
             ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
-            ->where('sms_messages.organizer_id', $organizerId)
+            ->whereIn('sms_messages.organizer_id', $organizerIds)
             ->where('sms_messages.direction', SmsMessageDirection::INBOUND->name)
             ->where('sms_messages.created_at', '>=', $since)
             ->where('sms_messages.created_at', '<=', $receivedBefore)
@@ -119,33 +119,33 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
                 ->from('sms_opt_outs')
                 ->whereColumn('sms_opt_outs.organizer_id', 'sms_conversations.organizer_id')
                 ->whereColumn('sms_opt_outs.phone', 'sms_conversations.phone'))
-            ->orderBy('sms_messages.id')
+            ->orderByDesc('sms_messages.id')
             ->limit($limit)
             ->get();
 
-        return $this->handleResults($messages);
+        return $this->handleResults($messages)->reverse()->values();
     }
 
-    public function findRepliesTrafficSince(int $organizerId, string $since, int $limit): Collection
+    public function findRepliesTrafficSince(array $organizerIds, string $since, int $limit): Collection
     {
         $messages = SmsMessage::query()
-            ->where(SmsMessageDomainObjectAbstract::ORGANIZER_ID, $organizerId)
+            ->whereIn(SmsMessageDomainObjectAbstract::ORGANIZER_ID, $organizerIds)
             ->where(SmsMessageDomainObjectAbstract::CREATED_AT, '>=', $since)
             ->where(fn (EloquentBuilder $query) => $query
                 ->where(SmsMessageDomainObjectAbstract::DIRECTION, SmsMessageDirection::INBOUND->name)
                 ->orWhereIn(SmsMessageDomainObjectAbstract::AUTHOR_TYPE, [SmsMessageAuthorType::HUMAN->name, SmsMessageAuthorType::AGENT->name])
                 ->orWhereNotNull(SmsMessageDomainObjectAbstract::AUTO_REPLY_TO_MESSAGE_ID))
-            ->orderBy(SmsMessageDomainObjectAbstract::ID)
+            ->orderByDesc(SmsMessageDomainObjectAbstract::ID)
             ->limit($limit)
             ->get();
 
-        return $this->handleResults($messages);
+        return $this->handleResults($messages)->reverse()->values();
     }
 
-    public function findUndeliveredOutbound(int $organizerId, string $since, string $pendingBefore, int $limit): Collection
+    public function findUndeliveredOutbound(array $organizerIds, string $since, string $pendingBefore, int $limit): Collection
     {
         $messages = SmsMessage::query()
-            ->where(SmsMessageDomainObjectAbstract::ORGANIZER_ID, $organizerId)
+            ->whereIn(SmsMessageDomainObjectAbstract::ORGANIZER_ID, $organizerIds)
             ->where(SmsMessageDomainObjectAbstract::DIRECTION, SmsMessageDirection::OUTBOUND->name)
             ->where(SmsMessageDomainObjectAbstract::CREATED_AT, '>=', $since)
             ->where(fn (EloquentBuilder $query) => $query
@@ -153,10 +153,10 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
                 ->orWhere(fn (EloquentBuilder $pending) => $pending
                     ->where(SmsMessageDomainObjectAbstract::STATUS, SmsMessageStatus::PENDING->name)
                     ->where(SmsMessageDomainObjectAbstract::CREATED_AT, '<=', $pendingBefore)))
-            ->orderBy(SmsMessageDomainObjectAbstract::ID)
+            ->orderByDesc(SmsMessageDomainObjectAbstract::ID)
             ->limit($limit)
             ->get();
 
-        return $this->handleResults($messages);
+        return $this->handleResults($messages)->reverse()->values();
     }
 }

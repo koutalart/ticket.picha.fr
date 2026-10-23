@@ -21,7 +21,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(PurgeQuestionAnswerFilesCommand::class)->hourly()->withoutOverlapping();
         $schedule->command(SyncSmsContactsCommand::class)->everyFifteenMinutes()->withoutOverlapping();
         $schedule->command(SendDueSmsRemindersCommand::class)->everyFiveMinutes()->withoutOverlapping(30)->runInBackground();
-        $schedule->command(SmsWatchdogCommand::class)->everyTenMinutes()->withoutOverlapping(10);
+        $schedule->command(SmsWatchdogCommand::class)->everyMinute()->withoutOverlapping(5);
         $schedule->command('contacts:sync')->dailyAt('03:30')->withoutOverlapping();
     }
 

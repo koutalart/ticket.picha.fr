@@ -7,20 +7,21 @@ namespace HiEvents\Mail\Sms;
 use HiEvents\DomainObjects\Enums\SmsWatchdogAnomalyType;
 use HiEvents\Mail\BaseMail;
 use HiEvents\Services\Domain\Sms\DTO\SmsWatchdogAnomalyDTO;
-use HiEvents\Services\Domain\Sms\Watchdog\SmsWatchdogDetector;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Carbon;
 use Throwable;
 
 /**
+ * All the new anomalies of a run, grouped by organizer.
+ *
  * @uses /backend/resources/views/emails/sms/watchdog-alert.blade.php
  */
 class SmsWatchdogAlertMail extends BaseMail
 {
     public const TIMEZONE = 'Indian/Mayotte';
 
-    public const MAX_LINES = 50;
+    public const MAX_LINES_PER_ORGANIZER = 30;
 
     /**
      * @param  array<int, SmsWatchdogAnomalyDTO>  $anomalies
@@ -40,11 +41,25 @@ class SmsWatchdogAlertMail extends BaseMail
 
     public function content(): Content
     {
+        $groups = [];
+        foreach ($this->anomalies as $anomaly) {
+            $groups[$anomaly->organizerId] ??= [
+                'organizer' => $anomaly->organizerName.' (#'.$anomaly->organizerId.')',
+                'lines' => [],
+                'hiddenCount' => 0,
+            ];
+
+            if (count($groups[$anomaly->organizerId]['lines']) < self::MAX_LINES_PER_ORGANIZER) {
+                $groups[$anomaly->organizerId]['lines'][] = $this->line($anomaly);
+            } else {
+                $groups[$anomaly->organizerId]['hiddenCount']++;
+            }
+        }
+
         return new Content(
             markdown: 'emails.sms.watchdog-alert',
             with: [
-                'lines' => array_map(fn (SmsWatchdogAnomalyDTO $anomaly) => $this->line($anomaly), array_slice($this->anomalies, 0, self::MAX_LINES)),
-                'hiddenCount' => max(0, count($this->anomalies) - self::MAX_LINES),
+                'groups' => array_values($groups),
             ],
         );
     }
@@ -77,13 +92,12 @@ class SmsWatchdogAlertMail extends BaseMail
     }
 
     /**
-     * @return array{type: string, organizer: string, conversation: string, phone: string, time: string, detail: string, excerpt: ?string}
+     * @return array{type: string, conversation: string, phone: string, time: string, detail: string, excerpt: ?string}
      */
     private function line(SmsWatchdogAnomalyDTO $anomaly): array
     {
         return [
             'type' => $anomaly->type->label(),
-            'organizer' => $anomaly->organizerName.' (#'.$anomaly->organizerId.')',
             'conversation' => $anomaly->conversationId !== null ? '#'.$anomaly->conversationId : '',
             'phone' => self::maskPhone($anomaly->phone),
             'time' => self::localTime($anomaly->occurredAt),
@@ -94,11 +108,14 @@ class SmsWatchdogAlertMail extends BaseMail
 
     private function detail(SmsWatchdogAnomalyDTO $anomaly): string
     {
+        $minutes = (int) $anomaly->thresholdMinutes;
+
         return match ($anomaly->type) {
-            SmsWatchdogAnomalyType::UNANSWERED_INBOUND => __('No reply for more than :minutes minutes', ['minutes' => SmsWatchdogDetector::REPLY_DELAY_MINUTES]),
+            SmsWatchdogAnomalyType::UNANSWERED_INBOUND => __('No reply for more than :minutes minutes', ['minutes' => $minutes]),
+            SmsWatchdogAnomalyType::DRAFT_PENDING => __('Draft not validated for more than :minutes minutes', ['minutes' => $minutes]),
             SmsWatchdogAnomalyType::DUPLICATE_REPLY => __(':count replies to the same SMS', ['count' => (int) $anomaly->count]),
             SmsWatchdogAnomalyType::DUPLICATE_REGISTRATION_CONFIRMATION => __('Second confirmation sent for event #:event', ['event' => (int) $anomaly->eventId]),
-            SmsWatchdogAnomalyType::STUCK_PENDING => __('Still pending after :minutes minutes', ['minutes' => SmsWatchdogDetector::PENDING_MINUTES]),
+            SmsWatchdogAnomalyType::STUCK_PENDING => __('Still pending after :minutes minutes', ['minutes' => $minutes]),
             SmsWatchdogAnomalyType::FAILED_OUTBOUND => __('Sending failed'),
         };
     }

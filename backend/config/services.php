@@ -42,6 +42,11 @@ return [
     'sms_watchdog' => [
         'alert_email' => env('SMS_WATCHDOG_ALERT_EMAIL'),
         'alert_phone' => env('SMS_WATCHDOG_ALERT_PHONE'),
+        'reply_delay_minutes' => env('SMS_WATCHDOG_REPLY_DELAY_MINUTES', 10),
+        'reply_delay_auto_send_minutes' => env('SMS_WATCHDOG_REPLY_DELAY_AUTO_SEND_MINUTES', 5),
+        'draft_pending_minutes' => env('SMS_WATCHDOG_DRAFT_PENDING_MINUTES', 10),
+        'pending_minutes' => env('SMS_WATCHDOG_PENDING_MINUTES', 15),
+        'alert_cooldown_minutes' => env('SMS_WATCHDOG_ALERT_COOLDOWN_MINUTES', 5),
     ],
 
     'meta' => [

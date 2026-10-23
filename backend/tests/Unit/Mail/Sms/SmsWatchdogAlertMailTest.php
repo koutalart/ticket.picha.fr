@@ -21,6 +21,17 @@ class SmsWatchdogAlertMailTest extends TestCase
                 phone: '+262639250206',
                 occurredAt: '2026-10-23 09:30:00',
                 excerpt: 'Il reste des places ?',
+                thresholdMinutes: 10,
+            ),
+            new SmsWatchdogAnomalyDTO(
+                type: SmsWatchdogAnomalyType::DRAFT_PENDING,
+                key: 'conversation:20:draft:20261023093000',
+                organizerId: 4,
+                organizerName: 'Innocent Event',
+                conversationId: 20,
+                phone: '+262639000002',
+                occurredAt: '2026-10-23 09:30:00',
+                thresholdMinutes: 10,
             ),
             new SmsWatchdogAnomalyDTO(
                 type: SmsWatchdogAnomalyType::DUPLICATE_REPLY,
@@ -36,8 +47,13 @@ class SmsWatchdogAlertMailTest extends TestCase
 
         $html = $mail->render();
 
-        $mail->assertHasSubject('Surveillance SMS : 2 anomalie(s)');
+        $mail->assertHasSubject('Surveillance SMS : 3 anomalie(s)');
+        $this->assertSame(1, substr_count($html, '(#8)'));
+        $this->assertSame(1, substr_count($html, 'Innocent Event (#4)'));
+        $this->assertLessThan(strpos($html, 'Innocent Event (#4)'), strpos($html, 'Réponse en double'));
         $this->assertStringContainsString('SMS sans réponse', $html);
+        $this->assertStringContainsString('Sans réponse depuis plus de 10 minutes', $html);
+        $this->assertStringContainsString('Brouillon non validé depuis plus de 10 minutes', $html);
         $this->assertStringContainsString('Réponse en double', $html);
         $this->assertStringContainsString('2 réponses au même SMS', $html);
         $this->assertStringContainsString('********0206', $html);

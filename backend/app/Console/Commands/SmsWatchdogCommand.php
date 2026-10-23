@@ -12,10 +12,11 @@ class SmsWatchdogCommand extends Command
 {
     protected $signature = 'sms:watchdog {--dry-run : Print the anomalies without recording or alerting}';
 
-    protected $description = 'Look for SMS anomalies of the organizers whose assistant replies on its own and alert the platform owner once per anomaly';
+    protected $description = 'Look for SMS anomalies of every organizer with an SMS line and alert the platform owner once per anomaly';
 
     public function handle(SmsWatchdogDetector $detector, SmsWatchdogAlertService $alertService): int
     {
+        $startedAt = microtime(true);
         $detection = $detector->detect();
 
         if ($this->option('dry-run')) {
@@ -30,7 +31,11 @@ class SmsWatchdogCommand extends Command
                     $anomaly->key,
                 ], $detection->anomalies),
             );
-            $this->info(sprintf('Dry run: %d anomalies, nothing recorded, no alert sent', count($detection->anomalies)));
+            $this->info(sprintf(
+                'Dry run: %d anomalies, nothing recorded, no alert sent (%d ms)',
+                count($detection->anomalies),
+                $this->elapsedMs($startedAt),
+            ));
 
             return self::SUCCESS;
         }
@@ -38,13 +43,20 @@ class SmsWatchdogCommand extends Command
         $result = $alertService->process($detection);
 
         $this->info(sprintf(
-            'Anomalies: %d, alerted: %d, resolved: %d%s',
+            'Anomalies: %d, alerted: %d, waiting for the next e-mail: %d, resolved: %d%s (%d ms)',
             $result->detected,
             $result->alerted,
+            $result->deferred,
             $result->resolved,
             $result->recipientMissing ? ' (no alert e-mail configured)' : '',
+            $this->elapsedMs($startedAt),
         ));
 
         return self::SUCCESS;
+    }
+
+    private function elapsedMs(float $startedAt): int
+    {
+        return (int) round((microtime(true) - $startedAt) * 1000);
     }
 }

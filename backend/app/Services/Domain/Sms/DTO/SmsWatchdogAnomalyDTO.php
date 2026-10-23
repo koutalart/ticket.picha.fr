@@ -20,5 +20,6 @@ class SmsWatchdogAnomalyDTO extends BaseDataObject
         public readonly ?int $count = null,
         public readonly ?int $eventId = null,
         public readonly ?string $excerpt = null,
+        public readonly ?int $thresholdMinutes = null,
     ) {}
 }

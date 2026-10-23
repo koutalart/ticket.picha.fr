@@ -27,4 +27,13 @@ interface SmsConversationRepositoryInterface extends RepositoryInterface
      * @return Collection<int, SmsCustomerOrderDTO>
      */
     public function findOrdersByPhone(int $organizerId, string $phone): Collection;
+
+    /**
+     * Open conversations of the given organizers holding an assistant draft generated between the two dates
+     * that no outbound SMS followed yet (failed or expired ones do not count), oldest draft first.
+     *
+     * @param  array<int, int>  $organizerIds
+     * @return Collection<int, SmsConversationDomainObject>
+     */
+    public function findWaitingAgentDrafts(array $organizerIds, string $since, string $generatedBefore, int $limit): Collection;
 }
