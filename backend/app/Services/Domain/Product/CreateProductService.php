@@ -92,6 +92,7 @@ class CreateProductService
             'is_visible_at_box_office' => $productsData->getIsVisibleAtBoxOffice(),
             'is_sales_paused' => $productsData->getIsSalesPaused(),
             'is_required' => $productsData->getIsRequired(),
+            'required_quantity_mode' => $productsData->getRequiredQuantityMode(),
             'event_id' => $productsData->getEventId(),
             'product_category_id' => $productsData->getProductCategoryId(),
             'is_highlighted' => $productsData->getIsHighlighted(),

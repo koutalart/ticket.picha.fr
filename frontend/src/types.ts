@@ -821,6 +821,8 @@ export interface ProductPrice {
     quantity_remaining?: number;
 }
 
+export type RequiredQuantityMode = 'PER_ORDER' | 'PER_TICKET';
+
 export interface Product {
     id?: number;
     order?: number;
@@ -853,6 +855,7 @@ export interface Product {
     is_visible_at_box_office?: boolean;
     is_sales_paused?: boolean;
     is_required?: boolean;
+    required_quantity_mode?: RequiredQuantityMode;
     is_before_sale_start_date?: boolean;
     is_after_sale_end_date?: boolean;
     taxes?: TaxAndFee[];

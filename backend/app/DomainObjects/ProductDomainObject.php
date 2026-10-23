@@ -4,6 +4,7 @@ namespace HiEvents\DomainObjects;
 
 use Carbon\Carbon;
 use HiEvents\DomainObjects\Enums\ProductPriceType;
+use HiEvents\DomainObjects\Enums\RequiredQuantityMode;
 use HiEvents\Constants;
 use HiEvents\DomainObjects\Interfaces\IsSortable;
 use HiEvents\DomainObjects\SortingAndFiltering\AllowedSorts;
@@ -25,6 +26,12 @@ class ProductDomainObject extends Generated\ProductDomainObjectAbstract implemen
     public function getRequiredQuantity(): int
     {
         return max(1, (int) $this->getMinPerOrder());
+    }
+
+    public function isRequiredPerTicket(): bool
+    {
+        return $this->getIsRequired()
+            && $this->getRequiredQuantityMode() === RequiredQuantityMode::PER_TICKET->name;
     }
 
     public function isScannable(): ?bool

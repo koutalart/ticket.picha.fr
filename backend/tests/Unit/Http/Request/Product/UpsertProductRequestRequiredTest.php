@@ -15,6 +15,8 @@ class UpsertProductRequestRequiredTest extends TestCase
         $this->assertFalse($this->fails(['is_required' => true, 'min_per_order' => 1, 'max_per_order' => 1]));
         $this->assertFalse($this->fails(['is_required' => true, 'min_per_order' => 2, 'max_per_order' => null]));
         $this->assertFalse($this->fails(['is_required' => false, 'min_per_order' => 2, 'max_per_order' => 1]));
+        $this->assertFalse($this->fails(['is_required' => true, 'required_quantity_mode' => 'PER_TICKET', 'min_per_order' => 2, 'max_per_order' => 1]));
+        $this->assertTrue($this->fails(['is_required' => true, 'required_quantity_mode' => 'PER_ORDER', 'min_per_order' => 2, 'max_per_order' => 1]));
     }
 
     private function fails(array $data): bool

@@ -172,6 +172,8 @@ class OrderCreateRequestValidationService
     /**
      * A product flagged is_required must be part of every online order that contains
      * at least one ticket, with at least its forced quantity (min_per_order, or 1).
+     * In PER_TICKET mode the forced quantity is the number of tickets in the order
+     * and must match exactly.
      * A required product that cannot currently be bought online (hidden, paused,
      * locked, promo code only, outside its sale dates, sold out) is skipped so it
      * never blocks a sale. Not applied when the event allows a single product per order.
@@ -215,14 +217,37 @@ class OrderCreateRequestValidationService
             $this->availableProductQuantities,
         );
 
+        $ticketQuantityForPerTicket = $products
+            ->filter(fn (ProductDomainObject $product) => $product->getProductType() === ProductType::TICKET->name
+                && !$product->getIsRequired())
+            ->sum(fn (ProductDomainObject $product) => $orderedQuantities[$product->getId()] ?? 0);
+
         foreach ($requiredProducts as $requiredProduct) {
-            $requiredQuantity = $this->getEnforceableRequiredQuantity($requiredProduct, $lockedRequiredProductIds);
+            $requiredQuantity = $this->getEnforceableRequiredQuantity(
+                $requiredProduct,
+                $lockedRequiredProductIds,
+                (int) $ticketQuantityForPerTicket,
+            );
 
             if ($requiredQuantity === 0) {
                 continue;
             }
 
-            if (($orderedQuantities[$requiredProduct->getId()] ?? 0) < $requiredQuantity) {
+            $orderedQuantity = $orderedQuantities[$requiredProduct->getId()] ?? 0;
+
+            if ($requiredProduct->isRequiredPerTicket()) {
+                if ($orderedQuantity !== $requiredQuantity) {
+                    throw ValidationException::withMessages([
+                        'products' => __(':product is included once per ticket (expected quantity: :quantity).', [
+                            'product' => $requiredProduct->getTitle(),
+                            'quantity' => $requiredQuantity,
+                        ]),
+                    ]);
+                }
+                continue;
+            }
+
+            if ($orderedQuantity < $requiredQuantity) {
                 throw ValidationException::withMessages([
                     'products' => __(':product is included in every order (quantity: :quantity).', [
                         'product' => $requiredProduct->getTitle(),
@@ -236,7 +261,7 @@ class OrderCreateRequestValidationService
     /**
      * @param int[] $lockedProductIds
      */
-    private function getEnforceableRequiredQuantity(ProductDomainObject $product, array $lockedProductIds): int
+    private function getEnforceableRequiredQuantity(ProductDomainObject $product, array $lockedProductIds, int $ticketQuantity): int
     {
         if ($product->getIsHidden()
             || $product->getIsSalesPaused()
@@ -256,7 +281,9 @@ class OrderCreateRequestValidationService
             ->where('product_id', $product->getId())
             ->sum('quantity_available');
 
-        return max(0, min($product->getRequiredQuantity(), (int) $quantityAvailable));
+        $forcedQuantity = $product->isRequiredPerTicket() ? $ticketQuantity : $product->getRequiredQuantity();
+
+        return max(0, min($forcedQuantity, (int) $quantityAvailable));
     }
 
     /**
@@ -345,6 +372,9 @@ class OrderCreateRequestValidationService
     }
 
     /**
+     * A required product counted per ticket ignores min/max per order: its quantity
+     * must equal the number of tickets, which validateRequiredProducts checks.
+     *
      * @throws ValidationException
      */
     private function validateProductQuantity(int $productIndex, array $productAndQuantities, ProductDomainObject $product): void
@@ -375,7 +405,7 @@ class OrderCreateRequestValidationService
             productIndex: $productIndex
         );
 
-        if ($totalQuantity > $maxPerOrder) {
+        if ($totalQuantity > $maxPerOrder && !$product->isRequiredPerTicket()) {
             throw ValidationException::withMessages([
                 "products.$productIndex" => __("The maximum number of products available for :products is :max", [
                     'max' => $maxPerOrder,
@@ -384,7 +414,7 @@ class OrderCreateRequestValidationService
             ]);
         }
 
-        if ($totalQuantity < $minPerOrder) {
+        if ($totalQuantity < $minPerOrder && !$product->isRequiredPerTicket()) {
             throw ValidationException::withMessages([
                 "products.$productIndex" => __("You must order at least :min products for :product", [
                     'min' => $minPerOrder,

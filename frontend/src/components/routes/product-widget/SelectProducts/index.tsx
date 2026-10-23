@@ -43,7 +43,7 @@ import {promoCodeClientPublic} from "../../../../api/promo-code.client.ts";
 import {IconChevronRight, IconX} from "@tabler/icons-react"
 import {getSessionIdentifier} from "../../../../utilites/sessionIdentifier.ts";
 import {Constants} from "../../../../constants.ts";
-import {applyRequiredProducts, isEnforceableRequiredProduct} from "../../../../utilites/requiredProducts.ts";
+import {applyRequiredProducts, isEnforceableRequiredProduct, isRequiredPerTicket} from "../../../../utilites/requiredProducts.ts";
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
 import {customDomainOrigin} from "../../../../utilites/urlHelper.ts";
 
@@ -621,12 +621,14 @@ const SelectProducts = (props: SelectProductsProps) => {
                                                             />
                                                             {isRequiredProduct && (
                                                                 <div className={'hi-product-required-hint'}>
-                                                                    {t`Added automatically to every order with a ticket.`}
+                                                                    {isRequiredPerTicket(product)
+                                                                        ? t`Added automatically, one per ticket.`
+                                                                        : t`Added automatically to every order with a ticket.`}
                                                                 </div>
                                                             )}
                                                         </div>
 
-                                                        {product.max_per_order && form.values.products && isObjectEmpty(form.errors) && (form.values.products[currentProductIndex]?.quantities.reduce((acc, {quantity}) => acc + Number(quantity), 0) > product.max_per_order) && (
+                                                        {product.max_per_order && !isRequiredProduct && form.values.products && isObjectEmpty(form.errors) && (form.values.products[currentProductIndex]?.quantities.reduce((acc, {quantity}) => acc + Number(quantity), 0) > product.max_per_order) && (
                                                             <div className={'hi-product-quantity-error'}>
                                                                 <Trans>The maximum number of products
                                                                     for {product.title}

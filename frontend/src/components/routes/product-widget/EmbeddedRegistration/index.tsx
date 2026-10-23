@@ -201,6 +201,21 @@ export const EmbeddedRegistration = ({
     const nextRef = useRef<() => void>(() => undefined);
     const leaveTimer = useRef<number | undefined>(undefined);
     const [leaving, setLeaving] = useState<{ step: Step, direction: 'forward' | 'backward' } | null>(null);
+    const [addedParticipantKeys, setAddedParticipantKeys] = useState<Set<string>>(() => new Set());
+
+    const form = useForm<RegistrationFormValues>({
+        initialValues: {
+            order: {
+                first_name: '',
+                last_name: '',
+                email: '',
+                email_confirmation: '',
+                questions: [],
+                opted_into_marketing: false,
+            },
+            products: [{key: 'participant-buyer', first_name: '', last_name: '', birth_date: '', questions: []}],
+        },
+    });
 
     useEffect(() => {
         if (codeOpen && hasInteracted.current) {
@@ -229,7 +244,6 @@ export const EmbeddedRegistration = ({
 
     const checkoutLines = useMemo(() => isPaidMode ? getEmbeddedCheckoutLines(event) : [], [event, isPaidMode]);
     const ticketLines = checkoutLines.filter(line => line.isTicket);
-    const requiredItems = useMemo(() => getRequiredCheckoutItems(event), [event]);
     const selectedLineItems: EmbeddedCheckoutItem[] = checkoutLines
         .filter(line => (selection[line.key] ?? 0) > 0)
         .map(line => ({
@@ -242,8 +256,11 @@ export const EmbeddedRegistration = ({
         }));
     const selectedTicketItems = selectedLineItems.filter(item => item.isTicket);
     const selectedTicketCount = selectedTicketItems.reduce((sum, item) => sum + item.quantity, 0);
+    const requiredItems = getRequiredCheckoutItems(event, isPaidMode ? selectedTicketCount : form.values.products.length);
     const checkoutItems = [...selectedLineItems, ...(selectedTicketCount > 0 ? requiredItems : [])];
     const totals = computeCheckoutTotals(checkoutItems);
+    const totalWithoutFees = Math.round((totals.total - totals.fees) * 100) / 100;
+    const hasServiceFees = checkoutLines.some(line => Number(line.price.fee_total) > 0);
     const ticketSignature = selectedTicketItems.map(item => `${item.key}x${item.quantity}`).join(',');
     const formatAmount = (amount: number) => formatCurrency(amount, currency);
 
@@ -280,20 +297,6 @@ export const EmbeddedRegistration = ({
         last_name: '',
         birth_date: '',
         questions: participantQuestions.map(emptyAnswer),
-    });
-
-    const form = useForm<RegistrationFormValues>({
-        initialValues: {
-            order: {
-                first_name: '',
-                last_name: '',
-                email: '',
-                email_confirmation: '',
-                questions: [],
-                opted_into_marketing: false,
-            },
-            products: [{key: 'participant-buyer', first_name: '', last_name: '', birth_date: '', questions: []}],
-        },
     });
 
     useEffect(() => {
@@ -839,6 +842,62 @@ export const EmbeddedRegistration = ({
         pendingFocus.current = 'add-participant';
     };
 
+    const productQuantityInSelection = (productId: unknown) => selectedLineItems
+        .filter(item => Number(item.product.id) === Number(productId))
+        .reduce((sum, item) => sum + item.quantity, 0);
+
+    // A participant added on the participants step takes the ticket of the last participant row.
+    const lastParticipantLineKey = form.values.products[form.values.products.length - 1]?.line_key;
+    const addTargetItem = selectedTicketItems.find(item => item.key === lastParticipantLineKey)
+        ?? selectedTicketItems[selectedTicketItems.length - 1];
+    const addTargetLine = checkoutLines.find(line => line.key === addTargetItem?.key);
+    const paidPlacesLeft = addTargetItem && addTargetLine
+        ? Math.max(0, Math.min(
+            addTargetLine.max - addTargetItem.quantity,
+            getProductMaxPerOrder(addTargetItem.product) - productQuantityInSelection(addTargetItem.product.id),
+        ))
+        : 0;
+
+    const addPaidParticipant = () => {
+        if (!addTargetItem || paidPlacesLeft <= 0) {
+            return;
+        }
+        hasInteracted.current = true;
+        const participant: ParticipantValue = {
+            key: nextParticipantKey(),
+            line_key: addTargetItem.key,
+            first_name: '',
+            last_name: '',
+            birth_date: '',
+            questions: questionsForProduct(addTargetItem.product.id).map(emptyAnswer),
+        };
+        const lastIndexOfLine = form.values.products.map(row => row.line_key).lastIndexOf(addTargetItem.key);
+        form.insertListItem('products', participant, lastIndexOfLine + 1);
+        setSelection(previous => ({...previous, [addTargetItem.key]: addTargetItem.quantity + 1}));
+        setAddedParticipantKeys(previous => new Set(previous).add(participant.key));
+        pendingFocus.current = participant.key;
+    };
+
+    const canRemovePaidParticipant = (participant: ParticipantValue) => {
+        const item = selectedTicketItems.find(candidate => candidate.key === participant.line_key);
+        if (!item || !addedParticipantKeys.has(participant.key) || selectedTicketCount <= 1) {
+            return false;
+        }
+        const min = Math.max(1, Number(item.product.min_per_order) || 1);
+        return productQuantityInSelection(item.product.id) - 1 >= min;
+    };
+
+    const removePaidParticipant = (index: number) => {
+        const participant = form.values.products[index];
+        const item = selectedTicketItems.find(candidate => candidate.key === participant?.line_key);
+        if (!participant || !item || !canRemovePaidParticipant(participant)) {
+            return;
+        }
+        form.removeListItem('products', index);
+        setSelection(previous => ({...previous, [item.key]: item.quantity - 1}));
+        pendingFocus.current = 'add-participant';
+    };
+
     const promoMutation = useMutation({
         mutationFn: async (code: string | null) => {
             if (code) {
@@ -949,7 +1008,7 @@ export const EmbeddedRegistration = ({
 
     const autoFilledProductIds = new Set([
         ...checkoutLines.filter(line => !line.isTicket).map(line => Number(line.product.id)),
-        ...requiredItems.map(item => Number(item.product.id)),
+        ...getRequiredCheckoutItems(event, 1).map(item => Number(item.product.id)),
     ]);
     const checkoutProductIds = new Set([...checkoutLines.map(line => Number(line.product.id)), ...autoFilledProductIds]);
     const relevantQuestions = isPaidMode
@@ -1005,10 +1064,29 @@ export const EmbeddedRegistration = ({
     const progress = totalSteps > 1 ? safeStepIndex / (totalSteps - 1) : 0;
     const titleId = `embedded-registration-${step.id}-title`;
     const participantsCount = form.values.products.length;
-    const maxParticipants = ticket?.maxParticipants ?? 1;
+    const maxParticipants = isPaidMode ? participantsCount + paidPlacesLeft : ticket?.maxParticipants ?? 1;
 
     const lineLabel = ({product, price}: { product: Product, price: ProductPrice }) =>
         price.label ? `${product.title} (${price.label})` : product.title;
+
+    const priceWithoutFees = (price: ProductPrice) => {
+        const fee = Number(price.fee_total) || 0;
+        return price.price_including_taxes_and_fees !== undefined && price.price_including_taxes_and_fees !== null
+            ? Number(price.price_including_taxes_and_fees) - fee
+            : Number(price.price) + (Number(price.tax_total) || 0);
+    };
+
+    const renderRunningTotal = () => (
+        <>
+            <div className={classes.runningTotal}>
+                <span>{t`Total`}</span>
+                <strong>{formatAmount(totalWithoutFees)}</strong>
+            </div>
+            {hasServiceFees && (
+                <p className={classes.feesHint}>{t`+ service fees, detailed before payment`}</p>
+            )}
+        </>
+    );
 
     const renderRequiredBadge = () => (
         <span className={classes.requiredBadge}>
@@ -1192,6 +1270,17 @@ export const EmbeddedRegistration = ({
                                                     <IconX size={18}/>
                                                 </ActionIcon>
                                             )}
+                                            {isPaidMode && canRemovePaidParticipant(participant) && (
+                                                <ActionIcon
+                                                    variant="subtle"
+                                                    className={classes.removeButton}
+                                                    onClick={() => removePaidParticipant(index)}
+                                                    aria-label={t`Remove participant ${participantNumber}`}
+                                                    title={t`Remove`}
+                                                >
+                                                    <IconX size={18}/>
+                                                </ActionIcon>
+                                            )}
                                         </div>
                                         {showNameFields && (
                                             <div className={classes.fieldRow}>
@@ -1247,6 +1336,29 @@ export const EmbeddedRegistration = ({
                                 </span>
                             </div>
                         )}
+                        {isPaidMode && addTargetItem && (
+                            <div className={classes.addRow}>
+                                <button
+                                    type="button"
+                                    className={classes.addButton}
+                                    onClick={addPaidParticipant}
+                                    disabled={paidPlacesLeft <= 0}
+                                    data-focus-key="add-participant"
+                                >
+                                    <IconPlus size={18} aria-hidden="true"/>
+                                    {t`Add a participant`}
+                                </button>
+                                <span className={classes.addHint}>
+                                    {t`${participantsCount} of ${maxParticipants} places`}
+                                </span>
+                                {paidPlacesLeft <= 0 && (
+                                    <span className={classes.addLimit} aria-live="polite">
+                                        {t`Maximum number of places reached for this order.`}
+                                    </span>
+                                )}
+                            </div>
+                        )}
+                        {isPaidMode && renderRunningTotal()}
                     </>
                 );
             case 'selection':
@@ -1258,16 +1370,13 @@ export const EmbeddedRegistration = ({
                             {checkoutLines.map(line => {
                                 const quantity = Math.min(selection[line.key] ?? 0, line.max);
                                 const label = lineLabel(line);
-                                const unitPrice = Number(line.price.price_including_taxes_and_fees ?? line.price.price);
+                                const unitPrice = priceWithoutFees(line.price);
                                 return (
                                     <li key={line.key} className={classes.line}>
                                         <div className={classes.lineInfo}>
                                             <span className={classes.lineTitle}>{label}</span>
                                             <span className={classes.linePrice}>
                                                 {unitPrice > 0 ? formatAmount(unitPrice) : t`Free`}
-                                                {Number(line.price.fee_total) > 0 && (
-                                                    <span className={classes.lineNote}>{t`fees included`}</span>
-                                                )}
                                             </span>
                                         </div>
                                         <div className={classes.stepper} role="group" aria-label={t`Quantity for ${label}`}>
@@ -1299,7 +1408,7 @@ export const EmbeddedRegistration = ({
                                     <div className={classes.lineInfo}>
                                         <span className={classes.lineTitle}>{lineLabel(item)}</span>
                                         <span className={classes.linePrice}>
-                                            {formatAmount(Number(item.price.price_including_taxes_and_fees ?? item.price.price))}
+                                            {formatAmount(priceWithoutFees(item.price))}
                                             {renderRequiredBadge()}
                                         </span>
                                     </div>
@@ -1309,10 +1418,7 @@ export const EmbeddedRegistration = ({
                                 </li>
                             ))}
                         </ul>
-                        <div className={classes.runningTotal}>
-                            <span>{t`Total`}</span>
-                            <strong>{formatAmount(totals.total)}</strong>
-                        </div>
+                        {renderRunningTotal()}
                     </>
                 );
             case 'confirm':

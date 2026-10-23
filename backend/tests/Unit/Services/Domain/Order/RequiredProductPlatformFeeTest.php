@@ -143,6 +143,83 @@ class RequiredProductPlatformFeeTest extends TestCase
         self::assertEqualsWithDelta(32.47, $addedItems[self::TICKET_ID]['total_gross'] + $addedItems[self::OPTION_ID]['total_gross'], 0.001);
     }
 
+    public function test_required_product_counted_per_ticket_has_no_platform_fee_on_quantity_three(): void
+    {
+        $platformFeeService = m::mock(OrderPlatformFeePassThroughService::class);
+        $platformFeeService->shouldReceive('calculatePlatformFee')
+            ->andReturnUsing(fn($account, $settings, float $total, int $quantity) => self::PLATFORM_FEE_PER_UNIT * $quantity);
+
+        $option = $this->makeProduct(self::OPTION_ID, 'GENERAL', 0.49, true)->setRequiredQuantityMode('PER_TICKET');
+        $products = [
+            self::TICKET_ID => $this->makeProduct(self::TICKET_ID, 'TICKET', 15.00, false),
+            self::OPTION_ID => $option,
+        ];
+
+        $productRepository = m::mock(ProductRepositoryInterface::class);
+        $productRepository->shouldReceive('loadRelation')->andReturnSelf();
+        $productRepository->shouldReceive('findFirstWhere')
+            ->andReturnUsing(fn(array $where) => $products[$where['id']]);
+        $productRepository->shouldReceive('findWhereIn')->andReturn(new Collection(array_values($products)));
+
+        $taxService = m::mock(TaxAndFeeCalculationService::class);
+        $taxService->shouldReceive('calculateTaxAndFeesForProduct')
+            ->andReturn(new TaxCalculationResponse(feeTotal: 0.0, taxTotal: 0.0, rollUp: []));
+
+        $priceService = m::mock(ProductPriceService::class);
+        $priceService->shouldReceive('getPrice')
+            ->andReturnUsing(fn(ProductDomainObject $product) => new PriceDTO($product->getProductPrices()->first()->getPrice()));
+
+        $addedItems = [];
+        $orderRepository = m::mock(OrderRepositoryInterface::class);
+        $orderRepository->shouldReceive('addOrderItem')
+            ->andReturnUsing(function (array $data) use (&$addedItems) {
+                $addedItems[$data['product_id']] = $data;
+                return new OrderItemDomainObject();
+            });
+
+        (new OrderItemProcessingService(
+            $orderRepository,
+            $productRepository,
+            $taxService,
+            $priceService,
+            $platformFeeService,
+            $this->makeAccountRepository(),
+            $this->makeEventRepository(),
+        ))->process(
+            order: (new OrderDomainObject())->setId(1),
+            productsOrderDetails: new Collection([
+                new ProductOrderDetailsDTO(self::TICKET_ID, new Collection([new OrderProductPriceDTO(3, self::TICKET_ID * 10)])),
+                new ProductOrderDetailsDTO(self::OPTION_ID, new Collection([new OrderProductPriceDTO(3, self::OPTION_ID * 10)])),
+            ]),
+            event: (new EventDomainObject())->setId(self::EVENT_ID)->setCurrency('EUR'),
+            promoCode: null,
+        );
+
+        self::assertEqualsWithDelta(2.97, $addedItems[self::TICKET_ID]['total_service_fee'], 0.001);
+        self::assertEqualsWithDelta(0.0, $addedItems[self::OPTION_ID]['total_service_fee'], 0.001);
+        self::assertEqualsWithDelta(1.47, $addedItems[self::OPTION_ID]['total_gross'], 0.001);
+
+        $config = m::mock(Repository::class);
+        $config->shouldReceive('get')->with('app.saas_mode_enabled')->andReturn(true);
+        $applicationFeeService = new OrderApplicationFeeCalculationService(
+            $config,
+            m::mock(CurrencyConversionClientInterface::class),
+            m::mock(VatRateDeterminationService::class),
+            $productRepository,
+        );
+
+        $order = (new OrderDomainObject())
+            ->setCurrency('EUR')
+            ->setTotalGross(49.44)
+            ->setOrderItems(new Collection([
+                (new OrderItemDomainObject())->setProductId(self::TICKET_ID)->setPrice(15.00)->setQuantity(3)->setTotalGross(47.97),
+                (new OrderItemDomainObject())->setProductId(self::OPTION_ID)->setPrice(0.49)->setQuantity(3)->setTotalGross(1.47),
+            ]));
+
+        $fee = $applicationFeeService->calculateApplicationFee($this->makeAccountConfiguration(0.99, 0), $order);
+        self::assertEqualsWithDelta(2.97, $fee->grossApplicationFee->toFloat(), 0.001);
+    }
+
     public function test_public_price_of_a_required_product_has_no_platform_fee(): void
     {
         $platformFeeService = m::mock(OrderPlatformFeePassThroughService::class);
