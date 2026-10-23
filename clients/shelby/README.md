@@ -6,7 +6,7 @@ Branche `client/shelby`. Tout ce qui est propre à ce client : habillage, visuel
 
 | | |
 |---|---|
-| Compte | à créer (inscription par le client lui-même, puis vérification manuelle) |
+| Compte | à créer (inscription par le client lui-même ; le lien de confirmation par e-mail fonctionne depuis le 20/10, vérifier en base avant toute vérification manuelle) |
 | Organisateur | nom définitif à confirmer |
 | E-mail de connexion | à confirmer |
 | Domaine personnalisé | à confirmer |
