@@ -122,7 +122,7 @@ class SmsUnattributedSmsServiceTest extends TestCase
     {
         $this->givenUnattributed();
         $this->settingsRepository->shouldReceive('findFirstWhere')->with(['id' => 1])->andReturn($this->line);
-        $this->lineService->shouldReceive('members')->with($this->line)->andReturn(collect([$this->line, $this->member]));
+        $this->lineService->shouldReceive('candidates')->with($this->line)->andReturn(collect([$this->line, $this->member]));
 
         $this->inboundService->shouldReceive('recordInbound')
             ->once()
@@ -148,7 +148,7 @@ class SmsUnattributedSmsServiceTest extends TestCase
     {
         $this->givenUnattributed();
         $this->settingsRepository->shouldReceive('findFirstWhere')->with(['id' => 1])->andReturn($this->line);
-        $this->lineService->shouldReceive('members')->andReturn(collect([$this->line, $this->member]));
+        $this->lineService->shouldReceive('candidates')->andReturn(collect([$this->line, $this->member]));
         $this->inboundService->shouldNotReceive('recordInbound');
 
         $this->expectException(SmsSharedLineException::class);

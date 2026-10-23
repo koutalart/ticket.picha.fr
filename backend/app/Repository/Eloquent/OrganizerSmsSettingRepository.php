@@ -26,7 +26,7 @@ class OrganizerSmsSettingRepository extends BaseRepository implements OrganizerS
         return OrganizerSmsSettingDomainObject::class;
     }
 
-    public function findWithSmsLine(int $limit): Collection
+    public function findWithSmsLine(int $limit, ?string $formerMembersDetachedSince = null): Collection
     {
         $settings = OrganizerSmsSetting::query()
             ->select([
@@ -41,7 +41,12 @@ class OrganizerSmsSettingRepository extends BaseRepository implements OrganizerS
                 ->orWhere(fn (Builder $ownLine) => $ownLine
                     ->whereNotNull(OrganizerSmsSettingDomainObjectAbstract::API_KEY)
                     ->whereNotNull(OrganizerSmsSettingDomainObjectAbstract::FROM_NUMBER)
-                    ->where(OrganizerSmsSettingDomainObjectAbstract::FROM_NUMBER, '!=', '')))
+                    ->where(OrganizerSmsSettingDomainObjectAbstract::FROM_NUMBER, '!=', ''))
+                ->when($formerMembersDetachedSince !== null, fn (Builder $formerMember) => $formerMember
+                    ->orWhereIn(OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ID, fn ($former) => $former
+                        ->select('organizer_id')
+                        ->from('sms_line_former_members')
+                        ->where('detached_at', '>=', $formerMembersDetachedSince))))
             ->orderBy(OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ID)
             ->limit($limit)
             ->get();

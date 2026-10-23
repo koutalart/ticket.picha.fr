@@ -56,6 +56,9 @@ class SmsSendService
         }
 
         $conversation = $this->conversationService->findOrCreate($settings, $phone);
+        if ($sms->replyInConversation) {
+            $line = $this->lineService->replyLine($settings, $conversation, $line);
+        }
 
         /** @var SmsMessageDomainObject $message */
         $message = $this->messageRepository->create([
@@ -68,6 +71,7 @@ class SmsSendService
             SmsMessageDomainObjectAbstract::STATUS => SmsMessageStatus::PENDING->name,
             SmsMessageDomainObjectAbstract::AUTO_REPLY_TO_MESSAGE_ID => $sms->autoReplyToMessageId,
             SmsMessageDomainObjectAbstract::AUTO_REPLY_TYPE => $sms->autoReplyType?->name,
+            SmsMessageDomainObjectAbstract::LINE_SETTINGS_ID => $line->getId(),
         ]);
 
         $requestId = self::REQUEST_ID_PREFIX.$message->getId();
@@ -75,7 +79,13 @@ class SmsSendService
             SmsMessageDomainObjectAbstract::REQUEST_ID => $requestId,
         ]);
 
-        $this->conversationService->recordActivity($conversation, SmsMessageDirection::OUTBOUND, $sms->content, markUnread: false);
+        $this->conversationService->recordActivity(
+            $conversation,
+            SmsMessageDirection::OUTBOUND,
+            $sms->content,
+            markUnread: false,
+            lineSettingsId: $line->getId(),
+        );
         if (! $sms->keepDraft) {
             $this->conversationRepository->updateFromArray($conversation->getId(), [
                 SmsConversationDomainObjectAbstract::DRAFT_REPLY => null,

@@ -56,6 +56,7 @@ class SmsConversationService
         string $content,
         bool $markUnread,
         ?string $occurredAt = null,
+        ?int $lineSettingsId = null,
     ): SmsConversationDomainObject {
         if ($occurredAt !== null && $this->isOlderThanLastMessage($conversation, $occurredAt)) {
             return $conversation;
@@ -66,6 +67,10 @@ class SmsConversationService
             SmsConversationDomainObjectAbstract::LAST_MESSAGE_PREVIEW => mb_substr($content, 0, self::PREVIEW_LENGTH),
             SmsConversationDomainObjectAbstract::LAST_MESSAGE_DIRECTION => $direction->name,
         ];
+
+        if ($lineSettingsId !== null && $lineSettingsId !== $conversation->getLineSettingsId()) {
+            $attributes[SmsConversationDomainObjectAbstract::LINE_SETTINGS_ID] = $lineSettingsId;
+        }
 
         if ($markUnread) {
             $attributes[SmsConversationDomainObjectAbstract::UNREAD_COUNT] = $conversation->getUnreadCount() + 1;

@@ -68,6 +68,7 @@ class SendSmsReplyHandler
             autoReplyToMessageId: $autoReplyToMessageId,
             autoReplyType: $autoReplyType,
             keepDraft: $autoReplyType === SmsAutoReplyType::HOLDING,
+            replyInConversation: true,
         ));
 
         if ($conversation->getStatus() === SmsConversationStatus::NEEDS_HUMAN->name && $autoReplyType !== SmsAutoReplyType::HOLDING) {

@@ -219,17 +219,10 @@ class SmsAutoReplyService
         }
 
         try {
-            $line = $this->lineService->resolveLine($settings);
+            $organizerIds = $this->lineService->relatedOrganizerIds($settings, $conversation->getLineSettingsId());
         } catch (SmsGatewayNotConfiguredException) {
             return SmsAutoReplySkipReason::LINE_UNAVAILABLE;
         }
-
-        $organizerIds = $this->lineService->members($line)
-            ->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())
-            ->push($conversation->getOrganizerId())
-            ->unique()
-            ->values()
-            ->all();
 
         if ($this->messageRepository->hasOutboundToPhoneAfter(
             $organizerIds,
