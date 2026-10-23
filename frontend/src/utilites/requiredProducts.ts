@@ -1,4 +1,4 @@
-import {Product, ProductType} from "../types.ts";
+import {Product, ProductPrice, ProductType} from "../types.ts";
 import {Constants} from "../constants.ts";
 import type {ProductFormValue} from "../api/order.client.ts";
 
@@ -63,5 +63,12 @@ export const applyRequiredProducts = (products: Product[], values: ProductFormVa
     return changed ? next : values;
 };
 
-export const eventHasRequiredProducts = (products: Product[]): boolean =>
-    products.some(isEnforceableRequiredProduct);
+export const getRequiredProductSelection = (product: Product): { price: ProductPrice, quantity: number } | null => {
+    if (!isEnforceableRequiredProduct(product)) {
+        return null;
+    }
+    const price = product.prices?.[getRequiredPriceIndex(product)];
+    const quantity = getForcedQuantity(product);
+
+    return price && quantity > 0 ? {price, quantity} : null;
+};

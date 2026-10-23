@@ -262,7 +262,9 @@ class ProductFilterService
             $feeTotal = $taxAndFees->feeTotal;
             $taxTotal = $taxAndFees->taxTotal;
 
-            $platformFee = $this->calculatePlatformFee($price->getPrice() + $feeTotal + $taxTotal);
+            $platformFee = $product->getIsRequired()
+                ? 0.0
+                : $this->calculatePlatformFee($price->getPrice() + $feeTotal + $taxTotal);
 
             if ($platformFee > 0) {
                 $feeTotal += $platformFee;

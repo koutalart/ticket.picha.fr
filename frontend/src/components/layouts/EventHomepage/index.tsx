@@ -267,6 +267,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
         .every(p => !p.prices?.some(price => Number(price.price) > 0));
 
     const isEmbeddedRegistration = isFullscreenHero && isEmbeddedRegistrationEnabled(event);
+    const isEmbeddedCardRegistration = !isFullscreenHero && isEmbeddedRegistrationEnabled(event);
     const isWaitingForSaleStart = getEventProducts(event).some(product => product.is_before_sale_start_date)
         && !getEventProducts(event).some(product => product.is_available && !product.is_before_sale_start_date);
 
@@ -768,7 +769,17 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     </div>
                                 )}
 
-                                {renderTicketsSection()}
+                                {isEmbeddedCardRegistration ? (
+                                    <EmbeddedRegistration
+                                        variant="card"
+                                        className={`${classes.section} ${classes.embeddedSection}`}
+                                        event={event}
+                                        promoCode={promoCode}
+                                        promoCodeValid={promoCodeValid}
+                                        sectionRef={ticketsSectionRef}
+                                        renderFallback={renderTicketsSection}
+                                    />
+                                ) : renderTicketsSection()}
 
                                 {coverVideo && flyer && (
                                     <div className={`${classes.section} ${classes.flyerSection}`} id="flyer">
