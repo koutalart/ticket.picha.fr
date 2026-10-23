@@ -9,7 +9,7 @@ class VerifyOrganizerCalendarCodeRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string', 'max:12'],
+            'code' => ['required', 'string', 'max:64'],
         ];
     }
 }
