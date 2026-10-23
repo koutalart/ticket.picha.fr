@@ -157,6 +157,17 @@ abstract class BaseAction extends Controller
         return Response::make($xmlContent, $statusCode, $allHeaders);
     }
 
+    protected function htmlResponse(
+        string $htmlContent,
+        int    $statusCode = ResponseCodes::HTTP_OK,
+        array  $headers = [],
+    ): LaravelResponse
+    {
+        return Response::make($htmlContent, $statusCode, array_merge([
+            'Content-Type' => 'text/html; charset=UTF-8',
+        ], $headers));
+    }
+
     protected function isActionAuthorized(
         int    $entityId,
         string $entityType,
