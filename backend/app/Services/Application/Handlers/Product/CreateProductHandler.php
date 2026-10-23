@@ -85,6 +85,7 @@ class CreateProductHandler
                 ->setIsHiddenWithoutPromoCode($productsData->is_hidden_without_promo_code)
                 ->setIsVisibleAtBoxOffice($productsData->is_visible_at_box_office ?? true)
                 ->setIsSalesPaused($productsData->is_sales_paused ?? ($productsData->is_hidden && ($productsData->is_visible_at_box_office ?? true)))
+                ->setIsRequired($productsData->is_required ?? false)
                 ->setIsHighlighted($productsData->is_highlighted ?? false)
                 ->setHighlightMessage($productsData->highlight_message)
                 ->setWaitlistEnabled($productsData->waitlist_enabled)

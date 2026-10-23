@@ -108,6 +108,25 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
     );
 }
 
+export const LockedNumberSelector = ({value, label}: { value: number, label?: string }) => (
+    <div className={classNames(classes.wrapper, 'button-input', 'hi-locked-quantity')} aria-label={label}>
+        <ActionIcon size={28} disabled className={classes.control} aria-hidden>
+            <IconMinus size="1rem" stroke={1.5}/>
+        </ActionIcon>
+        <NumberInput
+            mb={0}
+            variant="unstyled"
+            value={value}
+            hideControls
+            readOnly
+            classNames={{input: classes.input}}
+        />
+        <ActionIcon size={28} disabled className={classes.control} aria-hidden>
+            <IconPlus size="1rem" stroke={1.5}/>
+        </ActionIcon>
+    </div>
+);
+
 /* todo: create an event setting to choose select over button */
 export const NumberSelectorSelect = ({formInstance, fieldName, min, max, className}: NumberSelectorProps) => {
     const [value, setValue] = useState<string>('0');

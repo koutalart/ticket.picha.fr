@@ -40,6 +40,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     final public const WAITLIST_ENABLED = 'waitlist_enabled';
     final public const IS_VISIBLE_AT_BOX_OFFICE = 'is_visible_at_box_office';
     final public const IS_SALES_PAUSED = 'is_sales_paused';
+    final public const IS_REQUIRED = 'is_required';
 
     protected int $id;
     protected int $event_id;
@@ -71,6 +72,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     protected ?bool $waitlist_enabled = null;
     protected bool $is_visible_at_box_office = true;
     protected bool $is_sales_paused = false;
+    protected bool $is_required = false;
 
     public function toArray(): array
     {
@@ -105,6 +107,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
                     'waitlist_enabled' => $this->waitlist_enabled ?? null,
                     'is_visible_at_box_office' => $this->is_visible_at_box_office ?? null,
                     'is_sales_paused' => $this->is_sales_paused ?? null,
+                    'is_required' => $this->is_required ?? null,
                 ];
     }
 
@@ -436,5 +439,16 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     public function getIsSalesPaused(): bool
     {
         return $this->is_sales_paused;
+    }
+
+    public function setIsRequired(bool $is_required): self
+    {
+        $this->is_required = $is_required;
+        return $this;
+    }
+
+    public function getIsRequired(): bool
+    {
+        return $this->is_required;
     }
 }

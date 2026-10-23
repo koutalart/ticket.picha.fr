@@ -7,6 +7,7 @@ use HiEvents\DomainObjects\CapacityAssignmentDomainObject;
 use HiEvents\DomainObjects\Enums\ProductPriceType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
+use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\PromoCodeDomainObjectAbstract;
 use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\DomainObjects\ProductDomainObject;
@@ -165,6 +166,97 @@ class OrderCreateRequestValidationService
         }
 
         $this->validateOptionsComeWithATicket($event, $data, $products);
+        $this->validateRequiredProducts($event, $data, $products);
+    }
+
+    /**
+     * A product flagged is_required must be part of every online order that contains
+     * at least one ticket, with at least its forced quantity (min_per_order, or 1).
+     * A required product that cannot currently be bought online (hidden, paused,
+     * locked, promo code only, outside its sale dates, sold out) is skipped so it
+     * never blocks a sale. Not applied when the event allows a single product per order.
+     *
+     * @throws ValidationException
+     */
+    private function validateRequiredProducts(EventDomainObject $event, array $data, Collection $products): void
+    {
+        if ($event->getEventSettings()?->getSingleProductPerOrder()) {
+            return;
+        }
+
+        $orderedQuantities = [];
+        foreach ($data['products'] as $productAndQuantities) {
+            $productId = (int) $productAndQuantities['product_id'];
+            $orderedQuantities[$productId] = ($orderedQuantities[$productId] ?? 0)
+                + collect($productAndQuantities['quantities'] ?? [])->sum('quantity');
+        }
+
+        $ticketQuantity = $products
+            ->filter(fn (ProductDomainObject $product) => $product->getProductType() === ProductType::TICKET->name)
+            ->sum(fn (ProductDomainObject $product) => $orderedQuantities[$product->getId()] ?? 0);
+
+        if ($ticketQuantity <= 0) {
+            return;
+        }
+
+        $requiredProducts = $this->productRepository
+            ->loadRelation(ProductPriceDomainObject::class)
+            ->findWhere([
+                ProductDomainObjectAbstract::EVENT_ID => $event->getId(),
+                ProductDomainObjectAbstract::IS_REQUIRED => true,
+            ]);
+
+        if ($requiredProducts->isEmpty()) {
+            return;
+        }
+
+        $lockedRequiredProductIds = $this->productUnlockService->getLockedProductIds(
+            $requiredProducts,
+            $this->availableProductQuantities,
+        );
+
+        foreach ($requiredProducts as $requiredProduct) {
+            $requiredQuantity = $this->getEnforceableRequiredQuantity($requiredProduct, $lockedRequiredProductIds);
+
+            if ($requiredQuantity === 0) {
+                continue;
+            }
+
+            if (($orderedQuantities[$requiredProduct->getId()] ?? 0) < $requiredQuantity) {
+                throw ValidationException::withMessages([
+                    'products' => __(':product is included in every order (quantity: :quantity).', [
+                        'product' => $requiredProduct->getTitle(),
+                        'quantity' => $requiredQuantity,
+                    ]),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * @param int[] $lockedProductIds
+     */
+    private function getEnforceableRequiredQuantity(ProductDomainObject $product, array $lockedProductIds): int
+    {
+        if ($product->getIsHidden()
+            || $product->getIsSalesPaused()
+            || $product->getIsHiddenWithoutPromoCode()
+            || $product->isBeforeSaleStartDate()
+            || $product->isAfterSaleEndDate()
+            || in_array($product->getId(), $lockedProductIds, true)
+            || $product->getProductPrices() === null
+            || $product->getProductPrices()->isEmpty()
+            || $this->productUnlockService->isProductSoldOut($product->getId(), $this->availableProductQuantities->productQuantities)
+        ) {
+            return 0;
+        }
+
+        $quantityAvailable = $this->availableProductQuantities
+            ->productQuantities
+            ->where('product_id', $product->getId())
+            ->sum('quantity_available');
+
+        return max(0, min($product->getRequiredQuantity(), (int) $quantityAvailable));
     }
 
     /**

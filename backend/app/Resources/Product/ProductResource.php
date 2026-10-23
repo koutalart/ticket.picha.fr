@@ -48,6 +48,7 @@ class ProductResource extends JsonResource
             'is_hidden' => $this->getIsHidden(),
             'is_visible_at_box_office' => $this->getIsVisibleAtBoxOffice(),
             'is_sales_paused' => $this->getIsSalesPaused(),
+            'is_required' => $this->getIsRequired(),
             'is_before_sale_start_date' => $this->isBeforeSaleStartDate(),
             'is_after_sale_end_date' => $this->isAfterSaleEndDate(),
             'is_available' => $this->isAvailable(),

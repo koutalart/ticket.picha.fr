@@ -91,6 +91,7 @@ class CreateProductService
             'is_hidden_without_promo_code' => $productsData->getIsHiddenWithoutPromoCode(),
             'is_visible_at_box_office' => $productsData->getIsVisibleAtBoxOffice(),
             'is_sales_paused' => $productsData->getIsSalesPaused(),
+            'is_required' => $productsData->getIsRequired(),
             'event_id' => $productsData->getEventId(),
             'product_category_id' => $productsData->getProductCategoryId(),
             'is_highlighted' => $productsData->getIsHighlighted(),

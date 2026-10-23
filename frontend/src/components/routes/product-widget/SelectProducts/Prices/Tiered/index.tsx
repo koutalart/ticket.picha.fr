@@ -1,7 +1,7 @@
 import {Currency, ProductPriceDisplay} from "../../../../../common/Currency";
 import {Event, Product} from "../../../../../../types.ts";
 import {Group, Radio, TextInput} from "@mantine/core";
-import {NumberSelector} from "../../../../../common/NumberSelector";
+import {LockedNumberSelector, NumberSelector} from "../../../../../common/NumberSelector";
 import {UseFormReturnType} from "@mantine/form";
 import {t} from "@lingui/macro";
 import {ProductPriceAvailability} from "../../../../../common/ProductPriceAvailability";
@@ -14,9 +14,10 @@ interface TieredPricingProps {
     productIndex: number;
     singleSelection?: boolean;
     onSelectPrice?: (priceIndex: number) => void;
+    isQuantityLocked?: boolean;
 }
 
-export const TieredPricing = ({product, event, form, productIndex, singleSelection, onSelectPrice}: TieredPricingProps) => {
+export const TieredPricing = ({product, event, form, productIndex, singleSelection, onSelectPrice, isQuantityLocked}: TieredPricingProps) => {
     return (
         <>
             {product?.prices?.map((price, index) => {
@@ -78,7 +79,13 @@ export const TieredPricing = ({product, event, form, productIndex, singleSelecti
                                         aria-label={price.label || product.title}
                                     />
                                 )}
-                                {(isSelectable && !singleSelection) && (
+                                {(isSelectable && !singleSelection && isQuantityLocked) && (
+                                    <LockedNumberSelector
+                                        value={Number(form.values.products?.[productIndex]?.quantities?.[index]?.quantity) || 0}
+                                        label={t`Quantity`}
+                                    />
+                                )}
+                                {(isSelectable && !singleSelection && !isQuantityLocked) && (
                                     <>
                                         <NumberSelector
                                             className={'hi-product-quantity-selector'}
