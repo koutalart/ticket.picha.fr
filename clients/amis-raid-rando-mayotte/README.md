@@ -32,6 +32,7 @@ Les coordonnées bancaires du client ne sont pas versionnées ici.
 - Affiche : `visuels/marche-des-amis-10e-affiche.jpg`.
 - Événement 15 créé le 23/10/2026 en brouillon (`scripts/creer-marche-des-amis-10e.php`) : produit 32 inscription 15 €, produit 33 option sérénité 0,49 €/commande, couverture `visuels/marche-des-amis-10e-couverture.png`, logo `visuels/logo-arrm.png` (organisateur, site et e-mails).
 - Option sérénité voulue obligatoire et non modifiable : évolution « produit obligatoire » demandée au noyau le 23/10, à activer sur le produit 33 dès sa livraison.
+- Parcours d'achat voulu comme celui de Mayotte La 1ère (inscription intégrée pas à pas), mais en payant et **sans en-tête plein écran** (Jo, 23/10) : évolution demandée au noyau le 23/10, à activer sur l'événement 15 dès sa livraison.
 
 ## Règles
 
