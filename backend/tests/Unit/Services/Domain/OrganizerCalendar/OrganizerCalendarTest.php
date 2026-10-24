@@ -185,8 +185,26 @@ class OrganizerCalendarTest extends TestCase
         $daily = $this->postJson($this->api('/code'));
         $daily->assertStatus(429);
         self::assertStringContainsString("aujourd'hui", $daily->json('message'));
-        self::assertSame(24 * 3600 - 30 * 60, $daily->json('retry_after'));
+        self::assertSame(8 * 3600 + 30 * 60, $daily->json('retry_after'));
         self::assertCount(5, $this->sentSms);
+
+        Carbon::setTestNow(Carbon::parse('2026-10-23 21:00:00', 'UTC'));
+        $this->postJson($this->api('/code'))->assertOk();
+        self::assertCount(6, $this->sentSms);
+    }
+
+    public function test_codes_that_opened_the_calendar_do_not_count_against_the_daily_limit(): void
+    {
+        $this->import();
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->postJson($this->api('/code'))->assertOk();
+            OrganizerCalendarCode::query()->latest('id')->firstOrFail()->update(['used_at' => Carbon::now()]);
+            Carbon::setTestNow(Carbon::now()->addMinutes(6));
+        }
+
+        $this->postJson($this->api('/code'))->assertOk();
+        self::assertCount(6, $this->sentSms);
     }
 
     public function test_a_code_that_could_not_be_sent_is_discarded(): void

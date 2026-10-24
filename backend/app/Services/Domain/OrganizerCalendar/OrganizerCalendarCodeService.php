@@ -19,7 +19,8 @@ use Illuminate\Support\Carbon;
 
 /**
  * One-time 6 digit codes stored as an HMAC, valid 15 minutes, 5 attempts each.
- * A calendar gets at most one code every 5 minutes and 5 codes per rolling 24 hours.
+ * A calendar gets at most one code every 5 minutes and 5 unused codes per day (Mayotte time).
+ * Codes that led to a successful login do not count.
  */
 class OrganizerCalendarCodeService
 {
@@ -34,6 +35,8 @@ class OrganizerCalendarCodeService
     public const MAX_CODES_PER_DAY = 5;
 
     private const DAY_SECONDS = 86400;
+
+    private const DAY_TIMEZONE = 'Indian/Mayotte';
 
     public function __construct(
         private readonly OrganizerCalendarCodeRepositoryInterface $codeRepository,
@@ -142,17 +145,18 @@ class OrganizerCalendarCodeService
             }
         }
 
-        $since = $now->copy()->subSeconds(self::DAY_SECONDS)->toDateTimeString();
+        $since = $now->copy()->setTimezone(self::DAY_TIMEZONE)->startOfDay()->utc()->toDateTimeString();
         $countToday = $this->codeRepository->countWhere([
             Code::ORGANIZER_CALENDAR_ID => $calendarId,
             [Code::CREATED_AT, '>=', $since],
+            [Code::USED_AT, 'null', null],
         ]);
 
         if ($countToday >= self::MAX_CODES_PER_DAY) {
-            $oldest = $this->codeRepository->findOldestCreatedAtSince($calendarId, $since);
-            $retryAfter = $oldest === null
-                ? self::DAY_SECONDS
-                : Carbon::parse($oldest)->getTimestamp() + self::DAY_SECONDS - $now->getTimestamp();
+            $retryAfter = max(
+                60,
+                $now->copy()->setTimezone(self::DAY_TIMEZONE)->addDay()->startOfDay()->getTimestamp() - $now->getTimestamp(),
+            );
 
             throw $this->limited('Too many codes requested today. Try again in :delay.', $retryAfter);
         }
