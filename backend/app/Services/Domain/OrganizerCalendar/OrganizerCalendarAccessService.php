@@ -13,11 +13,16 @@ use HiEvents\Services\Domain\OrganizerCalendar\DTO\OrganizerCalendarAccessGrantD
 use Illuminate\Support\Carbon;
 
 /**
- * Access keys are random, given once to the browser and stored only as an HMAC. They last 12 hours and can be revoked.
+ * Access keys are random, given once to the browser and stored only as an HMAC.
+ * A key keeps its device recognised for a year, renewed on every visit, until it is revoked.
  */
 class OrganizerCalendarAccessService
 {
-    public const TTL_SECONDS = 43200;
+    public const TTL_SECONDS = 31536000;
+
+    public const MEDIA_URL_TTL_SECONDS = 43200;
+
+    private const RENEW_AFTER_SECONDS = 86400;
 
     public function __construct(
         private readonly OrganizerCalendarAccessRepositoryInterface $accessRepository,
@@ -61,7 +66,31 @@ class OrganizerCalendarAccessService
             );
         }
 
-        return $access;
+        return $this->renew($access);
+    }
+
+    public function mediaUrlsExpireAt(OrganizerCalendarAccessDomainObject $access): Carbon
+    {
+        $accessExpiry = Carbon::parse($access->getExpiresAt());
+        $mediaExpiry = Carbon::now()->addSeconds(self::MEDIA_URL_TTL_SECONDS)->startOfSecond();
+
+        return $accessExpiry->lessThan($mediaExpiry) ? $accessExpiry : $mediaExpiry;
+    }
+
+    private function renew(OrganizerCalendarAccessDomainObject $access): OrganizerCalendarAccessDomainObject
+    {
+        $expiresAt = Carbon::now()->addSeconds(self::TTL_SECONDS)->startOfSecond();
+
+        if ($expiresAt->getTimestamp() - Carbon::parse($access->getExpiresAt())->getTimestamp() < self::RENEW_AFTER_SECONDS) {
+            return $access;
+        }
+
+        $this->accessRepository->updateWhere(
+            [Access::EXPIRES_AT => $expiresAt->toDateTimeString()],
+            [Access::ID => $access->getId(), [Access::REVOKED_AT, 'null', null]],
+        );
+
+        return $access->setExpiresAt($expiresAt->toDateTimeString());
     }
 
     public function isActiveById(int $accessId, int $calendarId): bool
