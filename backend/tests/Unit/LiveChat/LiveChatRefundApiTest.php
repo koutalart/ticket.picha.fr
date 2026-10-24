@@ -9,6 +9,7 @@ use HiEvents\Mail\LiveChat\LiveChatContactAlertMail;
 use HiEvents\Mail\LiveChat\LiveChatRefundAlertMail;
 use HiEvents\Mail\LiveChat\LiveChatRefundCodeMail;
 use HiEvents\Mail\Order\OrderRefunded;
+use HiEvents\Mail\Sms\PlatformSupervisionAlertMail;
 use HiEvents\Models\Event;
 use HiEvents\Models\Product;
 use HiEvents\Models\ProductPrice;
@@ -190,8 +191,13 @@ class LiveChatRefundApiTest extends TestCase
             'amount' => 999,
         ])
             ->assertOk()
-            ->assertJsonPath('data.step', 'refunded')
+            ->assertJsonPath('data.step', 'pending')
             ->assertJsonPath('data.amount', 15);
+
+        $this->assertSame('ACTIVE', DB::table('attendees')->where('id', $attendeeIds[0])->value('status'));
+        $this->assertSame('AWAITING_APPROVAL', DB::table('live_chat_refund_requests')->where('order_id', $orderId)->orderByDesc('id')->value('status'));
+
+        $this->approve($orderId)->assertOk()->assertJsonPath('data.status', 'REFUNDED');
 
         $this->assertSame('CANCELLED', DB::table('attendees')->where('id', $attendeeIds[0])->value('status'));
         $this->assertSame('REFUND_PENDING', DB::table('orders')->where('id', $orderId)->value('refund_status'));
@@ -429,9 +435,12 @@ class LiveChatRefundApiTest extends TestCase
 
         $this->chat('post', '/public/live-chat/refund/confirm', $sessionId, ['attendee_ids' => [$attendeeIds[0]]])
             ->assertOk()
-            ->assertJsonPath('data.step', 'unavailable');
+            ->assertJsonPath('data.step', 'pending');
+
+        $this->approve($orderId)->assertOk()->assertJsonPath('data.status', 'HANDED_OFF');
 
         $this->assertSame('ACTIVE', DB::table('attendees')->where('id', $attendeeIds[0])->value('status'));
+        Mail::assertQueued(PlatformSupervisionAlertMail::class);
     }
 
     public function test_stripe_error_cancels_nothing_and_hands_over(): void
@@ -444,12 +453,14 @@ class LiveChatRefundApiTest extends TestCase
 
         $this->chat('post', '/public/live-chat/refund/confirm', $sessionId, ['attendee_ids' => [$attendeeIds[0]]])
             ->assertOk()
-            ->assertJsonPath('data.step', 'unavailable');
+            ->assertJsonPath('data.step', 'pending');
+
+        $this->approve($orderId)->assertOk()->assertJsonPath('data.status', 'FAILED');
 
         $this->assertSame('ACTIVE', DB::table('attendees')->where('id', $attendeeIds[0])->value('status'));
         $this->assertNull(DB::table('orders')->where('id', $orderId)->value('refund_status'));
         $this->assertSame('FAILED', DB::table('live_chat_refund_requests')->where('order_id', $orderId)->value('status'));
-        Mail::assertQueued(LiveChatContactAlertMail::class);
+        Mail::assertQueued(PlatformSupervisionAlertMail::class);
         Mail::assertNotQueued(LiveChatRefundAlertMail::class);
     }
 
@@ -476,6 +487,14 @@ class LiveChatRefundApiTest extends TestCase
 
         $this->chat('post', '/public/live-chat/refund/confirm', $sessionId, ['attendee_ids' => [$attendeeIds[0]]])
             ->assertUnprocessable();
+    }
+
+    private function approve(int $orderId): TestResponse
+    {
+        $requestId = (int) DB::table('live_chat_refund_requests')->where('order_id', $orderId)->orderByDesc('id')->value('id');
+
+        return $this->withHeader('Authorization', 'Bearer '.$this->loginAndGetToken($this->user, self::PASSWORD))
+            ->postJson("/organizers/{$this->organizerId}/refund-approvals/{$requestId}/decision", ['decision' => 'APPROVED']);
     }
 
     private function verifiedChat(int $orderId, int $expectedMaxTickets = 1): string

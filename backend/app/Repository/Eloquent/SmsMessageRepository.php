@@ -68,6 +68,8 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->whereIn('sms_messages.organizer_id', $organizerIds)
             ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
             ->where('sms_conversations.phone', $phone)
+            ->where('sms_conversations.is_team', false)
+            ->where('sms_messages.is_supervision', false)
             ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
             ->whereNull('sms_messages.channel')
             ->whereNotIn('sms_messages.status', [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name])
@@ -111,6 +113,7 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->where('sms_messages.created_at', '<=', $receivedBefore)
             ->whereRaw('COALESCE(sms_messages.provider_timestamp, sms_messages.created_at) >= ?', [$since])
             ->where('sms_conversations.status', '!=', SmsConversationStatus::CLOSED->name)
+            ->where('sms_conversations.is_team', false)
             ->whereNotExists(fn (Builder $reply) => $reply
                 ->selectRaw('1')
                 ->from('sms_messages as reply')
@@ -164,5 +167,23 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->get();
 
         return $this->handleResults($messages)->reverse()->values();
+    }
+
+    public function findLastInboundOrganizerId(array $organizerIds, string $phone): ?int
+    {
+        if ($organizerIds === []) {
+            return null;
+        }
+
+        $organizerId = SmsMessage::query()
+            ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
+            ->whereIn('sms_messages.organizer_id', array_values($organizerIds))
+            ->where('sms_conversations.phone', $phone)
+            ->where('sms_messages.direction', SmsMessageDirection::INBOUND->name)
+            ->whereNull('sms_messages.channel')
+            ->orderByDesc('sms_messages.id')
+            ->value('sms_messages.organizer_id');
+
+        return $organizerId === null ? null : (int) $organizerId;
     }
 }

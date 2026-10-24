@@ -15,6 +15,7 @@ abstract class LiveChatRefundRequestDomainObjectAbstract extends \HiEvents\Domai
     final public const ORGANIZER_ID = 'organizer_id';
     final public const EVENT_ID = 'event_id';
     final public const ORDER_ID = 'order_id';
+    final public const DECIDED_BY_USER_ID = 'decided_by_user_id';
     final public const ATTENDEE_IDS = 'attendee_ids';
     final public const AMOUNT = 'amount';
     final public const CURRENCY = 'currency';
@@ -28,12 +29,30 @@ abstract class LiveChatRefundRequestDomainObjectAbstract extends \HiEvents\Domai
     final public const IP_HASH = 'ip_hash';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const CUSTOMER_PHONE = 'customer_phone';
+    final public const CUSTOMER_EMAIL = 'customer_email';
+    final public const REASON = 'reason';
+    final public const AWAITING_APPROVAL_AT = 'awaiting_approval_at';
+    final public const DECISION = 'decision';
+    final public const DECIDED_BY_CHANNEL = 'decided_by_channel';
+    final public const DECIDED_BY_PHONE = 'decided_by_phone';
+    final public const DECIDED_BY_NAME = 'decided_by_name';
+    final public const DECIDED_AT = 'decided_at';
+    final public const APPROVAL_LINK_USED_AT = 'approval_link_used_at';
+    final public const NEXT_REMINDER_AT = 'next_reminder_at';
+    final public const REMINDERS_COUNT = 'reminders_count';
+    final public const LAST_REMINDER_AT = 'last_reminder_at';
+    final public const NEXT_CUSTOMER_UPDATE_AT = 'next_customer_update_at';
+    final public const CUSTOMER_UPDATES_COUNT = 'customer_updates_count';
+    final public const LAST_CUSTOMER_UPDATE_AT = 'last_customer_update_at';
+    final public const ESCALATED_AT = 'escalated_at';
 
     protected int $id;
     protected ?int $live_chat_session_id = null;
     protected int $organizer_id;
     protected ?int $event_id = null;
     protected ?int $order_id = null;
+    protected ?int $decided_by_user_id = null;
     protected array|string|null $attendee_ids = null;
     protected ?float $amount = null;
     protected ?string $currency = null;
@@ -47,6 +66,23 @@ abstract class LiveChatRefundRequestDomainObjectAbstract extends \HiEvents\Domai
     protected ?string $ip_hash = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?string $customer_phone = null;
+    protected ?string $customer_email = null;
+    protected ?string $reason = null;
+    protected ?string $awaiting_approval_at = null;
+    protected ?string $decision = null;
+    protected ?string $decided_by_channel = null;
+    protected ?string $decided_by_phone = null;
+    protected ?string $decided_by_name = null;
+    protected ?string $decided_at = null;
+    protected ?string $approval_link_used_at = null;
+    protected ?string $next_reminder_at = null;
+    protected int $reminders_count = 0;
+    protected ?string $last_reminder_at = null;
+    protected ?string $next_customer_update_at = null;
+    protected int $customer_updates_count = 0;
+    protected ?string $last_customer_update_at = null;
+    protected ?string $escalated_at = null;
 
     public function toArray(): array
     {
@@ -56,6 +92,7 @@ abstract class LiveChatRefundRequestDomainObjectAbstract extends \HiEvents\Domai
                     'organizer_id' => $this->organizer_id ?? null,
                     'event_id' => $this->event_id ?? null,
                     'order_id' => $this->order_id ?? null,
+                    'decided_by_user_id' => $this->decided_by_user_id ?? null,
                     'attendee_ids' => $this->attendee_ids ?? null,
                     'amount' => $this->amount ?? null,
                     'currency' => $this->currency ?? null,
@@ -69,6 +106,23 @@ abstract class LiveChatRefundRequestDomainObjectAbstract extends \HiEvents\Domai
                     'ip_hash' => $this->ip_hash ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'customer_phone' => $this->customer_phone ?? null,
+                    'customer_email' => $this->customer_email ?? null,
+                    'reason' => $this->reason ?? null,
+                    'awaiting_approval_at' => $this->awaiting_approval_at ?? null,
+                    'decision' => $this->decision ?? null,
+                    'decided_by_channel' => $this->decided_by_channel ?? null,
+                    'decided_by_phone' => $this->decided_by_phone ?? null,
+                    'decided_by_name' => $this->decided_by_name ?? null,
+                    'decided_at' => $this->decided_at ?? null,
+                    'approval_link_used_at' => $this->approval_link_used_at ?? null,
+                    'next_reminder_at' => $this->next_reminder_at ?? null,
+                    'reminders_count' => $this->reminders_count ?? null,
+                    'last_reminder_at' => $this->last_reminder_at ?? null,
+                    'next_customer_update_at' => $this->next_customer_update_at ?? null,
+                    'customer_updates_count' => $this->customer_updates_count ?? null,
+                    'last_customer_update_at' => $this->last_customer_update_at ?? null,
+                    'escalated_at' => $this->escalated_at ?? null,
                 ];
     }
 
@@ -125,6 +179,17 @@ abstract class LiveChatRefundRequestDomainObjectAbstract extends \HiEvents\Domai
     public function getOrderId(): ?int
     {
         return $this->order_id;
+    }
+
+    public function setDecidedByUserId(?int $decided_by_user_id): self
+    {
+        $this->decided_by_user_id = $decided_by_user_id;
+        return $this;
+    }
+
+    public function getDecidedByUserId(): ?int
+    {
+        return $this->decided_by_user_id;
     }
 
     public function setAttendeeIds(array|string|null $attendee_ids): self
@@ -268,5 +333,192 @@ abstract class LiveChatRefundRequestDomainObjectAbstract extends \HiEvents\Domai
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setCustomerPhone(?string $customer_phone): self
+    {
+        $this->customer_phone = $customer_phone;
+        return $this;
+    }
+
+    public function getCustomerPhone(): ?string
+    {
+        return $this->customer_phone;
+    }
+
+    public function setCustomerEmail(?string $customer_email): self
+    {
+        $this->customer_email = $customer_email;
+        return $this;
+    }
+
+    public function getCustomerEmail(): ?string
+    {
+        return $this->customer_email;
+    }
+
+    public function setReason(?string $reason): self
+    {
+        $this->reason = $reason;
+        return $this;
+    }
+
+    public function getReason(): ?string
+    {
+        return $this->reason;
+    }
+
+    public function setAwaitingApprovalAt(?string $awaiting_approval_at): self
+    {
+        $this->awaiting_approval_at = $awaiting_approval_at;
+        return $this;
+    }
+
+    public function getAwaitingApprovalAt(): ?string
+    {
+        return $this->awaiting_approval_at;
+    }
+
+    public function setDecision(?string $decision): self
+    {
+        $this->decision = $decision;
+        return $this;
+    }
+
+    public function getDecision(): ?string
+    {
+        return $this->decision;
+    }
+
+    public function setDecidedByChannel(?string $decided_by_channel): self
+    {
+        $this->decided_by_channel = $decided_by_channel;
+        return $this;
+    }
+
+    public function getDecidedByChannel(): ?string
+    {
+        return $this->decided_by_channel;
+    }
+
+    public function setDecidedByPhone(?string $decided_by_phone): self
+    {
+        $this->decided_by_phone = $decided_by_phone;
+        return $this;
+    }
+
+    public function getDecidedByPhone(): ?string
+    {
+        return $this->decided_by_phone;
+    }
+
+    public function setDecidedByName(?string $decided_by_name): self
+    {
+        $this->decided_by_name = $decided_by_name;
+        return $this;
+    }
+
+    public function getDecidedByName(): ?string
+    {
+        return $this->decided_by_name;
+    }
+
+    public function setDecidedAt(?string $decided_at): self
+    {
+        $this->decided_at = $decided_at;
+        return $this;
+    }
+
+    public function getDecidedAt(): ?string
+    {
+        return $this->decided_at;
+    }
+
+    public function setApprovalLinkUsedAt(?string $approval_link_used_at): self
+    {
+        $this->approval_link_used_at = $approval_link_used_at;
+        return $this;
+    }
+
+    public function getApprovalLinkUsedAt(): ?string
+    {
+        return $this->approval_link_used_at;
+    }
+
+    public function setNextReminderAt(?string $next_reminder_at): self
+    {
+        $this->next_reminder_at = $next_reminder_at;
+        return $this;
+    }
+
+    public function getNextReminderAt(): ?string
+    {
+        return $this->next_reminder_at;
+    }
+
+    public function setRemindersCount(int $reminders_count): self
+    {
+        $this->reminders_count = $reminders_count;
+        return $this;
+    }
+
+    public function getRemindersCount(): int
+    {
+        return $this->reminders_count;
+    }
+
+    public function setLastReminderAt(?string $last_reminder_at): self
+    {
+        $this->last_reminder_at = $last_reminder_at;
+        return $this;
+    }
+
+    public function getLastReminderAt(): ?string
+    {
+        return $this->last_reminder_at;
+    }
+
+    public function setNextCustomerUpdateAt(?string $next_customer_update_at): self
+    {
+        $this->next_customer_update_at = $next_customer_update_at;
+        return $this;
+    }
+
+    public function getNextCustomerUpdateAt(): ?string
+    {
+        return $this->next_customer_update_at;
+    }
+
+    public function setCustomerUpdatesCount(int $customer_updates_count): self
+    {
+        $this->customer_updates_count = $customer_updates_count;
+        return $this;
+    }
+
+    public function getCustomerUpdatesCount(): int
+    {
+        return $this->customer_updates_count;
+    }
+
+    public function setLastCustomerUpdateAt(?string $last_customer_update_at): self
+    {
+        $this->last_customer_update_at = $last_customer_update_at;
+        return $this;
+    }
+
+    public function getLastCustomerUpdateAt(): ?string
+    {
+        return $this->last_customer_update_at;
+    }
+
+    public function setEscalatedAt(?string $escalated_at): self
+    {
+        $this->escalated_at = $escalated_at;
+        return $this;
+    }
+
+    public function getEscalatedAt(): ?string
+    {
+        return $this->escalated_at;
     }
 }

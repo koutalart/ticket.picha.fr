@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace HiEvents\Services\Domain\Sms;
 
 use HiEvents\DomainObjects\Enums\SmsMessageDirection;
+use HiEvents\DomainObjects\Generated\OrganizerTeamContactDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsConversationDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsOptOutDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
+use HiEvents\DomainObjects\OrganizerTeamContactDomainObject;
 use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\Status\SmsConversationStatus;
+use HiEvents\Repository\Interfaces\OrganizerTeamContactRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -22,6 +25,7 @@ class SmsConversationService
     public function __construct(
         private readonly SmsConversationRepositoryInterface $conversationRepository,
         private readonly SmsOptOutRepositoryInterface $optOutRepository,
+        private readonly OrganizerTeamContactRepositoryInterface $teamContactRepository,
     ) {}
 
     public function findOrCreate(OrganizerSmsSettingDomainObject $settings, string $phone): SmsConversationDomainObject
@@ -37,13 +41,20 @@ class SmsConversationService
             return $existing;
         }
 
+        /** @var OrganizerTeamContactDomainObject|null $teamContact */
+        $teamContact = $this->teamContactRepository->findFirstWhere([
+            OrganizerTeamContactDomainObjectAbstract::ORGANIZER_ID => $settings->getOrganizerId(),
+            OrganizerTeamContactDomainObjectAbstract::PHONE => $phone,
+        ]);
+
         try {
             return $this->conversationRepository->create([
                 ...$where,
                 SmsConversationDomainObjectAbstract::ACCOUNT_ID => $settings->getAccountId(),
-                SmsConversationDomainObjectAbstract::CONTACT_NAME => $this->conversationRepository
+                SmsConversationDomainObjectAbstract::CONTACT_NAME => $teamContact?->getName() ?? $this->conversationRepository
                     ->findContactNameByPhone($settings->getOrganizerId(), $phone),
                 SmsConversationDomainObjectAbstract::STATUS => SmsConversationStatus::OPEN->name,
+                SmsConversationDomainObjectAbstract::IS_TEAM => $teamContact !== null,
             ]);
         } catch (UniqueConstraintViolationException) {
             return $this->conversationRepository->findFirstWhere($where);

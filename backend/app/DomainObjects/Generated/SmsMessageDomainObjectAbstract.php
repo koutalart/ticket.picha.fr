@@ -28,6 +28,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     final public const UPDATED_AT = 'updated_at';
     final public const AUTO_REPLY_TYPE = 'auto_reply_type';
     final public const CHANNEL = 'channel';
+    final public const IS_SUPERVISION = 'is_supervision';
 
     protected int $id;
     protected int $sms_conversation_id;
@@ -47,6 +48,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     protected ?string $updated_at = null;
     protected ?string $auto_reply_type = null;
     protected ?string $channel = null;
+    protected bool $is_supervision = false;
 
     public function toArray(): array
     {
@@ -69,6 +71,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
                     'updated_at' => $this->updated_at ?? null,
                     'auto_reply_type' => $this->auto_reply_type ?? null,
                     'channel' => $this->channel ?? null,
+                    'is_supervision' => $this->is_supervision ?? null,
                 ];
     }
 
@@ -268,5 +271,16 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     public function getChannel(): ?string
     {
         return $this->channel;
+    }
+
+    public function setIsSupervision(bool $is_supervision): self
+    {
+        $this->is_supervision = $is_supervision;
+        return $this;
+    }
+
+    public function getIsSupervision(): bool
+    {
+        return $this->is_supervision;
     }
 }

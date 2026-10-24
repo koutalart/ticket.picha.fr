@@ -13,6 +13,7 @@ use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
 use HiEvents\Exceptions\SmsWebhookUnauthorizedException;
 use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
+use HiEvents\Services\Application\Handlers\LiveChat\Approval\DecideLiveChatRefundHandler;
 use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
@@ -24,6 +25,7 @@ use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
+use HiEvents\Services\Domain\Sms\Team\SmsTeamInboundService;
 use Illuminate\Support\Collection;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -61,6 +63,8 @@ class HandleHttpSmsWebhookHandler
         private readonly SmsLineService $lineService,
         private readonly SmsUnattributedSmsService $unattributedService,
         private readonly LoggerInterface $logger,
+        private readonly SmsTeamInboundService $teamInboundService,
+        private readonly DecideLiveChatRefundHandler $refundDecisionHandler,
     ) {}
 
     /**
@@ -151,6 +155,25 @@ class HandleHttpSmsWebhookHandler
             );
 
             $candidates = $this->lineService->candidates($settings);
+
+            $teamRoute = $this->teamInboundService->route($candidates, $sms->contact);
+            if ($teamRoute !== null) {
+                $message = $this->inboundService->recordInbound($teamRoute->settings, $sms, lineSettingsId: $settings->getId());
+
+                if ($message !== null) {
+                    if ($this->refundDecisionHandler->handleTeamSms($teamRoute->settings, $message, $sms->contact)) {
+                        return;
+                    }
+
+                    if (! $this->teamInboundService->organizerAssistantActiveFor($teamRoute->settings)) {
+                        $this->alertService->notifyInbound($teamRoute->settings, $message);
+                    }
+                    $this->teamInboundService->afterInbound($teamRoute, $message);
+                }
+
+                return;
+            }
+
             $target = $candidates->count() > 1 ? $this->attributeInbound($settings, $candidates, $sms) : $settings;
             if ($target === null) {
                 return;
@@ -160,7 +183,9 @@ class HandleHttpSmsWebhookHandler
 
             if ($message !== null) {
                 $this->alertService->notifyInbound($target, $message);
-                $this->assistantService->queueDraftIfEligible($target, $message);
+                if (! $this->teamInboundService->isSupervisor($sms->contact)) {
+                    $this->assistantService->queueDraftIfEligible($target, $message);
+                }
             }
 
             return;

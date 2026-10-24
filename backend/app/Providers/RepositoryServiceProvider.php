@@ -51,6 +51,7 @@ use HiEvents\Repository\Eloquent\OrganizerSmsSettingRepository;
 use HiEvents\Repository\Eloquent\SmsAssistantCallRepository;
 use HiEvents\Repository\Eloquent\LiveChatMessageRepository;
 use HiEvents\Repository\Eloquent\LiveChatRefundRequestRepository;
+use HiEvents\Repository\Eloquent\LiveChatRefundRequestLogRepository;
 use HiEvents\Repository\Eloquent\LiveChatSessionRepository;
 use HiEvents\Repository\Eloquent\SmsConversationRepository;
 use HiEvents\Repository\Eloquent\SmsCustomerDirectoryRepository;
@@ -58,6 +59,8 @@ use HiEvents\Repository\Eloquent\SmsMessageRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRecipientRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRepository;
 use HiEvents\Repository\Eloquent\SmsOptOutRepository;
+use HiEvents\Repository\Eloquent\OrganizerTeamContactRepository;
+use HiEvents\Repository\Eloquent\EventDailyReportRepository;
 use HiEvents\Repository\Eloquent\SmsCancellationConfirmationRepository;
 use HiEvents\Repository\Eloquent\SmsRegistrationConfirmationRepository;
 use HiEvents\Repository\Eloquent\OrganizerNewsletterSubscriberRepository;
@@ -139,6 +142,7 @@ use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatRefundRequestRepositoryInterface;
+use HiEvents\Repository\Interfaces\LiveChatRefundRequestLogRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatSessionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCustomerDirectoryRepositoryInterface;
@@ -146,6 +150,8 @@ use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerTeamContactRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventDailyReportRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCancellationConfirmationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsRegistrationConfirmationRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerNewsletterSubscriberRepositoryInterface;
@@ -202,6 +208,8 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsCustomerDirectoryRepositoryInterface::class => SmsCustomerDirectoryRepository::class,
         SmsMessageRepositoryInterface::class => SmsMessageRepository::class,
         SmsOptOutRepositoryInterface::class => SmsOptOutRepository::class,
+        OrganizerTeamContactRepositoryInterface::class => OrganizerTeamContactRepository::class,
+        EventDailyReportRepositoryInterface::class => EventDailyReportRepository::class,
         SmsRegistrationConfirmationRepositoryInterface::class => SmsRegistrationConfirmationRepository::class,
         SmsCancellationConfirmationRepositoryInterface::class => SmsCancellationConfirmationRepository::class,
         OrganizerNewsletterSubscriberRepositoryInterface::class => OrganizerNewsletterSubscriberRepository::class,
@@ -211,6 +219,7 @@ class RepositoryServiceProvider extends ServiceProvider
         LiveChatSessionRepositoryInterface::class => LiveChatSessionRepository::class,
         LiveChatMessageRepositoryInterface::class => LiveChatMessageRepository::class,
         LiveChatRefundRequestRepositoryInterface::class => LiveChatRefundRequestRepository::class,
+        LiveChatRefundRequestLogRepositoryInterface::class => LiveChatRefundRequestLogRepository::class,
         SmsReplyTemplateRepositoryInterface::class => SmsReplyTemplateRepository::class,
         SmsLineFormerMemberRepositoryInterface::class => SmsLineFormerMemberRepository::class,
         SmsUnattributedMessageRepositoryInterface::class => SmsUnattributedMessageRepository::class,

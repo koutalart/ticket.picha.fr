@@ -9,18 +9,15 @@ use HiEvents\Exceptions\LiveChatRefundHandOffException;
 use HiEvents\Exceptions\LiveChatRefundNotEligibleException;
 use HiEvents\Exceptions\LiveChatRefundSelectionException;
 use HiEvents\Exceptions\LiveChatUnavailableException;
-use HiEvents\Services\Application\Handlers\Order\DTO\RefundOrderDTO;
-use HiEvents\Services\Application\Handlers\Order\Payment\Stripe\RefundOrderHandler;
 use HiEvents\Services\Domain\LiveChat\LiveChatService;
 use HiEvents\Services\Domain\LiveChat\Refund\DTO\LiveChatRefundStepDTO;
 use HiEvents\Services\Domain\LiveChat\Refund\LiveChatRefundService;
-use HiEvents\Services\Domain\Payment\Stripe\StripePaymentIntentRefundService;
 use Illuminate\Cache\CacheManager;
 use Throwable;
 
 /**
  * Public refund steps of the web chat: order number and e-mail, code, then the tickets to cancel.
- * The refund itself goes through the same handler as a refund from the dashboard.
+ * The request then waits for the organizer team (DecideLiveChatRefundHandler): nothing is refunded before.
  */
 class LiveChatRefundHandler
 {
@@ -29,7 +26,6 @@ class LiveChatRefundHandler
     public function __construct(
         private readonly LiveChatService $liveChatService,
         private readonly LiveChatRefundService $refundService,
-        private readonly RefundOrderHandler $refundOrderHandler,
         private readonly CacheManager $cache,
     ) {}
 
@@ -71,29 +67,10 @@ class LiveChatRefundHandler
 
         try {
             try {
-                $prepared = $this->refundService->prepare($session, $attendeeIds);
+                return $this->refundService->submit($session, $attendeeIds);
             } catch (LiveChatRefundHandOffException|LiveChatRefundNotEligibleException $exception) {
                 return $this->refundService->handOffFromException($session, $exception);
             }
-
-            $this->refundService->recordSelection($session, $prepared->tickets);
-            $order = $prepared->eligibility->order;
-
-            try {
-                $this->refundOrderHandler->handle(new RefundOrderDTO(
-                    event_id: $order->getEventId(),
-                    order_id: $order->getId(),
-                    amount: $prepared->amount,
-                    notify_buyer: true,
-                    cancel_order: false,
-                    attendee_ids: $prepared->tickets->map(fn ($ticket) => $ticket->attendeeId)->values()->all(),
-                    refund_source: StripePaymentIntentRefundService::REFUND_SOURCE_LIVE_CHAT,
-                ));
-            } catch (Throwable $exception) {
-                return $this->refundService->refundFailed($session, $prepared, $exception);
-            }
-
-            return $this->refundService->refunded($session, $prepared);
         } finally {
             $lock->release();
         }
