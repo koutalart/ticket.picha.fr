@@ -6,6 +6,7 @@ namespace HiEvents\Services\Domain\Social;
 
 use Carbon\Carbon;
 use HiEvents\DomainObjects\Generated\OrganizerSocialConnectionDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\SocialFeedItemDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
 use HiEvents\DomainObjects\Status\SocialConnectionStatus;
 use HiEvents\Exceptions\MetaAppNotConfiguredException;
@@ -15,6 +16,7 @@ use HiEvents\Exceptions\SocialConnectionNotFoundException;
 use HiEvents\Helper\Url;
 use HiEvents\Jobs\Social\SyncSocialFeedJob;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
+use HiEvents\Repository\Interfaces\SocialFeedItemRepositoryInterface;
 use HiEvents\Services\Domain\Social\DTO\MetaOAuthCallbackResultDTO;
 use HiEvents\Services\Infrastructure\Encryption\EncryptedPayloadService;
 use HiEvents\Services\Infrastructure\Encryption\Exception\DecryptionFailedException;
@@ -42,6 +44,7 @@ class MetaConnectionService
         private readonly CacheRepository $cache,
         private readonly Encrypter $encrypter,
         private readonly LoggerInterface $logger,
+        private readonly SocialFeedItemRepositoryInterface $feedItemRepository,
     ) {}
 
     public function isAvailable(): bool
@@ -184,6 +187,10 @@ class MetaConnectionService
             OrganizerSocialConnectionDomainObjectAbstract::ORGANIZER_ID => $organizerId,
         ]);
 
+        if ($existing !== null && $existing->getFacebookPageId() !== $page->id) {
+            $this->forgetCopiedContent($organizerId);
+        }
+
         $connection = $existing
             ? $this->connectionRepository->updateFromArray($existing->getId(), $attributes)
             : $this->connectionRepository->create(array_merge($attributes, [
@@ -237,6 +244,17 @@ class MetaConnectionService
         }
 
         $this->connectionRepository->deleteById($connection->getId());
+        $this->forgetCopiedContent($organizerId);
+    }
+
+    /**
+     * Posts and comments copied from the page (comments go with their post). The organizer's own PICHA posts are kept.
+     */
+    private function forgetCopiedContent(int $organizerId): void
+    {
+        $this->feedItemRepository->deleteWhere([
+            SocialFeedItemDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+        ]);
     }
 
     public function markNeedsReconnect(int $connectionId, string $error): void

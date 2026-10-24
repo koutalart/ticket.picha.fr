@@ -9,6 +9,7 @@ use HiEvents\Exceptions\MetaGraphApiException;
 use HiEvents\Exceptions\MetaOAuthException;
 use HiEvents\Jobs\Social\SyncSocialFeedJob;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
+use HiEvents\Repository\Interfaces\SocialFeedItemRepositoryInterface;
 use HiEvents\Services\Domain\Social\MetaConnectionService;
 use HiEvents\Services\Infrastructure\Encryption\EncryptedPayloadService;
 use HiEvents\Services\Infrastructure\Meta\DTO\MetaAccessTokenDTO;
@@ -30,6 +31,8 @@ class MetaConnectionServiceTest extends TestCase
 
     private CacheRepository $cache;
 
+    private SocialFeedItemRepositoryInterface|MockInterface $feedItemRepository;
+
     private MetaConnectionService $service;
 
     protected function setUp(): void
@@ -43,6 +46,7 @@ class MetaConnectionServiceTest extends TestCase
         $this->client->shouldReceive('subscribePageToWebhooks')->byDefault();
         $this->repository = Mockery::mock(OrganizerSocialConnectionRepositoryInterface::class);
         $this->cache = new CacheRepository(new ArrayStore);
+        $this->feedItemRepository = Mockery::mock(SocialFeedItemRepositoryInterface::class);
 
         $this->service = new MetaConnectionService(
             $this->client,
@@ -51,6 +55,7 @@ class MetaConnectionServiceTest extends TestCase
             $this->cache,
             app('encrypter'),
             new NullLogger,
+            $this->feedItemRepository,
         );
     }
 
@@ -141,7 +146,8 @@ class MetaConnectionServiceTest extends TestCase
         $this->mockSuccessfulOAuth();
         $result = $this->service->handleCallback('code', $this->state());
 
-        $this->repository->shouldReceive('findFirstWhere')->once()->andReturn((new OrganizerSocialConnectionDomainObject)->setId(12));
+        $this->repository->shouldReceive('findFirstWhere')->once()->andReturn((new OrganizerSocialConnectionDomainObject)->setId(12)->setFacebookPageId('old-page'));
+        $this->feedItemRepository->shouldReceive('deleteWhere')->once()->with(['organizer_id' => 4]);
         $this->repository->shouldReceive('updateFromArray')
             ->once()
             ->withArgs(fn (int $id, array $attributes) => $id === 12 && $attributes[OrganizerSocialConnectionDomainObjectAbstract::LAST_ERROR] === null)
@@ -189,6 +195,7 @@ class MetaConnectionServiceTest extends TestCase
         $this->repository->shouldReceive('findFirstWhere')->once()->andReturn($connection);
         $this->client->shouldReceive('revokePermissions')->once()->with('fb-user', 'long-token')->andThrow(new MetaGraphApiException('Expired', graphErrorCode: 190));
         $this->repository->shouldReceive('deleteById')->once()->with(12);
+        $this->feedItemRepository->shouldReceive('deleteWhere')->once()->with(['organizer_id' => 4])->andReturn(5);
 
         $this->service->disconnect(3, 4);
     }
