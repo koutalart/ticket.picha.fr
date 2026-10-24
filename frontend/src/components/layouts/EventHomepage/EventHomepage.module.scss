@@ -383,24 +383,27 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 0.9rem;
 }
 
-.metaLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--primary-color);
-  font-weight: 500;
-  font-size: 0.85rem;
+.metaLocationLink {
+  color: inherit;
   text-decoration: none;
-  margin-top: 4px;
+  border-radius: $radius-md;
+  transition: color $transition-fast;
 
-  svg {
-    width: 0.7rem;
-    height: 0.7rem;
-  }
-
-  &:hover {
+  &:hover .metaPrimary,
+  &:focus-visible .metaPrimary {
+    color: var(--primary-color);
     text-decoration: underline;
+    text-underline-offset: 3px;
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+  }
+}
+
+.locationSection {
+  scroll-margin-top: 16px;
 }
 
 .addToCalendarButton {

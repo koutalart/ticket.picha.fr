@@ -11,7 +11,6 @@ import {
     IconCalendar,
     IconCalendarOff,
     IconCalendarPlus,
-    IconExternalLink,
     IconMail,
     IconMapPin,
     IconMaximize,
@@ -55,6 +54,7 @@ import {useRegisteredOnDevice} from "../../../hooks/useRegisteredOnDevice.ts";
 import {AlreadyRegisteredLink, AttendanceAccessModal, RegisteredNotice} from "./AttendanceAccess";
 
 const VIDEO_PAUSE_PROGRESS = 0.6;
+const LOCATION_SECTION_ID = 'lieu';
 
 interface EventHomepageProps {
     event?: Event;
@@ -166,6 +166,16 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
     const scrollToTickets = () => {
         ticketsSectionRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
+    };
+
+    const scrollToLocation = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        const target = document.getElementById(LOCATION_SECTION_ID);
+        if (!target) {
+            return;
+        }
+        e.preventDefault();
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+        window.history.replaceState(null, '', `#${LOCATION_SECTION_ID}`);
     };
 
     if (!event) {
@@ -658,30 +668,20 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                                             {/* Location */}
                                             {hasLocation && locationDetails && (
-                                                <div className={classes.metaItem}>
+                                                <a
+                                                    href={`#${LOCATION_SECTION_ID}`}
+                                                    onClick={scrollToLocation}
+                                                    className={`${classes.metaItem} ${classes.metaLocationLink}`}
+                                                >
                                                     <div className={classes.metaIconBox}>
                                                         <IconMapPin/>
                                                     </div>
                                                     <div className={classes.metaContent}>
                                                         <div className={classes.metaPrimary}>
-                                                            {locationDetails.venue_name}
+                                                            {getShortLocationDisplay(locationDetails) || formatAddress(locationDetails)}
                                                         </div>
-                                                        <div className={classes.metaSecondary}>
-                                                            {formatAddress(locationDetails)}
-                                                        </div>
-                                                        {mapUrl && (
-                                                            <a
-                                                                href={mapUrl}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className={classes.metaLink}
-                                                            >
-                                                                {t`View on Google Maps`}
-                                                                <IconExternalLink/>
-                                                            </a>
-                                                        )}
                                                     </div>
-                                                </div>
+                                                </a>
                                             )}
                                         </div>
                                     </div>
@@ -699,7 +699,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                                 {/* Location Section (with map) */}
                                 {hasLocation && locationDetails && (
-                                    <div className={classes.section}>
+                                    <div className={`${classes.section} ${classes.locationSection}`} id={LOCATION_SECTION_ID}>
                                         <div className={classes.sectionHeader}>
                                             <h2 className={classes.sectionTitle}>{t`Location`}</h2>
                                         </div>
