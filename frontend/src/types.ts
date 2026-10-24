@@ -1490,6 +1490,7 @@ export interface OrganizerSmsSettings {
     live_chat_enabled: boolean;
     live_chat_relay_label: string | null;
     live_chat_relay_line: string;
+    sms_default_reminders_enabled: boolean;
     history_import: SmsHistoryImport;
 }
 
@@ -1648,6 +1649,8 @@ export interface SmsCampaign {
     completed_at: string | null;
     failure_reason: string | null;
     event_timezone: string | null;
+    auto_key?: string | null;
+    auto_edited?: boolean;
 }
 
 export type SmsCampaignType = 'IMPORTED' | 'REMINDER';

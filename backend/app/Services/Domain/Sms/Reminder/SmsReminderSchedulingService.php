@@ -16,6 +16,7 @@ use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
 use HiEvents\DomainObjects\Status\SmsCampaignStatus;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Exceptions\SmsReminderNotCancellableException;
+use HiEvents\Exceptions\SmsReminderNotEditableException;
 use HiEvents\Exceptions\SmsReminderValidationException;
 use HiEvents\Helper\SmsSegmentCounter;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -140,6 +141,75 @@ class SmsReminderSchedulingService
         if ($cancelled === 0) {
             throw new SmsReminderNotCancellableException(__('This reminder is already being sent and can no longer be cancelled'));
         }
+    }
+
+    /**
+     * Changes the text, name or time of a reminder not sent yet. An automatic reminder edited this way no longer follows the event date.
+     *
+     * @throws ResourceNotFoundException
+     * @throws SmsReminderValidationException
+     * @throws SmsReminderNotEditableException
+     */
+    public function update(int $campaignId, SmsReminderRequestDTO $dto): SmsCampaignDomainObject
+    {
+        $where = [
+            SmsCampaignDomainObjectAbstract::ID => $campaignId,
+            SmsCampaignDomainObjectAbstract::ORGANIZER_ID => $dto->organizerId,
+            SmsCampaignDomainObjectAbstract::TYPE => SmsCampaignType::REMINDER->value,
+        ];
+
+        /** @var SmsCampaignDomainObject|null $reminder */
+        $reminder = $this->campaignRepository->findFirstWhere($where);
+        if ($reminder === null || $reminder->getEventId() === null) {
+            throw new ResourceNotFoundException(__('Reminder not found'));
+        }
+
+        if ($reminder->getStatus() !== SmsCampaignStatus::SCHEDULED->value) {
+            throw new SmsReminderNotEditableException(__('This reminder is already being sent and can no longer be changed'));
+        }
+
+        $event = $this->findEvent($dto->organizerId, $reminder->getEventId());
+
+        if (trim($dto->message) === '') {
+            throw new SmsReminderValidationException(__('The reminder message cannot be empty'));
+        }
+
+        if ($dto->sendAt === null) {
+            throw new SmsReminderValidationException(__('Choose the date and time of sending'), 'send_at');
+        }
+
+        $scheduledAt = $this->toUtc($dto->sendAt, $event);
+        if (Carbon::parse($scheduledAt, 'UTC')->lte(Carbon::now('UTC'))) {
+            throw new SmsReminderValidationException(__('The sending date must be in the future'), 'send_at');
+        }
+
+        $name = trim((string) $dto->name);
+
+        return $this->databaseManager->transaction(function () use ($reminder, $where, $dto, $name, $scheduledAt, $campaignId) {
+            $updated = $this->campaignRepository->updateWhere(
+                attributes: [
+                    SmsCampaignDomainObjectAbstract::MESSAGE => trim($dto->message),
+                    SmsCampaignDomainObjectAbstract::NAME => $name !== '' ? mb_substr($name, 0, 120) : $reminder->getName(),
+                    SmsCampaignDomainObjectAbstract::SCHEDULED_AT => $scheduledAt,
+                    SmsCampaignDomainObjectAbstract::AUTO_EDITED => true,
+                ],
+                where: [...$where, SmsCampaignDomainObjectAbstract::STATUS => SmsCampaignStatus::SCHEDULED->value],
+            );
+
+            if ($updated === 0) {
+                throw new SmsReminderNotEditableException(__('This reminder is already being sent and can no longer be changed'));
+            }
+
+            $this->recipientRepository->updateWhere(
+                attributes: [SmsCampaignRecipientDomainObjectAbstract::SCHEDULED_AT => $scheduledAt],
+                where: [
+                    SmsCampaignRecipientDomainObjectAbstract::SMS_CAMPAIGN_ID => $campaignId,
+                    SmsCampaignRecipientDomainObjectAbstract::STATUS => SmsCampaignRecipientStatus::PENDING->value,
+                ],
+            );
+
+            return $this->campaignRepository->findFirstWhere($where);
+        });
     }
 
     public function recipientAttributes(SmsCampaignDomainObject $campaign, SmsReminderRecipientDTO $recipient): array

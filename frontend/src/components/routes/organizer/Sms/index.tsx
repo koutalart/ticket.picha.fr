@@ -25,7 +25,7 @@ const VIEW_PARAM = 'view';
 
 type SmsView = 'conversations' | 'campaigns' | 'reminders' | 'chats';
 
-const VIEWS: SmsView[] = ['conversations', 'campaigns', 'reminders', 'chats'];
+const VIEWS: SmsView[] = ['conversations', 'reminders', 'campaigns', 'chats'];
 
 const Sms = () => {
     const {organizerId} = useParams();
@@ -110,8 +110,8 @@ const Sms = () => {
                 onChange={(value) => changeView(value as SmsView)}
                 data={[
                     {value: 'conversations', label: t`Conversations`},
-                    {value: 'campaigns', label: t`Campaigns`},
                     {value: 'reminders', label: t`Reminders`},
+                    {value: 'campaigns', label: t`Campaigns`},
                     ...(settings?.live_chat_enabled || view === 'chats' ? [{value: 'chats', label: t`Web chats`}] : []),
                 ]}
             />

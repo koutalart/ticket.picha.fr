@@ -78,6 +78,10 @@ class UpdateOrganizerSmsSettingsHandler
             $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_INSTRUCTIONS] = $this->cleanInstructions($dto->assistantInstructions);
         }
 
+        if ($dto->wasProvided('defaultRemindersEnabled')) {
+            $this->settingsService->setDefaultRemindersEnabled($dto->organizerId, $dto->defaultRemindersEnabled);
+        }
+
         if ($attributes !== []) {
             $settings = $this->settingsRepository->updateFromArray($settings->getId(), $attributes);
         }
@@ -87,6 +91,7 @@ class UpdateOrganizerSmsSettingsHandler
             webhookUrl: $this->settingsService->getWebhookUrl($settings),
             assistantAvailable: $this->assistantService->isAvailable(),
             sharedLine: $this->settingsService->findSharedLine($settings),
+            defaultRemindersEnabled: $this->settingsService->defaultRemindersEnabled($dto->organizerId),
         );
     }
 

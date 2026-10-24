@@ -11,6 +11,7 @@ use HiEvents\Helper\DateHelper;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Event\DTO\UpdateEventDTO;
+use HiEvents\Services\Domain\Sms\Reminder\SmsDefaultRemindersService;
 use HiEvents\Services\Infrastructure\HtmlPurifier\HtmlPurifierService;
 use HiEvents\Jobs\Event\Webhook\DispatchEventWebhookJob;
 use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
@@ -26,6 +27,7 @@ readonly class UpdateEventHandler
         private DatabaseManager          $databaseManager,
         private OrderRepositoryInterface $orderRepository,
         private HtmlPurifierService      $purifier,
+        private SmsDefaultRemindersService $defaultRemindersService,
     )
     {
     }
@@ -35,11 +37,15 @@ readonly class UpdateEventHandler
      */
     public function handle(UpdateEventDTO $eventData): EventDomainObject
     {
-        return $this->databaseManager->transaction(function () use ($eventData) {
+        $event = $this->databaseManager->transaction(function () use ($eventData) {
             $this->updateEventAttributes($eventData);
 
             return $this->getUpdateEvent($eventData);
         });
+
+        $this->defaultRemindersService->rescheduleForEventSafely($event);
+
+        return $event;
     }
 
     private function fetchExistingEvent(UpdateEventDTO $eventData)

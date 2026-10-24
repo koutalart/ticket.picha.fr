@@ -26,6 +26,7 @@ use HiEvents\Http\Actions\Sms\GetSmsRemindersAction;
 use HiEvents\Http\Actions\Sms\ScheduleSmsReminderAction;
 use HiEvents\Http\Actions\Sms\PreviewSmsReminderAction;
 use HiEvents\Http\Actions\Sms\CancelSmsReminderAction;
+use HiEvents\Http\Actions\Sms\UpdateSmsReminderAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -471,6 +472,9 @@ $router->middleware(['auth:api'])->group(
             ->middleware('throttle:60,1');
         $router->post('/organizers/{organizer_id}/sms/reminders/{reminder_id}/cancel', CancelSmsReminderAction::class)
             ->where('reminder_id', '[0-9]+');
+        $router->put('/organizers/{organizer_id}/sms/reminders/{reminder_id}', UpdateSmsReminderAction::class)
+            ->where('reminder_id', '[0-9]+')
+            ->middleware('throttle:20,1');
         $router->get('/organizers/{organizer_id}/sms/conversations/{conversation_id}', GetSmsConversationAction::class)
             ->where('conversation_id', '[0-9]+');
         $router->patch('/organizers/{organizer_id}/sms/conversations/{conversation_id}', UpdateSmsConversationAction::class)

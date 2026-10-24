@@ -5,12 +5,14 @@ namespace HiEvents\Services\Application\Handlers\Event;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Services\Domain\Event\DTO\DuplicateEventDataDTO;
 use HiEvents\Services\Domain\Event\DuplicateEventService;
+use HiEvents\Services\Domain\Sms\Reminder\SmsDefaultRemindersService;
 use Throwable;
 
 class DuplicateEventHandler
 {
     public function __construct(
-        private readonly DuplicateEventService $duplicateEventService,
+        private readonly DuplicateEventService      $duplicateEventService,
+        private readonly SmsDefaultRemindersService $defaultRemindersService,
     )
     {
     }
@@ -20,7 +22,7 @@ class DuplicateEventHandler
      */
     public function handle(DuplicateEventDataDTO $data): EventDomainObject
     {
-        return $this->duplicateEventService->duplicateEvent(
+        $event = $this->duplicateEventService->duplicateEvent(
             eventId: $data->eventId,
             accountId: $data->accountId,
             title: $data->title,
@@ -38,5 +40,9 @@ class DuplicateEventHandler
             description: $data->description,
             endDate: $data->endDate,
         );
+
+        $this->defaultRemindersService->createForEventSafely($event);
+
+        return $event;
     }
 }

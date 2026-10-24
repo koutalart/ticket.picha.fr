@@ -111,6 +111,16 @@ export const SmsSettings = () => {
         });
     };
 
+    const toggleDefaultReminders = (enabled: boolean) => {
+        updateMutation.mutate({
+            organizerId: organizerId!,
+            settings: {sms_default_reminders_enabled: enabled},
+        }, {
+            onSuccess: () => showSuccess(enabled ? t`Automatic reminders enabled` : t`Automatic reminders disabled`),
+            onError: () => showError(t`Unable to update the automatic reminders`),
+        });
+    };
+
     const testConnection = () => {
         testMutation.mutate({organizerId: organizerId!}, {
             onSuccess: ({data}) => {
@@ -241,6 +251,14 @@ export const SmsSettings = () => {
                         description={t`Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline.`}
                         checked={settings.notify_on_inbound_sms}
                         onChange={(event) => toggleInboundAlerts(event.currentTarget.checked)}
+                        disabled={updateMutation.isPending}
+                        mb="lg"
+                    />
+                    <Switch
+                        label={t`Automatically schedule 3 SMS reminders for each new event`}
+                        description={t`Sent to the attendees one week before at 6 pm, the day before at 6 pm and 3 hours before the start, in the timezone of the event. Each reminder can be edited or cancelled in the Reminders tab of your SMS messages.`}
+                        checked={settings.sms_default_reminders_enabled}
+                        onChange={(event) => toggleDefaultReminders(event.currentTarget.checked)}
                         disabled={updateMutation.isPending}
                         mb="lg"
                     />

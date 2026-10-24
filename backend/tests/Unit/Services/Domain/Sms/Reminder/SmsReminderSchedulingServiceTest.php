@@ -7,6 +7,7 @@ use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\SmsCampaignDomainObject;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Exceptions\SmsReminderNotCancellableException;
+use HiEvents\Exceptions\SmsReminderNotEditableException;
 use HiEvents\Exceptions\SmsReminderValidationException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
@@ -210,6 +211,49 @@ class SmsReminderSchedulingServiceTest extends TestCase
 
         $this->expectException(ResourceNotFoundException::class);
         $this->service->cancel(9, 70);
+    }
+
+    public function test_editing_a_reminder_marks_it_as_edited_so_it_no_longer_follows_the_event(): void
+    {
+        $where = ['id' => 70, 'organizer_id' => 9, 'type' => 'REMINDER'];
+        $this->campaignRepository->shouldReceive('findFirstWhere')->with($where)->andReturn(
+            (new SmsCampaignDomainObject)->setId(70)->setEventId(8)->setName('Rappel J-1')->setStatus('SCHEDULED')->setAutoKey('J-1')
+        );
+        $this->campaignRepository->shouldReceive('updateWhere')->once()->withArgs(function (array $attributes, array $updateWhere) use ($where) {
+            return $attributes['message'] === 'Nouveau texte {prenom}'
+                && $attributes['name'] === 'Rappel J-1'
+                && $attributes['scheduled_at'] === '2026-10-23 15:00:00'
+                && $attributes['auto_edited'] === true
+                && $updateWhere === [...$where, 'status' => 'SCHEDULED'];
+        })->andReturn(1);
+        $this->recipientRepository->shouldReceive('updateWhere')->once()->withArgs(function (array $attributes, array $recipientWhere) {
+            return $attributes === ['scheduled_at' => '2026-10-23 15:00:00']
+                && $recipientWhere === ['sms_campaign_id' => 70, 'status' => 'PENDING'];
+        })->andReturn(0);
+
+        $this->service->update(70, new SmsReminderRequestDTO(9, 0, ' Nouveau texte {prenom} ', '2026-10-23 18:00'));
+    }
+
+    public function test_cannot_edit_a_reminder_already_sent(): void
+    {
+        $this->campaignRepository->shouldReceive('findFirstWhere')->andReturn(
+            (new SmsCampaignDomainObject)->setId(70)->setEventId(8)->setName('Rappel')->setStatus('SENT')
+        );
+        $this->campaignRepository->shouldNotReceive('updateWhere');
+
+        $this->expectException(SmsReminderNotEditableException::class);
+        $this->service->update(70, new SmsReminderRequestDTO(9, 0, 'Texte', '2026-10-23 18:00'));
+    }
+
+    public function test_cannot_move_an_edited_reminder_into_the_past(): void
+    {
+        $this->campaignRepository->shouldReceive('findFirstWhere')->andReturn(
+            (new SmsCampaignDomainObject)->setId(70)->setEventId(8)->setName('Rappel')->setStatus('SCHEDULED')
+        );
+        $this->campaignRepository->shouldNotReceive('updateWhere');
+
+        $this->expectException(SmsReminderValidationException::class);
+        $this->service->update(70, new SmsReminderRequestDTO(9, 0, 'Texte', '2026-10-22 08:00'));
     }
 
     private function audience(): SmsReminderAudienceDTO

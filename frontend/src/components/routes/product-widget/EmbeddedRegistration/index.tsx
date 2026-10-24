@@ -54,6 +54,7 @@ import {getConfig} from "../../../../utilites/config.ts";
 import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 import {UserGeneratedContent} from "../../../common/UserGeneratedContent";
 import {SaleCountdown} from "./SaleCountdown.tsx";
+import {LineDescription} from "./LineDescription.tsx";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import classes from "./EmbeddedRegistration.module.scss";
@@ -201,7 +202,7 @@ export const EmbeddedRegistration = ({
     const nextRef = useRef<() => void>(() => undefined);
     const leaveTimer = useRef<number | undefined>(undefined);
     const [leaving, setLeaving] = useState<{ step: Step, direction: 'forward' | 'backward' } | null>(null);
-    const [addedParticipantKeys, setAddedParticipantKeys] = useState<Set<string>>(() => new Set());
+    const [confirmingRemovalKey, setConfirmingRemovalKey] = useState<string | null>(null);
 
     const form = useForm<RegistrationFormValues>({
         initialValues: {
@@ -874,28 +875,52 @@ export const EmbeddedRegistration = ({
         const lastIndexOfLine = form.values.products.map(row => row.line_key).lastIndexOf(addTargetItem.key);
         form.insertListItem('products', participant, lastIndexOfLine + 1);
         setSelection(previous => ({...previous, [addTargetItem.key]: addTargetItem.quantity + 1}));
-        setAddedParticipantKeys(previous => new Set(previous).add(participant.key));
         pendingFocus.current = participant.key;
     };
 
-    const canRemovePaidParticipant = (participant: ParticipantValue) => {
+    const canRemoveParticipant = (participant: ParticipantValue, index: number) => {
+        if (!isPaidMode) {
+            return index > 0 && form.values.products.length > (ticket?.minParticipants ?? 1);
+        }
         const item = selectedTicketItems.find(candidate => candidate.key === participant.line_key);
-        if (!item || !addedParticipantKeys.has(participant.key) || selectedTicketCount <= 1) {
+        if (!item || selectedTicketCount <= 1) {
             return false;
         }
         const min = Math.max(1, Number(item.product.min_per_order) || 1);
         return productQuantityInSelection(item.product.id) - 1 >= min;
     };
 
-    const removePaidParticipant = (index: number) => {
+    const removeParticipantAt = (index: number) => {
         const participant = form.values.products[index];
-        const item = selectedTicketItems.find(candidate => candidate.key === participant?.line_key);
-        if (!participant || !item || !canRemovePaidParticipant(participant)) {
+        if (!participant || !canRemoveParticipant(participant, index)) {
+            return;
+        }
+        hasInteracted.current = true;
+        setConfirmingRemovalKey(null);
+        if (!isPaidMode) {
+            removeParticipant(index);
+            return;
+        }
+        const item = selectedTicketItems.find(candidate => candidate.key === participant.line_key);
+        if (!item) {
             return;
         }
         form.removeListItem('products', index);
         setSelection(previous => ({...previous, [item.key]: item.quantity - 1}));
         pendingFocus.current = 'add-participant';
+    };
+
+    const requestParticipantRemoval = (index: number) => {
+        const participant = form.values.products[index];
+        if (!participant) {
+            return;
+        }
+        if (participant.first_name.trim() || participant.last_name.trim()) {
+            setConfirmingRemovalKey(participant.key);
+            pendingFocus.current = `confirm-${participant.key}`;
+            return;
+        }
+        removeParticipantAt(index);
     };
 
     const promoMutation = useMutation({
@@ -1259,27 +1284,40 @@ export const EmbeddedRegistration = ({
                                                     : t`Participant ${participantNumber}`}
                                                 {lineTitle && <span className={classes.participantProduct}>{lineTitle}</span>}
                                             </h3>
-                                            {!isPaidMode && index > 0 && index >= (ticket?.minParticipants ?? 1) && (
+                                            {canRemoveParticipant(participant, index) && confirmingRemovalKey !== participant.key && (
                                                 <ActionIcon
                                                     variant="subtle"
                                                     className={classes.removeButton}
-                                                    onClick={() => removeParticipant(index)}
+                                                    onClick={() => requestParticipantRemoval(index)}
                                                     aria-label={t`Remove participant ${participantNumber}`}
                                                     title={t`Remove`}
+                                                    data-focus-key={`remove-${participant.key}`}
                                                 >
                                                     <IconX size={18}/>
                                                 </ActionIcon>
                                             )}
-                                            {isPaidMode && canRemovePaidParticipant(participant) && (
-                                                <ActionIcon
-                                                    variant="subtle"
-                                                    className={classes.removeButton}
-                                                    onClick={() => removePaidParticipant(index)}
-                                                    aria-label={t`Remove participant ${participantNumber}`}
-                                                    title={t`Remove`}
-                                                >
-                                                    <IconX size={18}/>
-                                                </ActionIcon>
+                                            {canRemoveParticipant(participant, index) && confirmingRemovalKey === participant.key && (
+                                                <div className={classes.removeConfirm} role="group" aria-label={t`Remove participant ${participantNumber}`}>
+                                                    <span className={classes.removeConfirmLabel}>{t`Remove?`}</span>
+                                                    <button
+                                                        type="button"
+                                                        className={classNames(classes.removeConfirmButton, classes.removeConfirmYes)}
+                                                        onClick={() => removeParticipantAt(index)}
+                                                        data-focus-key={`confirm-${participant.key}`}
+                                                    >
+                                                        {t`Yes`}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className={classes.removeConfirmButton}
+                                                        onClick={() => {
+                                                            setConfirmingRemovalKey(null);
+                                                            pendingFocus.current = `remove-${participant.key}`;
+                                                        }}
+                                                    >
+                                                        {t`Cancel`}
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
                                         {showNameFields && (
@@ -1400,6 +1438,7 @@ export const EmbeddedRegistration = ({
                                                 <IconPlus size={18} aria-hidden="true"/>
                                             </button>
                                         </div>
+                                        <LineDescription html={line.product.description}/>
                                     </li>
                                 );
                             })}
@@ -1415,6 +1454,7 @@ export const EmbeddedRegistration = ({
                                     <div className={classes.stepper} aria-label={t`Quantity`}>
                                         <span className={classes.stepperValue}>{item.quantity}</span>
                                     </div>
+                                    <LineDescription html={item.product.description}/>
                                 </li>
                             ))}
                         </ul>
