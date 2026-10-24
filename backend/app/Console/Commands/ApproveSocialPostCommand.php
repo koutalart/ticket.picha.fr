@@ -21,17 +21,10 @@ class ApproveSocialPostCommand extends Command
 
     protected $description = 'Approve a Facebook / Instagram post waiting for approval: it is published at its scheduled time, or right away.';
 
-    public function __construct(
-        private readonly SocialPostService $postService,
-        private readonly SocialPostRepositoryInterface $postRepository,
-    ) {
-        parent::__construct();
-    }
-
-    public function handle(): int
+    public function handle(SocialPostService $postService, SocialPostRepositoryInterface $postRepository): int
     {
         /** @var SocialPostDomainObject|null $post */
-        $post = $this->postRepository->findFirstWhere([SocialPostDomainObjectAbstract::ID => (int) $this->argument('post')]);
+        $post = $postRepository->findFirstWhere([SocialPostDomainObjectAbstract::ID => (int) $this->argument('post')]);
 
         if ($post === null) {
             $this->error('Post not found.');
@@ -49,7 +42,7 @@ class ApproveSocialPostCommand extends Command
         $this->line('Scheduled at (UTC): '.($post->getScheduledAt() ?? 'right away'));
         $this->line('Caption: '.($post->getCaption() ?? '(none)'));
 
-        foreach ($this->postService->mediaFromPost($post) as $item) {
+        foreach ($postService->mediaFromPost($post) as $item) {
             $this->line(sprintf('Media (%s): %s', $item->type->name, $item->url));
         }
 
@@ -60,7 +53,7 @@ class ApproveSocialPostCommand extends Command
         }
 
         try {
-            $approved = $this->postService->schedule(
+            $approved = $postService->schedule(
                 $post->getOrganizerId(),
                 $post->getId(),
                 $this->option('user') ? (int) $this->option('user') : null,

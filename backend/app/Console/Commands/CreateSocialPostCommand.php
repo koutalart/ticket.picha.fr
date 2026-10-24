@@ -37,17 +37,10 @@ class CreateSocialPostCommand extends Command
 
     private const DEFAULT_TIMEZONE = 'Indian/Mayotte';
 
-    public function __construct(
-        private readonly SocialPostService $postService,
-        private readonly OrganizerRepositoryInterface $organizerRepository,
-    ) {
-        parent::__construct();
-    }
-
-    public function handle(): int
+    public function handle(SocialPostService $postService, OrganizerRepositoryInterface $organizerRepository): int
     {
         /** @var OrganizerDomainObject|null $organizer */
-        $organizer = $this->organizerRepository->findFirstWhere(['id' => (int) $this->argument('organizer')]);
+        $organizer = $organizerRepository->findFirstWhere(['id' => (int) $this->argument('organizer')]);
 
         if ($organizer === null) {
             $this->error('Organizer not found.');
@@ -73,7 +66,7 @@ class CreateSocialPostCommand extends Command
         }
 
         try {
-            $posts = $this->postService->create(new CreateSocialPostsDTO(
+            $posts = $postService->create(new CreateSocialPostsDTO(
                 accountId: $organizer->getAccountId(),
                 organizerId: $organizer->getId(),
                 userId: null,
