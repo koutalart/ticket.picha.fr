@@ -56,6 +56,10 @@ class UpdateOrganizerSmsSettingsHandler
             $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_AUTO_SEND] = $dto->assistantAutoSend;
         }
 
+        if ($dto->wasProvided('assistantHoldingReplyEnabled')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_HOLDING_REPLY_ENABLED] = $dto->assistantHoldingReplyEnabled;
+        }
+
         if ($dto->wasProvided('assistantHoldingReply')) {
             $holdingReply = $this->cleanInstructions($dto->assistantHoldingReply);
             $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_HOLDING_REPLY] = $holdingReply !== null

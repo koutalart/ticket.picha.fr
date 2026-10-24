@@ -28,6 +28,7 @@ export interface SmsSettingsRequest {
     assistant_instructions?: string | null;
     assistant_auto_send?: boolean;
     assistant_holding_reply?: string | null;
+    assistant_holding_reply_enabled?: boolean;
     live_chat_enabled?: boolean;
     live_chat_relay_label?: string | null;
     sms_default_reminders_enabled?: boolean;
