@@ -17,14 +17,15 @@ import {ConversationThread} from "./ConversationThread.tsx";
 import {CustomerCard} from "./CustomerCard.tsx";
 import {CampaignList} from "./CampaignList.tsx";
 import {ReminderList} from "./ReminderList.tsx";
+import {LiveChatList} from "./LiveChatList.tsx";
 import classes from "./Sms.module.scss";
 
 const CONVERSATION_PARAM = 'conversation';
 const VIEW_PARAM = 'view';
 
-type SmsView = 'conversations' | 'campaigns' | 'reminders';
+type SmsView = 'conversations' | 'campaigns' | 'reminders' | 'chats';
 
-const VIEWS: SmsView[] = ['conversations', 'campaigns', 'reminders'];
+const VIEWS: SmsView[] = ['conversations', 'campaigns', 'reminders', 'chats'];
 
 const Sms = () => {
     const {organizerId} = useParams();
@@ -111,8 +112,21 @@ const Sms = () => {
                     {value: 'conversations', label: t`Conversations`},
                     {value: 'campaigns', label: t`Campaigns`},
                     {value: 'reminders', label: t`Reminders`},
+                    ...(settings?.live_chat_enabled || view === 'chats' ? [{value: 'chats', label: t`Web chats`}] : []),
                 ]}
             />
+
+            {view === 'chats' && (
+                <LiveChatList
+                    organizerId={organizerId!}
+                    onOpenConversation={(conversationId) => {
+                        const params = new URLSearchParams(searchParams);
+                        params.delete(VIEW_PARAM);
+                        params.set(CONVERSATION_PARAM, String(conversationId));
+                        setSearchParams(params, {replace: true});
+                    }}
+                />
+            )}
 
             {view === 'campaigns' && (
                 <CampaignList organizerId={organizerId} defaultCurrency={organizer?.currency || 'EUR'}/>

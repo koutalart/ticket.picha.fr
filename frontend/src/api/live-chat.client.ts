@@ -1,0 +1,55 @@
+import {api} from "./client";
+import {publicApi} from "./public-client";
+import {GenericDataResponse, GenericPaginatedResponse, IdParam, LiveChatConfig, LiveChatSession, LiveChatTurn} from "../types";
+
+// The chat session id is opaque and travels in this header, never in a URL.
+const SESSION_HEADER = 'X-Chat-Session';
+
+const sessionHeaders = (sessionId: string) => ({headers: {[SESSION_HEADER]: sessionId}});
+
+export const liveChatPublicClient = {
+    config: async (organizerId: IdParam) => {
+        const response = await publicApi.get<GenericDataResponse<LiveChatConfig>>(`organizers/${organizerId}/live-chat`);
+        return response.data;
+    },
+    start: async (organizerId: IdParam, eventId?: IdParam | null) => {
+        const response = await publicApi.post<GenericDataResponse<LiveChatTurn>>(
+            `organizers/${organizerId}/live-chat/sessions`,
+            {event_id: eventId ?? null},
+        );
+        return response.data;
+    },
+    messages: async (sessionId: string) => {
+        const response = await publicApi.get<GenericDataResponse<LiveChatTurn>>('live-chat/messages', sessionHeaders(sessionId));
+        return response.data;
+    },
+    post: async (sessionId: string, message: string) => {
+        const response = await publicApi.post<GenericDataResponse<LiveChatTurn>>(
+            'live-chat/messages',
+            {message},
+            sessionHeaders(sessionId),
+        );
+        return response.data;
+    },
+    contact: async (sessionId: string, contact: { phone?: string | null; email?: string | null }) => {
+        const response = await publicApi.post<GenericDataResponse<LiveChatTurn>>(
+            'live-chat/contact',
+            contact,
+            sessionHeaders(sessionId),
+        );
+        return response.data;
+    },
+};
+
+export const liveChatClient = {
+    list: async (organizerId: IdParam, page = 1) => {
+        const response = await api.get<GenericPaginatedResponse<LiveChatSession>>(
+            `organizers/${organizerId}/live-chats?page=${page}`,
+        );
+        return response.data;
+    },
+    get: async (organizerId: IdParam, sessionId: IdParam) => {
+        const response = await api.get<GenericDataResponse<LiveChatSession>>(`organizers/${organizerId}/live-chats/${sessionId}`);
+        return response.data;
+    },
+};

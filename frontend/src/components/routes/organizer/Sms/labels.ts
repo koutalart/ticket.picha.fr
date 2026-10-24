@@ -30,6 +30,10 @@ export const messageStatusLabel = (message: SmsMessage): string | null => {
 };
 
 export const messageAuthorLabel = (message: SmsMessage): string | null => {
+    if (message.channel === 'WEB_CHAT') {
+        return message.direction === 'INBOUND' ? t`Web chat` : t`Web chat assistant`;
+    }
+
     if (message.auto_sent) {
         return message.auto_reply_type === 'HOLDING' ? t`Holding reply sent automatically` : t`Sent automatically`;
     }

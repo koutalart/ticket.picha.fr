@@ -397,3 +397,13 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.liveChatMessage {
+  padding: 8px 12px;
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-default-hover);
+
+  &[data-author='VISITOR'] {
+    background: var(--mantine-primary-color-light);
+  }
+}

@@ -30,15 +30,20 @@ class SmsAssistantEventCatalogService
 
     private const LOOKBACK_DAYS = 7;
 
+    private const MAX_TEXT_LENGTH = 1500;
+
+    private const MAX_PAGE_ITEMS = 15;
+
     public function __construct(
         private readonly EventRepositoryInterface $eventRepository,
         private readonly ProductFilterService $productFilterService,
     ) {}
 
     /**
+     * @param  bool  $withDetails  Also describe the event, its tickets and its dedicated pages (FAQ, practical info, artists)
      * @return Collection<int, SmsAssistantEventInfoDTO>
      */
-    public function getUpcomingEvents(int $organizerId): Collection
+    public function getUpcomingEvents(int $organizerId, bool $withDetails = false): Collection
     {
         $events = $this->eventRepository
             ->loadRelation(new Relationship(ProductCategoryDomainObject::class, [
@@ -63,11 +68,11 @@ class SmsAssistantEventCatalogService
         return $events
             ->reject(fn (EventDomainObject $event) => $event->isEventInPast())
             ->take(self::MAX_EVENTS)
-            ->map(fn (EventDomainObject $event) => $this->describe($event))
+            ->map(fn (EventDomainObject $event) => $this->describe($event, $withDetails))
             ->values();
     }
 
-    private function describe(EventDomainObject $event): SmsAssistantEventInfoDTO
+    private function describe(EventDomainObject $event, bool $withDetails): SmsAssistantEventInfoDTO
     {
         $timezone = $event->getTimezone() ?: 'UTC';
         $categories = $event->getProductCategories() ?? collect();
@@ -79,26 +84,93 @@ class SmsAssistantEventCatalogService
             foreach ($visible as $category) {
                 foreach ($category->getProducts() ?? [] as $product) {
                     foreach ($product->getProductPrices() ?? [] as $price) {
-                        $tickets[] = $this->describeTicket($event, $product, $price);
+                        $tickets[] = $this->describeTicket($event, $product, $price, $withDetails);
                     }
                 }
             }
         }
 
+        $settings = $event->getEventSettings();
+        $pages = $withDetails ? $this->pages($settings) : [];
+
         return new SmsAssistantEventInfoDTO(
             title: $event->getTitle(),
             startsAt: $this->localDate($event->getStartDate(), $timezone),
             endsAt: $this->localDate($event->getEndDate(), $timezone),
-            venue: $this->venue($event->getEventSettings()),
+            venue: $this->venue($settings),
             url: $event->getEventUrl(),
             tickets: $tickets,
+            id: $withDetails ? $event->getId() : null,
+            description: $withDetails ? self::plainText($event->getDescription()) : null,
+            feesAddedAtCheckout: $withDetails && $settings !== null ? $settings->getPassPlatformFeeToBuyer() : null,
+            practicalInfo: $pages['practical_info'] ?? [],
+            faq: $pages['faq'] ?? [],
+            artists: $pages['artists'] ?? [],
         );
+    }
+
+    /**
+     * @return array{practical_info?: array, faq?: array, artists?: string[]}
+     */
+    private function pages(?EventSettingDomainObject $settings): array
+    {
+        $pages = $settings?->getEventPages();
+        if (is_string($pages)) {
+            $pages = json_decode($pages, true);
+        }
+        if (! is_array($pages)) {
+            return [];
+        }
+
+        $practicalInfo = collect($pages['practical_info'] ?? [])
+            ->filter(fn ($section) => is_array($section) && self::plainText($section['title'] ?? null) !== null)
+            ->map(fn (array $section) => [
+                'titre' => self::plainText($section['title']),
+                'contenu' => self::plainText($section['content'] ?? null),
+            ]);
+
+        $faq = collect($pages['faq'] ?? [])
+            ->filter(fn ($item) => is_array($item)
+                && self::plainText($item['question'] ?? null) !== null
+                && self::plainText($item['answer'] ?? null) !== null)
+            ->map(fn (array $item) => [
+                'question' => self::plainText($item['question']),
+                'reponse' => self::plainText($item['answer']),
+            ]);
+
+        $artists = collect($pages['artists'] ?? [])
+            ->map(fn ($artist) => is_array($artist) ? self::plainText($artist['name'] ?? null) : null)
+            ->filter();
+
+        return [
+            'practical_info' => $practicalInfo->take(self::MAX_PAGE_ITEMS)->values()->all(),
+            'faq' => $faq->take(self::MAX_PAGE_ITEMS)->values()->all(),
+            'artists' => $artists->take(self::MAX_PAGE_ITEMS)->values()->all(),
+        ];
+    }
+
+    private static function plainText(mixed $html): ?string
+    {
+        if (! is_string($html)) {
+            return null;
+        }
+
+        $text = preg_replace('~<\s*(br|/p|/li|/h[1-6])[^>]*>~i', "\n", $html) ?? $html;
+        $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = trim(preg_replace("/[ \t]+/u", ' ', preg_replace("/\n\s*\n+/u", "\n", $text) ?? $text) ?? $text);
+
+        if ($text === '') {
+            return null;
+        }
+
+        return mb_strlen($text) > self::MAX_TEXT_LENGTH ? rtrim(mb_substr($text, 0, self::MAX_TEXT_LENGTH)).'...' : $text;
     }
 
     private function describeTicket(
         EventDomainObject $event,
         ProductDomainObject $product,
         ProductPriceDomainObject $price,
+        bool $withDetails = false,
     ): SmsAssistantTicketInfoDTO {
         $name = $product->getTitle();
         if ($product->isTieredType() && $price->getLabel()) {
@@ -120,6 +192,7 @@ class SmsAssistantEventCatalogService
             },
             currency: $event->getCurrency(),
             availability: $availability,
+            description: $withDetails ? self::plainText($product->getDescription()) : null,
         );
     }
 

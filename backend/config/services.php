@@ -87,4 +87,15 @@ return [
         // SMS reply assistant: maximum Claude calls per organizer and per day (0 = no limit).
         'sms_assistant_daily_limit' => (int) env('SMS_ASSISTANT_DAILY_LIMIT', 150),
     ],
+
+    // Live chat on public pages ("Assistance en direct"), answered by the same assistant as the SMS.
+    'live_chat' => [
+        'model' => env('LIVE_CHAT_MODEL', 'claude-haiku-5-5'),
+        // Claude calls per organizer and per day, after which the chat shows the contact form (0 = no limit).
+        'daily_limit' => (int) env('LIVE_CHAT_DAILY_LIMIT', 300),
+        'max_messages_per_session' => (int) env('LIVE_CHAT_MAX_MESSAGES_PER_SESSION', 20),
+        'max_messages_per_ip_per_hour' => (int) env('LIVE_CHAT_MAX_MESSAGES_PER_IP_PER_HOUR', 60),
+        'max_sessions_per_ip_per_hour' => (int) env('LIVE_CHAT_MAX_SESSIONS_PER_IP_PER_HOUR', 5),
+        'retention_days' => (int) env('LIVE_CHAT_RETENTION_DAYS', 90),
+    ],
 ];

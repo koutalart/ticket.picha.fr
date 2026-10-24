@@ -165,6 +165,10 @@ msgstr ""
 msgid "{0} logo"
 msgstr "{0} logó"
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:56
+msgid "{0} message(s) from the visitor"
+msgstr ""
+
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:170
 msgid "{0} of {1} events"
 msgstr ""
@@ -491,7 +495,7 @@ msgstr "Lemondási értesítés elküldve ide:"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "A helyszín hálózatán egy számítógép futtatja a PICHA nyomtatási továbbítót. Átveszi az erről az állomásról nyomtatott jegyeket, és elküldi őket a Zebrának."
 
-#: src/components/routes/organizer/Sms/index.tsx:85
+#: src/components/routes/organizer/Sms/index.tsx:86
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Aki STOP-pal válaszol, automatikusan leiratkozik az SMS-eiről."
 
@@ -531,7 +535,7 @@ msgstr ""
 msgid "A fixed amount per product. E.g, $0.50 per product"
 msgstr "Fix összeg termékenként. Pl. 0,50 dollár termékenként"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:201
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:202
 msgid "A key is saved. Paste a new one to replace it."
 msgstr "Van mentett kulcs. Illesszen be újat a cseréhez."
 
@@ -1505,7 +1509,7 @@ msgstr ""
 msgid "Any queries from product holders will be sent to this email address. This will also be used as the \"reply-to\" address for all emails sent from this event"
 msgstr "A terméktulajdonosoktól érkező bármilyen kérdés erre az e-mail címre kerül elküldésre. Ez lesz az „válasz” cím is az eseményről küldött összes e-mailhez."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:88
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
 msgid "API key removed"
 msgstr "API-kulcs eltávolítva"
 
@@ -1771,13 +1775,23 @@ msgstr "Hozzárendelt konfiguráció"
 msgid "Assigned Tier"
 msgstr "Hozzárendelt szint"
 
-#: src/components/routes/organizer/Sms/labels.ts:43
+#: src/components/common/LiveChatWindow/index.tsx:206
+#: src/components/common/LiveChatWindow/index.tsx:232
+msgid "Assistance"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/labels.ts:47
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:108
 msgid "Assistant"
 msgstr "Asszisztens"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:67
 msgid "Assistant settings saved"
 msgstr "Az asszisztens beállításai mentve"
+
+#: src/components/common/LiveChatWindow/index.tsx:257
+msgid "Assistant:"
+msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:40
 msgid "Associate your brand with our events."
@@ -2013,7 +2027,7 @@ msgstr "Az automatikus ajánlat engedélyezve van"
 msgid "Auto-Process Waitlist"
 msgstr "Várólista automatikus feldolgozása"
 
-#: src/components/routes/organizer/Sms/labels.ts:41
+#: src/components/routes/organizer/Sms/labels.ts:45
 msgid "Automatic message"
 msgstr ""
 
@@ -2394,7 +2408,7 @@ msgstr "Kamera szkenner"
 #: src/components/routes/organizer/QrCodes/index.tsx:161
 #: src/components/routes/organizer/QrCodes/index.tsx:238
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:284
-#: src/components/routes/organizer/Sms/labels.ts:39
+#: src/components/routes/organizer/Sms/labels.ts:43
 msgid "Campaign"
 msgstr "Kampány"
 
@@ -2428,7 +2442,7 @@ msgstr ""
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
-#: src/components/routes/organizer/Sms/index.tsx:112
+#: src/components/routes/organizer/Sms/index.tsx:113
 msgid "Campaigns"
 msgstr ""
 
@@ -2447,7 +2461,7 @@ msgstr "Használhatjuk a platformot önállóan, támogatás nélkül?"
 #: src/components/common/AttendeeTable/index.tsx:387
 #: src/components/common/CheckIn/CheckInOptionsModal.tsx:59
 #: src/components/common/CheckIn/ScannerSelectionModal.tsx:57
-#: src/components/common/ContactOrganizerModal/index.tsx:104
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:95
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:121
 #: src/components/common/PromoCodeTable/index.tsx:119
 #: src/components/common/QuestionAndAnswerList/index.tsx:174
@@ -2533,7 +2547,7 @@ msgstr "törölve"
 #: src/components/routes/kiosk/Orders/index.tsx:180
 #: src/components/routes/kiosk/Orders/index.tsx:195
 #: src/components/routes/kiosk/Orders/index.tsx:260
-#: src/components/routes/organizer/Sms/labels.ts:89
+#: src/components/routes/organizer/Sms/labels.ts:93
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:106
 msgid "Cancelled"
 msgstr "Törölve"
@@ -2664,6 +2678,10 @@ msgstr ""
 #: src/constants/eventCategories.ts:17
 msgid "Charity"
 msgstr "Jótékonyság"
+
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:46
+msgid "Chats where the visitor left a phone number are also in your SMS conversations, marked \"To handle\". Chats without contact details are deleted after 90 days."
+msgstr ""
 
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:139
 msgid "Check"
@@ -3005,6 +3023,10 @@ msgstr ""
 msgid "Close sidebar"
 msgstr "Oldalsáv bezárása"
 
+#: src/components/common/LiveChatWindow/index.tsx:231
+msgid "Close the chat"
+msgstr ""
+
 #: src/components/routes/organizer/Sms/labels.ts:9
 msgid "Closed"
 msgstr "Lezárva"
@@ -3264,7 +3286,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:96
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:147
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:148
 msgid "Configured"
 msgstr "Beállítva"
 
@@ -3351,7 +3373,7 @@ msgstr "Csatlakozás és frissítés"
 msgid "Connect Documentation"
 msgstr "Dokumentáció csatlakoztatása"
 
-#: src/components/routes/organizer/Sms/index.tsx:93
+#: src/components/routes/organizer/Sms/index.tsx:94
 msgid "Connect PICHA SMS in Settings"
 msgstr "PICHA SMS csatlakoztatása a Beállításokban"
 
@@ -3400,15 +3422,15 @@ msgstr "Kapcsolja össze a Stripe fiókját a fizetések fogadásának megkezdé
 msgid "Connected at"
 msgstr "Bejelentkezés ideje"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:122
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
 msgid "Connected to PICHA SMS, but no phone is registered. Install the PICHA SMS app on your Android phone."
 msgstr "Csatlakozva a PICHA SMS-hez, de nincs regisztrált telefon. Telepítse a PICHA SMS alkalmazást Android telefonjára."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:121
 msgid "Connected to PICHA SMS, but your sending number is not one of your phones: {phones}"
 msgstr "Csatlakozva a PICHA SMS-hez, de a küldő szám nem tartozik a telefonjai közé: {phones}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:118
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:119
 msgid "Connected to PICHA SMS. Your sending number is registered."
 msgstr "Csatlakozva a PICHA SMS-hez. A küldő szám regisztrálva van."
 
@@ -3455,7 +3477,7 @@ msgstr ""
 msgid "Contact"
 msgstr "Kapcsolat"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:66
+#: src/components/common/ContactOrganizerModal/index.tsx:38
 msgid "Contact {0}"
 msgstr "Kapcsolatfelvétel {0}"
 
@@ -3577,7 +3599,11 @@ msgstr ""
 msgid "Control how platform fees are handled for this event"
 msgstr "Szabályozza, hogyan kezelje a platformdíjakat ezen eseménynél"
 
-#: src/components/routes/organizer/Sms/index.tsx:111
+#: src/components/common/LiveChatWindow/index.tsx:249
+msgid "Conversation"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:112
 msgid "Conversations"
 msgstr ""
 
@@ -3701,7 +3727,7 @@ msgstr "Vágólapra másolás"
 msgid "Copy URL"
 msgstr "URL másolása"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:191
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:192
 msgid "Copy your API key from the PICHA SMS settings page and paste it below, with the phone number of the SIM used to send."
 msgstr "Másolja ki az API-kulcsot a PICHA SMS beállítási oldaláról, és illessze be alább a küldő SIM-kártya számával együtt."
 
@@ -4091,7 +4117,7 @@ msgstr "Egyedi sablon"
 msgid "Customer"
 msgstr "Ügyfél"
 
-#: src/components/routes/organizer/Sms/index.tsx:163
+#: src/components/routes/organizer/Sms/index.tsx:177
 msgid "Customer file"
 msgstr "Ügyféladatlap"
 
@@ -4436,7 +4462,7 @@ msgstr ""
 
 #: src/components/routes/organizer/Sms/CampaignList.tsx:43
 #: src/components/routes/organizer/Sms/labels.ts:22
-#: src/components/routes/organizer/Sms/labels.ts:56
+#: src/components/routes/organizer/Sms/labels.ts:60
 #: src/components/routes/organizer/Sms/ReminderList.tsx:68
 msgid "Delivered"
 msgstr "Kézbesítve"
@@ -5034,11 +5060,11 @@ msgstr "E-mail cím vágólapra másolva"
 msgid "Email addresses do not match"
 msgstr "Az e-mail címek nem egyeznek"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:108
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
 msgid "Email alerts disabled"
 msgstr "E-mail értesítések kikapcsolva"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:108
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
 msgid "Email alerts enabled"
 msgstr "E-mail értesítések bekapcsolva"
 
@@ -5072,7 +5098,7 @@ msgstr "E-mail megerősítés sikeresen újraküldve"
 msgid "Email footer message"
 msgstr "E-mail lábléc üzenet"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:34
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:32
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:32
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:32
 msgid "Email is required"
@@ -5082,7 +5108,7 @@ msgstr "E-mail cím kötelező"
 msgid "Email logo for this event (light background)"
 msgstr "Az esemény e-mail logója (világos háttér)"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:239
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:240
 msgid "Email me when a new SMS arrives"
 msgstr "E-mailben értesítést kérek új SMS érkezésekor"
 
@@ -5324,7 +5350,7 @@ msgstr "Írja be az ÁFA számot az országkóddal együtt"
 msgid "Enter unique affiliate code"
 msgstr "Adjon meg egyedi partnerkódot"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:80
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:71
 #: src/components/routes/auth/Login/index.tsx:150
 #: src/components/routes/my-tickets/index.tsx:192
 msgid "Enter your email"
@@ -5334,9 +5360,13 @@ msgstr "Adja meg e-mail címét"
 msgid "Enter your email and we'll send you instructions to reset your password."
 msgstr "Írja be az e-mail címét és elküldjük a jelszó visszaállításához szükséges utasításokat."
 
-#: src/components/common/ContactOrganizerModal/index.tsx:74
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:65
 msgid "Enter your name"
 msgstr "Adja meg nevét"
+
+#: src/components/common/LiveChatWindow/index.tsx:175
+msgid "Enter your phone number or your email."
+msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:217
 msgid "Enter your VAT number including the country code, without spaces (e.g., IE1234567A, DE123456789)"
@@ -5868,8 +5898,8 @@ msgstr "Facebook"
 #: src/components/routes/admin/Messages/index.tsx:127
 #: src/components/routes/organizer/Sms/CampaignList.tsx:47
 #: src/components/routes/organizer/Sms/labels.ts:24
-#: src/components/routes/organizer/Sms/labels.ts:58
-#: src/components/routes/organizer/Sms/labels.ts:87
+#: src/components/routes/organizer/Sms/labels.ts:62
+#: src/components/routes/organizer/Sms/labels.ts:91
 #: src/components/routes/organizer/Sms/ReminderList.tsx:69
 msgid "Failed"
 msgstr "Sikertelen"
@@ -6042,7 +6072,7 @@ msgstr "A sablon mentése sikertelen"
 msgid "Failed to save VAT settings. Please try again."
 msgstr "Az ÁFA beállítások mentése sikertelen. Kérjük, próbálja újra."
 
-#: src/components/common/ContactOrganizerModal/index.tsx:57
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:55
 msgid "Failed to send message. Please try again."
 msgstr "Üzenet küldése sikertelen. Kérjük, próbálja újra."
 
@@ -6589,11 +6619,11 @@ msgstr "Generálás"
 msgid "Generate a new relay token"
 msgstr "Új továbbító token létrehozása"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:270
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:271
 msgid "Generate a new signing key"
 msgstr "Új aláírókulcs létrehozása"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:95
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:96
 msgid "Generate a new signing key? You will need to paste it into your PICHA SMS webhook, otherwise incoming SMS will be rejected."
 msgstr "Új aláírókulcsot hoz létre? Be kell illesztenie a PICHA SMS webhookba, különben a beérkező SMS-eket elutasítjuk."
 
@@ -6923,7 +6953,7 @@ msgstr "A kiemelt termékek eltérő háttérszínnel jelennek meg, hogy kiemelk
 msgid "Holding reply"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/labels.ts:34
+#: src/components/routes/organizer/Sms/labels.ts:38
 msgid "Holding reply sent automatically"
 msgstr ""
 
@@ -6995,7 +7025,7 @@ msgstr "Hány perc áll az ügyfél rendelkezésére a megrendelés befejezésé
 msgid "How many participants?"
 msgstr "Hány résztvevő?"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:184
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:185
 msgid "How to connect"
 msgstr "Csatlakoztatás"
 
@@ -7174,11 +7204,11 @@ msgstr ""
 msgid "Import contacts"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:299
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:300
 msgid "Import in progress: {0} messages retrieved"
 msgstr "Importálás folyamatban: {0} üzenet lekérve"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:131
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:132
 msgid "Import started. Messages will appear in SMS messages within a few minutes."
 msgstr "Az importálás elindult. Az üzenetek néhány percen belül megjelennek az SMS-üzenetek között."
 
@@ -7210,7 +7240,7 @@ msgstr "{diffMinutes} perc múlva"
 msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:192
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:193
 msgid "In PICHA SMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events."
 msgstr "A PICHA SMS-ben hozz létre egy webhookot az alábbi URL-lel és aláírókulccsal, és jelöld be a(z) message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline és phone.heartbeat.online eseményeket."
 
@@ -7325,7 +7355,7 @@ msgstr "Instagram"
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:187
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:188
 msgid "Install the PICHA SMS app on your Android phone and sign in on <0>sms.picha.fr</0>."
 msgstr "Telepítse a PICHA SMS alkalmazást Android telefonjára, és jelentkezzen be a <0>sms.picha.fr</0> oldalon."
 
@@ -7362,7 +7392,7 @@ msgstr ""
 msgid "Invalid"
 msgstr "Érvénytelen"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:35
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:33
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:33
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:33
 msgid "Invalid email"
@@ -7727,7 +7757,7 @@ msgstr "Utolsó 7 nap"
 msgid "Last 90 days"
 msgstr "Utolsó 90 nap"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:305
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:306
 msgid "Last import {0}: {1} new messages"
 msgstr "Utolsó importálás {0}: {1} új üzenet"
 
@@ -7796,7 +7826,7 @@ msgstr "Utolsó eladás: <0>{0} jegy</0>"
 msgid "Last sale: <0>{0}</0>"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:160
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:161
 msgid "Last SMS event received {0}"
 msgstr "Utolsó SMS-esemény fogadva: {0}"
 
@@ -7982,6 +8012,14 @@ msgstr "Élő"
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:111
 msgid "LIVE"
 msgstr "ÉLŐ"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:67
+msgid "Live assistance"
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:56
+msgid "Live assistance settings saved"
+msgstr ""
 
 #: src/components/routes/landing/ProductVisuals/index.tsx:95
 msgid "Live attendance"
@@ -8282,7 +8320,7 @@ msgid "Meet the artists who will be on stage for {title}."
 msgstr ""
 
 #: src/components/common/AttendeeTable/index.tsx:184
-#: src/components/common/ContactOrganizerModal/index.tsx:88
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:79
 #: src/components/common/OrdersTable/index.tsx:258
 #: src/components/modals/SendMessageModal/index.tsx:358
 #: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:176
@@ -8317,7 +8355,7 @@ msgstr "Üzenet a vásárlónak"
 msgid "Message cancelled"
 msgstr "Üzenet törölve"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:39
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:37
 msgid "Message cannot exceed 5000 characters"
 msgstr "Az üzenet nem haladhatja meg az 5000 karaktert"
 
@@ -8333,7 +8371,7 @@ msgstr "Üzenet részletei"
 msgid "Message individual attendees"
 msgstr "Egyéni résztvevők üzenete"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:41
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:39
 msgid "Message is required"
 msgstr "Üzenet kötelező"
 
@@ -8631,7 +8669,7 @@ msgstr ""
 msgid "Name and email of each attendee."
 msgstr ""
 
-#: src/components/common/ContactOrganizerModal/index.tsx:32
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:30
 #: src/components/modals/CreateAffiliateModal/index.tsx:28
 #: src/components/modals/EditAffiliateModal/index.tsx:33
 #: src/components/routes/admin/Configurations/index.tsx:168
@@ -8738,7 +8776,7 @@ msgstr "Új válaszsablon"
 msgid "New section"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:97
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:98
 msgid "New signing key generated"
 msgstr "Új aláírókulcs létrehozva"
 
@@ -8746,7 +8784,7 @@ msgstr "Új aláírókulcs létrehozva"
 msgid "New Signups"
 msgstr "Új regisztrációk"
 
-#: src/components/routes/organizer/Sms/index.tsx:102
+#: src/components/routes/organizer/Sms/index.tsx:103
 msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Az új SMS-ek nem érkeznek ide, és a válaszaid nem lesznek elküldve. Ellenőrizd, hogy a telefon be van-e kapcsolva, csatlakozik-e az internethez, és fut-e a PICHA SMS alkalmazás."
 
@@ -8887,6 +8925,10 @@ msgstr "Nem találhatók konfigurációk"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:133
 msgid "no consent"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:16
+msgid "No contact details"
 msgstr ""
 
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:286
@@ -9275,6 +9317,10 @@ msgstr "Nincs megtekintett esemény az elmúlt 14 napban"
 msgid "No waitlist entries"
 msgstr "Nincsenek várólistás bejegyzések"
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:38
+msgid "No web chat yet. The questions asked by visitors in the chat of your public pages will appear here."
+msgstr ""
+
 #: src/components/modals/OrganizerWebhookLogsModal/index.tsx:166
 #: src/components/modals/WebhookLogsModal/index.tsx:180
 msgid "No webhook events have been recorded for this endpoint yet. Events will appear here once they are triggered."
@@ -9323,7 +9369,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:97
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:148
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:149
 msgid "Not configured"
 msgstr "Nincs beállítva"
 
@@ -9357,7 +9403,7 @@ msgid "Not published: the page appears once it has content and is saved."
 msgstr ""
 
 #: src/components/routes/organizer/Sms/labels.ts:26
-#: src/components/routes/organizer/Sms/labels.ts:60
+#: src/components/routes/organizer/Sms/labels.ts:64
 msgid "Not sent (phone offline)"
 msgstr "Nincs elküldve (a telefon offline)"
 
@@ -9713,6 +9759,10 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:81
+msgid "Open a live chat instead of the contact form"
+msgstr ""
+
 #: src/components/common/CheckInListList/index.tsx:165
 #: src/components/modals/CheckInListSuccessModal/index.tsx:56
 msgid "Open Check-In Page"
@@ -9753,6 +9803,10 @@ msgstr "Ügyféladatlap megnyitása"
 #: src/components/layouts/EventHomepage/index.tsx:787
 msgid "Open the event flyer"
 msgstr "Az esemény plakátjának megnyitása"
+
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:90
+msgid "Open the SMS conversation"
+msgstr ""
 
 #: src/components/forms/ProductForm/index.tsx:534
 msgid "Open this ticket when this ticket is sold out"
@@ -9854,6 +9908,10 @@ msgstr "vagy"
 
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1696
 msgid "or press Enter"
+msgstr ""
+
+#: src/components/common/LiveChatWindow/index.tsx:286
+msgid "Or your email"
 msgstr ""
 
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:121
@@ -10470,7 +10528,7 @@ msgstr "Múltbeli események"
 msgid "Past events."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:257
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:258
 msgid "Paste it into the signing key field of your PICHA SMS webhook. Keep it private."
 msgstr "Illessze be a PICHA SMS webhook aláírókulcs mezőjébe. Tartsa titokban."
 
@@ -10725,6 +10783,10 @@ msgstr "Személyre szabott QR-kódos karszalagok az Ön színeivel és logójáv
 msgid "Phone"
 msgstr "Telefon"
 
+#: src/components/common/LiveChatWindow/index.tsx:276
+msgid "Phone (reply by SMS)"
+msgstr ""
+
 #: src/components/routes/kiosk/Settings/index.tsx:213
 msgid "Phone calling code"
 msgstr "Hívószám-előtét"
@@ -10740,11 +10802,11 @@ msgstr "Telefonszám"
 msgid "Phone Number"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:156
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:157
 msgid "Phone offline"
 msgstr "Telefon offline"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:153
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:154
 msgid "Phone online"
 msgstr "Telefon online"
 
@@ -10758,11 +10820,11 @@ msgid "Physical presales"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/index.tsx:103
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:140
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:141
 msgid "PICHA SMS"
 msgstr "PICHA SMS"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:200
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:201
 msgid "PICHA SMS API key"
 msgstr "PICHA SMS API-kulcs"
 
@@ -11138,6 +11200,10 @@ msgstr "Előnézet"
 msgid "Preview checkout form"
 msgstr "Pénztári űrlap előnézete"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:93
+msgid "Preview: Immediate answer, {relayLabel} can take over"
+msgstr ""
+
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1683
 msgid "Previous"
 msgstr ""
@@ -11250,6 +11316,7 @@ msgstr "Nyomtatás"
 msgid "Privacy"
 msgstr "Adatvédelem"
 
+#: src/components/common/LiveChatWindow/index.tsx:334
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:159
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:262
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:182
@@ -11622,6 +11689,10 @@ msgstr ""
 msgid "Reactivate the ticket"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:64
+msgid "Read"
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:531
 msgid "Read our privacy policy"
 msgstr "Adatvédelmi szabályzatunk"
@@ -11990,7 +12061,7 @@ msgstr ""
 msgid "Reminder sent"
 msgstr "Emlékeztetve"
 
-#: src/components/routes/organizer/Sms/index.tsx:113
+#: src/components/routes/organizer/Sms/index.tsx:114
 msgid "Reminders"
 msgstr ""
 
@@ -12061,7 +12132,7 @@ msgstr ""
 msgid "Remove the end time"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:226
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:227
 msgid "Remove the key"
 msgstr "Kulcs eltávolítása"
 
@@ -12070,7 +12141,7 @@ msgstr "Kulcs eltávolítása"
 msgid "Remove the mobile video? Phones will play the main cover video instead."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:83
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:84
 msgid "Remove the PICHA SMS API key? You will no longer be able to send SMS from PICHA."
 msgstr "Eltávolítja a PICHA SMS API-kulcsot? Többé nem küldhet SMS-t a PICHA-ból."
 
@@ -12147,6 +12218,10 @@ msgstr "A ticket.picha.fr címet és a PICHA logót a szervező saját domainjé
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
 msgid "Replied STOP"
 msgstr "STOP-pal válaszolt"
+
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:101
+msgid "Reply by email"
+msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:58
 msgid "Reply template deleted"
@@ -12328,11 +12403,11 @@ msgstr "Állítsa vissza ezt a szervezőt, és tegye ismét aktívvá."
 msgid "Resume"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:293
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:294
 msgid "Retrieve PICHA SMS history"
 msgstr "PICHA SMS előzmények lekérése"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:283
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:284
 msgid "Retrieve the SMS sent and received with your PICHA SMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread."
 msgstr "Kérje le a PICHA SMS-számával küldött és fogadott SMS-eket a webhook bekötése előttről, például egy szkripttel küldött kampányt. A már meglévő üzenetek nem duplikálódnak, és nem lesznek olvasatlanként jelölve."
 
@@ -12552,7 +12627,8 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:214
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:215
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:96
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:151
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
@@ -12680,8 +12756,8 @@ msgstr "Ütemezett"
 
 #: src/components/routes/admin/Messages/index.tsx:125
 #: src/components/routes/event/messages.tsx:62
-#: src/components/routes/organizer/Sms/labels.ts:52
-#: src/components/routes/organizer/Sms/labels.ts:91
+#: src/components/routes/organizer/Sms/labels.ts:56
+#: src/components/routes/organizer/Sms/labels.ts:95
 msgid "Scheduled"
 msgstr "Ütemezett"
 
@@ -13069,6 +13145,7 @@ msgstr "Gyorsan fogy 🔥"
 msgid "Seminar"
 msgstr "Szeminárium"
 
+#: src/components/common/LiveChatWindow/index.tsx:322
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:270
@@ -13096,7 +13173,7 @@ msgstr ""
 msgid "Send an SMS when an attendee cancels their registration"
 msgstr "SMS küldése, amikor egy résztvevő lemondja a regisztrációját"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:141
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:142
 msgid "Send and receive SMS with your customers from your own Android phone, using the PICHA SMS app. Replies appear in SMS messages."
 msgstr "Küldjön és fogadjon SMS-t ügyfeleivel saját Android telefonjáról a PICHA SMS alkalmazással. A válaszok az SMS-üzenetekben jelennek meg."
 
@@ -13116,10 +13193,14 @@ msgstr "E-mailek küldése résztvevőknek, jegytulajdonosoknak vagy rendelés t
 msgid "Send me a copy"
 msgstr "Küldjön nekem egy másolatot"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:112
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:103
 #: src/components/modals/SendMessageModal/index.tsx:475
 msgid "Send Message"
 msgstr "Üzenet küldése"
+
+#: src/components/common/LiveChatWindow/index.tsx:297
+msgid "Send my details"
+msgstr ""
 
 #: src/components/modals/SendMessageModal/index.tsx:399
 msgid "Send now"
@@ -13177,11 +13258,11 @@ msgstr "Küldés"
 msgid "Sending date and time"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/labels.ts:83
+#: src/components/routes/organizer/Sms/labels.ts:87
 msgid "Sending in progress"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:208
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:209
 msgid "Sending number"
 msgstr "Küldő szám"
 
@@ -13198,19 +13279,23 @@ msgstr "Küldés..."
 msgid "Sending…"
 msgstr "Küldés…"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:73
+msgid "Sensitive questions or questions it cannot answer get a holding reply that promises nothing. The visitor is then asked for a phone number (you reply by SMS, the conversation appears \"To handle\") or an email. Chats without contact details are listed in SMS, Web chats, and deleted after 90 days."
+msgstr ""
+
 #: src/components/routes/landing/ProductVisuals/index.tsx:68
 msgid "sent"
 msgstr "elküldve"
 
 #: src/components/routes/admin/Messages/index.tsx:123
 #: src/components/routes/organizer/Sms/labels.ts:20
-#: src/components/routes/organizer/Sms/labels.ts:54
-#: src/components/routes/organizer/Sms/labels.ts:85
+#: src/components/routes/organizer/Sms/labels.ts:58
+#: src/components/routes/organizer/Sms/labels.ts:89
 #: src/components/routes/organizer/Sms/ReminderList.tsx:67
 msgid "Sent"
 msgstr "Elküldve"
 
-#: src/components/routes/organizer/Sms/labels.ts:34
+#: src/components/routes/organizer/Sms/labels.ts:38
 msgid "Sent automatically"
 msgstr ""
 
@@ -13231,7 +13316,7 @@ msgstr "Elküldve a vásárlóknak, amikor rendelést adnak le"
 msgid "Sent to each attendee with their ticket details"
 msgstr "Elküldve minden résztvevőnek a jegy részleteivel"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:240
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:241
 msgid "Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline."
 msgstr "A szervező e-mail-címére küldjük. Beszélgetésenként legfeljebb egy e-mail 15 percenként. Ha a telefon offline lesz, mindig kapsz e-mailt."
 
@@ -13407,7 +13492,7 @@ msgstr ""
 msgid "Shared Capacity Management"
 msgstr "Megosztott kapacitás kezelés"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:150
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:151
 msgid "Shared line"
 msgstr ""
 
@@ -13514,6 +13599,10 @@ msgstr "Az ügyfélnek a fizetés után, a rendelésösszegző oldalon jelenik m
 msgid "Shown to the customer before they checkout"
 msgstr "Az ügyfélnek a fizetés előtt jelenik meg."
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:87
+msgid "Shown under the chat title. For example: a member of the association."
+msgstr ""
+
 #: src/components/forms/QuestionForm/index.tsx:134
 msgid "Shows common address fields, including country"
 msgstr "Gyakori címmezőket mutat, beleértve az országot is."
@@ -13589,15 +13678,15 @@ msgstr "SMS-asszisztens"
 msgid "SMS campaign"
 msgstr "SMS-kampány"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:281
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:282
 msgid "SMS history"
 msgstr "SMS előzmények"
 
-#: src/components/routes/organizer/Sms/index.tsx:91
+#: src/components/routes/organizer/Sms/index.tsx:92
 msgid "SMS is not connected yet."
 msgstr "Az SMS még nincs csatlakoztatva."
 
-#: src/components/routes/organizer/Sms/index.tsx:83
+#: src/components/routes/organizer/Sms/index.tsx:84
 msgid "SMS messages"
 msgstr "SMS-üzenetek"
 
@@ -13611,7 +13700,7 @@ msgstr "SMS letiltási lista"
 msgid "SMS reply templates"
 msgstr "SMS válaszsablonok"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:76
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:77
 msgid "SMS settings saved"
 msgstr "SMS-beállítások mentve"
 
@@ -13622,6 +13711,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:73
 msgid "Snapchat"
 msgstr "Snapchat"
+
+#: src/components/common/LiveChatWindow/index.tsx:274
+msgid "So that the organizer can reply to you"
+msgstr ""
 
 #: src/components/routes/organizer/Settings/index.tsx:61
 msgid "Social Links"
@@ -13920,7 +14013,7 @@ msgstr "Még mindig feldolgozza a régebbi tranzakciók visszatérítéseit."
 msgid "Stop Impersonating"
 msgstr "Megszemélyesítés leállítása"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:202
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:203
 msgid "Stored encrypted. It is never displayed again."
 msgstr "Titkosítva tároljuk. Többé nem jelenik meg."
 
@@ -14433,7 +14526,7 @@ msgid "Test event code (optional)"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:146
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:222
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:223
 msgid "Test the connection"
 msgstr "Kapcsolat tesztelése"
 
@@ -14477,6 +14570,10 @@ msgstr "Köszönjük a támogatását, miközben tovább fejlesztjük platformun
 msgid "That promo code is invalid"
 msgstr "Ez a promóciós kód érvénytelen."
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:68
+msgid "The \"Contact the organizer\" buttons of your event and organizer pages open a chat that answers visitors right away, with the same data and instructions as the SMS assistant. Off by default."
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:215
 msgid "The AI couldn't rewrite your text this time. Try again in a moment."
 msgstr ""
@@ -14489,10 +14586,18 @@ msgstr ""
 msgid "The artists"
 msgstr ""
 
+#: src/components/common/LiveChatWindow/index.tsx:237
+msgid "The assistant cannot answer right now. Leave your message and the organizer will reply by email."
+msgstr ""
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:83
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:98
 msgid "The assistant could not suggest a reply. Please try again."
 msgstr "Az asszisztens nem tudott választ javasolni. Kérjük, próbálja újra."
+
+#: src/components/common/LiveChatWindow/index.tsx:262
+msgid "The assistant is writing"
+msgstr ""
 
 #: src/components/common/ThemeColorControls/index.tsx:62
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
@@ -14505,6 +14610,10 @@ msgstr "A kosár üres."
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:298
 #: src/components/common/QuestionsTable/index.tsx:215
 msgid "The change could not be saved. Please try again."
+msgstr ""
+
+#: src/components/common/LiveChatWindow/index.tsx:268
+msgid "The chat could not start."
 msgstr ""
 
 #: src/components/layouts/CheckIn/index.tsx:353
@@ -14613,7 +14722,7 @@ msgstr ""
 msgid "The import could not be cancelled. Please try again."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:311
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:312
 msgid "The import failed: {importError}. You can start it again, messages already imported are kept."
 msgstr "Az importálás sikertelen: {importError}. Újraindíthatja, a már importált üzenetek megmaradnak."
 
@@ -14647,9 +14756,14 @@ msgstr ""
 msgid "The note could not be saved. Please try again."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:209
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:210
 msgid "The number of the SIM card in the PICHA SMS phone, for example +262639123456."
 msgstr "A PICHA SMS telefonban lévő SIM-kártya száma, például +262639123456."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:62
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:88
+msgid "the organizer"
+msgstr ""
 
 #: src/components/common/OrganizerFontManager/index.tsx:218
 msgid "The organizer font can now be chosen in Typography, for the organizer page and for each event."
@@ -14697,7 +14811,7 @@ msgstr ""
 msgid "The personal link lets the attendee find their registration again. When there is none for an attendee, the link and its label are left out of the message."
 msgstr "A személyes linkkel a résztvevő újra megtalálja a regisztrációját. Ha egy résztvevőnek nincs ilyen, a link és a címkéje kimarad az üzenetből."
 
-#: src/components/routes/organizer/Sms/index.tsx:101
+#: src/components/routes/organizer/Sms/index.tsx:102
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "A telefon offline lett: {0}. Az új SMS-ek nem érkeznek ide, és a válaszaid nem lesznek elküldve. Ellenőrizd, hogy a telefon be van-e kapcsolva, csatlakozik-e az internethez, és fut-e a PICHA SMS alkalmazás."
 
@@ -14961,6 +15075,10 @@ msgstr "Ezt a kódot az értékesítések nyomon követésére használjuk. Csak
 msgid "This color combination may be hard to read for some users"
 msgstr "Ez a színkombináció nehezen olvasható lehet egyes felhasználók számára"
 
+#: src/components/common/LiveChatWindow/index.tsx:183
+msgid "This email does not look valid."
+msgstr ""
+
 #: src/components/layouts/EventHomepage/index.tsx:639
 msgid "This event has ended"
 msgstr "Ez az esemény véget ért"
@@ -15092,6 +15210,10 @@ msgstr "Ez a szervezői profil még nem került közzétételre."
 
 #: src/components/routes/product-widget/AttendeeAttendance/index.tsx:46
 msgid "This personal link is not valid. Please use the link from your latest email."
+msgstr ""
+
+#: src/components/common/LiveChatWindow/index.tsx:179
+msgid "This phone number does not look valid."
 msgstr ""
 
 #: src/components/common/EmailTemplateEditor/EmailTemplatePreviewPane.tsx:69
@@ -15431,6 +15553,10 @@ msgstr "Kiegészítendő"
 msgid "To edit configurations, go to the Configurations section in the admin menu."
 msgstr "A konfigurációk szerkesztéséhez lépjen a Konfigurációk részhez az admin menüben."
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:63
+msgid "To follow up"
+msgstr ""
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:187
 #: src/components/routes/organizer/Sms/ConversationList.tsx:72
 #: src/components/routes/organizer/Sms/customerSummary.ts:19
@@ -15602,6 +15728,10 @@ msgstr "Igaz, ha fizetés folyamatban"
 msgid "Trust"
 msgstr "Bizalom"
 
+#: src/components/common/LiveChatWindow/index.tsx:269
+msgid "Try again"
+msgstr ""
+
 #: src/components/routes/auth/Login/index.tsx:141
 #: src/components/routes/my-tickets/index.tsx:183
 msgid "Try another email"
@@ -15706,7 +15836,7 @@ msgstr ""
 msgid "Unable to fetch attendee"
 msgstr "Nem sikerült lekérni a résztvevőt."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:98
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:99
 msgid "Unable to generate a new signing key"
 msgstr "Nem sikerült új aláírókulcsot létrehozni"
 
@@ -15722,7 +15852,7 @@ msgstr "Nem sikerült csatlakozni a várólistához"
 msgid "Unable to reach Meta. Please try again."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:125
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:126
 msgid "Unable to reach PICHA SMS. Please try again."
 msgstr "A PICHA SMS nem érhető el. Próbálja újra."
 
@@ -15730,7 +15860,7 @@ msgstr "A PICHA SMS nem érhető el. Próbálja újra."
 msgid "Unable to remove the access token"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:90
 msgid "Unable to remove the API key"
 msgstr "Nem sikerült eltávolítani az API-kulcsot"
 
@@ -15738,11 +15868,11 @@ msgstr "Nem sikerült eltávolítani az API-kulcsot"
 msgid "Unable to remove the number"
 msgstr "A szám nem távolítható el"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:132
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:133
 msgid "Unable to start the import"
 msgstr "Az importálás nem indítható el"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
 msgid "Unable to update email alerts"
 msgstr "Nem sikerült frissíteni az e-mail értesítéseket"
 
@@ -15822,7 +15952,7 @@ msgstr ""
 msgid "Unknown customer"
 msgstr "Ismeretlen ügyfél"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:38
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:39
 msgid "unknown error"
 msgstr "ismeretlen hiba"
 
@@ -16421,6 +16551,10 @@ msgstr "Láthatóság"
 msgid "Visible to check-in staff only. Helps identify this list during check-in."
 msgstr "Csak a bejelentkezési személyzet látja. Segít azonosítani ezt a listát bejelentkezéskor."
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:108
+msgid "Visitor"
+msgstr ""
+
 #: src/components/routes/event/Settings/Sections/EmbeddedRegistrationSettings/index.tsx:65
 msgid "Visitors answer one question at a time, add the people coming with them and confirm without leaving the event page."
 msgstr ""
@@ -16459,7 +16593,7 @@ msgstr "VK"
 #: src/components/common/WaitlistTable/index.tsx:24
 #: src/components/modals/OfferWaitlistModal/index.tsx:162
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:71
-#: src/components/routes/organizer/Sms/labels.ts:62
+#: src/components/routes/organizer/Sms/labels.ts:66
 msgid "Waiting"
 msgstr "Várakozik"
 
@@ -16508,6 +16642,10 @@ msgstr "Nem sikerült feldolgozni a fizetését. Kérjük, próbálja újra, vag
 
 #: src/components/routes/product-widget/AttendeeAttendance/index.tsx:87
 msgid "We could not save your answer. Please try again."
+msgstr ""
+
+#: src/components/common/LiveChatWindow/index.tsx:199
+msgid "We could not save your details. Please try again."
 msgstr ""
 
 #: src/components/layouts/EventHomepage/AttendanceAccess/AttendanceAccessModal.tsx:69
@@ -16615,6 +16753,19 @@ msgstr "Hivatalosan Írországba 🇮🇪 költöztettük a székhelyünket. Enn
 msgid "We've sent a 5-digit verification code to:"
 msgstr "Öt számjegyű ellenőrző kódot küldtünk ide:"
 
+#: src/components/routes/organizer/Sms/labels.ts:34
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:76
+msgid "Web chat"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/labels.ts:34
+msgid "Web chat assistant"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:115
+msgid "Web chats"
+msgstr ""
+
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:49
 #: src/components/modals/CreateWebhookModal/index.tsx:49
 msgid "Webhook created successfully"
@@ -16630,7 +16781,7 @@ msgstr "Webhook sikeresen törölve"
 msgid "Webhook Logs"
 msgstr "Webhook naplók"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:256
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:257
 msgid "Webhook signing key"
 msgstr "Webhook aláírókulcs"
 
@@ -16640,7 +16791,7 @@ msgid "Webhook Signing Secret"
 msgstr "Webhook aláírási titok"
 
 #: src/components/forms/WebhookForm/index.tsx:138
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:249
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:250
 msgid "Webhook URL"
 msgstr "Webhook URL"
 
@@ -16921,6 +17072,10 @@ msgstr "Mely jegyeket kell ehhez a bejelentkezési listához társítani?"
 msgid "While it is set, events only appear in the Test events tab and are not used by your campaigns. Remove it once your tests are done."
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:86
+msgid "Who can take over"
+msgstr ""
+
 #: src/components/common/QuestionsTable/index.tsx:461
 msgid "Who fills in the details?"
 msgstr ""
@@ -17008,9 +17163,13 @@ msgstr "Írjon egy üzenetet ügyfélként, hogy lássa, mit javasolna az asszis
 msgid "Write to us"
 msgstr ""
 
-#: src/components/common/ContactOrganizerModal/index.tsx:89
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:80
 msgid "Write your message here..."
 msgstr "Írja ide üzenetét..."
+
+#: src/components/common/LiveChatWindow/index.tsx:308
+msgid "Write your question..."
+msgstr ""
 
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:205
 msgid "Write your reply"
@@ -17221,6 +17380,10 @@ msgstr "Mindig Ön birtokolja a résztvevői adatok 100%-át"
 msgid "You receive"
 msgstr "Ön kap"
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:117
+msgid "You received this chat by email too: reply to that email to answer the visitor from your mailbox."
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:557
 msgid "You registered for an event?"
 msgstr "Regisztrált egy eseményre?"
@@ -17236,6 +17399,10 @@ msgstr "Ön fogadja a vendégeit, mi intézzük a többit"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:143
 msgid "You will have to mark an order as paid manually. This can be done on the manage order page."
 msgstr "Manuálisan kell fizetettként megjelölnie egy megrendelést. Ez a megrendelés kezelése oldalon tehető meg."
+
+#: src/components/common/LiveChatWindow/index.tsx:257
+msgid "You:"
+msgstr ""
 
 #: src/components/modals/CreateCheckInListModal/index.tsx:56
 msgid "You'll need a ticket before you can create a check-in list."
@@ -17264,6 +17431,10 @@ msgstr "Felkerült a várólistára!"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:467
 msgid "You've been offered a spot!"
 msgstr "Helyet ajánlottak neked!"
+
+#: src/components/common/LiveChatWindow/index.tsx:287
+msgid "you@example.com"
+msgstr ""
 
 #: src/components/modals/SendMessageModal/index.tsx:278
 msgid "Your account has messaging limits. To increase your limits, contact us at"
@@ -17323,7 +17494,7 @@ msgstr "Az Ön adatai"
 msgid "Your e-mail address"
 msgstr ""
 
-#: src/components/common/ContactOrganizerModal/index.tsx:79
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:70
 msgid "Your Email"
 msgstr "Az Ön e-mail címe"
 
@@ -17375,20 +17546,28 @@ msgstr ""
 msgid "Your logo, colors, and style on every page"
 msgstr "Az Ön logója, színei és stílusa minden oldalon"
 
+#: src/components/common/LiveChatWindow/index.tsx:309
+msgid "Your message"
+msgstr ""
+
 #: src/components/common/OrdersTable/index.tsx:86
 #: src/components/routes/event/OrdersPage/OrderList.tsx:75
 msgid "Your message has been sent"
 msgstr "Üzenetét elküldtük."
 
-#: src/components/common/ContactOrganizerModal/index.tsx:52
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:50
 msgid "Your message has been sent successfully!"
 msgstr "Üzenetét sikeresen elküldtük!"
+
+#: src/components/common/LiveChatWindow/index.tsx:329
+msgid "Your messages are answered by the organizer's automatic assistant and passed on to the organizer if needed. Without contact details they are deleted after 90 days."
+msgstr ""
 
 #: src/components/routes/event/messages.tsx:274
 msgid "Your messages will appear here"
 msgstr "Az üzenetei itt fognak megjelenni"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:73
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:64
 msgid "Your Name"
 msgstr "Az Ön neve"
 
@@ -17466,15 +17645,15 @@ msgstr "Fizetése sikertelen volt, kérjük, próbálja újra."
 msgid "Your payment was unsuccessful. Please try again."
 msgstr "Fizetése sikertelen volt. Kérjük, próbálja újra."
 
-#: src/components/routes/organizer/Sms/index.tsx:99
+#: src/components/routes/organizer/Sms/index.tsx:100
 msgid "Your PICHA SMS phone is offline"
 msgstr "A PICHA SMS telefonod offline"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:169
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:170
 msgid "Your PICHA SMS phone is offline. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "A PICHA SMS telefonod offline. Ellenőrizd, hogy be van-e kapcsolva, csatlakozik-e az internethez, és fut-e a PICHA SMS alkalmazás."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:168
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:169
 msgid "Your PICHA SMS phone went offline {0}. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "A PICHA SMS telefonod offline lett: {0}. Ellenőrizd, hogy be van-e kapcsolva, csatlakozik-e az internethez, és fut-e a PICHA SMS alkalmazás."
 
@@ -17518,7 +17697,7 @@ msgstr ""
 msgid "Your registration: {0}"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:176
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:177
 msgid "Your SMS are sent with a line shared and managed by PICHA, from the number {sharedNumber}. Customer replies appear in SMS messages and only your team can see your conversations."
 msgstr ""
 

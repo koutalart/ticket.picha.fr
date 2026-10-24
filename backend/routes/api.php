@@ -224,6 +224,13 @@ use HiEvents\Http\Actions\Organizers\Contacts\DeleteContactNoteAction;
 use HiEvents\Http\Actions\Organizers\Contacts\RemoveContactTagAction;
 use HiEvents\Http\Actions\Organizers\Orders\GetOrganizerOrdersAction;
 use HiEvents\Http\Actions\Organizers\Public\SendOrganizerContactMessagePublicAction;
+use HiEvents\Http\Actions\LiveChat\GetOrganizerLiveChatAction;
+use HiEvents\Http\Actions\LiveChat\GetOrganizerLiveChatsAction;
+use HiEvents\Http\Actions\LiveChat\Public\GetLiveChatConfigPublicAction;
+use HiEvents\Http\Actions\LiveChat\Public\GetLiveChatMessagesPublicAction;
+use HiEvents\Http\Actions\LiveChat\Public\PostLiveChatMessagePublicAction;
+use HiEvents\Http\Actions\LiveChat\Public\StartLiveChatPublicAction;
+use HiEvents\Http\Actions\LiveChat\Public\SubmitLiveChatContactPublicAction;
 use HiEvents\Http\Actions\Organizers\Public\SubscribeToOrganizerNewsletterPublicAction;
 use HiEvents\Http\Actions\Organizers\Newsletter\DeleteOrganizerNewsletterSubscriberAction;
 use HiEvents\Http\Actions\Organizers\Newsletter\ExportOrganizerNewsletterSubscribersAction;
@@ -476,6 +483,9 @@ $router->middleware(['auth:api'])->group(
             ->middleware('throttle:20,1');
         $router->post('/organizers/{organizer_id}/sms/assistant/preview', PreviewSmsAssistantAction::class)
             ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/live-chats', GetOrganizerLiveChatsAction::class);
+        $router->get('/organizers/{organizer_id}/live-chats/{live_chat_id}', GetOrganizerLiveChatAction::class)
+            ->where('live_chat_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/newsletter-subscribers', GetOrganizerNewsletterSubscribersAction::class);
         $router->post('/organizers/{organizer_id}/newsletter-subscribers/export', ExportOrganizerNewsletterSubscribersAction::class)
             ->middleware('throttle:10,1');
@@ -758,6 +768,18 @@ $router->prefix('/public')->group(
         $router->get('/organizers/{organizer_id}/events', GetOrganizerEventsPublicAction::class);
         $router->post('/organizers/{organizer_id}/contact', SendOrganizerContactMessagePublicAction::class)
             ->middleware('throttle:5,1');
+
+        // Live chat (« Assistance en direct »): the session id travels in the X-Chat-Session header, never in the URL
+        $router->get('/organizers/{organizer_id}/live-chat', GetLiveChatConfigPublicAction::class)
+            ->middleware('throttle:60,1');
+        $router->post('/organizers/{organizer_id}/live-chat/sessions', StartLiveChatPublicAction::class)
+            ->middleware('throttle:10,1');
+        $router->get('/live-chat/messages', GetLiveChatMessagesPublicAction::class)
+            ->middleware('throttle:30,1');
+        $router->post('/live-chat/messages', PostLiveChatMessagePublicAction::class)
+            ->middleware('throttle:20,1');
+        $router->post('/live-chat/contact', SubmitLiveChatContactPublicAction::class)
+            ->middleware('throttle:10,1');
         $router->get('/custom-domains/{domain}', GetOrganizerByCustomDomainPublicAction::class);
 
         // QR codes

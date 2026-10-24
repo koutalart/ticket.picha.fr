@@ -165,6 +165,10 @@ msgstr ""
 msgid "{0} logo"
 msgstr "{0} 標誌"
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:56
+msgid "{0} message(s) from the visitor"
+msgstr ""
+
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:170
 msgid "{0} of {1} events"
 msgstr "{1} 場活動中出席了 {0} 場"
@@ -491,7 +495,7 @@ msgstr "取消通知已發送至"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "場地網絡中的一部電腦運行 PICHA 打印中繼。它會取得從本工作站打印的門票並發送到 Zebra 打印機。"
 
-#: src/components/routes/organizer/Sms/index.tsx:85
+#: src/components/routes/organizer/Sms/index.tsx:86
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "回覆 STOP 的客戶將自動取消訂閱您的短訊。"
 
@@ -531,7 +535,7 @@ msgstr ""
 msgid "A fixed amount per product. E.g, $0.50 per product"
 msgstr "每個產品的固定金額。例如，每個產品$0.50"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:201
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:202
 msgid "A key is saved. Paste a new one to replace it."
 msgstr "已儲存金鑰。貼上新金鑰即可取代。"
 
@@ -1505,7 +1509,7 @@ msgstr ""
 msgid "Any queries from product holders will be sent to this email address. This will also be used as the \"reply-to\" address for all emails sent from this event"
 msgstr "產品持有者的任何查詢都將發送到此電子郵件地址。此地址還將用作從此活動發送的所有電子郵件的“回覆至”地址"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:88
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
 msgid "API key removed"
 msgstr "API 金鑰已移除"
 
@@ -1771,13 +1775,23 @@ msgstr "已分配配置"
 msgid "Assigned Tier"
 msgstr "分配的級別"
 
-#: src/components/routes/organizer/Sms/labels.ts:43
+#: src/components/common/LiveChatWindow/index.tsx:206
+#: src/components/common/LiveChatWindow/index.tsx:232
+msgid "Assistance"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/labels.ts:47
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:108
 msgid "Assistant"
 msgstr "助理"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:67
 msgid "Assistant settings saved"
 msgstr "助手設定已儲存"
+
+#: src/components/common/LiveChatWindow/index.tsx:257
+msgid "Assistant:"
+msgstr ""
 
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:40
 msgid "Associate your brand with our events."
@@ -2013,7 +2027,7 @@ msgstr "自動提供已啟用"
 msgid "Auto-Process Waitlist"
 msgstr "自動處理候補名單"
 
-#: src/components/routes/organizer/Sms/labels.ts:41
+#: src/components/routes/organizer/Sms/labels.ts:45
 msgid "Automatic message"
 msgstr ""
 
@@ -2394,7 +2408,7 @@ msgstr "相機掃描器"
 #: src/components/routes/organizer/QrCodes/index.tsx:161
 #: src/components/routes/organizer/QrCodes/index.tsx:238
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:284
-#: src/components/routes/organizer/Sms/labels.ts:39
+#: src/components/routes/organizer/Sms/labels.ts:43
 msgid "Campaign"
 msgstr "活動"
 
@@ -2428,7 +2442,7 @@ msgstr "推廣來源（utm 參數）、來源網站及登陸頁，在本網站�
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
-#: src/components/routes/organizer/Sms/index.tsx:112
+#: src/components/routes/organizer/Sms/index.tsx:113
 msgid "Campaigns"
 msgstr ""
 
@@ -2447,7 +2461,7 @@ msgstr "我們可以在沒有支援服務的情況下自行使用平台嗎？"
 #: src/components/common/AttendeeTable/index.tsx:387
 #: src/components/common/CheckIn/CheckInOptionsModal.tsx:59
 #: src/components/common/CheckIn/ScannerSelectionModal.tsx:57
-#: src/components/common/ContactOrganizerModal/index.tsx:104
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:95
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:121
 #: src/components/common/PromoCodeTable/index.tsx:119
 #: src/components/common/QuestionAndAnswerList/index.tsx:174
@@ -2533,7 +2547,7 @@ msgstr "已取消"
 #: src/components/routes/kiosk/Orders/index.tsx:180
 #: src/components/routes/kiosk/Orders/index.tsx:195
 #: src/components/routes/kiosk/Orders/index.tsx:260
-#: src/components/routes/organizer/Sms/labels.ts:89
+#: src/components/routes/organizer/Sms/labels.ts:93
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:106
 msgid "Cancelled"
 msgstr "已取消"
@@ -2664,6 +2678,10 @@ msgstr "渠道"
 #: src/constants/eventCategories.ts:17
 msgid "Charity"
 msgstr "慈善"
+
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:46
+msgid "Chats where the visitor left a phone number are also in your SMS conversations, marked \"To handle\". Chats without contact details are deleted after 90 days."
+msgstr ""
 
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:139
 msgid "Check"
@@ -3005,6 +3023,10 @@ msgstr ""
 msgid "Close sidebar"
 msgstr "關閉側邊欄"
 
+#: src/components/common/LiveChatWindow/index.tsx:231
+msgid "Close the chat"
+msgstr ""
+
 #: src/components/routes/organizer/Sms/labels.ts:9
 msgid "Closed"
 msgstr "已關閉"
@@ -3264,7 +3286,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:96
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:147
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:148
 msgid "Configured"
 msgstr "已設定"
 
@@ -3351,7 +3373,7 @@ msgstr "連接並升級"
 msgid "Connect Documentation"
 msgstr "連接文檔"
 
-#: src/components/routes/organizer/Sms/index.tsx:93
+#: src/components/routes/organizer/Sms/index.tsx:94
 msgid "Connect PICHA SMS in Settings"
 msgstr "在設定中連接 PICHA SMS"
 
@@ -3400,15 +3422,15 @@ msgstr "連接您的 Stripe 帳戶以開始接受付款。"
 msgid "Connected at"
 msgstr "登入時間"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:122
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:123
 msgid "Connected to PICHA SMS, but no phone is registered. Install the PICHA SMS app on your Android phone."
 msgstr "已連接 PICHA SMS，但尚未登記手機。請在 Android 手機上安裝 PICHA SMS 應用程式。"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:121
 msgid "Connected to PICHA SMS, but your sending number is not one of your phones: {phones}"
 msgstr "已連接 PICHA SMS，但發送號碼不在您的手機清單中：{phones}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:118
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:119
 msgid "Connected to PICHA SMS. Your sending number is registered."
 msgstr "已連接 PICHA SMS。發送號碼已登記。"
 
@@ -3455,7 +3477,7 @@ msgstr ""
 msgid "Contact"
 msgstr "聯絡"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:66
+#: src/components/common/ContactOrganizerModal/index.tsx:38
 msgid "Contact {0}"
 msgstr "聯絡 {0}"
 
@@ -3577,7 +3599,11 @@ msgstr "不接受並繼續"
 msgid "Control how platform fees are handled for this event"
 msgstr "控制此活動的平台費用如何處理"
 
-#: src/components/routes/organizer/Sms/index.tsx:111
+#: src/components/common/LiveChatWindow/index.tsx:249
+msgid "Conversation"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:112
 msgid "Conversations"
 msgstr "對話"
 
@@ -3701,7 +3727,7 @@ msgstr "複製到剪貼簿"
 msgid "Copy URL"
 msgstr "複製 URL"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:191
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:192
 msgid "Copy your API key from the PICHA SMS settings page and paste it below, with the phone number of the SIM used to send."
 msgstr "從 PICHA SMS 設定頁面複製 API 金鑰並貼到下方，同時填寫用於發送的 SIM 卡號碼。"
 
@@ -4091,7 +4117,7 @@ msgstr "自定義範本"
 msgid "Customer"
 msgstr "客户"
 
-#: src/components/routes/organizer/Sms/index.tsx:163
+#: src/components/routes/organizer/Sms/index.tsx:177
 msgid "Customer file"
 msgstr "客戶檔案"
 
@@ -4436,7 +4462,7 @@ msgstr ""
 
 #: src/components/routes/organizer/Sms/CampaignList.tsx:43
 #: src/components/routes/organizer/Sms/labels.ts:22
-#: src/components/routes/organizer/Sms/labels.ts:56
+#: src/components/routes/organizer/Sms/labels.ts:60
 #: src/components/routes/organizer/Sms/ReminderList.tsx:68
 msgid "Delivered"
 msgstr "已送達"
@@ -5034,11 +5060,11 @@ msgstr "郵箱地址已複製到剪貼板"
 msgid "Email addresses do not match"
 msgstr "電子郵件地址不匹配"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:108
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
 msgid "Email alerts disabled"
 msgstr "已關閉電郵提醒"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:108
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
 msgid "Email alerts enabled"
 msgstr "已開啟電郵提醒"
 
@@ -5072,7 +5098,7 @@ msgstr "成功重新發送電子郵件確認"
 msgid "Email footer message"
 msgstr "電子郵件頁腳信息"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:34
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:32
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:32
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:32
 msgid "Email is required"
@@ -5082,7 +5108,7 @@ msgstr "必須填寫電郵"
 msgid "Email logo for this event (light background)"
 msgstr "此活動的電郵標誌（淺色背景）"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:239
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:240
 msgid "Email me when a new SMS arrives"
 msgstr "收到新短訊時以電郵通知我"
 
@@ -5324,7 +5350,7 @@ msgstr "輸入包含國家代碼的增值稅號碼"
 msgid "Enter unique affiliate code"
 msgstr "輸入獨特推廣碼"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:80
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:71
 #: src/components/routes/auth/Login/index.tsx:150
 #: src/components/routes/my-tickets/index.tsx:192
 msgid "Enter your email"
@@ -5334,9 +5360,13 @@ msgstr "輸入您的電郵地址"
 msgid "Enter your email and we'll send you instructions to reset your password."
 msgstr "輸入您的電子郵件，我們將向您發送重置密碼的說明。"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:74
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:65
 msgid "Enter your name"
 msgstr "輸入您的姓名"
+
+#: src/components/common/LiveChatWindow/index.tsx:175
+msgid "Enter your phone number or your email."
+msgstr ""
 
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:217
 msgid "Enter your VAT number including the country code, without spaces (e.g., IE1234567A, DE123456789)"
@@ -5868,8 +5898,8 @@ msgstr "Facebook"
 #: src/components/routes/admin/Messages/index.tsx:127
 #: src/components/routes/organizer/Sms/CampaignList.tsx:47
 #: src/components/routes/organizer/Sms/labels.ts:24
-#: src/components/routes/organizer/Sms/labels.ts:58
-#: src/components/routes/organizer/Sms/labels.ts:87
+#: src/components/routes/organizer/Sms/labels.ts:62
+#: src/components/routes/organizer/Sms/labels.ts:91
 #: src/components/routes/organizer/Sms/ReminderList.tsx:69
 msgid "Failed"
 msgstr "失敗"
@@ -6042,7 +6072,7 @@ msgstr "儲存範本失敗"
 msgid "Failed to save VAT settings. Please try again."
 msgstr "儲存增值稅設定失敗。請重試。"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:57
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:55
 msgid "Failed to send message. Please try again."
 msgstr "發送訊息失敗。請再試一次。"
 
@@ -6589,11 +6619,11 @@ msgstr "產生"
 msgid "Generate a new relay token"
 msgstr "產生新的中繼令牌"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:270
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:271
 msgid "Generate a new signing key"
 msgstr "產生新的簽署金鑰"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:95
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:96
 msgid "Generate a new signing key? You will need to paste it into your PICHA SMS webhook, otherwise incoming SMS will be rejected."
 msgstr "產生新的簽署金鑰？您需要將其貼到 PICHA SMS webhook 中，否則收到的短訊將被拒絕。"
 
@@ -6923,7 +6953,7 @@ msgstr "突出顯示的產品將具有不同的背景色，使其在活動頁面
 msgid "Holding reply"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/labels.ts:34
+#: src/components/routes/organizer/Sms/labels.ts:38
 msgid "Holding reply sent automatically"
 msgstr ""
 
@@ -6995,7 +7025,7 @@ msgstr "客户有多少分鐘來完成訂單。我們建議至少 15 分鐘"
 msgid "How many participants?"
 msgstr "有多少位參加者？"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:184
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:185
 msgid "How to connect"
 msgstr "如何連接"
 
@@ -7174,11 +7204,11 @@ msgstr "匯入已撤銷"
 msgid "Import contacts"
 msgstr "匯入聯絡人"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:299
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:300
 msgid "Import in progress: {0} messages retrieved"
 msgstr "正在匯入：已取得 {0} 則訊息"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:131
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:132
 msgid "Import started. Messages will appear in SMS messages within a few minutes."
 msgstr "匯入已開始。數分鐘內訊息會顯示在短訊訊息中。"
 
@@ -7210,7 +7240,7 @@ msgstr "{diffMinutes} 分鐘後"
 msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:192
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:193
 msgid "In PICHA SMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events."
 msgstr "在 PICHA SMS 中，使用下面的 URL 和簽名密鑰建立 webhook，並勾選 message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline 和 phone.heartbeat.online 事件。"
 
@@ -7325,7 +7355,7 @@ msgstr "Instagram"
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:187
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:188
 msgid "Install the PICHA SMS app on your Android phone and sign in on <0>sms.picha.fr</0>."
 msgstr "在 Android 手機上安裝 PICHA SMS 應用程式，並登入 <0>sms.picha.fr</0>。"
 
@@ -7362,7 +7392,7 @@ msgstr "內部備註"
 msgid "Invalid"
 msgstr "無效"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:35
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:33
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:33
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:33
 msgid "Invalid email"
@@ -7727,7 +7757,7 @@ msgstr "過去 7 天"
 msgid "Last 90 days"
 msgstr "過去 90 天"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:305
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:306
 msgid "Last import {0}: {1} new messages"
 msgstr "上次匯入 {0}：{1} 則新訊息"
 
@@ -7796,7 +7826,7 @@ msgstr "上一筆銷售：<0>{0} 張門票</0>"
 msgid "Last sale: <0>{0}</0>"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:160
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:161
 msgid "Last SMS event received {0}"
 msgstr "最近一次收到短訊事件：{0}"
 
@@ -7982,6 +8012,14 @@ msgstr "已上線"
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:111
 msgid "LIVE"
 msgstr "直播"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:67
+msgid "Live assistance"
+msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:56
+msgid "Live assistance settings saved"
+msgstr ""
 
 #: src/components/routes/landing/ProductVisuals/index.tsx:95
 msgid "Live attendance"
@@ -8282,7 +8320,7 @@ msgid "Meet the artists who will be on stage for {title}."
 msgstr ""
 
 #: src/components/common/AttendeeTable/index.tsx:184
-#: src/components/common/ContactOrganizerModal/index.tsx:88
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:79
 #: src/components/common/OrdersTable/index.tsx:258
 #: src/components/modals/SendMessageModal/index.tsx:358
 #: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:176
@@ -8317,7 +8355,7 @@ msgstr "留言買家"
 msgid "Message cancelled"
 msgstr "訊息已取消"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:39
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:37
 msgid "Message cannot exceed 5000 characters"
 msgstr "訊息不能超過5000個字符"
 
@@ -8333,7 +8371,7 @@ msgstr "訊息詳情"
 msgid "Message individual attendees"
 msgstr "給個別與會者留言"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:41
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:39
 msgid "Message is required"
 msgstr "必須填寫訊息"
 
@@ -8631,7 +8669,7 @@ msgstr ""
 msgid "Name and email of each attendee."
 msgstr ""
 
-#: src/components/common/ContactOrganizerModal/index.tsx:32
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:30
 #: src/components/modals/CreateAffiliateModal/index.tsx:28
 #: src/components/modals/EditAffiliateModal/index.tsx:33
 #: src/components/routes/admin/Configurations/index.tsx:168
@@ -8738,7 +8776,7 @@ msgstr "新增快速回覆"
 msgid "New section"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:97
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:98
 msgid "New signing key generated"
 msgstr "已產生新的簽署金鑰"
 
@@ -8746,7 +8784,7 @@ msgstr "已產生新的簽署金鑰"
 msgid "New Signups"
 msgstr "新註冊"
 
-#: src/components/routes/organizer/Sms/index.tsx:102
+#: src/components/routes/organizer/Sms/index.tsx:103
 msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "新短訊不會出現在這裡，您的回覆亦不會發出。請檢查手機是否開機、已連接互聯網，以及 PICHA SMS 應用程式正在運行。"
 
@@ -8888,6 +8926,10 @@ msgstr "找不到配置"
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:133
 msgid "no consent"
 msgstr "未同意"
+
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:16
+msgid "No contact details"
+msgstr ""
 
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:286
 msgid "No contact is created before you click Import."
@@ -9275,6 +9317,10 @@ msgstr "過去14天沒有瀏覽的活動"
 msgid "No waitlist entries"
 msgstr "沒有候補名單條目"
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:38
+msgid "No web chat yet. The questions asked by visitors in the chat of your public pages will appear here."
+msgstr ""
+
 #: src/components/modals/OrganizerWebhookLogsModal/index.tsx:166
 #: src/components/modals/WebhookLogsModal/index.tsx:180
 msgid "No webhook events have been recorded for this endpoint yet. Events will appear here once they are triggered."
@@ -9323,7 +9369,7 @@ msgstr ""
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:97
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:148
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:149
 msgid "Not configured"
 msgstr "未設定"
 
@@ -9357,7 +9403,7 @@ msgid "Not published: the page appears once it has content and is saved."
 msgstr ""
 
 #: src/components/routes/organizer/Sms/labels.ts:26
-#: src/components/routes/organizer/Sms/labels.ts:60
+#: src/components/routes/organizer/Sms/labels.ts:64
 msgid "Not sent (phone offline)"
 msgstr "未發送（手機離線）"
 
@@ -9713,6 +9759,10 @@ msgstr "只有您的團隊能看到這些備註"
 msgid "Open"
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:81
+msgid "Open a live chat instead of the contact form"
+msgstr ""
+
 #: src/components/common/CheckInListList/index.tsx:165
 #: src/components/modals/CheckInListSuccessModal/index.tsx:56
 msgid "Open Check-In Page"
@@ -9753,6 +9803,10 @@ msgstr "開啟客戶檔案"
 #: src/components/layouts/EventHomepage/index.tsx:787
 msgid "Open the event flyer"
 msgstr "開啟活動海報"
+
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:90
+msgid "Open the SMS conversation"
+msgstr ""
 
 #: src/components/forms/ProductForm/index.tsx:534
 msgid "Open this ticket when this ticket is sold out"
@@ -9854,6 +9908,10 @@ msgstr "或"
 
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1696
 msgid "or press Enter"
+msgstr ""
+
+#: src/components/common/LiveChatWindow/index.tsx:286
+msgid "Or your email"
 msgstr ""
 
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:121
@@ -10470,7 +10528,7 @@ msgstr "過往活動"
 msgid "Past events."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:257
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:258
 msgid "Paste it into the signing key field of your PICHA SMS webhook. Keep it private."
 msgstr "將其貼到 PICHA SMS webhook 的簽署金鑰欄位中。請妥善保密。"
 
@@ -10725,6 +10783,10 @@ msgstr "印有您品牌色彩和標誌的個人化二維碼手帶"
 msgid "Phone"
 msgstr "電話"
 
+#: src/components/common/LiveChatWindow/index.tsx:276
+msgid "Phone (reply by SMS)"
+msgstr ""
+
 #: src/components/routes/kiosk/Settings/index.tsx:213
 msgid "Phone calling code"
 msgstr "國際區號"
@@ -10740,11 +10802,11 @@ msgstr "電話號碼"
 msgid "Phone Number"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:156
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:157
 msgid "Phone offline"
 msgstr "手機離線"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:153
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:154
 msgid "Phone online"
 msgstr "手機在線"
 
@@ -10758,11 +10820,11 @@ msgid "Physical presales"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/index.tsx:103
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:140
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:141
 msgid "PICHA SMS"
 msgstr "PICHA SMS"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:200
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:201
 msgid "PICHA SMS API key"
 msgstr "PICHA SMS API 金鑰"
 
@@ -11138,6 +11200,10 @@ msgstr "預覽"
 msgid "Preview checkout form"
 msgstr "預覽結帳表單"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:93
+msgid "Preview: Immediate answer, {relayLabel} can take over"
+msgstr ""
+
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1683
 msgid "Previous"
 msgstr ""
@@ -11250,6 +11316,7 @@ msgstr "列印"
 msgid "Privacy"
 msgstr "私隱"
 
+#: src/components/common/LiveChatWindow/index.tsx:334
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:159
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:262
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:182
@@ -11622,6 +11689,10 @@ msgstr ""
 msgid "Reactivate the ticket"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:64
+msgid "Read"
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:531
 msgid "Read our privacy policy"
 msgstr "閱讀我們的私隱政策"
@@ -11990,7 +12061,7 @@ msgstr ""
 msgid "Reminder sent"
 msgstr "已提醒"
 
-#: src/components/routes/organizer/Sms/index.tsx:113
+#: src/components/routes/organizer/Sms/index.tsx:114
 msgid "Reminders"
 msgstr ""
 
@@ -12061,7 +12132,7 @@ msgstr ""
 msgid "Remove the end time"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:226
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:227
 msgid "Remove the key"
 msgstr "移除金鑰"
 
@@ -12070,7 +12141,7 @@ msgstr "移除金鑰"
 msgid "Remove the mobile video? Phones will play the main cover video instead."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:83
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:84
 msgid "Remove the PICHA SMS API key? You will no longer be able to send SMS from PICHA."
 msgstr "移除 PICHA SMS API 金鑰？您將無法再從 PICHA 發送短訊。"
 
@@ -12147,6 +12218,10 @@ msgstr "以主辦方的自訂網域及電郵標誌取代 ticket.picha.fr 及 PIC
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:111
 msgid "Replied STOP"
 msgstr "已回覆 STOP"
+
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:101
+msgid "Reply by email"
+msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:58
 msgid "Reply template deleted"
@@ -12328,11 +12403,11 @@ msgstr "還原此主辦方並使其重新活躍。"
 msgid "Resume"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:293
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:294
 msgid "Retrieve PICHA SMS history"
 msgstr "取得 PICHA SMS 歷史記錄"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:283
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:284
 msgid "Retrieve the SMS sent and received with your PICHA SMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread."
 msgstr "取得在連接 webhook 之前用你的 PICHA SMS 號碼傳送和接收的短訊，例如以程式碼傳送的推廣短訊。已存在的訊息不會重複，也不會被標記為未讀。"
 
@@ -12552,7 +12627,8 @@ msgstr "舊金山"
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:138
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:214
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:215
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:96
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:151
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
@@ -12680,8 +12756,8 @@ msgstr "已排程"
 
 #: src/components/routes/admin/Messages/index.tsx:125
 #: src/components/routes/event/messages.tsx:62
-#: src/components/routes/organizer/Sms/labels.ts:52
-#: src/components/routes/organizer/Sms/labels.ts:91
+#: src/components/routes/organizer/Sms/labels.ts:56
+#: src/components/routes/organizer/Sms/labels.ts:95
 msgid "Scheduled"
 msgstr "已排程"
 
@@ -13069,6 +13145,7 @@ msgstr "熱賣中 🔥"
 msgid "Seminar"
 msgstr "研討會"
 
+#: src/components/common/LiveChatWindow/index.tsx:322
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:270
@@ -13096,7 +13173,7 @@ msgstr ""
 msgid "Send an SMS when an attendee cancels their registration"
 msgstr "參加者取消報名時發送短訊"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:141
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:142
 msgid "Send and receive SMS with your customers from your own Android phone, using the PICHA SMS app. Replies appear in SMS messages."
 msgstr "使用 PICHA SMS 應用程式，透過您自己的 Android 手機與客戶收發短訊。回覆會顯示在短訊訊息中。"
 
@@ -13116,10 +13193,14 @@ msgstr "向參與者、持票人或訂單擁有者發送電子郵件。訊息可
 msgid "Send me a copy"
 msgstr "發送副本給我"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:112
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:103
 #: src/components/modals/SendMessageModal/index.tsx:475
 msgid "Send Message"
 msgstr "發送消息"
+
+#: src/components/common/LiveChatWindow/index.tsx:297
+msgid "Send my details"
+msgstr ""
 
 #: src/components/modals/SendMessageModal/index.tsx:399
 msgid "Send now"
@@ -13177,11 +13258,11 @@ msgstr "傳送中"
 msgid "Sending date and time"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/labels.ts:83
+#: src/components/routes/organizer/Sms/labels.ts:87
 msgid "Sending in progress"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:208
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:209
 msgid "Sending number"
 msgstr "發送號碼"
 
@@ -13198,19 +13279,23 @@ msgstr "發送中..."
 msgid "Sending…"
 msgstr "正在傳送…"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:73
+msgid "Sensitive questions or questions it cannot answer get a holding reply that promises nothing. The visitor is then asked for a phone number (you reply by SMS, the conversation appears \"To handle\") or an email. Chats without contact details are listed in SMS, Web chats, and deleted after 90 days."
+msgstr ""
+
 #: src/components/routes/landing/ProductVisuals/index.tsx:68
 msgid "sent"
 msgstr "已發出"
 
 #: src/components/routes/admin/Messages/index.tsx:123
 #: src/components/routes/organizer/Sms/labels.ts:20
-#: src/components/routes/organizer/Sms/labels.ts:54
-#: src/components/routes/organizer/Sms/labels.ts:85
+#: src/components/routes/organizer/Sms/labels.ts:58
+#: src/components/routes/organizer/Sms/labels.ts:89
 #: src/components/routes/organizer/Sms/ReminderList.tsx:67
 msgid "Sent"
 msgstr "已發送"
 
-#: src/components/routes/organizer/Sms/labels.ts:34
+#: src/components/routes/organizer/Sms/labels.ts:38
 msgid "Sent automatically"
 msgstr ""
 
@@ -13231,7 +13316,7 @@ msgstr "客戶下訂時發送"
 msgid "Sent to each attendee with their ticket details"
 msgstr "發送給每位參會者及其門票詳情"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:240
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:241
 msgid "Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline."
 msgstr "發送至主辦方的電郵地址。每個對話每 15 分鐘最多一封電郵。手機離線時您總會收到電郵通知。"
 
@@ -13407,7 +13492,7 @@ msgstr ""
 msgid "Shared Capacity Management"
 msgstr "共享容量管理"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:150
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:151
 msgid "Shared line"
 msgstr ""
 
@@ -13514,6 +13599,10 @@ msgstr "結賬後顯示給客户，在訂單摘要頁面。"
 msgid "Shown to the customer before they checkout"
 msgstr "在顧客結賬前向他們展示"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:87
+msgid "Shown under the chat title. For example: a member of the association."
+msgstr ""
+
 #: src/components/forms/QuestionForm/index.tsx:134
 msgid "Shows common address fields, including country"
 msgstr "顯示常用地址字段，包括國家"
@@ -13589,15 +13678,15 @@ msgstr "短訊助手"
 msgid "SMS campaign"
 msgstr "短訊活動"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:281
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:282
 msgid "SMS history"
 msgstr "短訊歷史記錄"
 
-#: src/components/routes/organizer/Sms/index.tsx:91
+#: src/components/routes/organizer/Sms/index.tsx:92
 msgid "SMS is not connected yet."
 msgstr "短訊尚未連接。"
 
-#: src/components/routes/organizer/Sms/index.tsx:83
+#: src/components/routes/organizer/Sms/index.tsx:84
 msgid "SMS messages"
 msgstr "短訊訊息"
 
@@ -13611,7 +13700,7 @@ msgstr "短訊取消訂閱名單"
 msgid "SMS reply templates"
 msgstr "短訊快速回覆"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:76
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:77
 msgid "SMS settings saved"
 msgstr "短訊設定已儲存"
 
@@ -13622,6 +13711,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:73
 msgid "Snapchat"
 msgstr "Snapchat"
+
+#: src/components/common/LiveChatWindow/index.tsx:274
+msgid "So that the organizer can reply to you"
+msgstr ""
 
 #: src/components/routes/organizer/Settings/index.tsx:61
 msgid "Social Links"
@@ -13920,7 +14013,7 @@ msgstr "仍在處理您舊交易的退款。"
 msgid "Stop Impersonating"
 msgstr "停止模擬"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:202
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:203
 msgid "Stored encrypted. It is never displayed again."
 msgstr "加密儲存，之後不會再顯示。"
 
@@ -14433,7 +14526,7 @@ msgid "Test event code (optional)"
 msgstr ""
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:146
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:222
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:223
 msgid "Test the connection"
 msgstr "測試連線"
 
@@ -14477,6 +14570,10 @@ msgstr "感謝您在我們持續發展和改進平台期間的支持！"
 msgid "That promo code is invalid"
 msgstr "促銷代碼無效"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:68
+msgid "The \"Contact the organizer\" buttons of your event and organizer pages open a chat that answers visitors right away, with the same data and instructions as the SMS assistant. Off by default."
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:215
 msgid "The AI couldn't rewrite your text this time. Try again in a moment."
 msgstr ""
@@ -14489,10 +14586,18 @@ msgstr ""
 msgid "The artists"
 msgstr ""
 
+#: src/components/common/LiveChatWindow/index.tsx:237
+msgid "The assistant cannot answer right now. Leave your message and the organizer will reply by email."
+msgstr ""
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:83
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:98
 msgid "The assistant could not suggest a reply. Please try again."
 msgstr "助手未能提供回覆建議，請重試。"
+
+#: src/components/common/LiveChatWindow/index.tsx:262
+msgid "The assistant is writing"
+msgstr ""
 
 #: src/components/common/ThemeColorControls/index.tsx:62
 msgid "The background color of the page. When using cover image, this is applied as an overlay."
@@ -14505,6 +14610,10 @@ msgstr "購物車是空的。"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:298
 #: src/components/common/QuestionsTable/index.tsx:215
 msgid "The change could not be saved. Please try again."
+msgstr ""
+
+#: src/components/common/LiveChatWindow/index.tsx:268
+msgid "The chat could not start."
 msgstr ""
 
 #: src/components/layouts/CheckIn/index.tsx:353
@@ -14613,7 +14722,7 @@ msgstr ""
 msgid "The import could not be cancelled. Please try again."
 msgstr "無法撤銷匯入，請重試。"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:311
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:312
 msgid "The import failed: {importError}. You can start it again, messages already imported are kept."
 msgstr "匯入失敗：{importError}。你可以重新開始，已匯入的訊息會保留。"
 
@@ -14647,9 +14756,14 @@ msgstr ""
 msgid "The note could not be saved. Please try again."
 msgstr "無法儲存備註，請重試。"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:209
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:210
 msgid "The number of the SIM card in the PICHA SMS phone, for example +262639123456."
 msgstr "PICHA SMS 手機中 SIM 卡的號碼，例如 +262639123456。"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:62
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:88
+msgid "the organizer"
+msgstr ""
 
 #: src/components/common/OrganizerFontManager/index.tsx:218
 msgid "The organizer font can now be chosen in Typography, for the organizer page and for each event."
@@ -14697,7 +14811,7 @@ msgstr ""
 msgid "The personal link lets the attendee find their registration again. When there is none for an attendee, the link and its label are left out of the message."
 msgstr "個人連結讓參加者可以重新找到自己的報名。參加者沒有個人連結時，連結及其說明文字會從訊息中移除。"
 
-#: src/components/routes/organizer/Sms/index.tsx:101
+#: src/components/routes/organizer/Sms/index.tsx:102
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "手機已於{0}離線。新短訊不會出現在這裡，您的回覆亦不會發出。請檢查手機是否開機、已連接互聯網，以及 PICHA SMS 應用程式正在運行。"
 
@@ -14961,6 +15075,10 @@ msgstr "呢個代碼會用嚟追蹤銷售。只可以用字母、數字、連字
 msgid "This color combination may be hard to read for some users"
 msgstr "對某些使用者來說，此顏色組合可能難以閱讀"
 
+#: src/components/common/LiveChatWindow/index.tsx:183
+msgid "This email does not look valid."
+msgstr ""
+
 #: src/components/layouts/EventHomepage/index.tsx:639
 msgid "This event has ended"
 msgstr "此活動已結束"
@@ -15092,6 +15210,10 @@ msgstr "呢個主辦方資料未發佈"
 
 #: src/components/routes/product-widget/AttendeeAttendance/index.tsx:46
 msgid "This personal link is not valid. Please use the link from your latest email."
+msgstr ""
+
+#: src/components/common/LiveChatWindow/index.tsx:179
+msgid "This phone number does not look valid."
 msgstr ""
 
 #: src/components/common/EmailTemplateEditor/EmailTemplatePreviewPane.tsx:69
@@ -15431,6 +15553,10 @@ msgstr "待補全"
 msgid "To edit configurations, go to the Configurations section in the admin menu."
 msgstr "要編輯配置，請前往管理選單中的配置部分。"
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:63
+msgid "To follow up"
+msgstr ""
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:187
 #: src/components/routes/organizer/Sms/ConversationList.tsx:72
 #: src/components/routes/organizer/Sms/customerSummary.ts:19
@@ -15602,6 +15728,10 @@ msgstr "如果付款待處理則為真"
 msgid "Trust"
 msgstr "信任"
 
+#: src/components/common/LiveChatWindow/index.tsx:269
+msgid "Try again"
+msgstr ""
+
 #: src/components/routes/auth/Login/index.tsx:141
 #: src/components/routes/my-tickets/index.tsx:183
 msgid "Try another email"
@@ -15706,7 +15836,7 @@ msgstr ""
 msgid "Unable to fetch attendee"
 msgstr "無法擷取參與者資料"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:98
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:99
 msgid "Unable to generate a new signing key"
 msgstr "無法產生新的簽署金鑰"
 
@@ -15722,7 +15852,7 @@ msgstr "無法加入候補名單"
 msgid "Unable to reach Meta. Please try again."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:125
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:126
 msgid "Unable to reach PICHA SMS. Please try again."
 msgstr "無法連接 PICHA SMS，請重試。"
 
@@ -15730,7 +15860,7 @@ msgstr "無法連接 PICHA SMS，請重試。"
 msgid "Unable to remove the access token"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:90
 msgid "Unable to remove the API key"
 msgstr "無法移除 API 金鑰"
 
@@ -15738,11 +15868,11 @@ msgstr "無法移除 API 金鑰"
 msgid "Unable to remove the number"
 msgstr "無法移除號碼"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:132
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:133
 msgid "Unable to start the import"
 msgstr "無法開始匯入"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
 msgid "Unable to update email alerts"
 msgstr "無法更新電郵提醒"
 
@@ -15822,7 +15952,7 @@ msgstr ""
 msgid "Unknown customer"
 msgstr "未知客戶"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:38
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:39
 msgid "unknown error"
 msgstr "未知錯誤"
 
@@ -16421,6 +16551,10 @@ msgstr "可見性"
 msgid "Visible to check-in staff only. Helps identify this list during check-in."
 msgstr "僅對簽到工作人員可見。有助於在簽到期間識別此名單。"
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:108
+msgid "Visitor"
+msgstr ""
+
 #: src/components/routes/event/Settings/Sections/EmbeddedRegistrationSettings/index.tsx:65
 msgid "Visitors answer one question at a time, add the people coming with them and confirm without leaving the event page."
 msgstr ""
@@ -16459,7 +16593,7 @@ msgstr "VK"
 #: src/components/common/WaitlistTable/index.tsx:24
 #: src/components/modals/OfferWaitlistModal/index.tsx:162
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:71
-#: src/components/routes/organizer/Sms/labels.ts:62
+#: src/components/routes/organizer/Sms/labels.ts:66
 msgid "Waiting"
 msgstr "等待中"
 
@@ -16508,6 +16642,10 @@ msgstr "我們無法處理您的付款。請重試或聯繫技術支持。"
 
 #: src/components/routes/product-widget/AttendeeAttendance/index.tsx:87
 msgid "We could not save your answer. Please try again."
+msgstr ""
+
+#: src/components/common/LiveChatWindow/index.tsx:199
+msgid "We could not save your details. Please try again."
 msgstr ""
 
 #: src/components/layouts/EventHomepage/AttendanceAccess/AttendanceAccessModal.tsx:69
@@ -16615,6 +16753,19 @@ msgstr "我們已正式將總部遷至愛爾蘭 🇮🇪。作為此次過渡的
 msgid "We've sent a 5-digit verification code to:"
 msgstr "我哋已經將5位數驗證碼發送到："
 
+#: src/components/routes/organizer/Sms/labels.ts:34
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:76
+msgid "Web chat"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/labels.ts:34
+msgid "Web chat assistant"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:115
+msgid "Web chats"
+msgstr ""
+
 #: src/components/modals/CreateOrganizerWebhookModal/index.tsx:49
 #: src/components/modals/CreateWebhookModal/index.tsx:49
 msgid "Webhook created successfully"
@@ -16630,7 +16781,7 @@ msgstr "Webhook 刪除成功"
 msgid "Webhook Logs"
 msgstr "Webhook 日誌"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:256
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:257
 msgid "Webhook signing key"
 msgstr "Webhook 簽署金鑰"
 
@@ -16640,7 +16791,7 @@ msgid "Webhook Signing Secret"
 msgstr "Webhook 簽名密鑰"
 
 #: src/components/forms/WebhookForm/index.tsx:138
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:249
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:250
 msgid "Webhook URL"
 msgstr "Webhook URL"
 
@@ -16921,6 +17072,10 @@ msgstr "哪些票應與此簽到列表關聯？"
 msgid "While it is set, events only appear in the Test events tab and are not used by your campaigns. Remove it once your tests are done."
 msgstr ""
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:86
+msgid "Who can take over"
+msgstr ""
+
 #: src/components/common/QuestionsTable/index.tsx:461
 msgid "Who fills in the details?"
 msgstr ""
@@ -17008,9 +17163,13 @@ msgstr "以客戶身份寫一則訊息，查看助手根據上述指示會給出
 msgid "Write to us"
 msgstr ""
 
-#: src/components/common/ContactOrganizerModal/index.tsx:89
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:80
 msgid "Write your message here..."
 msgstr "請在此輸入您的訊息..."
+
+#: src/components/common/LiveChatWindow/index.tsx:308
+msgid "Write your question..."
+msgstr ""
 
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:205
 msgid "Write your reply"
@@ -17221,6 +17380,10 @@ msgstr "您永遠擁有 100% 的參加者資料"
 msgid "You receive"
 msgstr "您收到"
 
+#: src/components/routes/organizer/Sms/LiveChatList.tsx:117
+msgid "You received this chat by email too: reply to that email to answer the visitor from your mailbox."
+msgstr ""
+
 #: src/components/routes/landing/index.tsx:557
 msgid "You registered for an event?"
 msgstr "您已報名活動？"
@@ -17236,6 +17399,10 @@ msgstr "您負責迎接來賓，其餘交給我們"
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:143
 msgid "You will have to mark an order as paid manually. This can be done on the manage order page."
 msgstr "您必須手動將訂單標記為已支付。這可以在訂單管理頁面上完成。"
+
+#: src/components/common/LiveChatWindow/index.tsx:257
+msgid "You:"
+msgstr ""
 
 #: src/components/modals/CreateCheckInListModal/index.tsx:56
 msgid "You'll need a ticket before you can create a check-in list."
@@ -17264,6 +17431,10 @@ msgstr "您已加入候補名單！"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:467
 msgid "You've been offered a spot!"
 msgstr "您已獲得一個名額！"
+
+#: src/components/common/LiveChatWindow/index.tsx:287
+msgid "you@example.com"
+msgstr ""
 
 #: src/components/modals/SendMessageModal/index.tsx:278
 msgid "Your account has messaging limits. To increase your limits, contact us at"
@@ -17323,7 +17494,7 @@ msgstr "您的詳細信息"
 msgid "Your e-mail address"
 msgstr ""
 
-#: src/components/common/ContactOrganizerModal/index.tsx:79
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:70
 msgid "Your Email"
 msgstr "您的電子郵件"
 
@@ -17375,20 +17546,28 @@ msgstr ""
 msgid "Your logo, colors, and style on every page"
 msgstr "您的標誌、顏色和風格出現在每個頁面上"
 
+#: src/components/common/LiveChatWindow/index.tsx:309
+msgid "Your message"
+msgstr ""
+
 #: src/components/common/OrdersTable/index.tsx:86
 #: src/components/routes/event/OrdersPage/OrderList.tsx:75
 msgid "Your message has been sent"
 msgstr "您的信息已發送"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:52
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:50
 msgid "Your message has been sent successfully!"
 msgstr "你嘅訊息已經成功發送！"
+
+#: src/components/common/LiveChatWindow/index.tsx:329
+msgid "Your messages are answered by the organizer's automatic assistant and passed on to the organizer if needed. Without contact details they are deleted after 90 days."
+msgstr ""
 
 #: src/components/routes/event/messages.tsx:274
 msgid "Your messages will appear here"
 msgstr "您的訊息將顯示在此處"
 
-#: src/components/common/ContactOrganizerModal/index.tsx:73
+#: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:64
 msgid "Your Name"
 msgstr "您的姓名"
 
@@ -17466,15 +17645,15 @@ msgstr "您的付款未成功，請重試。"
 msgid "Your payment was unsuccessful. Please try again."
 msgstr "您的付款未成功。請重試。"
 
-#: src/components/routes/organizer/Sms/index.tsx:99
+#: src/components/routes/organizer/Sms/index.tsx:100
 msgid "Your PICHA SMS phone is offline"
 msgstr "您的 PICHA SMS 手機已離線"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:169
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:170
 msgid "Your PICHA SMS phone is offline. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "您的 PICHA SMS 手機已離線。請檢查它是否開機、已連接互聯網，以及 PICHA SMS 應用程式正在運行。"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:168
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:169
 msgid "Your PICHA SMS phone went offline {0}. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "您的 PICHA SMS 手機已於{0}離線。請檢查它是否開機、已連接互聯網，以及 PICHA SMS 應用程式正在運行。"
 
@@ -17518,7 +17697,7 @@ msgstr ""
 msgid "Your registration: {0}"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:176
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:177
 msgid "Your SMS are sent with a line shared and managed by PICHA, from the number {sharedNumber}. Customer replies appear in SMS messages and only your team can see your conversations."
 msgstr ""
 
