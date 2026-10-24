@@ -13,6 +13,7 @@ use HiEvents\Exceptions\MetaGraphApiException;
 use HiEvents\Exceptions\MetaOAuthException;
 use HiEvents\Exceptions\SocialConnectionNotFoundException;
 use HiEvents\Helper\Url;
+use HiEvents\Jobs\Social\SyncSocialFeedJob;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
 use HiEvents\Services\Domain\Social\DTO\MetaOAuthCallbackResultDTO;
 use HiEvents\Services\Infrastructure\Encryption\EncryptedPayloadService;
@@ -191,6 +192,17 @@ class MetaConnectionService
 
         $this->cache->forget(self::SELECTION_CACHE_PREFIX.$selectionKey);
 
+        try {
+            $this->client->subscribePageToWebhooks($page->id, $page->accessToken);
+        } catch (Throwable $exception) {
+            $this->logger->info('Meta page could not be subscribed to webhooks', [
+                'organizer_id' => $organizerId,
+                'message' => $exception->getMessage(),
+            ]);
+        }
+
+        SyncSocialFeedJob::dispatch($organizerId);
+
         return $connection;
     }
 
@@ -234,6 +246,22 @@ class MetaConnectionService
             OrganizerSocialConnectionDomainObjectAbstract::LAST_ERROR => $error,
             OrganizerSocialConnectionDomainObjectAbstract::LAST_ERROR_AT => Carbon::now(),
         ]);
+    }
+
+    /**
+     * Permissions the connection still lacks (a connection made before comments were added must be renewed).
+     *
+     * @return string[]
+     */
+    public function missingScopes(OrganizerSocialConnectionDomainObject $connection): array
+    {
+        $granted = $connection->getGrantedScopes();
+
+        if (is_string($granted)) {
+            $granted = json_decode($granted, true);
+        }
+
+        return array_values(array_diff((array) config('services.meta.oauth_scopes', []), is_array($granted) ? $granted : []));
     }
 
     public function getRedirectUri(): string

@@ -52,6 +52,7 @@ export const MediaPreview = ({item, autoPlay = true, controls = false}: MediaPre
                     ref={videoRef}
                     className={classes.mediaElement}
                     src={item.url}
+                    poster={item.thumbnail_url ?? undefined}
                     muted={controls ? false : muted}
                     loop
                     playsInline

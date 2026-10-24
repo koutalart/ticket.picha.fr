@@ -27,6 +27,9 @@ class SocialConnectionResource extends BaseResource
             'instagram_account_id' => $connection?->getInstagramAccountId(),
             'instagram_username' => $connection?->getInstagramUsername(),
             'granted_scopes' => $connection ? $this->scopes($connection->getGrantedScopes()) : [],
+            'missing_scopes' => $connection
+                ? array_values(array_diff((array) config('services.meta.oauth_scopes', []), $this->scopes($connection->getGrantedScopes())))
+                : [],
             'user_access_token_expires_at' => $connection?->getUserAccessTokenExpiresAt(),
             'last_error' => $connection?->getLastError(),
             'last_error_at' => $connection?->getLastErrorAt(),

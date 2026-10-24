@@ -7,6 +7,7 @@ use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
 use HiEvents\DomainObjects\Status\SocialConnectionStatus;
 use HiEvents\Exceptions\MetaGraphApiException;
 use HiEvents\Exceptions\MetaOAuthException;
+use HiEvents\Jobs\Social\SyncSocialFeedJob;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
 use HiEvents\Services\Domain\Social\MetaConnectionService;
 use HiEvents\Services\Infrastructure\Encryption\EncryptedPayloadService;
@@ -15,6 +16,7 @@ use HiEvents\Services\Infrastructure\Meta\DTO\MetaPageDTO;
 use HiEvents\Services\Infrastructure\Meta\MetaGraphClient;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository as CacheRepository;
+use Illuminate\Support\Facades\Bus;
 use Mockery;
 use Mockery\MockInterface;
 use Psr\Log\NullLogger;
@@ -36,7 +38,9 @@ class MetaConnectionServiceTest extends TestCase
 
         config(['app.api_url' => 'https://api.example.test', 'app.frontend_url' => 'https://app.example.test']);
 
+        Bus::fake();
         $this->client = Mockery::mock(MetaGraphClient::class);
+        $this->client->shouldReceive('subscribePageToWebhooks')->byDefault();
         $this->repository = Mockery::mock(OrganizerSocialConnectionRepositoryInterface::class);
         $this->cache = new CacheRepository(new ArrayStore);
 
@@ -124,9 +128,12 @@ class MetaConnectionServiceTest extends TestCase
                 && $attributes[OrganizerSocialConnectionDomainObjectAbstract::CONNECTED_BY_USER_ID] === 7)
             ->andReturn((new OrganizerSocialConnectionDomainObject)->setId(1));
 
+        $this->client->shouldReceive('subscribePageToWebhooks')->once()->with('258426924559094', 'page-token');
+
         $this->service->connect(3, 4, $result->selectionKey, '258426924559094');
 
         $this->assertNull($this->cache->get('social:meta:selection:'.$result->selectionKey));
+        Bus::assertDispatched(SyncSocialFeedJob::class, fn (SyncSocialFeedJob $job) => $job->organizerId === 4);
     }
 
     public function test_connect_replaces_the_existing_connection(): void
