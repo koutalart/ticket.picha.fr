@@ -11,7 +11,8 @@ import {
     IconSettings,
     IconUsersGroup,
     IconQrcode,
-    IconMessage
+    IconMessage,
+    IconSpeakerphone
 } from "@tabler/icons-react";
 import { t } from "@lingui/macro";
 import { NavItem } from "../AppLayout/types.ts";
@@ -72,6 +73,7 @@ const OrganizerLayout = () => {
         },
         {link: 'qr-codes', label: t`QR codes`, icon: IconQrcode},
         {link: 'sms', label: t`SMS`, icon: IconMessage, badge: smsUnreadCount ? smsUnreadCount : undefined},
+        {link: 'publications', label: t`Publications`, icon: IconSpeakerphone},
     ];
 
 
@@ -120,7 +122,7 @@ const OrganizerLayout = () => {
                 onSwitchOrganizer={organizers && organizers.length > 1 ? openSwitchModal : undefined}
                 navItems={navItems}
                 bottomItems={bottomItems}
-                mobileTabs={navItems}
+                mobileTabs={navItems.filter(item => item.link !== 'publications')}
                 headerActions={isQrCodesPage ? undefined : (
                     <Button radius="md" size="md" leftSection={<IconPlus size={18}/>}
                             onClick={() => navigate(`/manage/new-event?organizer=${organizerId}`)}>

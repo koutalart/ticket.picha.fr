@@ -8,6 +8,7 @@ use HiEvents\Console\Commands\PurgeQuestionAnswerFilesCommand;
 use HiEvents\Console\Commands\SendDueSmsRemindersCommand;
 use HiEvents\Console\Commands\SmsWatchdogCommand;
 use HiEvents\Console\Commands\SyncSmsContactsCommand;
+use HiEvents\Jobs\Social\PublishDueSocialPostsJob;
 use HiEvents\Jobs\Message\SendScheduledMessagesJob;
 use HiEvents\Jobs\Waitlist\ProcessExpiredWaitlistOffersJob;
 use Illuminate\Console\Scheduling\Schedule;
@@ -20,6 +21,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('kiosk:purge-print-jobs')->hourly()->withoutOverlapping();
         $schedule->job(new SendScheduledMessagesJob)->everyMinute()->withoutOverlapping();
         $schedule->job(new ProcessExpiredWaitlistOffersJob)->everyMinute()->withoutOverlapping();
+        $schedule->job(new PublishDueSocialPostsJob)->everyMinute()->withoutOverlapping();
         $schedule->command(PurgeQuestionAnswerFilesCommand::class)->hourly()->withoutOverlapping();
         $schedule->command(SyncSmsContactsCommand::class)->everyFifteenMinutes()->withoutOverlapping();
         $schedule->command(SendDueSmsRemindersCommand::class)->everyFiveMinutes()->withoutOverlapping(30)->runInBackground();

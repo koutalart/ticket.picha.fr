@@ -48,6 +48,8 @@ use HiEvents\Repository\Eloquent\PromoCodeRepository;
 use HiEvents\Repository\Eloquent\QrCampaignRepository;
 use HiEvents\Repository\Eloquent\OrganizerFontRepository;
 use HiEvents\Repository\Eloquent\OrganizerSmsSettingRepository;
+use HiEvents\Repository\Eloquent\OrganizerSocialConnectionRepository;
+use HiEvents\Repository\Eloquent\SocialPostRepository;
 use HiEvents\Repository\Eloquent\SmsAssistantCallRepository;
 use HiEvents\Repository\Eloquent\LiveChatMessageRepository;
 use HiEvents\Repository\Eloquent\LiveChatRefundRequestRepository;
@@ -137,6 +139,8 @@ use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerFontRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
+use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatRefundRequestRepositoryInterface;
@@ -199,6 +203,8 @@ class RepositoryServiceProvider extends ServiceProvider
         QrLinkRepositoryInterface::class => QrLinkRepository::class,
         QrCampaignRepositoryInterface::class => QrCampaignRepository::class,
         OrganizerSmsSettingRepositoryInterface::class => OrganizerSmsSettingRepository::class,
+        OrganizerSocialConnectionRepositoryInterface::class => OrganizerSocialConnectionRepository::class,
+        SocialPostRepositoryInterface::class => SocialPostRepository::class,
         OrganizerFontRepositoryInterface::class => OrganizerFontRepository::class,
         SmsConversationRepositoryInterface::class => SmsConversationRepository::class,
         SmsCustomerDirectoryRepositoryInterface::class => SmsCustomerDirectoryRepository::class,

@@ -20,6 +20,7 @@ use HiEvents\Services\Infrastructure\Authorization\IsAuthorizedService;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as LaravelResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -155,6 +156,11 @@ abstract class BaseAction extends Controller
         $allHeaders = array_merge($defaultHeaders, $headers);
 
         return Response::make($xmlContent, $statusCode, $allHeaders);
+    }
+
+    protected function redirectResponse(string $url): RedirectResponse
+    {
+        return new RedirectResponse($url);
     }
 
     protected function htmlResponse(
