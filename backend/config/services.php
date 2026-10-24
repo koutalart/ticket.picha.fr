@@ -60,6 +60,7 @@ return [
         'app_id' => env('META_APP_ID'),
         'app_secret' => env('META_APP_SECRET'),
         'login_config_id' => env('META_LOGIN_CONFIG_ID'),
+        'webhook_verify_token' => env('META_WEBHOOK_VERIFY_TOKEN'),
         'publishing_timeout_seconds' => (int) env('META_PUBLISHING_TIMEOUT', 60),
         'oauth_scopes' => [
             'pages_show_list',
@@ -70,6 +71,9 @@ return [
             'instagram_basic',
             'instagram_content_publish',
             'instagram_manage_insights',
+            'instagram_manage_comments',
+            'pages_read_user_content',
+            'pages_manage_engagement',
         ],
     ],
 

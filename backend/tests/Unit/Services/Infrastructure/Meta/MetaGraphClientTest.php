@@ -201,4 +201,50 @@ class MetaGraphClientTest extends TestCase
             && str_contains(urldecode($request->body()), 'attached_media[1]={"media_fbid":"p2"}')
             && ! str_contains($request->body(), 'link='));
     }
+
+    public function test_instagram_media_and_comments_are_read_with_the_needed_fields(): void
+    {
+        Http::fake([
+            'graph.facebook.com/v24.0/1784/media*' => Http::response(['data' => [['id' => 'm1', 'media_type' => 'VIDEO']]]),
+            'graph.facebook.com/v24.0/m1/comments*' => Http::response(['data' => [['id' => 'c1', 'text' => 'Trop hâte']]]),
+        ]);
+
+        $this->assertSame('m1', $this->client->getInstagramMedia('1784', 'page-token')[0]['id']);
+        $this->assertSame('c1', $this->client->getInstagramComments('m1', 'page-token')[0]['id']);
+
+        Http::assertSent(fn (Request $request) => str_contains($request->url(), '/1784/media?')
+            && str_contains(urldecode($request->url()), 'children{id,media_type,media_url,thumbnail_url}')
+            && str_contains(urldecode($request->url()), 'comments_count'));
+        Http::assertSent(fn (Request $request) => str_contains(urldecode($request->url()), 'replies{'));
+    }
+
+    public function test_page_posts_and_comments_are_read(): void
+    {
+        Http::fake([
+            'graph.facebook.com/v24.0/page-1/published_posts*' => Http::response(['data' => [['id' => 'page-1_p1']]]),
+            'graph.facebook.com/v24.0/page-1_p1/comments*' => Http::response(['data' => [['id' => 'fc1']]]),
+        ]);
+
+        $this->assertSame('page-1_p1', $this->client->getPagePosts('page-1', 'page-token')[0]['id']);
+        $this->assertSame('fc1', $this->client->getPostComments('page-1_p1', 'page-token')[0]['id']);
+
+        Http::assertSent(fn (Request $request) => str_contains(urldecode($request->url()), 'reactions.summary(total_count)'));
+        Http::assertSent(fn (Request $request) => str_contains($request->url(), 'filter=toplevel'));
+    }
+
+    public function test_replies_are_posted_to_the_right_edge(): void
+    {
+        Http::fake([
+            'graph.facebook.com/v24.0/ig-c1/replies' => Http::response(['id' => 'ig-r1']),
+            'graph.facebook.com/v24.0/fb-c1/comments' => Http::response(['id' => 'fb-r1']),
+            'graph.facebook.com/v24.0/page-1/subscribed_apps' => Http::response(['success' => true]),
+        ]);
+
+        $this->assertSame('ig-r1', $this->client->replyToInstagramComment('ig-c1', 'page-token', 'Merci !'));
+        $this->assertSame('fb-r1', $this->client->replyToFacebookComment('fb-c1', 'page-token', 'Merci !'));
+        $this->client->subscribePageToWebhooks('page-1', 'page-token');
+
+        Http::assertSent(fn (Request $request) => $request->url() === 'https://graph.facebook.com/v24.0/ig-c1/replies' && $request['message'] === 'Merci !');
+        Http::assertSent(fn (Request $request) => $request->url() === 'https://graph.facebook.com/v24.0/page-1/subscribed_apps' && $request['subscribed_fields'] === 'feed');
+    }
 }

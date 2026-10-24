@@ -50,6 +50,9 @@ use HiEvents\Repository\Eloquent\OrganizerFontRepository;
 use HiEvents\Repository\Eloquent\OrganizerSmsSettingRepository;
 use HiEvents\Repository\Eloquent\OrganizerSocialConnectionRepository;
 use HiEvents\Repository\Eloquent\SocialPostRepository;
+use HiEvents\Repository\Eloquent\SocialMediaFileRepository;
+use HiEvents\Repository\Eloquent\SocialFeedItemRepository;
+use HiEvents\Repository\Eloquent\SocialCommentRepository;
 use HiEvents\Repository\Eloquent\SmsAssistantCallRepository;
 use HiEvents\Repository\Eloquent\LiveChatMessageRepository;
 use HiEvents\Repository\Eloquent\LiveChatRefundRequestRepository;
@@ -140,6 +143,9 @@ use HiEvents\Repository\Interfaces\OrganizerFontRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
+use HiEvents\Repository\Interfaces\SocialMediaFileRepositoryInterface;
+use HiEvents\Repository\Interfaces\SocialFeedItemRepositoryInterface;
+use HiEvents\Repository\Interfaces\SocialCommentRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatRefundRequestRepositoryInterface;
@@ -203,6 +209,9 @@ class RepositoryServiceProvider extends ServiceProvider
         OrganizerSmsSettingRepositoryInterface::class => OrganizerSmsSettingRepository::class,
         OrganizerSocialConnectionRepositoryInterface::class => OrganizerSocialConnectionRepository::class,
         SocialPostRepositoryInterface::class => SocialPostRepository::class,
+        SocialMediaFileRepositoryInterface::class => SocialMediaFileRepository::class,
+        SocialFeedItemRepositoryInterface::class => SocialFeedItemRepository::class,
+        SocialCommentRepositoryInterface::class => SocialCommentRepository::class,
         OrganizerFontRepositoryInterface::class => OrganizerFontRepository::class,
         SmsConversationRepositoryInterface::class => SmsConversationRepository::class,
         SmsCustomerDirectoryRepositoryInterface::class => SmsCustomerDirectoryRepository::class,

@@ -1,5 +1,17 @@
 <?php
 
+use HiEvents\Http\Actions\Social\AppendSocialMediaChunkAction;
+use HiEvents\Http\Actions\Social\CompleteSocialMediaUploadAction;
+use HiEvents\Http\Actions\Social\GetSocialCommentsAction;
+use HiEvents\Http\Actions\Social\GetSocialFeedAction;
+use HiEvents\Http\Actions\Social\GetSocialMediaActionPublic;
+use HiEvents\Http\Actions\Social\GetSocialMediaContentAction;
+use HiEvents\Http\Actions\Social\ReceiveMetaWebhookActionPublic;
+use HiEvents\Http\Actions\Social\ReplyToSocialCommentAction;
+use HiEvents\Http\Actions\Social\StartSocialMediaUploadAction;
+use HiEvents\Http\Actions\Social\SuggestSocialCommentReplyAction;
+use HiEvents\Http\Actions\Social\VerifyMetaWebhookActionPublic;
+use HiEvents\Services\Domain\Social\Media\SocialMediaUrlGenerator;
 use HiEvents\Http\Actions\Social\CancelSocialPostAction;
 use HiEvents\Http\Actions\Social\ConnectMetaPageAction;
 use HiEvents\Http\Actions\Social\CreateSocialPostsAction;
@@ -540,6 +552,25 @@ $router->middleware(['auth:api'])->group(
             ->where('post_id', '[0-9]+');
         $router->post('/organizers/{organizer_id}/social/posts/{post_id}/cancel', CancelSocialPostAction::class)
             ->where('post_id', '[0-9]+');
+        $router->post('/organizers/{organizer_id}/social/media/uploads', StartSocialMediaUploadAction::class)
+            ->middleware('throttle:60,1');
+        $router->post('/organizers/{organizer_id}/social/media/uploads/{file_id}/chunks', AppendSocialMediaChunkAction::class)
+            ->where('file_id', '[0-9]+')
+            ->middleware('throttle:300,1');
+        $router->post('/organizers/{organizer_id}/social/media/uploads/{file_id}/complete', CompleteSocialMediaUploadAction::class)
+            ->where('file_id', '[0-9]+')
+            ->middleware('throttle:60,1');
+        $router->get('/organizers/{organizer_id}/social/media/{file_id}/content', GetSocialMediaContentAction::class)
+            ->where('file_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/social/feed', GetSocialFeedAction::class);
+        $router->get('/organizers/{organizer_id}/social/feed-items/{feed_item_id}/comments', GetSocialCommentsAction::class)
+            ->where('feed_item_id', '[0-9]+');
+        $router->post('/organizers/{organizer_id}/social/comments/{comment_id}/suggest-reply', SuggestSocialCommentReplyAction::class)
+            ->where('comment_id', '[0-9]+')
+            ->middleware('throttle:20,1');
+        $router->post('/organizers/{organizer_id}/social/comments/{comment_id}/reply', ReplyToSocialCommentAction::class)
+            ->where('comment_id', '[0-9]+')
+            ->middleware('throttle:30,1');
         $router->get('/organizers/{organizer_id}/reports/{report_type}', GetOrganizerReportAction::class);
         $router->get('/organizers/{organizer_id}/reports/{report_type}/export', ExportOrganizerReportAction::class);
         $router->post('/organizers/{organizer_id}/webhooks', CreateOrganizerWebhookAction::class);
@@ -829,6 +860,15 @@ $router->prefix('/public')->group(
         // Facebook / Instagram connection (Meta OAuth redirect)
         $router->get('/social/meta/callback', HandleMetaOAuthCallbackActionPublic::class)
             ->middleware('throttle:20,1');
+        $router->get('/social/meta/webhook', VerifyMetaWebhookActionPublic::class)
+            ->middleware('throttle:30,1');
+        $router->post('/social/meta/webhook', ReceiveMetaWebhookActionPublic::class)
+            ->middleware('throttle:600,1');
+        $router->get('/social/media/{media_id}/{file_name}', GetSocialMediaActionPublic::class)
+            ->where('media_id', '[0-9]+')
+            ->where('file_name', 'media-[0-9]+\\.(jpg|png|mp4|mov)')
+            ->middleware(['signed:relative', 'throttle:120,1'])
+            ->name(SocialMediaUrlGenerator::ROUTE_NAME);
 
         // QR codes
         $router->get('/qr-links/{short_id}', GetQrLinkPublicAction::class)

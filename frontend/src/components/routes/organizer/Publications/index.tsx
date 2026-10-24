@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {NavLink, useParams} from "react-router";
 import {t} from "@lingui/macro";
 import {Alert, Anchor, Badge, Button, Group, Pagination, Skeleton, Tabs, Text} from "@mantine/core";
@@ -6,6 +6,7 @@ import {IconAlertTriangle, IconPlus} from "@tabler/icons-react";
 import {SocialPost, SocialPostStatus} from "../../../../types.ts";
 import {useGetSocialConnection} from "../../../../queries/useGetSocialConnection.ts";
 import {useGetSocialPosts} from "../../../../queries/useGetSocialPosts.ts";
+import {useGetSocialFeed} from "../../../../queries/useGetSocialFeed.ts";
 import {useGetOrganizer} from "../../../../queries/useGetOrganizer.ts";
 import {useScheduleSocialPost} from "../../../../mutations/useScheduleSocialPost.ts";
 import {useCancelSocialPost} from "../../../../mutations/useCancelSocialPost.ts";
@@ -17,11 +18,13 @@ import {PageBody} from "../../../common/PageBody";
 import {PageTitle} from "../../../common/PageTitle";
 import {PostFormModal} from "./PostFormModal.tsx";
 import {PostCard, PostActions} from "./PostCard.tsx";
+import {FeedView, fromEntry, fromPost} from "./feedView.ts";
 import {PostViewer} from "./PostViewer.tsx";
 import {postTabLabel} from "./labels.ts";
 import classes from "./Publications.module.scss";
 
 const ALL = 'ALL';
+const FEED_PAGE = 20;
 const TABS: SocialPostStatus[] = ['PENDING_APPROVAL', 'SCHEDULED', 'PUBLISHED', 'FAILED', 'DRAFT', 'CANCELLED'];
 
 const Publications = () => {
@@ -30,9 +33,12 @@ const Publications = () => {
     const [page, setPage] = useState(1);
     const [creating, setCreating] = useState(false);
     const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+    const [feedLimit, setFeedLimit] = useState(FEED_PAGE);
+    const isFeed = status === ALL;
     const {data: organizer} = useGetOrganizer(organizerId);
     const connectionQuery = useGetSocialConnection(organizerId);
-    const postsQuery = useGetSocialPosts(organizerId, {status: status === ALL ? undefined : status as SocialPostStatus, page});
+    const feedQuery = useGetSocialFeed(organizerId, feedLimit, isFeed);
+    const postsQuery = useGetSocialPosts(organizerId, {status: isFeed ? undefined : status as SocialPostStatus, page});
     const pendingQuery = useGetSocialPosts(organizerId, {status: 'PENDING_APPROVAL', page: 1});
     const scheduleMutation = useScheduleSocialPost();
     const cancelMutation = useCancelSocialPost();
@@ -40,8 +46,11 @@ const Publications = () => {
     const connection = connectionQuery.data;
     const canPublish = !!connection?.connected && connection.status === 'ACTIVE';
     const timezone = organizer?.timezone || 'Indian/Mayotte';
-    const posts = postsQuery.data?.data ?? [];
+    const views = useMemo<FeedView[]>(() => isFeed
+        ? (feedQuery.data?.data ?? []).map(fromEntry)
+        : (postsQuery.data?.data ?? []).map(fromPost), [isFeed, feedQuery.data, postsQuery.data]);
     const meta = postsQuery.data?.meta;
+    const activeQuery = isFeed ? feedQuery : postsQuery;
     const pendingCount = pendingQuery.data?.meta?.total ?? 0;
 
     const actions: PostActions = {
@@ -105,6 +114,16 @@ const Publications = () => {
                     </Alert>
                 )}
 
+                {canPublish && (connection?.missing_scopes?.length ?? 0) > 0 && (
+                    <Alert color="blue" icon={<IconAlertTriangle size={16}/>} mb="md">
+                        {t`Reconnect the Facebook page to read and answer the comments of your posts.`}
+                        {' '}
+                        <Anchor component={NavLink} to={`/manage/organizer/${organizerId}/settings#social`} size="sm">
+                            {t`Open the settings`}
+                        </Anchor>
+                    </Alert>
+                )}
+
                 <Tabs value={status} onChange={changeTab} variant="pills" radius="xl" mb="md">
                     <Tabs.List className={classes.tabs}>
                         <Tabs.Tab value={ALL}>{t`All`}</Tabs.Tab>
@@ -122,17 +141,17 @@ const Publications = () => {
                     </Tabs.List>
                 </Tabs>
 
-                {postsQuery.isLoading && <Skeleton height={480} radius="md"/>}
+                {activeQuery.isLoading && <Skeleton height={480} radius="md"/>}
 
-                {postsQuery.isFetched && posts.length === 0 && (
+                {activeQuery.isFetched && views.length === 0 && (
                     <Text c="dimmed" size="sm" ta="center" py="xl">{t`No post yet.`}</Text>
                 )}
 
                 <div className={classes.feed}>
-                    {posts.map((post, position) => (
+                    {views.map((view, position) => (
                         <PostCard
-                            key={post.id}
-                            post={post}
+                            key={view.key}
+                            view={view}
                             connection={connection}
                             timezone={timezone}
                             actions={actions}
@@ -141,7 +160,15 @@ const Publications = () => {
                     ))}
                 </div>
 
-                {meta && meta.last_page > 1 && (
+                {isFeed && feedQuery.data?.meta.has_more && (
+                    <Group justify="center" mt="md">
+                        <Button variant="light" loading={feedQuery.isFetching} onClick={() => setFeedLimit(limit => limit + FEED_PAGE)}>
+                            {t`Show more`}
+                        </Button>
+                    </Group>
+                )}
+
+                {!isFeed && meta && meta.last_page > 1 && (
                     <Group justify="center" mt="md">
                         <Pagination size="sm" value={page} onChange={setPage} total={meta.last_page}/>
                     </Group>
@@ -150,7 +177,8 @@ const Publications = () => {
 
             {viewerIndex !== null && (
                 <PostViewer
-                    posts={posts}
+                    organizerId={organizerId!}
+                    posts={views}
                     index={viewerIndex}
                     connection={connection}
                     timezone={timezone}

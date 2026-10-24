@@ -1,15 +1,17 @@
 import {useEffect, useRef} from "react";
 import {t} from "@lingui/macro";
-import {ActionIcon, Badge, Modal, Text} from "@mantine/core";
-import {IconBrandFacebook, IconBrandInstagram, IconChevronDown, IconChevronUp, IconX} from "@tabler/icons-react";
-import {SocialConnection, SocialPost} from "../../../../types.ts";
+import {ActionIcon, Divider, Modal, Text} from "@mantine/core";
+import {IconChevronDown, IconChevronUp, IconX} from "@tabler/icons-react";
+import {IdParam, SocialConnection} from "../../../../types.ts";
 import {PostMedia} from "./PostMedia.tsx";
-import {accountName, PostActionButtons, PostActions, timeLabel} from "./PostCard.tsx";
-import {postFormatLabel, postStatusColor, postStatusLabel} from "./labels.ts";
+import {NetworkAvatar, PostActionButtons, PostActions, SourceBadges, ViewBadges} from "./PostCard.tsx";
+import {CommentsPanel} from "./CommentsPanel.tsx";
+import {accountName, FeedView, timeLabel} from "./feedView.ts";
 import classes from "./Publications.module.scss";
 
 interface PostViewerProps {
-    posts: SocialPost[];
+    organizerId: IdParam;
+    posts: FeedView[];
     index: number;
     connection?: SocialConnection;
     timezone: string;
@@ -20,7 +22,7 @@ interface PostViewerProps {
 
 const SWIPE_DISTANCE = 60;
 
-export const PostViewer = ({posts, index, connection, timezone, actions, onChange, onClose}: PostViewerProps) => {
+export const PostViewer = ({organizerId, posts, index, connection, timezone, actions, onChange, onClose}: PostViewerProps) => {
     const post = posts[index];
     const touchStart = useRef<number | null>(null);
     const hasPrevious = index > 0;
@@ -61,7 +63,7 @@ export const PostViewer = ({posts, index, connection, timezone, actions, onChang
 
                 <div
                     className={classes.viewerStage}
-                    key={post.id}
+                    key={post.key}
                     onTouchStart={(event) => {
                         touchStart.current = event.touches[0].clientY;
                     }}
@@ -84,25 +86,26 @@ export const PostViewer = ({posts, index, connection, timezone, actions, onChang
 
                 <aside className={classes.viewerPanel}>
                     <div className={classes.cardHeader}>
-                        <span className={post.network === 'INSTAGRAM' ? classes.avatarInstagram : classes.avatarFacebook}>
-                            {post.network === 'INSTAGRAM' ? <IconBrandInstagram size={18}/> : <IconBrandFacebook size={18}/>}
-                        </span>
+                        <NetworkAvatar view={post}/>
                         <div className={classes.cardHeaderText}>
                             <Text size="sm" fw={600} truncate>{accountName(post, connection)}</Text>
                             <Text size="xs" c="dimmed">{timeLabel(post, timezone)}</Text>
                         </div>
                     </div>
-                    <div className={classes.cardBadges}>
-                        <Badge variant="light" color="gray">{postFormatLabel(post.format)}</Badge>
-                        <Badge variant="light" color={postStatusColor(post.status)}>{postStatusLabel(post.status)}</Badge>
-                        {post.source === 'ASSISTANT' && <Badge variant="outline" color="violet">{t`Prepared by the assistant`}</Badge>}
-                    </div>
+                    <ViewBadges view={post}/>
+                    <SourceBadges view={post}/>
                     {post.caption && <Text size="sm" className={classes.caption}>{post.caption}</Text>}
                     {post.link && <Text size="sm" c="dimmed" style={{wordBreak: 'break-all'}}>{post.link}</Text>}
-                    {post.last_error && post.status !== 'PUBLISHED' && (
-                        <Text size="xs" c={post.status === 'FAILED' ? 'red' : 'orange'}>{post.last_error}</Text>
+                    {post.lastError && (
+                        <Text size="xs" c={post.status === 'FAILED' ? 'red' : 'orange'}>{post.lastError}</Text>
                     )}
-                    <PostActionButtons post={post} actions={actions}/>
+                    <PostActionButtons view={post} actions={actions}/>
+                    {post.item && (
+                        <>
+                            <Divider label={t`Comments`} labelPosition="left"/>
+                            <CommentsPanel organizerId={organizerId} feedItemId={post.item.id} canReply={actions.canPublish}/>
+                        </>
+                    )}
                 </aside>
 
                 <div className={classes.viewerNav}>

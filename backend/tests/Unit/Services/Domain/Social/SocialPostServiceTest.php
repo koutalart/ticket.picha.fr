@@ -9,14 +9,18 @@ use HiEvents\DomainObjects\Enums\SocialPostFormat;
 use HiEvents\DomainObjects\Enums\SocialPostSource;
 use HiEvents\DomainObjects\Generated\SocialPostDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
+use HiEvents\DomainObjects\SocialMediaFileDomainObject;
 use HiEvents\DomainObjects\SocialPostDomainObject;
 use HiEvents\DomainObjects\Status\SocialConnectionStatus;
 use HiEvents\DomainObjects\Status\SocialPostStatus;
 use HiEvents\Exceptions\InvalidSocialPostException;
+use HiEvents\Exceptions\SocialMediaFileNotFoundException;
 use HiEvents\Exceptions\SocialPostNotEditableException;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
 use HiEvents\Services\Domain\Social\DTO\CreateSocialPostsDTO;
 use HiEvents\Services\Domain\Social\DTO\SocialMediaItemDTO;
+use HiEvents\Services\Domain\Social\Media\SocialMediaFileService;
+use HiEvents\Services\Domain\Social\Media\SocialMediaRules;
 use HiEvents\Services\Domain\Social\MetaConnectionService;
 use HiEvents\Services\Domain\Social\SocialPostService;
 use HiEvents\Services\Domain\Social\SocialPostValidator;
@@ -31,6 +35,8 @@ class SocialPostServiceTest extends TestCase
 
     private MetaConnectionService|MockInterface $connectionService;
 
+    private SocialMediaFileService|MockInterface $mediaFileService;
+
     private SocialPostService $service;
 
     protected function setUp(): void
@@ -42,7 +48,10 @@ class SocialPostServiceTest extends TestCase
         $database = Mockery::mock(DatabaseManager::class);
         $database->shouldReceive('transaction')->andReturnUsing(fn (callable $callback) => $callback());
 
-        $this->service = new SocialPostService($this->postRepository, $this->connectionService, new SocialPostValidator, $database);
+        $this->mediaFileService = Mockery::mock(SocialMediaFileService::class);
+        $this->mediaFileService->shouldReceive('keep', 'purgeAfterDays')->byDefault();
+
+        $this->service = new SocialPostService($this->postRepository, $this->connectionService, new SocialPostValidator(new SocialMediaRules), $database, $this->mediaFileService);
     }
 
     public function test_post_prepared_by_the_assistant_waits_for_approval(): void
@@ -78,6 +87,33 @@ class SocialPostServiceTest extends TestCase
             ->andReturn(new SocialPostDomainObject);
 
         $this->service->create($this->dto(SocialPostSource::PICHA, [SocialNetwork::INSTAGRAM], userId: 7));
+    }
+
+    public function test_imported_png_is_refused_for_instagram_but_kept_for_facebook(): void
+    {
+        $this->givenConnection();
+        $this->mediaFileService->shouldReceive('findReady')->with(4, 42)->andReturn(
+            (new SocialMediaFileDomainObject)->setId(42)->setMediaType('IMAGE')->setMimeType('image/png')->setWidth(1080)->setHeight(1080),
+        );
+        $this->mediaFileService->shouldReceive('keep')->once()->with([42]);
+        $this->postRepository->shouldReceive('create')->once()
+            ->withArgs(fn (array $attributes) => $attributes[SocialPostDomainObjectAbstract::MEDIA] === [['file_id' => 42, 'type' => 'IMAGE']])
+            ->andReturn(new SocialPostDomainObject);
+
+        $this->service->create($this->fileDto([SocialNetwork::FACEBOOK]));
+
+        $this->expectException(InvalidSocialPostException::class);
+        $this->service->create($this->fileDto([SocialNetwork::INSTAGRAM]));
+    }
+
+    public function test_imported_file_of_another_organizer_is_refused(): void
+    {
+        $this->givenConnection();
+        $this->mediaFileService->shouldReceive('findReady')->andThrow(new SocialMediaFileNotFoundException('missing'));
+        $this->postRepository->shouldNotReceive('create');
+
+        $this->expectException(InvalidSocialPostException::class);
+        $this->service->create($this->fileDto([SocialNetwork::FACEBOOK]));
     }
 
     public function test_post_is_refused_without_a_connected_page(): void
@@ -149,6 +185,22 @@ class SocialPostServiceTest extends TestCase
             link: null,
             scheduledAt: null,
             source: $source,
+        );
+    }
+
+    private function fileDto(array $networks): CreateSocialPostsDTO
+    {
+        return new CreateSocialPostsDTO(
+            accountId: 3,
+            organizerId: 4,
+            userId: 7,
+            networks: $networks,
+            format: SocialPostFormat::IMAGE,
+            caption: 'Halloween',
+            media: [new SocialMediaItemDTO('', SocialMediaType::IMAGE, fileId: 42)],
+            link: null,
+            scheduledAt: null,
+            source: SocialPostSource::PICHA,
         );
     }
 

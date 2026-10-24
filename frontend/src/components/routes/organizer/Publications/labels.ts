@@ -1,5 +1,5 @@
 import {t} from "@lingui/macro";
-import {SocialPostFormat, SocialPostStatus} from "../../../../types.ts";
+import {SocialFeedItemFormat, SocialPostStatus} from "../../../../types.ts";
 
 export const postStatusLabel = (status: SocialPostStatus): string => {
     switch (status) {
@@ -36,7 +36,7 @@ export const postStatusColor = (status: SocialPostStatus): string => {
     }
 };
 
-export const postFormatLabel = (format: SocialPostFormat): string => {
+export const postFormatLabel = (format: SocialFeedItemFormat): string => {
     switch (format) {
         case 'TEXT':
             return t`Text`;
@@ -48,6 +48,8 @@ export const postFormatLabel = (format: SocialPostFormat): string => {
             return t`Reel`;
         case 'STORY':
             return t`Story`;
+        case 'VIDEO':
+            return t`Video`;
     }
 };
 

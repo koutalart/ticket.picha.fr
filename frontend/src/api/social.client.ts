@@ -4,7 +4,10 @@ import {
     GenericPaginatedResponse,
     IdParam,
     MetaPage,
+    SocialComment,
     SocialConnection,
+    SocialFeedEntry,
+    SocialMediaFile,
     SocialMediaItem,
     SocialNetwork,
     SocialPost,
@@ -32,6 +35,11 @@ export interface UpdateSocialPostRequest {
     media?: SocialMediaItem[];
     link?: string | null;
     scheduled_at?: string | null;
+}
+
+export interface SocialFeedResponse {
+    data: SocialFeedEntry[];
+    meta: { has_more: boolean, limit: number };
 }
 
 export const socialClient = {
@@ -79,5 +87,55 @@ export const socialClient = {
     },
     deletePost: async (organizerId: IdParam, postId: IdParam) => {
         await api.delete(`organizers/${organizerId}/social/posts/${postId}`);
+    },
+    feed: async (organizerId: IdParam, limit: number) => {
+        const response = await api.get<SocialFeedResponse>(`organizers/${organizerId}/social/feed`, {params: {limit}});
+        return response.data;
+    },
+    comments: async (organizerId: IdParam, feedItemId: IdParam) => {
+        const response = await api.get<GenericDataResponse<SocialComment[]>>(`organizers/${organizerId}/social/feed-items/${feedItemId}/comments`);
+        return response.data;
+    },
+    suggestReply: async (organizerId: IdParam, commentId: IdParam) => {
+        const response = await api.post<GenericDataResponse<{ message: string }>>(`organizers/${organizerId}/social/comments/${commentId}/suggest-reply`);
+        return response.data;
+    },
+    reply: async (organizerId: IdParam, commentId: IdParam, message: string) => {
+        const response = await api.post<GenericDataResponse<SocialComment>>(`organizers/${organizerId}/social/comments/${commentId}/reply`, {message});
+        return response.data;
+    },
+    /**
+     * Sends the file in chunks (the server refuses requests over 20 MB), then lets the server check it.
+     */
+    uploadMedia: async (
+        organizerId: IdParam,
+        file: File,
+        format: SocialPostFormat | null,
+        onProgress: (ratio: number) => void,
+    ): Promise<SocialMediaFile> => {
+        const started = await api.post<GenericDataResponse<SocialMediaFile>>(`organizers/${organizerId}/social/media/uploads`, {
+            file_name: file.name,
+            mime_type: file.type || 'application/octet-stream',
+            size: file.size,
+        });
+        const media = started.data.data;
+        const chunkSize = media.chunk_size;
+        const chunks = Math.max(1, Math.ceil(file.size / chunkSize));
+
+        for (let index = 0; index < chunks; index++) {
+            const body = new FormData();
+            body.append('index', String(index));
+            body.append('chunk', file.slice(index * chunkSize, (index + 1) * chunkSize), 'chunk');
+            await api.post(`organizers/${organizerId}/social/media/uploads/${media.id}/chunks`, body, {
+                headers: {'Content-Type': 'multipart/form-data'},
+                onUploadProgress: (event) => onProgress((index * chunkSize + (event.loaded || 0)) / file.size),
+            });
+        }
+
+        onProgress(1);
+
+        const completed = await api.post<GenericDataResponse<SocialMediaFile>>(`organizers/${organizerId}/social/media/uploads/${media.id}/complete`, {format});
+
+        return completed.data.data;
     },
 };
