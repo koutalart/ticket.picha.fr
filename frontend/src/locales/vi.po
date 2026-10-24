@@ -33,7 +33,7 @@ msgstr ""
 msgid "\"See also\" cards"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:221
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:222
 msgid "(emoji or special characters: 70 characters per SMS)"
 msgstr "(biểu tượng cảm xúc hoặc ký tự đặc biệt: 70 ký tự mỗi SMS)"
 
@@ -107,7 +107,7 @@ msgid "{0} came to 2 events or more"
 msgstr "{0} đến từ 2 sự kiện trở lên"
 
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:118
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:220
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:221
 msgid "{0} characters, {1} SMS"
 msgstr "{0} ký tự, {1} SMS"
 
@@ -500,7 +500,7 @@ msgstr "Thông báo hủy đã được gửi đến"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "Một máy tính trong mạng của địa điểm chạy bộ chuyển tiếp in PICHA. Nó nhận các vé được in từ quầy này và gửi đến máy Zebra."
 
-#: src/components/routes/organizer/Sms/index.tsx:86
+#: src/components/routes/organizer/Sms/index.tsx:87
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Khách hàng trả lời STOP sẽ tự động hủy nhận SMS của bạn."
 
@@ -850,6 +850,7 @@ msgid "Active Events"
 msgstr "Sự kiện hoạt động"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:197
+#: src/components/routes/organizer/Sms/TeamView.tsx:133
 msgid "Add"
 msgstr "Thêm"
 
@@ -1056,7 +1057,7 @@ msgstr ""
 msgid "Add Webhook"
 msgstr "Thêm Webhook"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:192
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:193
 msgid "Add your PICHA SMS API key and sending number in Settings to reply from here."
 msgstr "Thêm khóa API PICHA SMS và số gửi trong Cài đặt để trả lời tại đây."
 
@@ -1158,7 +1159,7 @@ msgstr "Bảng Điều Khiển Quản Trị"
 msgid "Admin users have full access to events and account settings."
 msgstr "Người dùng quản trị có quyền truy cập đầy đủ vào các sự kiện và cài đặt tài khoản."
 
-#: src/components/routes/event/Settings/index.tsx:70
+#: src/components/routes/event/Settings/index.tsx:72
 msgctxt "event settings tab"
 msgid "Advanced"
 msgstr ""
@@ -1400,6 +1401,10 @@ msgstr ""
 msgid "Also refund this order"
 msgstr "Cũng hoàn tiền đơn hàng này"
 
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:89
+msgid "Also send it to the platform supervision"
+msgstr "Gửi cả cho bộ phận giám sát nền tảng"
+
 #: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:163
 msgid "Also send it when I cancel a registration"
 msgstr "Cũng gửi khi tôi hủy một đăng ký"
@@ -1417,6 +1422,7 @@ msgstr "Tuyệt vời, sự kiện, từ khóa ..."
 #: src/components/forms/TaxAndFeeForm/index.tsx:71
 #: src/components/routes/event/OrdersPage/OrderList.tsx:155
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:50
+#: src/components/routes/refund-approval/index.tsx:86
 msgid "Amount"
 msgstr "Số tiền"
 
@@ -1437,7 +1443,7 @@ msgid "Amount received"
 msgstr ""
 
 #: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:218
-msgid "Amount refunded: {total}"
+msgid "Amount to refund: {total}"
 msgstr "Số tiền hoàn: {total}"
 
 #: src/components/routes/kiosk/NoEvent/index.tsx:26
@@ -1472,6 +1478,10 @@ msgstr "Đã xảy ra lỗi không mong muốn."
 msgid "An unexpected error occurred. Please try again."
 msgstr "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại."
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:140
+msgid "Anicka answers at once the SMS of the people who run the event: she checks with them that registration works as they wish and collects their contact lists. She never acts herself."
+msgstr "Anicka trả lời ngay tin nhắn SMS của những người điều hành sự kiện: cô kiểm tra cùng họ rằng việc đăng ký hoạt động như mong muốn và thu thập danh sách liên hệ của họ. Cô không bao giờ tự hành động."
+
 #: src/components/routes/landing/ProductVisuals/index.tsx:40
 #: src/components/routes/landing/ProductVisuals/index.tsx:65
 msgid "Annual Convention"
@@ -1489,6 +1499,10 @@ msgstr ""
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:83
 msgid "Answer"
 msgstr "Câu trả lời"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:159
+msgid "Answer the team automatically"
+msgstr "Tự động trả lời nhóm"
 
 #: src/components/common/QuestionAndAnswerList/index.tsx:122
 msgid "Answer updated successfully."
@@ -1559,9 +1573,25 @@ msgstr "Áp dụng mã khuyến mãi"
 msgid "Apply this {type} to all new products"
 msgstr "Áp dụng {type} này cho tất cả các sản phẩm mới"
 
+#: src/components/routes/refund-approval/index.tsx:121
+msgid "Approve"
+msgstr "Duyệt"
+
 #: src/components/routes/admin/Messages/index.tsx:232
 msgid "Approve Message"
 msgstr "Phê duyệt tin nhắn"
+
+#: src/components/routes/refund-approval/index.tsx:17
+msgid "Approved and refunded"
+msgstr "Đã duyệt và đã hoàn tiền"
+
+#: src/components/routes/refund-approval/index.tsx:23
+msgid "Approved, a person finishes the refund"
+msgstr "Đã duyệt, một người đang hoàn tất việc hoàn tiền"
+
+#: src/components/routes/refund-approval/index.tsx:21
+msgid "Approved, refund in progress"
+msgstr "Đã duyệt, đang hoàn tiền"
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:36
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
@@ -1771,6 +1801,10 @@ msgstr "Hỏi một lần cho mỗi đơn hàng"
 #: src/components/forms/QuestionForm/index.tsx:93
 msgid "Ask once per product"
 msgstr "Hỏi một lần cho mỗi sản phẩm"
+
+#: src/components/routes/refund-approval/index.tsx:90
+msgid "Asked on"
+msgstr "Yêu cầu lúc"
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:269
 msgid "Assigned Configuration"
@@ -2390,6 +2424,10 @@ msgstr "Theo mặc định, chỉ những người tham dự tự hủy từ tra
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 msgstr "Bằng cách đăng ký, bạn đồng ý với các <0>Điều khoản dịch vụ của chúng tôi</0> và <1>Chính sách bảo mật</1>."
 
+#: src/components/routes/refund-approval/index.tsx:30
+msgid "by SMS"
+msgstr "qua SMS"
+
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:69
 msgid "By subscribing, you agree to receive news about the events of {0} by e-mail. Your address is only used for this purpose and you can unsubscribe at any time."
 msgstr ""
@@ -2472,7 +2510,7 @@ msgstr "Nguồn chiến dịch (tham số utm), trang giới thiệu và trang �
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
-#: src/components/routes/organizer/Sms/index.tsx:114
+#: src/components/routes/organizer/Sms/index.tsx:115
 msgid "Campaigns"
 msgstr "Chiến dịch"
 
@@ -3392,7 +3430,6 @@ msgstr "Xác nhận mật khẩu"
 msgid "Confirm Password"
 msgstr "Xác nhận mật khẩu"
 
-#: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:227
 #: src/components/routes/organizer/Sms/ReminderList.tsx:111
 msgid "Confirm the cancellation"
 msgstr "Xác nhận hủy"
@@ -3426,7 +3463,7 @@ msgstr "Kết nối và nâng cấp"
 msgid "Connect Documentation"
 msgstr "Tài liệu kết nối"
 
-#: src/components/routes/organizer/Sms/index.tsx:94
+#: src/components/routes/organizer/Sms/index.tsx:95
 msgid "Connect PICHA SMS in Settings"
 msgstr "Kết nối PICHA SMS trong Cài đặt"
 
@@ -3598,6 +3635,10 @@ msgstr "Đã xuất liên hệ"
 msgid "Contacts imported"
 msgstr "Đã nhập liên hệ"
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:151
+msgid "Contacts in copy get no automatic answer. When a request commits to something (campaign, price, refund, any change), Anicka sends a holding reply and the platform supervision is alerted at once."
+msgstr "Liên hệ nhận bản sao không nhận được trả lời tự động. Khi một yêu cầu ràng buộc điều gì đó (chiến dịch, giá, hoàn tiền, mọi thay đổi), Anicka gửi tin chờ và bộ phận giám sát nền tảng được cảnh báo ngay."
+
 #: src/components/routes/event/EventPages/index.tsx:267
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:270
 msgid "Content"
@@ -3657,7 +3698,7 @@ msgstr "Kiểm soát cách xử lý phí nền tảng cho sự kiện này"
 msgid "Conversation"
 msgstr "Cuộc trò chuyện"
 
-#: src/components/routes/organizer/Sms/index.tsx:112
+#: src/components/routes/organizer/Sms/index.tsx:113
 msgid "Conversations"
 msgstr "Cuộc trò chuyện"
 
@@ -4168,10 +4209,11 @@ msgstr "Mẫu tùy chỉnh"
 #: src/components/common/OrdersTable/index.tsx:208
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:887
 #: src/components/routes/event/OrdersPage/OrderList.tsx:153
+#: src/components/routes/refund-approval/index.tsx:76
 msgid "Customer"
 msgstr "Khách hàng"
 
-#: src/components/routes/organizer/Sms/index.tsx:177
+#: src/components/routes/organizer/Sms/index.tsx:181
 msgid "Customer file"
 msgstr "Hồ sơ khách hàng"
 
@@ -4263,6 +4305,10 @@ msgstr "Tùy chỉnh giao diện trang tổ chức của bạn"
 msgid "Daily registrations"
 msgstr ""
 
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:45
+msgid "Daily report settings saved"
+msgstr "Đã lưu cài đặt báo cáo"
+
 #: src/components/routes/organizer/Reports/index.tsx:18
 msgid "Daily revenue, taxes, fees, and refunds across all events"
 msgstr "Doanh thu hàng ngày, thuế, phí và hoàn tiền cho tất cả sự kiện"
@@ -4275,6 +4321,10 @@ msgstr "Báo cáo doanh số hàng ngày"
 #: src/components/routes/event/Reports/index.tsx:47
 msgid "Daily sales, tax, and fee breakdown"
 msgstr "Chi tiết doanh số hàng ngày, thuế và phí"
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:53
+msgid "Daily SMS report"
+msgstr "Báo cáo SMS hằng ngày"
 
 #: src/components/common/CapacityAssignmentList/index.tsx:153
 #: src/components/common/CheckInListList/index.tsx:174
@@ -4382,6 +4432,10 @@ msgstr "Sức chứa ngày đầu tiên"
 #: src/components/routes/product-widget/EmbeddedRegistration/SaleCountdown.tsx:56
 msgid "days"
 msgstr ""
+
+#: src/components/routes/refund-approval/index.tsx:98
+msgid "Decided"
+msgstr "Đã quyết định"
 
 #: src/components/routes/event/EventPages/index.tsx:313
 msgid "Dedicated pages for the line-up, practical information and FAQ. Each page is indexed by search engines and links to registration. A page without content is not published."
@@ -4635,6 +4689,10 @@ msgstr "Bỏ qua thông báo này"
 #: src/components/routes/event/Settings/Sections/HomepageAndCheckoutSettings/index.tsx:173
 msgid "Display a checkbox allowing customers to opt-in to receive marketing communications from this event organizer."
 msgstr "Hiển thị hộp kiểm cho phép khách hàng đăng ký nhận thông tin tiếp thị từ ban tổ chức sự kiện này."
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:166
+msgid "Distinct from the instructions of the customer assistant. For example: what the organizer expects, the registration steps to check."
+msgstr "Khác với hướng dẫn của trợ lý khách hàng. Ví dụ: điều nhà tổ chức mong đợi, các bước đăng ký cần kiểm tra."
 
 #: src/components/routes/landing/index.tsx:287
 msgid "Do we need to install an application?"
@@ -5337,6 +5395,10 @@ msgstr ""
 msgid "English"
 msgstr "Tiếng Anh"
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:36
+msgid "Enter a phone number"
+msgstr "Nhập số điện thoại"
+
 #: src/components/common/EmailTemplateEditor/EmailTemplatePreviewPane.tsx:58
 msgid "Enter a subject and body to see the preview"
 msgstr "Nhập tiêu đề và nội dung để xem trước"
@@ -5510,7 +5572,7 @@ msgstr "Lỗi xác nhận thay đổi email"
 msgid "Error loading logs"
 msgstr "Lỗi khi tải nhật ký"
 
-#: src/components/routes/event/Settings/index.tsx:42
+#: src/components/routes/event/Settings/index.tsx:43
 msgctxt "event settings tab"
 msgid "Essentials"
 msgstr ""
@@ -5560,6 +5622,7 @@ msgstr "EUR"
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:43
 #: src/components/routes/organizer/Reports/TaxSummaryReport/index.tsx:23
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:183
+#: src/components/routes/refund-approval/index.tsx:82
 msgid "Event"
 msgstr "Sự kiện"
 
@@ -5834,6 +5897,10 @@ msgstr "Sự kiện bắt đầu trong 24 giờ tới"
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:17
 msgid "Events{0} — {1}"
 msgstr ""
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:54
+msgid "Every day at the chosen time (Mayotte time), the team of the organizer gets by SMS the paid registrations, the registration revenue and the carts in progress."
+msgstr "Mỗi ngày vào giờ đã chọn (giờ Mayotte), nhóm của nhà tổ chức nhận qua SMS số đăng ký đã thanh toán, doanh thu đăng ký và các giỏ hàng đang mở."
 
 #: src/components/common/EmailTemplateEditor/CTAConfiguration.tsx:23
 msgid "Every email template must include a call-to-action button that links to the appropriate page"
@@ -6621,6 +6688,10 @@ msgstr ""
 msgid "from {formatted}"
 msgstr ""
 
+#: src/components/routes/refund-approval/index.tsx:34
+msgid "from the dashboard"
+msgstr "từ bảng điều khiển"
+
 #: src/components/routes/landing/index.tsx:292
 msgid "From the welcome desk on a tablet: search for the attendee or scan their QR code, then print the badge and record the entry in one gesture."
 msgstr "Tại quầy tiếp đón trên máy tính bảng: tìm người tham dự hoặc quét mã QR, in thẻ tên và ghi nhận vào cửa chỉ trong một thao tác."
@@ -7303,6 +7374,10 @@ msgstr "Trong {diffHours} giờ"
 msgid "In {diffMinutes} minutes"
 msgstr "Trong {diffMinutes} phút"
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:19
+msgid "In copy"
+msgstr "Bản sao"
+
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:122
 msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
 msgstr ""
@@ -7437,6 +7512,10 @@ msgstr "Thanh toán ngay lập tức"
 #: src/components/routes/landing/index.tsx:212
 msgid "Institutions and local authorities"
 msgstr "Cơ quan và chính quyền địa phương"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:165
+msgid "Instructions for Anicka"
+msgstr "Hướng dẫn cho Anicka"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:116
 msgid "Instructions for the assistant"
@@ -8289,7 +8368,7 @@ msgstr "Quản lý hồ sơ"
 msgid "Manage registrations, welcome, digital check-in and badge printing for your professional and institutional events with {appName}."
 msgstr "Quản lý đăng ký, đón tiếp, điểm danh số và in thẻ đeo cho các sự kiện chuyên nghiệp và của cơ quan với {appName}."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:258
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:259
 msgid "Manage reply templates"
 msgstr "Quản lý câu trả lời mẫu"
 
@@ -8464,7 +8543,7 @@ msgctxt "event menu"
 msgid "Messages"
 msgstr "Tin nhắn"
 
-#: src/components/routes/event/Settings/index.tsx:61
+#: src/components/routes/event/Settings/index.tsx:62
 msgctxt "event settings tab"
 msgid "Messages"
 msgstr ""
@@ -8724,6 +8803,7 @@ msgstr "Nam placerat elementum..."
 #: src/components/routes/event/EventPages/index.tsx:206
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:77
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:108
+#: src/components/routes/organizer/Sms/TeamView.tsx:123
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:284
 msgid "Name"
 msgstr "Tên"
@@ -8851,7 +8931,7 @@ msgstr "Đã tạo khóa ký mới"
 msgid "New Signups"
 msgstr "Đăng ký mới"
 
-#: src/components/routes/organizer/Sms/index.tsx:103
+#: src/components/routes/organizer/Sms/index.tsx:104
 msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "SMS mới sẽ không đến đây và câu trả lời của bạn sẽ không được gửi. Hãy kiểm tra điện thoại đã bật, có kết nối internet và ứng dụng PICHA SMS đang chạy."
 
@@ -9285,7 +9365,7 @@ msgstr ""
 msgid "No reminder scheduled yet."
 msgstr ""
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:244
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:245
 msgid "No reply template yet"
 msgstr "Chưa có câu trả lời mẫu"
 
@@ -9351,6 +9431,14 @@ msgstr "Chưa có thẻ"
 #: src/components/common/TaxAndFeeList/index.tsx:105
 msgid "No Taxes or Fees have been added."
 msgstr "Không có thuế hoặc phí đã được thêm vào."
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:62
+msgid "No team contact yet: add the numbers of the team in the SMS tab before turning the report on."
+msgstr "Chưa có liên hệ nhóm: hãy thêm số của nhóm trong thẻ SMS trước khi bật báo cáo."
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:95
+msgid "No team contact yet."
+msgstr "Chưa có liên hệ nhóm."
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:473
 msgid "No ticket is both active and attached to an active check-in list. Attach a product to a check-in list first — otherwise it would not be scannable at the door."
@@ -9534,6 +9622,10 @@ msgstr "Số không có mã quốc gia đến từ"
 #: src/components/common/OrganizerReportTable/index.tsx:356
 msgid "of"
 msgstr "của"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:160
+msgid "Off by default."
+msgstr "Mặc định tắt."
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:127
 msgid "Off by default. A few seconds after a customer SMS, the suggested reply leaves on its own, only for simple questions answered by your instructions and your data."
@@ -9875,6 +9967,10 @@ msgstr "Mở áp phích sự kiện"
 msgid "Open the SMS conversation"
 msgstr "Mở hội thoại SMS"
 
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:65
+msgid "Open the team"
+msgstr "Mở nhóm"
+
 #: src/components/forms/ProductForm/index.tsx:546
 msgid "Open this ticket when this ticket is sold out"
 msgstr "Mở vé này khi vé này đã bán hết"
@@ -10002,6 +10098,7 @@ msgstr ""
 #: src/components/common/QuestionsTable/index.tsx:317
 #: src/components/routes/kiosk/Orders/index.tsx:318
 #: src/components/routes/my-tickets/index.tsx:53
+#: src/components/routes/refund-approval/index.tsx:78
 msgid "Order"
 msgstr "Đơn hàng"
 
@@ -10292,6 +10389,14 @@ msgstr "Người tổ chức"
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:61
 msgid "Organizer archived successfully"
 msgstr "Ban tổ chức đã được lưu trữ thành công"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:139
+msgid "Organizer assistant (Anicka)"
+msgstr "Trợ lý nhà tổ chức (Anicka)"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:80
+msgid "Organizer assistant settings saved"
+msgstr "Đã lưu cài đặt trợ lý nhà tổ chức"
 
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:41
 msgid "Organizer deleted successfully"
@@ -10866,6 +10971,7 @@ msgstr "Mã quốc gia"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:596
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:893
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:66
+#: src/components/routes/organizer/Sms/TeamView.tsx:122
 msgid "Phone number"
 msgstr "Số điện thoại"
 
@@ -11270,6 +11376,10 @@ msgstr "Xem trước"
 #: src/components/common/QuestionsTable/index.tsx:308
 msgid "Preview checkout form"
 msgstr "Xem trước biểu mẫu thanh toán"
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:93
+msgid "Preview with today's figures"
+msgstr "Xem trước với số liệu hôm nay"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:93
 msgid "Preview: Immediate answer, {relayLabel} can take over"
@@ -11915,6 +12025,10 @@ msgstr "Hoàn tiền đang chờ"
 msgid "Refund Pending"
 msgstr "Hoàn tiền chờ xử lý"
 
+#: src/components/routes/refund-approval/index.tsx:72
+msgid "Refund request {0}"
+msgstr "Yêu cầu hoàn tiền {0}"
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:327
 msgid "Refund Status"
 msgstr "Trạng thái hoàn trả"
@@ -11965,6 +12079,7 @@ msgid "Refunds, complaints, unusual requests and questions it cannot answer from
 msgstr "Hoàn tiền, khiếu nại, yêu cầu bất thường và câu hỏi không thể trả lời từ dữ liệu của bạn được đánh dấu \"Cần xử lý\" kèm lý do, không có gợi ý."
 
 #: src/components/common/CookieConsentBanner/index.tsx:169
+#: src/components/routes/refund-approval/index.tsx:131
 msgid "Refuse"
 msgstr "Từ chối"
 
@@ -11972,7 +12087,11 @@ msgstr "Từ chối"
 msgid "Refuse all"
 msgstr "Từ chối tất cả"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:233
+#: src/components/routes/refund-approval/index.tsx:19
+msgid "Refused, the customer is informed"
+msgstr "Đã từ chối, khách hàng đã được thông báo"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:234
 msgid "Regenerate the suggestion"
 msgstr "Tạo lại gợi ý"
 
@@ -12146,7 +12265,7 @@ msgstr "Đã nhắc lại"
 msgid "Reminder updated"
 msgstr "Đã cập nhật nhắc nhở"
 
-#: src/components/routes/organizer/Sms/index.tsx:113
+#: src/components/routes/organizer/Sms/index.tsx:114
 msgid "Reminders"
 msgstr "Lời nhắc"
 
@@ -12167,6 +12286,7 @@ msgstr "Loại bỏ"
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:149
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:176
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:118
+#: src/components/routes/organizer/Sms/TeamView.tsx:110
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1293
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1637
 #: src/components/routes/product-widget/SelectProducts/index.tsx:694
@@ -12575,8 +12695,13 @@ msgstr ""
 #: src/components/modals/EditUserModal/index.tsx:93
 #: src/components/modals/InviteUserModal/index.tsx:64
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:155
+#: src/components/routes/organizer/Sms/TeamView.tsx:126
 msgid "Role"
 msgstr "Vai trò"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:19
+msgid "Runs the event"
+msgstr "Điều hành sự kiện"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:135
 msgid "Safeguards: at most one automatic reply per customer SMS, nothing if you or your team already wrote to the contact after it, no reply to a simple \"ok\" or \"thanks\", and never after STOP. Complaints, place or invitation requests, press, minors, accessibility, refunds and any doubt stay a suggestion to validate: the customer only gets a holding reply that promises nothing, and the conversation stays \"To handle\"."
@@ -12623,7 +12748,7 @@ msgctxt "event menu"
 msgid "Sales"
 msgstr "Bán hàng"
 
-#: src/components/routes/event/Settings/index.tsx:50
+#: src/components/routes/event/Settings/index.tsx:51
 msgctxt "event settings tab"
 msgid "Sales"
 msgstr "Bán hàng"
@@ -12693,6 +12818,7 @@ msgstr "San Francisco"
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:324
 #: src/components/routes/event/EventPages/index.tsx:346
 #: src/components/routes/event/Settings/Sections/AttendanceResponseSettings/index.tsx:67
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:97
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:81
 #: src/components/routes/event/Settings/Sections/EmbeddedRegistrationSettings/index.tsx:77
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:134
@@ -12720,6 +12846,7 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:151
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:287
+#: src/components/routes/organizer/Sms/TeamView.tsx:174
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:88
 msgid "Save"
@@ -13245,7 +13372,7 @@ msgstr "Hội thảo chuyên đề"
 #: src/components/common/LiveChatWindow/index.tsx:347
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:270
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:271
 msgid "Send"
 msgstr "Gửi"
 
@@ -13300,6 +13427,10 @@ msgstr "Gửi tin nhắn"
 msgid "Send my details"
 msgstr "Gửi thông tin của tôi"
 
+#: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:227
+msgid "Send my refund request"
+msgstr "Gửi yêu cầu hoàn tiền của tôi"
+
 #: src/components/modals/SendMessageModal/index.tsx:399
 msgid "Send now"
 msgstr "Gửi ngay"
@@ -13327,6 +13458,10 @@ msgstr "Gửi Test"
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:126
 msgid "Send the assistant's replies automatically"
 msgstr ""
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:76
+msgid "Send the daily report"
+msgstr "Gửi báo cáo hằng ngày"
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:90
 msgid "Send ticket purchases to Meta directly from our servers. This is more reliable than the pixel alone (ad blockers, iOS restrictions) and improves your ad campaign measurement."
@@ -13367,6 +13502,10 @@ msgstr "Số gửi"
 #: src/components/routes/organizer/Sms/ReminderList.tsx:90
 msgid "sending on {0}"
 msgstr ""
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:83
+msgid "Sending time"
+msgstr "Giờ gửi"
 
 #: src/components/layouts/EventHomepage/AttendanceAccess/AttendanceAccessModal.tsx:135
 #: src/components/routes/auth/ForgotPassword/index.tsx:70
@@ -13526,7 +13665,7 @@ msgstr "Đã cập nhật cài đặt"
 #: src/components/layouts/Kiosk/index.tsx:65
 #: src/components/layouts/OrganizerLayout/index.tsx:82
 #: src/components/modals/DuplicateEventModal/index.tsx:27
-#: src/components/routes/event/Settings/index.tsx:103
+#: src/components/routes/event/Settings/index.tsx:105
 #: src/components/routes/kiosk/Settings/index.tsx:60
 msgid "Settings"
 msgstr "Cài đặt"
@@ -13788,11 +13927,11 @@ msgstr "Chiến dịch SMS"
 msgid "SMS history"
 msgstr "Lịch sử SMS"
 
-#: src/components/routes/organizer/Sms/index.tsx:92
+#: src/components/routes/organizer/Sms/index.tsx:93
 msgid "SMS is not connected yet."
 msgstr "SMS chưa được kết nối."
 
-#: src/components/routes/organizer/Sms/index.tsx:84
+#: src/components/routes/organizer/Sms/index.tsx:85
 msgid "SMS messages"
 msgstr "Tin nhắn SMS"
 
@@ -13940,6 +14079,7 @@ msgstr "Đã xảy ra lỗi. Vui lòng thử lại sau."
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:582
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
+#: src/components/routes/refund-approval/index.tsx:54
 msgid "Something went wrong. Please try again."
 msgstr "Có gì đó không ổn. Vui lòng thử lại"
 
@@ -14099,6 +14239,7 @@ msgstr "Thống kê dựa trên ngày tạo tài khoản"
 #: src/components/routes/event/OrdersPage/OrderList.tsx:156
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:88
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
+#: src/components/routes/refund-approval/index.tsx:94
 msgid "Status"
 msgstr "Trạng thái"
 
@@ -14377,7 +14518,7 @@ msgstr "Gợi ý trả lời SMS của khách hàng"
 msgid "Suggested reply"
 msgstr "Câu trả lời gợi ý"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:198
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:199
 msgid "Suggested reply, check it before sending"
 msgstr "Câu trả lời gợi ý, hãy kiểm tra trước khi gửi"
 
@@ -14400,6 +14541,10 @@ msgstr "Lễ hội âm nhạc mùa hè {0}"
 #: src/components/routes/welcome/index.tsx:357
 msgid "Summer Music Festival 2025"
 msgstr "Lễ hội Âm nhạc Mùa hè 2025"
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:88
+msgid "Supervision copy"
+msgstr "Bản sao cho giám sát"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:48
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
@@ -14560,8 +14705,23 @@ msgid "Taxes, Fees, Visibility, Sale Period, Product Highlight & Order Limits"
 msgstr "Thuế, phí, hiển thị, thời gian bán, nổi bật sản phẩm & giới hạn đơn hàng"
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:229
+#: src/components/routes/organizer/Sms/ConversationList.tsx:121
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:140
+#: src/components/routes/organizer/Sms/index.tsx:117
 msgid "Team"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:67
+msgid "Team contact removed"
+msgstr "Đã xóa liên hệ nhóm"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:59
+msgid "Team contact saved"
+msgstr "Đã lưu liên hệ nhóm"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:89
+msgid "Team contacts"
+msgstr "Liên hệ nhóm"
 
 #: src/components/layouts/AuthLayout/index.tsx:55
 msgid "Team Management"
@@ -14611,7 +14771,7 @@ msgstr "Xóa mẫu thành công"
 msgid "Template saved successfully"
 msgstr "Lưu mẫu thành công"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:239
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:240
 msgid "Templates"
 msgstr "Mẫu"
 
@@ -14714,10 +14874,6 @@ msgstr "Màu nền của trang. Khi sử dụng ảnh bìa, màu này được �
 msgid "The basket is empty."
 msgstr "Giỏ hàng trống."
 
-#: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:220
-msgid "The cancelled tickets will no longer be valid."
-msgstr "Vé đã hủy sẽ không còn hiệu lực."
-
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:298
 #: src/components/common/QuestionsTable/index.tsx:215
 msgid "The change could not be saved. Please try again."
@@ -14734,6 +14890,10 @@ msgstr "Danh sách check-in bạn đang tìm kiếm không tồn tại."
 #: src/components/routes/welcome/index.tsx:213
 msgid "The code will expire in 10 minutes. Check your spam folder if you don't see the email."
 msgstr "Mã sẽ hết hạn sau 10 phút. Kiểm tra thư mục spam nếu bạn không thấy email."
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:68
+msgid "The contact could not be removed. Please try again."
+msgstr "Không thể xóa liên hệ. Vui lòng thử lại."
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:445
 msgid "The cover is shown at the top of the event card"
@@ -14808,6 +14968,10 @@ msgstr ""
 msgid "The file must not be larger than 5 MB."
 msgstr "Tệp không được lớn hơn 5 MB."
 
+#: src/components/routes/refund-approval/index.tsx:111
+msgid "The first answer decides. If you approve, the ticket price is refunded to the customer's card at once."
+msgstr "Câu trả lời đầu tiên quyết định. Nếu bạn duyệt, giá vé được hoàn ngay vào thẻ của khách hàng."
+
 #: src/components/common/OrganizerFontManager/index.tsx:100
 msgid "The font could not be saved. Please try again."
 msgstr ""
@@ -14876,6 +15040,10 @@ msgstr "Số của SIM trong điện thoại PICHA SMS, ví dụ +262639123456."
 msgid "the organizer"
 msgstr "ban tổ chức"
 
+#: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:220
+msgid "The organizer approves the request before the refund. The cancelled tickets will then no longer be valid."
+msgstr "Nhà tổ chức duyệt yêu cầu trước khi hoàn tiền. Khi đó các vé đã hủy sẽ không còn hiệu lực."
+
 #: src/components/common/OrganizerFontManager/index.tsx:218
 msgid "The organizer font can now be chosen in Typography, for the organizer page and for each event."
 msgstr ""
@@ -14909,6 +15077,10 @@ msgstr "Trang bạn đang tìm kiếm không tồn tại"
 msgid "The people behind the events."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:90
+msgid "The people who run this organizer. Their SMS never get an answer from the customer assistant and their conversations carry the Team badge."
+msgstr "Những người điều hành nhà tổ chức này. Tin nhắn của họ không bao giờ được trợ lý khách hàng trả lời và các cuộc trò chuyện của họ có huy hiệu Nhóm."
+
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:237
 msgid "The personal confirmation link is not available yet: it will be left out of the message until it is."
 msgstr ""
@@ -14922,7 +15094,7 @@ msgstr ""
 msgid "The personal link lets the attendee find their registration again. When there is none for an attendee, the link and its label are left out of the message."
 msgstr "Liên kết cá nhân giúp người tham dự tìm lại đăng ký của mình. Khi người tham dự không có liên kết, liên kết và nhãn của nó sẽ bị bỏ khỏi tin nhắn."
 
-#: src/components/routes/organizer/Sms/index.tsx:102
+#: src/components/routes/organizer/Sms/index.tsx:103
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Điện thoại đã ngoại tuyến {0}. SMS mới sẽ không đến đây và câu trả lời của bạn sẽ không được gửi. Hãy kiểm tra điện thoại đã bật, có kết nối internet và ứng dụng PICHA SMS đang chạy."
 
@@ -14992,6 +15164,7 @@ msgid "The show"
 msgstr "Chương trình"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:96
+#: src/components/routes/organizer/Sms/TeamView.tsx:145
 msgid "The SMS assistant is not available on this platform yet."
 msgstr "Trợ lý SMS chưa khả dụng trên nền tảng này."
 
@@ -15021,6 +15194,10 @@ msgstr "Nội dung template chứa cú pháp Liquid không hợp lệ. Vui lòng
 #: src/hooks/useKioskTicketPrinter.tsx:202
 msgid "The tickets could not be added to the print queue. Retry, or open the tickets as PDF."
 msgstr "Không thể thêm vé vào hàng đợi in. Hãy thử lại hoặc mở vé dưới dạng PDF."
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:33
+msgid "The time must be in the HH:MM format"
+msgstr "Giờ phải theo định dạng HH:MM"
 
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:71
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:63
@@ -15256,6 +15433,10 @@ msgstr "Liên kết này không hợp lệ hoặc đã hết hạn."
 msgid "This link is no longer valid"
 msgstr "Liên kết này không còn hợp lệ"
 
+#: src/components/routes/refund-approval/index.tsx:66
+msgid "This link is not valid or has expired. Log in to your account to handle the request."
+msgstr "Liên kết này không hợp lệ hoặc đã hết hạn. Đăng nhập vào tài khoản để xử lý yêu cầu."
+
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:69
 msgid "This message will be included in the footer of all emails sent from this event"
 msgstr "Thông báo này sẽ được bao gồm trong phần chân trang của tất cả các email được gửi từ sự kiện này"
@@ -15268,7 +15449,7 @@ msgstr "Thông báo này sẽ chỉ được hiển thị nếu đơn hàng đư
 msgid "This name is visible to end users"
 msgstr "Tên này hiển thị cho người dùng cuối"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:188
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:189
 msgid "This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again."
 msgstr "Số này đã trả lời STOP: không thể nhận SMS của bạn nữa. Nếu họ trả lời START, bạn có thể nhắn lại."
 
@@ -15682,7 +15863,7 @@ msgstr "Cần theo dõi"
 msgid "To handle"
 msgstr "Cần xử lý"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:183
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:184
 msgid "To handle by your team: {needsHumanReason}"
 msgstr "Đội của bạn cần xử lý: {needsHumanReason}"
 
@@ -16723,6 +16904,10 @@ msgstr "Đang chờ"
 msgid "Waiting for payment"
 msgstr "Đang chờ thanh toán"
 
+#: src/components/routes/refund-approval/index.tsx:15
+msgid "Waiting for your decision"
+msgstr "Đang chờ quyết định của bạn"
+
 #: src/components/routes/organizer/Sms/customerSummary.ts:37
 msgid "Waiting for your reply since {0}"
 msgstr "Đang chờ bạn trả lời từ {0}"
@@ -16884,7 +17069,7 @@ msgstr "Trò chuyện web"
 msgid "Web chat assistant"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:115
+#: src/components/routes/organizer/Sms/index.tsx:116
 msgid "Web chats"
 msgstr "Trò chuyện web"
 
@@ -17239,6 +17424,10 @@ msgstr ""
 msgid "With a phone number"
 msgstr "Có số điện thoại"
 
+#: src/components/routes/refund-approval/index.tsx:32
+msgid "with the link"
+msgstr "bằng liên kết"
+
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:350
 msgid "Without an event, the button opens your organizer page."
 msgstr ""
@@ -17293,7 +17482,7 @@ msgstr "Viết tin nhắn của bạn tại đây..."
 msgid "Write your question..."
 msgstr "Viết câu hỏi của bạn..."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:205
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:206
 msgid "Write your reply"
 msgstr "Viết câu trả lời"
 
@@ -17768,7 +17957,7 @@ msgstr "Thanh toán của bạn không thành công, vui lòng thử lại."
 msgid "Your payment was unsuccessful. Please try again."
 msgstr "Thanh toán của bạn không thành công. Vui lòng thử lại."
 
-#: src/components/routes/organizer/Sms/index.tsx:100
+#: src/components/routes/organizer/Sms/index.tsx:101
 msgid "Your PICHA SMS phone is offline"
 msgstr "Điện thoại PICHA SMS của bạn đang ngoại tuyến"
 

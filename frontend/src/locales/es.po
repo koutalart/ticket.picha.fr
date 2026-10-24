@@ -33,7 +33,7 @@ msgstr "« Inscribirse » siempre se muestra. Añada enlaces a otras páginas de
 msgid "\"See also\" cards"
 msgstr "Tarjetas « Vea también »"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:221
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:222
 msgid "(emoji or special characters: 70 characters per SMS)"
 msgstr "(emojis o caracteres especiales: 70 caracteres por SMS)"
 
@@ -107,7 +107,7 @@ msgid "{0} came to 2 events or more"
 msgstr "{0} asistieron a 2 eventos o más"
 
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:118
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:220
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:221
 msgid "{0} characters, {1} SMS"
 msgstr "{0} caracteres, {1} SMS"
 
@@ -500,7 +500,7 @@ msgstr "Se ha enviado un aviso de cancelación a"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "Un ordenador en la red del lugar ejecuta el relé de impresión de PICHA. Recoge las entradas impresas desde este puesto y las envía a la Zebra."
 
-#: src/components/routes/organizer/Sms/index.tsx:86
+#: src/components/routes/organizer/Sms/index.tsx:87
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Un cliente que responde STOP se da de baja automáticamente de tus SMS."
 
@@ -850,6 +850,7 @@ msgid "Active Events"
 msgstr "Eventos activos"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:197
+#: src/components/routes/organizer/Sms/TeamView.tsx:133
 msgid "Add"
 msgstr "Añadir"
 
@@ -1056,7 +1057,7 @@ msgstr "Añade píxeles de seguimiento a tus páginas de eventos públicos y a l
 msgid "Add Webhook"
 msgstr "Agregar Webhook"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:192
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:193
 msgid "Add your PICHA SMS API key and sending number in Settings to reply from here."
 msgstr "Añade tu clave API de PICHA SMS y tu número de envío en Ajustes para responder desde aquí."
 
@@ -1158,7 +1159,7 @@ msgstr "Panel de Administración"
 msgid "Admin users have full access to events and account settings."
 msgstr "Los usuarios administradores tienen acceso completo a los eventos y la configuración de la cuenta."
 
-#: src/components/routes/event/Settings/index.tsx:70
+#: src/components/routes/event/Settings/index.tsx:72
 msgctxt "event settings tab"
 msgid "Advanced"
 msgstr "Avanzado"
@@ -1400,6 +1401,10 @@ msgstr ""
 msgid "Also refund this order"
 msgstr "También reembolsar este pedido"
 
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:89
+msgid "Also send it to the platform supervision"
+msgstr "Enviarlo también a la supervisión de la plataforma"
+
 #: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:163
 msgid "Also send it when I cancel a registration"
 msgstr "Enviarlo también cuando yo cancele una inscripción"
@@ -1417,6 +1422,7 @@ msgstr "Increíble, evento, palabras clave..."
 #: src/components/forms/TaxAndFeeForm/index.tsx:71
 #: src/components/routes/event/OrdersPage/OrderList.tsx:155
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:50
+#: src/components/routes/refund-approval/index.tsx:86
 msgid "Amount"
 msgstr "Cantidad"
 
@@ -1437,8 +1443,8 @@ msgid "Amount received"
 msgstr "Importe recibido"
 
 #: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:218
-msgid "Amount refunded: {total}"
-msgstr "Importe reembolsado: {total}"
+msgid "Amount to refund: {total}"
+msgstr "Importe a reembolsar: {total}"
 
 #: src/components/routes/kiosk/NoEvent/index.tsx:26
 msgid "An administrator needs to assign you to an event before you can sell tickets."
@@ -1472,6 +1478,10 @@ msgstr "Ocurrió un error inesperado."
 msgid "An unexpected error occurred. Please try again."
 msgstr "Ocurrió un error inesperado. Inténtalo de nuevo."
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:140
+msgid "Anicka answers at once the SMS of the people who run the event: she checks with them that registration works as they wish and collects their contact lists. She never acts herself."
+msgstr "Anicka responde al momento los SMS de las personas que gestionan el evento: comprueba con ellas que la inscripción funciona como desean y recoge sus listas de contactos. Nunca actúa por sí misma."
+
 #: src/components/routes/landing/ProductVisuals/index.tsx:40
 #: src/components/routes/landing/ProductVisuals/index.tsx:65
 msgid "Annual Convention"
@@ -1489,6 +1499,10 @@ msgstr ""
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:83
 msgid "Answer"
 msgstr "Respuesta"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:159
+msgid "Answer the team automatically"
+msgstr "Responder automáticamente al equipo"
 
 #: src/components/common/QuestionAndAnswerList/index.tsx:122
 msgid "Answer updated successfully."
@@ -1559,9 +1573,25 @@ msgstr "Aplicar código promocional"
 msgid "Apply this {type} to all new products"
 msgstr "Aplicar este {type} a todos los nuevos productos"
 
+#: src/components/routes/refund-approval/index.tsx:121
+msgid "Approve"
+msgstr "Aprobar"
+
 #: src/components/routes/admin/Messages/index.tsx:232
 msgid "Approve Message"
 msgstr "Aprobar mensaje"
+
+#: src/components/routes/refund-approval/index.tsx:17
+msgid "Approved and refunded"
+msgstr "Aprobada y reembolsada"
+
+#: src/components/routes/refund-approval/index.tsx:23
+msgid "Approved, a person finishes the refund"
+msgstr "Aprobada, una persona finaliza el reembolso"
+
+#: src/components/routes/refund-approval/index.tsx:21
+msgid "Approved, refund in progress"
+msgstr "Aprobada, reembolso en curso"
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:36
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
@@ -1771,6 +1801,10 @@ msgstr "Preguntar una vez por pedido"
 #: src/components/forms/QuestionForm/index.tsx:93
 msgid "Ask once per product"
 msgstr "Preguntar una vez por producto"
+
+#: src/components/routes/refund-approval/index.tsx:90
+msgid "Asked on"
+msgstr "Solicitada el"
 
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:269
 msgid "Assigned Configuration"
@@ -2390,6 +2424,10 @@ msgstr "Por defecto, solo lo reciben los asistentes que cancelan por sí mismos 
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 msgstr "Al registrarte, aceptas nuestras <0>Condiciones de servicio</0> y nuestra <1>Política de privacidad</1>."
 
+#: src/components/routes/refund-approval/index.tsx:30
+msgid "by SMS"
+msgstr "por SMS"
+
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:69
 msgid "By subscribing, you agree to receive news about the events of {0} by e-mail. Your address is only used for this purpose and you can unsubscribe at any time."
 msgstr "Al suscribirse, acepta recibir por correo electrónico las novedades de los eventos de {0}. Su dirección solo se utiliza con este fin y puede darse de baja en cualquier momento."
@@ -2472,7 +2510,7 @@ msgstr "Fuente de campaña (parámetros utm), sitio de referencia y página de l
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
-#: src/components/routes/organizer/Sms/index.tsx:114
+#: src/components/routes/organizer/Sms/index.tsx:115
 msgid "Campaigns"
 msgstr "Campañas"
 
@@ -3392,7 +3430,6 @@ msgstr "Confirmar Contraseña"
 msgid "Confirm Password"
 msgstr "confirmar Contraseña"
 
-#: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:227
 #: src/components/routes/organizer/Sms/ReminderList.tsx:111
 msgid "Confirm the cancellation"
 msgstr "Confirmar la cancelación"
@@ -3426,7 +3463,7 @@ msgstr "Conectar y actualizar"
 msgid "Connect Documentation"
 msgstr "Documentación de conexión"
 
-#: src/components/routes/organizer/Sms/index.tsx:94
+#: src/components/routes/organizer/Sms/index.tsx:95
 msgid "Connect PICHA SMS in Settings"
 msgstr "Conectar PICHA SMS en Ajustes"
 
@@ -3598,6 +3635,10 @@ msgstr "Contactos exportados"
 msgid "Contacts imported"
 msgstr "Contactos importados"
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:151
+msgid "Contacts in copy get no automatic answer. When a request commits to something (campaign, price, refund, any change), Anicka sends a holding reply and the platform supervision is alerted at once."
+msgstr "Los contactos en copia no reciben respuesta automática. Cuando una solicitud compromete algo (campaña, precio, reembolso, cualquier cambio), Anicka envía una respuesta de espera y se avisa al momento a la supervisión de la plataforma."
+
 #: src/components/routes/event/EventPages/index.tsx:267
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:270
 msgid "Content"
@@ -3657,7 +3698,7 @@ msgstr "Controle cómo se manejan las comisiones de la plataforma para este even
 msgid "Conversation"
 msgstr "Conversación"
 
-#: src/components/routes/organizer/Sms/index.tsx:112
+#: src/components/routes/organizer/Sms/index.tsx:113
 msgid "Conversations"
 msgstr "Conversaciones"
 
@@ -4168,10 +4209,11 @@ msgstr "Plantilla personalizada"
 #: src/components/common/OrdersTable/index.tsx:208
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:887
 #: src/components/routes/event/OrdersPage/OrderList.tsx:153
+#: src/components/routes/refund-approval/index.tsx:76
 msgid "Customer"
 msgstr "Cliente"
 
-#: src/components/routes/organizer/Sms/index.tsx:177
+#: src/components/routes/organizer/Sms/index.tsx:181
 msgid "Customer file"
 msgstr "Ficha del cliente"
 
@@ -4263,6 +4305,10 @@ msgstr "Personaliza la apariencia de tu página de organizador"
 msgid "Daily registrations"
 msgstr ""
 
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:45
+msgid "Daily report settings saved"
+msgstr "Ajustes del informe guardados"
+
 #: src/components/routes/organizer/Reports/index.tsx:18
 msgid "Daily revenue, taxes, fees, and refunds across all events"
 msgstr "Ingresos diarios, impuestos, tarifas y reembolsos en todos los eventos"
@@ -4275,6 +4321,10 @@ msgstr "Informe de ventas diarias"
 #: src/components/routes/event/Reports/index.tsx:47
 msgid "Daily sales, tax, and fee breakdown"
 msgstr "Desglose de ventas diarias, impuestos y tarifas"
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:53
+msgid "Daily SMS report"
+msgstr "Informe diario por SMS"
 
 #: src/components/common/CapacityAssignmentList/index.tsx:153
 #: src/components/common/CheckInListList/index.tsx:174
@@ -4382,6 +4432,10 @@ msgstr "Capacidad del primer día"
 #: src/components/routes/product-widget/EmbeddedRegistration/SaleCountdown.tsx:56
 msgid "days"
 msgstr "días"
+
+#: src/components/routes/refund-approval/index.tsx:98
+msgid "Decided"
+msgstr "Decidida"
 
 #: src/components/routes/event/EventPages/index.tsx:313
 msgid "Dedicated pages for the line-up, practical information and FAQ. Each page is indexed by search engines and links to registration. A page without content is not published."
@@ -4635,6 +4689,10 @@ msgstr "Descartar este mensaje"
 #: src/components/routes/event/Settings/Sections/HomepageAndCheckoutSettings/index.tsx:173
 msgid "Display a checkbox allowing customers to opt-in to receive marketing communications from this event organizer."
 msgstr "Muestra una casilla que permite a los clientes optar por recibir comunicaciones de marketing de este organizador de eventos."
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:166
+msgid "Distinct from the instructions of the customer assistant. For example: what the organizer expects, the registration steps to check."
+msgstr "Distintas de las instrucciones del asistente de clientes. Por ejemplo: lo que espera el organizador, los pasos de inscripción a comprobar."
 
 #: src/components/routes/landing/index.tsx:287
 msgid "Do we need to install an application?"
@@ -5339,6 +5397,10 @@ msgstr ""
 msgid "English"
 msgstr "Inglés"
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:36
+msgid "Enter a phone number"
+msgstr "Introduce un número de teléfono"
+
 #: src/components/common/EmailTemplateEditor/EmailTemplatePreviewPane.tsx:58
 msgid "Enter a subject and body to see the preview"
 msgstr "Ingrese un asunto y cuerpo para ver la vista previa"
@@ -5512,7 +5574,7 @@ msgstr "Error al confirmar el cambio de correo electrónico"
 msgid "Error loading logs"
 msgstr "Error al cargar los registros"
 
-#: src/components/routes/event/Settings/index.tsx:42
+#: src/components/routes/event/Settings/index.tsx:43
 msgctxt "event settings tab"
 msgid "Essentials"
 msgstr "Lo esencial"
@@ -5562,6 +5624,7 @@ msgstr "EUR"
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:43
 #: src/components/routes/organizer/Reports/TaxSummaryReport/index.tsx:23
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:183
+#: src/components/routes/refund-approval/index.tsx:82
 msgid "Event"
 msgstr "Evento"
 
@@ -5836,6 +5899,10 @@ msgstr "Eventos que Comienzan en las Próximas 24 Horas"
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:17
 msgid "Events{0} — {1}"
 msgstr ""
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:54
+msgid "Every day at the chosen time (Mayotte time), the team of the organizer gets by SMS the paid registrations, the registration revenue and the carts in progress."
+msgstr "Cada día a la hora elegida (hora de Mayotte), el equipo del organizador recibe por SMS las inscripciones pagadas, los ingresos de inscripciones y los carritos en curso."
 
 #: src/components/common/EmailTemplateEditor/CTAConfiguration.tsx:23
 msgid "Every email template must include a call-to-action button that links to the appropriate page"
@@ -6623,6 +6690,10 @@ msgstr ""
 msgid "from {formatted}"
 msgstr ""
 
+#: src/components/routes/refund-approval/index.tsx:34
+msgid "from the dashboard"
+msgstr "desde el panel"
+
 #: src/components/routes/landing/index.tsx:292
 msgid "From the welcome desk on a tablet: search for the attendee or scan their QR code, then print the badge and record the entry in one gesture."
 msgstr "Desde la recepción en tableta: busque al asistente o escanee su código QR, imprima la acreditación y registre la entrada en un solo gesto."
@@ -7305,6 +7376,10 @@ msgstr "En {diffHours} horas"
 msgid "In {diffMinutes} minutes"
 msgstr "En {diffMinutes} minutos"
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:19
+msgid "In copy"
+msgstr "En copia"
+
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:122
 msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
 msgstr ""
@@ -7439,6 +7514,10 @@ msgstr "Pagos instantáneos"
 #: src/components/routes/landing/index.tsx:212
 msgid "Institutions and local authorities"
 msgstr "Instituciones y administraciones"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:165
+msgid "Instructions for Anicka"
+msgstr "Instrucciones para Anicka"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:116
 msgid "Instructions for the assistant"
@@ -8291,7 +8370,7 @@ msgstr "Administrar perfil"
 msgid "Manage registrations, welcome, digital check-in and badge printing for your professional and institutional events with {appName}."
 msgstr "Gestione las inscripciones, la acogida, el registro de asistencia y la impresión de acreditaciones de sus eventos profesionales e institucionales con {appName}."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:258
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:259
 msgid "Manage reply templates"
 msgstr "Gestionar respuestas predefinidas"
 
@@ -8466,7 +8545,7 @@ msgctxt "event menu"
 msgid "Messages"
 msgstr "Mensajes"
 
-#: src/components/routes/event/Settings/index.tsx:61
+#: src/components/routes/event/Settings/index.tsx:62
 msgctxt "event settings tab"
 msgid "Messages"
 msgstr "Mensajes"
@@ -8726,6 +8805,7 @@ msgstr "Nam placerat elementum..."
 #: src/components/routes/event/EventPages/index.tsx:206
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:77
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:108
+#: src/components/routes/organizer/Sms/TeamView.tsx:123
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:284
 msgid "Name"
 msgstr "Nombre"
@@ -8853,7 +8933,7 @@ msgstr "Nueva clave de firma generada"
 msgid "New Signups"
 msgstr "Nuevos registros"
 
-#: src/components/routes/organizer/Sms/index.tsx:103
+#: src/components/routes/organizer/Sms/index.tsx:104
 msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Los nuevos SMS no llegarán aquí y tus respuestas no se enviarán. Comprueba que el teléfono esté encendido, conectado a internet y que la app PICHA SMS esté abierta."
 
@@ -9287,7 +9367,7 @@ msgstr ""
 msgid "No reminder scheduled yet."
 msgstr "Todavía no hay ningún recordatorio programado."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:244
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:245
 msgid "No reply template yet"
 msgstr "Todavía no hay respuestas predefinidas"
 
@@ -9353,6 +9433,14 @@ msgstr "Aún no hay etiquetas"
 #: src/components/common/TaxAndFeeList/index.tsx:105
 msgid "No Taxes or Fees have been added."
 msgstr "No se han agregado impuestos ni tarifas."
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:62
+msgid "No team contact yet: add the numbers of the team in the SMS tab before turning the report on."
+msgstr "Aún no hay contactos en el equipo: añade los números del equipo en la pestaña SMS antes de activar el informe."
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:95
+msgid "No team contact yet."
+msgstr "Aún no hay contactos en el equipo."
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:473
 msgid "No ticket is both active and attached to an active check-in list. Attach a product to a check-in list first — otherwise it would not be scannable at the door."
@@ -9536,6 +9624,10 @@ msgstr "Los números sin prefijo son de"
 #: src/components/common/OrganizerReportTable/index.tsx:356
 msgid "of"
 msgstr "de"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:160
+msgid "Off by default."
+msgstr "Desactivado por defecto."
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:127
 msgid "Off by default. A few seconds after a customer SMS, the suggested reply leaves on its own, only for simple questions answered by your instructions and your data."
@@ -9877,6 +9969,10 @@ msgstr "Abrir el cartel del evento"
 msgid "Open the SMS conversation"
 msgstr "Abrir la conversación SMS"
 
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:65
+msgid "Open the team"
+msgstr "Abrir el equipo"
+
 #: src/components/forms/ProductForm/index.tsx:546
 msgid "Open this ticket when this ticket is sold out"
 msgstr "Abrir esta entrada cuando esta entrada esté agotada"
@@ -10004,6 +10100,7 @@ msgstr ""
 #: src/components/common/QuestionsTable/index.tsx:317
 #: src/components/routes/kiosk/Orders/index.tsx:318
 #: src/components/routes/my-tickets/index.tsx:53
+#: src/components/routes/refund-approval/index.tsx:78
 msgid "Order"
 msgstr "Orden"
 
@@ -10294,6 +10391,14 @@ msgstr "Organizador"
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:61
 msgid "Organizer archived successfully"
 msgstr "Organizador archivado correctamente"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:139
+msgid "Organizer assistant (Anicka)"
+msgstr "Asistente del organizador (Anicka)"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:80
+msgid "Organizer assistant settings saved"
+msgstr "Ajustes del asistente del organizador guardados"
 
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:41
 msgid "Organizer deleted successfully"
@@ -10868,6 +10973,7 @@ msgstr "Prefijo telefónico"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:596
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:893
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:66
+#: src/components/routes/organizer/Sms/TeamView.tsx:122
 msgid "Phone number"
 msgstr "Número de teléfono"
 
@@ -11272,6 +11378,10 @@ msgstr "Vista Previa"
 #: src/components/common/QuestionsTable/index.tsx:308
 msgid "Preview checkout form"
 msgstr "Vista previa del formulario de pago"
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:93
+msgid "Preview with today's figures"
+msgstr "Vista previa con las cifras de hoy"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:93
 msgid "Preview: Immediate answer, {relayLabel} can take over"
@@ -11919,6 +12029,10 @@ msgstr "Reembolso pendiente"
 msgid "Refund Pending"
 msgstr "Reembolso pendiente"
 
+#: src/components/routes/refund-approval/index.tsx:72
+msgid "Refund request {0}"
+msgstr "Solicitud de reembolso {0}"
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:327
 msgid "Refund Status"
 msgstr "Estado del reembolso"
@@ -11969,6 +12083,7 @@ msgid "Refunds, complaints, unusual requests and questions it cannot answer from
 msgstr "Los reembolsos, reclamaciones, solicitudes inusuales y preguntas que no puede responder con tus datos se marcan como \"Por atender\" con el motivo, sin sugerencia."
 
 #: src/components/common/CookieConsentBanner/index.tsx:169
+#: src/components/routes/refund-approval/index.tsx:131
 msgid "Refuse"
 msgstr "Rechazar"
 
@@ -11976,7 +12091,11 @@ msgstr "Rechazar"
 msgid "Refuse all"
 msgstr "Rechazar todo"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:233
+#: src/components/routes/refund-approval/index.tsx:19
+msgid "Refused, the customer is informed"
+msgstr "Rechazada, el cliente está avisado"
+
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:234
 msgid "Regenerate the suggestion"
 msgstr "Regenerar la sugerencia"
 
@@ -12150,7 +12269,7 @@ msgstr "Recordatorio enviado"
 msgid "Reminder updated"
 msgstr "Recordatorio actualizado"
 
-#: src/components/routes/organizer/Sms/index.tsx:113
+#: src/components/routes/organizer/Sms/index.tsx:114
 msgid "Reminders"
 msgstr "Recordatorios"
 
@@ -12171,6 +12290,7 @@ msgstr "eliminar"
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:149
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:176
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:118
+#: src/components/routes/organizer/Sms/TeamView.tsx:110
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1293
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1637
 #: src/components/routes/product-widget/SelectProducts/index.tsx:694
@@ -12579,8 +12699,13 @@ msgstr ""
 #: src/components/modals/EditUserModal/index.tsx:93
 #: src/components/modals/InviteUserModal/index.tsx:64
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:155
+#: src/components/routes/organizer/Sms/TeamView.tsx:126
 msgid "Role"
 msgstr "Rol"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:19
+msgid "Runs the event"
+msgstr "Gestiona el evento"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:135
 msgid "Safeguards: at most one automatic reply per customer SMS, nothing if you or your team already wrote to the contact after it, no reply to a simple \"ok\" or \"thanks\", and never after STOP. Complaints, place or invitation requests, press, minors, accessibility, refunds and any doubt stay a suggestion to validate: the customer only gets a holding reply that promises nothing, and the conversation stays \"To handle\"."
@@ -12627,7 +12752,7 @@ msgctxt "event menu"
 msgid "Sales"
 msgstr "Ventas"
 
-#: src/components/routes/event/Settings/index.tsx:50
+#: src/components/routes/event/Settings/index.tsx:51
 msgctxt "event settings tab"
 msgid "Sales"
 msgstr "Venta"
@@ -12697,6 +12822,7 @@ msgstr "San Francisco"
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:324
 #: src/components/routes/event/EventPages/index.tsx:346
 #: src/components/routes/event/Settings/Sections/AttendanceResponseSettings/index.tsx:67
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:97
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:81
 #: src/components/routes/event/Settings/Sections/EmbeddedRegistrationSettings/index.tsx:77
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:134
@@ -12724,6 +12850,7 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:151
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:287
+#: src/components/routes/organizer/Sms/TeamView.tsx:174
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:88
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:88
 msgid "Save"
@@ -13249,7 +13376,7 @@ msgstr "Seminario"
 #: src/components/common/LiveChatWindow/index.tsx:347
 #: src/components/routes/auth/Login/index.tsx:160
 #: src/components/routes/my-tickets/index.tsx:202
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:270
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:271
 msgid "Send"
 msgstr "Enviar"
 
@@ -13304,6 +13431,10 @@ msgstr "Enviar Mensaje"
 msgid "Send my details"
 msgstr "Enviar mis datos"
 
+#: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:227
+msgid "Send my refund request"
+msgstr "Enviar mi solicitud de reembolso"
+
 #: src/components/modals/SendMessageModal/index.tsx:399
 msgid "Send now"
 msgstr "Enviar ahora"
@@ -13331,6 +13462,10 @@ msgstr "Enviar prueba"
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:126
 msgid "Send the assistant's replies automatically"
 msgstr "Enviar automáticamente las respuestas del asistente"
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:76
+msgid "Send the daily report"
+msgstr "Enviar el informe diario"
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:90
 msgid "Send ticket purchases to Meta directly from our servers. This is more reliable than the pixel alone (ad blockers, iOS restrictions) and improves your ad campaign measurement."
@@ -13371,6 +13506,10 @@ msgstr "Número de envío"
 #: src/components/routes/organizer/Sms/ReminderList.tsx:90
 msgid "sending on {0}"
 msgstr "envío el {0}"
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:83
+msgid "Sending time"
+msgstr "Hora de envío"
 
 #: src/components/layouts/EventHomepage/AttendanceAccess/AttendanceAccessModal.tsx:135
 #: src/components/routes/auth/ForgotPassword/index.tsx:70
@@ -13530,7 +13669,7 @@ msgstr "Configuración actualizada"
 #: src/components/layouts/Kiosk/index.tsx:65
 #: src/components/layouts/OrganizerLayout/index.tsx:82
 #: src/components/modals/DuplicateEventModal/index.tsx:27
-#: src/components/routes/event/Settings/index.tsx:103
+#: src/components/routes/event/Settings/index.tsx:105
 #: src/components/routes/kiosk/Settings/index.tsx:60
 msgid "Settings"
 msgstr "Ajustes"
@@ -13792,11 +13931,11 @@ msgstr "Campaña SMS"
 msgid "SMS history"
 msgstr "Historial de SMS"
 
-#: src/components/routes/organizer/Sms/index.tsx:92
+#: src/components/routes/organizer/Sms/index.tsx:93
 msgid "SMS is not connected yet."
 msgstr "Los SMS aún no están conectados."
 
-#: src/components/routes/organizer/Sms/index.tsx:84
+#: src/components/routes/organizer/Sms/index.tsx:85
 msgid "SMS messages"
 msgstr "Mensajes SMS"
 
@@ -13944,6 +14083,7 @@ msgstr "Algo salió mal. Por favor, inténtelo de nuevo más tarde."
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:582
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
+#: src/components/routes/refund-approval/index.tsx:54
 msgid "Something went wrong. Please try again."
 msgstr "Algo salió mal. Inténtalo de nuevo."
 
@@ -14103,6 +14243,7 @@ msgstr "Las estadísticas se basan en la fecha de creación de la cuenta"
 #: src/components/routes/event/OrdersPage/OrderList.tsx:156
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:88
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
+#: src/components/routes/refund-approval/index.tsx:94
 msgid "Status"
 msgstr "Estado"
 
@@ -14381,7 +14522,7 @@ msgstr "Sugerir respuestas a los SMS de mis clientes"
 msgid "Suggested reply"
 msgstr "Respuesta sugerida"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:198
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:199
 msgid "Suggested reply, check it before sending"
 msgstr "Respuesta sugerida, revísala antes de enviar"
 
@@ -14404,6 +14545,10 @@ msgstr "Festival de música de verano {0}"
 #: src/components/routes/welcome/index.tsx:357
 msgid "Summer Music Festival 2025"
 msgstr "Festival de Música de Verano 2025"
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:88
+msgid "Supervision copy"
+msgstr "Copia a supervisión"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:48
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
@@ -14564,8 +14709,23 @@ msgid "Taxes, Fees, Visibility, Sale Period, Product Highlight & Order Limits"
 msgstr "Impuestos, tarifas, visibilidad, período de venta, destacado de productos y límites de pedido"
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:229
+#: src/components/routes/organizer/Sms/ConversationList.tsx:121
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:140
+#: src/components/routes/organizer/Sms/index.tsx:117
 msgid "Team"
 msgstr ""
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:67
+msgid "Team contact removed"
+msgstr "Contacto del equipo eliminado"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:59
+msgid "Team contact saved"
+msgstr "Contacto del equipo guardado"
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:89
+msgid "Team contacts"
+msgstr "Contactos del equipo"
 
 #: src/components/layouts/AuthLayout/index.tsx:55
 msgid "Team Management"
@@ -14615,7 +14775,7 @@ msgstr "Plantilla eliminada exitosamente"
 msgid "Template saved successfully"
 msgstr "Plantilla guardada exitosamente"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:239
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:240
 msgid "Templates"
 msgstr "Plantillas"
 
@@ -14718,10 +14878,6 @@ msgstr "El color de fondo de la página. Al usar imagen de portada, se aplica co
 msgid "The basket is empty."
 msgstr "La cesta está vacía."
 
-#: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:220
-msgid "The cancelled tickets will no longer be valid."
-msgstr "Las entradas canceladas dejarán de ser válidas."
-
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:298
 #: src/components/common/QuestionsTable/index.tsx:215
 msgid "The change could not be saved. Please try again."
@@ -14738,6 +14894,10 @@ msgstr "La lista de registro que buscas no existe."
 #: src/components/routes/welcome/index.tsx:213
 msgid "The code will expire in 10 minutes. Check your spam folder if you don't see the email."
 msgstr "El código expirará en 10 minutos. Revisa tu carpeta de spam si no ves el correo."
+
+#: src/components/routes/organizer/Sms/TeamView.tsx:68
+msgid "The contact could not be removed. Please try again."
+msgstr "No se pudo eliminar el contacto. Inténtalo de nuevo."
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:445
 msgid "The cover is shown at the top of the event card"
@@ -14812,6 +14972,10 @@ msgstr "El archivo se ha descargado."
 msgid "The file must not be larger than 5 MB."
 msgstr "El archivo no debe superar los 5 MB."
 
+#: src/components/routes/refund-approval/index.tsx:111
+msgid "The first answer decides. If you approve, the ticket price is refunded to the customer's card at once."
+msgstr "La primera respuesta decide. Si apruebas, el precio de la entrada se reembolsa al momento en la tarjeta del cliente."
+
 #: src/components/common/OrganizerFontManager/index.tsx:100
 msgid "The font could not be saved. Please try again."
 msgstr "No se pudo guardar la fuente. Inténtalo de nuevo."
@@ -14880,6 +15044,10 @@ msgstr "El número de la SIM del teléfono PICHA SMS, por ejemplo +262639123456.
 msgid "the organizer"
 msgstr "el organizador"
 
+#: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:220
+msgid "The organizer approves the request before the refund. The cancelled tickets will then no longer be valid."
+msgstr "El organizador aprueba la solicitud antes del reembolso. Las entradas canceladas dejarán entonces de ser válidas."
+
 #: src/components/common/OrganizerFontManager/index.tsx:218
 msgid "The organizer font can now be chosen in Typography, for the organizer page and for each event."
 msgstr "La fuente del organizador ya se puede elegir en Tipografía, para la página del organizador y para cada evento."
@@ -14913,6 +15081,10 @@ msgstr "La página que buscas no existe"
 msgid "The people behind the events."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/TeamView.tsx:90
+msgid "The people who run this organizer. Their SMS never get an answer from the customer assistant and their conversations carry the Team badge."
+msgstr "Las personas que gestionan este organizador. Sus SMS nunca reciben respuesta del asistente de clientes y sus conversaciones llevan la etiqueta Equipo."
+
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:237
 msgid "The personal confirmation link is not available yet: it will be left out of the message until it is."
 msgstr "El enlace personal de confirmación aún no está disponible: se omitirá del mensaje mientras tanto."
@@ -14926,7 +15098,7 @@ msgstr "El enlace personal solo está disponible si los asistentes pueden confir
 msgid "The personal link lets the attendee find their registration again. When there is none for an attendee, the link and its label are left out of the message."
 msgstr "El enlace personal permite al asistente encontrar de nuevo su inscripción. Cuando un asistente no tiene, el enlace y su texto se quitan del mensaje."
 
-#: src/components/routes/organizer/Sms/index.tsx:102
+#: src/components/routes/organizer/Sms/index.tsx:103
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "El teléfono se desconectó {0}. Los nuevos SMS no llegarán aquí y tus respuestas no se enviarán. Comprueba que el teléfono esté encendido, conectado a internet y que la app PICHA SMS esté abierta."
 
@@ -14996,6 +15168,7 @@ msgid "The show"
 msgstr "El show"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:96
+#: src/components/routes/organizer/Sms/TeamView.tsx:145
 msgid "The SMS assistant is not available on this platform yet."
 msgstr "El asistente SMS aún no está disponible en esta plataforma."
 
@@ -15025,6 +15198,10 @@ msgstr "El cuerpo de la plantilla contiene sintaxis Liquid inválida. Por favor 
 #: src/hooks/useKioskTicketPrinter.tsx:202
 msgid "The tickets could not be added to the print queue. Retry, or open the tickets as PDF."
 msgstr "No se pudieron añadir las entradas a la cola de impresión. Vuelva a intentarlo o abra las entradas en PDF."
+
+#: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:33
+msgid "The time must be in the HH:MM format"
+msgstr "La hora debe tener el formato HH:MM"
 
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:71
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:63
@@ -15260,6 +15437,10 @@ msgstr "Este enlace es inválido o ha caducado."
 msgid "This link is no longer valid"
 msgstr "Este enlace ya no es válido"
 
+#: src/components/routes/refund-approval/index.tsx:66
+msgid "This link is not valid or has expired. Log in to your account to handle the request."
+msgstr "Este enlace no es válido o ha caducado. Inicia sesión en tu cuenta para gestionar la solicitud."
+
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:69
 msgid "This message will be included in the footer of all emails sent from this event"
 msgstr "Este mensaje se incluirá en el pie de página de todos los correos electrónicos enviados desde este evento."
@@ -15272,7 +15453,7 @@ msgstr "Este mensaje solo se mostrará si el pedido se completa con éxito. Los 
 msgid "This name is visible to end users"
 msgstr "Este nombre es visible para los usuarios finales"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:188
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:189
 msgid "This number replied STOP: it can no longer receive SMS from you. If they reply START, you will be able to write to them again."
 msgstr "Este número respondió STOP: ya no puede recibir tus SMS. Si responde START, podrás volver a escribirle."
 
@@ -15686,7 +15867,7 @@ msgstr "Por seguir"
 msgid "To handle"
 msgstr "Por atender"
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:183
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:184
 msgid "To handle by your team: {needsHumanReason}"
 msgstr "Por atender por tu equipo: {needsHumanReason}"
 
@@ -16727,6 +16908,10 @@ msgstr "En espera"
 msgid "Waiting for payment"
 msgstr "Esperando pago"
 
+#: src/components/routes/refund-approval/index.tsx:15
+msgid "Waiting for your decision"
+msgstr "Esperando tu decisión"
+
 #: src/components/routes/organizer/Sms/customerSummary.ts:37
 msgid "Waiting for your reply since {0}"
 msgstr "Espera tu respuesta desde {0}"
@@ -16888,7 +17073,7 @@ msgstr "Chat web"
 msgid "Web chat assistant"
 msgstr "Asistente del chat web"
 
-#: src/components/routes/organizer/Sms/index.tsx:115
+#: src/components/routes/organizer/Sms/index.tsx:116
 msgid "Web chats"
 msgstr "Chats web"
 
@@ -17243,6 +17428,10 @@ msgstr ""
 msgid "With a phone number"
 msgstr "Con número de teléfono"
 
+#: src/components/routes/refund-approval/index.tsx:32
+msgid "with the link"
+msgstr "con el enlace"
+
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:350
 msgid "Without an event, the button opens your organizer page."
 msgstr ""
@@ -17297,7 +17486,7 @@ msgstr "Escribe tu mensaje aquí..."
 msgid "Write your question..."
 msgstr "Escribe tu pregunta..."
 
-#: src/components/routes/organizer/Sms/ConversationThread.tsx:205
+#: src/components/routes/organizer/Sms/ConversationThread.tsx:206
 msgid "Write your reply"
 msgstr "Escribe tu respuesta"
 
@@ -17772,7 +17961,7 @@ msgstr "Su pago no fue exitoso, inténtelo nuevamente."
 msgid "Your payment was unsuccessful. Please try again."
 msgstr "Su pago no fue exitoso. Inténtalo de nuevo."
 
-#: src/components/routes/organizer/Sms/index.tsx:100
+#: src/components/routes/organizer/Sms/index.tsx:101
 msgid "Your PICHA SMS phone is offline"
 msgstr "Tu teléfono PICHA SMS está desconectado"
 
