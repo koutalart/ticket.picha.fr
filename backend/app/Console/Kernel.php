@@ -3,6 +3,7 @@
 namespace HiEvents\Console;
 
 use HiEvents\Console\Commands\PurgeLiveChatsCommand;
+use HiEvents\Console\Commands\PurgeOrganizerCalendarConsultationsCommand;
 use HiEvents\Console\Commands\PurgeQuestionAnswerFilesCommand;
 use HiEvents\Console\Commands\SendDueSmsRemindersCommand;
 use HiEvents\Console\Commands\SmsWatchdogCommand;
@@ -25,6 +26,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(SmsWatchdogCommand::class)->everyMinute()->withoutOverlapping(5);
         $schedule->command('contacts:sync')->dailyAt('03:30')->withoutOverlapping();
         $schedule->command(PurgeLiveChatsCommand::class)->dailyAt('03:45')->withoutOverlapping();
+        $schedule->command(PurgeOrganizerCalendarConsultationsCommand::class)->dailyAt('03:50')->withoutOverlapping();
     }
 
     protected function commands(): void

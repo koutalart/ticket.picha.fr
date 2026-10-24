@@ -67,6 +67,7 @@ use HiEvents\Repository\Eloquent\SmsUnattributedMessageRepository;
 use HiEvents\Repository\Eloquent\SmsWatchdogAlertRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarAccessRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarCodeRepository;
+use HiEvents\Repository\Eloquent\OrganizerCalendarConsultationRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarMediaRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarRepository;
 use HiEvents\Repository\Eloquent\QrLinkRepository;
@@ -155,6 +156,7 @@ use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsWatchdogAlertRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarAccessRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarCodeRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerCalendarConsultationRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarMediaRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
@@ -219,6 +221,7 @@ class RepositoryServiceProvider extends ServiceProvider
         OrganizerCalendarMediaRepositoryInterface::class => OrganizerCalendarMediaRepository::class,
         OrganizerCalendarCodeRepositoryInterface::class => OrganizerCalendarCodeRepository::class,
         OrganizerCalendarAccessRepositoryInterface::class => OrganizerCalendarAccessRepository::class,
+        OrganizerCalendarConsultationRepositoryInterface::class => OrganizerCalendarConsultationRepository::class,
         QrLinkVisitRepositoryInterface::class => QrLinkVisitRepository::class,
         OrderItemRepositoryInterface::class => OrderItemRepository::class,
         QuestionRepositoryInterface::class => QuestionRepository::class,
