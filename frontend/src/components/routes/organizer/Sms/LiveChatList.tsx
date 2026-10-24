@@ -60,6 +60,7 @@ export const LiveChatList = ({organizerId, onOpenConversation}: LiveChatListProp
                             )}
                         </div>
                         <Group gap="xs" wrap="nowrap">
+                            {session.refunded_at && <Badge color="green" variant="light">{t({message: 'Refunded', context: 'web chat'})}</Badge>}
                             {session.needs_follow_up && <Badge color="orange" variant="light">{t`To follow up`}</Badge>}
                             <Button variant="light" size="xs" onClick={() => setSelectedId(session.id)}>{t`Read`}</Button>
                         </Group>

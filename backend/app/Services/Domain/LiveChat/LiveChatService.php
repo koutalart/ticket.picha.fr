@@ -34,6 +34,7 @@ use HiEvents\Services\Domain\LiveChat\DTO\LiveChatConfigDTO;
 use HiEvents\Services\Domain\LiveChat\DTO\LiveChatReplyDTO;
 use HiEvents\Services\Domain\LiveChat\DTO\LiveChatRequestDTO;
 use HiEvents\Services\Domain\LiveChat\DTO\LiveChatTurnDTO;
+use HiEvents\Services\Domain\LiveChat\Refund\LiveChatRefundProtectionService;
 use HiEvents\Services\Domain\Sms\SmsAssistantEventCatalogService;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Config\Repository;
@@ -68,6 +69,7 @@ class LiveChatService
     public function __construct(
         private readonly LiveChatReplyGenerator $generator,
         private readonly LiveChatHandoffService $handoffService,
+        private readonly LiveChatRefundProtectionService $refundProtectionService,
         private readonly SmsAssistantEventCatalogService $catalogService,
         private readonly LiveChatSessionRepositoryInterface $sessionRepository,
         private readonly LiveChatMessageRepositoryInterface $messageRepository,
@@ -221,7 +223,7 @@ class LiveChatService
         }
 
         $reply = $this->reply($session, $settings, $contactKnown);
-        if ($sensitive && ! $reply->needsFollowUp) {
+        if ($sensitive && ! $reply->needsFollowUp && ! $reply->refundRequest) {
             $reply = new LiveChatReplyDTO(
                 reply: $reply->reply,
                 needsFollowUp: true,
@@ -244,6 +246,7 @@ class LiveChatService
             session: $session,
             messages: collect([$visitorMessage, $agentMessage]),
             askContact: $reply->askContact && ! $contactKnown,
+            refundForm: $reply->refundRequest,
         );
     }
 
@@ -271,14 +274,17 @@ class LiveChatService
         }
 
         $tutoiement = $this->isTutoiement($session->getOrganizerId());
+        $bySms = $normalizedPhone !== null && $this->handoffService->canRelayBySms($settings);
         $confirmation = match (true) {
-            $normalizedPhone !== null && $tutoiement => "Merci, c'est noté. L'organisateur te répond par SMS au {$normalizedPhone}.",
-            $normalizedPhone !== null => "Merci, c'est noté. L'organisateur vous répond par SMS au {$normalizedPhone}.",
+            $bySms && $tutoiement => "Merci, c'est noté. L'organisateur te répond par SMS au {$normalizedPhone}.",
+            $bySms => "Merci, c'est noté. L'organisateur vous répond par SMS au {$normalizedPhone}.",
+            $normalizedPhone !== null && $tutoiement => "Merci, c'est noté. L'organisateur te recontacte au {$normalizedPhone}.",
+            $normalizedPhone !== null => "Merci, c'est noté. L'organisateur vous recontacte au {$normalizedPhone}.",
             $tutoiement => "Merci, c'est noté. L'organisateur te répond par e-mail à {$email}.",
             default => "Merci, c'est noté. L'organisateur vous répond par e-mail à {$email}.",
         };
 
-        return $this->databaseManager->transaction(function () use ($session, $settings, $normalizedPhone, $email, $confirmation) {
+        return $this->databaseManager->transaction(function () use ($session, $settings, $normalizedPhone, $email, $confirmation, $bySms) {
             $this->sessionRepository->updateFromArray($session->getId(), [
                 LiveChatSessionDomainObjectAbstract::VISITOR_PHONE => $normalizedPhone ?? $session->getVisitorPhone(),
                 LiveChatSessionDomainObjectAbstract::VISITOR_EMAIL => $email ?? $session->getVisitorEmail(),
@@ -290,7 +296,7 @@ class LiveChatService
             $session = $this->sessionRepository->findById($session->getId());
             $transcript = $this->messageRepository->findLatestForSession($session->getId(), self::TRANSCRIPT_LENGTH);
 
-            if ($normalizedPhone !== null && $session->getSmsConversationId() === null) {
+            if ($bySms && $session->getSmsConversationId() === null) {
                 $conversation = $this->handoffService->handOffToSms($settings, $session, $normalizedPhone, $transcript);
                 $session = $this->sessionRepository->updateFromArray($session->getId(), [
                     LiveChatSessionDomainObjectAbstract::SMS_CONVERSATION_ID => $conversation->getId(),
@@ -307,6 +313,85 @@ class LiveChatService
             }
 
             return new LiveChatTurnDTO(session: $session, messages: collect([$agentMessage]));
+        });
+    }
+
+    /**
+     * Adds a message written outside the model (refund steps) and mirrors it to the SMS conversation of the chat, if any.
+     *
+     * @param  array<string, mixed>  $sessionAttributes
+     */
+    public function record(
+        LiveChatSessionDomainObject $session,
+        LiveChatAuthorType $author,
+        string $content,
+        array $sessionAttributes = [],
+        bool $needsFollowUp = false,
+    ): LiveChatMessageDomainObject {
+        $session = $this->sessionRepository->findById($session->getId());
+        $message = $this->addMessage($session, $author, $content, [
+            ...$sessionAttributes,
+            ...($author === LiveChatAuthorType::VISITOR ? [
+                LiveChatSessionDomainObjectAbstract::VISITOR_MESSAGE_COUNT => $session->getVisitorMessageCount() + 1,
+            ] : []),
+        ]);
+
+        if ($session->getSmsConversationId() !== null) {
+            $settings = $this->findEnabledSettings($session->getOrganizerId());
+            if ($settings !== null) {
+                $this->handoffService->appendToConversation(
+                    $settings,
+                    $this->sessionRepository->findById($session->getId()),
+                    $message,
+                    $needsFollowUp,
+                );
+            }
+        }
+
+        return $message;
+    }
+
+    /**
+     * Hands the chat over to the organizer when the contact details of the visitor are already known
+     * (for instance the e-mail of an order checked during a refund request), with the transcript.
+     *
+     * @throws Throwable
+     */
+    public function handOffKnownContact(LiveChatSessionDomainObject $session): LiveChatSessionDomainObject
+    {
+        $session = $this->sessionRepository->findById($session->getId());
+        $settings = $this->findEnabledSettings($session->getOrganizerId());
+        if ($settings === null || ! $this->contactKnown($session)) {
+            return $session;
+        }
+
+        return $this->databaseManager->transaction(function () use ($session, $settings) {
+            $session = $this->sessionRepository->updateFromArray($session->getId(), [
+                LiveChatSessionDomainObjectAbstract::STATUS => LiveChatSessionStatus::HANDED_OFF->name,
+                LiveChatSessionDomainObjectAbstract::CONTACT_GIVEN_AT => $session->getContactGivenAt() ?? now()->toDateTimeString(),
+            ]);
+
+            if ($session->getSmsConversationId() !== null) {
+                return $session;
+            }
+
+            $transcript = $this->messageRepository->findLatestForSession($session->getId(), self::TRANSCRIPT_LENGTH);
+            if ($session->getVisitorPhone() !== null && $this->handoffService->canRelayBySms($settings)) {
+                $conversation = $this->handoffService->handOffToSms($settings, $session, $session->getVisitorPhone(), $transcript);
+
+                return $this->sessionRepository->updateFromArray($session->getId(), [
+                    LiveChatSessionDomainObjectAbstract::SMS_CONVERSATION_ID => $conversation->getId(),
+                ]);
+            }
+
+            $this->handoffService->handOffByEmail(
+                $this->organizerRepository->findById($session->getOrganizerId()),
+                $settings,
+                $session,
+                $transcript,
+            );
+
+            return $session;
         });
     }
 
@@ -332,6 +417,8 @@ class LiveChatService
                 currentEventId: $session->getEventId(),
                 thread: $this->messageRepository->findLatestForSession($session->getId(), self::THREAD_LENGTH),
                 events: $this->catalogService->getUpcomingEvents($session->getOrganizerId(), withDetails: true),
+                refundAvailable: $session->getRefundedAt() === null
+                    && $this->refundProtectionService->isAvailableForOrganizer($session->getOrganizerId()),
             ));
         } catch (SmsAssistantUnavailableException|SmsAssistantFailedException|SmsAssistantLimitReachedException) {
             $replies = $tutoiement ? self::HOLDING_REPLIES_TU : self::HOLDING_REPLIES_VOUS;
@@ -413,7 +500,30 @@ class LiveChatService
             OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ID => $organizerId,
         ]);
 
-        return $settings !== null && $settings->getLiveChatEnabled() ? $settings : null;
+        if ($settings !== null) {
+            return $settings->getLiveChatEnabled() ? $settings : null;
+        }
+
+        return $this->defaultSettings($organizerId);
+    }
+
+    /**
+     * An organizer who never opened the SMS tab has no settings row: the chat is on by default and, without an SMS line,
+     * every hand-over goes to the organizer by e-mail. Nothing is written for a public visit.
+     */
+    private function defaultSettings(int $organizerId): ?OrganizerSmsSettingDomainObject
+    {
+        /** @var OrganizerDomainObject|null $organizer */
+        $organizer = $this->organizerRepository->findFirstWhere(['id' => $organizerId]);
+        if ($organizer === null) {
+            return null;
+        }
+
+        return (new OrganizerSmsSettingDomainObject)
+            ->setOrganizerId($organizerId)
+            ->setAccountId($organizer->getAccountId())
+            ->setLiveChatEnabled(true)
+            ->setNotifyOnInboundSms(true);
     }
 
     private function eventOfOrganizer(int $organizerId, ?int $eventId): ?EventDomainObject

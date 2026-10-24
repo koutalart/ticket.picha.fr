@@ -48,6 +48,11 @@ Ce que tu traites seul : questions sur les événements, dates, horaires, lieu, 
 
 Suivi par l'organisateur ("needs_follow_up" = true) pour : remboursement, annulation, échange ou revente de billet, litige, réclamation, mécontentement, problème de paiement, billet non reçu ou introuvable, modification d'une commande, demande d'invitation, de geste commercial, de partenariat, de prestation ou de liste d'invités, presse ou journaliste, accessibilité ou handicap, mineur ou enfant, demande inhabituelle, insulte ou menace, visiteur qui veut parler à quelqu'un ou être recontacté, et toute question dont la réponse n'est pas dans les données. Dans ces cas, "reply" est une réponse d'attente : courte, chaleureuse, reformulée à chaque fois (jamais deux fois la même), elle dit que l'organisateur va regarder sa demande, ne répond pas sur le fond et ne promet rien (ni place, ni invitation, ni remboursement, ni délai précis, ni prix).
 
+Remboursement ("intent") :
+- "intent" vaut "refund_request" quand le visiteur demande à être remboursé ou à annuler sa commande ou ses billets, et seulement si "Remboursement automatique possible" vaut oui dans les données. Sinon "none".
+- Avec "refund_request" : "needs_follow_up" et "ask_contact" sont false, et "reply" dit en une ou deux phrases qu'on va vérifier sa commande et l'invite à remplir le petit formulaire qui s'affiche sous ta réponse (numéro de commande et e-mail de la commande). Ne promets jamais de remboursement, ni de montant, ni de délai : c'est la vérification qui décide. Ne demande pas ces informations dans le message.
+- Si "Remboursement automatique possible" vaut non, une demande de remboursement suit la règle du suivi par l'organisateur ci-dessus.
+
 Coordonnées ("ask_contact") :
 - true seulement si "needs_follow_up" est true (ou si le visiteur demande à être recontacté) et que ses coordonnées ne sont pas déjà connues. Sinon false : ne demande jamais de coordonnées pour une question à laquelle tu as répondu.
 - Quand ask_contact est true, termine "reply" par une seule phrase courte qui demande son numéro de téléphone pour que l'organisateur lui réponde par SMS, ou à défaut son e-mail. Exemple : « Laissez-moi votre numéro, l'organisateur vous répond par SMS (ou votre e-mail si vous préférez). » Un petit formulaire s'affiche sous ta réponse : ne demande pas d'écrire le numéro dans le message.
@@ -136,7 +141,7 @@ PROMPT;
             throw new SmsAssistantFailedException(__('The assistant could not answer.'));
         }
 
-        $result = $this->interpret($answer->data, $request->contactKnown);
+        $result = $this->interpret($answer->data, $request->contactKnown, $request->refundAvailable);
         $this->recordCall(
             $request,
             match (true) {
@@ -169,7 +174,7 @@ PROMPT;
     /**
      * @param  array<string, mixed>  $data
      */
-    private function interpret(array $data, bool $contactKnown): ?LiveChatReplyDTO
+    private function interpret(array $data, bool $contactKnown, bool $refundAvailable): ?LiveChatReplyDTO
     {
         $reply = is_string($data['reply'] ?? null) ? self::cleanText($data['reply']) : '';
         if ($reply === '') {
@@ -180,14 +185,16 @@ PROMPT;
             $reply = rtrim(mb_substr($reply, 0, self::MAX_REPLY_LENGTH - 3)).'...';
         }
 
-        $needsFollowUp = ($data['needs_follow_up'] ?? null) === true;
+        $refundRequest = $refundAvailable && ($data['intent'] ?? null) === 'refund_request';
+        $needsFollowUp = ! $refundRequest && ($data['needs_follow_up'] ?? null) === true;
         $reason = is_string($data['reason'] ?? null) ? self::cleanText($data['reason']) : '';
 
         return new LiveChatReplyDTO(
             reply: $reply,
             needsFollowUp: $needsFollowUp,
-            askContact: ! $contactKnown && ($data['ask_contact'] ?? null) === true,
+            askContact: ! $refundRequest && ! $contactKnown && ($data['ask_contact'] ?? null) === true,
             reason: $needsFollowUp && $reason !== '' ? mb_substr($reason, 0, self::MAX_REASON_LENGTH) : null,
+            refundRequest: $refundRequest,
         );
     }
 
@@ -202,6 +209,7 @@ PROMPT;
             "Consigne de l'organisateur :\n".($instructions !== '' ? $instructions : 'aucune'),
             ...($request->tutoiement ? [SmsAssistantReplyGenerator::TUTOIEMENT_RULE] : []),
             'Coordonnées du visiteur déjà connues : '.($request->contactKnown ? 'oui' : 'non'),
+            'Remboursement automatique possible : '.($request->refundAvailable ? 'oui' : 'non'),
             "Événements à venir (données publiques à jour) :\n".$this->json($request->events->map(
                 fn (SmsAssistantEventInfoDTO $event) => array_filter([
                     'titre' => $event->title,
@@ -251,8 +259,9 @@ PROMPT;
                 'needs_follow_up' => ['type' => 'boolean'],
                 'ask_contact' => ['type' => 'boolean'],
                 'reason' => ['type' => ['string', 'null']],
+                'intent' => ['type' => 'string', 'enum' => ['none', 'refund_request']],
             ],
-            'required' => ['reply', 'needs_follow_up', 'ask_contact', 'reason'],
+            'required' => ['reply', 'needs_follow_up', 'ask_contact', 'reason', 'intent'],
             'additionalProperties' => false,
         ];
     }

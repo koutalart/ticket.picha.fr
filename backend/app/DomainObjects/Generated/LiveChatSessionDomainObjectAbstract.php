@@ -28,6 +28,7 @@ abstract class LiveChatSessionDomainObjectAbstract extends \HiEvents\DomainObjec
     final public const LAST_MESSAGE_AT = 'last_message_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const REFUNDED_AT = 'refunded_at';
 
     protected int $id;
     protected int $account_id;
@@ -47,6 +48,7 @@ abstract class LiveChatSessionDomainObjectAbstract extends \HiEvents\DomainObjec
     protected ?string $last_message_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?string $refunded_at = null;
 
     public function toArray(): array
     {
@@ -69,6 +71,7 @@ abstract class LiveChatSessionDomainObjectAbstract extends \HiEvents\DomainObjec
                     'last_message_at' => $this->last_message_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'refunded_at' => $this->refunded_at ?? null,
                 ];
     }
 
@@ -268,5 +271,16 @@ abstract class LiveChatSessionDomainObjectAbstract extends \HiEvents\DomainObjec
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setRefundedAt(?string $refunded_at): self
+    {
+        $this->refunded_at = $refunded_at;
+        return $this;
+    }
+
+    public function getRefundedAt(): ?string
+    {
+        return $this->refunded_at;
     }
 }

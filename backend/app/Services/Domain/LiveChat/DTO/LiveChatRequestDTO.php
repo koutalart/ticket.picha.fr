@@ -27,5 +27,6 @@ class LiveChatRequestDTO extends BaseDataObject
         public readonly ?int $currentEventId,
         public readonly Collection $thread,
         public readonly Collection $events,
+        public readonly bool $refundAvailable = false,
     ) {}
 }

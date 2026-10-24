@@ -22,6 +22,7 @@ class LiveChatTurnResource extends BaseResource
             'messages' => LiveChatMessageResource::collection($this->messages)->toArray($request),
             'ask_contact' => $this->askContact,
             'contact_form_fallback' => $this->contactFormFallback,
+            'refund_form' => $this->refundForm,
             'contact_given' => $this->session->getVisitorPhone() !== null || $this->session->getVisitorEmail() !== null,
         ];
     }

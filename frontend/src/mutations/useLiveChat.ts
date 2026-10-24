@@ -22,3 +22,24 @@ export const useSubmitLiveChatContact = () => {
             liveChatPublicClient.contact(sessionId, {phone, email}),
     });
 };
+
+export const useRequestLiveChatRefundCode = () => {
+    return useMutation({
+        mutationFn: ({sessionId, orderReference, email}: { sessionId: string; orderReference: string; email: string }) =>
+            liveChatPublicClient.refundRequest(sessionId, orderReference, email),
+    });
+};
+
+export const useVerifyLiveChatRefundCode = () => {
+    return useMutation({
+        mutationFn: ({sessionId, code}: { sessionId: string; code: string }) =>
+            liveChatPublicClient.refundVerify(sessionId, code),
+    });
+};
+
+export const useConfirmLiveChatRefund = () => {
+    return useMutation({
+        mutationFn: ({sessionId, attendeeIds}: { sessionId: string; attendeeIds: number[] }) =>
+            liveChatPublicClient.refundConfirm(sessionId, attendeeIds),
+    });
+};

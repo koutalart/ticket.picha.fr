@@ -291,6 +291,8 @@ export interface EventSettings {
 
     ticket_footer_use_organizer_domain?: boolean;
 
+    refund_protection_deadline_hours?: number;
+
     embedded_registration_enabled?: boolean;
 
     rich_footer_enabled?: boolean;
@@ -856,6 +858,7 @@ export interface Product {
     is_sales_paused?: boolean;
     is_required?: boolean;
     required_quantity_mode?: RequiredQuantityMode;
+    is_refund_protection?: boolean;
     is_before_sale_start_date?: boolean;
     is_after_sale_end_date?: boolean;
     taxes?: TaxAndFee[];
@@ -1590,6 +1593,30 @@ export interface LiveChatTurn {
     ask_contact: boolean;
     contact_form_fallback: boolean;
     contact_given: boolean;
+    refund_form: boolean;
+}
+
+export type LiveChatRefundStepName = 'code' | 'tickets' | 'refunded' | 'unavailable';
+
+export interface LiveChatRefundTicket {
+    attendee_id: number;
+    name: string;
+    category: string;
+    amount: number;
+    amount_minor: number;
+}
+
+export interface LiveChatRefundStep {
+    step: LiveChatRefundStepName;
+    messages: LiveChatMessage[];
+    tickets: LiveChatRefundTicket[];
+    max_tickets: number;
+    currency: string | null;
+    amount: number | null;
+    error: string | null;
+    attempts_left: number | null;
+    ask_contact: boolean;
+    contact_given: boolean;
 }
 
 export interface LiveChatSession {
@@ -1603,6 +1630,7 @@ export interface LiveChatSession {
     visitor_message_count: number;
     sms_conversation_id: number | null;
     contact_given_at: string | null;
+    refunded_at: string | null;
     last_message_at: string | null;
     created_at: string;
     messages: LiveChatMessage[] | null;

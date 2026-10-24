@@ -148,6 +148,7 @@ class UpdateEventSettingsRequest extends BaseRequest
             'sms_cancellation_confirmation_on_organizer_cancel' => ['boolean'],
 
             'ticket_footer_use_organizer_domain' => ['boolean'],
+            'refund_protection_deadline_hours' => ['nullable', 'integer', 'min:0', 'max:8760'],
 
             'rich_footer_enabled' => ['boolean'],
             'homepage_footer_settings' => ['nullable', 'array'],

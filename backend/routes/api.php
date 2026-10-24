@@ -227,11 +227,14 @@ use HiEvents\Http\Actions\Organizers\Orders\GetOrganizerOrdersAction;
 use HiEvents\Http\Actions\Organizers\Public\SendOrganizerContactMessagePublicAction;
 use HiEvents\Http\Actions\LiveChat\GetOrganizerLiveChatAction;
 use HiEvents\Http\Actions\LiveChat\GetOrganizerLiveChatsAction;
+use HiEvents\Http\Actions\LiveChat\Public\ConfirmLiveChatRefundPublicAction;
 use HiEvents\Http\Actions\LiveChat\Public\GetLiveChatConfigPublicAction;
 use HiEvents\Http\Actions\LiveChat\Public\GetLiveChatMessagesPublicAction;
 use HiEvents\Http\Actions\LiveChat\Public\PostLiveChatMessagePublicAction;
+use HiEvents\Http\Actions\LiveChat\Public\RequestLiveChatRefundCodePublicAction;
 use HiEvents\Http\Actions\LiveChat\Public\StartLiveChatPublicAction;
 use HiEvents\Http\Actions\LiveChat\Public\SubmitLiveChatContactPublicAction;
+use HiEvents\Http\Actions\LiveChat\Public\VerifyLiveChatRefundCodePublicAction;
 use HiEvents\Http\Actions\Organizers\Public\SubscribeToOrganizerNewsletterPublicAction;
 use HiEvents\Http\Actions\Organizers\Newsletter\DeleteOrganizerNewsletterSubscriberAction;
 use HiEvents\Http\Actions\Organizers\Newsletter\ExportOrganizerNewsletterSubscribersAction;
@@ -784,6 +787,12 @@ $router->prefix('/public')->group(
             ->middleware('throttle:20,1');
         $router->post('/live-chat/contact', SubmitLiveChatContactPublicAction::class)
             ->middleware('throttle:10,1');
+        $router->post('/live-chat/refund/request', RequestLiveChatRefundCodePublicAction::class)
+            ->middleware('throttle:20,1,live-chat-refund');
+        $router->post('/live-chat/refund/verify', VerifyLiveChatRefundCodePublicAction::class)
+            ->middleware('throttle:20,1,live-chat-refund');
+        $router->post('/live-chat/refund/confirm', ConfirmLiveChatRefundPublicAction::class)
+            ->middleware('throttle:20,1,live-chat-refund');
         $router->get('/custom-domains/{domain}', GetOrganizerByCustomDomainPublicAction::class);
 
         // QR codes

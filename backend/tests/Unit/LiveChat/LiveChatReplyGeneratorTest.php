@@ -60,6 +60,40 @@ class LiveChatReplyGeneratorTest extends TestCase
         $this->assertSame('Litige', $reply->reason);
     }
 
+    public function test_refund_intent_is_kept_only_when_the_organizer_offers_automatic_refunds(): void
+    {
+        $answer = new ClaudeStructuredAnswerDTO(
+            data: ['reply' => 'On vérifie ta commande.', 'needs_follow_up' => true, 'ask_contact' => true, 'reason' => 'Remboursement', 'intent' => 'refund_request'],
+            model: 'claude-haiku-5-5',
+            inputTokens: 10,
+            outputTokens: 5,
+        );
+        $claude = Mockery::mock(ClaudeStructuredOutputClient::class);
+        $claude->shouldReceive('isConfigured')->andReturn(true);
+        $claude->shouldReceive('askWithUsage')
+            ->withArgs(fn (string $system, array $content, array $schema) => in_array('intent', $schema['required'], true)
+                && str_contains($content[0]['text'], 'Remboursement automatique possible : oui'))
+            ->once()
+            ->andReturn($answer);
+        $claude->shouldReceive('askWithUsage')
+            ->withArgs(fn (string $system, array $content) => str_contains($content[0]['text'], 'Remboursement automatique possible : non'))
+            ->once()
+            ->andReturn($answer);
+        $calls = Mockery::mock(SmsAssistantCallRepositoryInterface::class);
+        $calls->shouldReceive('countWhere')->andReturn(0);
+        $calls->shouldReceive('create');
+
+        $offered = $this->generator($claude, $calls)->generate($this->request(refundAvailable: true));
+        $this->assertTrue($offered->refundRequest);
+        $this->assertFalse($offered->needsFollowUp);
+        $this->assertFalse($offered->askContact);
+
+        $notOffered = $this->generator($claude, $calls)->generate($this->request(refundAvailable: false));
+        $this->assertFalse($notOffered->refundRequest);
+        $this->assertTrue($notOffered->needsFollowUp);
+        $this->assertTrue($notOffered->askContact);
+    }
+
     public function test_daily_limit_blocks_the_call(): void
     {
         $claude = Mockery::mock(ClaudeStructuredOutputClient::class);
@@ -85,7 +119,7 @@ class LiveChatReplyGeneratorTest extends TestCase
         );
     }
 
-    private function request(bool $contactKnown = false): LiveChatRequestDTO
+    private function request(bool $contactKnown = false, bool $refundAvailable = false): LiveChatRequestDTO
     {
         return new LiveChatRequestDTO(
             organizerId: 1,
@@ -99,6 +133,7 @@ class LiveChatReplyGeneratorTest extends TestCase
             currentEventId: null,
             thread: collect(),
             events: collect(),
+            refundAvailable: $refundAvailable,
         );
     }
 }

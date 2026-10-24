@@ -8,6 +8,7 @@ import {usePostLiveChatMessage, useStartLiveChat, useSubmitLiveChatContact} from
 import {liveChatPublicClient} from "../../../api/live-chat.client.ts";
 import {getPrivacyPolicyUrl} from "../../../utilites/branding.ts";
 import {ContactOrganizerForm} from "../ContactOrganizerModal/ContactOrganizerForm.tsx";
+import {LiveChatRefundCard} from "./LiveChatRefundCard.tsx";
 import classes from "./LiveChatWindow.module.scss";
 
 interface LiveChatWindowProps {
@@ -61,6 +62,7 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
     const [email, setEmail] = useState('');
     const [contactError, setContactError] = useState<string | null>(null);
     const [startFailed, setStartFailed] = useState(false);
+    const [refundOpen, setRefundOpen] = useState(false);
     const logRef = useRef<HTMLDivElement>(null);
 
     const startMutation = useStartLiveChat();
@@ -72,6 +74,13 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
         setMessages((current) => replaceAll ? turn.messages : [...current.filter((message) => message.id > 0), ...turn.messages]);
         setAskContact(turn.ask_contact && !turn.contact_given);
         setContactGiven(turn.contact_given);
+        if (turn.refund_form) {
+            setRefundOpen(true);
+        }
+    };
+
+    const appendMessages = (newMessages: LiveChatMessage[]) => {
+        setMessages((current) => [...current, ...newMessages]);
     };
 
     const start = () => {
@@ -121,7 +130,7 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
         if (log) {
             log.scrollTop = log.scrollHeight;
         }
-    }, [messages, postMutation.isPending, askContact, opened]);
+    }, [messages, postMutation.isPending, askContact, opened, refundOpen]);
 
     const send = (event?: FormEvent) => {
         event?.preventDefault();
@@ -269,7 +278,23 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                                 <Button size="xs" variant="light" onClick={start}>{t`Try again`}</Button>
                             </div>
                         )}
-                        {askContact && !contactGiven && (
+                        {refundOpen && sessionId && (
+                            <LiveChatRefundCard
+                                sessionId={sessionId}
+                                onMessages={appendMessages}
+                                onUnavailable={(ask, given) => {
+                                    setRefundOpen(false);
+                                    setContactGiven(given);
+                                    setAskContact(ask && !given);
+                                }}
+                                onDone={() => setRefundOpen(false)}
+                                onLimit={(notice) => {
+                                    setRefundOpen(false);
+                                    setFallback({notice, message: ''});
+                                }}
+                            />
+                        )}
+                        {askContact && !contactGiven && !refundOpen && (
                             <form className={classes.contactForm} onSubmit={submitContact} noValidate>
                                 <Text size="sm" fw={600}>{t`So that the organizer can reply to you`}</Text>
                                 <TextInput

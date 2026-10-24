@@ -27,6 +27,7 @@ class LiveChatSessionResource extends BaseResource
             'visitor_message_count' => $this->getVisitorMessageCount(),
             'sms_conversation_id' => $this->getSmsConversationId(),
             'contact_given_at' => $this->getContactGivenAt(),
+            'refunded_at' => $this->getRefundedAt(),
             'last_message_at' => $this->getLastMessageAt(),
             'created_at' => $this->getCreatedAt(),
             'messages' => $this->getLiveChatMessages() !== null

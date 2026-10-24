@@ -13,5 +13,6 @@ class LiveChatReplyDTO extends BaseDataObject
         public readonly bool $needsFollowUp,
         public readonly bool $askContact,
         public readonly ?string $reason,
+        public readonly bool $refundRequest = false,
     ) {}
 }

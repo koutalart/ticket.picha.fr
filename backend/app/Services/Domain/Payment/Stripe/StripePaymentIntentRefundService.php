@@ -30,6 +30,8 @@ class StripePaymentIntentRefundService
 
     public const REFUND_SOURCE_EXPIRED_ORDER = 'expired_order';
 
+    public const REFUND_SOURCE_LIVE_CHAT = 'live_chat';
+
     public function refundPayment(
         MoneyValue $amount,
         StripePaymentDomainObject $payment,

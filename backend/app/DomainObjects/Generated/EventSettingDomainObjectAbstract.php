@@ -84,6 +84,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const SMS_CANCELLATION_CONFIRMATION_MESSAGE = 'sms_cancellation_confirmation_message';
     final public const SMS_CANCELLATION_CONFIRMATION_ON_ORGANIZER_CANCEL = 'sms_cancellation_confirmation_on_organizer_cancel';
     final public const TICKET_FOOTER_USE_ORGANIZER_DOMAIN = 'ticket_footer_use_organizer_domain';
+    final public const REFUND_PROTECTION_DEADLINE_HOURS = 'refund_protection_deadline_hours';
 
     protected int $id;
     protected int $event_id;
@@ -159,6 +160,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected ?string $sms_cancellation_confirmation_message = null;
     protected bool $sms_cancellation_confirmation_on_organizer_cancel = false;
     protected bool $ticket_footer_use_organizer_domain = false;
+    protected int $refund_protection_deadline_hours = 0;
 
     public function toArray(): array
     {
@@ -237,6 +239,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'sms_cancellation_confirmation_message' => $this->sms_cancellation_confirmation_message ?? null,
                     'sms_cancellation_confirmation_on_organizer_cancel' => $this->sms_cancellation_confirmation_on_organizer_cancel ?? null,
                     'ticket_footer_use_organizer_domain' => $this->ticket_footer_use_organizer_domain ?? null,
+                    'refund_protection_deadline_hours' => $this->refund_protection_deadline_hours ?? null,
                 ];
     }
 
@@ -1053,5 +1056,16 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getTicketFooterUseOrganizerDomain(): bool
     {
         return $this->ticket_footer_use_organizer_domain;
+    }
+
+    public function setRefundProtectionDeadlineHours(int $refund_protection_deadline_hours): self
+    {
+        $this->refund_protection_deadline_hours = $refund_protection_deadline_hours;
+        return $this;
+    }
+
+    public function getRefundProtectionDeadlineHours(): int
+    {
+        return $this->refund_protection_deadline_hours;
     }
 }

@@ -1,6 +1,14 @@
 import {api} from "./client";
 import {publicApi} from "./public-client";
-import {GenericDataResponse, GenericPaginatedResponse, IdParam, LiveChatConfig, LiveChatSession, LiveChatTurn} from "../types";
+import {
+    GenericDataResponse,
+    GenericPaginatedResponse,
+    IdParam,
+    LiveChatConfig,
+    LiveChatRefundStep,
+    LiveChatSession,
+    LiveChatTurn,
+} from "../types";
 
 // The chat session id is opaque and travels in this header, never in a URL.
 const SESSION_HEADER = 'X-Chat-Session';
@@ -35,6 +43,31 @@ export const liveChatPublicClient = {
         const response = await publicApi.post<GenericDataResponse<LiveChatTurn>>(
             'live-chat/contact',
             contact,
+            sessionHeaders(sessionId),
+        );
+        return response.data;
+    },
+    refundRequest: async (sessionId: string, orderReference: string, email: string) => {
+        const response = await publicApi.post<GenericDataResponse<LiveChatRefundStep>>(
+            'live-chat/refund/request',
+            {order_reference: orderReference, email},
+            sessionHeaders(sessionId),
+        );
+        return response.data;
+    },
+    refundVerify: async (sessionId: string, code: string) => {
+        const response = await publicApi.post<GenericDataResponse<LiveChatRefundStep>>(
+            'live-chat/refund/verify',
+            {code},
+            sessionHeaders(sessionId),
+        );
+        return response.data;
+    },
+    // Only the ticket ids are sent: the amount is always computed by the server.
+    refundConfirm: async (sessionId: string, attendeeIds: number[]) => {
+        const response = await publicApi.post<GenericDataResponse<LiveChatRefundStep>>(
+            'live-chat/refund/confirm',
+            {attendee_ids: attendeeIds},
             sessionHeaders(sessionId),
         );
         return response.data;
