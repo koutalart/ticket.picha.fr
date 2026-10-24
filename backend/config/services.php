@@ -57,6 +57,20 @@ return [
     'meta' => [
         'graph_api_version' => env('META_GRAPH_API_VERSION', 'v24.0'),
         'timeout_seconds' => (int) env('META_CONVERSIONS_API_TIMEOUT', 10),
+        'app_id' => env('META_APP_ID'),
+        'app_secret' => env('META_APP_SECRET'),
+        'login_config_id' => env('META_LOGIN_CONFIG_ID'),
+        'publishing_timeout_seconds' => (int) env('META_PUBLISHING_TIMEOUT', 60),
+        'oauth_scopes' => [
+            'pages_show_list',
+            'pages_read_engagement',
+            'pages_manage_posts',
+            'read_insights',
+            'business_management',
+            'instagram_basic',
+            'instagram_content_publish',
+            'instagram_manage_insights',
+        ],
     ],
 
     'stripe' => [
