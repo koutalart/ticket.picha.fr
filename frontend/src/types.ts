@@ -1647,3 +1647,66 @@ export interface SmsConversationDetail {
     customer_orders: SmsCustomerOrder[];
     opted_out: boolean;
 }
+
+export type SocialNetwork = 'FACEBOOK' | 'INSTAGRAM';
+
+export type SocialPostFormat = 'TEXT' | 'IMAGE' | 'CAROUSEL' | 'REEL' | 'STORY';
+
+export type SocialMediaType = 'IMAGE' | 'VIDEO';
+
+export type SocialPostStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'SCHEDULED' | 'PUBLISHING' | 'PUBLISHED' | 'FAILED' | 'CANCELLED';
+
+export type SocialPostSource = 'PICHA' | 'ASSISTANT';
+
+export type SocialConnectionStatus = 'ACTIVE' | 'NEEDS_RECONNECT';
+
+export interface SocialConnection {
+    available: boolean;
+    connected: boolean;
+    status: SocialConnectionStatus | null;
+    facebook_page_id: string | null;
+    facebook_page_name: string | null;
+    instagram_account_id: string | null;
+    instagram_username: string | null;
+    granted_scopes: string[];
+    user_access_token_expires_at: string | null;
+    last_error: string | null;
+    last_error_at: string | null;
+    connected_at: string | null;
+}
+
+export interface MetaPage {
+    id: string;
+    name: string;
+    instagram_account_id: string | null;
+    instagram_username: string | null;
+    can_publish: boolean;
+}
+
+export interface SocialMediaItem {
+    url: string;
+    type: SocialMediaType;
+}
+
+export interface SocialPost {
+    id: number;
+    organizer_id: number;
+    network: SocialNetwork;
+    format: SocialPostFormat;
+    caption: string | null;
+    media: SocialMediaItem[];
+    link: string | null;
+    status: SocialPostStatus;
+    source: SocialPostSource;
+    scheduled_at: string | null;
+    published_at: string | null;
+    permalink: string | null;
+    attempts: number;
+    next_attempt_at: string | null;
+    last_error: string | null;
+    created_by_user_id: number | null;
+    approved_by_user_id: number | null;
+    approved_at: string | null;
+    created_at: string;
+    updated_at: string;
+}

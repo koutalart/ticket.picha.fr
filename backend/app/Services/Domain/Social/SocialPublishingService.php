@@ -44,7 +44,7 @@ class SocialPublishingService
     public function publish(int $postId): SocialPublishResultDTO
     {
         /** @var SocialPostDomainObject|null $post */
-        $post = $this->postRepository->findFirst($postId);
+        $post = $this->postRepository->findFirstWhere([SocialPostDomainObjectAbstract::ID => $postId]);
 
         if ($post === null || $post->getStatus() !== SocialPostStatus::PUBLISHING->name) {
             return new SocialPublishResultDTO(SocialPostStatus::CANCELLED);

@@ -1,0 +1,43 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-sm);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-sm);
+}
+
+.post {
+  display: flex;
+  gap: var(--mantine-spacing-md);
+  align-items: flex-start;
+  justify-content: space-between;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
+}
+
+.caption {
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-xs);
+  flex-shrink: 0;
+}
+
+.mediaRow {
+  display: flex;
+  gap: var(--mantine-spacing-xs);
+  align-items: flex-start;
+}

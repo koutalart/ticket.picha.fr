@@ -14,11 +14,12 @@ import { MetaConversionsApiSettings } from "./Sections/MetaConversionsApiSetting
 import { SmsSettings } from "./Sections/SmsSettings";
 import { SmsReplyTemplates } from "./Sections/SmsReplyTemplates";
 import { SmsOptOuts } from "./Sections/SmsOptOuts";
+import { SocialPublishingSettings } from "./Sections/SocialPublishingSettings";
 import { PageBody } from "../../../common/PageBody";
 import { PageTitle } from "../../../common/PageTitle";
 import { t } from "@lingui/macro";
 import { Box, Group, NavLink as MantineNavLink, Stack } from "@mantine/core";
-import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconWebhook, IconBrandMeta, IconMessage, IconMessageBolt, IconBan, IconSend, IconMessageCircle } from "@tabler/icons-react";
+import { IconAlertTriangle, IconBrandGoogleAnalytics, IconInfoCircle, IconMapPin, IconShare, IconMail, IconCalendarEvent, IconPercentage, IconChartBar, IconWebhook, IconBrandMeta, IconMessage, IconMessageBolt, IconBan, IconSend, IconMessageCircle, IconBrandInstagram } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "../../../common/Card";
@@ -91,6 +92,12 @@ const Settings = () => {
                 label: t`Tracking & Analytics`,
                 icon: IconChartBar,
                 component: TrackingPixelSettings,
+            },
+            {
+                id: 'social',
+                label: t`Facebook and Instagram`,
+                icon: IconBrandInstagram,
+                component: SocialPublishingSettings,
             },
             {
                 id: 'meta-conversions-api',
