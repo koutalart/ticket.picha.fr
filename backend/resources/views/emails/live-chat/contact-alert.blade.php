@@ -1,5 +1,6 @@
 @php /** @var string $organizerName */ @endphp
-@php /** @var string $email */ @endphp
+@php /** @var string|null $email */ @endphp
+@php /** @var string|null $phone */ @endphp
 @php /** @var string|null $reason */ @endphp
 @php /** @var \Illuminate\Support\Collection<int, \HiEvents\DomainObjects\LiveChatMessageDomainObject> $transcript */ @endphp
 @php /** @var string $chatsUrl */ @endphp
@@ -9,7 +10,11 @@
 <x-mail::message>
 {{ __('Hello :name', ['name' => $organizerName]) }},
 
+@if($email)
 {{ __('A visitor of your pages asked a question in the web chat and left their e-mail address so that you can answer them:') }} **{{ $email }}**
+@else
+{{ __('A visitor of your pages asked a question in the web chat and left their phone number so that you can answer them:') }} **{{ $phone }}**
+@endif
 
 @if($reason)
 {{ __('To handle:') }} {{ $reason }}
@@ -22,7 +27,9 @@
 </div>
 @endforeach
 
+@if($email)
 {{ __('Reply to this e-mail to answer the visitor directly.') }}
+@endif
 
 <x-mail::button :url="$chatsUrl">
 {{ __('See the web chats') }}

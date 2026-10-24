@@ -26,7 +26,7 @@ export const LiveChatSettings = () => {
 
     const form = useForm({
         initialValues: {
-            live_chat_enabled: false,
+            live_chat_enabled: true,
             live_chat_relay_label: '',
         },
     });
@@ -65,7 +65,7 @@ export const LiveChatSettings = () => {
         <Card>
             <HeadingWithDescription
                 heading={t`Live assistance`}
-                description={t`The "Contact the organizer" buttons of your event and organizer pages open a chat that answers visitors right away, with the same data and instructions as the SMS assistant. Off by default.`}
+                description={t`The "Contact the organizer" buttons of your event and organizer pages open a chat that answers visitors right away, with the same data and instructions as the SMS assistant. On by default.`}
             />
 
             <Alert color="blue" variant="light" mb="md" icon={<IconMessageChatbot size={16}/>}>

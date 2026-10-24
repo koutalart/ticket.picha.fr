@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -9,9 +10,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('organizer_sms_settings', function (Blueprint $table) {
-            $table->boolean('live_chat_enabled')->default(false);
+            $table->boolean('live_chat_enabled')->default(true);
             $table->string('live_chat_relay_label', 120)->nullable();
         });
+
+        DB::table('organizer_sms_settings')->update(['live_chat_enabled' => true]);
 
         Schema::table('sms_messages', function (Blueprint $table) {
             $table->string('channel', 20)->nullable();

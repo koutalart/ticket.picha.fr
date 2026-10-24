@@ -18,12 +18,14 @@ use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\DomainObjects\Status\SmsConversationStatus;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
+use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
 use HiEvents\Helper\CustomerLocale;
 use HiEvents\Mail\LiveChat\LiveChatContactAlertMail;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Services\Domain\Sms\SmsAlertService;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
+use HiEvents\Services\Domain\Sms\SmsLineService;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Support\Collection;
 
@@ -43,7 +45,23 @@ class LiveChatHandoffService
         private readonly SmsMessageRepositoryInterface $messageRepository,
         private readonly SmsAlertService $alertService,
         private readonly Mailer $mailer,
+        private readonly SmsLineService $lineService,
     ) {}
+
+    /**
+     * A phone number can only be handed over as an SMS conversation when the organizer has a line to answer with.
+     * Otherwise (no SMS settings, no line yet) the hand-over goes by e-mail, like a visitor who left only an e-mail.
+     */
+    public function canRelayBySms(OrganizerSmsSettingDomainObject $settings): bool
+    {
+        try {
+            $line = $this->lineService->resolveLine($settings);
+        } catch (SmsGatewayNotConfiguredException) {
+            return false;
+        }
+
+        return trim((string) $line->getApiKey()) !== '' && trim((string) $line->getFromNumber()) !== '';
+    }
 
     /**
      * @param  Collection<int, LiveChatMessageDomainObject>  $transcript

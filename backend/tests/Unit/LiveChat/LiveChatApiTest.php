@@ -11,6 +11,7 @@ use HiEvents\Services\Infrastructure\AI\ClaudeStructuredOutputClient;
 use HiEvents\Services\Infrastructure\AI\DTO\ClaudeStructuredAnswerDTO;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -74,10 +75,56 @@ class LiveChatApiTest extends TestCase
         $this->chat('post', '/public/live-chat/contact', $sessionId, ['phone' => '0639000000'])->assertNotFound();
     }
 
-    public function test_organizer_without_settings_has_no_chat(): void
+    public function test_organizer_without_settings_has_the_chat_on_by_default(): void
     {
-        $this->getJson("/public/organizers/{$this->organizerId}/live-chat")->assertJsonPath('data.enabled', false);
-        $this->postJson("/public/organizers/{$this->organizerId}/live-chat/sessions")->assertNotFound();
+        $this->getJson("/public/organizers/{$this->organizerId}/live-chat")
+            ->assertOk()
+            ->assertJsonPath('data.enabled', true)
+            ->assertJsonPath('data.relay_line', "Réponse immédiate, l'organisateur peut prendre le relais");
+
+        $this->openChat();
+        $this->assertSame(0, DB::table('organizer_sms_settings')->where('organizer_id', $this->organizerId)->count());
+    }
+
+    public function test_new_sms_settings_have_the_chat_on(): void
+    {
+        DB::table('organizer_sms_settings')->insert([
+            'account_id' => DB::table('organizers')->where('id', $this->organizerId)->value('account_id'),
+            'organizer_id' => $this->organizerId,
+            'webhook_token' => Str::random(48),
+            'webhook_signing_key' => encrypt(Str::random(32)),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->assertTrue((bool) DB::table('organizer_sms_settings')->where('organizer_id', $this->organizerId)->value('live_chat_enabled'));
+        $this->getJson("/public/organizers/{$this->organizerId}/live-chat")->assertJsonPath('data.enabled', true);
+    }
+
+    public function test_phone_of_an_organizer_without_sms_line_is_handed_over_by_email(): void
+    {
+        DB::table('organizers')->where('id', $this->organizerId)->update(['email' => 'orga@example.com']);
+        $sessionId = $this->openChat();
+
+        $this->chat('post', '/public/live-chat/contact', $sessionId, ['phone' => '0639 12 34 56'])
+            ->assertOk()
+            ->assertJsonPath('data.contact_given', true)
+            ->assertJsonPath('data.messages.0.content', "Merci, c'est noté. L'organisateur vous recontacte au +262639123456.");
+
+        $this->assertSame(0, DB::table('sms_conversations')->where('organizer_id', $this->organizerId)->count());
+        Mail::assertQueued(LiveChatContactAlertMail::class, fn (LiveChatContactAlertMail $mail) => $mail->hasTo('orga@example.com'));
+    }
+
+    public function test_organizer_settings_without_line_hand_over_a_phone_by_email(): void
+    {
+        $this->settings(withLine: false);
+        DB::table('organizers')->where('id', $this->organizerId)->update(['email' => 'orga@example.com']);
+        $sessionId = $this->openChat();
+
+        $this->chat('post', '/public/live-chat/contact', $sessionId, ['phone' => '0639123456'])->assertOk();
+
+        $this->assertSame(0, DB::table('sms_conversations')->where('organizer_id', $this->organizerId)->count());
+        Mail::assertQueued(LiveChatContactAlertMail::class);
     }
 
     public function test_chat_is_off_when_the_assistant_is_not_configured(): void
@@ -440,7 +487,7 @@ class LiveChatApiTest extends TestCase
             ->assertJsonCount(2, 'data.messages');
     }
 
-    private function settings(bool $enabled = true, ?string $relayLabel = null): int
+    private function settings(bool $enabled = true, ?string $relayLabel = null, bool $withLine = true): int
     {
         $existing = DB::table('organizer_sms_settings')->where('organizer_id', $this->organizerId)->value('id');
         if ($existing !== null) {
@@ -454,6 +501,8 @@ class LiveChatApiTest extends TestCase
             'organizer_id' => $this->organizerId,
             'webhook_token' => Str::random(48),
             'webhook_signing_key' => encrypt(Str::random(32)),
+            'api_key' => $withLine ? Crypt::encryptString('test-api-key') : null,
+            'from_number' => $withLine ? '+262639000001' : null,
             'assistant_instructions' => 'Dites bonjour',
             'live_chat_enabled' => $enabled,
             'live_chat_relay_label' => $relayLabel,

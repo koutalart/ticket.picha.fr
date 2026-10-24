@@ -61,7 +61,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $history_import_error = null;
     protected bool $assistant_auto_send = false;
     protected ?string $assistant_holding_reply = null;
-    protected bool $live_chat_enabled = false;
+    protected bool $live_chat_enabled = true;
     protected ?string $live_chat_relay_label = null;
 
     public function toArray(): array
