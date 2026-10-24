@@ -122,7 +122,7 @@ const OrganizerLayout = () => {
                 onSwitchOrganizer={organizers && organizers.length > 1 ? openSwitchModal : undefined}
                 navItems={navItems}
                 bottomItems={bottomItems}
-                mobileTabs={navItems}
+                mobileTabs={navItems.filter(item => item.link !== 'publications')}
                 headerActions={isQrCodesPage ? undefined : (
                     <Button radius="md" size="md" leftSection={<IconPlus size={18}/>}
                             onClick={() => navigate(`/manage/new-event?organizer=${organizerId}`)}>

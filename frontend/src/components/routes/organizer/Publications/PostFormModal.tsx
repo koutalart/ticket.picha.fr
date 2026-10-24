@@ -1,6 +1,7 @@
 import {t} from "@lingui/macro";
 import {ActionIcon, Alert, Button, Checkbox, Group, SegmentedControl, Select, Stack, Switch, Text, Textarea, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
+import {useMediaQuery} from "@mantine/hooks";
 import {IconInfoCircle, IconPlus, IconTrash} from "@tabler/icons-react";
 import dayjs from "dayjs";
 import {IdParam, SocialConnection, SocialMediaType, SocialNetwork, SocialPostFormat} from "../../../../types.ts";
@@ -65,6 +66,8 @@ export const PostFormModal = ({organizerId, connection, timezone, onClose}: Post
     const isText = format === 'TEXT';
     const allowsSeveralMedia = format === 'CAROUSEL';
     const mediaTypeLocked = format === 'IMAGE' || format === 'CAROUSEL' || format === 'REEL';
+    const isSmallScreen = useMediaQuery('(max-width: 576px)');
+    const formatOptions = FORMATS.map(value => ({value, label: postFormatLabel(value)}));
 
     const changeFormat = (value: string) => {
         const next = value as SocialPostFormat;
@@ -119,15 +122,20 @@ export const PostFormModal = ({organizerId, connection, timezone, onClose}: Post
                         <Text size="xs" c="dimmed">{t`No Instagram professional account is linked to the connected Facebook page.`}</Text>
                     )}
 
-                    <div>
-                        <Text size="sm" fw={500} mb={4}>{t`Format`}</Text>
-                        <SegmentedControl
-                            fullWidth
+                    {isSmallScreen ? (
+                        <Select
+                            label={t`Format`}
                             value={format}
-                            onChange={changeFormat}
-                            data={FORMATS.map(value => ({value, label: postFormatLabel(value)}))}
+                            allowDeselect={false}
+                            onChange={(value) => value && changeFormat(value)}
+                            data={formatOptions}
                         />
-                    </div>
+                    ) : (
+                        <div>
+                            <Text size="sm" fw={500} mb={4}>{t`Format`}</Text>
+                            <SegmentedControl fullWidth value={format} onChange={changeFormat} data={formatOptions}/>
+                        </div>
+                    )}
 
                     {format !== 'STORY' && (
                         <Textarea

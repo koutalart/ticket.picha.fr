@@ -111,14 +111,14 @@ export const SocialPublishingSettings = () => {
                 <Text size="sm" fw={500}>{t`Choose the page to connect`}</Text>
                 {pages.map(page => (
                     <Paper key={page.id} withBorder p="sm" radius="md">
-                        <Group justify="space-between" wrap="nowrap">
-                            <div>
-                                <Group gap={6}>
-                                    <IconBrandFacebook size={16}/>
+                        <Group justify="space-between" wrap="nowrap" align="flex-start">
+                            <div style={{flex: 1, minWidth: 0}}>
+                                <Group gap={6} wrap="nowrap">
+                                    <IconBrandFacebook size={16} style={{flexShrink: 0}}/>
                                     <Text size="sm" fw={500}>{page.name}</Text>
                                 </Group>
-                                <Group gap={6} mt={4}>
-                                    <IconBrandInstagram size={16}/>
+                                <Group gap={6} mt={4} wrap="nowrap" align="flex-start">
+                                    <IconBrandInstagram size={16} style={{flexShrink: 0}}/>
                                     <Text size="xs" c="dimmed">
                                         {page.instagram_username ? `@${page.instagram_username}` : t`No Instagram professional account linked to this page`}
                                     </Text>
@@ -129,6 +129,7 @@ export const SocialPublishingSettings = () => {
                             </div>
                             <Button
                                 size="xs"
+                                style={{flexShrink: 0}}
                                 disabled={!page.can_publish}
                                 loading={connectMutation.isPending && connectMutation.variables?.pageId === page.id}
                                 onClick={() => choosePage(page)}
@@ -180,8 +181,8 @@ export const SocialPublishingSettings = () => {
                                     {needsReconnect ? t`To renew` : t`Connected`}
                                 </Badge>
                             </Group>
-                            <Group gap={6}>
-                                <IconBrandInstagram size={16}/>
+                            <Group gap={6} wrap="nowrap" align="flex-start">
+                                <IconBrandInstagram size={16} style={{flexShrink: 0}}/>
                                 <Text size="sm" c={connection.instagram_username ? undefined : 'dimmed'}>
                                     {connection.instagram_username ? `@${connection.instagram_username}` : t`No Instagram professional account linked to this page`}
                                 </Text>

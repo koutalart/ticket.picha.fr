@@ -8,15 +8,15 @@ export const postStatusLabel = (status: SocialPostStatus): string => {
         case 'PENDING_APPROVAL':
             return t`To approve`;
         case 'SCHEDULED':
-            return t`Scheduled`;
+            return t({message: 'Scheduled', context: 'social post status'});
         case 'PUBLISHING':
             return t`Publishing`;
         case 'PUBLISHED':
             return t`Published`;
         case 'FAILED':
-            return t`Failed`;
+            return t({message: 'Failed', context: 'social post status'});
         case 'CANCELLED':
-            return t`Cancelled`;
+            return t({message: 'Cancelled', context: 'social post status'});
     }
 };
 
