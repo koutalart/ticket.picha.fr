@@ -167,6 +167,7 @@ class PartialUpdateEventSettingsHandler
                 'sms_cancellation_confirmation_on_organizer_cancel' => $eventSettingsDTO->settings['sms_cancellation_confirmation_on_organizer_cancel'] ?? $existingSettings->getSmsCancellationConfirmationOnOrganizerCancel(),
 
                 'ticket_footer_use_organizer_domain' => $eventSettingsDTO->settings['ticket_footer_use_organizer_domain'] ?? $existingSettings->getTicketFooterUseOrganizerDomain(),
+                'refund_protection_deadline_hours' => $eventSettingsDTO->settings['refund_protection_deadline_hours'] ?? $existingSettings->getRefundProtectionDeadlineHours(),
 
                 'rich_footer_enabled' => $eventSettingsDTO->settings['rich_footer_enabled'] ?? $existingSettings->getRichFooterEnabled(),
                 'homepage_footer_settings' => array_key_exists('homepage_footer_settings', $eventSettingsDTO->settings)

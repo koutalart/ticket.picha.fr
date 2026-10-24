@@ -291,6 +291,8 @@ export interface EventSettings {
 
     ticket_footer_use_organizer_domain?: boolean;
 
+    refund_protection_deadline_hours?: number;
+
     embedded_registration_enabled?: boolean;
 
     rich_footer_enabled?: boolean;
@@ -856,6 +858,7 @@ export interface Product {
     is_sales_paused?: boolean;
     is_required?: boolean;
     required_quantity_mode?: RequiredQuantityMode;
+    is_refund_protection?: boolean;
     is_before_sale_start_date?: boolean;
     is_after_sale_end_date?: boolean;
     taxes?: TaxAndFee[];
@@ -1487,6 +1490,9 @@ export interface OrganizerSmsSettings {
     assistant_instructions: string | null;
     assistant_auto_send: boolean;
     assistant_holding_reply: string | null;
+    live_chat_enabled: boolean;
+    live_chat_relay_label: string | null;
+    live_chat_relay_line: string;
     sms_default_reminders_enabled: boolean;
     history_import: SmsHistoryImport;
 }
@@ -1559,8 +1565,75 @@ export interface SmsMessage {
     sent_by_user_id: number | null;
     auto_sent?: boolean;
     auto_reply_type?: 'ANSWER' | 'HOLDING' | null;
+    channel?: 'WEB_CHAT' | null;
     provider_timestamp: string | null;
     created_at: string;
+}
+
+export type LiveChatAuthorType = 'VISITOR' | 'AGENT';
+
+export interface LiveChatMessage {
+    id: number;
+    author_type: LiveChatAuthorType;
+    content: string;
+    created_at: string;
+}
+
+export interface LiveChatConfig {
+    enabled: boolean;
+    organizer_name: string | null;
+    relay_line: string | null;
+    max_message_length: number;
+}
+
+export interface LiveChatTurn {
+    session_id: string;
+    greeting: string | null;
+    messages: LiveChatMessage[];
+    ask_contact: boolean;
+    contact_form_fallback: boolean;
+    contact_given: boolean;
+    refund_form: boolean;
+}
+
+export type LiveChatRefundStepName = 'code' | 'tickets' | 'refunded' | 'unavailable';
+
+export interface LiveChatRefundTicket {
+    attendee_id: number;
+    name: string;
+    category: string;
+    amount: number;
+    amount_minor: number;
+}
+
+export interface LiveChatRefundStep {
+    step: LiveChatRefundStepName;
+    messages: LiveChatMessage[];
+    tickets: LiveChatRefundTicket[];
+    max_tickets: number;
+    currency: string | null;
+    amount: number | null;
+    error: string | null;
+    attempts_left: number | null;
+    ask_contact: boolean;
+    contact_given: boolean;
+}
+
+export interface LiveChatSession {
+    id: number;
+    event_id: number | null;
+    status: 'OPEN' | 'HANDED_OFF';
+    visitor_phone: string | null;
+    visitor_email: string | null;
+    needs_follow_up: boolean;
+    follow_up_reason: string | null;
+    visitor_message_count: number;
+    sms_conversation_id: number | null;
+    contact_given_at: string | null;
+    refunded_at: string | null;
+    last_message_at: string | null;
+    created_at: string;
+    messages: LiveChatMessage[] | null;
 }
 
 export interface SmsCustomerOrder {

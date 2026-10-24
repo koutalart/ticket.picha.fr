@@ -112,6 +112,7 @@ class UpdateEventSettingsDTO extends BaseDTO
         public readonly bool                    $sms_cancellation_confirmation_on_organizer_cancel = false,
 
         public readonly bool                    $ticket_footer_use_organizer_domain = false,
+        public readonly int                     $refund_protection_deadline_hours = 0,
 
         public readonly bool                    $rich_footer_enabled = false,
         public readonly ?array                  $homepage_footer_settings = null,

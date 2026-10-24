@@ -51,6 +51,9 @@ use HiEvents\Repository\Eloquent\OrganizerSmsSettingRepository;
 use HiEvents\Repository\Eloquent\OrganizerSocialConnectionRepository;
 use HiEvents\Repository\Eloquent\SocialPostRepository;
 use HiEvents\Repository\Eloquent\SmsAssistantCallRepository;
+use HiEvents\Repository\Eloquent\LiveChatMessageRepository;
+use HiEvents\Repository\Eloquent\LiveChatRefundRequestRepository;
+use HiEvents\Repository\Eloquent\LiveChatSessionRepository;
 use HiEvents\Repository\Eloquent\SmsConversationRepository;
 use HiEvents\Repository\Eloquent\SmsCustomerDirectoryRepository;
 use HiEvents\Repository\Eloquent\SmsMessageRepository;
@@ -138,6 +141,9 @@ use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
+use HiEvents\Repository\Interfaces\LiveChatMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\LiveChatRefundRequestRepositoryInterface;
+use HiEvents\Repository\Interfaces\LiveChatSessionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCustomerDirectoryRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
@@ -208,6 +214,9 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsCampaignRepositoryInterface::class => SmsCampaignRepository::class,
         SmsCampaignRecipientRepositoryInterface::class => SmsCampaignRecipientRepository::class,
         SmsAssistantCallRepositoryInterface::class => SmsAssistantCallRepository::class,
+        LiveChatSessionRepositoryInterface::class => LiveChatSessionRepository::class,
+        LiveChatMessageRepositoryInterface::class => LiveChatMessageRepository::class,
+        LiveChatRefundRequestRepositoryInterface::class => LiveChatRefundRequestRepository::class,
         SmsReplyTemplateRepositoryInterface::class => SmsReplyTemplateRepository::class,
         SmsLineFormerMemberRepositoryInterface::class => SmsLineFormerMemberRepository::class,
         SmsUnattributedMessageRepositoryInterface::class => SmsUnattributedMessageRepository::class,

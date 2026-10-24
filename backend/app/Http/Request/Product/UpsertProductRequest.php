@@ -42,6 +42,7 @@ class UpsertProductRequest extends BaseRequest
             'is_visible_at_box_office' => 'boolean',
             'is_sales_paused' => 'boolean',
             'is_required' => 'boolean',
+            'is_refund_protection' => 'boolean',
             'required_quantity_mode' => ['nullable', Rule::in(RequiredQuantityMode::valuesArray())],
             'type' => ['required', Rule::in(ProductPriceType::valuesArray())],
             'product_type' => ['required', Rule::in(ProductType::valuesArray())],

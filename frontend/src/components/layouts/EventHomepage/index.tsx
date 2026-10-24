@@ -913,6 +913,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             opened={contactModalOpen}
                             onClose={() => setContactModalOpen(false)}
                             organizer={organizer}
+                            eventId={event.id}
                         />
                     </PublicOverlayTheme>
                 </div>

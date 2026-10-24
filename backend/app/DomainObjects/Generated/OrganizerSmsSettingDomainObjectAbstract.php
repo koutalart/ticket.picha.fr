@@ -13,6 +13,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const ID = 'id';
     final public const ACCOUNT_ID = 'account_id';
     final public const ORGANIZER_ID = 'organizer_id';
+    final public const SHARED_LINE_SETTINGS_ID = 'shared_line_settings_id';
     final public const PROVIDER = 'provider';
     final public const API_KEY = 'api_key';
     final public const FROM_NUMBER = 'from_number';
@@ -21,23 +22,25 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const LAST_WEBHOOK_RECEIVED_AT = 'last_webhook_received_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const ASSISTANT_ENABLED = 'assistant_enabled';
+    final public const ASSISTANT_INSTRUCTIONS = 'assistant_instructions';
     final public const NOTIFY_ON_INBOUND_SMS = 'notify_on_inbound_sms';
     final public const PHONE_STATUS = 'phone_status';
     final public const PHONE_STATUS_CHANGED_AT = 'phone_status_changed_at';
-    final public const ASSISTANT_ENABLED = 'assistant_enabled';
-    final public const ASSISTANT_INSTRUCTIONS = 'assistant_instructions';
     final public const HISTORY_IMPORT_STATUS = 'history_import_status';
     final public const HISTORY_IMPORT_STARTED_AT = 'history_import_started_at';
     final public const HISTORY_IMPORT_FINISHED_AT = 'history_import_finished_at';
     final public const HISTORY_IMPORT_COUNT = 'history_import_count';
     final public const HISTORY_IMPORT_ERROR = 'history_import_error';
-    final public const SHARED_LINE_SETTINGS_ID = 'shared_line_settings_id';
     final public const ASSISTANT_AUTO_SEND = 'assistant_auto_send';
     final public const ASSISTANT_HOLDING_REPLY = 'assistant_holding_reply';
+    final public const LIVE_CHAT_ENABLED = 'live_chat_enabled';
+    final public const LIVE_CHAT_RELAY_LABEL = 'live_chat_relay_label';
 
     protected int $id;
     protected int $account_id;
     protected int $organizer_id;
+    protected ?int $shared_line_settings_id = null;
     protected string $provider = 'HTTPSMS';
     protected ?string $api_key = null;
     protected ?string $from_number = null;
@@ -46,19 +49,20 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $last_webhook_received_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected bool $assistant_enabled = true;
+    protected ?string $assistant_instructions = null;
     protected bool $notify_on_inbound_sms = true;
     protected ?string $phone_status = null;
     protected ?string $phone_status_changed_at = null;
-    protected bool $assistant_enabled = true;
-    protected ?string $assistant_instructions = null;
     protected ?string $history_import_status = null;
     protected ?string $history_import_started_at = null;
     protected ?string $history_import_finished_at = null;
     protected ?int $history_import_count = null;
     protected ?string $history_import_error = null;
-    protected ?int $shared_line_settings_id = null;
     protected bool $assistant_auto_send = false;
     protected ?string $assistant_holding_reply = null;
+    protected bool $live_chat_enabled = true;
+    protected ?string $live_chat_relay_label = null;
 
     public function toArray(): array
     {
@@ -66,6 +70,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'id' => $this->id ?? null,
                     'account_id' => $this->account_id ?? null,
                     'organizer_id' => $this->organizer_id ?? null,
+                    'shared_line_settings_id' => $this->shared_line_settings_id ?? null,
                     'provider' => $this->provider ?? null,
                     'api_key' => $this->api_key ?? null,
                     'from_number' => $this->from_number ?? null,
@@ -74,19 +79,20 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'last_webhook_received_at' => $this->last_webhook_received_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'assistant_enabled' => $this->assistant_enabled ?? null,
+                    'assistant_instructions' => $this->assistant_instructions ?? null,
                     'notify_on_inbound_sms' => $this->notify_on_inbound_sms ?? null,
                     'phone_status' => $this->phone_status ?? null,
                     'phone_status_changed_at' => $this->phone_status_changed_at ?? null,
-                    'assistant_enabled' => $this->assistant_enabled ?? null,
-                    'assistant_instructions' => $this->assistant_instructions ?? null,
                     'history_import_status' => $this->history_import_status ?? null,
                     'history_import_started_at' => $this->history_import_started_at ?? null,
                     'history_import_finished_at' => $this->history_import_finished_at ?? null,
                     'history_import_count' => $this->history_import_count ?? null,
                     'history_import_error' => $this->history_import_error ?? null,
-                    'shared_line_settings_id' => $this->shared_line_settings_id ?? null,
                     'assistant_auto_send' => $this->assistant_auto_send ?? null,
                     'assistant_holding_reply' => $this->assistant_holding_reply ?? null,
+                    'live_chat_enabled' => $this->live_chat_enabled ?? null,
+                    'live_chat_relay_label' => $this->live_chat_relay_label ?? null,
                 ];
     }
 
@@ -121,6 +127,17 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getOrganizerId(): int
     {
         return $this->organizer_id;
+    }
+
+    public function setSharedLineSettingsId(?int $shared_line_settings_id): self
+    {
+        $this->shared_line_settings_id = $shared_line_settings_id;
+        return $this;
+    }
+
+    public function getSharedLineSettingsId(): ?int
+    {
+        return $this->shared_line_settings_id;
     }
 
     public function setProvider(string $provider): self
@@ -211,6 +228,28 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
         return $this->updated_at;
     }
 
+    public function setAssistantEnabled(bool $assistant_enabled): self
+    {
+        $this->assistant_enabled = $assistant_enabled;
+        return $this;
+    }
+
+    public function getAssistantEnabled(): bool
+    {
+        return $this->assistant_enabled;
+    }
+
+    public function setAssistantInstructions(?string $assistant_instructions): self
+    {
+        $this->assistant_instructions = $assistant_instructions;
+        return $this;
+    }
+
+    public function getAssistantInstructions(): ?string
+    {
+        return $this->assistant_instructions;
+    }
+
     public function setNotifyOnInboundSms(bool $notify_on_inbound_sms): self
     {
         $this->notify_on_inbound_sms = $notify_on_inbound_sms;
@@ -242,28 +281,6 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getPhoneStatusChangedAt(): ?string
     {
         return $this->phone_status_changed_at;
-    }
-
-    public function setAssistantEnabled(bool $assistant_enabled): self
-    {
-        $this->assistant_enabled = $assistant_enabled;
-        return $this;
-    }
-
-    public function getAssistantEnabled(): bool
-    {
-        return $this->assistant_enabled;
-    }
-
-    public function setAssistantInstructions(?string $assistant_instructions): self
-    {
-        $this->assistant_instructions = $assistant_instructions;
-        return $this;
-    }
-
-    public function getAssistantInstructions(): ?string
-    {
-        return $this->assistant_instructions;
     }
 
     public function setHistoryImportStatus(?string $history_import_status): self
@@ -321,17 +338,6 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
         return $this->history_import_error;
     }
 
-    public function setSharedLineSettingsId(?int $shared_line_settings_id): self
-    {
-        $this->shared_line_settings_id = $shared_line_settings_id;
-        return $this;
-    }
-
-    public function getSharedLineSettingsId(): ?int
-    {
-        return $this->shared_line_settings_id;
-    }
-
     public function setAssistantAutoSend(bool $assistant_auto_send): self
     {
         $this->assistant_auto_send = $assistant_auto_send;
@@ -352,5 +358,27 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getAssistantHoldingReply(): ?string
     {
         return $this->assistant_holding_reply;
+    }
+
+    public function setLiveChatEnabled(bool $live_chat_enabled): self
+    {
+        $this->live_chat_enabled = $live_chat_enabled;
+        return $this;
+    }
+
+    public function getLiveChatEnabled(): bool
+    {
+        return $this->live_chat_enabled;
+    }
+
+    public function setLiveChatRelayLabel(?string $live_chat_relay_label): self
+    {
+        $this->live_chat_relay_label = $live_chat_relay_label;
+        return $this;
+    }
+
+    public function getLiveChatRelayLabel(): ?string
+    {
+        return $this->live_chat_relay_label;
     }
 }

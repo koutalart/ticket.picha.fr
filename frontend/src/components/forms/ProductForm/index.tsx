@@ -23,6 +23,7 @@ import {
     SegmentedControl,
     Select,
     Switch,
+    Text,
     TextInput
 } from "@mantine/core";
 import {
@@ -506,6 +507,17 @@ export const ProductForm = ({form, product}: ProductFormProps) => {
                                     <Radio value="PER_TICKET" label={t`1 per ticket`}/>
                                 </Group>
                             </Radio.Group>
+                        )}
+                        <Switch
+                            mt={15}
+                            {...form.getInputProps('is_refund_protection', {type: 'checkbox'})}
+                            label={t`Cancellation protection`}
+                            description={t`Buyers who take this product can get the price of their tickets refunded from the live assistance (excluding fees and this product).`}
+                        />
+                        {form.values.is_refund_protection && (
+                            <Text size="xs" c="dimmed" mt={6}>
+                                {t`Refunds are possible until the event starts, or until the deadline set in the event settings (Miscellaneous).`}
+                            </Text>
                         )}
                         {form.values.is_required && form.values.required_quantity_mode !== 'PER_TICKET'
                             && Number(form.values.max_per_order) > 0

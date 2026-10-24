@@ -87,6 +87,7 @@ class CreateProductHandler
                 ->setIsVisibleAtBoxOffice($productsData->is_visible_at_box_office ?? true)
                 ->setIsSalesPaused($productsData->is_sales_paused ?? ($productsData->is_hidden && ($productsData->is_visible_at_box_office ?? true)))
                 ->setIsRequired($productsData->is_required ?? false)
+                ->setIsRefundProtection($productsData->is_refund_protection ?? false)
                 ->setRequiredQuantityMode($productsData->required_quantity_mode ?? RequiredQuantityMode::PER_ORDER->name)
                 ->setIsHighlighted($productsData->is_highlighted ?? false)
                 ->setHighlightMessage($productsData->highlight_message)

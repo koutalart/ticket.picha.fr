@@ -41,6 +41,7 @@ const EventImmersiveMinimalFooter = ({event}: { event: Event }) => {
                     opened={contactOpen}
                     onClose={() => setContactOpen(false)}
                     organizer={organizer}
+                    eventId={event.id}
                 />
             )}
         </footer>

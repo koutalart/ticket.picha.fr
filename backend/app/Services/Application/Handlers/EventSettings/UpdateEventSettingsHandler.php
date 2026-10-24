@@ -126,6 +126,7 @@ class UpdateEventSettingsHandler
                     'sms_cancellation_confirmation_on_organizer_cancel' => $settings->sms_cancellation_confirmation_on_organizer_cancel,
 
                     'ticket_footer_use_organizer_domain' => $settings->ticket_footer_use_organizer_domain,
+                    'refund_protection_deadline_hours' => $settings->refund_protection_deadline_hours,
 
                     'rich_footer_enabled' => $settings->rich_footer_enabled,
                     'homepage_footer_settings' => $this->footerSettingsSanitizer->sanitize($settings->homepage_footer_settings),

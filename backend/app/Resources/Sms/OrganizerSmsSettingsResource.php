@@ -6,6 +6,7 @@ namespace HiEvents\Resources\Sms;
 
 use HiEvents\Resources\BaseResource;
 use HiEvents\Services\Application\Handlers\Sms\DTO\OrganizerSmsSettingsViewDTO;
+use HiEvents\Services\Domain\LiveChat\LiveChatService;
 
 /**
  * @mixin OrganizerSmsSettingsViewDTO
@@ -34,6 +35,9 @@ class OrganizerSmsSettingsResource extends BaseResource
             'assistant_instructions' => $settings->getAssistantInstructions(),
             'assistant_auto_send' => $settings->getAssistantAutoSend(),
             'assistant_holding_reply' => $settings->getAssistantHoldingReply(),
+            'live_chat_enabled' => $settings->getLiveChatEnabled(),
+            'live_chat_relay_label' => $settings->getLiveChatRelayLabel(),
+            'live_chat_relay_line' => LiveChatService::relayLine($settings->getLiveChatRelayLabel()),
             'sms_default_reminders_enabled' => $this->defaultRemindersEnabled,
             'history_import' => [
                 'status' => $settings->getHistoryImportStatus(),

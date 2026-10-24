@@ -69,6 +69,7 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
             ->where('sms_conversations.phone', $phone)
             ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+            ->whereNull('sms_messages.channel')
             ->whereNotIn('sms_messages.status', [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name])
             ->whereRaw($sentAt.' >= ?', [$since])
             ->orderByRaw($sentAt.' DESC')
@@ -89,6 +90,7 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->whereIn('sms_messages.organizer_id', $organizerIds)
             ->where('sms_conversations.phone', $phone)
             ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+            ->whereNull('sms_messages.channel')
             ->where(fn ($query) => $query
                 ->where('sms_messages.id', '>', $afterMessageId)
                 ->orWhere(fn ($pending) => $pending
@@ -104,6 +106,7 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
             ->whereIn('sms_messages.organizer_id', $organizerIds)
             ->where('sms_messages.direction', SmsMessageDirection::INBOUND->name)
+            ->whereNull('sms_messages.channel')
             ->where('sms_messages.created_at', '>=', $since)
             ->where('sms_messages.created_at', '<=', $receivedBefore)
             ->whereRaw('COALESCE(sms_messages.provider_timestamp, sms_messages.created_at) >= ?', [$since])
@@ -131,6 +134,7 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
     {
         $messages = SmsMessage::query()
             ->whereIn(SmsMessageDomainObjectAbstract::ORGANIZER_ID, $organizerIds)
+            ->whereNull(SmsMessageDomainObjectAbstract::CHANNEL)
             ->where(SmsMessageDomainObjectAbstract::CREATED_AT, '>=', $since)
             ->where(fn (EloquentBuilder $query) => $query
                 ->where(SmsMessageDomainObjectAbstract::DIRECTION, SmsMessageDirection::INBOUND->name)
@@ -148,6 +152,7 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
         $messages = SmsMessage::query()
             ->whereIn(SmsMessageDomainObjectAbstract::ORGANIZER_ID, $organizerIds)
             ->where(SmsMessageDomainObjectAbstract::DIRECTION, SmsMessageDirection::OUTBOUND->name)
+            ->whereNull(SmsMessageDomainObjectAbstract::CHANNEL)
             ->where(SmsMessageDomainObjectAbstract::CREATED_AT, '>=', $since)
             ->where(fn (EloquentBuilder $query) => $query
                 ->whereIn(SmsMessageDomainObjectAbstract::STATUS, [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name])

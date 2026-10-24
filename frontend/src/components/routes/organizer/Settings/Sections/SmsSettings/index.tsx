@@ -19,6 +19,7 @@ import {showError, showSuccess} from "../../../../../../utilites/notifications.t
 import {confirmationDialog} from "../../../../../../utilites/confirmationDialog.tsx";
 import {relativeDate} from "../../../../../../utilites/dates.ts";
 import {SmsAssistantSettings} from "./SmsAssistantSettings.tsx";
+import {LiveChatSettings} from "./LiveChatSettings.tsx";
 
 export const SmsSettings = () => {
     const {organizerId} = useParams();
@@ -333,6 +334,7 @@ export const SmsSettings = () => {
             )}
         </Card>
         <SmsAssistantSettings/>
+        <LiveChatSettings/>
         </>
     );
 };
