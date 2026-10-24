@@ -21,6 +21,7 @@ abstract class OrganizerCalendarDomainObjectAbstract extends \HiEvents\DomainObj
     final public const UPDATED_AT = 'updated_at';
     final public const ADMIN_CODE_HASH = 'admin_code_hash';
     final public const ADMIN_CODE_CREATED_AT = 'admin_code_created_at';
+    final public const ACCESS_MODE = 'access_mode';
 
     protected int $id;
     protected int $organizer_id;
@@ -33,6 +34,7 @@ abstract class OrganizerCalendarDomainObjectAbstract extends \HiEvents\DomainObj
     protected ?string $updated_at = null;
     protected ?string $admin_code_hash = null;
     protected ?string $admin_code_created_at = null;
+    protected string $access_mode = 'name';
 
     public function toArray(): array
     {
@@ -48,6 +50,7 @@ abstract class OrganizerCalendarDomainObjectAbstract extends \HiEvents\DomainObj
                     'updated_at' => $this->updated_at ?? null,
                     'admin_code_hash' => $this->admin_code_hash ?? null,
                     'admin_code_created_at' => $this->admin_code_created_at ?? null,
+                    'access_mode' => $this->access_mode ?? null,
                 ];
     }
 
@@ -170,5 +173,16 @@ abstract class OrganizerCalendarDomainObjectAbstract extends \HiEvents\DomainObj
     public function getAdminCodeCreatedAt(): ?string
     {
         return $this->admin_code_created_at;
+    }
+
+    public function setAccessMode(string $access_mode): self
+    {
+        $this->access_mode = $access_mode;
+        return $this;
+    }
+
+    public function getAccessMode(): string
+    {
+        return $this->access_mode;
     }
 }

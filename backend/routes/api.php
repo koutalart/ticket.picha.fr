@@ -140,6 +140,7 @@ use HiEvents\Http\Actions\Organizers\Font\UploadOrganizerFontAction;
 use HiEvents\Http\Actions\Questions\Files\DownloadQuestionAnswerFileAction;
 use HiEvents\Http\Actions\Questions\Public\UploadQuestionAnswerFilePublicAction;
 use HiEvents\Services\Domain\Question\File\QuestionAnswerFileUrlGenerator;
+use HiEvents\Http\Actions\OrganizerCalendars\ConsultOrganizerCalendarActionPublic;
 use HiEvents\Http\Actions\OrganizerCalendars\DownloadOrganizerCalendarMediaActionPublic;
 use HiEvents\Http\Actions\OrganizerCalendars\GetOrganizerCalendarActionPublic;
 use HiEvents\Http\Actions\OrganizerCalendars\GetOrganizerCalendarPageActionPublic;
@@ -807,7 +808,10 @@ $router->prefix('/public')->group(
             ->where('code', '[A-Za-z0-9]{6,16}')
             ->middleware('throttle:60,1');
 
-        // Private organizer calendars (one-time SMS code, then 12 h access key in the X-Acces-Calendrier header)
+        // Private organizer calendars (first name or one-time SMS code, then a one year access key in the X-Acces-Calendrier header)
+        $router->post('/calendriers/{slug}/consulter', ConsultOrganizerCalendarActionPublic::class)
+            ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN)
+            ->middleware('throttle:organizer-calendar-consult');
         $router->post('/calendriers/{slug}/code', RequestOrganizerCalendarCodeActionPublic::class)
             ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN)
             ->middleware('throttle:organizer-calendar-code');

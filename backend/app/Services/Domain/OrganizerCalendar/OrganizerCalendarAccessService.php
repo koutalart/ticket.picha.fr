@@ -28,7 +28,7 @@ class OrganizerCalendarAccessService
         private readonly OrganizerCalendarAccessRepositoryInterface $accessRepository,
     ) {}
 
-    public function grant(int $calendarId): OrganizerCalendarAccessGrantDTO
+    public function grant(int $calendarId, ?string $visitorName = null, ?string $deviceId = null): OrganizerCalendarAccessGrantDTO
     {
         $key = bin2hex(random_bytes(32));
         $expiresAt = Carbon::now()->addSeconds(self::TTL_SECONDS)->startOfSecond();
@@ -38,6 +38,8 @@ class OrganizerCalendarAccessService
             Access::ORGANIZER_CALENDAR_ID => $calendarId,
             Access::KEY_HASH => $this->hashKey($key),
             Access::EXPIRES_AT => $expiresAt->toDateTimeString(),
+            Access::VISITOR_NAME => $visitorName,
+            Access::DEVICE_ID => $deviceId,
         ]);
 
         return new OrganizerCalendarAccessGrantDTO(

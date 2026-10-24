@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Application\Handlers\OrganizerCalendar;
 
+use HiEvents\DomainObjects\Enums\OrganizerCalendarAccessMode;
+use HiEvents\Exceptions\OrganizerCalendarCodeDisabledException;
 use HiEvents\Exceptions\OrganizerCalendarCodeUnavailableException;
 use HiEvents\Exceptions\OrganizerCalendarNotFoundException;
 use HiEvents\Exceptions\OrganizerCalendarRateLimitedException;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\IpAddressMasker;
 use HiEvents\Services\Application\Handlers\OrganizerCalendar\DTO\OrganizerCalendarCodeSentDTO;
+use HiEvents\Services\Domain\OrganizerCalendar\OrganizerCalendarAccessModeService;
 use HiEvents\Services\Domain\OrganizerCalendar\OrganizerCalendarCodeNotifier;
 use HiEvents\Services\Domain\OrganizerCalendar\OrganizerCalendarCodeService;
 use HiEvents\Services\Domain\OrganizerCalendar\OrganizerCalendarIpRateLimiter;
@@ -27,6 +31,7 @@ class RequestOrganizerCalendarCodeHandler
 
     /**
      * @throws OrganizerCalendarNotFoundException
+     * @throws OrganizerCalendarCodeDisabledException
      * @throws OrganizerCalendarRateLimitedException
      * @throws OrganizerCalendarCodeUnavailableException
      */
@@ -34,6 +39,14 @@ class RequestOrganizerCalendarCodeHandler
     {
         $calendar = $this->calendarResolver->findBySlug($slug);
         $context = ['calendar_id' => $calendar->getId(), 'ip' => IpAddressMasker::mask($ipAddress)];
+
+        if (OrganizerCalendarAccessModeService::modeOf($calendar) !== OrganizerCalendarAccessMode::CODE) {
+            $this->logger->info('Organizer calendar code refused: calendar opened by first name', $context);
+
+            throw new OrganizerCalendarCodeDisabledException(
+                __('This calendar is not opened with an SMS code.', [], CustomerLocale::get())
+            );
+        }
 
         try {
             $this->ipRateLimiter->hitCodeRequest($ipAddress);
