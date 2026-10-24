@@ -56,7 +56,7 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
             onUnavailable(data.ask_contact, data.contact_given);
             return;
         }
-        if (data.step === 'refunded') {
+        if (data.step === 'refunded' || data.step === 'pending') {
             onDone();
             return;
         }
@@ -215,16 +215,16 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
                             {`${ticket.name || t`Ticket`}, ${ticket.category}, ${formatCurrency(ticket.amount_minor / 100, currency)}`}
                         </Text>
                     ))}
-                    <Text size="sm" fw={700}>{t`Amount refunded: ${total}`}</Text>
+                    <Text size="sm" fw={700}>{t`Amount to refund: ${total}`}</Text>
                     <Text size="xs" c="dimmed">{t`The service fees and the option are not refunded.`}</Text>
-                    <Text size="xs" c="dimmed">{t`The cancelled tickets will no longer be valid.`}</Text>
+                    <Text size="xs" c="dimmed">{t`The organizer approves the request before the refund. The cancelled tickets will then no longer be valid.`}</Text>
                     {error && <Text size="xs" c="red" role="alert">{error}</Text>}
                     <Group justify="space-between">
                         <Anchor component="button" type="button" size="xs" onClick={() => setStep('tickets')} disabled={confirmMutation.isPending}>
                             {t`Back`}
                         </Anchor>
                         <Button size="xs" color="red" loading={confirmMutation.isPending} onClick={confirm}>
-                            {t`Confirm the cancellation`}
+                            {t`Send my refund request`}
                         </Button>
                     </Group>
                 </Stack>

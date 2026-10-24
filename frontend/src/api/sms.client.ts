@@ -16,6 +16,8 @@ import {
     SmsOptOut,
     SmsReminderPreview,
     SmsReplyTemplate,
+    OrganizerTeamContact,
+    OrganizerTeamContactRole,
 } from "../types";
 
 export interface SmsSettingsRequest {
@@ -29,6 +31,14 @@ export interface SmsSettingsRequest {
     live_chat_enabled?: boolean;
     live_chat_relay_label?: string | null;
     sms_default_reminders_enabled?: boolean;
+    organizer_assistant_enabled?: boolean;
+    organizer_assistant_instructions?: string | null;
+}
+
+export interface OrganizerTeamContactRequest {
+    phone: string;
+    name?: string | null;
+    role: OrganizerTeamContactRole;
 }
 
 export interface SmsConversationsParams {
@@ -178,5 +188,16 @@ export const smsClient = {
     },
     removeOptOut: async (organizerId: IdParam, optOutId: IdParam) => {
         await api.delete(`organizers/${organizerId}/sms/opt-outs/${optOutId}`);
+    },
+    teamContacts: async (organizerId: IdParam) => {
+        const response = await api.get<GenericDataResponse<OrganizerTeamContact[]>>(`organizers/${organizerId}/sms/team-contacts`);
+        return response.data;
+    },
+    saveTeamContact: async (organizerId: IdParam, contact: OrganizerTeamContactRequest) => {
+        const response = await api.post<GenericDataResponse<OrganizerTeamContact>>(`organizers/${organizerId}/sms/team-contacts`, contact);
+        return response.data;
+    },
+    deleteTeamContact: async (organizerId: IdParam, contactId: IdParam) => {
+        await api.delete(`organizers/${organizerId}/sms/team-contacts/${contactId}`);
     },
 };

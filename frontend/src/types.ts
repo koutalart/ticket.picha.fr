@@ -1494,6 +1494,8 @@ export interface OrganizerSmsSettings {
     live_chat_relay_label: string | null;
     live_chat_relay_line: string;
     sms_default_reminders_enabled: boolean;
+    organizer_assistant_enabled: boolean;
+    organizer_assistant_instructions: string | null;
     history_import: SmsHistoryImport;
 }
 
@@ -1545,6 +1547,7 @@ export interface SmsConversation {
     contact_name: string | null;
     status: SmsConversationStatus;
     needs_human_reason: string | null;
+    is_team: boolean;
     unread_count: number;
     last_message_at: string | null;
     last_message_preview: string | null;
@@ -1596,7 +1599,7 @@ export interface LiveChatTurn {
     refund_form: boolean;
 }
 
-export type LiveChatRefundStepName = 'code' | 'tickets' | 'refunded' | 'unavailable';
+export type LiveChatRefundStepName = 'code' | 'tickets' | 'pending' | 'refunded' | 'unavailable';
 
 export interface LiveChatRefundTicket {
     attendee_id: number;
@@ -1719,4 +1722,47 @@ export interface SmsConversationDetail {
     messages: SmsMessage[];
     customer_orders: SmsCustomerOrder[];
     opted_out: boolean;
+}
+
+export type OrganizerTeamContactRole = 'ORGANIZER' | 'COPY';
+
+export interface OrganizerTeamContact {
+    id: number;
+    phone: string;
+    name: string | null;
+    role: OrganizerTeamContactRole;
+    created_at: string;
+}
+
+export interface EventDailyReport {
+    event_id: number;
+    enabled: boolean;
+    send_time: string;
+    timezone: string;
+    copy_supervisors: boolean;
+    last_sent_on: string | null;
+    team_contacts_count: number;
+    preview: string;
+}
+
+export type RefundDecision = 'APPROVED' | 'REFUSED';
+
+export interface RefundApproval {
+    id: number;
+    reference: string;
+    status: string;
+    decision: RefundDecision | null;
+    organizer_id: number;
+    organizer_name: string;
+    event_title: string | null;
+    customer_name: string;
+    order_reference: string | null;
+    amount: number;
+    currency: string;
+    amount_text: string;
+    requested_at: string | null;
+    decided_at: string | null;
+    decided_by_channel: 'SMS' | 'LINK' | 'DASHBOARD' | null;
+    decided_by_name: string | null;
+    can_decide: boolean;
 }

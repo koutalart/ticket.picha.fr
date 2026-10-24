@@ -8,6 +8,8 @@ import {
     LiveChatRefundStep,
     LiveChatSession,
     LiveChatTurn,
+    RefundApproval,
+    RefundDecision,
 } from "../types";
 
 // The chat session id is opaque and travels in this header, never in a URL.
@@ -83,6 +85,25 @@ export const liveChatClient = {
     },
     get: async (organizerId: IdParam, sessionId: IdParam) => {
         const response = await api.get<GenericDataResponse<LiveChatSession>>(`organizers/${organizerId}/live-chats/${sessionId}`);
+        return response.data;
+    },
+};
+
+export const refundApprovalClient = {
+    getWithLink: async (requestId: IdParam, token: string) => {
+        const response = await publicApi.get<GenericDataResponse<RefundApproval>>(`refund-approvals/${requestId}`, {params: {token}});
+        return response.data;
+    },
+    decideWithLink: async (requestId: IdParam, token: string, decision: RefundDecision) => {
+        const response = await publicApi.post<GenericDataResponse<RefundApproval>>(`refund-approvals/${requestId}/decision`, {token, decision});
+        return response.data;
+    },
+    get: async (organizerId: IdParam, requestId: IdParam) => {
+        const response = await api.get<GenericDataResponse<RefundApproval>>(`organizers/${organizerId}/refund-approvals/${requestId}`);
+        return response.data;
+    },
+    decide: async (organizerId: IdParam, requestId: IdParam, decision: RefundDecision) => {
+        const response = await api.post<GenericDataResponse<RefundApproval>>(`organizers/${organizerId}/refund-approvals/${requestId}/decision`, {decision});
         return response.data;
     },
 };
