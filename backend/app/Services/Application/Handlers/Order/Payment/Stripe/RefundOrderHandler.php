@@ -195,7 +195,7 @@ class RefundOrderHandler
             payment: $order->getStripePayment(),
             stripeClient: $stripeClient,
             metadata: array_filter([
-                StripePaymentIntentRefundService::REFUND_SOURCE_KEY => StripePaymentIntentRefundService::REFUND_SOURCE_DASHBOARD,
+                StripePaymentIntentRefundService::REFUND_SOURCE_KEY => $refundOrderDTO->refund_source,
                 'picha_attendee_ids' => implode(',', $refundOrderDTO->attendee_ids),
             ]),
         );

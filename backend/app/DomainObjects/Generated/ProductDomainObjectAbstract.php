@@ -42,6 +42,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     final public const IS_SALES_PAUSED = 'is_sales_paused';
     final public const IS_REQUIRED = 'is_required';
     final public const REQUIRED_QUANTITY_MODE = 'required_quantity_mode';
+    final public const IS_REFUND_PROTECTION = 'is_refund_protection';
 
     protected int $id;
     protected int $event_id;
@@ -75,6 +76,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     protected bool $is_sales_paused = false;
     protected bool $is_required = false;
     protected string $required_quantity_mode = 'PER_ORDER';
+    protected bool $is_refund_protection = false;
 
     public function toArray(): array
     {
@@ -111,6 +113,7 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
                     'is_sales_paused' => $this->is_sales_paused ?? null,
                     'is_required' => $this->is_required ?? null,
                     'required_quantity_mode' => $this->required_quantity_mode ?? null,
+                    'is_refund_protection' => $this->is_refund_protection ?? null,
                 ];
     }
 
@@ -464,5 +467,16 @@ abstract class ProductDomainObjectAbstract extends \HiEvents\DomainObjects\Abstr
     public function getRequiredQuantityMode(): string
     {
         return $this->required_quantity_mode;
+    }
+
+    public function setIsRefundProtection(bool $is_refund_protection): self
+    {
+        $this->is_refund_protection = $is_refund_protection;
+        return $this;
+    }
+
+    public function getIsRefundProtection(): bool
+    {
+        return $this->is_refund_protection;
     }
 }

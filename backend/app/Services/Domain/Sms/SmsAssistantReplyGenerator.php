@@ -6,6 +6,7 @@ namespace HiEvents\Services\Domain\Sms;
 
 use Carbon\Carbon;
 use HiEvents\DomainObjects\Enums\SmsAssistantOutcome;
+use HiEvents\DomainObjects\Enums\SmsAssistantTrigger;
 use HiEvents\DomainObjects\Generated\SmsAssistantCallDomainObjectAbstract;
 use HiEvents\Exceptions\EventAssistantFailedException;
 use HiEvents\Exceptions\EventAssistantUnavailableException;
@@ -81,7 +82,7 @@ Réponse d'attente ("holding_reply") : toujours fournie, quelle que soit la déc
 La raison ("reason") est en français, 100 caractères au plus, pour l'équipe ; mets-la à null pour un brouillon. "reply" est null pour "needs_human".
 PROMPT;
 
-    private const TUTOIEMENT_RULE = "Tutoiement : l'organisateur tutoie ses clients. Écris la réponse et la réponse d'attente en « tu » (par exemple « je reviens vers toi très vite »), sauf si sa consigne demande autre chose.";
+    public const TUTOIEMENT_RULE = "Tutoiement : l'organisateur tutoie ses clients. Écris la réponse et la réponse d'attente en « tu » (par exemple « je reviens vers toi très vite »), sauf si sa consigne demande autre chose.";
 
     public function __construct(
         private readonly ClaudeStructuredOutputClient $claude,
@@ -158,6 +159,7 @@ PROMPT;
 
         $callsToday = $this->callRepository->countWhere([
             SmsAssistantCallDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+            [SmsAssistantCallDomainObjectAbstract::TRIGGER, '!=', SmsAssistantTrigger::LIVE_CHAT->name],
             [SmsAssistantCallDomainObjectAbstract::CREATED_AT, '>=', now()->startOfDay()->toDateTimeString()],
         ]);
 

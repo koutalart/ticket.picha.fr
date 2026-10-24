@@ -1,5 +1,5 @@
 import {t} from "@lingui/macro";
-import {Button, Switch} from "@mantine/core";
+import {Button, NumberInput, Switch} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {useParams} from "react-router";
 import {useEffect} from "react";
@@ -25,6 +25,7 @@ export const MiscSettings = () => {
             allow_attendee_self_edit: true,
             single_product_per_order: false,
             choose_category_first: false,
+            refund_protection_deadline_hours: 0,
         }
     });
     const formErrorHandle = useFormErrorResponseHandler();
@@ -37,6 +38,7 @@ export const MiscSettings = () => {
                 allow_attendee_self_edit: eventSettingsQuery.data.allow_attendee_self_edit ?? true,
                 single_product_per_order: eventSettingsQuery.data.single_product_per_order ?? false,
                 choose_category_first: eventSettingsQuery.data.choose_category_first ?? false,
+                refund_protection_deadline_hours: eventSettingsQuery.data.refund_protection_deadline_hours ?? 0,
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -110,6 +112,16 @@ export const MiscSettings = () => {
                         {...form.getInputProps('choose_category_first', {type: 'checkbox'})}
                         label={t`Choose a category first`}
                         description={t`Visitors first pick a path (one big button per ticket category) before seeing its tickets.`}
+                    />
+
+                    <NumberInput
+                        mb={'md'}
+                        min={0}
+                        max={8760}
+                        allowDecimal={false}
+                        {...form.getInputProps('refund_protection_deadline_hours')}
+                        label={t`Cancellation protection deadline (hours)`}
+                        description={t`Buyers with a cancellation protection product can get a refund from the live assistance up to this many hours before the event starts. 0 means until the event starts.`}
                     />
 
                     <SelfServiceSettings

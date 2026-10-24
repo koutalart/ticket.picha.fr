@@ -27,6 +27,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
     final public const AUTO_REPLY_TYPE = 'auto_reply_type';
+    final public const CHANNEL = 'channel';
 
     protected int $id;
     protected int $sms_conversation_id;
@@ -45,6 +46,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
     protected ?string $auto_reply_type = null;
+    protected ?string $channel = null;
 
     public function toArray(): array
     {
@@ -66,6 +68,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
                     'auto_reply_type' => $this->auto_reply_type ?? null,
+                    'channel' => $this->channel ?? null,
                 ];
     }
 
@@ -254,5 +257,16 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     public function getAutoReplyType(): ?string
     {
         return $this->auto_reply_type;
+    }
+
+    public function setChannel(?string $channel): self
+    {
+        $this->channel = $channel;
+        return $this;
+    }
+
+    public function getChannel(): ?string
+    {
+        return $this->channel;
     }
 }

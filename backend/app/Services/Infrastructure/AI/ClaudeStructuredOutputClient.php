@@ -47,7 +47,7 @@ class ClaudeStructuredOutputClient
     }
 
     /**
-     * Same as ask(), with the model and token usage of the answer.
+     * Same as ask(), with the model and token usage of the answer. $model overrides the configured model (e.g. a smaller one).
      *
      * @param  array<int, array<string, mixed>>  $content
      * @param  array<string, mixed>  $schema
@@ -56,13 +56,15 @@ class ClaudeStructuredOutputClient
      * @throws EventAssistantUnavailableException
      * @throws EventAssistantFailedException
      */
-    public function askWithUsage(string $system, array $content, array $schema, array $tools = []): ClaudeStructuredAnswerDTO
+    public function askWithUsage(string $system, array $content, array $schema, array $tools = [], ?string $model = null, ?int $maxTokens = null): ClaudeStructuredAnswerDTO
     {
         if (! $this->isConfigured()) {
             throw new EventAssistantUnavailableException(__('The assistant is not available.'));
         }
 
         $client = new Client(apiKey: (string) $this->config->get('services.anthropic.api_key'));
+        $model = $model !== null && trim($model) !== '' ? trim($model) : (string) $this->config->get('services.anthropic.model');
+        $withFallbacks = self::supportsServerSideFallback($model);
         $messages = [['role' => 'user', 'content' => $content]];
         $inputTokens = 0;
         $outputTokens = 0;
@@ -70,17 +72,17 @@ class ClaudeStructuredOutputClient
         try {
             for ($attempt = 0; $attempt <= self::MAX_CONTINUATIONS; $attempt++) {
                 $message = $client->beta->messages->create(
-                    model: (string) $this->config->get('services.anthropic.model'),
-                    maxTokens: self::MAX_TOKENS,
+                    model: $model,
+                    maxTokens: $maxTokens ?? self::MAX_TOKENS,
                     system: $system,
                     messages: $messages,
                     outputConfig: [
                         'effort' => 'low',
                         'format' => ['type' => 'json_schema', 'schema' => $schema],
                     ],
-                    fallbacks: 'default',
+                    fallbacks: $withFallbacks ? 'default' : null,
                     tools: $tools === [] ? null : $tools,
-                    betas: ['server-side-fallback-2026-07-01'],
+                    betas: $withFallbacks ? ['server-side-fallback-2026-07-01'] : null,
                 );
 
                 $inputTokens += $message->usage->inputTokens;
@@ -118,5 +120,13 @@ class ClaudeStructuredOutputClient
         }
 
         throw new EventAssistantFailedException(__('The assistant could not answer. Please try again or fill in the form yourself.'));
+    }
+
+    /**
+     * Haiku models have no server-side refusal fallback.
+     */
+    public static function supportsServerSideFallback(string $model): bool
+    {
+        return ! str_starts_with($model, 'claude-haiku');
     }
 }

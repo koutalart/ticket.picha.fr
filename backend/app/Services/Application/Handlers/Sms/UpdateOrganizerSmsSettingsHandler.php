@@ -7,9 +7,11 @@ namespace HiEvents\Services\Application\Handlers\Sms;
 use HiEvents\DomainObjects\Generated\OrganizerSmsSettingDomainObjectAbstract;
 use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
 use HiEvents\Helper\SmsPhoneNormalizer;
+use HiEvents\Http\Request\Sms\UpdateOrganizerSmsSettingsRequest;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Sms\DTO\OrganizerSmsSettingsViewDTO;
 use HiEvents\Services\Application\Handlers\Sms\DTO\UpdateOrganizerSmsSettingsDTO;
+use HiEvents\Services\Domain\LiveChat\LiveChatReplyGenerator;
 use HiEvents\Services\Domain\Sms\SmsAssistantReplyGenerator;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
@@ -58,6 +60,17 @@ class UpdateOrganizerSmsSettingsHandler
             $holdingReply = $this->cleanInstructions($dto->assistantHoldingReply);
             $attributes[OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_HOLDING_REPLY] = $holdingReply !== null
                 ? SmsAssistantReplyGenerator::cleanText($holdingReply)
+                : null;
+        }
+
+        if ($dto->wasProvided('liveChatEnabled')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::LIVE_CHAT_ENABLED] = $dto->liveChatEnabled;
+        }
+
+        if ($dto->wasProvided('liveChatRelayLabel')) {
+            $label = $this->cleanInstructions($dto->liveChatRelayLabel);
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::LIVE_CHAT_RELAY_LABEL] = $label !== null
+                ? mb_substr(LiveChatReplyGenerator::cleanText($label), 0, UpdateOrganizerSmsSettingsRequest::MAX_RELAY_LABEL_LENGTH)
                 : null;
         }
 

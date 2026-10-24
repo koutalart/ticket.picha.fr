@@ -12,6 +12,8 @@ class UpdateOrganizerSmsSettingsRequest extends BaseRequest
 
     public const MAX_HOLDING_REPLY_LENGTH = 320;
 
+    public const MAX_RELAY_LABEL_LENGTH = 80;
+
     public function rules(): array
     {
         return [
@@ -23,6 +25,8 @@ class UpdateOrganizerSmsSettingsRequest extends BaseRequest
             'sms_default_reminders_enabled' => ['sometimes', 'boolean'],
             'assistant_holding_reply' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_HOLDING_REPLY_LENGTH],
             'assistant_instructions' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_INSTRUCTIONS_LENGTH],
+            'live_chat_enabled' => ['sometimes', 'boolean'],
+            'live_chat_relay_label' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_RELAY_LABEL_LENGTH],
         ];
     }
 }

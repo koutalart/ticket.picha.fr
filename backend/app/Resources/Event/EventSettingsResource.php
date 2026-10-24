@@ -103,6 +103,7 @@ class EventSettingsResource extends JsonResource
             'sms_cancellation_confirmation_message' => $this->getSmsCancellationConfirmationMessage(),
             'sms_cancellation_confirmation_on_organizer_cancel' => $this->getSmsCancellationConfirmationOnOrganizerCancel(),
             'ticket_footer_use_organizer_domain' => $this->getTicketFooterUseOrganizerDomain(),
+            'refund_protection_deadline_hours' => $this->getRefundProtectionDeadlineHours(),
             'rich_footer_enabled' => $this->getRichFooterEnabled(),
             'homepage_footer_settings' => $this->getHomepageFooterSettings(),
             'schema_event_type' => $this->getSchemaEventType(),

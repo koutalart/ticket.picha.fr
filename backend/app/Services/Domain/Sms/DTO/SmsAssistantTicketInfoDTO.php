@@ -19,5 +19,6 @@ class SmsAssistantTicketInfoDTO extends BaseDataObject
         public readonly ?float $price,
         public readonly string $currency,
         public readonly string $availability,
+        public readonly ?string $description = null,
     ) {}
 }
