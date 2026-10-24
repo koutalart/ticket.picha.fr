@@ -50,3 +50,22 @@ export const postFormatLabel = (format: SocialPostFormat): string => {
             return t`Story`;
     }
 };
+
+export const postTabLabel = (status: SocialPostStatus): string => {
+    switch (status) {
+        case 'DRAFT':
+            return t`Drafts`;
+        case 'PENDING_APPROVAL':
+            return t`To approve`;
+        case 'SCHEDULED':
+            return t({message: 'Scheduled', context: 'social posts tab'});
+        case 'PUBLISHING':
+            return t`Publishing`;
+        case 'PUBLISHED':
+            return t({message: 'Published', context: 'social posts tab'});
+        case 'FAILED':
+            return t({message: 'Failed', context: 'social posts tab'});
+        case 'CANCELLED':
+            return t({message: 'Cancelled', context: 'social posts tab'});
+    }
+};

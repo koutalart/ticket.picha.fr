@@ -73,7 +73,7 @@ msgstr "{0} {1}"
 msgid "{0} {1} is already checked in"
 msgstr "{0} {1} 已签到"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:140
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:148
 msgid "{0} / {INSTAGRAM_CAPTION_MAX_LENGTH} characters on Instagram"
 msgstr "Instagram 上 {0} / {INSTAGRAM_CAPTION_MAX_LENGTH} 个字符"
 
@@ -950,7 +950,7 @@ msgstr ""
 msgid "Add an end time"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:175
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:183
 msgid "Add an image"
 msgstr "添加图片"
 
@@ -1245,6 +1245,7 @@ msgstr "全部"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:233
+#: src/components/routes/organizer/Publications/index.tsx:110
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
@@ -1306,8 +1307,8 @@ msgid "All jobs queued for retry"
 msgstr "所有任务已排队等待重试"
 
 #: src/components/routes/organizer/Publications/index.tsx:174
-msgid "All posts"
-msgstr "全部帖子"
+#~ msgid "All posts"
+#~ msgstr "全部帖子"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:159
 #: src/components/routes/organizer/QrCodes/index.tsx:164
@@ -1571,7 +1572,7 @@ msgstr "应用促销代码"
 msgid "Apply this {type} to all new products"
 msgstr "将此{type}应用于所有新产品"
 
-#: src/components/routes/organizer/Publications/index.tsx:125
+#: src/components/routes/organizer/Publications/PostCard.tsx:51
 msgid "Approve"
 msgstr "批准"
 
@@ -1579,7 +1580,7 @@ msgstr "批准"
 msgid "Approve Message"
 msgstr "批准消息"
 
-#: src/components/routes/organizer/Publications/index.tsx:51
+#: src/components/routes/organizer/Publications/index.tsx:55
 msgid "Approve this post? {when}"
 msgstr "批准此帖子？{when}"
 
@@ -1775,7 +1776,7 @@ msgstr ""
 msgid "As shown on your identity document."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:82
+#: src/components/routes/organizer/Publications/PostCard.tsx:37
 msgid "As soon as approved"
 msgstr "批准后立即发布"
 
@@ -2524,11 +2525,11 @@ msgstr "我们可以在没有陪同服务的情况下自行使用平台吗？"
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:323
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
-#: src/components/routes/organizer/Publications/index.tsx:136
+#: src/components/routes/organizer/Publications/PostCard.tsx:56
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:142
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:143
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:281
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1318
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1673
@@ -2637,6 +2638,11 @@ msgctxt "social post status"
 msgid "Cancelled"
 msgstr "已取消"
 
+#: src/components/routes/organizer/Publications/labels.ts:69
+msgctxt "social posts tab"
+msgid "Cancelled"
+msgstr "已取消"
+
 #: src/components/common/AttendeeTable/index.tsx:312
 #: src/components/routes/event/EventDashboard/index.tsx:109
 msgid "Cancelled by attendee"
@@ -2733,7 +2739,7 @@ msgstr ""
 msgid "Change event"
 msgstr "切换活动"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:205
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:206
 msgid "Change page"
 msgstr "更换主页"
 
@@ -2975,7 +2981,7 @@ msgstr "选择一个组织者"
 msgid "Choose at least {min} for {title}."
 msgstr "{title} 至少选择 {min} 个。"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:59
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:60
 msgid "Choose at least one network"
 msgstr "请至少选择一个平台"
 
@@ -3003,7 +3009,7 @@ msgstr "选择我的城市"
 msgid "Choose the column that contains the email address or the phone number."
 msgstr "请选择包含邮箱或电话号码的列。"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:60
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:61
 msgid "Choose the date and time of publication"
 msgstr "请选择发布日期和时间"
 
@@ -3027,7 +3033,7 @@ msgstr "为每种票选择名额数量。"
 msgid "Choose the page to connect"
 msgstr "选择要连接的主页"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:191
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:199
 msgid "Choose the publication time"
 msgstr "选择发布时间"
 
@@ -3108,6 +3114,7 @@ msgstr "关闭"
 #: src/components/modals/JoinWaitlistModal/index.tsx:130
 #: src/components/modals/RefundOrderModal/index.tsx:210
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:308
+#: src/components/routes/organizer/Publications/PostViewer.tsx:58
 #: src/components/routes/product-widget/SelectProducts/index.tsx:723
 msgid "Close"
 msgstr "关闭"
@@ -3473,7 +3480,7 @@ msgstr "确认电子邮件地址..."
 msgid "Congratulations! Your event is now visible to the public."
 msgstr "恭喜！您的活动现已对公众可见。"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:136
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:137
 msgid "Connect"
 msgstr "连接"
 
@@ -3481,11 +3488,11 @@ msgstr "连接"
 msgid "Connect & Upgrade"
 msgstr "连接并升级"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:157
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:158
 msgid "Connect a Facebook page"
 msgstr "连接 Facebook 主页"
 
-#: src/components/routes/organizer/Publications/index.tsx:157
+#: src/components/routes/organizer/Publications/index.tsx:100
 msgid "Connect a Facebook page to publish on Facebook and Instagram."
 msgstr "连接 Facebook 主页即可在 Facebook 和 Instagram 上发布。"
 
@@ -3522,7 +3529,7 @@ msgstr ""
 msgid "Connect with Stripe"
 msgstr "与 Stripe 连接"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:225
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:226
 msgid "Connect your Facebook page and the Instagram professional account linked to it to schedule your posts from PICHA. Every post is checked by a person before it goes out."
 msgstr "连接您的 Facebook 主页及其关联的 Instagram 专业账户，即可在 PICHA 中安排发布帖子。每条帖子发布前都会由人工审核。"
 
@@ -3542,11 +3549,11 @@ msgstr "连接您的 Stripe 账户以开始接受您活动的付款。"
 msgid "Connect your Stripe account to start accepting payments."
 msgstr "连接您的 Stripe 账户以开始接受付款。"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:180
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:181
 msgid "Connected"
 msgstr "已连接"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:190
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:191
 msgid "Connected {0}"
 msgstr "{0}连接"
 
@@ -4507,7 +4514,7 @@ msgstr "删除"
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/event/EventPages/index.tsx:101
 #: src/components/routes/event/EventPages/index.tsx:102
-#: src/components/routes/organizer/Publications/index.tsx:141
+#: src/components/routes/organizer/Publications/PostCard.tsx:66
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
@@ -4576,7 +4583,7 @@ msgstr "删除快捷回复“{0}”？"
 msgid "Delete the subscriber"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:67
+#: src/components/routes/organizer/Publications/index.tsx:69
 msgid "Delete this post from the log?"
 msgstr "从记录中删除此帖子？"
 
@@ -4676,7 +4683,7 @@ msgstr "直接访问或未知"
 msgid "Disabling this capacity will track sales but not stop them when the limit is reached"
 msgstr "禁用此容量将跟踪销售情况，但不会在达到限制时停止销售"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:214
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:215
 msgid "Disconnect"
 msgstr "断开连接"
 
@@ -4842,13 +4849,14 @@ msgstr "正在下载发票"
 msgid "Draft"
 msgstr "草稿"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:92
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:95
 msgid "Draft saved"
 msgstr "草稿已保存"
 
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:77
+#: src/components/routes/organizer/Publications/labels.ts:57
 msgid "Drafts"
-msgstr ""
+msgstr "草稿"
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:302
 msgid "Drag it in, or"
@@ -6064,7 +6072,7 @@ msgid "Facebook"
 msgstr "Facebook"
 
 #: src/components/routes/organizer/Settings/index.tsx:98
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:224
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:225
 msgid "Facebook and Instagram"
 msgstr "Facebook 和 Instagram"
 
@@ -6072,7 +6080,7 @@ msgstr "Facebook 和 Instagram"
 msgid "Facebook did not accept the connection. Please try again, or check that you manage the page."
 msgstr "Facebook 未接受连接。请重试，或确认您是该主页的管理员。"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:169
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:170
 msgid "Facebook no longer accepts PICHA's access. Connect the page again to resume publishing."
 msgstr "Facebook 不再接受 PICHA 的访问。请重新连接主页以继续发布。"
 
@@ -6091,6 +6099,11 @@ msgstr "失败"
 
 #: src/components/routes/organizer/Publications/labels.ts:17
 msgctxt "social post status"
+msgid "Failed"
+msgstr "失败"
+
+#: src/components/routes/organizer/Publications/labels.ts:67
+msgctxt "social posts tab"
 msgid "Failed"
 msgstr "失败"
 
@@ -6646,7 +6659,8 @@ msgstr "表单"
 msgid "Formal (vous)"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:123
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:127
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:135
 msgid "Format"
 msgstr "格式"
 
@@ -7333,13 +7347,13 @@ msgid "Ignore"
 msgstr "忽略"
 
 #: src/components/routes/organizer/Publications/labels.ts:44
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:160
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:168
 msgid "Image"
 msgstr "图片"
 
 #: src/components/routes/organizer/Publications/index.tsx:101
-msgid "Image {0}"
-msgstr "图片 {0}"
+#~ msgid "Image {0}"
+#~ msgstr "图片 {0}"
 
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:149
 msgid "Image address (optional)"
@@ -7362,7 +7376,7 @@ msgstr "图片网址"
 msgid "Images"
 msgstr "图片"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:148
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:156
 msgid "Images (2 to 10)"
 msgstr "图片（2 至 10 张）"
 
@@ -7771,11 +7785,11 @@ msgstr "此账户是否在欧盟注册增值税？"
 msgid "It stays a draft until you publish it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:48
+#: src/components/routes/organizer/Publications/index.tsx:52
 msgid "It will be published on {0}."
 msgstr "将于 {0} 发布。"
 
-#: src/components/routes/organizer/Publications/index.tsx:49
+#: src/components/routes/organizer/Publications/index.tsx:53
 msgid "It will be published within a minute."
 msgstr "将在一分钟内发布。"
 
@@ -8157,7 +8171,7 @@ msgstr "行被拒绝"
 
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:90
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:141
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:188
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:196
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:314
 msgid "Link"
 msgstr "链接"
@@ -8514,11 +8528,11 @@ msgstr "每份订单的最高限额"
 msgid "Mayotte or France"
 msgstr "马约特或法国"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:148
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:156
 msgid "Media"
 msgstr "媒体"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:181
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:189
 msgid "Media must be public https:// links. Instagram only accepts JPEG images. Videos: vertical HD 1080x1920, H.264 and AAC."
 msgstr "媒体必须是公开的 https:// 链接。Instagram 仅接受 JPEG 图片。视频：竖屏高清 1080x1920，H.264 和 AAC。"
 
@@ -8943,7 +8957,7 @@ msgstr ""
 msgid "Network error - please try again"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:112
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:115
 msgid "Networks"
 msgstr "平台"
 
@@ -8982,8 +8996,8 @@ msgstr "新日期即将公布。"
 msgid "New Password"
 msgstr "新密码"
 
-#: src/components/routes/organizer/Publications/index.tsx:178
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:106
+#: src/components/routes/organizer/Publications/index.tsx:92
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:109
 msgid "New post"
 msgstr "新帖子"
 
@@ -9036,6 +9050,14 @@ msgstr ""
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1732
 msgid "Next"
 msgstr ""
+
+#: src/components/routes/organizer/Publications/PostMedia.tsx:73
+msgid "Next image"
+msgstr "下一张"
+
+#: src/components/routes/organizer/Publications/PostViewer.tsx:112
+msgid "Next post"
+msgstr "下一条"
 
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:88
 msgid "Next steps"
@@ -9262,12 +9284,12 @@ msgstr "没有可用筛选器"
 msgid "No impact on your current or past transactions"
 msgstr "不影响您当前或过去的交易"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:119
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:122
 msgid "No Instagram professional account is linked to the connected Facebook page."
 msgstr "已连接的 Facebook 主页未关联 Instagram 专业账户。"
 
 #: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:123
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:186
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:187
 msgid "No Instagram professional account linked to this page"
 msgstr "此主页未关联 Instagram 专业账户"
 
@@ -9380,7 +9402,7 @@ msgstr "无需支付"
 msgid "No popular events in the last 14 days"
 msgstr "过去14天没有热门活动"
 
-#: src/components/routes/organizer/Publications/index.tsx:185
+#: src/components/routes/organizer/Publications/index.tsx:128
 msgid "No post yet."
 msgstr "暂无帖子。"
 
@@ -10032,7 +10054,7 @@ msgstr "开放日"
 msgid "Open menu"
 msgstr "打开菜单"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:202
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:203
 msgid "Open publications"
 msgstr "打开发布页面"
 
@@ -10054,7 +10076,7 @@ msgstr "打开客户档案"
 msgid "Open the event flyer"
 msgstr "打开活动海报"
 
-#: src/components/routes/organizer/Publications/index.tsx:160
+#: src/components/routes/organizer/Publications/index.tsx:103
 msgid "Open the settings"
 msgstr "打开设置"
 
@@ -11098,7 +11120,7 @@ msgstr "将此放置在您网站的 <head> 中。"
 msgid "Plan at least one presale, online or physical."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:80
+#: src/components/routes/organizer/Publications/PostCard.tsx:35
 msgid "Planned for {0}"
 msgstr "计划于 {0}"
 
@@ -11334,11 +11356,11 @@ msgstr "热门活动（过去14天）"
 msgid "Portuguese"
 msgstr "葡萄牙语"
 
-#: src/components/routes/organizer/Publications/index.tsx:53
+#: src/components/routes/organizer/Publications/index.tsx:57
 msgid "Post approved"
 msgstr "帖子已批准"
 
-#: src/components/routes/organizer/Publications/index.tsx:61
+#: src/components/routes/organizer/Publications/index.tsx:64
 msgid "Post cancelled"
 msgstr "帖子已取消"
 
@@ -11351,11 +11373,11 @@ msgstr "结账后信息"
 msgid "Post Checkout Message"
 msgstr "结账后消息"
 
-#: src/components/routes/organizer/Publications/index.tsx:69
+#: src/components/routes/organizer/Publications/index.tsx:72
 msgid "Post deleted"
 msgstr "帖子已删除"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:92
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:95
 msgid "Post scheduled"
 msgstr "帖子已安排"
 
@@ -11417,7 +11439,8 @@ msgstr "想自己先开始？"
 msgid "Prepare your event before publishing it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:93
+#: src/components/routes/organizer/Publications/PostCard.tsx:100
+#: src/components/routes/organizer/Publications/PostViewer.tsx:98
 msgid "Prepared by the assistant"
 msgstr "由助手准备"
 
@@ -11482,6 +11505,10 @@ msgstr "预览"
 msgid "Preview checkout form"
 msgstr "预览结账表单"
 
+#: src/components/routes/organizer/Publications/MediaPreview.tsx:43
+msgid "Preview unavailable"
+msgstr "无法预览"
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:93
 msgid "Preview: Immediate answer, {relayLabel} can take over"
 msgstr "预览：即时回复，{relayLabel} 可以接手"
@@ -11489,6 +11516,14 @@ msgstr "预览：即时回复，{relayLabel} 可以接手"
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1723
 msgid "Previous"
 msgstr ""
+
+#: src/components/routes/organizer/Publications/PostMedia.tsx:68
+msgid "Previous image"
+msgstr "上一张"
+
+#: src/components/routes/organizer/Publications/PostViewer.tsx:109
+msgid "Previous post"
+msgstr "上一条"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:406
 #: src/components/forms/ProductForm/index.tsx:96
@@ -11769,7 +11804,7 @@ msgid ""
 "and conditions, guidelines, or any important information that attendees need to know before answering."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:154
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:162
 msgid "Public link of the media"
 msgstr "媒体的公开链接"
 
@@ -11777,12 +11812,12 @@ msgstr "媒体的公开链接"
 msgid "Publication"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:195
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:203
 msgid "Publication time"
 msgstr "发布时间"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:76
-#: src/components/routes/organizer/Publications/index.tsx:151
+#: src/components/routes/organizer/Publications/index.tsx:90
 msgid "Publications"
 msgstr "发布"
 
@@ -11790,7 +11825,7 @@ msgstr "发布"
 msgid "Publish"
 msgstr "发布"
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:206
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:214
 msgid "Publish now"
 msgstr "立即发布"
 
@@ -11807,15 +11842,21 @@ msgstr ""
 msgid "Published"
 msgstr "已发布"
 
-#: src/components/routes/organizer/Publications/index.tsx:77
+#: src/components/routes/organizer/Publications/labels.ts:65
+msgctxt "social posts tab"
+msgid "Published"
+msgstr "已发布"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:32
 msgid "Published on {0}"
 msgstr "发布于 {0}"
 
 #: src/components/routes/organizer/Publications/labels.ts:13
+#: src/components/routes/organizer/Publications/labels.ts:63
 msgid "Publishing"
 msgstr "发布中"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:232
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:233
 msgid "Publishing on Facebook and Instagram is not yet available on this server."
 msgstr "此服务器尚不支持在 Facebook 和 Instagram 上发布。"
 
@@ -12098,7 +12139,7 @@ msgstr "收件人"
 msgid "Recipients are available after the message is sent"
 msgstr "收件人在消息发送后可用"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:205
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:206
 msgid "Reconnect"
 msgstr "重新连接"
 
@@ -12415,7 +12456,7 @@ msgstr "去除"
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:159
 #: src/components/routes/event/HomepageDesigner/index.tsx:311
 #: src/components/routes/event/HomepageDesigner/index.tsx:341
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:166
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:174
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:380
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:149
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:176
@@ -12753,7 +12794,7 @@ msgid "Retrieve the SMS sent and received with your PICHA SMS number before the 
 msgstr "获取在连接 webhook 之前用您的 PICHA SMS 号码发送和接收的短信，例如通过脚本发送的活动短信。已存在的消息不会重复，也不会被标记为未读。"
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
-#: src/components/routes/organizer/Publications/index.tsx:125
+#: src/components/routes/organizer/Publications/PostCard.tsx:51
 #: src/hooks/useKioskTicketPrinter.tsx:227
 msgid "Retry"
 msgstr "重试"
@@ -12983,7 +13024,7 @@ msgstr "节省"
 msgid "Save and continue"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:203
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:211
 msgid "Save as draft"
 msgstr "保存为草稿"
 
@@ -13062,7 +13103,7 @@ msgstr ""
 msgid "Scans per day"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:206
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:214
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:287
 msgid "Schedule"
 msgstr "安排"
@@ -13111,6 +13152,11 @@ msgstr "已安排"
 
 #: src/components/routes/organizer/Publications/labels.ts:11
 msgctxt "social post status"
+msgid "Scheduled"
+msgstr "已安排"
+
+#: src/components/routes/organizer/Publications/labels.ts:61
+msgctxt "social posts tab"
 msgid "Scheduled"
 msgstr "已安排"
 
@@ -14362,7 +14408,6 @@ msgstr "统计数据基于账户创建日期"
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:100
 #: src/components/routes/event/OrdersPage/OrderList.tsx:156
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:88
-#: src/components/routes/organizer/Publications/index.tsx:175
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:62
 msgid "Status"
 msgstr "状态"
@@ -14904,7 +14949,7 @@ msgid "Test the connection"
 msgstr "测试连接"
 
 #: src/components/routes/organizer/Publications/labels.ts:42
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:135
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:143
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:116
 msgid "Text"
 msgstr "文本"
@@ -14916,6 +14961,10 @@ msgstr ""
 #: src/components/common/ThemeColorControls/index.tsx:107
 msgid "Text may be hard to read"
 msgstr "文字可能难以阅读"
+
+#: src/components/routes/organizer/Publications/PostMedia.tsx:33
+msgid "Text post"
+msgstr "文字帖子"
 
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:482
 msgid "Text under the QR code"
@@ -15003,7 +15052,7 @@ msgstr "您查找的签到列表不存在。"
 msgid "The code will expire in 10 minutes. Check your spam folder if you don't see the email."
 msgstr "验证码将在10分钟后过期。如果您没有收到邮件，请检查垃圾邮件文件夹。"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:168
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:169
 msgid "The connection must be renewed"
 msgstr "需要续期连接"
 
@@ -15068,7 +15117,7 @@ msgstr "您查找的活动目前不可用。它可能已被删除、过期或 UR
 msgid "The Facebook connection link has expired. Please try again."
 msgstr "Facebook 连接链接已过期。请重试。"
 
-#: src/components/routes/organizer/Publications/index.tsx:156
+#: src/components/routes/organizer/Publications/index.tsx:99
 msgid "The Facebook connection must be renewed before anything can be published."
 msgstr "发布之前需要续期 Facebook 连接。"
 
@@ -15918,7 +15967,7 @@ msgstr "剩余时间："
 msgid "Time of scan"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:196
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:204
 msgid "Time zone: {timezone}"
 msgstr "时区：{timezone}"
 
@@ -15955,6 +16004,7 @@ msgid "To"
 msgstr "收件人"
 
 #: src/components/routes/organizer/Publications/labels.ts:9
+#: src/components/routes/organizer/Publications/labels.ts:59
 msgid "To approve"
 msgstr "待批准"
 
@@ -15998,7 +16048,7 @@ msgstr "要提高您的限制，请联系我们"
 msgid "To receive credit card payments, you need to connect your Stripe account. Stripe is our payment processing partner that ensures secure transactions and timely payouts."
 msgstr "要接受信用卡付款，您需要连接您的 Stripe 账户。Stripe 是我们的支付处理合作伙伴，确保安全交易和及时付款。"
 
-#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:180
+#: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:181
 msgid "To renew"
 msgstr "待续期"
 
@@ -16171,6 +16221,14 @@ msgstr "关闭声音"
 msgid "Turn sound on"
 msgstr "开启声音"
 
+#: src/components/routes/organizer/Publications/MediaPreview.tsx:71
+msgid "Turn the sound off"
+msgstr "关闭声音"
+
+#: src/components/routes/organizer/Publications/MediaPreview.tsx:71
+msgid "Turn the sound on"
+msgstr "开启声音"
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:111
 msgid "Turned on by default. You can turn it off at any time."
 msgstr "默认开启。您可以随时关闭。"
@@ -16209,11 +16267,11 @@ msgstr "门票类型"
 msgid "Typography"
 msgstr "排版"
 
-#: src/components/routes/organizer/Publications/index.tsx:54
+#: src/components/routes/organizer/Publications/index.tsx:58
 msgid "Unable to approve the post"
 msgstr "无法批准帖子"
 
-#: src/components/routes/organizer/Publications/index.tsx:62
+#: src/components/routes/organizer/Publications/index.tsx:65
 msgid "Unable to cancel the post"
 msgstr "无法取消帖子"
 
@@ -16246,7 +16304,7 @@ msgstr "无法创建问题。请检查您的详细信息"
 msgid "Unable to delete the campaign"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:70
+#: src/components/routes/organizer/Publications/index.tsx:75
 msgid "Unable to delete the post"
 msgstr "无法删除帖子"
 
@@ -16863,14 +16921,14 @@ msgstr "验证您的邮箱"
 msgid "Verifying..."
 msgstr "正在验证..."
 
-#: src/components/routes/organizer/Publications/PostFormModal.tsx:160
+#: src/components/routes/organizer/Publications/PostFormModal.tsx:168
 #: src/components/routes/organizer/QrCodes/posterLogos.tsx:41
 msgid "Video"
 msgstr "视频"
 
 #: src/components/routes/organizer/Publications/index.tsx:101
-msgid "Video {0}"
-msgstr "视频 {0}"
+#~ msgid "Video {0}"
+#~ msgstr "视频 {0}"
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:322
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:158
@@ -16888,7 +16946,6 @@ msgstr "越南语"
 
 #: src/components/modals/ManageAttendeeModal/index.tsx:223
 #: src/components/modals/ManageOrderModal/index.tsx:200
-#: src/components/routes/organizer/Publications/index.tsx:114
 msgid "View"
 msgstr "查看"
 
@@ -16940,9 +16997,17 @@ msgstr "查看地图"
 msgid "View Message"
 msgstr "查看消息"
 
+#: src/components/routes/organizer/Publications/PostCard.tsx:61
+msgid "View on Facebook"
+msgstr "在 Facebook 上查看"
+
 #: src/components/layouts/EventHomepage/index.tsx:679
 msgid "View on Google Maps"
 msgstr "在谷歌地图上查看"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:61
+msgid "View on Instagram"
+msgstr "在 Instagram 上查看"
 
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:137
 msgid "View order"
