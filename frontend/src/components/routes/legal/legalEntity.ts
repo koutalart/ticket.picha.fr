@@ -6,13 +6,13 @@
  */
 export const legalEntity = {
     brand: "PICHA Ticket",
-    companyName: "[À COMPLÉTER : raison sociale]",
-    legalForm: "[À COMPLÉTER : forme juridique, ex. SAS]",
-    shareCapital: "[À COMPLÉTER : capital social]",
-    address: "[À COMPLÉTER : adresse du siège social]",
-    registration: "[À COMPLÉTER : RCS ville + numéro, ou n° de répertoire des métiers]",
-    siren: "[À COMPLÉTER : SIREN]",
-    vatNumber: "[À COMPLÉTER : n° de TVA intracommunautaire]",
+    companyName: "DIGIT",
+    legalForm: "SAS",
+    shareCapital: "500 €",
+    address: "1 rue Citronnelle, BP 66, 97660 Dembeni, Mayotte",
+    registration: "RCS Mamoudzou 897 877 122 (SIRET 897 877 122 00019)",
+    siren: "897 877 122",
+    vatNumber: "FR63897877122",
     phone: "[À COMPLÉTER : téléphone]",
     email: "ticket@picha.fr",
     publicationDirector: "[À COMPLÉTER : nom du directeur de la publication]",
@@ -27,5 +27,5 @@ export const legalEntity = {
         address: "2 rue Kellermann, 59100 Roubaix, France",
         website: "https://www.ovhcloud.com",
     },
-    lastUpdated: "23 octobre 2026",
+    lastUpdated: "24 octobre 2026",
 };
