@@ -1,5 +1,17 @@
 <?php
 
+use HiEvents\Http\Actions\Social\CancelSocialPostAction;
+use HiEvents\Http\Actions\Social\ConnectMetaPageAction;
+use HiEvents\Http\Actions\Social\CreateSocialPostsAction;
+use HiEvents\Http\Actions\Social\DeleteSocialPostAction;
+use HiEvents\Http\Actions\Social\DisconnectSocialConnectionAction;
+use HiEvents\Http\Actions\Social\GetMetaLoginUrlAction;
+use HiEvents\Http\Actions\Social\GetPendingMetaPagesAction;
+use HiEvents\Http\Actions\Social\GetSocialConnectionAction;
+use HiEvents\Http\Actions\Social\GetSocialPostsAction;
+use HiEvents\Http\Actions\Social\HandleMetaOAuthCallbackActionPublic;
+use HiEvents\Http\Actions\Social\ScheduleSocialPostAction;
+use HiEvents\Http\Actions\Social\UpdateSocialPostAction;
 use HiEvents\Http\Actions\Sms\GetOrganizerSmsSettingsAction;
 use HiEvents\Http\Actions\Sms\UpdateOrganizerSmsSettingsAction;
 use HiEvents\Http\Actions\Sms\RegenerateSmsWebhookSigningKeyAction;
@@ -145,6 +157,7 @@ use HiEvents\Http\Actions\Organizers\Font\UploadOrganizerFontAction;
 use HiEvents\Http\Actions\Questions\Files\DownloadQuestionAnswerFileAction;
 use HiEvents\Http\Actions\Questions\Public\UploadQuestionAnswerFilePublicAction;
 use HiEvents\Services\Domain\Question\File\QuestionAnswerFileUrlGenerator;
+use HiEvents\Http\Actions\OrganizerCalendars\ConsultOrganizerCalendarActionPublic;
 use HiEvents\Http\Actions\OrganizerCalendars\DownloadOrganizerCalendarMediaActionPublic;
 use HiEvents\Http\Actions\OrganizerCalendars\GetOrganizerCalendarActionPublic;
 use HiEvents\Http\Actions\OrganizerCalendars\GetOrganizerCalendarPageActionPublic;
@@ -528,6 +541,25 @@ $router->middleware(['auth:api'])->group(
         $router->get('/organizers/{organizer_id}/qr-links/{qr_link_id}/stats', GetQrLinkStatsAction::class);
         $router->get('/organizers/{organizer_id}/qr-links/{qr_link_id}/poster', GetQrLinkPosterAction::class)
             ->middleware('throttle:30,1');
+        $router->get('/organizers/{organizer_id}/social/connection', GetSocialConnectionAction::class);
+        $router->delete('/organizers/{organizer_id}/social/connection', DisconnectSocialConnectionAction::class);
+        $router->post('/organizers/{organizer_id}/social/connection', ConnectMetaPageAction::class)
+            ->middleware('throttle:10,1');
+        $router->post('/organizers/{organizer_id}/social/meta/login-url', GetMetaLoginUrlAction::class)
+            ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/social/meta/pending-pages/{selection_key}', GetPendingMetaPagesAction::class)
+            ->where('selection_key', '[A-Za-z0-9]{20,100}');
+        $router->get('/organizers/{organizer_id}/social/posts', GetSocialPostsAction::class);
+        $router->post('/organizers/{organizer_id}/social/posts', CreateSocialPostsAction::class)
+            ->middleware('throttle:30,1');
+        $router->put('/organizers/{organizer_id}/social/posts/{post_id}', UpdateSocialPostAction::class)
+            ->where('post_id', '[0-9]+');
+        $router->delete('/organizers/{organizer_id}/social/posts/{post_id}', DeleteSocialPostAction::class)
+            ->where('post_id', '[0-9]+');
+        $router->post('/organizers/{organizer_id}/social/posts/{post_id}/schedule', ScheduleSocialPostAction::class)
+            ->where('post_id', '[0-9]+');
+        $router->post('/organizers/{organizer_id}/social/posts/{post_id}/cancel', CancelSocialPostAction::class)
+            ->where('post_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/reports/{report_type}', GetOrganizerReportAction::class);
         $router->get('/organizers/{organizer_id}/reports/{report_type}/export', ExportOrganizerReportAction::class);
         $router->post('/organizers/{organizer_id}/webhooks', CreateOrganizerWebhookAction::class);
@@ -822,6 +854,10 @@ $router->prefix('/public')->group(
             ->middleware('throttle:10,1,refund-approval');
         $router->get('/custom-domains/{domain}', GetOrganizerByCustomDomainPublicAction::class);
 
+        // Facebook / Instagram connection (Meta OAuth redirect)
+        $router->get('/social/meta/callback', HandleMetaOAuthCallbackActionPublic::class)
+            ->middleware('throttle:20,1');
+
         // QR codes
         $router->get('/qr-links/{short_id}', GetQrLinkPublicAction::class)
             ->where('short_id', '[A-Za-z0-9]{4,32}');
@@ -834,7 +870,10 @@ $router->prefix('/public')->group(
             ->where('code', '[A-Za-z0-9]{6,16}')
             ->middleware('throttle:60,1');
 
-        // Private organizer calendars (one-time SMS code, then 12 h access key in the X-Acces-Calendrier header)
+        // Private organizer calendars (first name or one-time SMS code, then a one year access key in the X-Acces-Calendrier header)
+        $router->post('/calendriers/{slug}/consulter', ConsultOrganizerCalendarActionPublic::class)
+            ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN)
+            ->middleware('throttle:organizer-calendar-consult');
         $router->post('/calendriers/{slug}/code', RequestOrganizerCalendarCodeActionPublic::class)
             ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN)
             ->middleware('throttle:organizer-calendar-code');

@@ -17,6 +17,8 @@ abstract class OrganizerCalendarAccessDomainObjectAbstract extends \HiEvents\Dom
     final public const REVOKED_AT = 'revoked_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const VISITOR_NAME = 'visitor_name';
+    final public const DEVICE_ID = 'device_id';
 
     protected int $id;
     protected int $organizer_calendar_id;
@@ -25,6 +27,8 @@ abstract class OrganizerCalendarAccessDomainObjectAbstract extends \HiEvents\Dom
     protected ?string $revoked_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?string $visitor_name = null;
+    protected ?string $device_id = null;
 
     public function toArray(): array
     {
@@ -36,6 +40,8 @@ abstract class OrganizerCalendarAccessDomainObjectAbstract extends \HiEvents\Dom
                     'revoked_at' => $this->revoked_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'visitor_name' => $this->visitor_name ?? null,
+                    'device_id' => $this->device_id ?? null,
                 ];
     }
 
@@ -114,5 +120,27 @@ abstract class OrganizerCalendarAccessDomainObjectAbstract extends \HiEvents\Dom
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setVisitorName(?string $visitor_name): self
+    {
+        $this->visitor_name = $visitor_name;
+        return $this;
+    }
+
+    public function getVisitorName(): ?string
+    {
+        return $this->visitor_name;
+    }
+
+    public function setDeviceId(?string $device_id): self
+    {
+        $this->device_id = $device_id;
+        return $this;
+    }
+
+    public function getDeviceId(): ?string
+    {
+        return $this->device_id;
     }
 }

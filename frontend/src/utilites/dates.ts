@@ -142,6 +142,10 @@ export const utcToTz = (date: undefined | string | Date, tz: string): string | u
     return dayjs.utc(date).tz(tz).format('YYYY-MM-DDTHH:mm');
 };
 
+export const tzToUtc = (date: string, tz: string): string => {
+    return dayjs.tz(date, tz).utc().format();
+};
+
 /**
  * Converts a datetime to the user's browser timezone with locale-aware formatting.
  * Falls back to provided timezone for SSR.

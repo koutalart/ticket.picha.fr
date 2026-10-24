@@ -1,0 +1,384 @@
+.feedColumn {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.feedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-sm);
+  margin-bottom: var(--mantine-spacing-sm);
+
+  h1 {
+    margin-bottom: 0;
+  }
+}
+
+.tabs {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  button {
+    flex-shrink: 0;
+  }
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-lg);
+}
+
+.card {
+  background: var(--mantine-color-body);
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-lg);
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+}
+
+.cardHeaderText {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.avatarInstagram,
+.avatarFacebook {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.avatarInstagram {
+  background: linear-gradient(45deg, #f9ce34, #ee2a7b 55%, #6228d7);
+}
+
+.avatarFacebook {
+  background: #1877f2;
+}
+
+.cardBody {
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md) var(--mantine-spacing-md);
+}
+
+.caption {
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-xs);
+  margin-top: var(--mantine-spacing-sm);
+}
+
+.mediaFrame {
+  position: relative;
+  width: 100%;
+  background: #0b0b0f;
+  overflow: hidden;
+}
+
+.square {
+  aspect-ratio: 1 / 1;
+}
+
+.vertical {
+  aspect-ratio: 9 / 16;
+  max-height: 70vh;
+
+  .mediaElement {
+    object-fit: contain;
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.mediaElement {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mediaFallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  color: var(--mantine-color-gray-5);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.textOnly {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mantine-spacing-sm);
+  min-height: 220px;
+  padding: var(--mantine-spacing-xl);
+  background: linear-gradient(135deg, var(--mantine-color-violet-7), var(--mantine-color-grape-6));
+  color: #fff;
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 600;
+  text-align: center;
+  white-space: pre-line;
+
+  span {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.muteButton {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  cursor: pointer;
+}
+
+.carouselTrack {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.carouselSlide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: center;
+}
+
+.carouselCounter {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 12px;
+}
+
+.carouselDots {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.dotActive {
+  background: #fff;
+}
+
+.viewerContent {
+  background: #000;
+}
+
+.viewerBody {
+  height: 100%;
+}
+
+.viewer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mantine-spacing-xl);
+  height: 100vh;
+  padding: var(--mantine-spacing-md);
+
+  @media (max-width: 768px) {
+    display: block;
+    padding: 0;
+    overflow-y: auto;
+  }
+}
+
+.viewerStage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 2 * var(--mantine-spacing-md));
+
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 60vh;
+  }
+}
+
+.fullscreenFrame {
+  border-radius: var(--mantine-radius-md);
+
+  &.vertical {
+    height: 100%;
+    max-height: none;
+    width: auto;
+  }
+
+  &.square {
+    width: min(90vw, calc(100vh - 2 * var(--mantine-spacing-md)), 720px);
+  }
+
+  .mediaElement {
+    object-fit: contain;
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 0;
+
+    &.vertical {
+      width: 100%;
+      height: auto;
+    }
+
+    &.square {
+      width: 100%;
+    }
+  }
+}
+
+.viewerPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-sm);
+  width: 340px;
+  max-height: calc(100vh - 2 * var(--mantine-spacing-md));
+  overflow-y: auto;
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-body);
+
+  .cardHeader {
+    padding: 0;
+  }
+
+  .cardBadges {
+    justify-content: flex-start;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-height: none;
+    border-radius: 0;
+  }
+}
+
+.viewerClose {
+  position: absolute;
+  top: var(--mantine-spacing-md);
+  right: var(--mantine-spacing-md);
+  z-index: 2;
+}
+
+.viewerNav {
+  position: absolute;
+  right: var(--mantine-spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-sm);
+  z-index: 2;
+
+  @media (max-width: 768px) {
+    position: fixed;
+    top: var(--mantine-spacing-md);
+    right: auto;
+    left: var(--mantine-spacing-md);
+    flex-direction: row;
+    transform: none;
+  }
+}
+
+.mediaRow {
+  display: flex;
+  gap: var(--mantine-spacing-xs);
+  align-items: flex-start;
+}
+
+.carouselArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: #111;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.carouselPrevious {
+  left: 10px;
+}
+
+.carouselNext {
+  right: 10px;
+}

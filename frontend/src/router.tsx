@@ -352,6 +352,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "publications",
+                async lazy() {
+                    const Publications = await import("./components/routes/organizer/Publications");
+                    return { Component: Publications.default };
+                }
+            },
+            {
                 path: "subscribers",
                 element: <Navigate to="../contacts?tab=subscribers" replace/>,
             },

@@ -16,6 +16,8 @@ class OrganizerCalendarIpRateLimiter
 
     public const MAX_ADMIN_FAILURES_PER_IP = 5;
 
+    public const MAX_CONSULTATIONS_PER_IP = 30;
+
     public const DECAY_SECONDS = 3600;
 
     public function __construct(
@@ -36,6 +38,14 @@ class OrganizerCalendarIpRateLimiter
     public function hitVerification(string $ipAddress): void
     {
         $this->hit('organizer-calendar:verify-ip:'.hash('sha256', $ipAddress), self::MAX_VERIFICATIONS_PER_IP);
+    }
+
+    /**
+     * @throws OrganizerCalendarRateLimitedException
+     */
+    public function hitConsultation(string $ipAddress): void
+    {
+        $this->hit('organizer-calendar:consult-ip:'.hash('sha256', $ipAddress), self::MAX_CONSULTATIONS_PER_IP);
     }
 
     /**

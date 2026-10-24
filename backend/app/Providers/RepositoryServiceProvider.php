@@ -48,6 +48,8 @@ use HiEvents\Repository\Eloquent\PromoCodeRepository;
 use HiEvents\Repository\Eloquent\QrCampaignRepository;
 use HiEvents\Repository\Eloquent\OrganizerFontRepository;
 use HiEvents\Repository\Eloquent\OrganizerSmsSettingRepository;
+use HiEvents\Repository\Eloquent\OrganizerSocialConnectionRepository;
+use HiEvents\Repository\Eloquent\SocialPostRepository;
 use HiEvents\Repository\Eloquent\SmsAssistantCallRepository;
 use HiEvents\Repository\Eloquent\LiveChatMessageRepository;
 use HiEvents\Repository\Eloquent\LiveChatRefundRequestRepository;
@@ -70,6 +72,7 @@ use HiEvents\Repository\Eloquent\SmsUnattributedMessageRepository;
 use HiEvents\Repository\Eloquent\SmsWatchdogAlertRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarAccessRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarCodeRepository;
+use HiEvents\Repository\Eloquent\OrganizerCalendarConsultationRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarMediaRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarRepository;
 use HiEvents\Repository\Eloquent\QrLinkRepository;
@@ -139,6 +142,8 @@ use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerFontRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
+use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatRefundRequestRepositoryInterface;
@@ -161,6 +166,7 @@ use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsWatchdogAlertRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarAccessRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarCodeRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerCalendarConsultationRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarMediaRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrLinkRepositoryInterface;
@@ -203,6 +209,8 @@ class RepositoryServiceProvider extends ServiceProvider
         QrLinkRepositoryInterface::class => QrLinkRepository::class,
         QrCampaignRepositoryInterface::class => QrCampaignRepository::class,
         OrganizerSmsSettingRepositoryInterface::class => OrganizerSmsSettingRepository::class,
+        OrganizerSocialConnectionRepositoryInterface::class => OrganizerSocialConnectionRepository::class,
+        SocialPostRepositoryInterface::class => SocialPostRepository::class,
         OrganizerFontRepositoryInterface::class => OrganizerFontRepository::class,
         SmsConversationRepositoryInterface::class => SmsConversationRepository::class,
         SmsCustomerDirectoryRepositoryInterface::class => SmsCustomerDirectoryRepository::class,
@@ -228,6 +236,7 @@ class RepositoryServiceProvider extends ServiceProvider
         OrganizerCalendarMediaRepositoryInterface::class => OrganizerCalendarMediaRepository::class,
         OrganizerCalendarCodeRepositoryInterface::class => OrganizerCalendarCodeRepository::class,
         OrganizerCalendarAccessRepositoryInterface::class => OrganizerCalendarAccessRepository::class,
+        OrganizerCalendarConsultationRepositoryInterface::class => OrganizerCalendarConsultationRepository::class,
         QrLinkVisitRepositoryInterface::class => QrLinkVisitRepository::class,
         OrderItemRepositoryInterface::class => OrderItemRepository::class,
         QuestionRepositoryInterface::class => QuestionRepository::class,

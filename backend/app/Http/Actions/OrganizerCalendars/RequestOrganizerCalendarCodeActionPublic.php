@@ -2,6 +2,7 @@
 
 namespace HiEvents\Http\Actions\OrganizerCalendars;
 
+use HiEvents\Exceptions\OrganizerCalendarCodeDisabledException;
 use HiEvents\Exceptions\OrganizerCalendarCodeUnavailableException;
 use HiEvents\Exceptions\OrganizerCalendarNotFoundException;
 use HiEvents\Exceptions\OrganizerCalendarRateLimitedException;
@@ -23,7 +24,7 @@ class RequestOrganizerCalendarCodeActionPublic extends BaseAction
     {
         try {
             $sent = $this->handler->handle($slug, (string) $this->getClientIp($request));
-        } catch (OrganizerCalendarNotFoundException) {
+        } catch (OrganizerCalendarNotFoundException|OrganizerCalendarCodeDisabledException) {
             return $this->notFoundResponse();
         } catch (OrganizerCalendarRateLimitedException $exception) {
             return $this->jsonResponse([
