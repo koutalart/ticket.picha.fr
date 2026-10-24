@@ -137,6 +137,7 @@ export const ConversationThread = ({organizerId, detail, isLoading, canSend, ass
                 <UnstyledButton className={classes.threadTitle} onClick={onOpenCustomer} title={t`Open the customer file`}>
                     <strong className={classes.threadName}>{conversation.contact_name || conversation.phone}</strong>
                     {conversation.contact_name && <Text size="xs" c="dimmed">{conversation.phone}</Text>}
+                    {conversation.is_team && <Badge size="xs" color="violet" variant="light">{t`Team`}</Badge>}
                 </UnstyledButton>
                 <Select
                     size="xs"

@@ -44,6 +44,8 @@ class UpdateOrganizerSmsSettingsAction extends BaseAction
                 liveChatEnabled: array_key_exists('live_chat_enabled', $validated) ? (bool) $validated['live_chat_enabled'] : Optional::create(),
                 liveChatRelayLabel: array_key_exists('live_chat_relay_label', $validated) ? $validated['live_chat_relay_label'] : Optional::create(),
                 defaultRemindersEnabled: array_key_exists('sms_default_reminders_enabled', $validated) ? (bool) $validated['sms_default_reminders_enabled'] : Optional::create(),
+                organizerAssistantEnabled: array_key_exists('organizer_assistant_enabled', $validated) ? (bool) $validated['organizer_assistant_enabled'] : Optional::create(),
+                organizerAssistantInstructions: array_key_exists('organizer_assistant_instructions', $validated) ? $validated['organizer_assistant_instructions'] : Optional::create(),
             ));
         } catch (InvalidSmsPhoneNumberException $exception) {
             throw ValidationException::withMessages(['from_number' => $exception->getMessage()]);

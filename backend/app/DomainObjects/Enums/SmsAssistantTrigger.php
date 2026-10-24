@@ -12,4 +12,5 @@ enum SmsAssistantTrigger: string
     case REGENERATE = 'REGENERATE';
     case PREVIEW = 'PREVIEW';
     case LIVE_CHAT = 'LIVE_CHAT';
+    case ORGANIZER = 'ORGANIZER';
 }

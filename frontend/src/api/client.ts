@@ -32,6 +32,7 @@ const ALLOWED_UNAUTHENTICATED_PATHS = [
     '/legal/',
     '/cas-clients',
     '/q/',
+    '/refund-approval/',
     '/venue/',
     '/e/',
     '/festival/',

@@ -25,7 +25,12 @@ class GetOrganizerCalendarActionPublic extends BaseAction
     public function __invoke(Request $request, string $slug): JsonResponse|Response
     {
         try {
-            $calendar = $this->handler->handle($slug, $request->header(self::ACCESS_HEADER));
+            $calendar = $this->handler->handle(
+                $slug,
+                $request->header(self::ACCESS_HEADER),
+                $this->getClientIp($request),
+                $request->userAgent(),
+            );
         } catch (OrganizerCalendarNotFoundException) {
             return $this->notFoundResponse();
         } catch (OrganizerCalendarAccessDeniedException $exception) {

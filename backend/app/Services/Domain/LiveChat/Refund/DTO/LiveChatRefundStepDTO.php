@@ -21,6 +21,8 @@ class LiveChatRefundStepDTO extends BaseDataObject
 
     public const REFUNDED = 'refunded';
 
+    public const PENDING = 'pending';
+
     public const UNAVAILABLE = 'unavailable';
 
     /**

@@ -44,6 +44,11 @@ use HiEvents\Http\Actions\Sms\CreateSmsReplyTemplateAction;
 use HiEvents\Http\Actions\Sms\UpdateSmsReplyTemplateAction;
 use HiEvents\Http\Actions\Sms\DeleteSmsReplyTemplateAction;
 use HiEvents\Http\Actions\Sms\GetSmsOptOutsAction;
+use HiEvents\Http\Actions\Sms\Team\DeleteOrganizerTeamContactAction;
+use HiEvents\Http\Actions\Sms\Team\GetOrganizerTeamContactsAction;
+use HiEvents\Http\Actions\Sms\Team\SaveOrganizerTeamContactAction;
+use HiEvents\Http\Actions\Events\DailyReport\GetEventDailyReportAction;
+use HiEvents\Http\Actions\Events\DailyReport\UpdateEventDailyReportAction;
 use HiEvents\Http\Actions\Sms\AddSmsOptOutAction;
 use HiEvents\Http\Actions\Sms\RemoveSmsOptOutAction;
 use HiEvents\Http\Actions\Sms\GetSmsRemindersAction;
@@ -164,6 +169,7 @@ use HiEvents\Http\Actions\Organizers\Font\UploadOrganizerFontAction;
 use HiEvents\Http\Actions\Questions\Files\DownloadQuestionAnswerFileAction;
 use HiEvents\Http\Actions\Questions\Public\UploadQuestionAnswerFilePublicAction;
 use HiEvents\Services\Domain\Question\File\QuestionAnswerFileUrlGenerator;
+use HiEvents\Http\Actions\OrganizerCalendars\ConsultOrganizerCalendarActionPublic;
 use HiEvents\Http\Actions\OrganizerCalendars\DownloadOrganizerCalendarMediaActionPublic;
 use HiEvents\Http\Actions\OrganizerCalendars\GetOrganizerCalendarActionPublic;
 use HiEvents\Http\Actions\OrganizerCalendars\GetOrganizerCalendarPageActionPublic;
@@ -249,6 +255,10 @@ use HiEvents\Http\Actions\Organizers\Contacts\DeleteContactNoteAction;
 use HiEvents\Http\Actions\Organizers\Contacts\RemoveContactTagAction;
 use HiEvents\Http\Actions\Organizers\Orders\GetOrganizerOrdersAction;
 use HiEvents\Http\Actions\Organizers\Public\SendOrganizerContactMessagePublicAction;
+use HiEvents\Http\Actions\LiveChat\Approval\DecideRefundAction;
+use HiEvents\Http\Actions\LiveChat\Approval\DecideRefundPublicAction;
+use HiEvents\Http\Actions\LiveChat\Approval\GetRefundApprovalAction;
+use HiEvents\Http\Actions\LiveChat\Approval\GetRefundApprovalPublicAction;
 use HiEvents\Http\Actions\LiveChat\GetOrganizerLiveChatAction;
 use HiEvents\Http\Actions\LiveChat\GetOrganizerLiveChatsAction;
 use HiEvents\Http\Actions\LiveChat\Public\ConfirmLiveChatRefundPublicAction;
@@ -487,6 +497,11 @@ $router->middleware(['auth:api'])->group(
         $router->post('/organizers/{organizer_id}/sms/opt-outs', AddSmsOptOutAction::class);
         $router->delete('/organizers/{organizer_id}/sms/opt-outs/{opt_out_id}', RemoveSmsOptOutAction::class)
             ->where('opt_out_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/sms/team-contacts', GetOrganizerTeamContactsAction::class);
+        $router->post('/organizers/{organizer_id}/sms/team-contacts', SaveOrganizerTeamContactAction::class)
+            ->middleware('throttle:30,1');
+        $router->delete('/organizers/{organizer_id}/sms/team-contacts/{contact_id}', DeleteOrganizerTeamContactAction::class)
+            ->where('contact_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/sms/conversations', GetSmsConversationsAction::class);
         $router->get('/organizers/{organizer_id}/sms/unread-count', GetSmsUnreadCountAction::class);
         $router->get('/organizers/{organizer_id}/sms/campaigns', GetSmsCampaignsAction::class);
@@ -514,6 +529,11 @@ $router->middleware(['auth:api'])->group(
             ->middleware('throttle:20,1');
         $router->post('/organizers/{organizer_id}/sms/assistant/preview', PreviewSmsAssistantAction::class)
             ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/refund-approvals/{request_id}', GetRefundApprovalAction::class)
+            ->where('request_id', '[0-9]+');
+        $router->post('/organizers/{organizer_id}/refund-approvals/{request_id}/decision', DecideRefundAction::class)
+            ->where('request_id', '[0-9]+')
+            ->middleware('throttle:20,1');
         $router->get('/organizers/{organizer_id}/live-chats', GetOrganizerLiveChatsAction::class);
         $router->get('/organizers/{organizer_id}/live-chats/{live_chat_id}', GetOrganizerLiveChatAction::class)
             ->where('live_chat_id', '[0-9]+');
@@ -725,6 +745,8 @@ $router->middleware(['auth:api'])->group(
         $router->get('/events/{event_id}/messages/{message_id}/recipients', GetMessageRecipientsAction::class);
 
         // Event Settings
+        $router->get('/events/{event_id}/daily-report', GetEventDailyReportAction::class);
+        $router->put('/events/{event_id}/daily-report', UpdateEventDailyReportAction::class);
         $router->get('/events/{event_id}/settings', GetEventSettingsAction::class);
         $router->put('/events/{event_id}/settings', EditEventSettingsAction::class);
         $router->patch('/events/{event_id}/settings', PartialEditEventSettingsAction::class);
@@ -855,6 +877,12 @@ $router->prefix('/public')->group(
             ->middleware('throttle:20,1,live-chat-refund');
         $router->post('/live-chat/refund/confirm', ConfirmLiveChatRefundPublicAction::class)
             ->middleware('throttle:20,1,live-chat-refund');
+        $router->get('/refund-approvals/{request_id}', GetRefundApprovalPublicAction::class)
+            ->where('request_id', '[0-9]+')
+            ->middleware('throttle:30,1,refund-approval');
+        $router->post('/refund-approvals/{request_id}/decision', DecideRefundPublicAction::class)
+            ->where('request_id', '[0-9]+')
+            ->middleware('throttle:10,1,refund-approval');
         $router->get('/custom-domains/{domain}', GetOrganizerByCustomDomainPublicAction::class);
 
         // Facebook / Instagram connection (Meta OAuth redirect)
@@ -882,7 +910,10 @@ $router->prefix('/public')->group(
             ->where('code', '[A-Za-z0-9]{6,16}')
             ->middleware('throttle:60,1');
 
-        // Private organizer calendars (one-time SMS code, then 12 h access key in the X-Acces-Calendrier header)
+        // Private organizer calendars (first name or one-time SMS code, then a one year access key in the X-Acces-Calendrier header)
+        $router->post('/calendriers/{slug}/consulter', ConsultOrganizerCalendarActionPublic::class)
+            ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN)
+            ->middleware('throttle:organizer-calendar-consult');
         $router->post('/calendriers/{slug}/code', RequestOrganizerCalendarCodeActionPublic::class)
             ->where('slug', OrganizerCalendarResolver::SLUG_PATTERN)
             ->middleware('throttle:organizer-calendar-code');

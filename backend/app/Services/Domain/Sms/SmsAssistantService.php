@@ -78,7 +78,7 @@ class SmsAssistantService
 
     /**
      * Drafts a reply for a new customer SMS. Does nothing when the SMS is no longer the last message of the conversation
-     * or when the customer replied STOP. A conversation waiting for the team is only a signal: the assistant keeps working.
+     * when the customer replied STOP, or in a team conversation. A conversation waiting for the team is only a signal: the assistant keeps working.
      *
      * @throws SmsAssistantUnavailableException
      * @throws SmsAssistantLimitReachedException
@@ -89,7 +89,7 @@ class SmsAssistantService
         $conversation = $this->conversationRepository->findFirstWhere([
             SmsConversationDomainObjectAbstract::ID => $conversationId,
         ]);
-        if ($conversation === null) {
+        if ($conversation === null || $conversation->getIsTeam()) {
             return null;
         }
 
@@ -121,6 +121,10 @@ class SmsAssistantService
      */
     public function regenerate(SmsConversationDomainObject $conversation): SmsConversationDomainObject
     {
+        if ($conversation->getIsTeam()) {
+            throw new SmsAssistantFailedException(__('The customer assistant does not answer the organizer team.'));
+        }
+
         $settings = $this->findSettings($conversation->getOrganizerId());
         if (! $this->isActiveFor($settings)) {
             throw new SmsAssistantUnavailableException(__('Turn on the SMS assistant in Settings to get suggested replies.'));

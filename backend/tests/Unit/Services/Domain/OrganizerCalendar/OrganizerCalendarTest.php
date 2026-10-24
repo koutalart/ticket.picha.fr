@@ -150,7 +150,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_requesting_a_code_sends_an_automatic_sms_and_stores_only_a_hash(): void
     {
-        $this->import();
+        $this->importInCodeMode();
 
         $response = $this->postJson($this->api('/code'));
 
@@ -169,7 +169,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_one_code_every_five_minutes_and_five_per_day(): void
     {
-        $this->import();
+        $this->importInCodeMode();
 
         $this->postJson($this->api('/code'))->assertOk();
         $limited = $this->postJson($this->api('/code'));
@@ -195,7 +195,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_codes_that_opened_the_calendar_do_not_count_against_the_daily_limit(): void
     {
-        $this->import();
+        $this->importInCodeMode();
 
         for ($i = 0; $i < 5; $i++) {
             $this->postJson($this->api('/code'))->assertOk();
@@ -209,7 +209,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_a_code_that_could_not_be_sent_is_discarded(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $this->smsFails = true;
 
         $this->postJson($this->api('/code'))->assertStatus(503);
@@ -221,7 +221,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_verifying_the_code_returns_a_one_year_jeton_once(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $this->postJson($this->api('/code'));
 
         $response = $this->postJson($this->api('/verifier'), ['code' => $this->lastCode()]);
@@ -237,7 +237,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_a_code_allows_five_attempts_then_dies(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $this->postJson($this->api('/code'));
         $code = $this->lastCode();
         $wrong = $code === '000000' ? '111111' : '000000';
@@ -252,7 +252,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_an_expired_code_is_refused(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $this->postJson($this->api('/code'));
 
         Carbon::setTestNow(Carbon::now()->addMinutes(16));
@@ -262,7 +262,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_a_new_code_replaces_the_previous_one(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $this->postJson($this->api('/code'));
         $first = $this->lastCode();
 
@@ -277,7 +277,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_a_field_named_token_is_not_accepted_as_the_code(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $this->postJson($this->api('/code'));
 
         $this->postJson($this->api('/verifier'), ['token' => $this->lastCode()])->assertStatus(422);
@@ -285,7 +285,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_content_requires_a_valid_access(): void
     {
-        $this->import();
+        $this->importInCodeMode();
 
         $missing = $this->getJson($this->api());
         $missing->assertStatus(401);
@@ -297,7 +297,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_content_replaces_media_by_signed_urls_and_keeps_the_rest(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $jeton = $this->grantAccess();
 
         $response = $this->getJson($this->api(), ['X-Acces-Calendrier' => $jeton]);
@@ -321,7 +321,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_a_recognised_device_stays_open_and_is_renewed_on_each_visit(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $jeton = $this->grantAccess();
         $this->app['auth']->forgetGuards();
 
@@ -337,7 +337,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_an_unused_device_is_forgotten_after_a_year(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $jeton = $this->grantAccess();
         $this->app['auth']->forgetGuards();
 
@@ -348,7 +348,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_a_revoked_device_must_request_a_new_code(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $jeton = $this->grantAccess();
 
         $this->artisan('calendar:revoke', ['slug' => self::SLUG])->assertSuccessful();
@@ -358,7 +358,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_media_urls_stream_with_range_support_and_stop_after_revocation(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $jeton = $this->grantAccess();
         $url = $this->getJson($this->api(), ['X-Acces-Calendrier' => $jeton])->json('jours.0.p.0.media.1');
 
@@ -378,7 +378,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_media_urls_last_twelve_hours_and_are_signed_again_on_the_next_visit(): void
     {
-        $this->import();
+        $this->importInCodeMode();
         $jeton = $this->grantAccess();
         $url = $this->getJson($this->api(), ['X-Acces-Calendrier' => $jeton])->json('jours.0.p.0.vignette');
 
@@ -391,7 +391,7 @@ class OrganizerCalendarTest extends TestCase
 
     public function test_page_is_served_and_unknown_slugs_answer_404(): void
     {
-        $this->import();
+        $this->importInCodeMode();
 
         $page = $this->get('/public/calendriers/'.self::SLUG.'/page');
         $page->assertOk()->assertHeader('X-Robots-Tag', 'noindex, nofollow');
@@ -432,6 +432,12 @@ class OrganizerCalendarTest extends TestCase
     private function api(string $suffix = ''): string
     {
         return '/public/calendriers/'.self::SLUG.$suffix;
+    }
+
+    private function importInCodeMode(): void
+    {
+        $this->import()->assertExitCode(0)->run();
+        $this->artisan('calendar:access-mode', ['slug' => self::SLUG, 'mode' => 'code'])->assertExitCode(0)->run();
     }
 
     private function import(array $options = []): mixed

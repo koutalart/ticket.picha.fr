@@ -1,6 +1,6 @@
 import {t} from "@lingui/macro";
 import {useEffect, useRef} from "react";
-import {Badge, Loader, SegmentedControl, Text, TextInput, UnstyledButton} from "@mantine/core";
+import {Badge, Group, Loader, SegmentedControl, Text, TextInput, UnstyledButton} from "@mantine/core";
 import {IconSearch} from "@tabler/icons-react";
 import {SmsConversation, SmsConversationFilter} from "../../../../types.ts";
 import {relativeDate} from "../../../../utilites/dates.ts";
@@ -115,10 +115,17 @@ export const ConversationList = ({
                                 <Badge size="sm" circle>{conversation.unread_count}</Badge>
                             )}
                         </div>
-                        {conversation.status === 'NEEDS_HUMAN' && (
-                            <Badge size="xs" color="orange" variant="light" mt={4}>
-                                {conversationStatusLabel(conversation.status)}
-                            </Badge>
+                        {(conversation.is_team || conversation.status === 'NEEDS_HUMAN') && (
+                            <Group gap={4} mt={4}>
+                                {conversation.is_team && (
+                                    <Badge size="xs" color="violet" variant="light">{t`Team`}</Badge>
+                                )}
+                                {conversation.status === 'NEEDS_HUMAN' && (
+                                    <Badge size="xs" color="orange" variant="light">
+                                        {conversationStatusLabel(conversation.status)}
+                                    </Badge>
+                                )}
+                            </Group>
                         )}
                     </UnstyledButton>
                 ))}

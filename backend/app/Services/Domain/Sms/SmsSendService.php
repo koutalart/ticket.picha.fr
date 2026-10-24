@@ -72,6 +72,7 @@ class SmsSendService
             SmsMessageDomainObjectAbstract::AUTO_REPLY_TO_MESSAGE_ID => $sms->autoReplyToMessageId,
             SmsMessageDomainObjectAbstract::AUTO_REPLY_TYPE => $sms->autoReplyType?->name,
             SmsMessageDomainObjectAbstract::LINE_SETTINGS_ID => $line->getId(),
+            SmsMessageDomainObjectAbstract::IS_SUPERVISION => $sms->isSupervision,
         ]);
 
         $requestId = self::REQUEST_ID_PREFIX.$message->getId();

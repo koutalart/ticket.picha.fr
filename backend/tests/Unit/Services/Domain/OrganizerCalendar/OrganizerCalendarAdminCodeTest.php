@@ -184,6 +184,7 @@ class OrganizerCalendarAdminCodeTest extends TestCase
             'title' => 'Calendrier',
             'phone' => '+262639250206',
             'content' => ['jours' => []],
+            'access_mode' => 'code',
         ]);
     }
 

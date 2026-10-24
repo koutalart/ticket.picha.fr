@@ -18,14 +18,15 @@ import {CustomerCard} from "./CustomerCard.tsx";
 import {CampaignList} from "./CampaignList.tsx";
 import {ReminderList} from "./ReminderList.tsx";
 import {LiveChatList} from "./LiveChatList.tsx";
+import {TeamView} from "./TeamView.tsx";
 import classes from "./Sms.module.scss";
 
 const CONVERSATION_PARAM = 'conversation';
 const VIEW_PARAM = 'view';
 
-type SmsView = 'conversations' | 'campaigns' | 'reminders' | 'chats';
+type SmsView = 'conversations' | 'campaigns' | 'reminders' | 'chats' | 'team';
 
-const VIEWS: SmsView[] = ['conversations', 'reminders', 'campaigns', 'chats'];
+const VIEWS: SmsView[] = ['conversations', 'reminders', 'campaigns', 'chats', 'team'];
 
 const Sms = () => {
     const {organizerId} = useParams();
@@ -113,6 +114,7 @@ const Sms = () => {
                     {value: 'reminders', label: t`Reminders`},
                     {value: 'campaigns', label: t`Campaigns`},
                     ...(settings?.live_chat_enabled || view === 'chats' ? [{value: 'chats', label: t`Web chats`}] : []),
+                    {value: 'team', label: t`Team`},
                 ]}
             />
 
@@ -127,6 +129,8 @@ const Sms = () => {
                     }}
                 />
             )}
+
+            {view === 'team' && <TeamView organizerId={organizerId!} settings={settings}/>}
 
             {view === 'campaigns' && (
                 <CampaignList organizerId={organizerId} defaultCurrency={organizer?.currency || 'EUR'}/>
@@ -160,7 +164,7 @@ const Sms = () => {
                     detail={selectedId ? detailQuery.data : undefined}
                     isLoading={!!selectedId && detailQuery.isLoading}
                     canSend={canSend}
-                    assistantEnabled={assistantEnabled}
+                    assistantEnabled={assistantEnabled && !detailQuery.data?.conversation.is_team}
                     onBack={() => select(null)}
                     onOpenCustomer={() => setCustomerOpen(true)}
                 />

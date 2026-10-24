@@ -22,5 +22,7 @@ class UpdateOrganizerSmsSettingsDTO extends BaseDataObject
         public readonly bool|Optional $liveChatEnabled = new Optional,
         public readonly string|Optional|null $liveChatRelayLabel = new Optional,
         public readonly bool|Optional $defaultRemindersEnabled = new Optional,
+        public readonly bool|Optional $organizerAssistantEnabled = new Optional,
+        public readonly string|Optional|null $organizerAssistantInstructions = new Optional,
     ) {}
 }

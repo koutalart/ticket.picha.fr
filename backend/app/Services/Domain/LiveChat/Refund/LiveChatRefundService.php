@@ -20,6 +20,7 @@ use HiEvents\Exceptions\LiveChatRefundNotEligibleException;
 use HiEvents\Exceptions\LiveChatRefundSelectionException;
 use HiEvents\Helper\Currency;
 use HiEvents\Helper\CustomerLocale;
+use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Mail\LiveChat\LiveChatRefundAlertMail;
 use HiEvents\Mail\LiveChat\LiveChatRefundCodeMail;
 use HiEvents\Repository\Eloquent\Value\OrderAndDirection;
@@ -29,6 +30,9 @@ use HiEvents\Repository\Interfaces\LiveChatSessionRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Services\Domain\LiveChat\LiveChatService;
+use HiEvents\Services\Domain\LiveChat\Refund\Approval\RefundApprovalSchedule;
+use HiEvents\Services\Domain\LiveChat\Refund\Approval\RefundApprovalService;
+use HiEvents\Services\Domain\LiveChat\Refund\Approval\RefundCustomerNotifier;
 use HiEvents\Services\Domain\LiveChat\Refund\DTO\LiveChatPreparedRefundDTO;
 use HiEvents\Services\Domain\LiveChat\Refund\DTO\LiveChatRefundStepDTO;
 use HiEvents\Services\Domain\LiveChat\Refund\DTO\LiveChatRefundTicketDTO;
@@ -40,9 +44,10 @@ use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
- * Automatic refund from the web chat, for orders with a cancellation protection product.
- * Every decision is taken here, on the server: the order is identified by its number and its e-mail, the visitor
+ * Refund from the web chat, for orders with a cancellation protection product.
+ * Every check is done here, on the server: the order is identified by its number and its e-mail, the visitor
  * proves they own that e-mail with a code, and the amount is recomputed from the order (ticket prices only).
+ * Nothing is refunded until a member of the organizer team approves the request (RefundApprovalService).
  */
 class LiveChatRefundService
 {
@@ -70,6 +75,8 @@ class LiveChatRefundService
         private readonly Mailer $mailer,
         private readonly Repository $config,
         private readonly LoggerInterface $logger,
+        private readonly RefundApprovalService $approvalService,
+        private readonly RefundCustomerNotifier $customerNotifier,
     ) {}
 
     /**
@@ -219,17 +226,19 @@ class LiveChatRefundService
     }
 
     /**
-     * Checks the request again with the tickets chosen by the visitor and locks it. The amount is recomputed
-     * from the order: nothing sent by the visitor but the ticket ids is used.
+     * Checks the request with the tickets chosen by the visitor and puts it in the hands of the organizer team:
+     * nothing is refunded before one of them approves it.
      *
      * @param  int[]  $attendeeIds
      *
      * @throws LiveChatRefundSelectionException
      * @throws LiveChatRefundHandOffException
      * @throws LiveChatRefundNotEligibleException
+     * @throws Throwable
      */
-    public function prepare(LiveChatSessionDomainObject $session, array $attendeeIds): LiveChatPreparedRefundDTO
+    public function submit(LiveChatSessionDomainObject $session, array $attendeeIds, ?Carbon $now = null): LiveChatRefundStepDTO
     {
+        $now = ($now ?? Carbon::now('UTC'))->copy()->utc();
         $request = $this->latestRequest($session, LiveChatRefundRequestStatus::VERIFIED);
         if ($request === null || $this->verificationExpired($request)) {
             throw new LiveChatRefundSelectionException($this->text($session, 'Your check has expired. Ask for a refund again to receive a new code.'));
@@ -238,29 +247,31 @@ class LiveChatRefundService
         $eligibility = $this->eligibilityService->check($this->eligibilityService->orderOf($request));
         $tickets = $this->calculator->select($eligibility->coverage, $attendeeIds);
         $amount = $this->calculator->total($tickets);
+        $order = $eligibility->order;
 
         $maxAmount = (float) $this->config->get('services.live_chat.auto_refund_max_amount', 300);
         if ($maxAmount > 0 && $amount > $maxAmount) {
             $this->markHandedOff($request, $tickets, $amount, 'amount above the automatic refund cap');
 
             throw new LiveChatRefundHandOffException(__('amount of :amount above the automatic refund cap', [
-                'amount' => $this->formatAmount($amount, $eligibility->order->getCurrency()),
+                'amount' => $this->formatAmount($amount, $order->getCurrency()),
             ]));
         }
 
-        $maxPerDay = (int) $this->config->get('services.live_chat.auto_refund_max_per_organizer_per_day', 10);
-        if ($maxPerDay > 0 && $this->refundsInLastDay($session->getOrganizerId()) >= $maxPerDay) {
-            $this->markHandedOff($request, $tickets, $amount, 'daily cap of automatic refunds reached');
-
-            throw new LiveChatRefundHandOffException(__('daily cap of automatic refunds reached'));
-        }
+        $session = $this->sessionRepository->findById($session->getId());
+        $phone = $session->getVisitorPhone() !== null ? SmsPhoneNormalizer::normalize($session->getVisitorPhone()) : null;
 
         $locked = $this->requestRepository->updateWhere(
             [
-                LiveChatRefundRequestDomainObjectAbstract::STATUS => LiveChatRefundRequestStatus::PROCESSING->name,
+                LiveChatRefundRequestDomainObjectAbstract::STATUS => LiveChatRefundRequestStatus::AWAITING_APPROVAL->name,
                 LiveChatRefundRequestDomainObjectAbstract::ATTENDEE_IDS => json_encode($this->ids($tickets)),
                 LiveChatRefundRequestDomainObjectAbstract::AMOUNT => $amount,
-                LiveChatRefundRequestDomainObjectAbstract::CURRENCY => $eligibility->order->getCurrency(),
+                LiveChatRefundRequestDomainObjectAbstract::CURRENCY => $order->getCurrency(),
+                LiveChatRefundRequestDomainObjectAbstract::CUSTOMER_PHONE => $phone,
+                LiveChatRefundRequestDomainObjectAbstract::CUSTOMER_EMAIL => $order->getEmail() !== null ? mb_strtolower(trim($order->getEmail())) : null,
+                LiveChatRefundRequestDomainObjectAbstract::AWAITING_APPROVAL_AT => $now->toDateTimeString(),
+                LiveChatRefundRequestDomainObjectAbstract::NEXT_REMINDER_AT => RefundApprovalSchedule::withinDay($now)->toDateTimeString(),
+                LiveChatRefundRequestDomainObjectAbstract::NEXT_CUSTOMER_UPDATE_AT => RefundApprovalSchedule::nextCustomerUpdateAt($now)->toDateTimeString(),
             ],
             [
                 LiveChatRefundRequestDomainObjectAbstract::ID => $request->getId(),
@@ -271,12 +282,104 @@ class LiveChatRefundService
             throw new LiveChatRefundSelectionException($this->text($session, 'Your check has expired. Ask for a refund again to receive a new code.'));
         }
 
+        $request = $this->requestRepository->findById($request->getId());
+        $this->recordSelection($session, $tickets);
+        $agentMessage = $this->liveChatService->record($session, LiveChatAuthorType::AGENT, $this->text(
+            $session,
+            'Your refund request :reference for :amount is recorded. The organizer will answer very quickly and I will keep you posted.',
+            ['reference' => RefundApprovalService::reference($request), 'amount' => $this->formatAmount($amount, $order->getCurrency())],
+        ));
+
+        $this->approvalService->submitted($request, $now);
+
+        return new LiveChatRefundStepDTO(
+            session: $this->sessionRepository->findById($session->getId()),
+            step: LiveChatRefundStepDTO::PENDING,
+            messages: collect([$agentMessage]),
+            currency: $order->getCurrency(),
+            amount: $amount,
+        );
+    }
+
+    /**
+     * Checks again a request approved by the organizer team, with the guards of an automatic refund (amount cap and
+     * daily cap). Beyond them, or when the order changed, a human takes over.
+     *
+     * @throws LiveChatRefundSelectionException
+     * @throws LiveChatRefundHandOffException
+     * @throws LiveChatRefundNotEligibleException
+     */
+    public function prepareApproved(LiveChatRefundRequestDomainObject $request): LiveChatPreparedRefundDTO
+    {
+        if ($request->getStatus() !== LiveChatRefundRequestStatus::PROCESSING->name) {
+            throw new LiveChatRefundSelectionException(__('This refund request was already handled'));
+        }
+
+        $eligibility = $this->eligibilityService->check($this->eligibilityService->orderOf($request));
+        $tickets = $this->calculator->select($eligibility->coverage, array_map('intval', (array) $request->getAttendeeIds()));
+        $amount = $this->calculator->total($tickets);
+
+        $maxAmount = (float) $this->config->get('services.live_chat.auto_refund_max_amount', 300);
+        if ($maxAmount > 0 && $amount > $maxAmount) {
+            throw new LiveChatRefundHandOffException(__('amount of :amount above the automatic refund cap', [
+                'amount' => $this->formatAmount($amount, $eligibility->order->getCurrency()),
+            ]));
+        }
+
+        $maxPerDay = (int) $this->config->get('services.live_chat.auto_refund_max_per_organizer_per_day', 10);
+        if ($maxPerDay > 0 && $this->refundsInLastDay($request->getOrganizerId(), $request->getId()) >= $maxPerDay) {
+            throw new LiveChatRefundHandOffException(__('daily cap of automatic refunds reached'));
+        }
+
         return new LiveChatPreparedRefundDTO(
-            request: $this->requestRepository->findById($request->getId()),
+            request: $request,
             eligibility: $eligibility,
             tickets: $tickets,
             amount: $amount,
         );
+    }
+
+    /**
+     * The refund of an approved request went through: the customer is told, the organizer and the platform get the alert.
+     */
+    public function approvedRefunded(LiveChatPreparedRefundDTO $prepared): void
+    {
+        $request = $prepared->request;
+        $now = Carbon::now('UTC')->toDateTimeString();
+
+        $this->requestRepository->updateFromArray($request->getId(), [
+            LiveChatRefundRequestDomainObjectAbstract::STATUS => LiveChatRefundRequestStatus::REFUNDED->name,
+            LiveChatRefundRequestDomainObjectAbstract::REFUNDED_AT => $now,
+        ]);
+
+        if ($request->getLiveChatSessionId() !== null) {
+            $this->sessionRepository->updateWhere(
+                [LiveChatSessionDomainObjectAbstract::REFUNDED_AT => $now],
+                [LiveChatSessionDomainObjectAbstract::ID => $request->getLiveChatSessionId()],
+            );
+        }
+
+        $this->customerNotifier->notify($request, __(
+            'Good news, your refund request :reference is approved: :amount will be refunded to the card used for the order, usually within 5 to 10 days depending on your bank. The cancelled tickets are no longer valid.',
+            ['reference' => RefundApprovalService::reference($request), 'amount' => $this->formatAmount($prepared->amount, $prepared->eligibility->order->getCurrency())],
+            $this->customerNotifier->locale($request),
+        ));
+
+        $this->sendAlert($request->getOrganizerId(), $request->getLiveChatSessionId(), $prepared);
+    }
+
+    /**
+     * An approved request that cannot be refunded automatically (caps, order changed, Stripe error): a human takes over.
+     */
+    public function approvedHandedOff(LiveChatRefundRequestDomainObject $request, LiveChatRefundRequestStatus $status, string $reason): void
+    {
+        $this->setStatus($request, $status, mb_substr($reason, 0, self::MAX_REASON_LENGTH));
+
+        $this->customerNotifier->notify($request, __(
+            'Your refund request :reference is approved. The organizer is finishing it personally and will get back to you.',
+            ['reference' => RefundApprovalService::reference($request)],
+            $this->customerNotifier->locale($request),
+        ));
     }
 
     /**
@@ -286,59 +389,6 @@ class LiveChatRefundService
     {
         $this->liveChatService->record($session, LiveChatAuthorType::VISITOR, $this->text($session, 'Cancel these tickets: :tickets.', [
             'tickets' => $tickets->map(fn (LiveChatRefundTicketDTO $ticket) => trim($ticket->name.' ('.$ticket->category.')'))->implode(', '),
-        ]));
-    }
-
-    /**
-     * @throws Throwable
-     */
-    public function refunded(LiveChatSessionDomainObject $session, LiveChatPreparedRefundDTO $prepared): LiveChatRefundStepDTO
-    {
-        $now = Carbon::now('UTC')->toDateTimeString();
-        $order = $prepared->eligibility->order;
-
-        $this->requestRepository->updateFromArray($prepared->request->getId(), [
-            LiveChatRefundRequestDomainObjectAbstract::STATUS => LiveChatRefundRequestStatus::REFUNDED->name,
-            LiveChatRefundRequestDomainObjectAbstract::REFUNDED_AT => $now,
-        ]);
-
-        $agentMessage = $this->liveChatService->record($session, LiveChatAuthorType::AGENT, $this->text(
-            $session,
-            'Done: :amount will be refunded to the card used for the order, usually within 5 to 10 days depending on your bank. The cancelled tickets are no longer valid and you will receive a confirmation e-mail.',
-            ['amount' => $this->formatAmount($prepared->amount, $order->getCurrency())],
-        ), [
-            LiveChatSessionDomainObjectAbstract::REFUNDED_AT => $now,
-        ]);
-
-        $this->sendAlert($session, $prepared);
-
-        return new LiveChatRefundStepDTO(
-            session: $this->sessionRepository->findById($session->getId()),
-            step: LiveChatRefundStepDTO::REFUNDED,
-            messages: collect([$agentMessage]),
-            currency: $order->getCurrency(),
-            amount: $prepared->amount,
-        );
-    }
-
-    /**
-     * Stripe refused or failed: nothing was refunded (the cancellations were rolled back), a person takes over.
-     *
-     * @throws Throwable
-     */
-    public function refundFailed(LiveChatSessionDomainObject $session, LiveChatPreparedRefundDTO $prepared, Throwable $error): LiveChatRefundStepDTO
-    {
-        $this->logger->error('Live chat: automatic refund failed', [
-            'live_chat_session_id' => $session->getId(),
-            'order_id' => $prepared->eligibility->order->getId(),
-            'amount' => $prepared->amount,
-            'error' => $error->getMessage(),
-        ]);
-
-        $this->setStatus($prepared->request, LiveChatRefundRequestStatus::FAILED, mb_substr($error->getMessage(), 0, self::MAX_REASON_LENGTH));
-
-        return $this->handOff($session, null, __('the automatic refund of order :reference failed', [
-            'reference' => $prepared->eligibility->order->getPublicId(),
         ]));
     }
 
@@ -419,15 +469,15 @@ class LiveChatRefundService
         );
     }
 
-    private function sendAlert(LiveChatSessionDomainObject $session, LiveChatPreparedRefundDTO $prepared): void
+    private function sendAlert(int $organizerId, ?int $sessionId, LiveChatPreparedRefundDTO $prepared): void
     {
-        $organizer = $this->organizer($session);
+        $organizer = $this->organizerRepository->findById($organizerId);
         $recipients = array_values(array_unique(array_filter([
             trim((string) $organizer->getEmail()),
             trim((string) $this->config->get('services.sms_watchdog.alert_email')),
         ])));
 
-        $transcript = $this->messageRepository->findLatestForSession($session->getId(), self::TRANSCRIPT_LENGTH);
+        $transcript = $sessionId !== null ? $this->messageRepository->findLatestForSession($sessionId, self::TRANSCRIPT_LENGTH) : collect();
 
         foreach ($recipients as $recipient) {
             try {
@@ -444,7 +494,7 @@ class LiveChatRefundService
                     ));
             } catch (Throwable $exception) {
                 $this->logger->error('Live chat: refund alert not sent', [
-                    'live_chat_session_id' => $session->getId(),
+                    'live_chat_session_id' => $sessionId,
                     'error' => $exception->getMessage(),
                 ]);
             }
@@ -464,9 +514,10 @@ class LiveChatRefundService
         ]);
     }
 
-    private function refundsInLastDay(int $organizerId): int
+    private function refundsInLastDay(int $organizerId, ?int $exceptRequestId = null): int
     {
         return $this->requestRepository->countWhere([
+            ...($exceptRequestId !== null ? [[LiveChatRefundRequestDomainObjectAbstract::ID, '!=', $exceptRequestId]] : []),
             LiveChatRefundRequestDomainObjectAbstract::ORGANIZER_ID => $organizerId,
             [LiveChatRefundRequestDomainObjectAbstract::STATUS, 'in', [
                 LiveChatRefundRequestStatus::REFUNDED->name,
