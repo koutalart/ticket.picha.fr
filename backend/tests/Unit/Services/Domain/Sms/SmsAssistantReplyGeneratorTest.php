@@ -76,6 +76,7 @@ class SmsAssistantReplyGeneratorTest extends TestCase
         self::assertStringContainsString('160 caractères', $systemPrompt);
         self::assertStringContainsString('sans les frais', $systemPrompt);
         self::assertStringContainsString('Ne sois pas répétitif', $systemPrompt);
+        self::assertStringNotContainsString("avec l'équipe", $systemPrompt);
         self::assertStringContainsString('Lien personnel du client : aucun', $sent);
         self::assertStringContainsString('Tutoie les clients.', $sent);
         self::assertStringContainsString('Halloween', $sent);
@@ -275,14 +276,14 @@ class SmsAssistantReplyGeneratorTest extends TestCase
                 'reply' => 'Ça commence à 22h.',
                 'reason' => null,
                 'auto_send_safe' => true,
-                'holding_reply' => "Je vérifie avec l'équipe — je reviens vers vous très vite\n\nKultur'm via PICHA Ticket",
+                'holding_reply' => "Je vérifie — je reviens vers vous très vite\n\nKultur'm via PICHA Ticket",
             ]);
         });
 
         $result = $this->generator()->generate($this->request());
 
         self::assertTrue($result->autoSendSafe);
-        self::assertSame("Je vérifie avec l'équipe, je reviens vers vous très vite\n\nKultur'm via PICHA Ticket", $result->holdingReply);
+        self::assertSame("Je vérifie, je reviens vers vous très vite\n\nKultur'm via PICHA Ticket", $result->holdingReply);
         self::assertContains('auto_send_safe', $sentSchema['required']);
         self::assertContains('holding_reply', $sentSchema['required']);
     }
@@ -295,14 +296,14 @@ class SmsAssistantReplyGeneratorTest extends TestCase
             'reply' => null,
             'reason' => "Demande d'invitation",
             'auto_send_safe' => true,
-            'holding_reply' => "Bonne question, je vérifie avec l'équipe et je reviens vers vous très vite 🎶",
+            'holding_reply' => 'Bonne question, je vérifie et je reviens vers vous très vite 🎶',
         ]));
 
         $result = $this->generator()->generate($this->request());
 
         self::assertSame(SmsAssistantOutcome::NEEDS_HUMAN, $result->outcome);
         self::assertFalse($result->autoSendSafe);
-        self::assertSame("Bonne question, je vérifie avec l'équipe et je reviens vers vous très vite 🎶", $result->holdingReply);
+        self::assertSame('Bonne question, je vérifie et je reviens vers vous très vite 🎶', $result->holdingReply);
     }
 
     public function test_holding_reply_with_a_link_or_a_missing_flag_is_ignored(): void

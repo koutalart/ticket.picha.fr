@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Application\Handlers\Sms;
 
+use HiEvents\DomainObjects\Enums\SmsAutoReplySkipReason;
 use HiEvents\DomainObjects\Enums\SmsAutoReplyType;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
@@ -29,6 +30,10 @@ class SendSmsAutoReplyHandler
         $context = ['sms_conversation_id' => $conversationId, 'sms_message_id' => $messageId];
 
         if (! $check->isAllowed()) {
+            if ($check->skipReason === SmsAutoReplySkipReason::HOLDING_DISABLED && $check->conversation !== null) {
+                $this->autoReplyService->keepWaitingForTeam($check->conversation);
+            }
+
             $this->logger->info('SMS assistant: nothing sent automatically', $context + ['reason' => $check->skipReason?->name]);
 
             return null;

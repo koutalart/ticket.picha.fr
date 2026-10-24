@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useParams} from "react-router";
 import {useForm} from "@mantine/form";
 import {t} from "@lingui/macro";
-import {Alert, Badge, Button, Group, Paper, Switch, Text, Textarea, TextInput} from "@mantine/core";
+import {Alert, Badge, Button, Checkbox, Group, Paper, Switch, Text, Textarea, TextInput} from "@mantine/core";
 import {IconEye, IconRobot, IconUserExclamation} from "@tabler/icons-react";
 import {Card} from "../../../../../common/Card";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
@@ -33,6 +33,7 @@ export const SmsAssistantSettings = () => {
             assistant_instructions: '',
             assistant_auto_send: false,
             assistant_holding_reply: '',
+            assistant_holding_reply_enabled: true,
         },
     });
 
@@ -43,6 +44,7 @@ export const SmsAssistantSettings = () => {
                 assistant_instructions: settings.assistant_instructions || '',
                 assistant_auto_send: !!settings.assistant_auto_send,
                 assistant_holding_reply: settings.assistant_holding_reply || '',
+                assistant_holding_reply_enabled: settings.assistant_holding_reply_enabled ?? true,
             });
         }
     }, [settingsQuery.isFetched]);
@@ -55,6 +57,7 @@ export const SmsAssistantSettings = () => {
                 assistant_instructions: values.assistant_instructions.trim() || null,
                 assistant_auto_send: values.assistant_auto_send,
                 assistant_holding_reply: values.assistant_holding_reply.trim() || null,
+                assistant_holding_reply_enabled: values.assistant_holding_reply_enabled,
             },
         }, {
             onSuccess: ({data}) => {
@@ -63,6 +66,7 @@ export const SmsAssistantSettings = () => {
                     assistant_instructions: data.assistant_instructions || '',
                     assistant_auto_send: !!data.assistant_auto_send,
                     assistant_holding_reply: data.assistant_holding_reply || '',
+                    assistant_holding_reply_enabled: data.assistant_holding_reply_enabled ?? true,
                 });
                 showSuccess(t`Assistant settings saved`);
             },
@@ -135,16 +139,24 @@ export const SmsAssistantSettings = () => {
                                     {t`Safeguards: at most one automatic reply per customer SMS, nothing if you or your team already wrote to the contact after it, no reply to a simple "ok" or "thanks", and never after STOP. Complaints, place or invitation requests, press, minors, accessibility, refunds and any doubt stay a suggestion to validate: the customer only gets a holding reply that promises nothing, and the conversation stays "To handle".`}
                                 </Text>
                             </Alert>
-                            <Textarea
-                                {...form.getInputProps('assistant_holding_reply')}
-                                label={t`Holding reply`}
-                                description={t`Used when the assistant cannot write one in your tone. Add your signature if you want one. Leave empty to use: "Good question, I am checking with the team and will get back to you very soon."`}
-                                autosize
-                                minRows={2}
-                                maxRows={6}
-                                maxLength={MAX_HOLDING_REPLY_LENGTH}
+                            <Checkbox
+                                {...form.getInputProps('assistant_holding_reply_enabled', {type: 'checkbox'})}
+                                label={t`Send a holding reply when the assistant cannot answer`}
+                                description={t`Unchecked, nothing leaves in that case and the conversation stays "To handle". Your team contacts and the platform supervision never get an automatic reply.`}
                                 mb="md"
                             />
+                            {form.values.assistant_holding_reply_enabled && (
+                                <Textarea
+                                    {...form.getInputProps('assistant_holding_reply')}
+                                    label={t`Holding reply`}
+                                    description={t`Used when the assistant cannot write one in your tone. Add your signature if you want one. Leave empty to use: "Good question, I am checking and will get back to you very soon."`}
+                                    autosize
+                                    minRows={2}
+                                    maxRows={6}
+                                    maxLength={MAX_HOLDING_REPLY_LENGTH}
+                                    mb="md"
+                                />
+                            )}
                         </>
                     )}
                     <Group mb="lg">

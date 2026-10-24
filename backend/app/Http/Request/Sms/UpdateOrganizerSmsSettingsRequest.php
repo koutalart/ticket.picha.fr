@@ -22,6 +22,7 @@ class UpdateOrganizerSmsSettingsRequest extends BaseRequest
             'notify_on_inbound_sms' => ['sometimes', 'boolean'],
             'assistant_enabled' => ['sometimes', 'boolean'],
             'assistant_auto_send' => ['sometimes', 'boolean'],
+            'assistant_holding_reply_enabled' => ['sometimes', 'boolean'],
             'sms_default_reminders_enabled' => ['sometimes', 'boolean'],
             'assistant_holding_reply' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_HOLDING_REPLY_LENGTH],
             'assistant_instructions' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_INSTRUCTIONS_LENGTH],

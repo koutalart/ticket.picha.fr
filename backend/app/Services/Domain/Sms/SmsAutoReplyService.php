@@ -28,6 +28,8 @@ use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
 use HiEvents\Services\Domain\Sms\DTO\SmsAssistantResultDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsAutoReplyCheckDTO;
+use HiEvents\Services\Domain\Sms\Team\OrganizerTeamContactService;
+use HiEvents\Services\Domain\Sms\Team\PlatformSupervisorService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -35,7 +37,9 @@ use Illuminate\Support\Collection;
  * Answers a customer SMS on its own when the organizer allows it. The assistant's draft leaves only for a simple
  * question answered from the organizer's instructions and data. Otherwise (sensitive case, doubt, conversation waiting
  * for the team) only a holding reply leaves, which promises nothing, and the conversation stays waiting for the team.
- * At most one automatic reply per customer SMS, and none once somebody wrote to the contact after it.
+ * At most one automatic reply per customer SMS, and none once somebody wrote to the contact after it. A team contact of
+ * any organizer of the line and a platform supervisor never get any automatic reply, and the organizer can turn the
+ * holding reply off.
  */
 class SmsAutoReplyService
 {
@@ -57,6 +61,8 @@ class SmsAutoReplyService
         private readonly SmsConversationService $conversationService,
         private readonly SmsLineService $lineService,
         private readonly CustomerLocaleResolver $customerLocaleResolver,
+        private readonly OrganizerTeamContactService $teamContactService,
+        private readonly PlatformSupervisorService $supervisorService,
     ) {}
 
     public function isEnabledFor(?OrganizerSmsSettingDomainObject $settings): bool
@@ -81,7 +87,7 @@ class SmsAutoReplyService
         $tutoiement = $this->customerLocaleResolver->addressFormForOrganizerId($settings->getOrganizerId()) === CustomerAddressForm::TU;
 
         return __(
-            'Good question, I am checking with the team and will get back to you very soon.',
+            'Good question, I am checking and will get back to you very soon.',
             [],
             $tutoiement ? CustomerLocale::FRENCH_TUTOIEMENT : 'fr',
         );
@@ -102,7 +108,7 @@ class SmsAutoReplyService
         }
 
         $settings = $this->findSettings($conversation->getOrganizerId());
-        if (! $this->isEnabledFor($settings)) {
+        if (! $this->isEnabledFor($settings) || $this->findTeamReason($conversation, $settings) !== null) {
             return false;
         }
 
@@ -136,6 +142,11 @@ class SmsAutoReplyService
         $settings = $this->findSettings($conversation->getOrganizerId());
         if (! $this->isEnabledFor($settings)) {
             return new SmsAutoReplyCheckDTO(SmsAutoReplySkipReason::DISABLED, $conversation);
+        }
+
+        $teamReason = $this->findTeamReason($conversation, $settings);
+        if ($teamReason !== null) {
+            return new SmsAutoReplyCheckDTO($teamReason, $conversation);
         }
 
         /** @var SmsMessageDomainObject|null $message */
@@ -172,6 +183,10 @@ class SmsAutoReplyService
             return new SmsAutoReplyCheckDTO(SmsAutoReplySkipReason::EMPTY_REPLY, $conversation);
         }
 
+        if (! $settings->getAssistantHoldingReplyEnabled()) {
+            return new SmsAutoReplyCheckDTO(SmsAutoReplySkipReason::HOLDING_DISABLED, $conversation);
+        }
+
         if ($this->holdingReplyJustSent($thread)) {
             return new SmsAutoReplyCheckDTO(SmsAutoReplySkipReason::HOLDING_ALREADY_SENT, $conversation);
         }
@@ -194,6 +209,32 @@ class SmsAutoReplyService
         ], [
             SmsConversationDomainObjectAbstract::ID => $conversation->getId(),
         ]);
+    }
+
+    /**
+     * A team conversation, a platform supervisor, or a team contact of any organizer of the line: never an automatic reply.
+     * Checked again right before sending, since the number may have joined a team in between.
+     */
+    private function findTeamReason(SmsConversationDomainObject $conversation, OrganizerSmsSettingDomainObject $settings): ?SmsAutoReplySkipReason
+    {
+        if ($this->supervisorService->isSupervisor($conversation->getPhone())) {
+            return SmsAutoReplySkipReason::SUPERVISOR;
+        }
+
+        if ($conversation->getIsTeam()) {
+            return SmsAutoReplySkipReason::TEAM_CONTACT;
+        }
+
+        try {
+            $organizerIds = $this->lineService->relatedOrganizerIds($settings, $conversation->getLineSettingsId());
+        } catch (SmsGatewayNotConfiguredException) {
+            $organizerIds = [];
+        }
+        $organizerIds = array_values(array_unique([...$organizerIds, $conversation->getOrganizerId()]));
+
+        return $this->teamContactService->findForPhone($organizerIds, $conversation->getPhone())->isNotEmpty()
+            ? SmsAutoReplySkipReason::TEAM_CONTACT
+            : null;
     }
 
     /**

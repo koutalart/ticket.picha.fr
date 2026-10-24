@@ -1490,6 +1490,7 @@ export interface OrganizerSmsSettings {
     assistant_instructions: string | null;
     assistant_auto_send: boolean;
     assistant_holding_reply: string | null;
+    assistant_holding_reply_enabled: boolean;
     live_chat_enabled: boolean;
     live_chat_relay_label: string | null;
     live_chat_relay_line: string;

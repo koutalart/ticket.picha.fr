@@ -38,6 +38,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const LIVE_CHAT_RELAY_LABEL = 'live_chat_relay_label';
     final public const ORGANIZER_ASSISTANT_ENABLED = 'organizer_assistant_enabled';
     final public const ORGANIZER_ASSISTANT_INSTRUCTIONS = 'organizer_assistant_instructions';
+    final public const ASSISTANT_HOLDING_REPLY_ENABLED = 'assistant_holding_reply_enabled';
 
     protected int $id;
     protected int $account_id;
@@ -67,6 +68,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $live_chat_relay_label = null;
     protected bool $organizer_assistant_enabled = false;
     protected ?string $organizer_assistant_instructions = null;
+    protected bool $assistant_holding_reply_enabled = true;
 
     public function toArray(): array
     {
@@ -99,6 +101,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'live_chat_relay_label' => $this->live_chat_relay_label ?? null,
                     'organizer_assistant_enabled' => $this->organizer_assistant_enabled ?? null,
                     'organizer_assistant_instructions' => $this->organizer_assistant_instructions ?? null,
+                    'assistant_holding_reply_enabled' => $this->assistant_holding_reply_enabled ?? null,
                 ];
     }
 
@@ -408,5 +411,16 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getOrganizerAssistantInstructions(): ?string
     {
         return $this->organizer_assistant_instructions;
+    }
+
+    public function setAssistantHoldingReplyEnabled(bool $assistant_holding_reply_enabled): self
+    {
+        $this->assistant_holding_reply_enabled = $assistant_holding_reply_enabled;
+        return $this;
+    }
+
+    public function getAssistantHoldingReplyEnabled(): bool
+    {
+        return $this->assistant_holding_reply_enabled;
     }
 }
