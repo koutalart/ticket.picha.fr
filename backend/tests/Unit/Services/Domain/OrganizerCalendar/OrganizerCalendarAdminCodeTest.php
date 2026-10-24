@@ -77,7 +77,7 @@ class OrganizerCalendarAdminCodeTest extends TestCase
 
         $response->assertOk()->assertJsonPath('admin', true)->assertJsonMissingPath('token');
         self::assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $response->json('jeton'));
-        self::assertSame(Carbon::now()->addHours(12)->toIso8601String(), $response->json('expire_le'));
+        self::assertSame(Carbon::now()->addDays(365)->toIso8601String(), $response->json('expire_le'));
         self::assertSame([], $this->sentSms);
         self::assertSame(0, OrganizerCalendarCode::query()->count());
 

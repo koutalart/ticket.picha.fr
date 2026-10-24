@@ -31,7 +31,7 @@ class GetOrganizerCalendarContentHandler
         $expiresAt = Carbon::parse($access->getExpiresAt());
 
         return new OrganizerCalendarContentDTO(
-            content: $this->contentResolver->resolve($calendar, $access->getId(), $expiresAt),
+            content: $this->contentResolver->resolve($calendar, $access->getId(), $this->accessService->mediaUrlsExpireAt($access)),
             expiresAt: $expiresAt,
         );
     }

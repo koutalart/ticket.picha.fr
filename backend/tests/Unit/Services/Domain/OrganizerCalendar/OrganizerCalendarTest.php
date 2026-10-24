@@ -219,7 +219,7 @@ class OrganizerCalendarTest extends TestCase
         $this->postJson($this->api('/code'))->assertOk();
     }
 
-    public function test_verifying_the_code_returns_a_twelve_hour_jeton_once(): void
+    public function test_verifying_the_code_returns_a_one_year_jeton_once(): void
     {
         $this->import();
         $this->postJson($this->api('/code'));
@@ -228,7 +228,7 @@ class OrganizerCalendarTest extends TestCase
 
         $response->assertOk()->assertJsonMissingPath('token')->assertJsonMissingPath('data');
         self::assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $response->json('jeton'));
-        self::assertSame(Carbon::now()->addHours(12)->toIso8601String(), $response->json('expire_le'));
+        self::assertSame(Carbon::now()->addDays(365)->toIso8601String(), $response->json('expire_le'));
         self::assertSame(1, OrganizerCalendarAccess::query()->count());
         self::assertNotSame($response->json('jeton'), OrganizerCalendarAccess::query()->value('key_hash'));
 
@@ -313,18 +313,45 @@ class OrganizerCalendarTest extends TestCase
         self::assertSame(['Instagram', 'Facebook'], $publication['r']);
         self::assertSame('J-8', $response->json('jours.0.c'));
         self::assertSame('https://example.test/remote.jpg', $response->json('jours.0.p.1.vignette'));
-        self::assertSame(Carbon::now()->addHours(12)->toIso8601String(), $response->json('expire_le'));
+        self::assertSame(Carbon::now()->addDays(365)->toIso8601String(), $response->json('expire_le'));
 
         parse_str((string) parse_url($publication['vignette'], PHP_URL_QUERY), $query);
         self::assertSame(Carbon::now()->addHours(12)->getTimestamp(), (int) $query['expires']);
     }
 
-    public function test_access_ends_after_twelve_hours(): void
+    public function test_a_recognised_device_stays_open_and_is_renewed_on_each_visit(): void
+    {
+        $this->import();
+        $jeton = $this->grantAccess();
+        $this->app['auth']->forgetGuards();
+
+        Carbon::setTestNow(Carbon::now()->addMonths(11));
+        $this->getJson($this->api(), ['X-Acces-Calendrier' => $jeton])->assertOk()
+            ->assertJsonPath('expire_le', Carbon::now()->addDays(365)->toIso8601String());
+
+        Carbon::setTestNow(Carbon::now()->addMonths(11));
+        $this->getJson($this->api(), ['X-Acces-Calendrier' => $jeton])->assertOk();
+        self::assertSame(1, OrganizerCalendarAccess::query()->count());
+        self::assertCount(1, $this->sentSms);
+    }
+
+    public function test_an_unused_device_is_forgotten_after_a_year(): void
+    {
+        $this->import();
+        $jeton = $this->grantAccess();
+        $this->app['auth']->forgetGuards();
+
+        Carbon::setTestNow(Carbon::now()->addYear()->addSecond());
+
+        $this->getJson($this->api(), ['X-Acces-Calendrier' => $jeton])->assertStatus(401);
+    }
+
+    public function test_a_revoked_device_must_request_a_new_code(): void
     {
         $this->import();
         $jeton = $this->grantAccess();
 
-        Carbon::setTestNow(Carbon::now()->addHours(12)->addSecond());
+        $this->artisan('calendar:revoke', ['slug' => self::SLUG])->assertSuccessful();
 
         $this->getJson($this->api(), ['X-Acces-Calendrier' => $jeton])->assertStatus(401);
     }
@@ -349,7 +376,7 @@ class OrganizerCalendarTest extends TestCase
         $this->getJson($this->api(), ['X-Acces-Calendrier' => $jeton])->assertStatus(401);
     }
 
-    public function test_media_urls_expire_with_the_access(): void
+    public function test_media_urls_last_twelve_hours_and_are_signed_again_on_the_next_visit(): void
     {
         $this->import();
         $jeton = $this->grantAccess();
@@ -358,6 +385,8 @@ class OrganizerCalendarTest extends TestCase
         Carbon::setTestNow(Carbon::now()->addHours(12)->addMinute());
 
         $this->get($url)->assertStatus(403);
+        $fresh = $this->getJson($this->api(), ['X-Acces-Calendrier' => $jeton])->json('jours.0.p.0.vignette');
+        $this->get($fresh)->assertOk();
     }
 
     public function test_page_is_served_and_unknown_slugs_answer_404(): void
