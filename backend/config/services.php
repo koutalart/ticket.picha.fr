@@ -74,6 +74,7 @@ return [
             'instagram_manage_comments',
             'pages_read_user_content',
             'pages_manage_engagement',
+            'pages_manage_metadata',
         ],
     ],
 
