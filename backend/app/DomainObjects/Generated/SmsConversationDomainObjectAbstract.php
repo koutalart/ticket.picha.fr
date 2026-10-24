@@ -28,6 +28,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     final public const UPDATED_AT = 'updated_at';
     final public const NEEDS_HUMAN_REASON = 'needs_human_reason';
     final public const INBOUND_NOTIFIED_AT = 'inbound_notified_at';
+    final public const IS_TEAM = 'is_team';
 
     protected int $id;
     protected int $account_id;
@@ -47,6 +48,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     protected ?string $updated_at = null;
     protected ?string $needs_human_reason = null;
     protected ?string $inbound_notified_at = null;
+    protected bool $is_team = false;
 
     public function toArray(): array
     {
@@ -69,6 +71,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
                     'updated_at' => $this->updated_at ?? null,
                     'needs_human_reason' => $this->needs_human_reason ?? null,
                     'inbound_notified_at' => $this->inbound_notified_at ?? null,
+                    'is_team' => $this->is_team ?? null,
                 ];
     }
 
@@ -268,5 +271,16 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     public function getInboundNotifiedAt(): ?string
     {
         return $this->inbound_notified_at;
+    }
+
+    public function setIsTeam(bool $is_team): self
+    {
+        $this->is_team = $is_team;
+        return $this;
+    }
+
+    public function getIsTeam(): bool
+    {
+        return $this->is_team;
     }
 }

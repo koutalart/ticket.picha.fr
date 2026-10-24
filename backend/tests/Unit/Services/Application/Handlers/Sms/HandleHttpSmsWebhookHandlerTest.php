@@ -10,6 +10,7 @@ use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\DomainObjects\Status\SmsPhoneStatus;
 use HiEvents\Exceptions\SmsWebhookUnauthorizedException;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
+use HiEvents\Services\Application\Handlers\LiveChat\Approval\DecideLiveChatRefundHandler;
 use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
 use HiEvents\Services\Application\Handlers\Sms\HandleHttpSmsWebhookHandler;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
@@ -22,6 +23,7 @@ use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
+use HiEvents\Services\Domain\Sms\Team\SmsTeamInboundService;
 use Mockery;
 use Mockery\MockInterface;
 use Psr\Log\NullLogger;
@@ -47,6 +49,8 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
     private SmsUnattributedSmsService|MockInterface $unattributedService;
 
+    private SmsTeamInboundService|MockInterface $teamInboundService;
+
     private OrganizerSmsSettingDomainObject $member;
 
     private HandleHttpSmsWebhookHandler $handler;
@@ -71,6 +75,9 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->lineService->shouldReceive('candidates')->andReturnUsing(fn ($line) => collect([$line]))->byDefault();
         $this->unattributedService = Mockery::mock(SmsUnattributedSmsService::class);
         $this->unattributedService->shouldReceive('isKnown')->andReturnFalse()->byDefault();
+        $this->teamInboundService = Mockery::mock(SmsTeamInboundService::class);
+        $this->teamInboundService->shouldReceive('route')->andReturnNull()->byDefault();
+        $this->teamInboundService->shouldReceive('isSupervisor')->andReturnFalse()->byDefault();
 
         $this->handler = new HandleHttpSmsWebhookHandler(
             $this->settingsService,
@@ -83,6 +90,8 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             $this->lineService,
             $this->unattributedService,
             new NullLogger,
+            $this->teamInboundService,
+            Mockery::mock(DecideLiveChatRefundHandler::class),
         );
 
         $this->settings = (new OrganizerSmsSettingDomainObject)

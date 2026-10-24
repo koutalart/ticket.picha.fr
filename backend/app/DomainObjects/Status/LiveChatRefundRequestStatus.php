@@ -15,6 +15,8 @@ enum LiveChatRefundRequestStatus: string
     case EXPIRED = 'EXPIRED';
     case BLOCKED = 'BLOCKED';
     case VERIFIED = 'VERIFIED';
+    case AWAITING_APPROVAL = 'AWAITING_APPROVAL';
+    case REFUSED = 'REFUSED';
     case PROCESSING = 'PROCESSING';
     case REFUNDED = 'REFUNDED';
     case HANDED_OFF = 'HANDED_OFF';

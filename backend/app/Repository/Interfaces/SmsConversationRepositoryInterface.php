@@ -36,4 +36,11 @@ interface SmsConversationRepositoryInterface extends RepositoryInterface
      * @return Collection<int, SmsConversationDomainObject>
      */
     public function findWaitingAgentDrafts(array $organizerIds, string $since, string $generatedBefore, int $limit): Collection;
+
+    /**
+     * The organizer whose team conversation with this number had the latest message, among the given organizers.
+     *
+     * @param  array<int, int>  $organizerIds
+     */
+    public function findLatestTeamConversationOrganizerId(array $organizerIds, string $phone): ?int;
 }

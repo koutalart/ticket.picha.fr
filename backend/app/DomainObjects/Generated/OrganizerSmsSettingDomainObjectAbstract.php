@@ -36,6 +36,8 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const ASSISTANT_HOLDING_REPLY = 'assistant_holding_reply';
     final public const LIVE_CHAT_ENABLED = 'live_chat_enabled';
     final public const LIVE_CHAT_RELAY_LABEL = 'live_chat_relay_label';
+    final public const ORGANIZER_ASSISTANT_ENABLED = 'organizer_assistant_enabled';
+    final public const ORGANIZER_ASSISTANT_INSTRUCTIONS = 'organizer_assistant_instructions';
 
     protected int $id;
     protected int $account_id;
@@ -63,6 +65,8 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $assistant_holding_reply = null;
     protected bool $live_chat_enabled = true;
     protected ?string $live_chat_relay_label = null;
+    protected bool $organizer_assistant_enabled = false;
+    protected ?string $organizer_assistant_instructions = null;
 
     public function toArray(): array
     {
@@ -93,6 +97,8 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'assistant_holding_reply' => $this->assistant_holding_reply ?? null,
                     'live_chat_enabled' => $this->live_chat_enabled ?? null,
                     'live_chat_relay_label' => $this->live_chat_relay_label ?? null,
+                    'organizer_assistant_enabled' => $this->organizer_assistant_enabled ?? null,
+                    'organizer_assistant_instructions' => $this->organizer_assistant_instructions ?? null,
                 ];
     }
 
@@ -380,5 +386,27 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getLiveChatRelayLabel(): ?string
     {
         return $this->live_chat_relay_label;
+    }
+
+    public function setOrganizerAssistantEnabled(bool $organizer_assistant_enabled): self
+    {
+        $this->organizer_assistant_enabled = $organizer_assistant_enabled;
+        return $this;
+    }
+
+    public function getOrganizerAssistantEnabled(): bool
+    {
+        return $this->organizer_assistant_enabled;
+    }
+
+    public function setOrganizerAssistantInstructions(?string $organizer_assistant_instructions): self
+    {
+        $this->organizer_assistant_instructions = $organizer_assistant_instructions;
+        return $this;
+    }
+
+    public function getOrganizerAssistantInstructions(): ?string
+    {
+        return $this->organizer_assistant_instructions;
     }
 }

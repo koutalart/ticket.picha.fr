@@ -207,4 +207,22 @@ class SmsConversationRepository extends BaseRepository implements SmsConversatio
 
         return $this->handleResults($conversations);
     }
+
+    public function findLatestTeamConversationOrganizerId(array $organizerIds, string $phone): ?int
+    {
+        if ($organizerIds === []) {
+            return null;
+        }
+
+        $organizerId = SmsConversation::query()
+            ->whereIn(SmsConversationDomainObjectAbstract::ORGANIZER_ID, array_values($organizerIds))
+            ->where(SmsConversationDomainObjectAbstract::PHONE, $phone)
+            ->where(SmsConversationDomainObjectAbstract::IS_TEAM, true)
+            ->whereNotNull(SmsConversationDomainObjectAbstract::LAST_MESSAGE_AT)
+            ->orderByDesc(SmsConversationDomainObjectAbstract::LAST_MESSAGE_AT)
+            ->orderByDesc(SmsConversationDomainObjectAbstract::ID)
+            ->value(SmsConversationDomainObjectAbstract::ORGANIZER_ID);
+
+        return $organizerId === null ? null : (int) $organizerId;
+    }
 }

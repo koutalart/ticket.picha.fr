@@ -26,7 +26,7 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
 
     /**
      * The organizer, among the given ones, who sent the most recent SMS to this number since the given date,
-     * from the given line when one is given.
+     * from the given line when one is given. Messages of team conversations and supervision copies do not count.
      *
      * @param  array<int, int>  $organizerIds
      */
@@ -42,7 +42,7 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
 
     /**
      * Inbound SMS of the given organizers received between the two dates that no outbound SMS of the conversation
-     * followed (failed or expired ones do not count). Closed and opted out conversations are left aside.
+     * followed (failed or expired ones do not count). Closed, team and opted out conversations are left aside.
      * The most recent ones within the limit, returned oldest first.
      *
      * @param  array<int, int>  $organizerIds
@@ -67,4 +67,11 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
      * @return Collection<int, SmsMessageDomainObject>
      */
     public function findUndeliveredOutbound(array $organizerIds, string $since, string $pendingBefore, int $limit): Collection;
+
+    /**
+     * The organizer this number wrote to last, among the given organizers.
+     *
+     * @param  array<int, int>  $organizerIds
+     */
+    public function findLastInboundOrganizerId(array $organizerIds, string $phone): ?int;
 }

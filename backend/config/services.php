@@ -40,6 +40,11 @@ return [
         'detached_line_transition_days' => (int) env('HTTPSMS_DETACHED_LINE_TRANSITION_DAYS', 30),
     ],
 
+    'platform_supervisor' => [
+        // Comma separated E.164 numbers of the platform supervisors. They belong to no organizer team.
+        'phones' => env('PLATFORM_SUPERVISOR_PHONES', ''),
+    ],
+
     'sms_watchdog' => [
         'alert_email' => env('SMS_WATCHDOG_ALERT_EMAIL'),
         'alert_phone' => env('SMS_WATCHDOG_ALERT_PHONE'),
@@ -100,6 +105,7 @@ return [
         'model' => env('ANTHROPIC_MODEL', 'claude-opus-5-5'),
         // SMS reply assistant: maximum Claude calls per organizer and per day (0 = no limit).
         'sms_assistant_daily_limit' => (int) env('SMS_ASSISTANT_DAILY_LIMIT', 150),
+        'organizer_assistant_model' => env('ORGANIZER_ASSISTANT_MODEL', 'claude-haiku-5-5'),
     ],
 
     // Live chat on public pages ("Assistance en direct"), answered by the same assistant as the SMS.

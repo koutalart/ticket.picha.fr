@@ -590,6 +590,22 @@ export const router: RouteObject[] = [
         errorElement: <ErrorPage />,
     })),
     {
+        path: "/refund-approval/:requestId",
+        async lazy() {
+            const RefundApproval = await import("./components/routes/refund-approval");
+            return {Component: RefundApproval.default};
+        },
+        errorElement: <ErrorPage/>,
+    },
+    {
+        path: "/manage/organizer/:organizerId/refund-approvals/:requestId",
+        async lazy() {
+            const RefundApproval = await import("./components/routes/refund-approval");
+            return {Component: RefundApproval.default};
+        },
+        errorElement: <ErrorPage/>,
+    },
+    {
         path: "/q/:shortId",
         loader: qrLinkPageLoader,
         async lazy() {
