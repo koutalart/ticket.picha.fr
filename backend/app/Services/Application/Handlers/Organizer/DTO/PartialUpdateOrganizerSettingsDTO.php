@@ -75,6 +75,7 @@ class PartialUpdateOrganizerSettingsDTO extends BaseDataObject
         public readonly bool|Optional|null                            $trackingConsentAcknowledged,
         public readonly string|Optional|null                          $metaConversionsApiToken,
         public readonly string|Optional|null                          $metaTestEventCode,
+        public readonly bool|Optional|null                            $metaCapiSendWithoutConsent,
 
         // E-mails
         public readonly string|Optional|null                          $emailSenderName,

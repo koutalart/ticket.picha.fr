@@ -36,6 +36,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     final public const EMAIL_SENDER_NAME = 'email_sender_name';
     final public const CUSTOMER_ADDRESS_FORM = 'customer_address_form';
     final public const SMS_DEFAULT_REMINDERS_ENABLED = 'sms_default_reminders_enabled';
+    final public const META_CAPI_SEND_WITHOUT_CONSENT = 'meta_capi_send_without_consent';
 
     protected int $id;
     protected int $organizer_id;
@@ -63,6 +64,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     protected ?string $email_sender_name = null;
     protected string $customer_address_form = 'vous';
     protected bool $sms_default_reminders_enabled = false;
+    protected bool $meta_capi_send_without_consent = false;
 
     public function toArray(): array
     {
@@ -93,6 +95,7 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
                     'email_sender_name' => $this->email_sender_name ?? null,
                     'customer_address_form' => $this->customer_address_form ?? null,
                     'sms_default_reminders_enabled' => $this->sms_default_reminders_enabled ?? null,
+                    'meta_capi_send_without_consent' => $this->meta_capi_send_without_consent ?? null,
                 ];
     }
 
@@ -381,5 +384,16 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     public function getSmsDefaultRemindersEnabled(): bool
     {
         return $this->sms_default_reminders_enabled;
+    }
+
+    public function setMetaCapiSendWithoutConsent(bool $meta_capi_send_without_consent): self
+    {
+        $this->meta_capi_send_without_consent = $meta_capi_send_without_consent;
+        return $this;
+    }
+
+    public function getMetaCapiSendWithoutConsent(): bool
+    {
+        return $this->meta_capi_send_without_consent;
     }
 }

@@ -180,6 +180,7 @@ const Checkout = () => {
                 eventName: 'InitiateCheckout',
                 contentName: event.title,
                 contentId: event.id,
+                eventId: order?.short_id ? `checkout_${order.short_id}` : undefined,
             });
         }
     }, [event?.id, orderIsReserved, consentGranted]);
