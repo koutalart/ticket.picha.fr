@@ -276,6 +276,95 @@ class MetaGraphClient
     /**
      * @throws MetaGraphApiException
      */
+    public function subscribePageToWebhooks(string $pageId, string $pageAccessToken): void
+    {
+        $this->post($pageId.'/subscribed_apps', $pageAccessToken, ['subscribed_fields' => 'feed']);
+    }
+
+    /**
+     * Latest media of an Instagram professional account.
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws MetaGraphApiException
+     */
+    public function getInstagramMedia(string $instagramAccountId, string $accessToken, int $limit = 25): array
+    {
+        return $this->get($instagramAccountId.'/media', $accessToken, [
+            'fields' => 'id,caption,media_type,media_product_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count,'
+                .'children{id,media_type,media_url,thumbnail_url}',
+            'limit' => $limit,
+        ])->json('data', []);
+    }
+
+    /**
+     * Top-level comments of an Instagram media, with their replies.
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws MetaGraphApiException
+     */
+    public function getInstagramComments(string $mediaId, string $accessToken, int $limit = 50): array
+    {
+        return $this->get($mediaId.'/comments', $accessToken, [
+            'fields' => 'id,text,username,timestamp,like_count,from{id,username},replies{id,text,username,timestamp,like_count,from{id,username}}',
+            'limit' => $limit,
+        ])->json('data', []);
+    }
+
+    /**
+     * Latest posts published by a Page.
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws MetaGraphApiException
+     */
+    public function getPagePosts(string $pageId, string $accessToken, int $limit = 25): array
+    {
+        return $this->get($pageId.'/published_posts', $accessToken, [
+            'fields' => 'id,message,created_time,permalink_url,full_picture,'
+                .'attachments{media_type,type,url,media{image{src},source},subattachments{media_type,type,media{image{src},source}}},'
+                .'reactions.summary(total_count).limit(0),comments.summary(total_count).limit(0)',
+            'limit' => $limit,
+        ])->json('data', []);
+    }
+
+    /**
+     * Top-level comments of a Page post, with their replies.
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws MetaGraphApiException
+     */
+    public function getPostComments(string $postId, string $accessToken, int $limit = 50): array
+    {
+        return $this->get($postId.'/comments', $accessToken, [
+            'fields' => 'id,message,created_time,like_count,from{id,name},comments{id,message,created_time,like_count,from{id,name}}',
+            'filter' => 'toplevel',
+            'order' => 'chronological',
+            'limit' => $limit,
+        ])->json('data', []);
+    }
+
+    /**
+     * @throws MetaGraphApiException
+     */
+    public function replyToInstagramComment(string $commentId, string $accessToken, string $message): string
+    {
+        return (string) $this->post($commentId.'/replies', $accessToken, ['message' => $message])->json('id');
+    }
+
+    /**
+     * @throws MetaGraphApiException
+     */
+    public function replyToFacebookComment(string $commentId, string $accessToken, string $message): string
+    {
+        return (string) $this->post($commentId.'/comments', $accessToken, ['message' => $message])->json('id');
+    }
+
+    /**
+     * @throws MetaGraphApiException
+     */
     private function get(string $path, string $accessToken, array $query = []): Response
     {
         return $this->send(fn (PendingRequest $request) => $request->get(

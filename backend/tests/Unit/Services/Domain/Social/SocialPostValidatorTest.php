@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
 use HiEvents\Exceptions\InvalidSocialPostException;
 use HiEvents\Services\Domain\Social\DTO\SocialMediaItemDTO;
 use HiEvents\Services\Domain\Social\DTO\SocialPostDataDTO;
+use HiEvents\Services\Domain\Social\Media\SocialMediaRules;
 use HiEvents\Services\Domain\Social\SocialPostValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -43,7 +44,7 @@ class SocialPostValidatorTest extends TestCase
     #[DataProvider('validPosts')]
     public function test_valid_posts_pass(SocialNetwork $network, SocialPostFormat $format, array $media, ?string $link = null): void
     {
-        (new SocialPostValidator)->validate($this->postIn($network, $format, $media, $link, 'Halloween'), $this->connection());
+        (new SocialPostValidator(new SocialMediaRules))->validate($this->postIn($network, $format, $media, $link, 'Halloween'), $this->connection());
 
         $this->addToAssertionCount(1);
     }
@@ -53,14 +54,14 @@ class SocialPostValidatorTest extends TestCase
     {
         $this->expectException(InvalidSocialPostException::class);
 
-        (new SocialPostValidator)->validate($this->postIn($network, $format, $media, $link, $caption), $this->connection());
+        (new SocialPostValidator(new SocialMediaRules))->validate($this->postIn($network, $format, $media, $link, $caption), $this->connection());
     }
 
     public function test_instagram_caption_length_is_limited(): void
     {
         $this->expectException(InvalidSocialPostException::class);
 
-        (new SocialPostValidator)->validate(
+        (new SocialPostValidator(new SocialMediaRules))->validate(
             $this->postIn(SocialNetwork::INSTAGRAM, SocialPostFormat::IMAGE, [['https://cdn.test/a.jpg', 'IMAGE']], null, str_repeat('a', 2201)),
             $this->connection(),
         );

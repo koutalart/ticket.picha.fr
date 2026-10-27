@@ -6,6 +6,7 @@ namespace HiEvents\Services\Domain\Social;
 
 use Carbon\Carbon;
 use HiEvents\DomainObjects\Generated\OrganizerSocialConnectionDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\SocialFeedItemDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
 use HiEvents\DomainObjects\Status\SocialConnectionStatus;
 use HiEvents\Exceptions\MetaAppNotConfiguredException;
@@ -13,7 +14,9 @@ use HiEvents\Exceptions\MetaGraphApiException;
 use HiEvents\Exceptions\MetaOAuthException;
 use HiEvents\Exceptions\SocialConnectionNotFoundException;
 use HiEvents\Helper\Url;
+use HiEvents\Jobs\Social\SyncSocialFeedJob;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
+use HiEvents\Repository\Interfaces\SocialFeedItemRepositoryInterface;
 use HiEvents\Services\Domain\Social\DTO\MetaOAuthCallbackResultDTO;
 use HiEvents\Services\Infrastructure\Encryption\EncryptedPayloadService;
 use HiEvents\Services\Infrastructure\Encryption\Exception\DecryptionFailedException;
@@ -41,6 +44,7 @@ class MetaConnectionService
         private readonly CacheRepository $cache,
         private readonly Encrypter $encrypter,
         private readonly LoggerInterface $logger,
+        private readonly SocialFeedItemRepositoryInterface $feedItemRepository,
     ) {}
 
     public function isAvailable(): bool
@@ -183,6 +187,10 @@ class MetaConnectionService
             OrganizerSocialConnectionDomainObjectAbstract::ORGANIZER_ID => $organizerId,
         ]);
 
+        if ($existing !== null && $existing->getFacebookPageId() !== $page->id) {
+            $this->forgetCopiedContent($organizerId);
+        }
+
         $connection = $existing
             ? $this->connectionRepository->updateFromArray($existing->getId(), $attributes)
             : $this->connectionRepository->create(array_merge($attributes, [
@@ -190,6 +198,17 @@ class MetaConnectionService
             ]));
 
         $this->cache->forget(self::SELECTION_CACHE_PREFIX.$selectionKey);
+
+        try {
+            $this->client->subscribePageToWebhooks($page->id, $page->accessToken);
+        } catch (Throwable $exception) {
+            $this->logger->info('Meta page could not be subscribed to webhooks', [
+                'organizer_id' => $organizerId,
+                'message' => $exception->getMessage(),
+            ]);
+        }
+
+        SyncSocialFeedJob::dispatch($organizerId);
 
         return $connection;
     }
@@ -225,6 +244,17 @@ class MetaConnectionService
         }
 
         $this->connectionRepository->deleteById($connection->getId());
+        $this->forgetCopiedContent($organizerId);
+    }
+
+    /**
+     * Posts and comments copied from the page (comments go with their post). The organizer's own PICHA posts are kept.
+     */
+    private function forgetCopiedContent(int $organizerId): void
+    {
+        $this->feedItemRepository->deleteWhere([
+            SocialFeedItemDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+        ]);
     }
 
     public function markNeedsReconnect(int $connectionId, string $error): void
@@ -234,6 +264,22 @@ class MetaConnectionService
             OrganizerSocialConnectionDomainObjectAbstract::LAST_ERROR => $error,
             OrganizerSocialConnectionDomainObjectAbstract::LAST_ERROR_AT => Carbon::now(),
         ]);
+    }
+
+    /**
+     * Permissions the connection still lacks (a connection made before comments were added must be renewed).
+     *
+     * @return string[]
+     */
+    public function missingScopes(OrganizerSocialConnectionDomainObject $connection): array
+    {
+        $granted = $connection->getGrantedScopes();
+
+        if (is_string($granted)) {
+            $granted = json_decode($granted, true);
+        }
+
+        return array_values(array_diff((array) config('services.meta.oauth_scopes', []), is_array($granted) ? $granted : []));
     }
 
     public function getRedirectUri(): string
