@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Domain\Sms;
 
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\Enums\SmsAssistantOutcome;
 use HiEvents\DomainObjects\Enums\SmsAutoReplySkipReason;
 use HiEvents\DomainObjects\Enums\SmsAutoReplyType;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
+use HiEvents\DomainObjects\OrganizerTeamContactDomainObject;
 use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
@@ -20,12 +22,13 @@ use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsAutoReplyService;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
+use HiEvents\Services\Domain\Sms\Team\OrganizerTeamContactService;
+use HiEvents\Services\Domain\Sms\Team\PlatformSupervisorService;
 use Illuminate\Support\Facades\Bus;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\Unit\Support\StaticCustomerLocaleResolver;
-use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 
 class SmsAutoReplyServiceTest extends TestCase
 {
@@ -35,7 +38,7 @@ class SmsAutoReplyServiceTest extends TestCase
 
     private const QUESTION = 'Bonsoir, ça commence à quelle heure ?';
 
-    private const HOLDING = "Bonne question, je vérifie avec l'équipe et je reviens vers vous très vite 🎶\n\nKultur'm via PICHA Ticket";
+    private const HOLDING = "Bonne question, je vérifie et je reviens vers vous très vite 🎶\n\nKultur'm via PICHA Ticket";
 
     private SmsAssistantService|MockInterface $assistantService;
 
@@ -49,13 +52,17 @@ class SmsAutoReplyServiceTest extends TestCase
 
     private SmsLineService|MockInterface $lineService;
 
+    private OrganizerTeamContactService|MockInterface $teamContactService;
+
+    private PlatformSupervisorService|MockInterface $supervisorService;
+
     private OrganizerSmsSettingDomainObject $settings;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->settings = (new OrganizerSmsSettingDomainObject)->setId(20)->setOrganizerId(8)->setAssistantEnabled(true)->setAssistantAutoSend(true);
+        $this->settings = (new OrganizerSmsSettingDomainObject)->setId(20)->setOrganizerId(8)->setAssistantEnabled(true)->setAssistantAutoSend(true)->setAssistantHoldingReplyEnabled(true);
 
         $this->assistantService = Mockery::mock(SmsAssistantService::class);
         $this->assistantService->shouldReceive('isActiveFor')->andReturnUsing(
@@ -76,6 +83,80 @@ class SmsAutoReplyServiceTest extends TestCase
 
         $this->lineService = Mockery::mock(SmsLineService::class);
         $this->lineService->shouldReceive('relatedOrganizerIds')->andReturnUsing(fn () => [$this->settings->getOrganizerId()])->byDefault();
+
+        $this->teamContactService = Mockery::mock(OrganizerTeamContactService::class);
+        $this->teamContactService->shouldReceive('findForPhone')->andReturn(collect())->byDefault();
+
+        $this->supervisorService = Mockery::mock(PlatformSupervisorService::class);
+        $this->supervisorService->shouldReceive('isSupervisor')->andReturnFalse()->byDefault();
+    }
+
+    public function test_team_contact_of_any_organizer_of_the_line_gets_neither_answer_nor_holding_reply(): void
+    {
+        Bus::fake();
+        $this->lineService->shouldReceive('relatedOrganizerIds')->andReturn([4, 8]);
+        $this->teamContactService->shouldReceive('findForPhone')
+            ->withArgs(fn (array $organizerIds, string $phone) => $organizerIds === [4, 8] && $phone === '+262639000001')
+            ->andReturn(collect([(new OrganizerTeamContactDomainObject)->setId(1)->setOrganizerId(4)->setPhone('+262639000001')->setRole('COPY')]));
+
+        $this->assertSkipped(SmsAutoReplySkipReason::TEAM_CONTACT, self::REPLY, self::HOLDING);
+        $this->assertSkipped(SmsAutoReplySkipReason::TEAM_CONTACT, null, self::HOLDING);
+        self::assertFalse($this->service()->queueIfEligible(3, 9, new SmsAssistantResultDTO(SmsAssistantOutcome::NEEDS_HUMAN, null, 'Invitation', holdingReply: self::HOLDING)));
+        Bus::assertNotDispatched(SendSmsAutoReplyJob::class);
+    }
+
+    public function test_team_conversation_gets_no_automatic_reply(): void
+    {
+        $this->conversationRepository->shouldReceive('findFirstWhere')->with(['id' => 3])
+            ->andReturn($this->conversation()->setIsTeam(true));
+
+        $this->assertSkipped(SmsAutoReplySkipReason::TEAM_CONTACT, self::REPLY, self::HOLDING);
+        $this->assertSkipped(SmsAutoReplySkipReason::TEAM_CONTACT, null, self::HOLDING);
+    }
+
+    public function test_platform_supervisor_gets_neither_answer_nor_holding_reply(): void
+    {
+        Bus::fake();
+        $this->supervisorService->shouldReceive('isSupervisor')->with('+262639000001')->andReturnTrue();
+
+        $this->assertSkipped(SmsAutoReplySkipReason::SUPERVISOR, self::REPLY, self::HOLDING);
+        $this->assertSkipped(SmsAutoReplySkipReason::SUPERVISOR, null, self::HOLDING);
+        self::assertFalse($this->service()->queueIfEligible(3, 9, new SmsAssistantResultDTO(SmsAssistantOutcome::DRAFT, self::REPLY, null, autoSendSafe: true, holdingReply: self::HOLDING)));
+        Bus::assertNotDispatched(SendSmsAutoReplyJob::class);
+    }
+
+    public function test_number_that_joined_a_team_after_the_trigger_is_blocked_right_before_sending(): void
+    {
+        $this->teamContactService->shouldReceive('findForPhone')->andReturn(collect(), collect([(new OrganizerTeamContactDomainObject)->setId(1)->setOrganizerId(8)]));
+
+        self::assertTrue($this->service()->check(3, 9, null, self::HOLDING)->isAllowed());
+        $this->assertSkipped(SmsAutoReplySkipReason::TEAM_CONTACT, null, self::HOLDING);
+    }
+
+    public function test_holding_reply_turned_off_sends_no_holding_reply_but_the_simple_answer_still_leaves(): void
+    {
+        $this->settings->setAssistantHoldingReplyEnabled(false);
+
+        $this->assertSkipped(SmsAutoReplySkipReason::HOLDING_DISABLED, null, self::HOLDING);
+
+        $check = $this->service()->check(3, 9, self::REPLY, self::HOLDING);
+        self::assertTrue($check->isAllowed());
+        self::assertSame(SmsAutoReplyType::ANSWER, $check->type);
+
+        $this->conversationRepository->shouldReceive('findFirstWhere')->with(['id' => 3])
+            ->andReturn($this->conversation()->setStatus('NEEDS_HUMAN'));
+        $this->assertSkipped(SmsAutoReplySkipReason::HOLDING_DISABLED, self::REPLY, self::HOLDING);
+    }
+
+    public function test_default_holding_reply_never_mentions_a_team(): void
+    {
+        $this->settings->setAssistantHoldingReply(null);
+        $service = $this->service();
+
+        self::assertSame('Bonne question, je vérifie et je reviens vers vous très vite.', $service->holdingReplyFor($this->settings, null));
+
+        $this->customerLocaleResolver->addressForm = CustomerAddressForm::TU;
+        self::assertSame('Bonne question, je vérifie et je reviens vers toi très vite.', $service->holdingReplyFor($this->settings, null));
     }
 
     public function test_simple_answer_within_the_instructions_can_leave_on_its_own(): void
@@ -272,7 +353,7 @@ class SmsAutoReplyServiceTest extends TestCase
         $this->settings->setAssistantHoldingReply(null);
 
         self::assertSame(
-            "Bonne question, je vérifie avec l'équipe et je reviens vers toi très vite.",
+            'Bonne question, je vérifie et je reviens vers toi très vite.',
             $service->holdingReplyFor($this->settings, null),
         );
     }
@@ -284,8 +365,8 @@ class SmsAutoReplyServiceTest extends TestCase
 
         self::assertSame(self::HOLDING, $service->holdingReplyFor($this->settings, $fromAssistant));
 
-        $this->settings->setAssistantHoldingReply("Je regarde ça et je reviens vers vous.\n\nL'équipe");
-        self::assertSame("Je regarde ça et je reviens vers vous.\n\nL'équipe", $service->holdingReplyFor($this->settings, null));
+        $this->settings->setAssistantHoldingReply("Je regarde ça et je reviens vers vous.\n\nKultur'm");
+        self::assertSame("Je regarde ça et je reviens vers vous.\n\nKultur'm", $service->holdingReplyFor($this->settings, null));
 
         $this->settings->setAssistantHoldingReply(null);
         $default = $service->holdingReplyFor($this->settings, null);
@@ -371,6 +452,8 @@ class SmsAutoReplyServiceTest extends TestCase
             $this->conversationService,
             $this->lineService,
             $this->customerLocaleResolver = new StaticCustomerLocaleResolver,
+            $this->teamContactService,
+            $this->supervisorService,
         );
     }
 

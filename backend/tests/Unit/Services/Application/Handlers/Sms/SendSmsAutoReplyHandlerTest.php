@@ -27,7 +27,7 @@ class SendSmsAutoReplyHandlerTest extends TestCase
 {
     private const ANSWER = 'Ça commence à 20h.';
 
-    private const HOLDING = "Je vérifie avec l'équipe et je reviens vers vous très vite\n\nKultur'm via PICHA Ticket";
+    private const HOLDING = "Je vérifie et je reviens vers vous très vite\n\nKultur'm via PICHA Ticket";
 
     private SmsAutoReplyService|MockInterface $autoReplyService;
 
@@ -52,6 +52,29 @@ class SendSmsAutoReplyHandlerTest extends TestCase
         $this->sendService->shouldNotReceive('send');
 
         self::assertNull($this->handler()->handle(3, 9, self::ANSWER, self::HOLDING));
+    }
+
+    public function test_holding_reply_turned_off_sends_nothing_and_keeps_the_conversation_waiting(): void
+    {
+        $conversation = $this->conversation('OPEN');
+        $this->autoReplyService->shouldReceive('check')->once()
+            ->andReturn(new SmsAutoReplyCheckDTO(SmsAutoReplySkipReason::HOLDING_DISABLED, $conversation));
+        $this->autoReplyService->shouldReceive('keepWaitingForTeam')->once()->with($conversation);
+        $this->sendService->shouldNotReceive('send');
+
+        self::assertNull($this->handler()->handle(3, 9, null, self::HOLDING));
+    }
+
+    public function test_team_contact_and_supervisor_get_nothing_and_their_conversation_is_left_alone(): void
+    {
+        foreach ([SmsAutoReplySkipReason::TEAM_CONTACT, SmsAutoReplySkipReason::SUPERVISOR] as $reason) {
+            $this->autoReplyService = Mockery::mock(SmsAutoReplyService::class);
+            $this->autoReplyService->shouldReceive('check')->once()->andReturn(new SmsAutoReplyCheckDTO($reason, $this->conversation('OPEN')));
+            $this->autoReplyService->shouldNotReceive('keepWaitingForTeam');
+            $this->sendService->shouldNotReceive('send');
+
+            self::assertNull($this->handler()->handle(3, 9, self::ANSWER, self::HOLDING));
+        }
     }
 
     public function test_answer_is_sent_by_the_assistant_through_the_reply_path_and_marked_automatic(): void

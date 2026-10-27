@@ -35,6 +35,7 @@ class OrganizerSmsSettingsResource extends BaseResource
             'assistant_instructions' => $settings->getAssistantInstructions(),
             'assistant_auto_send' => $settings->getAssistantAutoSend(),
             'assistant_holding_reply' => $settings->getAssistantHoldingReply(),
+            'assistant_holding_reply_enabled' => $settings->getAssistantHoldingReplyEnabled(),
             'live_chat_enabled' => $settings->getLiveChatEnabled(),
             'live_chat_relay_label' => $settings->getLiveChatRelayLabel(),
             'live_chat_relay_line' => LiveChatService::relayLine($settings->getLiveChatRelayLabel()),
