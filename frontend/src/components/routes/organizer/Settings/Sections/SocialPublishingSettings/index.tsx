@@ -165,6 +165,11 @@ export const SocialPublishingSettings = () => {
 
         return (
             <Stack gap="sm">
+                {!needsReconnect && connection.missing_scopes.length > 0 && (
+                    <Alert color="blue" icon={<IconAlertTriangle size={16}/>} title={t`New permissions to grant`}>
+                        <Text size="sm">{t`Reconnect the page to let PICHA read the comments of your posts and answer them from the Publications page.`}</Text>
+                    </Alert>
+                )}
                 {needsReconnect && (
                     <Alert color="red" icon={<IconAlertTriangle size={16}/>} title={t`The connection must be renewed`}>
                         <Text size="sm">{t`Facebook no longer accepts PICHA's access. Connect the page again to resume publishing.`}</Text>

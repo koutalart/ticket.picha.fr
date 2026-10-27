@@ -6,6 +6,7 @@ namespace HiEvents\Resources\Social;
 
 use HiEvents\DomainObjects\SocialPostDomainObject;
 use HiEvents\Resources\BaseResource;
+use HiEvents\Services\Domain\Social\Media\SocialMediaUrlGenerator;
 
 /**
  * @mixin SocialPostDomainObject
@@ -26,7 +27,7 @@ class SocialPostResource extends BaseResource
             'network' => $this->getNetwork(),
             'format' => $this->getFormat(),
             'caption' => $this->getCaption(),
-            'media' => is_array($media) ? array_values($media) : [],
+            'media' => is_array($media) ? array_map(fn (array $item) => $this->mediaItem($item), array_values($media)) : [],
             'link' => $this->getLink(),
             'status' => $this->getStatus(),
             'source' => $this->getSource(),
@@ -41,6 +42,19 @@ class SocialPostResource extends BaseResource
             'approved_at' => $this->getApprovedAt(),
             'created_at' => $this->getCreatedAt(),
             'updated_at' => $this->getUpdatedAt(),
+        ];
+    }
+
+    private function mediaItem(array $item): array
+    {
+        if (! isset($item['file_id'])) {
+            return $item;
+        }
+
+        return [
+            'type' => $item['type'],
+            'file_id' => (int) $item['file_id'],
+            'url' => app(SocialMediaUrlGenerator::class)->previewUrl($this->getOrganizerId(), (int) $item['file_id']),
         ];
     }
 }

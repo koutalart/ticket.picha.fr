@@ -13,11 +13,13 @@ use HiEvents\DomainObjects\Generated\SocialPostDomainObjectAbstract;
 use HiEvents\DomainObjects\SocialPostDomainObject;
 use HiEvents\DomainObjects\Status\SocialPostStatus;
 use HiEvents\Exceptions\InvalidSocialPostException;
+use HiEvents\Exceptions\SocialMediaFileNotFoundException;
 use HiEvents\Exceptions\SocialPostNotEditableException;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
 use HiEvents\Services\Domain\Social\DTO\CreateSocialPostsDTO;
 use HiEvents\Services\Domain\Social\DTO\SocialMediaItemDTO;
 use HiEvents\Services\Domain\Social\DTO\SocialPostDataDTO;
+use HiEvents\Services\Domain\Social\Media\SocialMediaFileService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
 use Throwable;
@@ -37,6 +39,7 @@ class SocialPostService
         private readonly MetaConnectionService $connectionService,
         private readonly SocialPostValidator $validator,
         private readonly DatabaseManager $databaseManager,
+        private readonly SocialMediaFileService $mediaFileService,
     ) {}
 
     /**
@@ -55,13 +58,14 @@ class SocialPostService
 
         $connection = $this->connectionService->findForOrganizer($dto->accountId, $dto->organizerId);
         $caption = $this->cleanCaption($dto->caption);
+        $media = $this->hydrateFiles($dto->organizerId, $dto->media);
 
         foreach ($dto->networks as $network) {
             $this->validator->validate(new SocialPostDataDTO(
                 network: $network,
                 format: $dto->format,
                 caption: $caption,
-                media: $dto->media,
+                media: $media,
                 link: $dto->link,
                 scheduledAt: $dto->scheduledAt,
             ), $connection);
@@ -73,6 +77,8 @@ class SocialPostService
             default => SocialPostStatus::SCHEDULED,
         };
 
+        $this->mediaFileService->keep($this->fileIds($media));
+
         return $this->databaseManager->transaction(fn () => collect(array_unique($dto->networks, SORT_REGULAR))
             ->map(fn (SocialNetwork $network) => $this->postRepository->create([
                 SocialPostDomainObjectAbstract::ORGANIZER_ID => $dto->organizerId,
@@ -80,7 +86,7 @@ class SocialPostService
                 SocialPostDomainObjectAbstract::NETWORK => $network->name,
                 SocialPostDomainObjectAbstract::FORMAT => $dto->format->name,
                 SocialPostDomainObjectAbstract::CAPTION => $caption,
-                SocialPostDomainObjectAbstract::MEDIA => $this->mediaToArray($dto->media),
+                SocialPostDomainObjectAbstract::MEDIA => $this->mediaToArray($media),
                 SocialPostDomainObjectAbstract::LINK => $dto->link,
                 SocialPostDomainObjectAbstract::STATUS => $status->name,
                 SocialPostDomainObjectAbstract::SOURCE => $dto->source->name,
@@ -109,7 +115,7 @@ class SocialPostService
         ?Carbon $scheduledAt,
     ): SocialPostDomainObject {
         $post = $this->findEditable($organizerId, $postId);
-        $media ??= $this->mediaFromPost($post);
+        $media = $this->hydrateFiles($organizerId, $media ?? $this->mediaFromPost($post));
         $caption = $this->cleanCaption($caption);
 
         $this->validator->validate(new SocialPostDataDTO(
@@ -122,6 +128,7 @@ class SocialPostService
         ), $this->connectionService->findForOrganizer($accountId, $organizerId));
 
         $isScheduled = $post->getStatus() === SocialPostStatus::SCHEDULED->name;
+        $this->mediaFileService->keep($this->fileIds($media));
 
         return $this->postRepository->updateFromArray($postId, [
             SocialPostDomainObjectAbstract::CAPTION => $caption,
@@ -174,6 +181,7 @@ class SocialPostService
         $post = $this->findEditable($organizerId, $postId);
 
         $this->postRepository->deleteById($post->getId());
+        $this->mediaFileService->purgeAfterDays($this->fileIds($this->mediaFromPost($post)), 1);
     }
 
     /**
@@ -188,9 +196,55 @@ class SocialPostService
         }
 
         return array_map(
-            fn (array $item) => new SocialMediaItemDTO(url: (string) $item['url'], type: SocialMediaType::fromName((string) $item['type'])),
+            fn (array $item) => new SocialMediaItemDTO(
+                url: (string) ($item['url'] ?? ''),
+                type: SocialMediaType::fromName((string) $item['type']),
+                fileId: isset($item['file_id']) ? (int) $item['file_id'] : null,
+            ),
             is_array($media) ? $media : [],
         );
+    }
+
+    /**
+     * @param  SocialMediaItemDTO[]  $media
+     * @return int[]
+     */
+    public function fileIds(array $media): array
+    {
+        return array_values(array_filter(array_map(fn (SocialMediaItemDTO $item) => $item->fileId, $media)));
+    }
+
+    /**
+     * Loads the type and metadata of the imported files, which must belong to the organizer.
+     *
+     * @param  SocialMediaItemDTO[]  $media
+     * @return SocialMediaItemDTO[]
+     *
+     * @throws InvalidSocialPostException
+     */
+    private function hydrateFiles(int $organizerId, array $media): array
+    {
+        return array_map(function (SocialMediaItemDTO $item) use ($organizerId) {
+            if (! $item->isFile()) {
+                return $item;
+            }
+
+            try {
+                $file = $this->mediaFileService->findReady($organizerId, (int) $item->fileId);
+            } catch (SocialMediaFileNotFoundException) {
+                throw new InvalidSocialPostException(__('An imported media is no longer available. Import it again.'));
+            }
+
+            return new SocialMediaItemDTO(
+                url: '',
+                type: SocialMediaType::fromName($file->getMediaType()),
+                fileId: $file->getId(),
+                mimeType: $file->getMimeType(),
+                width: $file->getWidth(),
+                height: $file->getHeight(),
+                durationMs: $file->getDurationMs(),
+            );
+        }, array_values($media));
     }
 
     /**
@@ -225,7 +279,9 @@ class SocialPostService
      */
     private function mediaToArray(array $media): array
     {
-        return array_map(fn (SocialMediaItemDTO $item) => ['url' => $item->url, 'type' => $item->type->name], array_values($media));
+        return array_map(fn (SocialMediaItemDTO $item) => $item->isFile()
+            ? ['file_id' => $item->fileId, 'type' => $item->type->name]
+            : ['url' => $item->url, 'type' => $item->type->name], array_values($media));
     }
 
     private function cleanCaption(?string $caption): ?string

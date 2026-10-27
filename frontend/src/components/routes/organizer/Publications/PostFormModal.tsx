@@ -1,8 +1,9 @@
 import {t} from "@lingui/macro";
 import {ActionIcon, Alert, Button, Checkbox, Group, SegmentedControl, Select, Stack, Switch, Text, Textarea, TextInput} from "@mantine/core";
+import {useState} from "react";
 import {useForm} from "@mantine/form";
 import {useMediaQuery} from "@mantine/hooks";
-import {IconInfoCircle, IconPlus, IconTrash} from "@tabler/icons-react";
+import {IconInfoCircle, IconLink, IconPlus, IconTrash} from "@tabler/icons-react";
 import dayjs from "dayjs";
 import {IdParam, SocialConnection, SocialMediaType, SocialNetwork, SocialPostFormat} from "../../../../types.ts";
 import {useCreateSocialPosts} from "../../../../mutations/useCreateSocialPosts.ts";
@@ -12,6 +13,7 @@ import {Modal} from "../../../common/Modal";
 import {DateTimeInput} from "../../../common/DateTimeInput";
 import {tzToUtc} from "../../../../utilites/dates.ts";
 import {postFormatLabel} from "./labels.ts";
+import {MediaUploader, UploadEntry} from "./MediaUploader.tsx";
 import classes from "./Publications.module.scss";
 
 const INSTAGRAM_CAPTION_MAX_LENGTH = 2200;
@@ -43,6 +45,8 @@ const defaultMediaType = (format: SocialPostFormat): SocialMediaType => format =
 
 export const PostFormModal = ({organizerId, connection, timezone, onClose}: PostFormModalProps) => {
     const createMutation = useCreateSocialPosts();
+    const [uploads, setUploads] = useState<UploadEntry[]>([]);
+    const [useLinks, setUseLinks] = useState(false);
     const formErrorHandle = useFormErrorResponseHandler();
     const hasInstagram = !!connection.instagram_account_id;
 
@@ -51,7 +55,7 @@ export const PostFormModal = ({organizerId, connection, timezone, onClose}: Post
             networks: hasInstagram ? ['INSTAGRAM', 'FACEBOOK'] : ['FACEBOOK'],
             format: 'IMAGE',
             caption: '',
-            media: [{url: '', type: 'IMAGE'}],
+            media: [],
             link: '',
             schedule: false,
             scheduled_at: '',
@@ -72,7 +76,9 @@ export const PostFormModal = ({organizerId, connection, timezone, onClose}: Post
     const changeFormat = (value: string) => {
         const next = value as SocialPostFormat;
         form.setFieldValue('format', next);
-        form.setFieldValue('media', next === 'TEXT' ? [] : [{url: '', type: defaultMediaType(next)}, ...(next === 'CAROUSEL' ? [{url: '', type: 'IMAGE' as SocialMediaType}] : [])]);
+        setUploads([]);
+        setUseLinks(false);
+        form.setFieldValue('media', []);
         if (next === 'TEXT') {
             form.setFieldValue('networks', ['FACEBOOK']);
         }
@@ -85,7 +91,10 @@ export const PostFormModal = ({organizerId, connection, timezone, onClose}: Post
                 networks: values.networks,
                 format: values.format,
                 caption: values.caption.trim() || null,
-                media: values.media.filter(item => item.url.trim() !== '').map(item => ({url: item.url.trim(), type: item.type})),
+                media: [
+                    ...uploads.filter(entry => entry.status === 'ready' && entry.media).map(entry => ({file_id: entry.media!.id, type: entry.media!.media_type, url: ''})),
+                    ...values.media.filter(item => item.url.trim() !== '').map(item => ({url: item.url.trim(), type: item.type})),
+                ],
                 link: values.link.trim() || null,
                 scheduled_at: values.schedule && values.scheduled_at ? tzToUtc(values.scheduled_at, timezone) : null,
                 as_draft: asDraft,
@@ -99,8 +108,10 @@ export const PostFormModal = ({organizerId, connection, timezone, onClose}: Post
         });
     };
 
+    const isUploading = uploads.some(entry => entry.status === 'uploading');
+
     const validateThenSubmit = (asDraft: boolean) => {
-        if (!form.validate().hasErrors) {
+        if (!form.validate().hasErrors && !isUploading) {
             submit(form.values, asDraft);
         }
     };
@@ -153,40 +164,52 @@ export const PostFormModal = ({organizerId, connection, timezone, onClose}: Post
 
                     {!isText && (
                         <Stack gap="xs">
-                            <Text size="sm" fw={500}>{allowsSeveralMedia ? t`Images (2 to 10)` : t`Media`}</Text>
-                            {media.map((_, index) => (
-                                <div key={index} className={classes.mediaRow}>
-                                    <TextInput
-                                        {...form.getInputProps(`media.${index}.url`)}
-                                        placeholder="https://"
-                                        aria-label={t`Public link of the media`}
-                                        style={{flex: 1}}
-                                    />
-                                    {!mediaTypeLocked && (
-                                        <Select
-                                            w={120}
-                                            data={[{value: 'IMAGE', label: t`Image`}, {value: 'VIDEO', label: t`Video`}]}
-                                            allowDeselect={false}
-                                            {...form.getInputProps(`media.${index}.type`)}
-                                        />
+                            <Text size="sm" fw={500}>{allowsSeveralMedia ? t`Photos (2 to 10)` : t`Media`}</Text>
+                            <MediaUploader organizerId={organizerId} format={format} uploads={uploads} onChange={setUploads}/>
+                            {useLinks ? (
+                                <>
+                                    {media.map((_, index) => (
+                                        <div key={index} className={classes.mediaRow}>
+                                            <TextInput
+                                                {...form.getInputProps(`media.${index}.url`)}
+                                                placeholder="https://"
+                                                aria-label={t`Public link of the media`}
+                                                style={{flex: 1}}
+                                            />
+                                            {!mediaTypeLocked && (
+                                                <Select
+                                                    w={120}
+                                                    data={[{value: 'IMAGE', label: t`Image`}, {value: 'VIDEO', label: t`Video`}]}
+                                                    allowDeselect={false}
+                                                    {...form.getInputProps(`media.${index}.type`)}
+                                                />
+                                            )}
+                                            <ActionIcon variant="subtle" color="red" mt={6} onClick={() => form.removeListItem('media', index)} aria-label={t`Remove`}>
+                                                <IconTrash size={16}/>
+                                            </ActionIcon>
+                                        </div>
+                                    ))}
+                                    {uploads.length + media.length < (allowsSeveralMedia ? 10 : 1) && (
+                                        <Group>
+                                            <Button variant="subtle" size="xs" leftSection={<IconPlus size={14}/>} onClick={() => form.insertListItem('media', {url: '', type: defaultMediaType(format)})}>
+                                                {t`Add a link`}
+                                            </Button>
+                                        </Group>
                                     )}
-                                    {allowsSeveralMedia && media.length > 2 && (
-                                        <ActionIcon variant="subtle" color="red" mt={6} onClick={() => form.removeListItem('media', index)} aria-label={t`Remove`}>
-                                            <IconTrash size={16}/>
-                                        </ActionIcon>
-                                    )}
-                                </div>
-                            ))}
-                            {allowsSeveralMedia && media.length < 10 && (
+                                </>
+                            ) : (
                                 <Group>
-                                    <Button variant="subtle" size="xs" leftSection={<IconPlus size={14}/>} onClick={() => form.insertListItem('media', {url: '', type: 'IMAGE'})}>
-                                        {t`Add an image`}
+                                    <Button variant="subtle" size="xs" leftSection={<IconLink size={14}/>} onClick={() => {
+                                        setUseLinks(true);
+                                        form.insertListItem('media', {url: '', type: defaultMediaType(format)});
+                                    }}>
+                                        {t`Use a public link instead`}
                                     </Button>
                                 </Group>
                             )}
                             <Alert color="blue" variant="light" icon={<IconInfoCircle size={16}/>} p="xs">
                                 <Text size="xs">
-                                    {t`Media must be public https:// links. Instagram only accepts JPEG images. Videos: vertical HD 1080x1920, H.264 and AAC.`}
+                                    {t`Files are kept as they are, never recompressed. Instagram only accepts JPEG photos. Videos: vertical HD 1080x1920, H.264 and AAC.`}
                                 </Text>
                             </Alert>
                         </Stack>
@@ -207,10 +230,10 @@ export const PostFormModal = ({organizerId, connection, timezone, onClose}: Post
                     )}
 
                     <Group justify="flex-end">
-                        <Button variant="default" onClick={() => validateThenSubmit(true)} loading={createMutation.isPending && createMutation.variables?.post.as_draft}>
+                        <Button variant="default" disabled={isUploading} onClick={() => validateThenSubmit(true)} loading={createMutation.isPending && createMutation.variables?.post.as_draft}>
                             {t`Save as draft`}
                         </Button>
-                        <Button type="submit" loading={createMutation.isPending && !createMutation.variables?.post.as_draft}>
+                        <Button type="submit" disabled={isUploading} loading={createMutation.isPending && !createMutation.variables?.post.as_draft}>
                             {form.values.schedule ? t`Schedule` : t`Publish now`}
                         </Button>
                     </Group>

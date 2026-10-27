@@ -11,6 +11,7 @@ use HiEvents\Console\Commands\SendDueSmsRemindersCommand;
 use HiEvents\Console\Commands\SmsWatchdogCommand;
 use HiEvents\Console\Commands\SyncSmsContactsCommand;
 use HiEvents\Jobs\Social\PublishDueSocialPostsJob;
+use HiEvents\Jobs\Social\SyncAllSocialFeedsJob;
 use HiEvents\Jobs\Message\SendScheduledMessagesJob;
 use HiEvents\Jobs\Waitlist\ProcessExpiredWaitlistOffersJob;
 use Illuminate\Console\Scheduling\Schedule;
@@ -24,6 +25,8 @@ class Kernel extends ConsoleKernel
         $schedule->job(new SendScheduledMessagesJob)->everyMinute()->withoutOverlapping();
         $schedule->job(new ProcessExpiredWaitlistOffersJob)->everyMinute()->withoutOverlapping();
         $schedule->job(new PublishDueSocialPostsJob)->everyMinute()->withoutOverlapping();
+        $schedule->job(new SyncAllSocialFeedsJob)->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('social:purge-media')->dailyAt('02:30')->withoutOverlapping();
         $schedule->command(PurgeQuestionAnswerFilesCommand::class)->hourly()->withoutOverlapping();
         $schedule->command(SyncSmsContactsCommand::class)->everyFifteenMinutes()->withoutOverlapping();
         $schedule->command(SendDueSmsRemindersCommand::class)->everyFiveMinutes()->withoutOverlapping(30)->runInBackground();

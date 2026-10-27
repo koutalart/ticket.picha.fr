@@ -7,9 +7,12 @@ namespace HiEvents\Services\Domain\Social;
 use HiEvents\DomainObjects\Enums\SocialNetwork;
 use HiEvents\DomainObjects\Enums\SocialPostFormat;
 use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
+use HiEvents\Exceptions\InvalidSocialMediaFileException;
 use HiEvents\Exceptions\InvalidSocialPostException;
 use HiEvents\Services\Domain\Social\DTO\SocialMediaItemDTO;
 use HiEvents\Services\Domain\Social\DTO\SocialPostDataDTO;
+use HiEvents\Services\Domain\Social\Media\DTO\SocialMediaMetadataDTO;
+use HiEvents\Services\Domain\Social\Media\SocialMediaRules;
 
 class SocialPostValidator
 {
@@ -18,6 +21,10 @@ class SocialPostValidator
     public const CAROUSEL_MIN_ITEMS = 2;
 
     public const CAROUSEL_MAX_ITEMS = 10;
+
+    public function __construct(
+        private readonly SocialMediaRules $mediaRules,
+    ) {}
 
     /**
      * @throws InvalidSocialPostException
@@ -33,7 +40,7 @@ class SocialPostValidator
         }
 
         foreach ($post->media as $item) {
-            if (! filter_var($item->url, FILTER_VALIDATE_URL) || ! str_starts_with(strtolower($item->url), 'https://')) {
+            if (! $item->isFile() && (! filter_var($item->url, FILTER_VALIDATE_URL) || ! str_starts_with(strtolower($item->url), 'https://'))) {
                 throw new InvalidSocialPostException(__('Each media must be a public https:// link.'));
             }
         }
@@ -58,7 +65,20 @@ class SocialPostValidator
 
         if ($post->network === SocialNetwork::INSTAGRAM) {
             foreach ($images as $image) {
-                $this->expect($this->looksLikeJpeg($image->url), __('Instagram only accepts JPEG images (.jpg).'));
+                $isJpeg = $image->isFile() ? $image->mimeType === 'image/jpeg' : $this->looksLikeJpeg($image->url);
+                $this->expect($isJpeg, __('Instagram only accepts JPEG images (.jpg).'));
+            }
+        }
+
+        foreach ($post->media as $item) {
+            try {
+                $this->mediaRules->assertFitsFormat($post->format, $item->type, new SocialMediaMetadataDTO(
+                    width: $item->width,
+                    height: $item->height,
+                    durationMs: $item->durationMs,
+                ));
+            } catch (InvalidSocialMediaFileException $exception) {
+                throw new InvalidSocialPostException($exception->getMessage());
             }
         }
     }
