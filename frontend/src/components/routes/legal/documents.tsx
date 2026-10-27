@@ -211,8 +211,10 @@ const cgv: LegalDocument = {
             <p>
                 Toute réclamation peut être adressée à <Mail address={e.email}/>. Conformément aux articles
                 L611-1 et suivants du Code de la consommation, en cas de litige non résolu, le consommateur peut
-                recourir gratuitement au médiateur de la consommation : {e.mediator.name}, {e.mediator.address},
-                {" "}{e.mediator.website}.
+                recourir gratuitement à un médiateur de la consommation
+                {e.mediator
+                    ? <> : {e.mediator.name}, {e.mediator.address}, {e.mediator.website}.</>
+                    : <>, dont les coordonnées seront indiquées ici dès sa désignation.</>}
             </p>
 
             <h2>10. Droit applicable</h2>

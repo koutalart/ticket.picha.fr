@@ -2,7 +2,7 @@
 
 /**
  * Informations légales de l'éditeur, reprises dans toutes les pages /legal/*.
- * Remplacer chaque « [À COMPLÉTER] » avant la mise en production.
+ * mediator reste null tant qu'aucun médiateur de la consommation n'est désigné.
  */
 export const legalEntity = {
     brand: "PICHA Ticket",
@@ -17,15 +17,11 @@ export const legalEntity = {
     email: "direction@picha.fr",
     publicationDirector: "Josué Koutala, Président",
     privacyContactEmail: "ticket@picha.fr",
-    mediator: {
-        name: "[À COMPLÉTER : nom du médiateur de la consommation]",
-        address: "[À COMPLÉTER : adresse du médiateur]",
-        website: "[À COMPLÉTER : site internet du médiateur]",
-    },
+    mediator: null as null | {name: string, address: string, website: string},
     host: {
         name: "OVH SAS",
         address: "2 rue Kellermann, 59100 Roubaix, France",
         website: "https://www.ovhcloud.com",
     },
-    lastUpdated: "24 octobre 2026",
+    lastUpdated: "27 octobre 2026",
 };
