@@ -1,38 +1,53 @@
 import {t} from "@lingui/macro";
 import classes from "./EventFactSummary.module.scss";
-import {Event} from "../../../types.ts";
+import {Event, Product} from "../../../types.ts";
 import {formatEventDateRange} from "../../../utilites/dates.ts";
 import {formatAddress, isAddressSet} from "../../../utilites/addressUtilities.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
-import {getStructuredDataProducts, isEventFree} from "../../../utilites/eventStructuredData.ts";
+import {getStructuredDataProducts} from "../../../utilites/eventStructuredData.ts";
 
 interface EventFactSummaryProps {
     event: Event;
     eventUrl: string;
 }
 
-const lowestPrice = (event: Event): number | null => {
-    const prices = getStructuredDataProducts(event)
+const getTicketProducts = (event: Event): Product[] =>
+    getStructuredDataProducts(event)
+        .filter(product => product.product_type === 'TICKET' && !product.is_refund_protection);
+
+const lowestTicketPrice = (event: Event, tickets: Product[]): number | null => {
+    const isInclusive = event.settings?.price_display_mode === 'INCLUSIVE';
+    const prices = tickets
         .flatMap(product => product.prices || [])
-        .map(price => Number(price.price))
+        .map(price => {
+            const base = Number(price.price);
+            return isInclusive ? base + (Number(price.tax_total) || 0) + (Number(price.fee_total) || 0) : base;
+        })
         .filter(price => Number.isFinite(price) && price > 0);
     return prices.length ? Math.min(...prices) : null;
 };
+
+const areAllTicketsFree = (tickets: Product[]): boolean =>
+    tickets.length > 0 && tickets.every(product =>
+        product.type !== 'DONATION' && !(product.prices || []).some(price => Number(price.price) > 0)
+    );
 
 export const EventFactSummary = ({event, eventUrl}: EventFactSummaryProps) => {
     const location = event.settings?.location_details;
     const venue = [location?.venue_name, isAddressSet(location) ? formatAddress(location!) : null]
         .filter(Boolean)
         .join(", ");
-    const minPrice = lowestPrice(event);
+    const tickets = getTicketProducts(event);
+    const minPrice = lowestTicketPrice(event, tickets);
     const dateRange = formatEventDateRange(event.start_date, event.end_date, event.timezone);
     const organizerName = event.organizer?.name;
     const registrationUrl = `${eventUrl}#tickets`;
 
-    const price = isEventFree(event)
+    const formattedMinPrice = minPrice !== null ? formatCurrency(minPrice, event.currency) : null;
+    const price = areAllTicketsFree(tickets)
         ? t`Free, registration required`
-        : minPrice !== null
-            ? t`From ${formatCurrency(minPrice, event.currency)}`
+        : formattedMinPrice !== null
+            ? t({message: `From ${formattedMinPrice}`, context: 'lowest ticket price'})
             : null;
 
     return (

@@ -2,8 +2,6 @@ import React from 'react';
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {Product, ProductPrice} from "../../../types.ts";
 import {t} from "@lingui/macro";
-import {Popover} from "@mantine/core";
-import {IconInfoCircle} from "@tabler/icons-react";
 
 interface CurrencyProps {
     price?: number | null | undefined;
@@ -46,54 +44,59 @@ interface ProductPriceProps {
     taxAndServiceFeeDisplayType?: 'INCLUSIVE' | 'EXCLUSIVE';
 }
 
+/**
+ * fee_total comes from the backend and already contains the platform fee paid by the buyer,
+ * computed from the account configuration (see ProductFilterService::processProductPrice).
+ */
 export const ProductPriceDisplay: React.FC<ProductPriceProps> = ({
-                                                                   product,
                                                                    price,
                                                                    currency = 'USD',
                                                                    className,
                                                                    freeLabel,
-                                                                   taxAndServiceFeeDisplayType = 'exclusive',
+                                                                   taxAndServiceFeeDisplayType = 'EXCLUSIVE',
                                                                }) => {
-    let displayPrice = price.price;
-    const totalTaxAndFees = (price.tax_total || 0) + (price.fee_total || 0);
+    const basePrice = Number(price.price) || 0;
+    const taxTotal = Number(price.tax_total) || 0;
+    const feeTotal = Number(price.fee_total) || 0;
+    const totalTaxAndFees = taxTotal + feeTotal;
+    const isInclusive = taxAndServiceFeeDisplayType === 'INCLUSIVE';
 
-    // Order taxes and service fees for display
-    const orderedFees = [...(product.taxes || [])].sort((a, b) => a.type.localeCompare(b.type));
-    const feeDescriptions = orderedFees.map(fee => fee.name).join(', ');
-
-    const getTextAppendage = () => {
-        if (taxAndServiceFeeDisplayType === 'INCLUSIVE') {
-            displayPrice += totalTaxAndFees;
-            return `incl. ${feeDescriptions}`;
-        } else {
-            const formattedFees = formatCurrency(totalTaxAndFees, currency);
-            return `excl. ${formattedFees} ${feeDescriptions}`;
-        }
-    };
-
-    const appendedText = totalTaxAndFees === 0 ? '' : (
-        <>
-            <Popover>
-                <Popover.Target>
-                    <span style={{cursor: 'pointer'}}> <IconInfoCircle size={18}/> </span>
-                </Popover.Target>
-                <Popover.Dropdown>
-                    {getTextAppendage()}
-                </Popover.Dropdown>
-            </Popover>
-        </>
-    )
-
-    const formattedPrice = formatCurrency(displayPrice, currency);
-
-    if (displayPrice === 0 && totalTaxAndFees === 0) {
+    if (basePrice === 0 && totalTaxAndFees === 0) {
         return <span className={className}>{freeLabel || t`Free`}</span>;
     }
 
+    const displayPrice = isInclusive ? basePrice + totalTaxAndFees : basePrice;
+
+    const getFeeNote = (): string | null => {
+        if (totalTaxAndFees === 0) {
+            return null;
+        }
+
+        if (isInclusive) {
+            return taxTotal > 0 ? t`Taxes and fees included` : t`Service fee included`;
+        }
+
+        const formattedTotal = formatCurrency(totalTaxAndFees, currency);
+
+        if (taxTotal > 0 && feeTotal > 0) {
+            return t`+ ${formattedTotal} taxes and fees`;
+        }
+
+        if (taxTotal > 0) {
+            return t`+ ${formattedTotal} taxes`;
+        }
+
+        return t`+ ${formattedTotal} service fee`;
+    };
+
+    const feeNote = getFeeNote();
+
     return (
         <div className={className}>
-            <div>{formattedPrice}</div>
-            <div>{appendedText}</div>
+            <div>
+                <div>{formatCurrency(displayPrice, currency)}</div>
+                {feeNote && <div className={'hi-price-fee-note'}>{feeNote}</div>}
+            </div>
         </div>
     );
 };

@@ -30,6 +30,7 @@ class ProductResourcePublic extends JsonResource
             'start_collapsed' => $this->getStartCollapsed(),
             'is_required' => $this->getIsRequired(),
             'required_quantity_mode' => $this->getRequiredQuantityMode(),
+            'is_refund_protection' => $this->getIsRefundProtection(),
             $this->mergeWhen($this->getShowQuantityRemaining(), fn() => [
                 'quantity_available' => $this->getQuantityAvailable(),
             ]),
