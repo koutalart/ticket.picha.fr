@@ -59,6 +59,8 @@ import {RichFooter} from "./RichFooter";
 import {EventFactSummary} from "../../common/EventFactSummary";
 import {useRegisteredOnDevice} from "../../../hooks/useRegisteredOnDevice.ts";
 import {AlreadyRegisteredLink, AttendanceAccessModal, RegisteredNotice} from "./AttendanceAccess";
+import {alignTicketsOnArrival, scrollToTicketsSection} from "../../../utilites/ticketsAnchor.ts";
+import {useGetLiveChatConfig} from "../../../queries/useGetLiveChatConfig.ts";
 
 const VIDEO_PAUSE_PROGRESS = 0.6;
 
@@ -72,12 +74,25 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const {event, promoCodeValid, promoCode} = loaderData;
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [contactModalOpen, setContactModalOpen] = useState(false);
+    const [contactModalMounted, setContactModalMounted] = useState(false);
     const ticketsSectionRef = useRef<HTMLElement>(null);
     const fullscreenHeroRef = useRef<HTMLElement>(null);
     const [attendanceAccessOpen, setAttendanceAccessOpen] = useState(false);
+    const [attendanceAccessMounted, setAttendanceAccessMounted] = useState(false);
     const [registerAnotherPerson, setRegisterAnotherPerson] = useState(false);
     const {attendanceEnabled, registered: registeredOnDevice, forget: forgetRegistration} = useRegisteredOnDevice(event);
-    const openAttendanceAccess = () => setAttendanceAccessOpen(true);
+    const openAttendanceAccess = () => {
+        setAttendanceAccessMounted(true);
+        setAttendanceAccessOpen(true);
+    };
+    const openContactModal = () => {
+        setContactModalMounted(true);
+        setContactModalOpen(true);
+    };
+
+    useGetLiveChatConfig(event?.organizer?.id);
+
+    useEffect(() => alignTicketsOnArrival(), []);
 
     const {consentGranted} = useOrganizerTrackingPixels(
         event?.organizer?.settings?.tracking_pixels
@@ -185,7 +200,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     }, []);
 
     const scrollToTickets = () => {
-        ticketsSectionRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
+        scrollToTicketsSection(ticketsSectionRef.current);
     };
 
     if (!event) {
@@ -347,7 +362,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                 {event && <EventDocumentHead event={event}/>}
 
-                {attendanceEnabled && (
+                {attendanceEnabled && attendanceAccessMounted && (
                     <AttendanceAccessModal
                         opened={attendanceAccessOpen}
                         onClose={() => setAttendanceAccessOpen(false)}
@@ -483,7 +498,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             socialLinks={socialLinks}
                             websiteUrl={websiteUrl}
                             onRegister={scrollToTickets}
-                            onContact={() => setContactModalOpen(true)}
+                            onContact={openContactModal}
                             onManageCookies={openConsentPreferences}
                         />
                     ) : isEmbeddedRegistration ? (
@@ -497,7 +512,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                         )}
                                         <button
                                             type="button"
-                                            onClick={() => setContactModalOpen(true)}
+                                            onClick={openContactModal}
                                             className={classes.landingContact}
                                         >
                                             <IconMail/>
@@ -896,7 +911,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                         }
                                                     })()}
                                                     <button
-                                                        onClick={() => setContactModalOpen(true)}
+                                                        onClick={openContactModal}
                                                         className={classes.contactButton}
                                                     >
                                                         <IconMail/>
@@ -916,25 +931,26 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         </div>
                     )}
 
-                    {/* Floating Scroll Button */}
                     {showScrollButton && !isEmbeddedRegistration && (
                         <button
+                            type="button"
                             className={classes.scrollToTicketsButton}
                             onClick={scrollToTickets}
                         >
                             <IconTicket size={18}/>
-                            {t`Get Tickets`}
+                            {isFreeEvent ? t`Register for free` : t`Buy`}
                         </button>
                     )}
 
-                    {/* Contact Modal */}
                     <PublicOverlayTheme {...overlayTheme}>
-                        <ContactOrganizerModal
-                            opened={contactModalOpen}
-                            onClose={() => setContactModalOpen(false)}
-                            organizer={organizer}
-                            eventId={event.id}
-                        />
+                        {contactModalMounted && (
+                            <ContactOrganizerModal
+                                opened={contactModalOpen}
+                                onClose={() => setContactModalOpen(false)}
+                                organizer={organizer}
+                                eventId={event.id}
+                            />
+                        )}
                     </PublicOverlayTheme>
                 </div>
             </main>
