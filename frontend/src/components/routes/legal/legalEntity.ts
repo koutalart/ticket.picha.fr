@@ -15,7 +15,7 @@ export const legalEntity = {
     vatNumber: "FR63897877122",
     phone: "[À COMPLÉTER : téléphone]",
     email: "ticket@picha.fr",
-    publicationDirector: "[À COMPLÉTER : nom du directeur de la publication]",
+    publicationDirector: "Josué Koutala, Président",
     privacyContactEmail: "ticket@picha.fr",
     mediator: {
         name: "[À COMPLÉTER : nom du médiateur de la consommation]",
