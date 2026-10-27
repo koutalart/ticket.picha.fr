@@ -326,6 +326,50 @@ class LiveChatApiTest extends TestCase
         );
     }
 
+    public function test_each_bubble_is_a_message_of_the_chat_and_of_the_sms_conversation(): void
+    {
+        $this->settings();
+        $sessionId = $this->openChat();
+        $this->chat('post', '/public/live-chat/contact', $sessionId, ['phone' => '0639123456'])->assertOk();
+        $this->claude->shouldReceive('askWithUsage')
+            ->once()
+            ->withArgs(fn (string $system, array $content) => str_contains($content[0]['text'], "Demande déjà transmise à l'organisateur : oui"))
+            ->andReturn(new ClaudeStructuredAnswerDTO(
+                data: [
+                    'messages' => ['Heyy masta ! Le 10 décembre, c’est noté.', "L'organisateur te rappelle pour en parler."],
+                    'needs_follow_up' => true,
+                    'ask_contact' => false,
+                    'reason' => 'Anniversaire privé',
+                    'intent' => 'none',
+                ],
+                model: 'claude-haiku-5-5',
+                inputTokens: 1200,
+                outputTokens: 80,
+            ));
+
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => '10 décembre'])
+            ->assertOk()
+            ->assertJsonCount(3, 'data.messages')
+            ->assertJsonPath('data.messages.1.author_type', 'AGENT')
+            ->assertJsonPath('data.messages.1.content', 'Le 10 décembre, c’est noté.')
+            ->assertJsonPath('data.messages.2.content', "L'organisateur te rappelle pour en parler.");
+
+        $session = DB::table('live_chat_sessions')->where('public_id', $sessionId)->first();
+        $this->assertSame(1, (int) $session->model_call_count);
+        $this->assertSame('Anniversaire privé', $session->follow_up_reason);
+        $this->assertSame(4, DB::table('live_chat_messages')->where('live_chat_session_id', $session->id)->count());
+        $this->assertSame(1, DB::table('sms_assistant_calls')->where('organizer_id', $this->organizerId)->count());
+
+        $this->assertSame(
+            ['10 décembre', 'Le 10 décembre, c’est noté.', "L'organisateur te rappelle pour en parler."],
+            DB::table('sms_messages')->where('sms_conversation_id', $session->sms_conversation_id)->orderBy('id')->pluck('content')->slice(1)->values()->all(),
+        );
+
+        $this->chat('get', '/public/live-chat/messages', $sessionId)
+            ->assertOk()
+            ->assertJsonCount(4, 'data.messages');
+    }
+
     public function test_email_only_contact_keeps_the_chat_and_alerts_by_email(): void
     {
         $this->settings();

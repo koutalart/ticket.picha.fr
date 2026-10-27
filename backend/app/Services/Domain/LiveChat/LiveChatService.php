@@ -48,21 +48,21 @@ class LiveChatService
 
     public const DEFAULT_RELAY_LABEL = "l'organisateur";
 
-    private const THREAD_LENGTH = 30;
+    private const THREAD_LENGTH = 40;
 
-    private const TRANSCRIPT_LENGTH = 60;
+    private const TRANSCRIPT_LENGTH = 80;
 
     private const RATE_WINDOW_SECONDS = 3600;
 
     private const HOLDING_REPLIES_VOUS = [
         "Je transmets votre question à l'organisateur, il va regarder ça.",
-        "Bonne question, je la fais suivre à l'organisateur pour être sûr de bien vous répondre.",
+        "Bonne question, je la fais suivre à l'organisateur pour être sûre de bien vous répondre.",
         "Je préfère laisser l'organisateur vous répondre là-dessus, je lui transmets.",
     ];
 
     private const HOLDING_REPLIES_TU = [
         "Je transmets ta question à l'organisateur, il va regarder ça.",
-        "Bonne question, je la fais suivre à l'organisateur pour être sûr de bien te répondre.",
+        "Bonne question, je la fais suivre à l'organisateur pour être sûre de bien te répondre.",
         "Je préfère laisser l'organisateur te répondre là-dessus, je lui transmets.",
     ];
 
@@ -137,10 +137,15 @@ class LiveChatService
         return new LiveChatTurnDTO(
             session: $session,
             messages: collect(),
-            greeting: $this->isTutoiement($organizerId)
-                ? 'Bonjour ! Pose-moi ta question sur nos événements, je te réponds tout de suite.'
-                : 'Bonjour ! Posez-moi votre question sur nos événements, je vous réponds tout de suite.',
+            greeting: self::greeting($this->isTutoiement($organizerId)),
         );
+    }
+
+    public static function greeting(bool $tutoiement): string
+    {
+        return $tutoiement
+            ? 'Bonjour ! Pose-moi ta question sur nos événements, je te réponds tout de suite.'
+            : 'Bonjour ! Posez-moi votre question sur nos événements, je vous réponds tout de suite.';
     }
 
     /**
@@ -225,26 +230,31 @@ class LiveChatService
         $reply = $this->reply($session, $settings, $contactKnown);
         if ($sensitive && ! $reply->needsFollowUp && ! $reply->refundRequest) {
             $reply = new LiveChatReplyDTO(
-                reply: $reply->reply,
+                messages: $reply->messages,
                 needsFollowUp: true,
                 askContact: ! $contactKnown,
                 reason: $reply->reason,
             );
         }
 
-        $agentMessage = $this->addMessage($session, LiveChatAuthorType::AGENT, $reply->reply, [
-            LiveChatSessionDomainObjectAbstract::NEEDS_FOLLOW_UP => $session->getNeedsFollowUp() || $reply->needsFollowUp,
-            LiveChatSessionDomainObjectAbstract::FOLLOW_UP_REASON => $reply->reason ?? $session->getFollowUpReason(),
-        ], countModelCall: true);
+        $agentMessages = collect();
+        foreach ($reply->messages as $index => $bubble) {
+            $agentMessages->push($this->addMessage($session, LiveChatAuthorType::AGENT, $bubble, $index === 0 ? [
+                LiveChatSessionDomainObjectAbstract::NEEDS_FOLLOW_UP => $session->getNeedsFollowUp() || $reply->needsFollowUp,
+                LiveChatSessionDomainObjectAbstract::FOLLOW_UP_REASON => $reply->reason ?? $session->getFollowUpReason(),
+            ] : [], countModelCall: $index === 0));
+        }
         $session = $this->sessionRepository->findById($session->getId());
 
         if ($session->getSmsConversationId() !== null) {
-            $this->handoffService->appendToConversation($settings, $session, $agentMessage, $reply->needsFollowUp);
+            foreach ($agentMessages as $agentMessage) {
+                $this->handoffService->appendToConversation($settings, $session, $agentMessage, $reply->needsFollowUp);
+            }
         }
 
         return new LiveChatTurnDTO(
             session: $session,
-            messages: collect([$visitorMessage, $agentMessage]),
+            messages: collect([$visitorMessage, ...$agentMessages]),
             askContact: $reply->askContact && ! $contactKnown,
             refundForm: $reply->refundRequest,
         );
@@ -419,12 +429,16 @@ class LiveChatService
                 events: $this->catalogService->getUpcomingEvents($session->getOrganizerId(), withDetails: true),
                 refundAvailable: $session->getRefundedAt() === null
                     && $this->refundProtectionService->isAvailableForOrganizer($session->getOrganizerId()),
+                greeting: self::greeting($tutoiement),
+                handedOff: $session->getNeedsFollowUp()
+                    || $session->getStatus() === LiveChatSessionStatus::HANDED_OFF->name
+                    || $session->getSmsConversationId() !== null,
             ));
         } catch (SmsAssistantUnavailableException|SmsAssistantFailedException|SmsAssistantLimitReachedException) {
             $replies = $tutoiement ? self::HOLDING_REPLIES_TU : self::HOLDING_REPLIES_VOUS;
 
             return new LiveChatReplyDTO(
-                reply: $replies[$session->getVisitorMessageCount() % count($replies)],
+                messages: [$replies[$session->getVisitorMessageCount() % count($replies)]],
                 needsFollowUp: true,
                 askContact: ! $contactKnown,
                 reason: __('the assistant could not answer'),
