@@ -1746,6 +1746,80 @@ export interface SmsConversationDetail {
     opted_out: boolean;
 }
 
+export type EmailThreadStatus = 'OPEN' | 'NEEDS_HUMAN' | 'CLOSED';
+
+export type EmailThreadFilter = 'all' | 'unread' | 'needs_human' | 'failed';
+
+export type EmailMessageStatus =
+    'SENDING'
+    | 'SENT'
+    | 'DELAYED'
+    | 'DELIVERED'
+    | 'OPENED'
+    | 'BOUNCED'
+    | 'COMPLAINED'
+    | 'FAILED'
+    | 'RECEIVED';
+
+export interface EmailThread {
+    id: number;
+    email: string;
+    contact_name?: string | null;
+    status: EmailThreadStatus;
+    unread_count: number;
+    last_message_at?: string | null;
+    last_message_subject?: string | null;
+    last_message_preview?: string | null;
+    last_message_direction?: 'INBOUND' | 'OUTBOUND' | null;
+    last_message_status?: EmailMessageStatus | null;
+    created_at: string;
+}
+
+export interface EmailMessageAttachment {
+    filename?: string | null;
+    content_type?: string | null;
+    size?: number | null;
+}
+
+export interface EmailMessage {
+    id: number;
+    email_thread_id: number;
+    direction: 'INBOUND' | 'OUTBOUND';
+    source: string;
+    event_id?: number | null;
+    order_id?: number | null;
+    attendee_id?: number | null;
+    sent_by_user_id?: number | null;
+    from_email?: string | null;
+    from_name?: string | null;
+    to_email: string;
+    subject?: string | null;
+    preview?: string | null;
+    body_text?: string | null;
+    body_html?: string | null;
+    attachments?: EmailMessageAttachment[] | null;
+    status: EmailMessageStatus;
+    error_message?: string | null;
+    delivered_at?: string | null;
+    opened_at?: string | null;
+    status_updated_at?: string | null;
+    created_at: string;
+}
+
+export interface EmailThreadDetail {
+    thread: EmailThread;
+    messages: EmailMessage[];
+    customer_orders: SmsCustomerOrder[];
+    unsubscribed: boolean;
+}
+
+export interface EmailRecipient {
+    email: string;
+    name?: string | null;
+    thread_id?: number | null;
+    unsubscribed: boolean;
+}
+
 export type OrganizerTeamContactRole = 'ORGANIZER' | 'COPY';
 
 export interface OrganizerTeamContact {

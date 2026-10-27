@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useQueryClient} from "@tanstack/react-query";
 import {NavLink, useParams, useSearchParams} from "react-router";
 import {t} from "@lingui/macro";
-import {Alert, Anchor, Drawer, SegmentedControl} from "@mantine/core";
+import {Alert, Anchor, Badge, Drawer, SegmentedControl, Tabs} from "@mantine/core";
 import {useDebouncedValue} from "@mantine/hooks";
 import {SmsConversation, SmsConversationFilter} from "../../../../types.ts";
 import {GET_SMS_CONVERSATIONS_QUERY_KEY, SMS_POLL_INTERVAL_MS, useGetSmsConversations} from "../../../../queries/useGetSmsConversations.ts";
@@ -19,10 +19,16 @@ import {CampaignList} from "./CampaignList.tsx";
 import {ReminderList} from "./ReminderList.tsx";
 import {LiveChatList} from "./LiveChatList.tsx";
 import {TeamView} from "./TeamView.tsx";
+import {EmailInbox} from "./Email/EmailInbox.tsx";
+import {useGetEmailUnreadCount} from "../../../../queries/useGetEmailUnreadCount.ts";
+import {useGetSmsUnreadCount} from "../../../../queries/useGetSmsUnreadCount.ts";
 import classes from "./Sms.module.scss";
 
 const CONVERSATION_PARAM = 'conversation';
 const VIEW_PARAM = 'view';
+const CHANNEL_PARAM = 'channel';
+
+type MessageChannel = 'sms' | 'email';
 
 type SmsView = 'conversations' | 'campaigns' | 'reminders' | 'chats' | 'team';
 
@@ -38,6 +44,9 @@ const Sms = () => {
     const selectedId = Number(searchParams.get(CONVERSATION_PARAM)) || null;
     const requestedView = searchParams.get(VIEW_PARAM) as SmsView | null;
     const view: SmsView = requestedView && VIEWS.includes(requestedView) ? requestedView : 'conversations';
+    const channel: MessageChannel = searchParams.get(CHANNEL_PARAM) === 'email' ? 'email' : 'sms';
+    const {data: smsUnreadCount} = useGetSmsUnreadCount(organizerId);
+    const {data: emailUnreadCount} = useGetEmailUnreadCount(organizerId);
 
     const {data: organizer} = useGetOrganizer(organizerId);
     const settingsQuery = useGetSmsSettings(organizerId, SMS_POLL_INTERVAL_MS * 4);
@@ -79,14 +88,45 @@ const Sms = () => {
         setSearchParams(params, {replace: true});
     };
 
+    const changeChannel = (next: MessageChannel) => {
+        const params = new URLSearchParams();
+        if (next === 'email') {
+            params.set(CHANNEL_PARAM, 'email');
+        }
+        setSearchParams(params, {replace: true});
+    };
+
     return (
         <PageBody>
             <div className={classes.pageHeader}>
-                <h1 className={classes.pageTitle}>{t`SMS messages`}</h1>
+                <h1 className={classes.pageTitle}>{t`Messages`}</h1>
                 <p className={classes.pageIntro}>
-                    {t`A customer who replies STOP is automatically unsubscribed from your SMS.`}
+                    {channel === 'email'
+                        ? t`Every e-mail sent to your buyers on your behalf, their delivery and their replies.`
+                        : t`A customer who replies STOP is automatically unsubscribed from your SMS.`}
                 </p>
             </div>
+
+            <Tabs value={channel} onChange={(value) => changeChannel((value as MessageChannel) || 'sms')} mb="md">
+                <Tabs.List>
+                    <Tabs.Tab
+                        value="sms"
+                        rightSection={smsUnreadCount ? <Badge size="xs" circle>{smsUnreadCount}</Badge> : undefined}
+                    >
+                        {t`SMS`}
+                    </Tabs.Tab>
+                    <Tabs.Tab
+                        value="email"
+                        rightSection={emailUnreadCount ? <Badge size="xs" circle>{emailUnreadCount}</Badge> : undefined}
+                    >
+                        {t`E-mails`}
+                    </Tabs.Tab>
+                </Tabs.List>
+            </Tabs>
+
+            {channel === 'email' && <EmailInbox organizerId={organizerId!}/>}
+
+            {channel === 'sms' && <>
 
             {settingsQuery.isFetched && !canSend && (
                 <Alert color="yellow" variant="light" mb="md">
@@ -173,6 +213,7 @@ const Sms = () => {
                     timezone={organizer?.timezone || 'Indian/Mayotte'}
                 />
             </div>}
+            </>}
 
             <Drawer
                 opened={customerOpen && !!detailQuery.data}

@@ -33,6 +33,8 @@ use HiEvents\Services\Domain\Sms\Reminder\SmsReminderPersonalLinkProviderInterfa
 use HiEvents\Services\Infrastructure\Printing\ZebraNetworkPrinter;
 use HiEvents\Services\Infrastructure\Printing\ZebraPrinterClientInterface;
 use HiEvents\Services\Infrastructure\Stripe\StripeClientFactory;
+use HiEvents\Services\Infrastructure\EmailProvider\EmailProviderInterface;
+use HiEvents\Services\Infrastructure\EmailProvider\Resend\ResendEmailProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,6 +46,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ZebraPrinterClientInterface::class, ZebraNetworkPrinter::class);
         $this->app->bind(SmsReminderPersonalLinkProviderInterface::class, AttendanceSmsReminderPersonalLinkProvider::class);
         $this->app->bind(SmsCancellationLinkProviderInterface::class, ContactSmsCancellationLinkProvider::class);
+        // TODO Brevo: implement BrevoEmailProvider behind EmailProviderInterface and pick it from services.email_inbox.provider.
+        $this->app->bind(EmailProviderInterface::class, ResendEmailProvider::class);
         $this->app->scoped(PublicBaseUrlResolver::class);
         $this->registerLocaleVariants();
     }

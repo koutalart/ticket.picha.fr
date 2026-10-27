@@ -1,0 +1,61 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.emailBubble {
+  width: min(560px, 90%);
+}
+
+.emailSubject {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  overflow-wrap: anywhere;
+}
+
+.emailBody {
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.emailHtml {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  p {
+    margin: 0 0 8px;
+  }
+}
+
+.quoted {
+  margin-top: 6px;
+  padding-left: 8px;
+  border-left: 2px solid var(--mantine-color-default-border);
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  opacity: 0.8;
+}
+
+.attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.metaBadge {
+  text-transform: none;
+}

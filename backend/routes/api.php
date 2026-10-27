@@ -56,6 +56,14 @@ use HiEvents\Http\Actions\Sms\ScheduleSmsReminderAction;
 use HiEvents\Http\Actions\Sms\PreviewSmsReminderAction;
 use HiEvents\Http\Actions\Sms\CancelSmsReminderAction;
 use HiEvents\Http\Actions\Sms\UpdateSmsReminderAction;
+use HiEvents\Http\Actions\Email\EmailProviderWebhookAction;
+use HiEvents\Http\Actions\Email\GetEmailThreadAction;
+use HiEvents\Http\Actions\Email\GetEmailThreadsAction;
+use HiEvents\Http\Actions\Email\GetEmailUnreadCountAction;
+use HiEvents\Http\Actions\Email\ReplyEmailThreadAction;
+use HiEvents\Http\Actions\Email\SearchEmailRecipientsAction;
+use HiEvents\Http\Actions\Email\SendNewEmailAction;
+use HiEvents\Http\Actions\Email\UpdateEmailThreadAction;
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
@@ -532,6 +540,19 @@ $router->middleware(['auth:api'])->group(
             ->middleware('throttle:20,1');
         $router->post('/organizers/{organizer_id}/sms/assistant/preview', PreviewSmsAssistantAction::class)
             ->middleware('throttle:10,1');
+        $router->get('/organizers/{organizer_id}/email/threads', GetEmailThreadsAction::class);
+        $router->get('/organizers/{organizer_id}/email/unread-count', GetEmailUnreadCountAction::class);
+        $router->get('/organizers/{organizer_id}/email/recipients', SearchEmailRecipientsAction::class)
+            ->middleware('throttle:60,1');
+        $router->post('/organizers/{organizer_id}/email/messages', SendNewEmailAction::class)
+            ->middleware('throttle:20,1');
+        $router->get('/organizers/{organizer_id}/email/threads/{thread_id}', GetEmailThreadAction::class)
+            ->where('thread_id', '[0-9]+');
+        $router->patch('/organizers/{organizer_id}/email/threads/{thread_id}', UpdateEmailThreadAction::class)
+            ->where('thread_id', '[0-9]+');
+        $router->post('/organizers/{organizer_id}/email/threads/{thread_id}/messages', ReplyEmailThreadAction::class)
+            ->where('thread_id', '[0-9]+')
+            ->middleware('throttle:30,1');
         $router->get('/organizers/{organizer_id}/refund-approvals/{request_id}', GetRefundApprovalAction::class)
             ->where('request_id', '[0-9]+');
         $router->post('/organizers/{organizer_id}/refund-approvals/{request_id}/decision', DecideRefundAction::class)
@@ -997,6 +1018,8 @@ $router->prefix('/public')->group(
 
         // Webhooks
         $router->post('/webhooks/stripe', StripeIncomingWebhookAction::class);
+        $router->post('/webhooks/resend', EmailProviderWebhookAction::class)
+            ->middleware('throttle:300,1');
         $router->post('/webhooks/httpsms/{webhook_token}', HttpSmsIncomingWebhookAction::class)
             ->where('webhook_token', '[A-Za-z0-9]{20,64}')
             ->middleware('throttle:120,1');

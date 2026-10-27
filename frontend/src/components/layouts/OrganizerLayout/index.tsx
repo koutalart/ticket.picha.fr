@@ -33,6 +33,7 @@ import { StripeConnectButton } from "../../common/StripeConnectButton";
 import { useGetMe } from "../../../queries/useGetMe.ts";
 import { isBoxOfficeOperator } from "../../../utilites/kioskAuth.ts";
 import { useGetSmsUnreadCount } from "../../../queries/useGetSmsUnreadCount.ts";
+import { useGetEmailUnreadCount } from "../../../queries/useGetEmailUnreadCount.ts";
 
 const OrganizerLayout = () => {
     const { organizerId } = useParams();
@@ -47,6 +48,8 @@ const OrganizerLayout = () => {
     const { data: account } = useGetAccount();
     const { data: me, isSuccess: isMeSuccess } = useGetMe();
     const { data: smsUnreadCount } = useGetSmsUnreadCount(organizerId);
+    const { data: emailUnreadCount } = useGetEmailUnreadCount(organizerId);
+    const messagesUnreadCount = (smsUnreadCount ?? 0) + (emailUnreadCount ?? 0);
 
     if (isMeSuccess && isBoxOfficeOperator(me)) {
         return <Navigate to="/kiosk" replace />;
@@ -72,7 +75,7 @@ const OrganizerLayout = () => {
             isActive: (isActive) => isActive || location.pathname.includes('/report/')
         },
         {link: 'qr-codes', label: t`QR codes`, icon: IconQrcode},
-        {link: 'sms', label: t`SMS`, icon: IconMessage, badge: smsUnreadCount ? smsUnreadCount : undefined},
+        {link: 'sms', label: t`Messages`, icon: IconMessage, badge: messagesUnreadCount ? messagesUnreadCount : undefined},
         {link: 'publications', label: t`Publications`, icon: IconSpeakerphone},
     ];
 

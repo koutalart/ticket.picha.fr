@@ -43,6 +43,8 @@ class LiveChatRefundUpdateMail extends BaseMail
         return new Content(
             markdown: 'emails.live-chat.refund-update',
             with: [
+                'organizer' => $this->organizer,
+                'event' => $this->event,
                 'organizerName' => $this->organizer->getName(),
                 'text' => $this->text,
             ],

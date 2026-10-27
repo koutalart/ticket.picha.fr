@@ -182,6 +182,10 @@ msgstr ""
 msgid "{0} orders, {1} events"
 msgstr "Заказов: {0}, мероприятий: {1}"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:163
+msgid "{0} orders, last: {1} ({2})"
+msgstr ""
+
 #: src/components/routes/events/Dashboard/index.tsx:140
 msgid "{0} organizers"
 msgstr ""
@@ -516,7 +520,7 @@ msgstr ""
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "Компьютер в сети площадки запускает ретранслятор печати PICHA. Он забирает билеты, напечатанные с этой станции, и отправляет их на Zebra."
 
-#: src/components/routes/organizer/Sms/index.tsx:87
+#: src/components/routes/organizer/Sms/index.tsx:106
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "Клиент, ответивший STOP, автоматически отписывается от ваших SMS."
 
@@ -924,6 +928,10 @@ msgstr ""
 msgid "Add a service"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:38
+msgid "Add a subject"
+msgstr ""
+
 #: src/components/routes/organizer/Contacts/index.tsx:341
 msgid "Add a tag"
 msgstr ""
@@ -1270,6 +1278,7 @@ msgstr ""
 #: src/components/routes/organizer/Publications/index.tsx:129
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:51
 msgid "All"
 msgstr ""
 
@@ -1900,6 +1909,10 @@ msgstr ""
 msgid "At the entrance, one scan of the QR code grants access and starts printing the badge. Unregistered attendees are signed up on the spot from a tablet."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:71
+msgid "Attachment"
+msgstr ""
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:100
 msgid "Attempts"
 msgstr ""
@@ -2219,6 +2232,7 @@ msgstr ""
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:134
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:150
 msgid "Back"
 msgstr ""
 
@@ -2362,6 +2376,10 @@ msgstr ""
 
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:59
 msgid "Bought"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:46
+msgid "Bounced"
 msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:208
@@ -2557,7 +2575,7 @@ msgstr ""
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
-#: src/components/routes/organizer/Sms/index.tsx:115
+#: src/components/routes/organizer/Sms/index.tsx:155
 msgid "Campaigns"
 msgstr "Кампании"
 
@@ -3011,6 +3029,10 @@ msgstr "Выберите файл PDF (не более 5 МБ)"
 msgid "Choose a price"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:37
+msgid "Choose a recipient among your contacts"
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:358
 msgid "Choose a type"
 msgstr ""
@@ -3202,6 +3224,7 @@ msgstr ""
 msgid "Close the chat"
 msgstr "Закрыть чат"
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:80
 #: src/components/routes/organizer/Sms/labels.ts:9
 msgid "Closed"
 msgstr "Закрыт"
@@ -3242,7 +3265,7 @@ msgstr ""
 msgid "Code received"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:91
+#: src/components/layouts/OrganizerLayout/index.tsx:94
 msgid "Collaborate with your team to create amazing events together."
 msgstr ""
 
@@ -3556,12 +3579,12 @@ msgstr ""
 msgid "Connect Documentation"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:95
+#: src/components/routes/organizer/Sms/index.tsx:135
 msgid "Connect PICHA SMS in Settings"
 msgstr "Подключить PICHA SMS в настройках"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:104
-#: src/components/layouts/OrganizerLayout/index.tsx:112
+#: src/components/layouts/OrganizerLayout/index.tsx:107
+#: src/components/layouts/OrganizerLayout/index.tsx:115
 #: src/components/routes/event/GettingStarted/index.tsx:120
 msgid "Connect Stripe"
 msgstr ""
@@ -3589,7 +3612,7 @@ msgstr ""
 msgid "Connect your Facebook page and the Instagram professional account linked to it to schedule your posts from PICHA. Every post is checked by a person before it goes out."
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:105
+#: src/components/layouts/OrganizerLayout/index.tsx:108
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr ""
 
@@ -3723,7 +3746,7 @@ msgstr ""
 msgid "Contact us to become a partner"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:64
+#: src/components/layouts/OrganizerLayout/index.tsx:67
 #: src/components/routes/organizer/Contacts/index.tsx:196
 msgid "Contacts"
 msgstr ""
@@ -3803,7 +3826,7 @@ msgstr ""
 msgid "Conversation"
 msgstr "Диалог"
 
-#: src/components/routes/organizer/Sms/index.tsx:113
+#: src/components/routes/organizer/Sms/index.tsx:153
 msgid "Conversations"
 msgstr "Диалоги"
 
@@ -4106,7 +4129,7 @@ msgid "Create Custom Template"
 msgstr ""
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:129
+#: src/components/layouts/OrganizerLayout/index.tsx:132
 #: src/components/routes/organizer/Events/index.tsx:66
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:223
 msgid "Create Event"
@@ -4319,7 +4342,7 @@ msgstr ""
 msgid "Customer"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:181
+#: src/components/routes/organizer/Sms/index.tsx:222
 msgid "Customer file"
 msgstr "Карточка клиента"
 
@@ -4365,7 +4388,7 @@ msgstr ""
 msgid "Customize columns"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:83
+#: src/components/layouts/OrganizerLayout/index.tsx:86
 msgid "Customize my page"
 msgstr ""
 
@@ -4575,6 +4598,10 @@ msgstr "Язык билета по умолчанию"
 msgid "Defaults to the event or organizer name"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:40
+msgid "Delayed"
+msgstr ""
+
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:28
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:30
 msgid "delete"
@@ -4680,6 +4707,7 @@ msgid "Deleted event"
 msgstr ""
 
 #: src/components/routes/organizer/Sms/CampaignList.tsx:43
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:42
 #: src/components/routes/organizer/Sms/labels.ts:22
 #: src/components/routes/organizer/Sms/labels.ts:60
 #: src/components/routes/organizer/Sms/ReminderList.tsx:69
@@ -4721,6 +4749,10 @@ msgstr ""
 #: src/components/common/ProgressStepper/index.tsx:18
 #: src/components/common/ProgressStepper/index.tsx:23
 msgid "Details"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:21
+msgid "Details updated"
 msgstr ""
 
 #: src/pages/digit/DeviceTokenGate.tsx:62
@@ -5007,6 +5039,14 @@ msgstr ""
 
 #: src/components/routes/organizer/Contacts/NewsletterSubscribersTab.tsx:108
 msgid "E-mail"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:63
+msgid "E-mail sent"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:122
+msgid "E-mails"
 msgstr ""
 
 #: src/components/organizerTemplates/Tour/index.tsx:85
@@ -5993,7 +6033,7 @@ msgstr ""
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:61
+#: src/components/layouts/OrganizerLayout/index.tsx:64
 #: src/components/organizerTemplates/Poster/index.tsx:75
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:184
 #: src/components/routes/admin/Attribution/index.tsx:133
@@ -6028,6 +6068,10 @@ msgstr ""
 #: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:54
 msgid "Every day at the chosen time (Mayotte time), the team of the organizer gets by SMS the paid registrations, the registration revenue and the carts in progress."
 msgstr "Каждый день в выбранное время (время Майотты) команда организатора получает по SMS оплаченные регистрации, выручку от регистраций и текущие корзины."
+
+#: src/components/routes/organizer/Sms/index.tsx:105
+msgid "Every e-mail sent to your buyers on your behalf, their delivery and their replies."
+msgstr ""
 
 #: src/components/common/EmailTemplateEditor/CTAConfiguration.tsx:23
 msgid "Every email template must include a call-to-action button that links to the appropriate page"
@@ -6179,6 +6223,7 @@ msgstr ""
 
 #: src/components/routes/admin/Messages/index.tsx:127
 #: src/components/routes/organizer/Sms/CampaignList.tsx:47
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:50
 #: src/components/routes/organizer/Sms/labels.ts:24
 #: src/components/routes/organizer/Sms/labels.ts:62
 #: src/components/routes/organizer/Sms/labels.ts:91
@@ -7215,6 +7260,10 @@ msgstr ""
 msgid "Hide the getting started page from the sidebar"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:60
+msgid "Hide the quoted message"
+msgstr ""
+
 #: src/components/forms/ProductCategoryForm/index.tsx:47
 msgid "Hide this category?"
 msgstr ""
@@ -7261,7 +7310,7 @@ msgstr ""
 msgid "Holding reply sent automatically"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:60
+#: src/components/layouts/OrganizerLayout/index.tsx:63
 #: src/components/organizerTemplates/Poster/index.tsx:74
 msgid "Home"
 msgstr ""
@@ -7818,7 +7867,7 @@ msgstr "Пригласите человека продавать билеты н
 msgid "Invite Team Member"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:93
+#: src/components/layouts/OrganizerLayout/index.tsx:96
 msgid "Invite Team Members"
 msgstr ""
 
@@ -7830,7 +7879,7 @@ msgstr ""
 msgid "Invite User"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:90
+#: src/components/layouts/OrganizerLayout/index.tsx:93
 msgid "Invite Your Team"
 msgstr ""
 
@@ -8377,6 +8426,7 @@ msgid "Load an event or a tag"
 msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:305
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:118
 msgid "Load more"
 msgstr ""
 
@@ -8607,6 +8657,10 @@ msgstr ""
 msgid "Mark as paid"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:48
+msgid "Marked as spam"
+msgstr ""
+
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:275
 msgid "Market poster"
 msgstr ""
@@ -8662,6 +8716,7 @@ msgstr ""
 #: src/components/modals/SendMessageModal/index.tsx:358
 #: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:176
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:158
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:94
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:206
 msgid "Message"
 msgstr ""
@@ -8724,8 +8779,14 @@ msgstr "Сообщение запланировано"
 msgid "Message Sent"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:11
+msgid "Message to attendees"
+msgstr ""
+
 #: src/components/layouts/Admin/index.tsx:18
+#: src/components/layouts/OrganizerLayout/index.tsx:78
 #: src/components/routes/event/messages.tsx:225
+#: src/components/routes/organizer/Sms/index.tsx:102
 msgid "Messages"
 msgstr ""
 
@@ -8952,7 +9013,7 @@ msgstr ""
 msgid "My image"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:82
+#: src/components/layouts/OrganizerLayout/index.tsx:85
 msgid "My organizer page"
 msgstr ""
 
@@ -9035,6 +9096,10 @@ msgstr "Имя или номер"
 msgid "Name shown as the sender of emails sent to your attendees. The sending address stays the platform one. Leave empty for PICHA Ticket."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:42
+msgid "Name, e-mail or subject"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:238
 msgid "Name, e-mail, phone, order or ticket number — or scan the QR code"
 msgstr ""
@@ -9095,6 +9160,11 @@ msgstr ""
 msgid "New dates will be announced soon."
 msgstr "Новые даты скоро будут объявлены."
 
+#: src/components/routes/organizer/Sms/Email/EmailInbox.tsx:61
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:73
+msgid "New e-mail"
+msgstr ""
+
 #: src/components/routes/auth/ResetPassword/index.tsx:64
 #: src/components/routes/profile/ManageProfile/index.tsx:232
 msgid "New Password"
@@ -9135,7 +9205,7 @@ msgstr "Новый ключ подписи создан"
 msgid "New Signups"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:104
+#: src/components/routes/organizer/Sms/index.tsx:144
 msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Новые SMS не будут приходить сюда, а ваши ответы не будут отправлены. Убедитесь, что телефон включён, подключён к интернету и приложение PICHA SMS запущено."
 
@@ -9294,6 +9364,10 @@ msgstr ""
 msgid "No contact details"
 msgstr "Нет контактов"
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:84
+msgid "No contact found"
+msgstr ""
+
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:286
 msgid "No contact is created before you click Import."
 msgstr ""
@@ -9324,6 +9398,10 @@ msgstr ""
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:50
 msgid "No data yet"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:72
+msgid "No e-mail yet. The e-mails sent to your buyers and their replies will appear here."
 msgstr ""
 
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:68
@@ -9766,6 +9844,7 @@ msgid "Not decided yet"
 msgstr ""
 
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:60
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:54
 msgid "Not delivered"
 msgstr ""
 
@@ -10155,11 +10234,16 @@ msgstr ""
 msgid "Only tick this if the person agreed to it. A phone number is required."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:85
+msgid "Only your contacts, buyers and attendees can be chosen. Unsubscribed contacts are greyed out."
+msgstr ""
+
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:204
 msgid "Only your team can see these notes"
 msgstr ""
 
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:125
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:76
 msgid "Open"
 msgstr ""
 
@@ -10204,6 +10288,10 @@ msgstr ""
 msgid "Open Stripe Dashboard"
 msgstr "Открыть панель Stripe"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:157
+msgid "Open the contact"
+msgstr ""
+
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:137
 msgid "Open the customer file"
 msgstr "Открыть карточку клиента"
@@ -10231,6 +10319,10 @@ msgstr "Открыть этот билет, когда этот билет бу�
 
 #: src/hooks/useKioskTicketPrinter.tsx:219
 msgid "Open tickets as PDF"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:44
+msgid "Opened"
 msgstr ""
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:154
@@ -10364,6 +10456,7 @@ msgstr ""
 msgid "Order & Ticket"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:15
 #: src/components/routes/product-widget/CollectInformation/index.tsx:396
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:407
 msgid "Order cancelled"
@@ -10376,6 +10469,10 @@ msgstr ""
 #: src/components/routes/product-widget/CollectInformation/index.tsx:386
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:417
 msgid "Order complete"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:7
+msgid "Order confirmation"
 msgstr ""
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:94
@@ -10463,6 +10560,10 @@ msgstr ""
 
 #: src/components/forms/WebhookForm/index.tsx:85
 msgid "Order Marked as Paid"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:18
+msgid "Order not completed"
 msgstr ""
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:411
@@ -12003,7 +12104,7 @@ msgstr ""
 msgid "Publication time"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:76
+#: src/components/layouts/OrganizerLayout/index.tsx:79
 #: src/components/routes/organizer/Publications/index.tsx:99
 msgid "Publications"
 msgstr ""
@@ -12121,7 +12222,7 @@ msgstr ""
 msgid "QR code updated"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:74
+#: src/components/layouts/OrganizerLayout/index.tsx:77
 #: src/components/routes/organizer/QrCodes/index.tsx:176
 #: src/components/routes/organizer/QrCodes/index.tsx:264
 msgid "QR codes"
@@ -12299,6 +12400,10 @@ msgstr "Получить код"
 msgid "Receive product updates from {0}."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:52
+msgid "Received"
+msgstr ""
+
 #: src/components/routes/event/EventDashboard/index.tsx:236
 msgid "Recent"
 msgstr "Недавние"
@@ -12377,6 +12482,10 @@ msgstr ""
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:175
 msgid "Refresh Preview"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:13
+msgid "Refund"
 msgstr ""
 
 #: src/components/modals/RefundOrderModal/index.tsx:148
@@ -12652,7 +12761,7 @@ msgstr ""
 msgid "Reminder updated"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:114
+#: src/components/routes/organizer/Sms/index.tsx:154
 msgid "Reminders"
 msgstr "Напоминания"
 
@@ -12816,6 +12925,10 @@ msgstr "Заменяет ticket.picha.fr и логотип PICHA собстве�
 msgid "Replied STOP"
 msgstr "Ответил STOP"
 
+#: src/components/routes/organizer/Sms/Email/EmailInbox.tsx:57
+msgid "Replies to your e-mails are not collected here yet. They still reach your support e-mail address."
+msgstr ""
+
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:125
 msgid "Reply"
 msgstr ""
@@ -12850,7 +12963,7 @@ msgid "Report not found"
 msgstr ""
 
 #: src/components/layouts/Event/index.tsx:95
-#: src/components/layouts/OrganizerLayout/index.tsx:70
+#: src/components/layouts/OrganizerLayout/index.tsx:73
 #: src/components/routes/event/Reports/index.tsx:70
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -13402,6 +13515,10 @@ msgstr "Запланированное время"
 msgid "Search"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:78
+msgid "Search a contact, buyer or attendee"
+msgstr ""
+
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:65
 msgid "Search a name or a number…"
 msgstr ""
@@ -13500,6 +13617,10 @@ msgstr ""
 
 #: src/components/common/SearchBar/index.tsx:38
 msgid "Search..."
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:84
+msgid "Searching..."
 msgstr ""
 
 #: src/components/routes/event/EventPages/index.tsx:74
@@ -13624,6 +13745,7 @@ msgid "Select a configuration"
 msgstr ""
 
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:66
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:113
 msgid "Select a conversation"
 msgstr "Выберите переписку"
 
@@ -13791,6 +13913,8 @@ msgstr ""
 #: src/components/routes/my-tickets/index.tsx:202
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:67
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:271
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:220
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:105
 msgid "Send"
 msgstr ""
 
@@ -13913,6 +14037,7 @@ msgstr ""
 msgid "Send your orders and attendees automatically to another tool (CRM, spreadsheet, automation)."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:36
 #: src/components/routes/organizer/Sms/labels.ts:18
 msgid "Sending"
 msgstr "Отправка"
@@ -13955,6 +14080,7 @@ msgid "sent"
 msgstr ""
 
 #: src/components/routes/admin/Messages/index.tsx:123
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:38
 #: src/components/routes/organizer/Sms/labels.ts:20
 #: src/components/routes/organizer/Sms/labels.ts:58
 #: src/components/routes/organizer/Sms/labels.ts:89
@@ -13971,9 +14097,17 @@ msgstr ""
 msgid "Sent By"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:209
+msgid "Sent by e-mail to {0}. Their answer will come back here."
+msgstr ""
+
 #: src/components/organizerTemplates/Tour/index.tsx:85
 msgid "Sent by email right after purchase, to show on your phone or printed at the entrance."
 msgstr "Приходит на e-mail сразу после покупки, покажите на телефоне или в распечатке на входе."
+
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:102
+msgid "Sent from the platform address with your organizer name. The answer will come back in Messages, E-mails."
+msgstr ""
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:205
 msgid "Sent to customers when they place an order"
@@ -14093,7 +14227,7 @@ msgstr ""
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:84
 #: src/components/layouts/Kiosk/index.tsx:65
-#: src/components/layouts/OrganizerLayout/index.tsx:84
+#: src/components/layouts/OrganizerLayout/index.tsx:87
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/event/Settings/index.tsx:105
 #: src/components/routes/kiosk/Settings/index.tsx:60
@@ -14223,6 +14357,10 @@ msgstr ""
 msgid "Show the organizer domain in the ticket footer"
 msgstr "Показывать домен организатора в нижней части билета"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:60
+msgid "Show the quoted message"
+msgstr ""
+
 #: src/components/common/QuestionsTable/index.tsx:146
 msgid "Show this question"
 msgstr ""
@@ -14338,10 +14476,10 @@ msgstr ""
 msgid "Smith"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:75
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:167
 #: src/components/routes/organizer/Contacts/index.tsx:118
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:82
+#: src/components/routes/organizer/Sms/index.tsx:116
 msgid "SMS"
 msgstr "SMS"
 
@@ -14358,13 +14496,9 @@ msgstr "SMS-кампания"
 msgid "SMS history"
 msgstr "История SMS"
 
-#: src/components/routes/organizer/Sms/index.tsx:93
+#: src/components/routes/organizer/Sms/index.tsx:133
 msgid "SMS is not connected yet."
 msgstr "SMS ещё не подключены."
-
-#: src/components/routes/organizer/Sms/index.tsx:85
-msgid "SMS messages"
-msgstr "SMS-сообщения"
 
 #: src/components/routes/organizer/Settings/index.tsx:122
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:57
@@ -14755,6 +14889,7 @@ msgstr ""
 #: src/components/modals/SendMessageModal/index.tsx:352
 #: src/components/routes/admin/Messages/index.tsx:162
 #: src/components/routes/admin/Messages/index.tsx:272
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:89
 msgid "Subject"
 msgstr ""
 
@@ -14986,6 +15121,10 @@ msgstr ""
 msgid "Supervision copy"
 msgstr "Копия надзору"
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:27
+msgid "Support"
+msgstr ""
+
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:48
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:63
@@ -15147,7 +15286,7 @@ msgstr ""
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:229
 #: src/components/routes/organizer/Sms/ConversationList.tsx:121
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:140
-#: src/components/routes/organizer/Sms/index.tsx:117
+#: src/components/routes/organizer/Sms/index.tsx:157
 msgid "Team"
 msgstr ""
 
@@ -15371,6 +15510,10 @@ msgstr ""
 msgid "The default timezone for your events."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:129
+msgid "The e-mail could not be sent"
+msgstr ""
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:78
 msgid "The email address has been changed. The attendee will receive a new ticket at the updated email address."
 msgstr "Адрес электронной почты был изменен. Участник получит новый билет на обновленный адрес электронной почты."
@@ -15568,7 +15711,7 @@ msgstr ""
 msgid "The personal link lets the attendee find their registration again. When there is none for an attendee, the link and its label are left out of the message."
 msgstr "Персональная ссылка позволяет участнику снова найти свою регистрацию. Если у участника её нет, ссылка и её подпись удаляются из сообщения."
 
-#: src/components/routes/organizer/Sms/index.tsx:103
+#: src/components/routes/organizer/Sms/index.tsx:143
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Телефон вышел из сети {0}. Новые SMS не будут приходить сюда, а ваши ответы не будут отправлены. Убедитесь, что телефон включён, подключён к интернету и приложение PICHA SMS запущено."
 
@@ -15845,6 +15988,10 @@ msgstr ""
 msgid "This color combination may be hard to read for some users"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:188
+msgid "This contact unsubscribed from your e-mails. Only answer a question they asked you."
+msgstr ""
+
 #: src/components/common/LiveChatWindow/index.tsx:192
 #: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:89
 msgid "This email does not look valid."
@@ -16061,6 +16208,7 @@ msgstr ""
 #: src/components/modals/CreateAttendeeModal/index.tsx:132
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:120
 #: src/components/routes/event/Reports/ProductSalesReport/index.tsx:22
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:9
 msgid "Ticket"
 msgstr ""
 
@@ -16314,6 +16462,7 @@ msgid "Title of the song performed"
 msgstr ""
 
 #: src/components/routes/event/messages.tsx:93
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:77
 msgid "To"
 msgstr ""
 
@@ -16342,6 +16491,8 @@ msgstr "Требует внимания"
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:199
 #: src/components/routes/organizer/Sms/ConversationList.tsx:72
 #: src/components/routes/organizer/Sms/customerSummary.ts:19
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:78
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:53
 #: src/components/routes/organizer/Sms/labels.ts:7
 msgid "To handle"
 msgstr "К обработке"
@@ -16707,6 +16858,7 @@ msgid "Unable to update the automatic reminders"
 msgstr ""
 
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:127
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:141
 msgid "Unable to update the conversation"
 msgstr "Не удалось обновить переписку"
 
@@ -16829,6 +16981,7 @@ msgid "Unpaid Order"
 msgstr ""
 
 #: src/components/routes/organizer/Sms/ConversationList.tsx:71
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:52
 msgid "Unread"
 msgstr "Непрочитанные"
 
@@ -17460,6 +17613,7 @@ msgstr "Ждёт вашего ответа с {0}"
 #: src/components/layouts/Event/index.tsx:125
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:51
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:49
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:25
 msgid "Waitlist"
 msgstr "Список ожидания"
 
@@ -17614,7 +17768,7 @@ msgstr "Веб-чат"
 msgid "Web chat assistant"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:116
+#: src/components/routes/organizer/Sms/index.tsx:156
 msgid "Web chats"
 msgstr "Веб-чаты"
 
@@ -18019,6 +18173,10 @@ msgstr "Напишите сообщение от имени клиента, чт
 msgid "Write to us"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:39
+msgid "Write your message"
+msgstr ""
+
 #: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:80
 msgid "Write your message here..."
 msgstr ""
@@ -18028,6 +18186,7 @@ msgid "Write your question..."
 msgstr "Напишите ваш вопрос..."
 
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:206
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:194
 msgid "Write your reply"
 msgstr "Напишите ответ"
 
@@ -18093,6 +18252,7 @@ msgstr ""
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:80
 #: src/components/routes/organizer/Sms/ConversationList.tsx:111
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:96
 msgid "You"
 msgstr "Вы"
 
@@ -18511,7 +18671,7 @@ msgstr ""
 msgid "Your payment was unsuccessful. Please try again."
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:101
+#: src/components/routes/organizer/Sms/index.tsx:141
 msgid "Your PICHA SMS phone is offline"
 msgstr "Ваш телефон PICHA SMS не в сети"
 

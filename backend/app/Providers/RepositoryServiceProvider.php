@@ -61,6 +61,8 @@ use HiEvents\Repository\Eloquent\LiveChatSessionRepository;
 use HiEvents\Repository\Eloquent\SmsConversationRepository;
 use HiEvents\Repository\Eloquent\SmsCustomerDirectoryRepository;
 use HiEvents\Repository\Eloquent\SmsMessageRepository;
+use HiEvents\Repository\Eloquent\EmailThreadRepository;
+use HiEvents\Repository\Eloquent\EmailMessageRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRecipientRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRepository;
 use HiEvents\Repository\Eloquent\SmsOptOutRepository;
@@ -159,6 +161,8 @@ use HiEvents\Repository\Interfaces\LiveChatSessionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCustomerDirectoryRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\EmailThreadRepositoryInterface;
+use HiEvents\Repository\Interfaces\EmailMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
@@ -226,6 +230,8 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsConversationRepositoryInterface::class => SmsConversationRepository::class,
         SmsCustomerDirectoryRepositoryInterface::class => SmsCustomerDirectoryRepository::class,
         SmsMessageRepositoryInterface::class => SmsMessageRepository::class,
+        EmailThreadRepositoryInterface::class => EmailThreadRepository::class,
+        EmailMessageRepositoryInterface::class => EmailMessageRepository::class,
         SmsOptOutRepositoryInterface::class => SmsOptOutRepository::class,
         OrganizerTeamContactRepositoryInterface::class => OrganizerTeamContactRepository::class,
         OrganizerTeamNudgeRepositoryInterface::class => OrganizerTeamNudgeRepository::class,

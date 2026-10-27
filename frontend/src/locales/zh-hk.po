@@ -182,6 +182,10 @@ msgstr "{1} 場活動中出席了 {0} 場"
 msgid "{0} orders, {1} events"
 msgstr "{0} 張訂單，{1} 個活動"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:163
+msgid "{0} orders, last: {1} ({2})"
+msgstr ""
+
 #: src/components/routes/events/Dashboard/index.tsx:140
 msgid "{0} organizers"
 msgstr "{0} 位主辦單位"
@@ -516,7 +520,7 @@ msgstr "取消通知已發送至"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "場地網絡中的一部電腦運行 PICHA 打印中繼。它會取得從本工作站打印的門票並發送到 Zebra 打印機。"
 
-#: src/components/routes/organizer/Sms/index.tsx:87
+#: src/components/routes/organizer/Sms/index.tsx:106
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "回覆 STOP 的客戶將自動取消訂閱您的短訊。"
 
@@ -924,6 +928,10 @@ msgstr ""
 msgid "Add a service"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:38
+msgid "Add a subject"
+msgstr ""
+
 #: src/components/routes/organizer/Contacts/index.tsx:341
 msgid "Add a tag"
 msgstr "新增標籤"
@@ -1270,6 +1278,7 @@ msgstr "全部"
 #: src/components/routes/organizer/Publications/index.tsx:129
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:51
 msgid "All"
 msgstr "全部"
 
@@ -1900,6 +1909,10 @@ msgstr "在域名註冊商處，將該域名及其 www. 子域名的 A 記錄指
 msgid "At the entrance, one scan of the QR code grants access and starts printing the badge. Unregistered attendees are signed up on the spot from a tablet."
 msgstr "在入口掃描一次二維碼即可核實入場並開始列印名牌。未報名的參加者可透過平板電腦即場登記。"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:71
+msgid "Attachment"
+msgstr ""
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:100
 msgid "Attempts"
 msgstr "嘗試次數"
@@ -2219,6 +2232,7 @@ msgstr "Awesome Organizer Ltd."
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:134
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:150
 msgid "Back"
 msgstr "返回"
 
@@ -2363,6 +2377,10 @@ msgstr "收藏此頁面，隨時管理您的訂單。"
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:59
 msgid "Bought"
 msgstr "已購買"
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:46
+msgid "Bounced"
+msgstr ""
 
 #: src/components/routes/kiosk/Orders/index.tsx:208
 #: src/components/routes/kiosk/Orders/index.tsx:252
@@ -2557,7 +2575,7 @@ msgstr "推廣來源（utm 參數）、來源網站及登陸頁，在本網站�
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
-#: src/components/routes/organizer/Sms/index.tsx:115
+#: src/components/routes/organizer/Sms/index.tsx:155
 msgid "Campaigns"
 msgstr "推廣活動"
 
@@ -3011,6 +3029,10 @@ msgstr "選擇 PDF 檔案（最大 5 MB）"
 msgid "Choose a price"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:37
+msgid "Choose a recipient among your contacts"
+msgstr ""
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:358
 msgid "Choose a type"
 msgstr ""
@@ -3202,6 +3224,7 @@ msgstr "關閉側邊欄"
 msgid "Close the chat"
 msgstr "關閉聊天"
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:80
 #: src/components/routes/organizer/Sms/labels.ts:9
 msgid "Closed"
 msgstr "已關閉"
@@ -3242,7 +3265,7 @@ msgstr "代碼唔可以超過20個字元"
 msgid "Code received"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:91
+#: src/components/layouts/OrganizerLayout/index.tsx:94
 msgid "Collaborate with your team to create amazing events together."
 msgstr "與您的團隊合作，一起創造精彩活動。"
 
@@ -3556,12 +3579,12 @@ msgstr "連接 Facebook 專頁即可在 Facebook 及 Instagram 上發佈。"
 msgid "Connect Documentation"
 msgstr "連接文檔"
 
-#: src/components/routes/organizer/Sms/index.tsx:95
+#: src/components/routes/organizer/Sms/index.tsx:135
 msgid "Connect PICHA SMS in Settings"
 msgstr "在設定中連接 PICHA SMS"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:104
-#: src/components/layouts/OrganizerLayout/index.tsx:112
+#: src/components/layouts/OrganizerLayout/index.tsx:107
+#: src/components/layouts/OrganizerLayout/index.tsx:115
 #: src/components/routes/event/GettingStarted/index.tsx:120
 msgid "Connect Stripe"
 msgstr "連接條紋"
@@ -3589,7 +3612,7 @@ msgstr "與 Stripe 連接"
 msgid "Connect your Facebook page and the Instagram professional account linked to it to schedule your posts from PICHA. Every post is checked by a person before it goes out."
 msgstr "連接您的 Facebook 專頁及其連結的 Instagram 專業帳戶，即可在 PICHA 中排程發佈帖子。每則帖子發佈前都會由專人審核。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:105
+#: src/components/layouts/OrganizerLayout/index.tsx:108
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "連接您的 Stripe 帳戶以接受門票和商品的付款。"
 
@@ -3723,7 +3746,7 @@ msgstr ""
 msgid "Contact us to become a partner"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:64
+#: src/components/layouts/OrganizerLayout/index.tsx:67
 #: src/components/routes/organizer/Contacts/index.tsx:196
 msgid "Contacts"
 msgstr "聯絡人"
@@ -3803,7 +3826,7 @@ msgstr "控制此活動的平台費用如何處理"
 msgid "Conversation"
 msgstr "對話"
 
-#: src/components/routes/organizer/Sms/index.tsx:113
+#: src/components/routes/organizer/Sms/index.tsx:153
 msgid "Conversations"
 msgstr "對話"
 
@@ -4106,7 +4129,7 @@ msgid "Create Custom Template"
 msgstr "建立自定義範本"
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:129
+#: src/components/layouts/OrganizerLayout/index.tsx:132
 #: src/components/routes/organizer/Events/index.tsx:66
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:223
 msgid "Create Event"
@@ -4319,7 +4342,7 @@ msgstr "自定義範本"
 msgid "Customer"
 msgstr "客户"
 
-#: src/components/routes/organizer/Sms/index.tsx:181
+#: src/components/routes/organizer/Sms/index.tsx:222
 msgid "Customer file"
 msgstr "客戶檔案"
 
@@ -4365,7 +4388,7 @@ msgstr ""
 msgid "Customize columns"
 msgstr "自訂欄位"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:83
+#: src/components/layouts/OrganizerLayout/index.tsx:86
 msgid "Customize my page"
 msgstr ""
 
@@ -4575,6 +4598,10 @@ msgstr "預設門票語言"
 msgid "Defaults to the event or organizer name"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:40
+msgid "Delayed"
+msgstr ""
+
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:28
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:30
 msgid "delete"
@@ -4680,6 +4707,7 @@ msgid "Deleted event"
 msgstr ""
 
 #: src/components/routes/organizer/Sms/CampaignList.tsx:43
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:42
 #: src/components/routes/organizer/Sms/labels.ts:22
 #: src/components/routes/organizer/Sms/labels.ts:60
 #: src/components/routes/organizer/Sms/ReminderList.tsx:69
@@ -4722,6 +4750,10 @@ msgstr "設計元素"
 #: src/components/common/ProgressStepper/index.tsx:23
 msgid "Details"
 msgstr "詳細信息"
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:21
+msgid "Details updated"
+msgstr ""
 
 #: src/pages/digit/DeviceTokenGate.tsx:62
 msgid "Device token"
@@ -5007,6 +5039,14 @@ msgstr "荷蘭語"
 
 #: src/components/routes/organizer/Contacts/NewsletterSubscribersTab.tsx:108
 msgid "E-mail"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:63
+msgid "E-mail sent"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/index.tsx:122
+msgid "E-mails"
 msgstr ""
 
 #: src/components/organizerTemplates/Tour/index.tsx:85
@@ -5993,7 +6033,7 @@ msgstr "活動：{0}"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:61
+#: src/components/layouts/OrganizerLayout/index.tsx:64
 #: src/components/organizerTemplates/Poster/index.tsx:75
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:184
 #: src/components/routes/admin/Attribution/index.tsx:133
@@ -6028,6 +6068,10 @@ msgstr ""
 #: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:54
 msgid "Every day at the chosen time (Mayotte time), the team of the organizer gets by SMS the paid registrations, the registration revenue and the carts in progress."
 msgstr "每天在所選時間（馬約特時間），主辦方團隊會以短訊收到已付款報名數、報名收入和進行中的購物車。"
+
+#: src/components/routes/organizer/Sms/index.tsx:105
+msgid "Every e-mail sent to your buyers on your behalf, their delivery and their replies."
+msgstr ""
 
 #: src/components/common/EmailTemplateEditor/CTAConfiguration.tsx:23
 msgid "Every email template must include a call-to-action button that links to the appropriate page"
@@ -6179,6 +6223,7 @@ msgstr "Facebook 專頁已中斷連接"
 
 #: src/components/routes/admin/Messages/index.tsx:127
 #: src/components/routes/organizer/Sms/CampaignList.tsx:47
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:50
 #: src/components/routes/organizer/Sms/labels.ts:24
 #: src/components/routes/organizer/Sms/labels.ts:62
 #: src/components/routes/organizer/Sms/labels.ts:91
@@ -7215,6 +7260,10 @@ msgstr "隱藏日期"
 msgid "Hide the getting started page from the sidebar"
 msgstr "隱藏側邊欄中的入門頁面"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:60
+msgid "Hide the quoted message"
+msgstr ""
+
 #: src/components/forms/ProductCategoryForm/index.tsx:47
 msgid "Hide this category?"
 msgstr ""
@@ -7261,7 +7310,7 @@ msgstr ""
 msgid "Holding reply sent automatically"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:60
+#: src/components/layouts/OrganizerLayout/index.tsx:63
 #: src/components/organizerTemplates/Poster/index.tsx:74
 msgid "Home"
 msgstr ""
@@ -7818,7 +7867,7 @@ msgstr "邀請他人在門口售票。他們會收到設定密碼的電郵，然
 msgid "Invite Team Member"
 msgstr "邀請團隊成員"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:93
+#: src/components/layouts/OrganizerLayout/index.tsx:96
 msgid "Invite Team Members"
 msgstr "邀請團隊成員"
 
@@ -7830,7 +7879,7 @@ msgstr "邀請無限團隊成員並自訂角色"
 msgid "Invite User"
 msgstr "邀請用户"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:90
+#: src/components/layouts/OrganizerLayout/index.tsx:93
 msgid "Invite Your Team"
 msgstr "邀請您的團隊"
 
@@ -8377,6 +8426,7 @@ msgid "Load an event or a tag"
 msgstr "載入活動或標籤"
 
 #: src/components/routes/kiosk/Orders/index.tsx:305
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:118
 msgid "Load more"
 msgstr "載入更多"
 
@@ -8607,6 +8657,10 @@ msgstr "手動添加與會者"
 msgid "Mark as paid"
 msgstr "標記為已支付"
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:48
+msgid "Marked as spam"
+msgstr ""
+
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:275
 msgid "Market poster"
 msgstr ""
@@ -8662,6 +8716,7 @@ msgstr ""
 #: src/components/modals/SendMessageModal/index.tsx:358
 #: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:176
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:158
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:94
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:206
 msgid "Message"
 msgstr "訊息"
@@ -8724,8 +8779,14 @@ msgstr "訊息已排程"
 msgid "Message Sent"
 msgstr "發送的信息"
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:11
+msgid "Message to attendees"
+msgstr ""
+
 #: src/components/layouts/Admin/index.tsx:18
+#: src/components/layouts/OrganizerLayout/index.tsx:78
 #: src/components/routes/event/messages.tsx:225
+#: src/components/routes/organizer/Sms/index.tsx:102
 msgid "Messages"
 msgstr "信息"
 
@@ -8952,7 +9013,7 @@ msgstr ""
 msgid "My image"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:82
+#: src/components/layouts/OrganizerLayout/index.tsx:85
 msgid "My organizer page"
 msgstr ""
 
@@ -9035,6 +9096,10 @@ msgstr "姓名或號碼"
 msgid "Name shown as the sender of emails sent to your attendees. The sending address stays the platform one. Leave empty for PICHA Ticket."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:42
+msgid "Name, e-mail or subject"
+msgstr ""
+
 #: src/components/routes/kiosk/Orders/index.tsx:238
 msgid "Name, e-mail, phone, order or ticket number — or scan the QR code"
 msgstr "姓名、電郵、電話、訂單號或門票號——或掃描二維碼"
@@ -9095,6 +9160,11 @@ msgstr ""
 msgid "New dates will be announced soon."
 msgstr "新日期即將公佈。"
 
+#: src/components/routes/organizer/Sms/Email/EmailInbox.tsx:61
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:73
+msgid "New e-mail"
+msgstr ""
+
 #: src/components/routes/auth/ResetPassword/index.tsx:64
 #: src/components/routes/profile/ManageProfile/index.tsx:232
 msgid "New Password"
@@ -9135,7 +9205,7 @@ msgstr "已產生新的簽署金鑰"
 msgid "New Signups"
 msgstr "新註冊"
 
-#: src/components/routes/organizer/Sms/index.tsx:104
+#: src/components/routes/organizer/Sms/index.tsx:144
 msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "新短訊不會出現在這裡，您的回覆亦不會發出。請檢查手機是否開機、已連接互聯網，以及 PICHA SMS 應用程式正在運行。"
 
@@ -9294,6 +9364,10 @@ msgstr "未同意"
 msgid "No contact details"
 msgstr "沒有聯絡資料"
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:84
+msgid "No contact found"
+msgstr ""
+
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:286
 msgid "No contact is created before you click Import."
 msgstr "按匯入之前不會建立任何聯絡人。"
@@ -9324,6 +9398,10 @@ msgstr "無數據顯示。請選擇日期範圍"
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:50
 msgid "No data yet"
+msgstr ""
+
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:72
+msgid "No e-mail yet. The e-mails sent to your buyers and their replies will appear here."
 msgstr ""
 
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:68
@@ -9766,6 +9844,7 @@ msgid "Not decided yet"
 msgstr "尚未確定"
 
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:60
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:54
 msgid "Not delivered"
 msgstr "未送達"
 
@@ -10155,11 +10234,16 @@ msgstr "只在對方同意時勾選。"
 msgid "Only tick this if the person agreed to it. A phone number is required."
 msgstr "只在對方同意時勾選。需要電話號碼。"
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:85
+msgid "Only your contacts, buyers and attendees can be chosen. Unsubscribed contacts are greyed out."
+msgstr ""
+
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:204
 msgid "Only your team can see these notes"
 msgstr "只有您的團隊能看到這些備註"
 
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:125
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:76
 msgid "Open"
 msgstr ""
 
@@ -10204,6 +10288,10 @@ msgstr "打開側邊欄"
 msgid "Open Stripe Dashboard"
 msgstr "打開 Stripe 儀表板"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:157
+msgid "Open the contact"
+msgstr ""
+
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:137
 msgid "Open the customer file"
 msgstr "開啟客戶檔案"
@@ -10232,6 +10320,10 @@ msgstr "當此門票售罄時開放本門票"
 #: src/hooks/useKioskTicketPrinter.tsx:219
 msgid "Open tickets as PDF"
 msgstr "以 PDF 開啟門票"
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:44
+msgid "Opened"
+msgstr ""
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:154
 msgid "Opened from"
@@ -10364,6 +10456,7 @@ msgstr "訂單 {0}"
 msgid "Order & Ticket"
 msgstr "訂單及門票"
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:15
 #: src/components/routes/product-widget/CollectInformation/index.tsx:396
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:407
 msgid "Order cancelled"
@@ -10377,6 +10470,10 @@ msgstr "取消訂單"
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:417
 msgid "Order complete"
 msgstr "訂單完成"
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:7
+msgid "Order confirmation"
+msgstr ""
 
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:94
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:200
@@ -10464,6 +10561,10 @@ msgstr "訂單已標記為已支付"
 #: src/components/forms/WebhookForm/index.tsx:85
 msgid "Order Marked as Paid"
 msgstr "訂單標記為已支付"
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:18
+msgid "Order not completed"
+msgstr ""
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:411
 msgid "Order not found"
@@ -12003,7 +12104,7 @@ msgstr ""
 msgid "Publication time"
 msgstr "發佈時間"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:76
+#: src/components/layouts/OrganizerLayout/index.tsx:79
 #: src/components/routes/organizer/Publications/index.tsx:99
 msgid "Publications"
 msgstr "發佈"
@@ -12121,7 +12222,7 @@ msgstr ""
 msgid "QR code updated"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:74
+#: src/components/layouts/OrganizerLayout/index.tsx:77
 #: src/components/routes/organizer/QrCodes/index.tsx:176
 #: src/components/routes/organizer/QrCodes/index.tsx:264
 msgid "QR codes"
@@ -12299,6 +12400,10 @@ msgstr "取得驗證碼"
 msgid "Receive product updates from {0}."
 msgstr "接收 {0} 的產品更新。"
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:52
+msgid "Received"
+msgstr ""
+
 #: src/components/routes/event/EventDashboard/index.tsx:236
 msgid "Recent"
 msgstr "最近"
@@ -12378,6 +12483,10 @@ msgstr ""
 #: src/components/common/EmailTemplateEditor/EmailTemplateEditor.tsx:175
 msgid "Refresh Preview"
 msgstr "刷新預覽"
+
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:13
+msgid "Refund"
+msgstr ""
 
 #: src/components/modals/RefundOrderModal/index.tsx:148
 msgid "Refund amount"
@@ -12652,7 +12761,7 @@ msgstr "已提醒"
 msgid "Reminder updated"
 msgstr "提醒已更新"
 
-#: src/components/routes/organizer/Sms/index.tsx:114
+#: src/components/routes/organizer/Sms/index.tsx:154
 msgid "Reminders"
 msgstr "提醒"
 
@@ -12816,6 +12925,10 @@ msgstr "以主辦方的自訂網域及電郵標誌取代 ticket.picha.fr 及 PIC
 msgid "Replied STOP"
 msgstr "已回覆 STOP"
 
+#: src/components/routes/organizer/Sms/Email/EmailInbox.tsx:57
+msgid "Replies to your e-mails are not collected here yet. They still reach your support e-mail address."
+msgstr ""
+
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:125
 msgid "Reply"
 msgstr "回覆"
@@ -12850,7 +12963,7 @@ msgid "Report not found"
 msgstr "未找到報告"
 
 #: src/components/layouts/Event/index.tsx:95
-#: src/components/layouts/OrganizerLayout/index.tsx:70
+#: src/components/layouts/OrganizerLayout/index.tsx:73
 #: src/components/routes/event/Reports/index.tsx:70
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -13402,6 +13515,10 @@ msgstr "排程時間"
 msgid "Search"
 msgstr "搜尋"
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:78
+msgid "Search a contact, buyer or attendee"
+msgstr ""
+
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:65
 msgid "Search a name or a number…"
 msgstr "搜尋姓名或號碼…"
@@ -13501,6 +13618,10 @@ msgstr "搜尋訂單"
 #: src/components/common/SearchBar/index.tsx:38
 msgid "Search..."
 msgstr "搜索..."
+
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:84
+msgid "Searching..."
+msgstr ""
 
 #: src/components/routes/event/EventPages/index.tsx:74
 msgid "Seats"
@@ -13624,6 +13745,7 @@ msgid "Select a configuration"
 msgstr "選擇配置"
 
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:66
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:113
 msgid "Select a conversation"
 msgstr "選擇一個對話"
 
@@ -13791,6 +13913,8 @@ msgstr "研討會"
 #: src/components/routes/my-tickets/index.tsx:202
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:67
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:271
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:220
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:105
 msgid "Send"
 msgstr "發送"
 
@@ -13913,6 +14037,7 @@ msgstr "發送您的第一則訊息"
 msgid "Send your orders and attendees automatically to another tool (CRM, spreadsheet, automation)."
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:36
 #: src/components/routes/organizer/Sms/labels.ts:18
 msgid "Sending"
 msgstr "傳送中"
@@ -13955,6 +14080,7 @@ msgid "sent"
 msgstr "已發出"
 
 #: src/components/routes/admin/Messages/index.tsx:123
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:38
 #: src/components/routes/organizer/Sms/labels.ts:20
 #: src/components/routes/organizer/Sms/labels.ts:58
 #: src/components/routes/organizer/Sms/labels.ts:89
@@ -13971,9 +14097,17 @@ msgstr ""
 msgid "Sent By"
 msgstr "發送者"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:209
+msgid "Sent by e-mail to {0}. Their answer will come back here."
+msgstr ""
+
 #: src/components/organizerTemplates/Tour/index.tsx:85
 msgid "Sent by email right after purchase, to show on your phone or printed at the entrance."
 msgstr "購票後即時以電郵發送，入場時出示手機或列印本。"
+
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:102
+msgid "Sent from the platform address with your organizer name. The answer will come back in Messages, E-mails."
+msgstr ""
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:205
 msgid "Sent to customers when they place an order"
@@ -14093,7 +14227,7 @@ msgstr "設定已更新"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:84
 #: src/components/layouts/Kiosk/index.tsx:65
-#: src/components/layouts/OrganizerLayout/index.tsx:84
+#: src/components/layouts/OrganizerLayout/index.tsx:87
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/event/Settings/index.tsx:105
 #: src/components/routes/kiosk/Settings/index.tsx:60
@@ -14223,6 +14357,10 @@ msgstr "單獨顯示税費"
 msgid "Show the organizer domain in the ticket footer"
 msgstr "在門票頁腳顯示主辦方網域"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:60
+msgid "Show the quoted message"
+msgstr ""
+
 #: src/components/common/QuestionsTable/index.tsx:146
 msgid "Show this question"
 msgstr ""
@@ -14338,10 +14476,10 @@ msgstr "跳至內容"
 msgid "Smith"
 msgstr "史密斯"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:75
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:167
 #: src/components/routes/organizer/Contacts/index.tsx:118
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:82
+#: src/components/routes/organizer/Sms/index.tsx:116
 msgid "SMS"
 msgstr "短訊"
 
@@ -14358,13 +14496,9 @@ msgstr "短訊活動"
 msgid "SMS history"
 msgstr "短訊歷史記錄"
 
-#: src/components/routes/organizer/Sms/index.tsx:93
+#: src/components/routes/organizer/Sms/index.tsx:133
 msgid "SMS is not connected yet."
 msgstr "短訊尚未連接。"
-
-#: src/components/routes/organizer/Sms/index.tsx:85
-msgid "SMS messages"
-msgstr "短訊訊息"
 
 #: src/components/routes/organizer/Settings/index.tsx:122
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:57
@@ -14755,6 +14889,7 @@ msgstr "Stripe設置已完成。"
 #: src/components/modals/SendMessageModal/index.tsx:352
 #: src/components/routes/admin/Messages/index.tsx:162
 #: src/components/routes/admin/Messages/index.tsx:272
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:89
 msgid "Subject"
 msgstr "主題"
 
@@ -14986,6 +15121,10 @@ msgstr "2025夏季音樂節"
 msgid "Supervision copy"
 msgstr "副本給監督"
 
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:27
+msgid "Support"
+msgstr ""
+
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:48
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/routes/event/Settings/Sections/EmailSettings/GeneralEmailSettings.tsx:63
@@ -15147,7 +15286,7 @@ msgstr "稅項、費用、可見性、銷售期間、產品重點和訂單限制
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:229
 #: src/components/routes/organizer/Sms/ConversationList.tsx:121
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:140
-#: src/components/routes/organizer/Sms/index.tsx:117
+#: src/components/routes/organizer/Sms/index.tsx:157
 msgid "Team"
 msgstr ""
 
@@ -15371,6 +15510,10 @@ msgstr "事件的默認貨幣。"
 msgid "The default timezone for your events."
 msgstr "事件的默認時區。"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:129
+msgid "The e-mail could not be sent"
+msgstr ""
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:78
 msgid "The email address has been changed. The attendee will receive a new ticket at the updated email address."
 msgstr "電郵地址已更改。參與者將在更新後的電郵地址收到新門票。"
@@ -15568,7 +15711,7 @@ msgstr ""
 msgid "The personal link lets the attendee find their registration again. When there is none for an attendee, the link and its label are left out of the message."
 msgstr "個人連結讓參加者可以重新找到自己的報名。參加者沒有個人連結時，連結及其說明文字會從訊息中移除。"
 
-#: src/components/routes/organizer/Sms/index.tsx:103
+#: src/components/routes/organizer/Sms/index.tsx:143
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "手機已於{0}離線。新短訊不會出現在這裡，您的回覆亦不會發出。請檢查手機是否開機、已連接互聯網，以及 PICHA SMS 應用程式正在運行。"
 
@@ -15845,6 +15988,10 @@ msgstr "呢個代碼會用嚟追蹤銷售。只可以用字母、數字、連字
 msgid "This color combination may be hard to read for some users"
 msgstr "對某些使用者來說，此顏色組合可能難以閱讀"
 
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:188
+msgid "This contact unsubscribed from your e-mails. Only answer a question they asked you."
+msgstr ""
+
 #: src/components/common/LiveChatWindow/index.tsx:192
 #: src/components/common/LiveChatWindow/LiveChatRefundCard.tsx:89
 msgid "This email does not look valid."
@@ -16061,6 +16208,7 @@ msgstr "入場券"
 #: src/components/modals/CreateAttendeeModal/index.tsx:132
 #: src/components/routes/event/AttendeesPage/AttendeeList.tsx:120
 #: src/components/routes/event/Reports/ProductSalesReport/index.tsx:22
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:9
 msgid "Ticket"
 msgstr "門票"
 
@@ -16314,6 +16462,7 @@ msgid "Title of the song performed"
 msgstr ""
 
 #: src/components/routes/event/messages.tsx:93
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:77
 msgid "To"
 msgstr "收件人"
 
@@ -16342,6 +16491,8 @@ msgstr "待跟進"
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:199
 #: src/components/routes/organizer/Sms/ConversationList.tsx:72
 #: src/components/routes/organizer/Sms/customerSummary.ts:19
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:78
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:53
 #: src/components/routes/organizer/Sms/labels.ts:7
 msgid "To handle"
 msgstr "待處理"
@@ -16707,6 +16858,7 @@ msgid "Unable to update the automatic reminders"
 msgstr "無法更新自動提醒"
 
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:127
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:141
 msgid "Unable to update the conversation"
 msgstr "無法更新對話"
 
@@ -16829,6 +16981,7 @@ msgid "Unpaid Order"
 msgstr "未付款訂單"
 
 #: src/components/routes/organizer/Sms/ConversationList.tsx:71
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:52
 msgid "Unread"
 msgstr "未讀"
 
@@ -17460,6 +17613,7 @@ msgstr "自 {0} 起等待您的回覆"
 #: src/components/layouts/Event/index.tsx:125
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:51
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:49
+#: src/components/routes/organizer/Sms/Email/emailLabels.ts:25
 msgid "Waitlist"
 msgstr "候補名單"
 
@@ -17614,7 +17768,7 @@ msgstr "網頁聊天"
 msgid "Web chat assistant"
 msgstr ""
 
-#: src/components/routes/organizer/Sms/index.tsx:116
+#: src/components/routes/organizer/Sms/index.tsx:156
 msgid "Web chats"
 msgstr "網頁聊天"
 
@@ -18019,6 +18173,10 @@ msgstr "以客戶身份寫一則訊息，查看助手根據上述指示會給出
 msgid "Write to us"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/Email/NewEmailModal.tsx:39
+msgid "Write your message"
+msgstr ""
+
 #: src/components/common/ContactOrganizerModal/ContactOrganizerForm.tsx:80
 msgid "Write your message here..."
 msgstr "請在此輸入您的訊息..."
@@ -18028,6 +18186,7 @@ msgid "Write your question..."
 msgstr "寫下您的問題..."
 
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:206
+#: src/components/routes/organizer/Sms/Email/EmailThreadView.tsx:194
 msgid "Write your reply"
 msgstr "輸入回覆"
 
@@ -18093,6 +18252,7 @@ msgstr ""
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:80
 #: src/components/routes/organizer/Sms/ConversationList.tsx:111
+#: src/components/routes/organizer/Sms/Email/EmailThreadList.tsx:96
 msgid "You"
 msgstr "您"
 
@@ -18511,7 +18671,7 @@ msgstr "您的付款未成功，請重試。"
 msgid "Your payment was unsuccessful. Please try again."
 msgstr "您的付款未成功。請重試。"
 
-#: src/components/routes/organizer/Sms/index.tsx:101
+#: src/components/routes/organizer/Sms/index.tsx:141
 msgid "Your PICHA SMS phone is offline"
 msgstr "您的 PICHA SMS 手機已離線"
 

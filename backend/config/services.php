@@ -40,6 +40,22 @@ return [
         'detached_line_transition_days' => (int) env('HTTPSMS_DETACHED_LINE_TRANSITION_DAYS', 30),
     ],
 
+    'resend' => [
+        'api_key' => env('RESEND_API_KEY'),
+        'webhook_secret' => env('RESEND_WEBHOOK_SECRET'),
+        'base_url' => env('RESEND_API_BASE_URL', 'https://api.resend.com'),
+        'timeout_seconds' => (int) env('RESEND_TIMEOUT_SECONDS', 15),
+    ],
+
+    'email_inbox' => [
+        'provider' => env('EMAIL_INBOX_PROVIDER', 'RESEND'),
+        // Domain receiving the replies (MX on the provider), e.g. in.picha.fr. Empty disables reply tracking.
+        'reply_domain' => env('EMAIL_INBOX_REPLY_DOMAIN'),
+        'reply_local_prefix' => env('EMAIL_INBOX_REPLY_PREFIX', 'r'),
+        // Adds the tracked reply address next to the event support e-mail on order, ticket and event e-mails.
+        'track_transactional_replies' => (bool) env('EMAIL_INBOX_TRACK_TRANSACTIONAL_REPLIES', false),
+    ],
+
     'platform_supervisor' => [
         // Comma separated E.164 numbers of the platform supervisors. They belong to no organizer team.
         'phones' => env('PLATFORM_SUPERVISOR_PHONES', ''),
