@@ -29,6 +29,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     final public const AUTO_REPLY_TYPE = 'auto_reply_type';
     final public const CHANNEL = 'channel';
     final public const IS_SUPERVISION = 'is_supervision';
+    final public const AWAITS_REPLY = 'awaits_reply';
 
     protected int $id;
     protected int $sms_conversation_id;
@@ -49,6 +50,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     protected ?string $auto_reply_type = null;
     protected ?string $channel = null;
     protected bool $is_supervision = false;
+    protected bool $awaits_reply = false;
 
     public function toArray(): array
     {
@@ -72,6 +74,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
                     'auto_reply_type' => $this->auto_reply_type ?? null,
                     'channel' => $this->channel ?? null,
                     'is_supervision' => $this->is_supervision ?? null,
+                    'awaits_reply' => $this->awaits_reply ?? null,
                 ];
     }
 
@@ -282,5 +285,16 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     public function getIsSupervision(): bool
     {
         return $this->is_supervision;
+    }
+
+    public function setAwaitsReply(bool $awaits_reply): self
+    {
+        $this->awaits_reply = $awaits_reply;
+        return $this;
+    }
+
+    public function getAwaitsReply(): bool
+    {
+        return $this->awaits_reply;
     }
 }

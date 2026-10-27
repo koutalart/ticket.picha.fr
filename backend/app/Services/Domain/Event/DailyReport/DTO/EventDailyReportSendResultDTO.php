@@ -14,5 +14,6 @@ class EventDailyReportSendResultDTO extends BaseDataObject
         public readonly EventDailyReportDTO $report,
         public readonly SmsBulkSendResultDTO $team,
         public readonly ?SmsBulkSendResultDTO $supervision = null,
+        public readonly ?EventDailyActivityDTO $activity = null,
     ) {}
 }

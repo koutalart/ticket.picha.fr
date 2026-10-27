@@ -14,6 +14,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const ACCOUNT_ID = 'account_id';
     final public const ORGANIZER_ID = 'organizer_id';
     final public const SHARED_LINE_SETTINGS_ID = 'shared_line_settings_id';
+    final public const ORGANIZER_NUDGE_EVENT_ID = 'organizer_nudge_event_id';
     final public const PROVIDER = 'provider';
     final public const API_KEY = 'api_key';
     final public const FROM_NUMBER = 'from_number';
@@ -39,11 +40,13 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const ORGANIZER_ASSISTANT_ENABLED = 'organizer_assistant_enabled';
     final public const ORGANIZER_ASSISTANT_INSTRUCTIONS = 'organizer_assistant_instructions';
     final public const ASSISTANT_HOLDING_REPLY_ENABLED = 'assistant_holding_reply_enabled';
+    final public const ORGANIZER_NUDGE_ENABLED = 'organizer_nudge_enabled';
 
     protected int $id;
     protected int $account_id;
     protected int $organizer_id;
     protected ?int $shared_line_settings_id = null;
+    protected ?int $organizer_nudge_event_id = null;
     protected string $provider = 'HTTPSMS';
     protected ?string $api_key = null;
     protected ?string $from_number = null;
@@ -69,6 +72,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected bool $organizer_assistant_enabled = false;
     protected ?string $organizer_assistant_instructions = null;
     protected bool $assistant_holding_reply_enabled = true;
+    protected bool $organizer_nudge_enabled = false;
 
     public function toArray(): array
     {
@@ -77,6 +81,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'account_id' => $this->account_id ?? null,
                     'organizer_id' => $this->organizer_id ?? null,
                     'shared_line_settings_id' => $this->shared_line_settings_id ?? null,
+                    'organizer_nudge_event_id' => $this->organizer_nudge_event_id ?? null,
                     'provider' => $this->provider ?? null,
                     'api_key' => $this->api_key ?? null,
                     'from_number' => $this->from_number ?? null,
@@ -102,6 +107,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'organizer_assistant_enabled' => $this->organizer_assistant_enabled ?? null,
                     'organizer_assistant_instructions' => $this->organizer_assistant_instructions ?? null,
                     'assistant_holding_reply_enabled' => $this->assistant_holding_reply_enabled ?? null,
+                    'organizer_nudge_enabled' => $this->organizer_nudge_enabled ?? null,
                 ];
     }
 
@@ -147,6 +153,17 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getSharedLineSettingsId(): ?int
     {
         return $this->shared_line_settings_id;
+    }
+
+    public function setOrganizerNudgeEventId(?int $organizer_nudge_event_id): self
+    {
+        $this->organizer_nudge_event_id = $organizer_nudge_event_id;
+        return $this;
+    }
+
+    public function getOrganizerNudgeEventId(): ?int
+    {
+        return $this->organizer_nudge_event_id;
     }
 
     public function setProvider(string $provider): self
@@ -422,5 +439,16 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getAssistantHoldingReplyEnabled(): bool
     {
         return $this->assistant_holding_reply_enabled;
+    }
+
+    public function setOrganizerNudgeEnabled(bool $organizer_nudge_enabled): self
+    {
+        $this->organizer_nudge_enabled = $organizer_nudge_enabled;
+        return $this;
+    }
+
+    public function getOrganizerNudgeEnabled(): bool
+    {
+        return $this->organizer_nudge_enabled;
     }
 }

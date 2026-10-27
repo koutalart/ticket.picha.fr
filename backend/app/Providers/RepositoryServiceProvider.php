@@ -65,6 +65,7 @@ use HiEvents\Repository\Eloquent\SmsCampaignRecipientRepository;
 use HiEvents\Repository\Eloquent\SmsCampaignRepository;
 use HiEvents\Repository\Eloquent\SmsOptOutRepository;
 use HiEvents\Repository\Eloquent\OrganizerTeamContactRepository;
+use HiEvents\Repository\Eloquent\OrganizerTeamNudgeRepository;
 use HiEvents\Repository\Eloquent\EventDailyReportRepository;
 use HiEvents\Repository\Eloquent\SmsCancellationConfirmationRepository;
 use HiEvents\Repository\Eloquent\SmsRegistrationConfirmationRepository;
@@ -162,6 +163,7 @@ use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerTeamContactRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerTeamNudgeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventDailyReportRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCancellationConfirmationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsRegistrationConfirmationRepositoryInterface;
@@ -226,6 +228,7 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsMessageRepositoryInterface::class => SmsMessageRepository::class,
         SmsOptOutRepositoryInterface::class => SmsOptOutRepository::class,
         OrganizerTeamContactRepositoryInterface::class => OrganizerTeamContactRepository::class,
+        OrganizerTeamNudgeRepositoryInterface::class => OrganizerTeamNudgeRepository::class,
         EventDailyReportRepositoryInterface::class => EventDailyReportRepository::class,
         SmsRegistrationConfirmationRepositoryInterface::class => SmsRegistrationConfirmationRepository::class,
         SmsCancellationConfirmationRepositoryInterface::class => SmsCancellationConfirmationRepository::class,

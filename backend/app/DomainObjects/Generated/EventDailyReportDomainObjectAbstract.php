@@ -19,6 +19,7 @@ abstract class EventDailyReportDomainObjectAbstract extends \HiEvents\DomainObje
     final public const LAST_SENT_ON = 'last_sent_on';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const ACTIVITY_ENABLED = 'activity_enabled';
 
     protected int $id;
     protected int $event_id;
@@ -29,6 +30,7 @@ abstract class EventDailyReportDomainObjectAbstract extends \HiEvents\DomainObje
     protected ?string $last_sent_on = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected bool $activity_enabled = false;
 
     public function toArray(): array
     {
@@ -42,6 +44,7 @@ abstract class EventDailyReportDomainObjectAbstract extends \HiEvents\DomainObje
                     'last_sent_on' => $this->last_sent_on ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'activity_enabled' => $this->activity_enabled ?? null,
                 ];
     }
 
@@ -142,5 +145,16 @@ abstract class EventDailyReportDomainObjectAbstract extends \HiEvents\DomainObje
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setActivityEnabled(bool $activity_enabled): self
+    {
+        $this->activity_enabled = $activity_enabled;
+        return $this;
+    }
+
+    public function getActivityEnabled(): bool
+    {
+        return $this->activity_enabled;
     }
 }

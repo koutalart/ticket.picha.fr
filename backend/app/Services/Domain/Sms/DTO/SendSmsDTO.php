@@ -21,5 +21,6 @@ class SendSmsDTO extends BaseDataObject
         public readonly bool $keepDraft = false,
         public readonly bool $replyInConversation = false,
         public readonly bool $isSupervision = false,
+        public readonly bool $awaitsReply = false,
     ) {}
 }
