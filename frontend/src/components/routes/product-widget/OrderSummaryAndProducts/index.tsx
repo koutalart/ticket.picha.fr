@@ -24,6 +24,7 @@ import {useEffect, useState} from "react";
 import {useQueryClient} from "@tanstack/react-query";
 
 import {useGetOrderPublic, GET_ORDER_PUBLIC_QUERY_KEY} from "../../../../queries/useGetOrderPublic.ts";
+import {confirmOrderOnDevice} from "../../../../utilites/checkoutMemory.ts";
 import {eventCheckoutPath} from "../../../../utilites/urlHelper.ts";
 import {dateToBrowserTz} from "../../../../utilites/dates.ts";
 import {formatAddress} from "../../../../utilites/addressUtilities.ts";
@@ -468,6 +469,7 @@ export const OrderSummaryAndProducts = () => {
     useEffect(() => {
         if (eventId && order && (order.status === 'COMPLETED' || order.status === 'AWAITING_OFFLINE_PAYMENT')) {
             clearWaitlistJoinedForEvent(eventId);
+            confirmOrderOnDevice(eventId, order.short_id);
         }
     }, [eventId, order?.status]);
 

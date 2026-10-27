@@ -88,6 +88,7 @@ const Category = ({title, description, checked, locked, onChange}: CategoryProps
 export const CookieConsentBanner = ({view, theme, initialSelection, onSave, onCustomize}: CookieConsentBannerProps) => {
     const titleId = useId();
     const firstButtonRef = useRef<HTMLButtonElement>(null);
+    const barRef = useRef<HTMLDivElement>(null);
     const [audience, setAudience] = useState(initialSelection?.audience ?? true);
     const [marketing, setMarketing] = useState(initialSelection?.marketing ?? false);
 
@@ -97,13 +98,56 @@ export const CookieConsentBanner = ({view, theme, initialSelection, onSave, onCu
         }
     }, [view]);
 
-    const text = getConfig(
-        'VITE_COOKIE_CONSENT_TEXT',
-        t`We measure where our visitors come from (campaign links, referring sites) to know which channels work. With your consent, we also use advertising cookies (Meta, Google, TikTok) to measure the results of our ads. You can change your mind at any time.`
-    );
+    useEffect(() => {
+        const bar = barRef.current;
+        if (view !== 'main' || !bar || typeof ResizeObserver === 'undefined') {
+            return;
+        }
+        const root = document.documentElement;
+        const publish = () => {
+            root.style.setProperty('--picha-cookie-bar-height', `${Math.ceil(bar.getBoundingClientRect().height)}px`);
+            window.dispatchEvent(new Event('picha:bottom-bar-change'));
+        };
+        const observer = new ResizeObserver(publish);
+        observer.observe(bar);
+        publish();
+        return () => {
+            observer.disconnect();
+            root.style.removeProperty('--picha-cookie-bar-height');
+            window.dispatchEvent(new Event('picha:bottom-bar-change'));
+        };
+    }, [view]);
 
     const refuse = () => onSave({audience, marketing: false});
     const accept = () => onSave({audience: true, marketing: true});
+
+    if (view === 'main') {
+        return (
+            <div
+                ref={barRef}
+                className={classes.bar}
+                style={themeStyle(theme)}
+                role="region"
+                aria-label={t`Cookies and trackers`}
+                data-view={view}
+            >
+                <p className={classes.barText}>
+                    {t`Cookies to measure our ads.`}{' '}
+                    <button type="button" className={classes.barLink} onClick={onCustomize}>
+                        {t`Info`}
+                    </button>
+                </p>
+                <div className={classes.barActions}>
+                    <button type="button" className={classes.barButton} onClick={refuse}>
+                        {t`Refuse`}
+                    </button>
+                    <button type="button" className={classes.barButton} onClick={accept}>
+                        {t`Accept`}
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div
@@ -129,67 +173,42 @@ export const CookieConsentBanner = ({view, theme, initialSelection, onSave, onCu
                 <h2 id={titleId} className={classes.title}>{t`Cookies and trackers`}</h2>
             </div>
 
-            {view === 'main' ? (
-                <p className={classes.text}>
-                    {text}{' '}
-                    <a href={cookiePolicyUrl()} target="_blank" rel="noopener noreferrer" className={classes.link}>
-                        {t`Cookie policy`}
-                    </a>
-                </p>
-            ) : (
-                <div className={classes.categories}>
-                    <Category
-                        title={t`Strictly necessary`}
-                        description={t`Session, cart, language and the memory of your choice. Required for the site to work.`}
-                        checked
-                        locked
-                    />
-                    <Category
-                        title={t`Exempt audience measurement`}
-                        description={t`Campaign source (utm parameters), referring site and landing page, kept 90 days on this site to count visits and sales per channel. Exempt from consent, you can object to it.`}
-                        checked={audience}
-                        onChange={setAudience}
-                    />
-                    <Category
-                        title={t`Advertising and marketing`}
-                        description={t`Advertising identifiers (Meta _fbp and _fbc cookies, Google _gcl_aw cookie, ad click identifiers) kept 90 days to measure the results of ads. Only with your consent.`}
-                        checked={marketing}
-                        onChange={setMarketing}
-                    />
-                    <a href={cookiePolicyUrl()} target="_blank" rel="noopener noreferrer" className={classes.link}>
-                        {t`Cookie policy`}
-                    </a>
-                </div>
-            )}
+            <div className={classes.categories}>
+                <Category
+                    title={t`Strictly necessary`}
+                    description={t`Session, cart, language and the memory of your choice. Required for the site to work.`}
+                    checked
+                    locked
+                />
+                <Category
+                    title={t`Exempt audience measurement`}
+                    description={t`Campaign source (utm parameters), referring site and landing page, kept 90 days on this site to count visits and sales per channel. Exempt from consent, you can object to it.`}
+                    checked={audience}
+                    onChange={setAudience}
+                />
+                <Category
+                    title={t`Advertising and marketing`}
+                    description={t`Advertising identifiers (Meta _fbp and _fbc cookies, Google _gcl_aw cookie, ad click identifiers) kept 90 days to measure the results of ads. Only with your consent.`}
+                    checked={marketing}
+                    onChange={setMarketing}
+                />
+                <a href={cookiePolicyUrl()} target="_blank" rel="noopener noreferrer" className={classes.link}>
+                    {t`Cookie policy`}
+                </a>
+            </div>
 
             <div className={classes.actions}>
-                {view === 'main' ? (
-                    <>
-                        <button type="button" className={classes.choiceButton} onClick={refuse}>
-                            {t`Refuse`}
-                        </button>
-                        <button type="button" className={classes.secondaryButton} onClick={onCustomize}>
-                            {t`Customize`}
-                        </button>
-                        <button type="button" className={classes.choiceButton} onClick={accept}>
-                            {t`Accept`}
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <button ref={firstButtonRef} type="button" className={classes.choiceButton}
-                                onClick={() => onSave({audience, marketing: false})}>
-                            {t`Refuse all`}
-                        </button>
-                        <button type="button" className={classes.secondaryButton}
-                                onClick={() => onSave({audience, marketing})}>
-                            {t`Save my choices`}
-                        </button>
-                        <button type="button" className={classes.choiceButton} onClick={accept}>
-                            {t`Accept all`}
-                        </button>
-                    </>
-                )}
+                <button ref={firstButtonRef} type="button" className={classes.choiceButton}
+                        onClick={() => onSave({audience, marketing: false})}>
+                    {t`Refuse all`}
+                </button>
+                <button type="button" className={classes.secondaryButton}
+                        onClick={() => onSave({audience, marketing})}>
+                    {t`Save my choices`}
+                </button>
+                <button type="button" className={classes.choiceButton} onClick={accept}>
+                    {t`Accept all`}
+                </button>
             </div>
         </div>
     );
