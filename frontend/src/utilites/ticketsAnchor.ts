@@ -4,6 +4,7 @@ export const BUY_QUERY_PARAM = 'acheter';
 const ANCHOR_GAP = 12;
 const SETTLE_MS = 700;
 const MAX_WAIT_MS = 8000;
+const TICK_MS = 80;
 const USER_INTENT_EVENTS = ['wheel', 'touchstart', 'pointerdown', 'keydown'] as const;
 
 /**
@@ -60,32 +61,41 @@ export const scrollToTicketsSection = (target: HTMLElement | null, smooth = true
 /**
  * The browser jumps to the anchor once, while the page is still under the loader, before the ticket form has loaded
  * and the images above it have their height. This keeps the form aligned until the layout settles, and lets go
- * as soon as the visitor touches the page.
+ * as soon as the visitor really touches, scrolls or types (trusted events only).
+ *
+ * Driven by timers rather than requestAnimationFrame: in-app browsers and embedded panes may not paint frames
+ * while the page is loading, and a rAF loop then never runs.
  */
 export const alignTicketsOnArrival = (): (() => void) => {
     if (typeof window === 'undefined' || !wantsTicketsOnArrival(window.location)) {
         return () => undefined;
     }
 
-    let frame = 0;
+    let timer: number | undefined;
     let stopped = false;
     let lastTop = Number.NaN;
     let stableSince = 0;
-    const startedAt = performance.now();
+    let startedAt = performance.now();
 
-    const stop = () => {
-        if (stopped) {
-            return;
-        }
+    const cleanUp = () => {
         stopped = true;
-        window.cancelAnimationFrame(frame);
-        USER_INTENT_EVENTS.forEach((type) => window.removeEventListener(type, stop, true));
+        window.clearTimeout(timer);
+        USER_INTENT_EVENTS.forEach((type) => window.removeEventListener(type, onUserIntent, true));
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        window.removeEventListener('load', onLoad);
     };
 
-    const tick = (now: number) => {
+    const onUserIntent = (event: Event) => {
+        if (event.isTrusted) {
+            cleanUp();
+        }
+    };
+
+    const tick = () => {
         if (stopped) {
             return;
         }
+        const now = performance.now();
         const target = document.getElementById(TICKETS_SECTION_ID);
         if (target && target.getAttribute('aria-busy') !== 'true') {
             const top = ticketsTop(target);
@@ -96,19 +106,37 @@ export const alignTicketsOnArrival = (): (() => void) => {
                 lastTop = top;
                 stableSince = now;
             } else if (now - stableSince > SETTLE_MS && document.readyState === 'complete') {
-                stop();
+                cleanUp();
                 return;
             }
         }
-        if (now - startedAt > MAX_WAIT_MS) {
-            stop();
+        if (now - startedAt > MAX_WAIT_MS && !document.hidden) {
+            cleanUp();
             return;
         }
-        frame = window.requestAnimationFrame(tick);
+        timer = window.setTimeout(tick, TICK_MS);
     };
 
-    USER_INTENT_EVENTS.forEach((type) => window.addEventListener(type, stop, {capture: true, passive: true}));
-    frame = window.requestAnimationFrame(tick);
+    const restart = () => {
+        window.clearTimeout(timer);
+        tick();
+    };
 
-    return stop;
+    function onVisibilityChange() {
+        if (!document.hidden) {
+            startedAt = performance.now();
+            restart();
+        }
+    }
+
+    function onLoad() {
+        restart();
+    }
+
+    USER_INTENT_EVENTS.forEach((type) => window.addEventListener(type, onUserIntent, {capture: true, passive: true}));
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('load', onLoad);
+    timer = window.setTimeout(tick, 0);
+
+    return cleanUp;
 };

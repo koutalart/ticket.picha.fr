@@ -313,21 +313,68 @@ Sitemap: ${frontendUrl}/sitemap.xml
         }
     });
     const QR_SHORT_ID = /^[A-Za-z0-9]{4,32}$/;
-    // "/q/abc?acheter=1" keeps the buy intent on the event page (the "#tickets" fragment is kept by the browser).
-    const withBuyIntent = (redirectUrl, req) => {
+    // QR / campaign links that land on an event page with tickets on sale open straight on the ticket form
+    // ("acheter=1"). "/q/abc?acheter=0" (or any explicit value) is passed through as is, so a link can opt out.
+    const BUY_INTENT_EVENT_PATH = /^\/(?:event|e)\/(\d+)\/(?!preview(?:\/|$))[^/]+\/?$/;
+    const ON_SALE_CACHE_TTL_MS = 60 * 1000;
+    const eventOnSaleCache = new Map();
+
+    const isEventOnSale = async (eventId) => {
+        const cached = eventOnSaleCache.get(eventId);
+        if (cached && cached.expiresAt > Date.now()) {
+            return cached.onSale;
+        }
+
+        let onSale = false;
+        try {
+            const response = await fetch(
+                `${process.env.VITE_API_URL_SERVER}/public/events/${encodeURIComponent(eventId)}`,
+                {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(1500)}
+            );
+            if (response.ok) {
+                const event = (await response.json()).data;
+                const endsAt = Date.parse(event?.end_date || event?.start_date || '');
+                const products = [
+                    ...(event?.products || []),
+                    ...((event?.product_categories || []).flatMap((category) => category.products || [])),
+                ];
+                onSale = event?.status === 'LIVE'
+                    && !['ENDED', 'CANCELLED'].includes(event?.lifecycle_status)
+                    && (Number.isNaN(endsAt) || endsAt > Date.now())
+                    && products.some((product) => product.is_available && !product.is_sold_out);
+            }
+        } catch (error) {
+            console.error(`Buy intent lookup failed for event ${eventId}`, error);
+            return cached?.onSale ?? false;
+        }
+
+        eventOnSaleCache.set(eventId, {onSale, expiresAt: Date.now() + ON_SALE_CACHE_TTL_MS});
+        return onSale;
+    };
+
+    const withBuyIntent = async (redirectUrl, req) => {
         const intent = req.query?.acheter;
-        if (intent === undefined || Array.isArray(intent)) {
+        if (Array.isArray(intent)) {
             return redirectUrl;
         }
         try {
             const target = new URL(redirectUrl, platformBaseUrl(req));
-            if (!target.searchParams.has('acheter')) {
-                target.searchParams.set('acheter', String(intent) || '1');
+            if (target.searchParams.has('acheter')) {
+                return redirectUrl;
             }
-            return target.toString();
+            if (intent !== undefined) {
+                target.searchParams.set('acheter', String(intent) || '1');
+                return target.toString();
+            }
+            const eventId = target.pathname.match(BUY_INTENT_EVENT_PATH)?.[1];
+            if (eventId && await isEventOnSale(eventId)) {
+                target.searchParams.set('acheter', '1');
+                return target.toString();
+            }
         } catch {
-            return redirectUrl;
+            // Keep the original destination.
         }
+        return redirectUrl;
     };
     const clientIp = (req) => (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.socket?.remoteAddress || '';
 
@@ -362,7 +409,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 const {data} = await response.json();
                 if (data?.redirect_url) {
                     res.setHeader('Cache-Control', 'no-store');
-                    return res.redirect(302, withBuyIntent(data.redirect_url, req));
+                    return res.redirect(302, await withBuyIntent(data.redirect_url, req));
                 }
             }
         } catch (error) {
