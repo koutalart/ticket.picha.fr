@@ -45,6 +45,13 @@ const storeSession = (organizerId: IdParam, sessionId: string | null) => {
 
 const statusOf = (error: any): number | undefined => error?.response?.status;
 
+const between = (min: number, max: number) => min + Math.random() * (max - min);
+
+// Human rhythm: the visitor's message is "read", then each bubble is "typed" at a pace that follows its length.
+const readingDelay = () => between(1000, 2000);
+const pauseBetweenBubbles = () => between(600, 1200);
+const typingDelay = (text: string) => Math.min(6000, Math.max(1500, text.length * between(25, 40)));
+
 /**
  * « Assistance en direct »: answers the visitor right away with the organizer's assistant. Full screen on a phone,
  * side panel on a desktop. The contact details are only asked when the organizer must follow up.
@@ -63,20 +70,85 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
     const [contactError, setContactError] = useState<string | null>(null);
     const [startFailed, setStartFailed] = useState(false);
     const [refundOpen, setRefundOpen] = useState(false);
+    const [typing, setTyping] = useState(false);
+    const [revealing, setRevealing] = useState(false);
     const logRef = useRef<HTMLDivElement>(null);
+    const timers = useRef<number[]>([]);
+    const revealRun = useRef(0);
 
     const startMutation = useStartLiveChat();
     const postMutation = usePostLiveChatMessage();
     const contactMutation = useSubmitLiveChatContact();
     const maxLength = config.max_message_length || 800;
 
-    const applyTurn = (turn: LiveChatTurn, replaceAll = false) => {
-        setMessages((current) => replaceAll ? turn.messages : [...current.filter((message) => message.id > 0), ...turn.messages]);
+    const applyTurnState = (turn: LiveChatTurn) => {
         setAskContact(turn.ask_contact && !turn.contact_given);
         setContactGiven(turn.contact_given);
         if (turn.refund_form) {
             setRefundOpen(true);
         }
+    };
+
+    const applyTurn = (turn: LiveChatTurn, replaceAll = false) => {
+        setMessages((current) => replaceAll ? turn.messages : [...current.filter((message) => message.id > 0), ...turn.messages]);
+        applyTurnState(turn);
+    };
+
+    const wait = (ms: number) => new Promise<void>((resolve) => {
+        if (ms <= 0) {
+            resolve();
+            return;
+        }
+        timers.current.push(window.setTimeout(resolve, ms));
+    });
+
+    const clearTimers = () => {
+        timers.current.forEach((id) => window.clearTimeout(id));
+        timers.current = [];
+    };
+
+    useEffect(() => () => {
+        revealRun.current += 1;
+        clearTimers();
+    }, []);
+
+    /**
+     * Shows the answer bubble by bubble: the typing dots appear once the visitor's message has been "read"
+     * (typingFrom), each bubble waits for a typing time that follows its length, and a server that answers late
+     * adds no extra wait.
+     */
+    const revealTurn = async (turn: LiveChatTurn, typingFrom: number) => {
+        const run = revealRun.current;
+        const agentMessages = turn.messages.filter((message) => message.author_type !== 'VISITOR');
+        const visitorMessages = turn.messages.filter((message) => message.author_type === 'VISITOR');
+
+        setMessages((current) => [...current.filter((message) => message.id > 0), ...visitorMessages]);
+        setRevealing(true);
+
+        let typingStartedAt = typingFrom;
+        for (let index = 0; index < agentMessages.length; index++) {
+            if (index > 0) {
+                setTyping(false);
+                await wait(pauseBetweenBubbles());
+                typingStartedAt = Date.now();
+            } else {
+                await wait(typingFrom - Date.now());
+            }
+            if (run !== revealRun.current) {
+                return;
+            }
+            setTyping(true);
+            await wait(typingStartedAt + typingDelay(agentMessages[index].content) - Date.now());
+            if (run !== revealRun.current) {
+                return;
+            }
+            const message = agentMessages[index];
+            setMessages((current) => [...current, message]);
+        }
+
+        setTyping(false);
+        setRevealing(false);
+        applyTurnState(turn);
     };
 
     const appendMessages = (newMessages: LiveChatMessage[]) => {
@@ -130,12 +202,12 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
         if (log) {
             log.scrollTop = log.scrollHeight;
         }
-    }, [messages, postMutation.isPending, askContact, opened, refundOpen]);
+    }, [messages, typing, askContact, opened, refundOpen]);
 
     const send = (event?: FormEvent) => {
         event?.preventDefault();
         const content = draft.trim();
-        if (!content || !sessionId || postMutation.isPending) {
+        if (!content || !sessionId || postMutation.isPending || revealing) {
             return;
         }
 
@@ -143,14 +215,23 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
         setMessages((current) => [...current, optimistic]);
         setDraft('');
 
+        const typingFrom = Date.now() + readingDelay();
+        clearTimers();
+        timers.current.push(window.setTimeout(() => setTyping(true), typingFrom - Date.now()));
+
         postMutation.mutate({sessionId, message: content}, {
             onSuccess: ({data}) => {
-                applyTurn(data);
                 if (data.contact_form_fallback) {
+                    setTyping(false);
+                    applyTurn(data);
                     setFallback({notice: null, message: content});
+                    return;
                 }
+                void revealTurn(data, typingFrom);
             },
             onError: (error: any) => {
+                clearTimers();
+                setTyping(false);
                 const status = statusOf(error);
                 if (status === 429) {
                     setFallback({notice: error?.response?.data?.message ?? null, message: content});
@@ -267,8 +348,8 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                                 {message.content}
                             </div>
                         ))}
-                        {(postMutation.isPending || startMutation.isPending) && (
-                            <div className={`${classes.bubble} ${classes.agent} ${classes.typing}`} aria-label={t`The assistant is writing`}>
+                        {(typing || startMutation.isPending) && (
+                            <div className={`${classes.bubble} ${classes.agent} ${classes.typing}`} role="status" aria-label={t`The assistant is writing`}>
                                 <span/><span/><span/>
                             </div>
                         )}
@@ -345,7 +426,7 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                             size="lg"
                             radius="xl"
                             aria-label={t`Send`}
-                            disabled={!sessionId || !draft.trim() || postMutation.isPending}
+                            disabled={!sessionId || !draft.trim() || postMutation.isPending || revealing}
                         >
                             <IconSend size={18}/>
                         </ActionIcon>
