@@ -85,7 +85,7 @@ class CompleteOrderValidator extends BaseValidator
             'order.questions' => (new OrderQuestionRule($orderQuestions, $products))
                 ->setUploadedFiles($uploadedFiles),
             'order.email' => 'required|email',
-            'order.email_confirmation' => 'required|email|same:order.email',
+            'order.email_confirmation' => 'nullable|email|same:order.email',
             'products' => (new ProductQuestionRule(
                 $productQuestions,
                 $products,
@@ -118,7 +118,6 @@ class CompleteOrderValidator extends BaseValidator
             'order.first_name.required' => __('First name is required'),
             'order.last_name.required' => __('Last name is required'),
             'order.email' => __('A valid email is required'),
-            'order.email_confirmation.required' => __('Please confirm your email address'),
             'order.email_confirmation.same' => __('Email addresses do not match'),
             'order.address.address_line_1.required' => __('Address line 1 is required'),
             'order.address.city.required' => __('City is required'),
