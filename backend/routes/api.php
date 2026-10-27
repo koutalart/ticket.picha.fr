@@ -221,6 +221,8 @@ use HiEvents\Http\Actions\Orders\Payment\RefundOrderAction;
 use HiEvents\Http\Actions\Orders\Payment\Stripe\CreatePaymentIntentActionPublic;
 use HiEvents\Http\Actions\Orders\Payment\Stripe\GetPaymentIntentActionPublic;
 use HiEvents\Http\Actions\Orders\Public\AbandonOrderActionPublic;
+use HiEvents\Http\Actions\Orders\Public\GetOrderRefundProtectionActionPublic;
+use HiEvents\Http\Actions\Orders\Public\UpdateOrderRefundProtectionActionPublic;
 use HiEvents\Http\Actions\Orders\Public\CompleteOrderActionPublic;
 use HiEvents\Http\Actions\Orders\Public\CreateOrderActionPublic;
 use HiEvents\Http\Actions\Orders\Public\DownloadOrderInvoicePublicAction;
@@ -951,6 +953,8 @@ $router->prefix('/public')->group(
         $router->put('/events/{event_id}/order/{order_short_id}', CompleteOrderActionPublic::class);
         $router->get('/events/{event_id}/order/{order_short_id}', GetOrderActionPublic::class);
         $router->post('/events/{event_id}/order/{order_short_id}/abandon', AbandonOrderActionPublic::class);
+        $router->get('/events/{event_id}/order/{order_short_id}/refund-protection', GetOrderRefundProtectionActionPublic::class);
+        $router->put('/events/{event_id}/order/{order_short_id}/refund-protection', UpdateOrderRefundProtectionActionPublic::class);
         $router->post('/events/{event_id}/order/{order_short_id}/await-offline-payment', TransitionOrderToOfflinePaymentPublicAction::class);
         $router->get('/events/{event_id}/order/{order_short_id}/invoice', DownloadOrderInvoicePublicAction::class);
         $router->post('/events/{event_id}/order/{order_short_id}/question-files', UploadQuestionAnswerFilePublicAction::class)

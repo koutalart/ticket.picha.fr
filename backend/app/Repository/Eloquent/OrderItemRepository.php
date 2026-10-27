@@ -20,4 +20,16 @@ class OrderItemRepository extends BaseRepository implements OrderItemRepositoryI
     {
         return OrderItemDomainObject::class;
     }
+
+    public function forceDeleteForOrderAndProducts(int $orderId, array $productIds): int
+    {
+        if ($productIds === []) {
+            return 0;
+        }
+
+        return (int) OrderItem::withTrashed()
+            ->where('order_id', $orderId)
+            ->whereIn('product_id', $productIds)
+            ->forceDelete();
+    }
 }

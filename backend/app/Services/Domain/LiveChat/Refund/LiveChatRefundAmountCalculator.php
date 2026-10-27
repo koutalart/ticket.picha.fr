@@ -11,6 +11,7 @@ use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\Exceptions\LiveChatRefundSelectionException;
+use HiEvents\Services\Domain\Order\RefundProtection\OrderRefundProtectionService;
 use HiEvents\Services\Domain\LiveChat\Refund\DTO\LiveChatRefundCoverageDTO;
 use HiEvents\Services\Domain\LiveChat\Refund\DTO\LiveChatRefundTicketDTO;
 use Illuminate\Support\Collection;
@@ -69,7 +70,8 @@ class LiveChatRefundAmountCalculator
         $coversWholeOrder = $protectionItems->contains(function (OrderItemDomainObject $item) use ($products) {
             $product = $products->get($item->getProductId());
 
-            return $product->getIsRequired() && $product->getRequiredQuantityMode() === RequiredQuantityMode::PER_ORDER->name;
+            return $product->getRequiredQuantityMode() === RequiredQuantityMode::PER_ORDER->name
+                && ($product->getIsRequired() || OrderRefundProtectionService::isCheckoutRefundProtection($product));
         });
 
         $protectedCount = (int) $protectionItems->sum(fn (OrderItemDomainObject $item) => $item->getQuantity());

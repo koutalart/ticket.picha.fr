@@ -15,14 +15,10 @@ const getTicketProducts = (event: Event): Product[] =>
     getStructuredDataProducts(event)
         .filter(product => product.product_type === 'TICKET' && !product.is_refund_protection);
 
-const lowestTicketPrice = (event: Event, tickets: Product[]): number | null => {
-    const isInclusive = event.settings?.price_display_mode === 'INCLUSIVE';
+const lowestTicketPrice = (tickets: Product[]): number | null => {
     const prices = tickets
         .flatMap(product => product.prices || [])
-        .map(price => {
-            const base = Number(price.price);
-            return isInclusive ? base + (Number(price.tax_total) || 0) + (Number(price.fee_total) || 0) : base;
-        })
+        .map(price => Number(price.price))
         .filter(price => Number.isFinite(price) && price > 0);
     return prices.length ? Math.min(...prices) : null;
 };
@@ -38,7 +34,7 @@ export const EventFactSummary = ({event, eventUrl}: EventFactSummaryProps) => {
         .filter(Boolean)
         .join(", ");
     const tickets = getTicketProducts(event);
-    const minPrice = lowestTicketPrice(event, tickets);
+    const minPrice = lowestTicketPrice(tickets);
     const dateRange = formatEventDateRange(event.start_date, event.end_date, event.timezone);
     const organizerName = event.organizer?.name;
     const registrationUrl = `${eventUrl}#tickets`;

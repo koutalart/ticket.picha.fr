@@ -1,6 +1,7 @@
 import {Event, Product, ProductPrice, Question, QuestionType, TaxAndFeeType} from "../types.ts";
 import {Constants} from "../constants.ts";
 import {getRequiredProductSelection} from "./requiredProducts.ts";
+import {isCheckoutRefundProtection} from "./refundProtection.ts";
 
 export const SUPPORTED_EMBEDDED_QUESTION_TYPES: string[] = [
     QuestionType.SINGLE_LINE_TEXT,
@@ -109,10 +110,7 @@ export const getProductMaxPerOrder = (product: Product): number =>
 
 export const getEmbeddedCheckoutLines = (event?: Event): EmbeddedCheckoutLine[] =>
     getEventProducts(event)
-        .filter(product => !product.is_required
-            && !product.is_refund_protection
-            && product.is_available !== false
-            && !product.is_sold_out)
+        .filter(product => !product.is_required && !isCheckoutRefundProtection(product) && product.is_available !== false && !product.is_sold_out)
         .flatMap(product => (product.prices ?? []).filter(isSelectablePrice).map(price => {
             const limits = [price.quantity_remaining, product.quantity_available].filter(isFiniteLimit);
             return {
@@ -127,7 +125,7 @@ export const getEmbeddedCheckoutLines = (event?: Event): EmbeddedCheckoutLine[] 
 
 export const getRequiredCheckoutItems = (event: Event | undefined, ticketQuantity: number): EmbeddedCheckoutItem[] =>
     getEventProducts(event).flatMap(product => {
-        const selection = getRequiredProductSelection(product, ticketQuantity);
+        const selection = isCheckoutRefundProtection(product) ? null : getRequiredProductSelection(product, ticketQuantity);
         return selection ? [{
             key: lineKey(product, selection.price),
             product,

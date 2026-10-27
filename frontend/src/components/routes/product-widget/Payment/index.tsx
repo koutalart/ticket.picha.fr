@@ -21,6 +21,11 @@ import classes from "./Payment.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
 import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 import {LoadingMask} from "../../../common/LoadingMask";
+import {useIsFetching} from "@tanstack/react-query";
+import {useGetOrderRefundProtectionPublic} from "../../../../queries/useGetOrderRefundProtectionPublic.ts";
+import {useUpdateOrderRefundProtectionPublic} from "../../../../mutations/useUpdateOrderRefundProtectionPublic.ts";
+import {GET_INITIATE_STRIPE_SESSION_PUBLIC_QUERY_KEY} from "../../../../queries/useCreateStripePaymentIntent.ts";
+import {RefundProtectionOption} from "./RefundProtectionOption";
 
 const Payment = () => {
     const navigate = useNavigate();
@@ -32,6 +37,22 @@ const Payment = () => {
     const [activePaymentMethod, setActivePaymentMethod] = useState<'STRIPE' | 'OFFLINE' | null>(null);
     const [submitHandler, setSubmitHandler] = useState<(() => Promise<void>) | null>(null);
     const transitionOrderToOfflinePaymentMutation = useTransitionOrderToOfflinePaymentPublic();
+    const {data: refundProtection} = useGetOrderRefundProtectionPublic(eventId, orderShortId, !!order?.is_payment_required);
+    const refundProtectionMutation = useUpdateOrderRefundProtectionPublic();
+    const isStripeIntentFetching = useIsFetching({queryKey: [GET_INITIATE_STRIPE_SESSION_PUBLIC_QUERY_KEY, eventId, orderShortId]}) > 0;
+    const isRefundProtectionChecked = refundProtectionMutation.isPending
+        ? !!refundProtectionMutation.variables?.enabled
+        : !!refundProtection?.is_selected;
+
+    const handleRefundProtectionChange = (enabled: boolean) => {
+        refundProtectionMutation.mutate({eventId, orderShortId, enabled}, {
+            onError: (error: any) => {
+                showError(error.response?.data?.errors?.enabled?.[0]
+                    || error.response?.data?.message
+                    || t`Unable to update the peace of mind option. Please try again.`);
+            },
+        });
+    };
 
     const isStripeEnabled = event?.settings?.payment_providers?.includes('STRIPE');
     const isOfflineEnabled = event?.settings?.payment_providers?.includes('OFFLINE');
@@ -109,6 +130,14 @@ const Payment = () => {
                 {(event && order) && (
                     <InlineOrderSummary event={event} order={order} defaultExpanded={false}/>
                 )}
+                {refundProtection && (
+                    <RefundProtectionOption
+                        offer={refundProtection}
+                        checked={isRefundProtectionChecked}
+                        disabled={refundProtectionMutation.isPending || isStripeIntentFetching || isPaymentLoading}
+                        onChange={handleRefundProtectionChange}
+                    />
+                )}
                 {isStripeEnabled && (
                     <div style={{display: activePaymentMethod === 'STRIPE' ? 'block' : 'none'}}>
                         <StripePaymentMethod enabled={true} event={event} order={order} setSubmitHandler={setSubmitHandler}/>
@@ -150,7 +179,7 @@ const Payment = () => {
                 <div className={classes.checkoutActions}>
                     <Button
                         className={classes.continueButton}
-                        loading={isLoading || isPaymentLoading}
+                        loading={isLoading || isPaymentLoading || refundProtectionMutation.isPending || isStripeIntentFetching}
                         onClick={handleSubmit}
                     >
                         {order?.is_payment_required ? (
