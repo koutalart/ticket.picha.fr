@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Meta;
 
+use HiEvents\Helper\SmsPhoneNormalizer;
 use Illuminate\Support\Str;
 
 class MetaUserDataHasher
@@ -21,6 +22,16 @@ class MetaUserDataHasher
         $name = preg_replace('/[^\p{L}\p{M}]+/u', '', $name);
 
         return $name === '' || $name === null ? null : $this->hash($name);
+    }
+
+    /**
+     * Digits only with the country code, as Meta expects (0639... becomes 262639...).
+     */
+    public function phone(?string $phone): ?string
+    {
+        $normalized = $phone === null ? null : SmsPhoneNormalizer::normalize($phone);
+
+        return $normalized === null ? null : $this->hash(ltrim($normalized, '+'));
     }
 
     public function countryCode(?string $countryCode): ?string

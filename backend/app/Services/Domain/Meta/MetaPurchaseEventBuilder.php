@@ -17,9 +17,10 @@ class MetaPurchaseEventBuilder
         private readonly MetaUserDataHasher $hasher,
     ) {}
 
-    public function build(OrderDomainObject $order, EventDomainObject $event): array
+    public function build(OrderDomainObject $order, EventDomainObject $event, ?string $phone = null): array
     {
         $context = (array) ($order->getTrackingContext() ?? []);
+        $consent = ($context['consent'] ?? false) === true;
 
         $customData = array_filter([
             'currency' => strtoupper($order->getCurrency()),
@@ -38,23 +39,23 @@ class MetaPurchaseEventBuilder
             'event_id' => self::EVENT_ID_PREFIX.$order->getShortId(),
             'action_source' => 'website',
             'event_source_url' => $context['event_source_url'] ?? $event->getEventUrl(),
-            'user_data' => $this->buildUserData($order, $context),
+            'user_data' => $this->buildUserData($order, $consent ? $context : [], $phone),
             'custom_data' => $customData,
         ], static fn ($value) => $value !== null);
     }
 
-    private function buildUserData(OrderDomainObject $order, array $context): array
+    private function buildUserData(OrderDomainObject $order, array $context, ?string $phone): array
     {
         return array_filter([
             'em' => $this->wrap($this->hasher->email($order->getEmail())),
+            'ph' => $this->wrap($this->hasher->phone($phone)),
             'fn' => $this->wrap($this->hasher->name($order->getFirstName())),
             'ln' => $this->wrap($this->hasher->name($order->getLastName())),
             'country' => $this->wrap($this->hasher->countryCode($order->getAddressDTO()?->country)),
             'client_ip_address' => $context['client_ip_address'] ?? null,
             'client_user_agent' => $context['client_user_agent'] ?? null,
             'fbp' => $context['fbp'] ?? null,
-            'fbc' => $context['fbc'] ?? null,
-        ], static fn ($value) => $value !== null && $value !== '');
+            'fbc' => MetaClickId::fbc($context['fbc'] ?? null, $context['fbclid'] ?? null),        ], static fn ($value) => $value !== null && $value !== '');
     }
 
     private function wrap(?string $hash): ?array

@@ -45,4 +45,12 @@ class OrganizerSettingDomainObject extends Generated\OrganizerSettingDomainObjec
     {
         return ! empty($this->getMetaConversionsApiToken()) && $this->getEnabledFacebookPixelId() !== null;
     }
+
+    /**
+     * Server events follow the buyer's cookie choice, unless the organizer explicitly decided otherwise.
+     */
+    public function allowsMetaServerEvent(bool $buyerConsented): bool
+    {
+        return $buyerConsented || $this->getMetaCapiSendWithoutConsent() === true;
+    }
 }

@@ -43,8 +43,8 @@ export const facebookPixelPlugin: TrackingPixelPlugin = {
         fbq('init', pixelId);
     },
 
-    pageView(_data: PageViewData) {
-        fbq('track', 'PageView');
+    pageView(data: PageViewData) {
+        fbq('track', 'PageView', {}, data.eventId ? {eventID: data.eventId} : undefined);
     },
 
     trackEvent(data: TrackingEventData) {

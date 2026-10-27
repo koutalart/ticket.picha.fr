@@ -636,6 +636,7 @@ export interface OrganizerSettings {
     meta_conversions_api_configured?: boolean;
     meta_test_event_code?: string | null;
     meta_conversions_api_token?: string | null;
+    meta_capi_send_without_consent?: boolean;
     email_sender_name?: string | null;
     customer_address_form?: CustomerAddressForm;
 }
