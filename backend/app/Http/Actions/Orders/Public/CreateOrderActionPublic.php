@@ -12,6 +12,7 @@ use HiEvents\Services\Application\Handlers\Order\CreateOrderHandler;
 use HiEvents\Services\Application\Handlers\Order\DTO\CreateOrderPublicDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\ProductOrderDetailsDTO;
 use HiEvents\Services\Application\Locale\LocaleService;
+use HiEvents\Services\Domain\Meta\MetaServerEventDispatcher;
 use HiEvents\Services\Domain\Meta\OrderTrackingContextFactory;
 use HiEvents\Services\Domain\Order\OrderCreateRequestValidationService;
 use HiEvents\Services\Infrastructure\Session\CheckoutSessionManagementService;
@@ -26,7 +27,7 @@ class CreateOrderActionPublic extends BaseAction
         private readonly CheckoutSessionManagementService    $sessionIdentifierService,
         private readonly LocaleService                        $localeService,
         private readonly OrderTrackingContextFactory          $trackingContextFactory,
-
+        private readonly MetaServerEventDispatcher            $metaServerEventDispatcher,
     )
     {
     }
@@ -39,6 +40,12 @@ class CreateOrderActionPublic extends BaseAction
         $this->orderCreateRequestValidationService->validateRequestData($eventId, $request->all());
         $sessionId = $this->sessionIdentifierService->getSessionId();
         $qrLinkCode = is_string($request->input('qr_link_code')) ? $request->input('qr_link_code') : null;
+        $trackingContext = $this->trackingContextFactory->create(
+            input: is_array($request->input('tracking_context')) ? $request->input('tracking_context') : null,
+            ipAddress: $request->ip(),
+            userAgent: $request->userAgent(),
+            qrCode: $qrLinkCode,
+        );
 
         $order = $this->orderHandler->handle(
             eventId: $eventId,
@@ -48,12 +55,7 @@ class CreateOrderActionPublic extends BaseAction
                 'affiliate_code' => $request->input('affiliate_code'),
                 'qr_link_code' => $qrLinkCode,
                 'contact_code' => is_string($request->input('contact_code')) ? $request->input('contact_code') : null,
-                'tracking_context' => $this->trackingContextFactory->create(
-                    input: is_array($request->input('tracking_context')) ? $request->input('tracking_context') : null,
-                    ipAddress: $request->ip(),
-                    userAgent: $request->userAgent(),
-                    qrCode: $qrLinkCode,
-                ),
+                'tracking_context' => $trackingContext,
                 'products' => ProductOrderDetailsDTO::collectionFromArray($request->input('products')),
                 'session_identifier' => $sessionId,
                 'order_locale' => $this->localeService->getLocaleOrDefault($request->getPreferredLanguage()),
@@ -61,6 +63,8 @@ class CreateOrderActionPublic extends BaseAction
         );
 
         $order->setSessionIdentifier($sessionId);
+
+        $this->metaServerEventDispatcher->queueInitiateCheckout($order, $trackingContext, $request->ip(), $request->userAgent());
 
         $response =  $this->resourceResponse(
             resource: OrderResourcePublic::class,

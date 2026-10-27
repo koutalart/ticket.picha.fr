@@ -82,6 +82,7 @@ use HiEvents\Http\Actions\QrLinks\GetQrLinkPosterAction;
 use HiEvents\Http\Actions\QrLinks\GetQrLinkStatsAction;
 use HiEvents\Http\Actions\QrLinks\Public\GetQrLinkPublicAction;
 use HiEvents\Http\Actions\QrLinks\Public\RecordQrLinkVisitPublicAction;
+use HiEvents\Http\Actions\Meta\Public\TrackMetaPageEventActionPublic;
 use HiEvents\Http\Actions\Contacts\Public\RecordContactLinkVisitPublicAction;
 use HiEvents\Http\Actions\QrLinks\UpdateQrLinkAction;
 use HiEvents\Http\Actions\Tickets\GetAttendeeTicketImageActionPublic;
@@ -822,6 +823,9 @@ $router->prefix('/public')->group(
         // Events
         $router->get('/events/{event_id}', GetEventPublicAction::class);
         $router->get('/events/{event_id}/pages', GetEventPagesPublicAction::class);
+        $router->post('/events/{event_id}/page-signals', TrackMetaPageEventActionPublic::class)
+            ->where('event_id', '[0-9]+')
+            ->middleware('throttle:60,1');
 
         // Organizers
         $router->get('/organizers/{organizer_id}', GetPublicOrganizerAction::class);

@@ -4,7 +4,7 @@ import "../../../styles/widget/default.scss";
 import React, {useEffect, useRef, useState} from "react";
 import {EventDocumentHead} from "../../common/EventDocumentHead";
 import {eventCoverImage, eventHomepageUrl, imageUrl, organizerHomepageUrl} from "../../../utilites/urlHelper.ts";
-import {Event, OrganizerStatus} from "../../../types.ts";
+import {Event, IdParam, OrganizerStatus} from "../../../types.ts";
 import {EventNotAvailable} from "./EventNotAvailable";
 import {
     IconArrowUpRight,
@@ -36,6 +36,12 @@ import {computeThemeVariables, validateThemeSettings} from "../../../utilites/th
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
 import {openConsentPreferences} from "../../../utilites/trackingPixels/consent.ts";
+import {
+    getPageViewEventId,
+    isMetaServerEventsEnabled,
+    newMetaEventId,
+    sendMetaServerEvent,
+} from "../../../utilites/trackingPixels/metaServerEvents.ts";
 import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
 import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {ShareComponent} from "../../common/ShareIcon";
@@ -77,13 +83,27 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
         event?.organizer?.settings?.tracking_pixels
     );
 
+    const viewContentEventId = useRef<{ eventId?: IdParam; id: string } | null>(null);
+
     useEffect(() => {
-        if (event && consentGranted && hasActivePixels()) {
+        if (!event?.id) return;
+        if (viewContentEventId.current?.eventId !== event.id) {
+            viewContentEventId.current = {eventId: event.id, id: newMetaEventId('vc')};
+        }
+        const metaEventId = viewContentEventId.current.id;
+
+        if (consentGranted && hasActivePixels()) {
             trackPixelEvent({
                 eventName: 'ViewContent',
                 contentName: event.title,
                 contentId: event.id,
+                eventId: metaEventId,
             });
+        }
+
+        if (isMetaServerEventsEnabled(event.organizer?.settings, consentGranted)) {
+            sendMetaServerEvent(event.id, 'PageView', getPageViewEventId());
+            sendMetaServerEvent(event.id, 'ViewContent', metaEventId);
         }
     }, [event?.id, consentGranted]);
 
