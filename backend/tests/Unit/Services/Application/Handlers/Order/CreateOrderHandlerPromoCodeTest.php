@@ -15,6 +15,7 @@ use HiEvents\Services\Application\Handlers\Order\CreateOrderHandler;
 use HiEvents\Services\Application\Handlers\Order\DTO\CreateOrderPublicDTO;
 use HiEvents\Services\Domain\Order\OrderItemProcessingService;
 use HiEvents\Services\Domain\Order\OrderManagementService;
+use HiEvents\Services\Domain\Order\RefundProtection\OrderRefundProtectionService;
 use HiEvents\Services\Domain\Product\AvailableProductQuantitiesFetchService;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesResponseDTO;
 use HiEvents\Services\Domain\PromoCode\PromoCodeUsageValidationService;
@@ -108,6 +109,7 @@ class CreateOrderHandlerPromoCodeTest extends TestCase
             $databaseManager,
             Mockery::mock(QrLinkRepositoryInterface::class),
             Mockery::mock(OrderContactAttributionService::class)->shouldReceive('resolveContactId')->andReturn(null)->getMock(),
+            Mockery::mock(OrderRefundProtectionService::class)->shouldReceive('syncAfterOrderCreation')->andReturnUsing(fn($order) => $order)->getMock(),
         );
 
         $dto = new CreateOrderPublicDTO(

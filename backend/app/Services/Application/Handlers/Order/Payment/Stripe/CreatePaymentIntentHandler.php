@@ -11,6 +11,7 @@ use HiEvents\DomainObjects\AccountStripePlatformDomainObject;
 use HiEvents\DomainObjects\AccountVatSettingDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\StripePaymentDomainObjectAbstract;
+use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\DomainObjects\StripePaymentDomainObject;
@@ -24,12 +25,14 @@ use HiEvents\Repository\Interfaces\StripePaymentsRepositoryInterface;
 use HiEvents\Services\Domain\Payment\Stripe\DTOs\CreatePaymentIntentRequestDTO;
 use HiEvents\Services\Domain\Payment\Stripe\DTOs\CreatePaymentIntentResponseDTO;
 use HiEvents\Services\Domain\Payment\Stripe\StripePaymentIntentCreationService;
+use HiEvents\Services\Domain\Payment\Stripe\StripePaymentIntentInvalidationService;
 use HiEvents\Services\Infrastructure\Session\CheckoutSessionManagementService;
 use HiEvents\Services\Infrastructure\Stripe\StripeClientFactory;
 use HiEvents\Services\Infrastructure\Stripe\StripeConfigurationService;
 use HiEvents\Values\MoneyValue;
 use Illuminate\Support\Str;
 use Stripe\Exception\ApiErrorException;
+use Stripe\PaymentIntent;
 use Throwable;
 
 readonly class CreatePaymentIntentHandler
@@ -42,6 +45,7 @@ readonly class CreatePaymentIntentHandler
         private AccountRepositoryInterface         $accountRepository,
         private StripeClientFactory                $stripeClientFactory,
         private StripeConfigurationService         $stripeConfigurationService,
+        private StripePaymentIntentInvalidationService $paymentIntentInvalidationService,
     )
     {
     }
@@ -98,19 +102,26 @@ readonly class CreatePaymentIntentHandler
         $stripeClient = $this->stripeClientFactory->createForPlatform($stripePlatform);
         $publicKey = $this->stripeConfigurationService->getPublicKey($stripePlatform);
 
-        // If we already have a Stripe session then re-fetch the client secret
+        // If we already have a Stripe session then re-fetch the client secret,
+        // unless the order amount changed since (e.g. cancellation protection added or removed)
         if ($order->getStripePayment() !== null) {
-            return new CreatePaymentIntentResponseDTO(
-                paymentIntentId: $order->getStripePayment()->getPaymentIntentId(),
-                clientSecret: $this->stripePaymentService->retrievePaymentIntentClientSecretWithClient(
-                    $stripeClient,
-                    $order->getStripePayment()->getPaymentIntentId(),
-                    $stripeAccountId
-                ),
-                accountId: $stripeAccountId,
-                stripePlatform: $stripePlatform,
-                publicKey: $publicKey,
+            $existingPaymentIntent = $this->stripePaymentService->retrievePaymentIntentWithClient(
+                $stripeClient,
+                $order->getStripePayment()->getPaymentIntentId(),
+                $stripeAccountId
             );
+
+            if (!$this->mustReplacePaymentIntent($existingPaymentIntent, $order)) {
+                return new CreatePaymentIntentResponseDTO(
+                    paymentIntentId: $order->getStripePayment()->getPaymentIntentId(),
+                    clientSecret: $existingPaymentIntent->client_secret,
+                    accountId: $stripeAccountId,
+                    stripePlatform: $stripePlatform,
+                    publicKey: $publicKey,
+                );
+            }
+
+            $this->paymentIntentInvalidationService->invalidate($order->getStripePayment());
         }
 
         $description = __(':item_count item(s) for event: :event_name (Order :order_short_id)', [
@@ -154,5 +165,25 @@ readonly class CreatePaymentIntentHandler
             stripePlatform: $stripePlatform,
             publicKey: $publicKey,
         );
+    }
+
+    /**
+     * A PaymentIntent already processing or paid is always kept, whatever its amount.
+     */
+    private function mustReplacePaymentIntent(PaymentIntent $paymentIntent, OrderDomainObject $order): bool
+    {
+        if ($paymentIntent->status === PaymentIntent::STATUS_CANCELED) {
+            return true;
+        }
+
+        if (!in_array($paymentIntent->status, [
+            PaymentIntent::STATUS_REQUIRES_PAYMENT_METHOD,
+            PaymentIntent::STATUS_REQUIRES_CONFIRMATION,
+            PaymentIntent::STATUS_REQUIRES_ACTION,
+        ], true)) {
+            return false;
+        }
+
+        return (int) $paymentIntent->amount !== MoneyValue::fromFloat($order->getTotalGross(), $order->getCurrency())->toMinorUnit();
     }
 }

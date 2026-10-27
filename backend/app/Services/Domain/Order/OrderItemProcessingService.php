@@ -87,6 +87,23 @@ class OrderItemProcessingService
         return $orderItems;
     }
 
+    /**
+     * Computes an order item exactly as process() does, without saving it.
+     * The product must be loaded with its prices and its taxes and fees.
+     */
+    public function calculateItemForProduct(
+        OrderDomainObject      $order,
+        ProductDomainObject    $product,
+        OrderProductPriceDTO   $productPrice,
+        EventDomainObject      $event,
+        ?PromoCodeDomainObject $promoCode,
+    ): array
+    {
+        $this->loadPlatformFeeConfiguration($event->getId());
+
+        return $this->calculateOrderItemData($product, $productPrice, $order, $promoCode, $event->getCurrency());
+    }
+
     private function loadPlatformFeeConfiguration(int $eventId): void
     {
         $account = $this->accountRepository

@@ -82,7 +82,7 @@ export const StripePaymentMethod = ({enabled, event, order, setSubmitHandler}: S
             {(!stripePromise) && <LoadingMask/>}
 
             {(isStripeFetched && stripeData?.client_secret && stripePromise) && (
-                <Elements options={{
+                <Elements key={stripeData.client_secret} options={{
                     clientSecret: stripeData?.client_secret,
                     loader: 'always',
                     appearance: {

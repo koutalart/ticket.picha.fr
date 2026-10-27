@@ -24,6 +24,7 @@ use HiEvents\Services\Application\Handlers\Order\DTO\CreateOrderPublicDTO;
 use HiEvents\Services\Domain\Contact\OrderContactAttributionService;
 use HiEvents\Services\Domain\Order\OrderItemProcessingService;
 use HiEvents\Services\Domain\Order\OrderManagementService;
+use HiEvents\Services\Domain\Order\RefundProtection\OrderRefundProtectionService;
 use HiEvents\Services\Domain\PromoCode\PromoCodeUsageValidationService;
 use HiEvents\Services\Domain\Product\AvailableProductQuantitiesFetchService;
 use Illuminate\Database\DatabaseManager;
@@ -44,6 +45,7 @@ class CreateOrderHandler
         private readonly DatabaseManager                        $databaseManager,
         private readonly QrLinkRepositoryInterface              $qrLinkRepository,
         private readonly OrderContactAttributionService         $orderContactAttributionService,
+        private readonly OrderRefundProtectionService           $refundProtectionService,
     )
     {
     }
@@ -97,7 +99,9 @@ class CreateOrderHandler
                 promoCode: $promoCode,
             );
 
-            return $this->orderManagementService->updateOrderTotals($order, $orderItems);
+            $order = $this->orderManagementService->updateOrderTotals($order, $orderItems);
+
+            return $this->refundProtectionService->syncAfterOrderCreation($order, $event);
         });
     }
 

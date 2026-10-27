@@ -6,6 +6,7 @@ import {
     Order,
     QueryFilters,
     QuestionAnswerFileUpload,
+    RefundProtectionOffer,
     StripePaymentIntent
 } from "../types.ts";
 import {api} from "./client.ts";
@@ -182,6 +183,21 @@ export const orderClientPublic = {
         const response = await publicApi.put<GenericDataResponse<Order>>(
             withSessionIdentifier(`events/${eventId}/order/${orderShortId}`),
             payload
+        );
+        return response.data;
+    },
+
+    getRefundProtection: async (eventId: IdParam, orderShortId: IdParam) => {
+        const response = await publicApi.get<GenericDataResponse<RefundProtectionOffer | null>>(
+            withSessionIdentifier(`events/${eventId}/order/${orderShortId}/refund-protection`)
+        );
+        return response.data;
+    },
+
+    updateRefundProtection: async (eventId: IdParam, orderShortId: IdParam, enabled: boolean) => {
+        const response = await publicApi.put<GenericDataResponse<RefundProtectionOffer | null>>(
+            withSessionIdentifier(`events/${eventId}/order/${orderShortId}/refund-protection`),
+            {enabled}
         );
         return response.data;
     },

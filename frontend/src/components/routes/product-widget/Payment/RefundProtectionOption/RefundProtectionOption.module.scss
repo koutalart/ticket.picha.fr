@@ -1,0 +1,51 @@
+.option {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  background: var(--checkout-surface, #FFFFFF);
+  border: 1px solid var(--checkout-border, #E5E7EB);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &.checked {
+    border-color: var(--checkout-accent, var(--mantine-primary-color-filled));
+    background: var(--checkout-accent-soft, var(--mantine-primary-color-light));
+  }
+
+  &.disabled {
+    cursor: default;
+  }
+}
+
+.icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--checkout-accent, var(--mantine-primary-color-filled));
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--checkout-text-primary, #111827);
+}
+
+.details {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--checkout-text-secondary, #6B7280);
+}
+
+.checkbox {
+  flex-shrink: 0;
+  margin-top: 2px;
+}

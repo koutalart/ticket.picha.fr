@@ -13,6 +13,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Database\DatabaseManager;
 use Psr\Log\LoggerInterface;
 use Stripe\Exception\ApiErrorException;
+use Stripe\PaymentIntent;
 use Stripe\StripeClient;
 use Throwable;
 
@@ -42,6 +43,32 @@ class StripePaymentIntentCreationService
                 id: $paymentIntentId,
                 opts: $accountId ? ['stripe_account' => $accountId] : []
             )->client_secret;
+        } catch (ApiErrorException $exception) {
+            $this->logger->error("Stripe payment intent retrieval failed: {$exception->getMessage()}", [
+                'exception' => $exception,
+                'paymentIntentId' => $paymentIntentId,
+            ]);
+
+            throw new CreatePaymentIntentFailedException(
+                __('There was an error communicating with the payment provider. Please try again later.')
+            );
+        }
+    }
+
+    /**
+     * @throws CreatePaymentIntentFailedException
+     */
+    public function retrievePaymentIntentWithClient(
+        StripeClient $stripeClient,
+        string       $paymentIntentId,
+        ?string      $accountId = null,
+    ): PaymentIntent
+    {
+        try {
+            return $stripeClient->paymentIntents->retrieve(
+                id: $paymentIntentId,
+                opts: $accountId ? ['stripe_account' => $accountId] : []
+            );
         } catch (ApiErrorException $exception) {
             $this->logger->error("Stripe payment intent retrieval failed: {$exception->getMessage()}", [
                 'exception' => $exception,

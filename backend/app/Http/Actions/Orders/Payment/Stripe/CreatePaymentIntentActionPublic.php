@@ -2,6 +2,7 @@
 
 namespace HiEvents\Http\Actions\Orders\Payment\Stripe;
 
+use HiEvents\Exceptions\PaymentAlreadyStartedException;
 use HiEvents\Exceptions\Stripe\CreatePaymentIntentFailedException;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Services\Application\Handlers\Order\Payment\Stripe\CreatePaymentIntentHandler;
@@ -22,6 +23,8 @@ class CreatePaymentIntentActionPublic extends BaseAction
             $createIntent = $this->createPaymentIntentHandler->handle($orderShortId);
         } catch (CreatePaymentIntentFailedException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (PaymentAlreadyStartedException $e) {
+            return $this->errorResponse($e->getMessage(), Response::HTTP_CONFLICT);
         }
 
         return $this->jsonResponse([

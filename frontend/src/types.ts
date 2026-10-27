@@ -1028,6 +1028,21 @@ export interface OrderItem {
     total_gross?: number;
 }
 
+export interface RefundProtectionOffer {
+    product_id: number;
+    title: string;
+    description: string | null;
+    quantity: number;
+    is_per_ticket: boolean;
+    total_before_additions: number;
+    total_tax: number;
+    total_fee: number;
+    total_gross: number;
+    currency: string;
+    is_selected: boolean;
+    is_locked: boolean;
+}
+
 export interface StripePaymentIntent {
     status: string;
     paymentIntentId: string;
