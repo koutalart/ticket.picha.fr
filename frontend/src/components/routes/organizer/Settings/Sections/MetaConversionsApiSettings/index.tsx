@@ -2,7 +2,7 @@ import {useParams} from "react-router";
 import {useForm} from "@mantine/form";
 import {useEffect} from "react";
 import {t, Trans} from "@lingui/macro";
-import {Alert, Anchor, Badge, Button, Group, List, PasswordInput, Text, TextInput} from "@mantine/core";
+import {Alert, Anchor, Badge, Button, Group, List, PasswordInput, Switch, Text, TextInput} from "@mantine/core";
 import {IconBrandMeta, IconCircleCheck, IconPlugConnected} from "@tabler/icons-react";
 import {Card} from "../../../../../common/Card";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
@@ -71,6 +71,28 @@ export const MetaConversionsApiSettings = () => {
         });
     };
 
+    const saveSendWithoutConsent = (enabled: boolean) => {
+        updateMutation.mutate({
+            organizerId: organizerId!,
+            organizerSettings: {meta_capi_send_without_consent: enabled},
+        }, {
+            onSuccess: () => showSuccess(t`Conversions API settings saved`),
+            onError: () => showError(t`Unable to save the setting`),
+        });
+    };
+
+    const toggleSendWithoutConsent = (enabled: boolean) => {
+        if (!enabled) {
+            saveSendWithoutConsent(false);
+            return;
+        }
+
+        confirmationDialog(
+            t`Send events to Meta even for visitors who refused cookies? You are responsible for this choice: check with your legal advisor that it is allowed.`,
+            () => saveSendWithoutConsent(true),
+        );
+    };
+
     const testConnection = () => {
         testMutation.mutate({organizerId: organizerId!}, {
             onSuccess: ({data}) => {
@@ -106,7 +128,7 @@ export const MetaConversionsApiSettings = () => {
             <Alert color="blue" variant="light" mb="md">
                 <Text size="sm" mb={6}>{t`How it works`}</Text>
                 <List size="sm" spacing={4}>
-                    <List.Item>{t`A purchase is only sent if the buyer accepted cookies on your pages.`}</List.Item>
+                    <List.Item>{t`Page views, checkout starts and purchases are only sent if the visitor accepted cookies on your pages, unless the option below is turned on.`}</List.Item>
                     <List.Item>{t`Email and names are hashed (SHA-256) before leaving our servers.`}</List.Item>
                     <List.Item>{t`Each purchase carries the same identifier as the pixel event, so Meta counts it only once.`}</List.Item>
                 </List>
@@ -132,6 +154,14 @@ export const MetaConversionsApiSettings = () => {
                         label={t`Test event code (optional)`}
                         description={t`While it is set, events only appear in the Test events tab and are not used by your campaigns. Remove it once your tests are done.`}
                         placeholder="TEST12345"
+                        mb="md"
+                    />
+                    <Switch
+                        checked={!!settings?.meta_capi_send_without_consent}
+                        onChange={(event) => toggleSendWithoutConsent(event.currentTarget.checked)}
+                        label={t`Send server events without cookie consent`}
+                        description={t`Off by default: server events follow each visitor's cookie choice. Advertising tracking, even from the server, generally requires consent (CNIL). Only turn this on after legal advice.`}
+                        color="red"
                         mb="md"
                     />
                     <Group>

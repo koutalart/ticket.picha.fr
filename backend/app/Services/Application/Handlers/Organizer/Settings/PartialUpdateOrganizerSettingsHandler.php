@@ -102,6 +102,7 @@ class PartialUpdateOrganizerSettingsHandler
             'tracking_pixels' => $dto->getProvided('trackingPixels', $organizerSettings->getTrackingPixels()),
             'tracking_consent_acknowledged' => $dto->getProvided('trackingConsentAcknowledged', $organizerSettings->getTrackingConsentAcknowledged()),
             'meta_test_event_code' => $dto->getProvided('metaTestEventCode', $organizerSettings->getMetaTestEventCode()),
+            'meta_capi_send_without_consent' => (bool) $dto->getProvided('metaCapiSendWithoutConsent', $organizerSettings->getMetaCapiSendWithoutConsent()),
             'email_sender_name' => $this->organizerMailSenderResolver->sanitize(
                 $dto->getProvided('emailSenderName', $organizerSettings->getEmailSenderName())
             ),

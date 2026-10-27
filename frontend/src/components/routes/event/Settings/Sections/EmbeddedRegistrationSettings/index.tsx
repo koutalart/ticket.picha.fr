@@ -33,9 +33,7 @@ export const EmbeddedRegistrationSettings = () => {
         }
     }, [eventSettingsQuery.isFetched]);
 
-    const isFullscreen = eventSettingsQuery.data?.homepage_theme_settings?.hero_layout === 'FULLSCREEN';
-    const isFree = isFreeEvent(event);
-    const isEligible = isFullscreen && isFree;
+    const isPaid = !!event && !isFreeEvent(event);
 
     const handleSubmit = (values: typeof form.values) => {
         updateMutation.mutate({
@@ -55,7 +53,7 @@ export const EmbeddedRegistrationSettings = () => {
         <Card>
             <HeadingWithDescription
                 heading={t`Registration built into the page`}
-                description={t`Replace the ticket list and the details page with a step by step form displayed over the full screen header. Only for free events.`}
+                description={t`Replace the ticket list and the details page with a step by step form displayed directly on the event page, for free and paid events.`}
             />
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending}>
@@ -65,11 +63,9 @@ export const EmbeddedRegistrationSettings = () => {
                         description={t`Visitors answer one question at a time, add the people coming with them and confirm without leaving the event page.`}
                     />
 
-                    {!isEligible && (
+                    {isPaid && (
                         <Alert mt="md" variant="light" color="gray" icon={<IconInfoCircle/>}>
-                            {!isFullscreen
-                                ? t`This option only applies when the page header is set to Full screen.`
-                                : t`This option only applies to free events. While the event has paid tickets, the usual checkout is used.`}
+                            {t`Paid event: the buyer chooses their tickets and enters their details on the event page, then goes straight to the usual payment page. Service fees are shown in the order summary, just before payment.`}
                         </Alert>
                     )}
 
