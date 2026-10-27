@@ -144,9 +144,13 @@ class LiveChatRefundApprovalTest extends TestCase
 
     private ?OrganizerSmsSetting $line = null;
 
+    private ?Carbon $day = null;
+
     private function withSmsLine(): void
     {
-        Carbon::setTestNow(Carbon::parse('2026-10-26 07:00:00', 'UTC'));
+        $this->day = Carbon::now('UTC')->addDay()->setTime(0, 0);
+        Carbon::setTestNow($this->day->copy()->setTime(7, 0));
+        $this->app['auth']->forgetGuards();
         config(['services.platform_supervisor.phones' => self::SUPERVISOR, 'app.frontend_url' => 'https://ticket.picha.test']);
         DB::table('organizer_sms_settings')->update(['api_key' => null, 'shared_line_settings_id' => null]);
         DB::table('organizers')->where('id', $this->organizerId)->update(['email' => 'orga@example.com']);
@@ -320,13 +324,13 @@ class LiveChatRefundApprovalTest extends TestCase
     public function test_a_request_made_at_night_reaches_the_team_at_8(): void
     {
         $this->withSmsLine();
-        Carbon::setTestNow(Carbon::parse('2026-10-26 20:30:00', 'UTC'));
+        Carbon::setTestNow($this->day->copy()->setTime(20, 30));
         [$orderId, $attendeeIds] = $this->order();
 
         $requestId = $this->submit($orderId, $attendeeIds[0]);
 
         $this->assertSame([self::VISITOR], array_column($this->sent, 'to'));
-        $this->assertSame('2026-10-27 05:00:00', DB::table('live_chat_refund_requests')->where('id', $requestId)->value('next_reminder_at'));
+        $this->assertSame($this->day->copy()->addDay()->setTime(5, 0)->toDateTimeString(), DB::table('live_chat_refund_requests')->where('id', $requestId)->value('next_reminder_at'));
     }
 
     public function test_reminders_and_news_follow_the_schedule_and_the_alert_comes_after_24_hours(): void
@@ -342,7 +346,7 @@ class LiveChatRefundApprovalTest extends TestCase
             outputTokens: 20,
         ));
         $this->sent = [];
-        $start = Carbon::parse('2026-10-26 07:00:00', 'UTC');
+        $start = $this->day->copy()->setTime(7, 0);
 
         $run = function (string $after) use ($service, $start) {
             Carbon::setTestNow($start->copy()->add($after));
