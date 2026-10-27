@@ -13,8 +13,8 @@ export const legalEntity = {
     registration: "RCS Mamoudzou 897 877 122 (SIRET 897 877 122 00019)",
     siren: "897 877 122",
     vatNumber: "FR63897877122",
-    phone: "[À COMPLÉTER : téléphone]",
-    email: "ticket@picha.fr",
+    phone: "06 39 78 07 73",
+    email: "direction@picha.fr",
     publicationDirector: "Josué Koutala, Président",
     privacyContactEmail: "ticket@picha.fr",
     mediator: {
