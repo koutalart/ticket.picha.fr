@@ -399,3 +399,98 @@ $tabbar-height: 64px;
     text-decoration: none;
   }
 }
+
+.tab {
+  position: relative;
+  min-width: 0;
+  min-height: 44px;
+  padding: 6px 2px 4px;
+
+  span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .badge {
+    position: absolute;
+    top: 4px;
+    left: calc(50% + 6px);
+    margin: 0;
+    min-width: 18px;
+    padding: 1px 5px;
+    background: #e5484d;
+    color: #fff;
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+  }
+}
+
+.sheet {
+  border-radius: 20px 20px 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.sheetTitle {
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.sheetNav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sheetLink {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: #3d3a48;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+
+  svg {
+    flex-shrink: 0;
+    color: #6b6b78;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    background: #f5f4f8;
+  }
+}
+
+.sheetLinkActive {
+  background: #f1ecfa;
+  color: #5b2bb5;
+  font-weight: 600;
+
+  svg {
+    color: #5b2bb5;
+  }
+}
+
+.sheetFooter {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: $sidebar;
+  color: #fff;
+}
