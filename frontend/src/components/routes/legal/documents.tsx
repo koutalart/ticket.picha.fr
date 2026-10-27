@@ -211,8 +211,10 @@ const cgv: LegalDocument = {
             <p>
                 Toute réclamation peut être adressée à <Mail address={e.email}/>. Conformément aux articles
                 L611-1 et suivants du Code de la consommation, en cas de litige non résolu, le consommateur peut
-                recourir gratuitement au médiateur de la consommation : {e.mediator.name}, {e.mediator.address},
-                {" "}{e.mediator.website}.
+                recourir gratuitement à un médiateur de la consommation
+                {e.mediator
+                    ? <> : {e.mediator.name}, {e.mediator.address}, {e.mediator.website}.</>
+                    : <>, dont les coordonnées seront indiquées ici dès sa désignation.</>}
             </p>
 
             <h2>10. Droit applicable</h2>
@@ -252,7 +254,9 @@ const confidentialite: LegalDocument = {
                 <li>Commande : billets, montants, mode de paiement (sans conservation des numéros de carte),
                     historique d'accès à l'événement (contrôle des billets) ;</li>
                 <li>Réponses aux questions posées par l'organisateur lors de l'inscription ;</li>
-                <li>Données techniques : adresse IP, journaux de connexion, préférences (langue).</li>
+                <li>Données techniques : adresse IP, journaux de connexion, préférences (langue) ;</li>
+                <li>Pour les organisateurs qui connectent une page Facebook : les données décrites à la
+                    section <a href="#facebook-instagram">Facebook et Instagram</a>.</li>
             </ul>
 
             <h2>3. Finalités et bases légales</h2>
@@ -313,6 +317,60 @@ const confidentialite: LegalDocument = {
                 L'utilisation des cookies et traceurs est détaillée dans la
                 {" "}<a href="/legal/cookies">politique cookies</a>.
             </p>
+
+            <h2 id="facebook-instagram">10. Facebook et Instagram (organisateurs)</h2>
+            <p>
+                Un organisateur peut connecter à {e.brand} sa page Facebook et le compte Instagram
+                professionnel qui lui est lié, avec la connexion Facebook de Meta. Il choisit lui-même la page
+                et les autorisations qu'il accorde. Ces données servent uniquement à lui rendre les services
+                suivants, à sa demande :
+            </p>
+            <ul>
+                <li>publier sur sa page et son compte Instagram les contenus qu'il prépare dans {e.brand}, à
+                    l'heure qu'il choisit, après approbation d'une personne de son équipe ;</li>
+                <li>afficher dans {e.brand} les publications de sa page et de son compte Instagram, avec le
+                    nombre de mentions J'aime et de commentaires ;</li>
+                <li>afficher les commentaires publics laissés sous ses publications et lui permettre d'y
+                    répondre depuis {e.brand}. Une réponse n'est jamais envoyée automatiquement : une personne
+                    la relit et la valide.</li>
+            </ul>
+            <p>Données concernées :</p>
+            <ul>
+                <li>identifiant, nom de la page Facebook et nom du compte Instagram connectés, autorisations
+                    accordées ;</li>
+                <li>jetons d'accès délivrés par Meta, conservés chiffrés et jamais transmis au navigateur ni
+                    à des tiers ;</li>
+                <li>publications de la page et du compte Instagram (texte, médias, date, lien, statistiques
+                    publiques) ;</li>
+                <li>commentaires publics sous ces publications : nom ou pseudonyme public de l'auteur, texte,
+                    date ;</li>
+                <li>photos et vidéos que l'organisateur importe pour ses publications, gardées telles quelles
+                    et transmises à Meta uniquement pour être publiées.</li>
+            </ul>
+            <p>
+                Base légale : exécution du contrat avec l'organisateur (art. 6.1.b) ; pour les commentaires
+                des internautes, intérêt légitime de l'organisateur à gérer sa page (art. 6.1.f).
+                {" "}{e.companyName} ne vend pas ces données, ne les utilise pas à des fins publicitaires et ne
+                les partage avec personne d'autre que l'organisateur concerné et Meta.
+            </p>
+            <p>
+                Conservation : les publications et commentaires copiés sont gardés tant que la page est
+                connectée ; les photos et vidéos importées sont supprimées 30 jours après leur publication ;
+                tout est supprimé à la déconnexion de la page ou à la suppression du compte organisateur.
+            </p>
+
+            <h2 id="suppression-donnees-meta">11. Supprimer vos données Facebook et Instagram</h2>
+            <p>Vous pouvez à tout moment faire supprimer les données reçues de Facebook et Instagram :</p>
+            <ul>
+                <li><strong>Organisateur</strong> : dans {e.brand}, ouvrez Paramètres de l'organisateur, puis
+                    Facebook et Instagram, puis Déconnecter. La connexion et les jetons sont supprimés
+                    immédiatement et les autorisations accordées à {e.brand} sont retirées chez Meta. Vous
+                    pouvez aussi retirer l'accès depuis votre compte Facebook (Paramètres, Intégrations
+                    professionnelles).</li>
+                <li><strong>Toute personne</strong> (par exemple l'auteur d'un commentaire) : écrivez à
+                    {" "}<Mail address={e.privacyContactEmail}/> en indiquant la page ou le compte concerné. La
+                    suppression est faite sous 30 jours et vous recevez une confirmation.</li>
+            </ul>
         </>
     ),
 };

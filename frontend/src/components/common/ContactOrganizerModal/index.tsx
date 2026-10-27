@@ -19,6 +19,10 @@ interface ContactOrganizerModalProps {
 export const ContactOrganizerModal = ({opened, onClose, organizer, eventId}: ContactOrganizerModalProps) => {
     const liveChatConfig = useGetLiveChatConfig(organizer?.id);
 
+    if (liveChatConfig.isPending && !!organizer?.id) {
+        return null;
+    }
+
     if (liveChatConfig.data?.enabled) {
         return (
             <LiveChatWindow

@@ -1801,7 +1801,14 @@ export const EmbeddedRegistration = ({
     };
 
     return (
-        <section className={rootClassName} data-variant={variant} ref={sectionRef} id="tickets" aria-label={t`Registration`}>
+        <section
+            className={rootClassName}
+            data-variant={variant}
+            ref={sectionRef}
+            id="tickets"
+            aria-label={t`Registration`}
+            aria-busy={isLoading || undefined}
+        >
             <div className={classes.panel} ref={panelRef}>
                 {isLoading ? (
                     <p className={classes.loading} role="status">{t`Loading...`}</p>

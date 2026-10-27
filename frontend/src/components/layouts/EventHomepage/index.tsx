@@ -7,14 +7,12 @@ import {eventCoverImage, eventHomepageUrl, imageUrl, organizerHomepageUrl} from 
 import {Event, IdParam, OrganizerStatus} from "../../../types.ts";
 import {EventNotAvailable} from "./EventNotAvailable";
 import {
-    IconArrowUpRight,
     IconCalendar,
     IconCalendarOff,
     IconCalendarPlus,
     IconExternalLink,
     IconMail,
     IconMapPin,
-    IconMaximize,
     IconShare,
     IconTicket,
     IconWorld
@@ -59,6 +57,8 @@ import {RichFooter} from "./RichFooter";
 import {EventFactSummary} from "../../common/EventFactSummary";
 import {useRegisteredOnDevice} from "../../../hooks/useRegisteredOnDevice.ts";
 import {AlreadyRegisteredLink, AttendanceAccessModal, RegisteredNotice} from "./AttendanceAccess";
+import {alignTicketsOnArrival, scrollToTicketsSection} from "../../../utilites/ticketsAnchor.ts";
+import {useGetLiveChatConfig} from "../../../queries/useGetLiveChatConfig.ts";
 
 const VIDEO_PAUSE_PROGRESS = 0.6;
 
@@ -72,12 +72,25 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const {event, promoCodeValid, promoCode} = loaderData;
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [contactModalOpen, setContactModalOpen] = useState(false);
+    const [contactModalMounted, setContactModalMounted] = useState(false);
     const ticketsSectionRef = useRef<HTMLElement>(null);
     const fullscreenHeroRef = useRef<HTMLElement>(null);
     const [attendanceAccessOpen, setAttendanceAccessOpen] = useState(false);
+    const [attendanceAccessMounted, setAttendanceAccessMounted] = useState(false);
     const [registerAnotherPerson, setRegisterAnotherPerson] = useState(false);
     const {attendanceEnabled, registered: registeredOnDevice, forget: forgetRegistration} = useRegisteredOnDevice(event);
-    const openAttendanceAccess = () => setAttendanceAccessOpen(true);
+    const openAttendanceAccess = () => {
+        setAttendanceAccessMounted(true);
+        setAttendanceAccessOpen(true);
+    };
+    const openContactModal = () => {
+        setContactModalMounted(true);
+        setContactModalOpen(true);
+    };
+
+    useGetLiveChatConfig(event?.organizer?.id);
+
+    useEffect(() => alignTicketsOnArrival(), []);
 
     const {consentGranted} = useOrganizerTrackingPixels(
         event?.organizer?.settings?.tracking_pixels
@@ -185,7 +198,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     }, []);
 
     const scrollToTickets = () => {
-        ticketsSectionRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
+        scrollToTicketsSection(ticketsSectionRef.current);
     };
 
     if (!event) {
@@ -347,7 +360,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                 {event && <EventDocumentHead event={event}/>}
 
-                {attendanceEnabled && (
+                {attendanceEnabled && attendanceAccessMounted && (
                     <AttendanceAccessModal
                         opened={attendanceAccessOpen}
                         onClose={() => setAttendanceAccessOpen(false)}
@@ -483,7 +496,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             socialLinks={socialLinks}
                             websiteUrl={websiteUrl}
                             onRegister={scrollToTickets}
-                            onContact={() => setContactModalOpen(true)}
+                            onContact={openContactModal}
                             onManageCookies={openConsentPreferences}
                         />
                     ) : isEmbeddedRegistration ? (
@@ -497,7 +510,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                         )}
                                         <button
                                             type="button"
-                                            onClick={() => setContactModalOpen(true)}
+                                            onClick={openContactModal}
                                             className={classes.landingContact}
                                         >
                                             <IconMail/>
@@ -684,19 +697,22 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                     </div>
                                                     <div className={classes.metaContent}>
                                                         <div className={classes.metaPrimary}>
-                                                            {locationDetails.venue_name}
+                                                            {locationDetails.venue_name || locationDetails.city}
                                                         </div>
-                                                        <div className={classes.metaSecondary}>
-                                                            {formatAddress(locationDetails)}
-                                                        </div>
+                                                        {locationDetails.venue_name && locationDetails.city && (
+                                                            <div className={classes.metaSecondary}>
+                                                                {locationDetails.city}
+                                                            </div>
+                                                        )}
                                                         {mapUrl && (
                                                             <a
                                                                 href={mapUrl}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className={classes.metaLink}
+                                                                title={formatAddress(locationDetails)}
                                                             >
-                                                                {t`View on Google Maps`}
+                                                                {t`Get Directions`}
                                                                 <IconExternalLink/>
                                                             </a>
                                                         )}
@@ -714,78 +730,6 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                             <h2 className={classes.sectionTitle}>{t`About`}</h2>
                                         </div>
                                         <RichDescription className={classes.description} html={event.description}/>
-                                    </div>
-                                )}
-
-                                {/* Location Section (with map) */}
-                                {hasLocation && locationDetails && (
-                                    <div className={classes.section}>
-                                        <div className={classes.sectionHeader}>
-                                            <h2 className={classes.sectionTitle}>{t`Location`}</h2>
-                                        </div>
-                                        <div className={classes.locationContent}>
-                                            <div className={classes.venueDetails}>
-                                                <div className={classes.venueName}>
-                                                    {locationDetails.venue_name}
-                                                </div>
-                                                <div className={classes.venueAddress}>
-                                                    {formatAddress(locationDetails)}
-                                                </div>
-                                                {mapUrl && (
-                                                    <a
-                                                        href={mapUrl}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className={classes.directionsLink}
-                                                    >
-                                                        <IconArrowUpRight/>
-                                                        {t`Get Directions`}
-                                                    </a>
-                                                )}
-                                            </div>
-                                            {mapUrl && (
-                                                <a
-                                                    href={mapUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className={classes.mapContainer}
-                                                >
-                                                    <svg
-                                                        viewBox="0 0 200 120"
-                                                        preserveAspectRatio="xMidYMid slice"
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            position: 'absolute',
-                                                            inset: 0,
-                                                        }}
-                                                    >
-                                                        <rect width="200" height="120" fill="var(--accent-soft)"/>
-                                                        {/* River */}
-                                                        <path d="M-5 95 Q30 85, 50 90 Q80 100, 110 88 Q140 75, 170 82 Q190 86, 205 80" stroke="var(--border-color)" strokeWidth="2" fill="none" opacity="0.3"/>
-                                                        {/* Main roads */}
-                                                        <line x1="0" y1="50" x2="200" y2="50" stroke="var(--border-color)" strokeWidth="2" opacity="0.2"/>
-                                                        <line x1="100" y1="0" x2="100" y2="120" stroke="var(--border-color)" strokeWidth="2" opacity="0.2"/>
-                                                        {/* Secondary roads */}
-                                                        <line x1="0" y1="25" x2="200" y2="25" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                        <line x1="0" y1="70" x2="85" y2="70" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                        <line x1="115" y1="70" x2="200" y2="70" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                        <line x1="50" y1="0" x2="50" y2="120" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                        <line x1="150" y1="0" x2="150" y2="75" stroke="var(--border-color)" strokeWidth="1.5" opacity="0.2"/>
-                                                        {/* Blocks/buildings */}
-                                                        <rect x="110" y="28" width="14" height="10" fill="var(--border-color)" opacity="0.25" rx="1"/>
-                                                        <rect x="20" y="55" width="12" height="10" fill="var(--border-color)" opacity="0.25" rx="1"/>
-                                                    </svg>
-                                                    <IconMapPin size={32} className={classes.mapPin}/>
-                                                    <div className={classes.mapOverlay}>
-                                                        <span className={classes.mapOverlayLabel}>
-                                                            <IconMaximize/>
-                                                            {t`View Map`}
-                                                        </span>
-                                                    </div>
-                                                </a>
-                                            )}
-                                        </div>
                                     </div>
                                 )}
 
@@ -896,7 +840,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                         }
                                                     })()}
                                                     <button
-                                                        onClick={() => setContactModalOpen(true)}
+                                                        onClick={openContactModal}
                                                         className={classes.contactButton}
                                                     >
                                                         <IconMail/>
@@ -916,25 +860,26 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         </div>
                     )}
 
-                    {/* Floating Scroll Button */}
                     {showScrollButton && !isEmbeddedRegistration && (
                         <button
+                            type="button"
                             className={classes.scrollToTicketsButton}
                             onClick={scrollToTickets}
                         >
                             <IconTicket size={18}/>
-                            {t`Get Tickets`}
+                            {isFreeEvent ? t`Register for free` : t`Buy`}
                         </button>
                     )}
 
-                    {/* Contact Modal */}
                     <PublicOverlayTheme {...overlayTheme}>
-                        <ContactOrganizerModal
-                            opened={contactModalOpen}
-                            onClose={() => setContactModalOpen(false)}
-                            organizer={organizer}
-                            eventId={event.id}
-                        />
+                        {contactModalMounted && (
+                            <ContactOrganizerModal
+                                opened={contactModalOpen}
+                                onClose={() => setContactModalOpen(false)}
+                                organizer={organizer}
+                                eventId={event.id}
+                            />
+                        )}
                     </PublicOverlayTheme>
                 </div>
             </main>
