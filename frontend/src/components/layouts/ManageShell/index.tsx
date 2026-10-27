@@ -1,7 +1,7 @@
 import {ReactNode, useEffect, useState} from "react";
 import {NavLink, Outlet, useLocation} from "react-router";
-import {UnstyledButton} from "@mantine/core";
-import {IconArrowLeft, IconChevronDown, IconChevronLeft, IconDots, IconX} from "@tabler/icons-react";
+import {Drawer, UnstyledButton} from "@mantine/core";
+import {IconArrowLeft, IconArrowsExchange, IconChevronDown, IconChevronLeft, IconDots, IconX} from "@tabler/icons-react";
 import {t} from "@lingui/macro";
 import classNames from "classnames";
 import ImpersonationBanner from "../../common/ImpersonationBanner";
@@ -19,6 +19,7 @@ interface ManageShellProps {
     moreItems?: NavItem[];
     bottomItems: NavItem[];
     mobileTabs: NavItem[];
+    mobileMoreItems?: NavItem[];
     headerActions?: ReactNode;
     sidebarFooter?: ReactNode;
 }
@@ -48,7 +49,7 @@ const NavEntry = ({item, onNavigate, className, activeClassName}: {
         );
     }
 
-    if (item.link.startsWith('http') || item.link.startsWith('/events/') || item.link.startsWith('/event/')) {
+    if (isExternal(item.link)) {
         return (
             <a href={item.link} target="_blank" rel="noreferrer" className={className} onClick={onNavigate}>
                 {content}
@@ -69,6 +70,13 @@ const NavEntry = ({item, onNavigate, className, activeClassName}: {
 
 const isHeading = (item: NavItem) => !item.link && !item.onClick;
 
+const isExternal = (link: string) => link.startsWith('http') || link.startsWith('/events/') || link.startsWith('/event/');
+
+const isItemActive = (item: NavItem, pathname: string) => {
+    if (!item.link || isExternal(item.link)) return false;
+    return pathname.split('/').includes(item.link) || Boolean(item.isActive?.(false));
+};
+
 export const ManageShell = ({
                                 organizerName,
                                 onSwitchOrganizer,
@@ -78,6 +86,7 @@ export const ManageShell = ({
                                 moreItems = [],
                                 bottomItems,
                                 mobileTabs,
+                                mobileMoreItems,
                                 headerActions,
                                 sidebarFooter,
                             }: ManageShellProps) => {
@@ -86,12 +95,19 @@ export const ManageShell = ({
     const moreIsActive = moreItems.some((item) => item.link && location.pathname.includes(`/${item.link}`));
     const [moreOpen, setMoreOpen] = useState(moreIsActive);
 
-    useEffect(() => setDrawerOpen(false), [location.pathname]);
+    const [moreSheetOpen, setMoreSheetOpen] = useState(false);
+
+    useEffect(() => {
+        setDrawerOpen(false);
+        setMoreSheetOpen(false);
+    }, [location.pathname]);
     useEffect(() => {
         if (moreIsActive) setMoreOpen(true);
     }, [moreIsActive]);
 
     const visible = (items: NavItem[]) => items.filter((item) => !item.showWhen || item.showWhen());
+    const visibleMobileMore = mobileMoreItems ? visible(mobileMoreItems).filter((item) => !isHeading(item)) : [];
+    const mobileMoreIsActive = visibleMobileMore.some((item) => isItemActive(item, location.pathname));
 
     const renderNav = (items: NavItem[]) => visible(items).map((item, index) => {
         if (isHeading(item)) {
@@ -190,11 +206,50 @@ export const ManageShell = ({
                     {visible(mobileTabs).map((item) => (
                         <NavEntry key={item.label} item={item} className={classes.tab} activeClassName={classes.tabActive}/>
                     ))}
-                    <button type="button" className={classes.tab} onClick={() => setDrawerOpen(true)}>
-                        <IconDots size={22} stroke={1.6}/>
-                        <span>{t`More`}</span>
-                    </button>
+                    {mobileMoreItems ? (
+                        <button type="button"
+                                className={classNames(classes.tab, (mobileMoreIsActive || moreSheetOpen) && classes.tabActive)}
+                                aria-expanded={moreSheetOpen}
+                                onClick={() => setMoreSheetOpen(true)}>
+                            <IconDots size={22} stroke={1.6}/>
+                            <span>{t`More`}</span>
+                        </button>
+                    ) : (
+                        <button type="button" className={classes.tab} onClick={() => setDrawerOpen(true)}>
+                            <IconDots size={22} stroke={1.6}/>
+                            <span>{t`More`}</span>
+                        </button>
+                    )}
                 </nav>
+
+                {mobileMoreItems && (
+                    <Drawer
+                        opened={moreSheetOpen}
+                        onClose={() => setMoreSheetOpen(false)}
+                        position="bottom"
+                        size="auto"
+                        title={t`More`}
+                        classNames={{content: classes.sheet, title: classes.sheetTitle}}
+                    >
+                        <nav className={classes.sheetNav}>
+                            {organizerName && onSwitchOrganizer && (
+                                <button type="button" className={classes.sheetLink} onClick={() => {
+                                    setMoreSheetOpen(false);
+                                    onSwitchOrganizer();
+                                }}>
+                                    <IconArrowsExchange size={22} stroke={1.6}/>
+                                    <span>{t`Switch Organizer`}</span>
+                                </button>
+                            )}
+                            {visibleMobileMore.map((item) => (
+                                <NavEntry key={item.label} item={item} className={classes.sheetLink}
+                                          activeClassName={classes.sheetLinkActive}
+                                          onNavigate={() => setMoreSheetOpen(false)}/>
+                            ))}
+                        </nav>
+                        {sidebarFooter && <div className={classes.sheetFooter}>{sidebarFooter}</div>}
+                    </Drawer>
+                )}
 
                 {drawerOpen && <div className={classes.overlay} onClick={() => setDrawerOpen(false)}/>}
             </div>
