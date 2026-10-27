@@ -113,6 +113,8 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     0 10px 15px -3px rgba(0, 0, 0, 0.08),
     0 20px 40px -5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  // clip keeps the rounded corners without creating a scroll container, so the form's sticky action bar works
+  overflow: clip;
   margin-bottom: 16px;
   animation: fadeInUp 0.5s ease-out backwards;
 
@@ -1130,7 +1132,7 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 // Floating scroll button
 .scrollToTicketsButton {
   position: fixed;
-  bottom: 24px;
+  bottom: calc(24px + var(--picha-cookie-bar-height, 0px));
   right: 24px;
   z-index: 100;
   display: flex;
@@ -1152,7 +1154,7 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   @include mixins.respond-below(sm) {
     left: 16px;
     right: 16px;
-    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(12px + var(--picha-cookie-bar-height, env(safe-area-inset-bottom, 0px)));
     justify-content: center;
     min-height: 52px;
     padding: 14px 20px;

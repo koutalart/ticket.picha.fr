@@ -18,7 +18,7 @@ import {
 } from "@tabler/icons-react";
 import classNames from "classnames";
 import {Event, Product, ProductPrice, Question, QuestionType} from "../../../../types.ts";
-import {FinaliseOrderPayload, ProductFormPayload} from "../../../../api/order.client.ts";
+import {FinaliseOrderPayload, orderClientPublic, ProductFormPayload} from "../../../../api/order.client.ts";
 import {eventsClientPublic} from "../../../../api/event.client.ts";
 import {promoCodeClientPublic} from "../../../../api/promo-code.client.ts";
 import {useGetEventQuestionsPublic} from "../../../../queries/useGetEventQuestionsPublic.ts";
@@ -52,6 +52,22 @@ import {
     withIncludedRefundProtection,
 } from "../../../../utilites/refundProtection.ts";
 import {getContactCode} from "../../../../utilites/contactLinkAttribution.ts";
+import {
+    BuyerContact,
+    CheckoutDraft,
+    clearBuyerProfile,
+    clearCheckoutDraft,
+    confirmOrderOnDevice,
+    DraftAnswer,
+    DraftAwaitingPayment,
+    readBuyerProfile,
+    readCheckoutDraft,
+    rememberPendingContact,
+    saveBuyerProfile,
+    writeCheckoutDraft,
+} from "../../../../utilites/checkoutMemory.ts";
+import {getStoredSessionIdentifier, storeSessionIdentifier} from "../../../../utilites/checkoutSession.ts";
+import {useKeyboardAwareActionBar} from "../../../../hooks/useKeyboardAwareActionBar.ts";
 import {getSessionIdentifier} from "../../../../utilites/sessionIdentifier.ts";
 import {getOrderTrackingContext, getQrLinkCode} from "../../../../utilites/qrAttribution.ts";
 import {addQueryStringToUrl, removeQueryStringFromUrl} from "../../../../utilites/helpers.ts";
@@ -154,6 +170,19 @@ const initialSelection = (event: Event): Record<string, number> => {
     return {[line.key]: Math.min(line.max, Math.max(1, Number(line.product.min_per_order) || 1))};
 };
 
+const toDraftAnswers = (answers: QuestionAnswerValue[]): DraftAnswer[] =>
+    answers.map(answer => ({question_id: answer.question_id, answer: answer.response?.answer ?? ''}));
+
+const fromDraftAnswers = (answers: DraftAnswer[]): QuestionAnswerValue[] =>
+    answers
+        .filter(answer => answer && typeof answer === 'object')
+        .map(answer => ({
+            question_id: Number(answer.question_id) || undefined,
+            response: {answer: Array.isArray(answer.answer) ? answer.answer.map(String) : String(answer.answer ?? '')},
+        }));
+
+const sameText = (a?: string, b?: string) => !!a && !!b && a.trim().toLowerCase() === b.trim().toLowerCase();
+
 const productIdOfLineKey = (key?: string) => Number(String(key ?? '').split(':')[0]);
 
 const prefersReducedMotion = () =>
@@ -211,6 +240,19 @@ export const EmbeddedRegistration = ({
     const leaveTimer = useRef<number | undefined>(undefined);
     const [leaving, setLeaving] = useState<{ step: Step, direction: 'forward' | 'backward' } | null>(null);
     const [confirmingRemovalKey, setConfirmingRemovalKey] = useState<string | null>(null);
+    const [memoryReady, setMemoryReady] = useState(false);
+    const [restoreStepId, setRestoreStepId] = useState<string | null>(null);
+    const [awaitingPayment, setAwaitingPayment] = useState<DraftAwaitingPayment | null>(null);
+    const [rememberedProfile, setRememberedProfile] = useState<BuyerContact | null>(null);
+    const profileRef = useRef<BuyerContact | null | undefined>(undefined);
+    const latestDraft = useRef<CheckoutDraft | null>(null);
+    const draftClosed = useRef(false);
+    const getProfile = () => {
+        if (profileRef.current === undefined) {
+            profileRef.current = readBuyerProfile();
+        }
+        return profileRef.current;
+    };
 
     const form = useForm<RegistrationFormValues>({
         initialValues: {
@@ -335,11 +377,16 @@ export const EmbeddedRegistration = ({
         questions: participantQuestions.map(emptyAnswer),
     });
 
+    const alignOrderAnswers = (existing: QuestionAnswerValue[]) => orderQuestions.map(question => {
+        const answer = existing.find(candidate => candidate.question_id === question.id) ?? emptyAnswer(question);
+        const profilePhone = question.type === QuestionType.PHONE ? getProfile()?.phone : undefined;
+        return profilePhone && isAnswerEmpty(answer.response.answer)
+            ? {...answer, response: {answer: profilePhone}}
+            : answer;
+    });
+
     useEffect(() => {
-        const existing = form.values.order.questions;
-        form.setFieldValue('order.questions', orderQuestions.map(question =>
-            existing.find(answer => answer.question_id === question.id) ?? emptyAnswer(question)
-        ));
+        form.setFieldValue('order.questions', alignOrderAnswers(form.getValues().order.questions));
     }, [orderQuestions]);
 
     useEffect(() => {
@@ -388,6 +435,87 @@ export const EmbeddedRegistration = ({
         }
         form.setFieldValue('products', participants);
     }, [participantQuestions, ticket?.product.id, ticket?.maxParticipants, ticket?.minParticipants]);
+
+    useEffect(() => {
+        const draft = readCheckoutDraft(eventId);
+        const profile = getProfile();
+        setRememberedProfile(profile);
+        const pick = (draftValue: string | undefined, profileValue: string | undefined) => draftValue || profileValue || '';
+
+        if (draft) {
+            if (isPaidMode) {
+                const restored: Record<string, number> = {};
+                getEmbeddedCheckoutLines(event).forEach(line => {
+                    const quantity = Math.floor(Number(draft.selection[line.key]) || 0);
+                    if (quantity > 0) {
+                        restored[line.key] = Math.min(quantity, line.max);
+                    }
+                });
+                if (Object.keys(restored).length > 0) {
+                    setSelection(restored);
+                }
+            }
+            setProtectionOptIn(draft.protectionOptIn);
+            const draftAnswers = fromDraftAnswers(draft.order.questions);
+            const previous = form.getValues();
+            form.setValues({
+                order: {
+                    ...previous.order,
+                    first_name: pick(draft.order.first_name, profile?.first_name),
+                    last_name: pick(draft.order.last_name, profile?.last_name),
+                    email: pick(draft.order.email, profile?.email),
+                    opted_into_marketing: draft.order.opted_into_marketing,
+                    questions: questionsQuery.isFetched ? alignOrderAnswers(draftAnswers) : draftAnswers,
+                },
+                products: draft.participants.length > 0
+                    ? draft.participants.map((participant, index) => ({
+                        key: index === 0 && !isPaidMode ? 'participant-buyer' : nextParticipantKey(),
+                        line_key: participant.line_key || undefined,
+                        first_name: String(participant.first_name ?? ''),
+                        last_name: String(participant.last_name ?? ''),
+                        birth_date: String(participant.birth_date ?? ''),
+                        questions: fromDraftAnswers(Array.isArray(participant.questions) ? participant.questions : []),
+                    }))
+                    : previous.products,
+            });
+            setRestoreStepId(draft.stepId || null);
+            if (draft.awaitingPayment) {
+                const pending = draft.awaitingPayment;
+                setAwaitingPayment(pending);
+                orderClientPublic.findByShortId(Number(eventId), pending.shortId, [], pending.sessionIdentifier)
+                    .then(({data}) => {
+                        if (data.status === 'COMPLETED' || data.status === 'AWAITING_OFFLINE_PAYMENT') {
+                            confirmOrderOnDevice(eventId as number, pending.shortId);
+                            setRememberedProfile(readBuyerProfile());
+                            setAwaitingPayment(null);
+                            setRestoreStepId(null);
+                            setStepIndex(0);
+                            return;
+                        }
+                        if (data.status !== 'RESERVED' || data.is_expired) {
+                            setAwaitingPayment(null);
+                            return;
+                        }
+                        if (pending.sessionIdentifier && !getStoredSessionIdentifier()) {
+                            storeSessionIdentifier(pending.sessionIdentifier);
+                        }
+                    })
+                    .catch(() => setAwaitingPayment(null));
+            }
+        } else if (profile) {
+            const previous = form.getValues();
+            form.setValues({
+                ...previous,
+                order: {
+                    ...previous.order,
+                    first_name: pick(previous.order.first_name, profile.first_name),
+                    last_name: pick(previous.order.last_name, profile.last_name),
+                    email: pick(previous.order.email, profile.email),
+                },
+            });
+        }
+        setMemoryReady(true);
+    }, []);
 
     const needsParticipantsStep = !isPaidMode
         || isPerTicket
@@ -660,9 +788,24 @@ export const EmbeddedRegistration = ({
         session_identifier: getSessionIdentifier(),
     });
 
-    const navigateAfterCompletion = (completedOrder: { is_payment_required?: boolean, short_id: string }) => {
+    const navigateAfterCompletion = (
+        completedOrder: { is_payment_required?: boolean, short_id: string, reserved_until?: string },
+        resumeSignature?: string,
+    ) => {
+        const contact = buyerContact();
+        draftClosed.current = true;
         if (!completedOrder.is_payment_required) {
             trackEvent(AnalyticsEvents.PURCHASE_COMPLETED_FREE);
+            clearCheckoutDraft(eventId as number);
+            saveBuyerProfile(contact);
+        } else {
+            rememberPendingContact(completedOrder.short_id, contact);
+            writeCheckoutDraft(eventId as number, buildDraft(step.id, {
+                shortId: completedOrder.short_id,
+                reservedUntil: completedOrder.reserved_until,
+                sessionIdentifier: getStoredSessionIdentifier() ?? undefined,
+                signature: resumeSignature ?? '',
+            }), eventEnd);
         }
         const nextPage = completedOrder.is_payment_required ? 'payment' : 'summary';
         navigate(eventCheckoutPath(eventId as number, completedOrder.short_id, nextPage));
@@ -713,17 +856,34 @@ export const EmbeddedRegistration = ({
             ],
         } as unknown as FinaliseOrderPayload;
 
+        const signature = `${checkoutItems.map(item => `${item.key}x${item.quantity}`).join(',')}:${promoCode ?? ''}:${isProtectionAdded ? 'protection' : ''}`;
+        const resumeSignature = `${signature}#${JSON.stringify(completePayload)}`;
+
+        if (awaitingPayment) {
+            const stillReserved = !awaitingPayment.reservedUntil
+                || dayjs.utc(awaitingPayment.reservedUntil).valueOf() > Date.now() + 30_000;
+            if (stillReserved && awaitingPayment.signature === resumeSignature) {
+                draftClosed.current = true;
+                navigate(eventCheckoutPath(eventId as number, awaitingPayment.shortId, 'payment'));
+                return;
+            }
+            if (stillReserved) {
+                orderClientPublic.abandonOrder(eventId, awaitingPayment.shortId).catch(() => undefined);
+            }
+            setAwaitingPayment(null);
+        }
+
         setStepErrors({});
         setCreationFailed(false);
         completeMutation.mutate({
             eventId: eventId as number,
-            signature: `${checkoutItems.map(item => `${item.key}x${item.quantity}`).join(',')}:${promoCode ?? ''}:${isProtectionAdded ? 'protection' : ''}`,
+            signature,
             pendingOrder,
             createPayload,
             completePayload,
             onOrderCreated: setPendingOrder,
         }, {
-            onSuccess: navigateAfterCompletion,
+            onSuccess: completedOrder => navigateAfterCompletion(completedOrder, resumeSignature),
             onError: handleServerError,
         });
     };
@@ -787,7 +947,7 @@ export const EmbeddedRegistration = ({
             completePayload,
             onOrderCreated: setPendingOrder,
         }, {
-            onSuccess: navigateAfterCompletion,
+            onSuccess: completedOrder => navigateAfterCompletion(completedOrder),
             onError: handleServerError,
         });
     };
@@ -959,6 +1119,130 @@ export const EmbeddedRegistration = ({
         removeParticipantAt(index);
     };
 
+    useEffect(() => {
+        if (!memoryReady || restoreStepId === null || !questionsQuery.isFetched || (!isPaidMode && !ticket)) {
+            return;
+        }
+        const answers = form.values.order.questions;
+        if (answers.length !== orderQuestions.length
+            || orderQuestions.some((question, index) => answers[index]?.question_id !== question.id)) {
+            return;
+        }
+        let target = Math.max(0, steps.findIndex(candidate => candidate.id === restoreStepId));
+        for (let index = 0; index < target; index++) {
+            const {_step: stepMessage, ...errors} = validateStep(steps[index]);
+            if (stepMessage || Object.keys(errors).length > 0) {
+                target = index;
+                break;
+            }
+        }
+        setRestoreStepId(null);
+        setStepIndex(target);
+    });
+
+    const buyerPhone = () => {
+        const index = orderQuestions.findIndex(question => question.type === QuestionType.PHONE);
+        const answer = index >= 0 ? form.values.order.questions[index]?.response.answer : '';
+        return typeof answer === 'string' ? answer.trim() : '';
+    };
+
+    const buyerContact = (): BuyerContact => ({
+        first_name: form.values.order.first_name.trim(),
+        last_name: form.values.order.last_name.trim(),
+        email: form.values.order.email.trim(),
+        phone: buyerPhone(),
+    });
+
+    const buildDraft = (stepId: string, pendingPayment: DraftAwaitingPayment | null): CheckoutDraft => ({
+        stepId,
+        selection,
+        order: {
+            first_name: form.values.order.first_name,
+            last_name: form.values.order.last_name,
+            email: form.values.order.email,
+            opted_into_marketing: form.values.order.opted_into_marketing,
+            questions: toDraftAnswers(form.values.order.questions),
+        },
+        participants: form.values.products.map(participant => ({
+            line_key: participant.line_key,
+            first_name: participant.first_name,
+            last_name: participant.last_name,
+            birth_date: participant.birth_date,
+            questions: toDraftAnswers(participant.questions),
+        })),
+        protectionOptIn,
+        awaitingPayment: pendingPayment,
+    });
+
+    const eventEnd = event.end_date || (event.start_date ? dayjs.utc(event.start_date).add(1, 'day').toISOString() : null);
+    const hasDraftContent = safeStepIndex > 0
+        || hasInteracted.current
+        || !!awaitingPayment
+        || [form.values.order.first_name, form.values.order.last_name, form.values.order.email]
+            .some(value => value.trim() && !(rememberedProfile && [rememberedProfile.first_name, rememberedProfile.last_name, rememberedProfile.email].includes(value.trim())));
+    latestDraft.current = memoryReady && restoreStepId === null && !draftClosed.current && hasDraftContent
+        ? buildDraft(step.id, awaitingPayment)
+        : null;
+
+    useEffect(() => {
+        if (!latestDraft.current) {
+            return;
+        }
+        const timer = window.setTimeout(() => {
+            if (latestDraft.current && !draftClosed.current) {
+                writeCheckoutDraft(eventId as number, latestDraft.current, eventEnd);
+            }
+        }, 400);
+        return () => window.clearTimeout(timer);
+    }, [memoryReady, restoreStepId, step.id, selection, form.values, protectionOptIn, awaitingPayment]);
+
+    useEffect(() => {
+        const flush = () => {
+            if (latestDraft.current && !draftClosed.current) {
+                writeCheckoutDraft(eventId as number, latestDraft.current, eventEnd);
+            }
+        };
+        const handleVisibility = () => {
+            if (document.visibilityState === 'hidden') {
+                flush();
+            }
+        };
+        window.addEventListener('pagehide', flush);
+        document.addEventListener('visibilitychange', handleVisibility);
+        return () => {
+            window.removeEventListener('pagehide', flush);
+            document.removeEventListener('visibilitychange', handleVisibility);
+        };
+    }, [eventId, eventEnd]);
+
+    const forgetRememberedProfile = () => {
+        const profile = rememberedProfile;
+        clearBuyerProfile();
+        profileRef.current = null;
+        setRememberedProfile(null);
+        if (!profile) {
+            return;
+        }
+        const previous = form.getValues();
+        const {order} = previous;
+        form.setValues({
+            ...previous,
+            order: {
+                ...order,
+                first_name: sameText(order.first_name, profile.first_name) ? '' : order.first_name,
+                last_name: sameText(order.last_name, profile.last_name) ? '' : order.last_name,
+                email: sameText(order.email, profile.email) ? '' : order.email,
+                questions: order.questions.map(answer => {
+                    const question = orderQuestions.find(candidate => candidate.id === answer.question_id);
+                    return question?.type === QuestionType.PHONE && sameText(String(answer.response.answer), profile.phone)
+                        ? {...answer, response: {answer: ''}}
+                        : answer;
+                }),
+            },
+        });
+        pendingFocus.current = 'step';
+    };
+
     const promoMutation = useMutation({
         mutationFn: async (code: string | null) => {
             if (code) {
@@ -1094,6 +1378,8 @@ export const EmbeddedRegistration = ({
         .sort((a, b) => a.getTime() - b.getTime())[0];
     const rootClassName = classNames(classes.root, className);
 
+    useKeyboardAwareActionBar(panelRef, `.${classes.nav}`, !forceClassic && !cannotEmbed && questionsQuery.isFetched);
+
     if (!forceClassic && hasNothingToRegister && upcomingSaleStart) {
         return (
             <section className={rootClassName} data-variant={variant} ref={sectionRef} id="tickets" aria-label={t`Registration`}>
@@ -1171,7 +1457,7 @@ export const EmbeddedRegistration = ({
 
         switch (question.type) {
             case QuestionType.PHONE:
-                return <TextInput {...inputProps} {...common} type="tel" inputMode="tel" autoComplete="tel"/>;
+                return <TextInput {...inputProps} {...common} type="tel" inputMode="tel" autoComplete={path.startsWith('order.') ? 'tel' : 'off'} name={path.startsWith('order.') ? 'tel' : undefined}/>;
             case QuestionType.DATE:
                 return <TextInput {...inputProps} {...common} type="date"/>;
             case QuestionType.MULTI_LINE_TEXT:
@@ -1246,14 +1532,18 @@ export const EmbeddedRegistration = ({
                                 {...form.getInputProps('order.first_name')}
                                 label={t`First Name`}
                                 withAsterisk
+                                name="given-name"
                                 autoComplete="given-name"
+                                autoCapitalize="words"
                                 classNames={fieldClassNames}
                             />
                             <TextInput
                                 {...form.getInputProps('order.last_name')}
                                 label={t`Last Name`}
                                 withAsterisk
+                                name="family-name"
                                 autoComplete="family-name"
+                                autoCapitalize="words"
                                 classNames={fieldClassNames}
                             />
                         </div>
@@ -1270,8 +1560,12 @@ export const EmbeddedRegistration = ({
                                 type="email"
                                 label={t`Email Address`}
                                 withAsterisk
+                                name="email"
                                 autoComplete="email"
                                 inputMode="email"
+                                autoCapitalize="off"
+                                autoCorrect="off"
+                                spellCheck={false}
                                 classNames={fieldClassNames}
                             />
                         </div>
@@ -1748,6 +2042,30 @@ export const EmbeddedRegistration = ({
         );
     };
 
+    const renderDeviceMemoryNote = (current: Step) => {
+        const profile = rememberedProfile;
+        if (!profile) {
+            return null;
+        }
+        const {order} = form.values;
+        const isPrefilled = {
+            name: sameText(order.first_name, profile.first_name) || sameText(order.last_name, profile.last_name),
+            email: sameText(order.email, profile.email),
+            phone: sameText(buyerPhone(), profile.phone),
+        }[current.kind as 'name' | 'email' | 'phone'];
+        if (!isPrefilled) {
+            return null;
+        }
+        return (
+            <p className={classes.deviceMemory}>
+                <span>{t`Your details stay on this device.`}</span>
+                <button type="button" className={classes.linkButton} onClick={forgetRememberedProfile}>
+                    {t`Not me`}
+                </button>
+            </p>
+        );
+    };
+
     const renderStepBody = (current: Step, active: boolean) => {
         const index = steps.findIndex(candidate => candidate.id === current.id);
         const isLast = index === steps.length - 1;
@@ -1757,7 +2075,11 @@ export const EmbeddedRegistration = ({
         return (
             <>
                 {renderStepContent(current, currentTitleId)}
+                {renderDeviceMemoryNote(current)}
                 {renderConsents(current)}
+                {current.kind === 'summary' && awaitingPayment && (
+                    <p className={classes.resumeNotice}>{t`Your order is still reserved. Continue to payment to finish it.`}</p>
+                )}
 
                 {!!currentError && (
                     <div className={classes.stepError} role="alert">

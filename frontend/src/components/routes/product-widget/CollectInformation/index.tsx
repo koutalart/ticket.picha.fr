@@ -19,7 +19,7 @@ import {useGetOrderPublic} from "../../../../queries/useGetOrderPublic.ts";
 import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
 import {useGetEventQuestionsPublic} from "../../../../queries/useGetEventQuestionsPublic.ts";
 import {CheckoutOrderQuestions, CheckoutProductQuestions} from "../../../common/CheckoutQuestion";
-import {Event, IdParam, Question} from "../../../../types.ts";
+import {Event, IdParam, Question, QuestionType} from "../../../../types.ts";
 import {useEffect, useState} from "react";
 import {InputGroup} from "../../../common/InputGroup";
 import {Card} from "../../../common/Card";
@@ -35,6 +35,7 @@ import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
 import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 import {preloadPaymentStep} from "../../../../utilites/checkoutPreload.ts";
+import {readBuyerProfile, rememberPendingContact} from "../../../../utilites/checkoutMemory.ts";
 import {getStripePaymentIntentQuery} from "../../../../queries/useCreateStripePaymentIntent.ts";
 
 const LoadingSkeleton = () =>
@@ -228,8 +229,16 @@ export const CollectInformation = () => {
     const mutation = useMutation({
         mutationFn: (orderData: FinaliseOrderPayload) => orderClientPublic.finaliseOrder(Number(eventId), String(orderShortId), orderData),
 
-        onSuccess: (data) => {
+        onSuccess: (data, variables) => {
             const nextPage = order?.is_payment_required ? 'payment' : 'summary';
+            const phoneIndex = (orderQuestions ?? []).findIndex(question => question.type === QuestionType.PHONE);
+            const phoneAnswer = phoneIndex >= 0 ? (variables as any)?.order?.questions?.[phoneIndex]?.response?.answer : '';
+            rememberPendingContact(String(data.data.short_id), {
+                first_name: String(variables?.order?.first_name ?? '').trim(),
+                last_name: String(variables?.order?.last_name ?? '').trim(),
+                email: String(variables?.order?.email ?? '').trim(),
+                phone: typeof phoneAnswer === 'string' ? phoneAnswer.trim() : '',
+            });
             if (nextPage === 'payment' && isStripeEnabled) {
                 queryClient.prefetchQuery(getStripePaymentIntentQuery(eventId, data.data.short_id));
             }
@@ -300,13 +309,16 @@ export const CollectInformation = () => {
         return products;
     }
 
-    const createFormOrderQuestions = () => {
+    const createFormOrderQuestions = (profilePhone?: string) => {
         const formOrderQuestions: any = [];
+        let phoneFilled = false;
 
         orderQuestions?.forEach(orderQuestion => {
+            const fillPhone = !!profilePhone && !phoneFilled && orderQuestion.type === QuestionType.PHONE;
+            phoneFilled = phoneFilled || fillPhone;
             formOrderQuestions.push({
                 question_id: orderQuestion.id,
-                response: {},
+                response: fillPhone ? {answer: profilePhone} : {},
             });
         });
 
@@ -335,14 +347,33 @@ export const CollectInformation = () => {
 
     useEffect(() => {
         if (isEventFetched && isOrderFetched && isQuestionsFetched && productQuestions && orderQuestions) {
-            const products = createProductsAndQuestions(createProductIdToQuestionMap());
-            const formOrderQuestions = createFormOrderQuestions();
+            const profile = readBuyerProfile();
+            const formProducts = createProductsAndQuestions(createProductIdToQuestionMap());
+            const formOrderQuestions = createFormOrderQuestions(profile?.phone);
+            const pick = (current: string, remembered?: string) => current || remembered || '';
+
+            if (profile && isFreeEvent && !isPerOrderCollection) {
+                const firstTicketIndex = formProducts.findIndex((product: any) =>
+                    products?.some(candidate => candidate?.id === product.product_id && candidate?.product_type === 'TICKET')
+                );
+                if (firstTicketIndex >= 0) {
+                    formProducts[firstTicketIndex] = {
+                        ...formProducts[firstTicketIndex],
+                        first_name: profile.first_name,
+                        last_name: profile.last_name,
+                        email: profile.email,
+                    };
+                }
+            }
 
             form.setValues({
                 ...form.values,
-                products: products,
+                products: formProducts,
                 order: {
                     ...form.values.order,
+                    first_name: pick(form.values.order.first_name, profile?.first_name),
+                    last_name: pick(form.values.order.last_name, profile?.last_name),
+                    email: pick(form.values.order.email, profile?.email),
                     questions: formOrderQuestions,
                 },
             });
@@ -474,12 +505,16 @@ export const CollectInformation = () => {
                             withAsterisk
                             label={t`First Name`}
                             placeholder={t`First name`}
+                            name="given-name"
+                            autoComplete="given-name"
                             {...form.getInputProps("order.first_name")}
                         />
                         <TextInput
                             withAsterisk
                             label={t`Last Name`}
                             placeholder={t`Last Name`}
+                            name="family-name"
+                            autoComplete="family-name"
                             {...form.getInputProps("order.last_name")}
                         />
                     </InputGroup>
@@ -487,6 +522,8 @@ export const CollectInformation = () => {
                     <TextInput
                         withAsterisk
                         type={"email"}
+                        name="email"
+                        inputMode="email"
                         autoComplete="email"
                         label={t`Email Address`}
                         placeholder={t`Email Address`}
