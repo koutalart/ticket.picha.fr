@@ -699,8 +699,15 @@ textarea.fieldInput {
   margin-top: clamp(28px, 5vh, 44px);
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 14px 20px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
 }
 
 .nextButton {
@@ -730,7 +737,8 @@ textarea.fieldInput {
   }
 
   @media (max-width: 600px) {
-    flex: 1 1 auto;
+    order: -1;
+    width: 100%;
   }
 }
 
@@ -761,6 +769,11 @@ textarea.fieldInput {
   &:disabled {
     opacity: 0.5;
   }
+
+  @media (max-width: 600px) {
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 .enterHint {
@@ -769,6 +782,8 @@ textarea.fieldInput {
   gap: 6px;
   font-size: 0.85rem;
   color: $text-muted;
+  order: -1;
+  margin-right: auto;
 
   @media (hover: none) {
     display: none;
@@ -1074,6 +1089,55 @@ textarea.fieldInput {
   padding: 0 4px;
   text-align: right;
   font-size: 0.92rem;
+  color: $text-soft;
+}
+
+.protectionOffer {
+  margin-top: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1.5px solid var(--er-veil-16);
+  background: var(--er-veil-06);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  &[data-checked="true"] {
+    border-color: $accent;
+    background: var(--er-veil-08);
+  }
+}
+
+.protectionIcon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: $accent;
+}
+
+.protectionBody {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.protectionLabel {
+  display: block;
+  font-weight: 700;
+  color: $text;
+}
+
+.protectionHint {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.9rem;
+  color: $text-soft;
+}
+
+.protectionIncluded {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
   color: $text-soft;
 }
 

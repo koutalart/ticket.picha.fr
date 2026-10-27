@@ -822,6 +822,7 @@ export interface ProductPrice {
     quantity_sold?: number;
     is_hidden?: boolean;
     quantity_remaining?: number;
+    refund_protection_included?: number | null;
 }
 
 export type RequiredQuantityMode = 'PER_ORDER' | 'PER_TICKET';
@@ -1042,6 +1043,10 @@ export interface RefundProtectionOffer {
     currency: string;
     is_selected: boolean;
     is_locked: boolean;
+    mandatory_quantity?: number;
+    mandatory_total_gross?: number;
+    mandatory_above?: number | null;
+    is_required_by_organizer?: boolean;
 }
 
 export interface StripePaymentIntent {

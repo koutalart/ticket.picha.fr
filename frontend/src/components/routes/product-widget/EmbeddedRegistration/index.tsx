@@ -12,6 +12,7 @@ import {
     IconLock,
     IconMinus,
     IconPlus,
+    IconShieldCheck,
     IconTicket,
     IconX
 } from "@tabler/icons-react";
@@ -44,6 +45,12 @@ import {
     sortQuestions,
 } from "../../../../utilites/embeddedRegistration.ts";
 import {formatCurrency} from "../../../../utilites/currency.ts";
+import {
+    getCheckoutRefundProtection,
+    getIncludedRefundProtection,
+    getPlainTextSummary,
+    withIncludedRefundProtection,
+} from "../../../../utilites/refundProtection.ts";
 import {getContactCode} from "../../../../utilites/contactLinkAttribution.ts";
 import {getSessionIdentifier} from "../../../../utilites/sessionIdentifier.ts";
 import {getOrderTrackingContext, getQrLinkCode} from "../../../../utilites/qrAttribution.ts";
@@ -191,6 +198,7 @@ export const EmbeddedRegistration = ({
     const [creationFailed, setCreationFailed] = useState(false);
     const [forceClassic, setForceClassic] = useState(false);
     const [pendingOrder, setPendingOrder] = useState<PendingEmbeddedOrder | null>(null);
+    const [protectionOptIn, setProtectionOptIn] = useState(false);
     const [codeOpen, setCodeOpen] = useState(promoCodeValid === false);
     const [codeValue, setCodeValue] = useState('');
     const [codeError, setCodeError] = useState<string | null>(promoCodeValid === false ? t`This invitation code is not valid.` : null);
@@ -259,7 +267,34 @@ export const EmbeddedRegistration = ({
     const selectedTicketCount = selectedTicketItems.reduce((sum, item) => sum + item.quantity, 0);
     const requiredItems = getRequiredCheckoutItems(event, isPaidMode ? selectedTicketCount : form.values.products.length);
     const checkoutItems = [...selectedLineItems, ...(selectedTicketCount > 0 ? requiredItems : [])];
-    const totals = computeCheckoutTotals(checkoutItems);
+    const checkoutProtection = isPaidMode && !event.settings?.single_product_per_order
+        ? getCheckoutRefundProtection(getEventProducts(event))
+        : null;
+    const countTickets = (items: EmbeddedCheckoutItem[]) => items.reduce((sum, item) => sum + item.quantity, 0);
+    const coveredTicketCount = countTickets(selectedTicketItems.filter(item => getIncludedRefundProtection(item.price) > 0));
+    const otherTicketItems = selectedTicketItems.filter(item => getIncludedRefundProtection(item.price) <= 0);
+    const optionalProtectionQuantity = checkoutProtection
+        && !checkoutProtection.product.is_required
+        && otherTicketItems.some(item => Number(item.price.price) > 0)
+        ? (checkoutProtection.product.required_quantity_mode === 'PER_TICKET'
+            ? countTickets(otherTicketItems)
+            : Math.max(1, Number(checkoutProtection.product.min_per_order) || 1))
+        : 0;
+    const protectionItem = (key: string, quantity: number, isRequired: boolean): EmbeddedCheckoutItem[] =>
+        checkoutProtection && quantity > 0 ? [{
+            key,
+            product: checkoutProtection.product,
+            price: checkoutProtection.price,
+            quantity,
+            isTicket: false,
+            isRequired,
+        }] : [];
+    const protectionItems: EmbeddedCheckoutItem[] = [
+        ...protectionItem('refund-protection-included', coveredTicketCount, true),
+        ...(protectionOptIn ? protectionItem('refund-protection-optional', optionalProtectionQuantity, false) : []),
+    ];
+    const isProtectionAdded = protectionOptIn && optionalProtectionQuantity > 0;
+    const totals = computeCheckoutTotals([...checkoutItems, ...protectionItems]);
     const totalWithoutFees = Math.round((totals.total - totals.fees) * 100) / 100;
     const hasServiceFees = checkoutLines.some(line => Number(line.price.fee_total) > 0);
     const ticketSignature = selectedTicketItems.map(item => `${item.key}x${item.quantity}`).join(',');
@@ -640,7 +675,13 @@ export const EmbeddedRegistration = ({
         const email = order.email.trim();
 
         const createPayload = {
-            products: groupByProduct(checkoutItems),
+            products: [
+                ...groupByProduct(checkoutItems),
+                ...(isProtectionAdded && checkoutProtection ? [{
+                    product_id: Number(checkoutProtection.product.id),
+                    quantities: [{price_id: Number(checkoutProtection.price.id), quantity: 1}],
+                }] : []),
+            ],
             ...trackingFields(),
         } as ProductFormPayload;
 
@@ -676,7 +717,7 @@ export const EmbeddedRegistration = ({
         setCreationFailed(false);
         completeMutation.mutate({
             eventId: eventId as number,
-            signature: `${checkoutItems.map(item => `${item.key}x${item.quantity}`).join(',')}:${promoCode ?? ''}`,
+            signature: `${checkoutItems.map(item => `${item.key}x${item.quantity}`).join(',')}:${promoCode ?? ''}:${isProtectionAdded ? 'protection' : ''}`,
             pendingOrder,
             createPayload,
             completePayload,
@@ -1394,13 +1435,16 @@ export const EmbeddedRegistration = ({
                             {checkoutLines.map(line => {
                                 const quantity = Math.min(selection[line.key] ?? 0, line.max);
                                 const label = lineLabel(line);
-                                const unitPrice = priceWithoutFees(line.price);
+                                const unitPrice = withIncludedRefundProtection(priceWithoutFees(line.price), line.price);
                                 return (
                                     <li key={line.key} className={classes.line}>
                                         <div className={classes.lineInfo}>
                                             <span className={classes.lineTitle}>{label}</span>
                                             <span className={classes.linePrice}>
                                                 {unitPrice > 0 ? formatAmount(unitPrice) : t`Free`}
+                                                {getIncludedRefundProtection(line.price) > 0 && (
+                                                    <span className={classes.protectionIncluded}>{t`Peace of mind option included`}</span>
+                                                )}
                                             </span>
                                         </div>
                                         <div className={classes.stepper} role="group" aria-label={t`Quantity for ${label}`}>
@@ -1493,7 +1537,7 @@ export const EmbeddedRegistration = ({
                         <p className={classes.stepHelp}>{t`Check your order before continuing to payment.`}</p>
                         <div className={classes.receipt}>
                             <ul className={classes.receiptLines}>
-                                {checkoutItems.map(item => (
+                                {[...checkoutItems, ...protectionItems].map(item => (
                                     <li key={item.key} className={classes.receiptLine}>
                                         <span className={classes.receiptLabel}>
                                             <span>{`${item.quantity} × ${lineLabel(item)}`}</span>
@@ -1525,6 +1569,7 @@ export const EmbeddedRegistration = ({
                             </dl>
                         </div>
                         <div className={classes.summaryCode}>{renderCodeRow()}</div>
+                        {renderProtectionOffer()}
                         <dl className={classes.summary}>
                             <div>
                                 <dt>{t`Contact`}</dt>
@@ -1547,6 +1592,34 @@ export const EmbeddedRegistration = ({
                     </>
                 );
         }
+    };
+
+    const renderProtectionOffer = () => {
+        if (!checkoutProtection || optionalProtectionQuantity <= 0) {
+            return null;
+        }
+
+        const amount = formatAmount(Math.round(Number(checkoutProtection.price.price) * optionalProtectionQuantity * 100) / 100);
+        const label = coveredTicketCount > 0
+            ? t`Add the peace of mind option to your other tickets for ${amount}`
+            : t`Add the peace of mind option for ${amount}`;
+        const hint = getPlainTextSummary(checkoutProtection.product.description);
+
+        return (
+            <label className={classes.protectionOffer} data-checked={protectionOptIn}>
+                <IconShieldCheck size={22} className={classes.protectionIcon} aria-hidden="true"/>
+                <span className={classes.protectionBody}>
+                    <span className={classes.protectionLabel}>{label}</span>
+                    {hint && <span className={classes.protectionHint}>{hint}</span>}
+                </span>
+                <Checkbox
+                    checked={protectionOptIn}
+                    onChange={(changeEvent) => setProtectionOptIn(changeEvent.currentTarget.checked)}
+                    disabled={completeMutation.isPending}
+                    aria-label={label}
+                />
+            </label>
+        );
     };
 
     const renderCheckoutNotices = () => (

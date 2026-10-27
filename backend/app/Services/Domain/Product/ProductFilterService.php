@@ -16,6 +16,8 @@ use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AccountRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Services\Domain\Order\OrderPlatformFeePassThroughService;
+use HiEvents\Services\Domain\Order\RefundProtection\RefundProtectionPolicy;
+use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesResponseDTO;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesDTO;
 use HiEvents\Services\Domain\Tax\TaxAndFeeCalculationService;
 use Illuminate\Support\Collection;
@@ -29,6 +31,10 @@ class ProductFilterService
     /** @var int[] */
     private array $lockedProductIds = [];
 
+    private ?ProductDomainObject $refundProtectionProduct = null;
+
+    private ?float $refundProtectionUnitTotal = null;
+
     public function __construct(
         private readonly TaxAndFeeCalculationService            $taxCalculationService,
         private readonly ProductPriceService                    $productPriceService,
@@ -37,6 +43,7 @@ class ProductFilterService
         private readonly AccountRepositoryInterface             $accountRepository,
         private readonly EventRepositoryInterface               $eventRepository,
         private readonly ProductUnlockService                   $productUnlockService,
+        private readonly RefundProtectionPolicy                 $refundProtectionPolicy,
     )
     {
     }
@@ -125,8 +132,12 @@ class ProductFilterService
 
         $this->lockedProductIds = $this->productUnlockService->getLockedProductIds($products, $productQuantities);
 
+        $products = $products
+            ->map(fn(ProductDomainObject $product) => $this->processProduct($product, $productQuantities->productQuantities, $promoCode));
+
+        $this->loadRefundProtection($products, $productQuantities);
+
         return $products
-            ->map(fn(ProductDomainObject $product) => $this->processProduct($product, $productQuantities->productQuantities, $promoCode))
             ->reject(fn(ProductDomainObject $product) => $this->filterProduct($product, $promoCode, $hideSoldOutProducts))
             ->each(fn(ProductDomainObject $product) => $this->processProductPrices($product, $hideSoldOutProducts));
     }
@@ -148,6 +159,54 @@ class ProductFilterService
 
         $this->eventSettings = $event->getEventSettings();
         $this->eventCurrency = $event->getCurrency();
+    }
+
+    /**
+     * The protection that the order will add once per ticket (above the threshold, or required per ticket by the organizer)
+     * is part of the ticket price: same product, price, promo code, taxes and fees as OrderRefundProtectionService, no platform fee.
+     *
+     * @param Collection<ProductDomainObject> $products
+     */
+    private function loadRefundProtection(Collection $products, AvailableProductQuantitiesResponseDTO $productQuantities): void
+    {
+        $this->refundProtectionProduct = null;
+        $this->refundProtectionUnitTotal = null;
+
+        if ($this->eventSettings?->getSingleProductPerOrder()) {
+            return;
+        }
+
+        $protection = $this->refundProtectionPolicy->findOfferProduct(
+            $products->filter(fn(ProductDomainObject $product) => RefundProtectionPolicy::isCheckoutRefundProtection($product)),
+            $productQuantities,
+            $this->lockedProductIds,
+        );
+        $price = $protection ? $this->refundProtectionPolicy->findOfferPrice($protection, $productQuantities) : null;
+
+        if ($protection === null || $price === null) {
+            return;
+        }
+
+        $taxAndFees = $this->taxCalculationService->calculateTaxAndFeesForProductPrice($protection, $price);
+
+        $this->refundProtectionProduct = $protection;
+        $this->refundProtectionUnitTotal = Currency::round((float)$price->getPrice() + $taxAndFees->taxTotal + $taxAndFees->feeTotal);
+    }
+
+    private function getRefundProtectionIncluded(ProductDomainObject $product, ProductPriceDomainObject $price): ?float
+    {
+        if ($this->refundProtectionProduct === null || !$this->refundProtectionUnitTotal) {
+            return null;
+        }
+
+        $isIncluded = $this->refundProtectionPolicy->isIncludedInTicketPrice(
+            protection: $this->refundProtectionProduct,
+            ticket: $product,
+            tariffPrice: (float)($price->getPriceBeforeDiscount() ?? $price->getPrice()),
+            paidPrice: (float)$price->getPrice(),
+        );
+
+        return $isIncluded ? $this->refundProtectionUnitTotal : null;
     }
 
     private function isHiddenByPromoCode(ProductDomainObject $product, ?PromoCodeDomainObject $promoCode): bool
@@ -262,7 +321,7 @@ class ProductFilterService
             $feeTotal = $taxAndFees->feeTotal;
             $taxTotal = $taxAndFees->taxTotal;
 
-            $platformFee = $product->getIsRequired()
+            $platformFee = OrderPlatformFeePassThroughService::isExemptProduct($product)
                 ? 0.0
                 : $this->calculatePlatformFee($price->getPrice() + $feeTotal + $taxTotal);
 
@@ -276,6 +335,7 @@ class ProductFilterService
                 ->setFeeTotal(Currency::round($feeTotal));
         }
 
+        $price->setRefundProtectionIncluded($this->getRefundProtectionIncluded($product, $price));
         $price->setIsAvailable($this->getPriceAvailability($price, $product));
     }
 

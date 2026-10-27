@@ -6,6 +6,7 @@ import {UseFormReturnType} from "@mantine/form";
 import {t} from "@lingui/macro";
 import {ProductPriceAvailability} from "../../../../../common/ProductPriceAvailability";
 import {getCurrencySymbol} from "../../../../../../utilites/currency.ts";
+import {withIncludedRefundProtection} from "../../../../../../utilites/refundProtection.ts";
 
 interface TieredPricingProps {
     event: Event;
@@ -110,7 +111,7 @@ export const TieredPricing = ({product, event, form, productIndex, singleSelecti
                         {price.is_discounted && (
                             <div style={{textDecoration: 'line-through', fontSize: '.9em'}}>
                                 <Currency
-                                    price={price.price_before_discount}
+                                    price={withIncludedRefundProtection(Number(price.price_before_discount), price)}
                                     currency={event?.currency}
                                     className={'hi-price-tier-price-amount'}
                                 />

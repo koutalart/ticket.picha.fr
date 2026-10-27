@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import {Event, Product, ProductPrice, SCHEMA_EVENT_TYPES, SchemaEventType} from "../types.ts";
+import {withIncludedRefundProtection} from "./refundProtection.ts";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -78,7 +79,7 @@ const buildOffers = (event: Event, eventUrl: string): JsonLd[] =>
     getStructuredDataProducts(event).flatMap(product => {
         const prices = product.prices?.length ? product.prices : [undefined];
         return prices.map(price => {
-            const amount = Number(price?.price ?? 0);
+            const amount = withIncludedRefundProtection(Number(price?.price ?? 0), price);
             return compact({
                 "@type": "Offer",
                 name: price?.label ? `${product.title} ${price.label}` : product.title,

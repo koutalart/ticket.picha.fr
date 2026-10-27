@@ -12,6 +12,7 @@ use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\Exceptions\LiveChatRefundSelectionException;
 use HiEvents\Services\Domain\Order\RefundProtection\OrderRefundProtectionService;
+use HiEvents\Services\Domain\Order\RefundProtection\RefundProtectionPolicy;
 use HiEvents\Services\Domain\LiveChat\Refund\DTO\LiveChatRefundCoverageDTO;
 use HiEvents\Services\Domain\LiveChat\Refund\DTO\LiveChatRefundTicketDTO;
 use Illuminate\Support\Collection;
@@ -19,6 +20,10 @@ use Illuminate\Support\Collection;
 /**
  * Only the ticket price is refunded: never the service fees (platform fee included), never the taxes on fees,
  * never the protection product itself. The amount always comes from the order, never from the visitor.
+ *
+ * Orders with a snapshot (OrderRefundProtectionService::SNAPSHOT_KEY in point_in_time_data) follow the platform rule:
+ * the mandatory protections cover the tickets above the threshold saved at purchase, the checkbox covers the whole order.
+ * Older orders keep the previous rules.
  */
 class LiveChatRefundAmountCalculator
 {
@@ -26,8 +31,9 @@ class LiveChatRefundAmountCalculator
      * @param  Collection<int, OrderItemDomainObject>  $orderItems
      * @param  Collection<int, ProductDomainObject>  $products  keyed by product id
      * @param  Collection<int, AttendeeDomainObject>  $attendees
+     * @param  array<string, mixed>|null  $snapshot  the refund_protection entry of the order point_in_time_data
      */
-    public function coverage(Collection $orderItems, Collection $products, Collection $attendees): LiveChatRefundCoverageDTO
+    public function coverage(Collection $orderItems, Collection $products, Collection $attendees, ?array $snapshot = null): LiveChatRefundCoverageDTO
     {
         $protectionItems = $orderItems->filter(
             fn (OrderItemDomainObject $item) => $products->get($item->getProductId())?->getIsRefundProtection() === true
@@ -49,10 +55,14 @@ class LiveChatRefundAmountCalculator
                     && ! $product->getIsRefundProtection()
                     && $product->getProductType() === ProductType::TICKET->name;
             })
-            ->map(function (AttendeeDomainObject $attendee) use ($itemsByPrice) {
+            ->map(function (AttendeeDomainObject $attendee) use ($itemsByPrice, $snapshot) {
                 /** @var OrderItemDomainObject|null $item */
                 $item = $itemsByPrice->get($attendee->getProductPriceId());
                 if ($item === null || $item->getProductId() !== $attendee->getProductId()) {
+                    return null;
+                }
+
+                if ($snapshot !== null && ! $this->isCoveredBySnapshot($item, $snapshot)) {
                     return null;
                 }
 
@@ -67,14 +77,25 @@ class LiveChatRefundAmountCalculator
             ->sortBy(fn (LiveChatRefundTicketDTO $ticket) => $ticket->attendeeId)
             ->values();
 
+        $protectedCount = (int) $protectionItems->sum(fn (OrderItemDomainObject $item) => $item->getQuantity());
+
+        if ($snapshot !== null) {
+            $coversWholeOrder = ! empty($snapshot['optional_selected'])
+                && $protectionItems->contains(fn (OrderItemDomainObject $item) => ! RefundProtectionPolicy::isPerTicket($products->get($item->getProductId())));
+
+            return new LiveChatRefundCoverageDTO(
+                hasProtection: true,
+                tickets: $tickets,
+                maxTickets: $coversWholeOrder ? $tickets->count() : min($protectedCount, $tickets->count()),
+            );
+        }
+
         $coversWholeOrder = $protectionItems->contains(function (OrderItemDomainObject $item) use ($products) {
             $product = $products->get($item->getProductId());
 
             return $product->getRequiredQuantityMode() === RequiredQuantityMode::PER_ORDER->name
                 && ($product->getIsRequired() || OrderRefundProtectionService::isCheckoutRefundProtection($product));
         });
-
-        $protectedCount = (int) $protectionItems->sum(fn (OrderItemDomainObject $item) => $item->getQuantity());
 
         return new LiveChatRefundCoverageDTO(
             hasProtection: true,
@@ -115,6 +136,27 @@ class LiveChatRefundAmountCalculator
     public function total(Collection $tickets): float
     {
         return $this->fromCents((int) $tickets->sum(fn (LiveChatRefundTicketDTO $ticket) => $this->toCents($ticket->amount)));
+    }
+
+    /**
+     * Without the checkbox, only the tickets above the threshold saved at purchase are covered.
+     *
+     * @param  array<string, mixed>  $snapshot
+     */
+    private function isCoveredBySnapshot(OrderItemDomainObject $item, array $snapshot): bool
+    {
+        if (! empty($snapshot['optional_selected'])) {
+            return true;
+        }
+
+        if (! isset($snapshot['mandatory_above']) || ! is_numeric($snapshot['mandatory_above'])) {
+            return false;
+        }
+
+        $tariff = (float) ($item->getPriceBeforeDiscount() ?? $item->getPrice());
+
+        return $this->toCents($tariff) > $this->toCents((float) $snapshot['mandatory_above'])
+            && (float) $item->getPrice() > 0;
     }
 
     private function toCents(float $amount): int

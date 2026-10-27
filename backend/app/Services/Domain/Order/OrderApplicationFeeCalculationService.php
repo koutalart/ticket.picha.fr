@@ -84,14 +84,14 @@ class OrderApplicationFeeCalculationService
     }
 
     /**
-     * Required products (is_required) never carry a platform fee.
+     * Required products (is_required) and the cancellation protection (is_refund_protection) never carry a platform fee.
      *
      * @return OrderItemDomainObject[]
      */
     private function getChargeableItems(OrderDomainObject $order): array
     {
         $items = collect($order->getOrderItems() ?? []);
-        $requiredProductIds = $this->getRequiredProductIds($items->all());
+        $requiredProductIds = $this->getExemptProductIds($items->all());
 
         return $items
             ->reject(fn(OrderItemDomainObject $item) => in_array($item->getProductId(), $requiredProductIds, true))
@@ -103,7 +103,7 @@ class OrderApplicationFeeCalculationService
      * @param OrderItemDomainObject[] $items
      * @return int[]
      */
-    private function getRequiredProductIds(array $items): array
+    private function getExemptProductIds(array $items): array
     {
         $productIds = array_values(array_unique(array_filter(
             array_map(static fn(OrderItemDomainObject $item) => $item->getProductId(), $items)
@@ -115,7 +115,7 @@ class OrderApplicationFeeCalculationService
 
         return $this->productRepository
             ->findWhereIn(ProductDomainObjectAbstract::ID, $productIds)
-            ->filter(fn(ProductDomainObject $product) => $product->getIsRequired())
+            ->filter(fn(ProductDomainObject $product) => OrderPlatformFeePassThroughService::isExemptProduct($product))
             ->map(fn(ProductDomainObject $product) => $product->getId())
             ->values()
             ->all();
