@@ -15,8 +15,11 @@ use HiEvents\Exceptions\MetaConversionsApiException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSettingsRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsCustomerDirectoryRepositoryInterface;
+use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
 use HiEvents\Services\Infrastructure\Meta\MetaConversionsApiClient;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class MetaPurchaseConversionService
 {
@@ -27,13 +30,23 @@ class MetaPurchaseConversionService
         private readonly MetaPurchaseEventBuilder $eventBuilder,
         private readonly MetaConversionsApiClient $client,
         private readonly LoggerInterface $logger,
+        private readonly SmsCustomerDirectoryRepositoryInterface $directoryRepository,
     ) {}
 
+    /**
+     * Online order, completed and not sent yet. Box office and manual orders never are website purchases.
+     * The buyer's consent is checked when sending, against the organizer settings.
+     */
     public static function isEligible(OrderDomainObject $order): bool
     {
         return $order->getStatus() === OrderStatus::COMPLETED->name
             && $order->getMetaCapiSentAt() === null
-            && (($order->getTrackingContext() ?? [])['consent'] ?? false) === true;
+            && ! $order->getIsManuallyCreated();
+    }
+
+    public static function hasConsent(OrderDomainObject $order): bool
+    {
+        return (($order->getTrackingContext() ?? [])['consent'] ?? false) === true;
     }
 
     /**
@@ -57,14 +70,16 @@ class MetaPurchaseConversionService
             OrganizerSettingDomainObjectAbstract::ORGANIZER_ID => $event->getOrganizerId(),
         ]);
 
-        if ($settings === null || ! $settings->isMetaConversionsApiConfigured()) {
+        if ($settings === null
+            || ! $settings->isMetaConversionsApiConfigured()
+            || ! $settings->allowsMetaServerEvent(self::hasConsent($order))) {
             return false;
         }
 
         $eventsReceived = $this->client->sendEvents(
             pixelId: $settings->getEnabledFacebookPixelId(),
             accessToken: $settings->getMetaConversionsApiToken(),
-            events: [$this->eventBuilder->build($order, $event)],
+            events: [$this->eventBuilder->build($order, $event, $this->findPhone($order))],
             testEventCode: $settings->getMetaTestEventCode(),
         );
 
@@ -74,9 +89,28 @@ class MetaPurchaseConversionService
 
         $this->logger->info('Meta Conversions API purchase sent', [
             'order_id' => $order->getId(),
+            'consent' => self::hasConsent($order),
+            'test_event_code' => $settings->getMetaTestEventCode() !== null,
             'events_received' => $eventsReceived,
         ]);
 
         return true;
+    }
+
+    private function findPhone(OrderDomainObject $order): ?string
+    {
+        try {
+            return $this->directoryRepository
+                ->findActiveAttendeesWithPhone($order->getEventId(), $order->getId())
+                ->first(fn (SmsReminderAttendeeDTO $attendee) => $attendee->phone !== null && $attendee->phone !== '')
+                ?->phone;
+        } catch (Throwable $exception) {
+            $this->logger->warning('Meta Conversions API purchase: phone lookup failed', [
+                'order_id' => $order->getId(),
+                'message' => $exception->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 }
