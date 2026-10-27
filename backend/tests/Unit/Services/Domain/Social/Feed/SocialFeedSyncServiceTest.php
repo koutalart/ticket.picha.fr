@@ -7,6 +7,7 @@ use HiEvents\DomainObjects\Generated\SocialFeedItemDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
 use HiEvents\DomainObjects\SocialCommentDomainObject;
 use HiEvents\DomainObjects\SocialFeedItemDomainObject;
+use HiEvents\DomainObjects\SocialMediaFileDomainObject;
 use HiEvents\DomainObjects\SocialPostDomainObject;
 use HiEvents\DomainObjects\Status\SocialConnectionStatus;
 use HiEvents\Exceptions\MetaGraphApiException;
@@ -15,6 +16,7 @@ use HiEvents\Repository\Interfaces\SocialCommentRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialFeedItemRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
 use HiEvents\Services\Domain\Social\Feed\SocialFeedSyncService;
+use HiEvents\Services\Domain\Social\Media\SocialMediaFileService;
 use HiEvents\Services\Domain\Social\MetaConnectionService;
 use HiEvents\Services\Infrastructure\Meta\MetaGraphClient;
 use Illuminate\Support\Collection;
@@ -34,6 +36,8 @@ class SocialFeedSyncServiceTest extends TestCase
     private SocialPostRepositoryInterface|MockInterface $postRepository;
 
     private MetaConnectionService|MockInterface $connectionService;
+
+    private SocialMediaFileService|MockInterface $mediaFileService;
 
     private SocialFeedSyncService $service;
 
@@ -75,6 +79,7 @@ class SocialFeedSyncServiceTest extends TestCase
         $this->postRepository = Mockery::mock(SocialPostRepositoryInterface::class);
         $this->postRepository->shouldReceive('findFirstWhere')->andReturnNull()->byDefault();
         $this->connectionService = Mockery::mock(MetaConnectionService::class);
+        $this->mediaFileService = Mockery::mock(SocialMediaFileService::class);
 
         $this->service = new SocialFeedSyncService(
             $this->client,
@@ -83,8 +88,50 @@ class SocialFeedSyncServiceTest extends TestCase
             $this->commentRepository,
             $this->postRepository,
             $this->connectionService,
+            $this->mediaFileService,
             new NullLogger,
         );
+        $this->client->shouldReceive('getInstagramStories')->andReturn([])->byDefault();
+    }
+
+    public function test_a_new_story_is_copied_once_and_kept_out_of_the_feed(): void
+    {
+        $this->client->shouldReceive('getInstagramMedia')->andReturn([]);
+        $this->client->shouldReceive('getPagePosts')->andReturn([]);
+        $this->client->shouldReceive('getInstagramStories')->with('1784', 'page-token')->andReturn([
+            ['id' => 'st-1', 'media_type' => 'VIDEO', 'media_url' => 'https://cdn.test/story.mp4', 'timestamp' => '2026-10-27T18:00:00+0000', 'permalink' => 'https://instagram.com/stories/1'],
+            ['id' => 'st-2', 'media_type' => 'IMAGE', 'media_url' => 'https://cdn.test/old.jpg', 'timestamp' => '2026-10-27T10:00:00+0000'],
+        ]);
+        $this->itemRepository->shouldReceive('findFirstWhere')->andReturnUsing(
+            fn (array $where) => $where['external_id'] === 'st-2' ? new SocialFeedItemDomainObject : null,
+        );
+        $this->client->shouldReceive('downloadMedia')->once()->with('https://cdn.test/story.mp4', Mockery::type('string'));
+        $this->mediaFileService->shouldReceive('storeCopy')->once()
+            ->withArgs(fn (int $accountId, int $organizerId, string $path, string $name, $purgeAfter) => $accountId === 3 && $organizerId === 4
+                && $name === 'story-st-1' && $purgeAfter->toDateString() === '2027-01-25')
+            ->andReturn((new SocialMediaFileDomainObject)->setId(41));
+
+        $this->service->syncOrganizer(4);
+
+        $this->assertSame(['st-1'], array_keys($this->items));
+        $this->assertSame('STORY', $this->items['st-1'][SocialFeedItemDomainObjectAbstract::MEDIA_PRODUCT_TYPE]);
+        $this->assertSame([['file_id' => 41, 'type' => 'VIDEO']], $this->items['st-1'][SocialFeedItemDomainObjectAbstract::CHILDREN]);
+    }
+
+    public function test_a_story_that_cannot_be_downloaded_is_skipped_without_stopping_the_sync(): void
+    {
+        $this->client->shouldReceive('getInstagramMedia')->andReturn([]);
+        $this->client->shouldReceive('getPagePosts')->andReturn([]);
+        $this->client->shouldReceive('getInstagramStories')->andReturn([
+            ['id' => 'st-1', 'media_type' => 'IMAGE', 'media_url' => 'https://cdn.test/gone.jpg', 'timestamp' => '2026-10-27T18:00:00+0000'],
+        ]);
+        $this->client->shouldReceive('downloadMedia')->andThrow(new MetaGraphApiException('Media download failed', code: 404));
+        $this->mediaFileService->shouldNotReceive('storeCopy');
+        $this->connectionService->shouldNotReceive('markNeedsReconnect');
+
+        $this->service->syncOrganizer(4);
+
+        $this->assertSame([], $this->items);
     }
 
     public function test_instagram_and_facebook_posts_are_copied_with_their_media(): void

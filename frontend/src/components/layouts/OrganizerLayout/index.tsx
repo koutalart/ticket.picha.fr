@@ -54,35 +54,52 @@ const OrganizerLayout = () => {
 
 
     const isQrCodesPage = /\/(qr-codes|sms)\/?$/.test(location.pathname);
+    const isMessagesSection = /\/manage\/organizer\/[^/]+\/(sms|messages|emails?)(\/|$)/.test(location.pathname);
     const isDashboard = (isActive: boolean) => isActive || /\/manage\/organizer\/[^/]+\/?$/.test(location.pathname);
 
-    const navItems: NavItem[] = [
-        {link: 'dashboard', label: t`Home`, icon: IconHome, isActive: isDashboard},
-        {link: 'events', label: t`Events`, icon: IconCalendar},
-        {
-            link: 'contacts',
-            label: t`Contacts`,
-            icon: IconAddressBook,
-            isActive: (isActive) => isActive || location.pathname.includes('/contacts/'),
-        },
-        {
-            link: 'reports',
-            label: t`Reports`,
-            icon: IconChartBar,
-            isActive: (isActive) => isActive || location.pathname.includes('/report/')
-        },
-        {link: 'qr-codes', label: t`QR codes`, icon: IconQrcode},
-        {link: 'sms', label: t`SMS`, icon: IconMessage, badge: smsUnreadCount ? smsUnreadCount : undefined},
-        {link: 'publications', label: t`Publications`, icon: IconSpeakerphone},
-    ];
+    const homeItem: NavItem = {link: 'dashboard', label: t`Home`, icon: IconHome, isActive: isDashboard};
+    const eventsItem: NavItem = {link: 'events', label: t`Events`, icon: IconCalendar};
+    const contactsItem: NavItem = {
+        link: 'contacts',
+        label: t`Contacts`,
+        icon: IconAddressBook,
+        isActive: (isActive) => isActive || location.pathname.includes('/contacts/'),
+    };
+    const reportsItem: NavItem = {
+        link: 'reports',
+        label: t`Reports`,
+        icon: IconChartBar,
+        isActive: (isActive) => isActive || location.pathname.includes('/report/')
+    };
+    const qrCodesItem: NavItem = {link: 'qr-codes', label: t`QR codes`, icon: IconQrcode};
+    const smsItem: NavItem = {link: 'sms', label: t`SMS`, icon: IconMessage, badge: smsUnreadCount ? smsUnreadCount : undefined};
+    const publicationsItem: NavItem = {link: 'publications', label: t`Publications`, icon: IconSpeakerphone};
 
-
+    const navItems: NavItem[] = [homeItem, eventsItem, contactsItem, reportsItem, qrCodesItem, smsItem, publicationsItem];
 
     const bottomItems: NavItem[] = organizer ? [
         {link: `/events/${organizerId}/${organizer.slug || ''}`, label: t`My organizer page`, icon: IconExternalLink},
         {link: 'organizer-homepage-designer', label: t`Customize my page`, icon: IconPaint},
         {link: 'settings', label: t`Settings`, icon: IconSettings},
     ] : [];
+
+    const mobileTabs: NavItem[] = [
+        homeItem,
+        eventsItem,
+        reportsItem,
+        {
+            ...smsItem,
+            label: t`Messages`,
+            isActive: (isActive) => isActive || isMessagesSection,
+        },
+        {...publicationsItem, label: t`Publication`},
+    ];
+
+    const mobileMoreItems: NavItem[] = [
+        contactsItem,
+        qrCodesItem,
+        ...bottomItems,
+    ];
 
     const callouts: CalloutConfig[] = [
         {
@@ -122,7 +139,8 @@ const OrganizerLayout = () => {
                 onSwitchOrganizer={organizers && organizers.length > 1 ? openSwitchModal : undefined}
                 navItems={navItems}
                 bottomItems={bottomItems}
-                mobileTabs={navItems.filter(item => item.link !== 'publications')}
+                mobileTabs={mobileTabs}
+                mobileMoreItems={mobileMoreItems}
                 headerActions={isQrCodesPage ? undefined : (
                     <Button radius="md" size="md" leftSection={<IconPlus size={18}/>}
                             onClick={() => navigate(`/manage/new-event?organizer=${organizerId}`)}>

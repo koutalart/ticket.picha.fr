@@ -23,6 +23,9 @@ class SocialFeedEntryResource extends BaseResource
             'source' => $item ? ($post ? 'PICHA' : 'NETWORK') : 'PICHA',
             'post' => $post ? (new SocialPostResource($post))->toArray($request) : null,
             'item' => $item ? (new SocialFeedItemResource($item))->toArray($request) : null,
+            'latest_comments' => $this->resource->latestComments
+                ? $this->resource->latestComments->map(fn ($comment) => (new SocialCommentResource($comment))->toArray($request))->values()->all()
+                : [],
         ];
     }
 }

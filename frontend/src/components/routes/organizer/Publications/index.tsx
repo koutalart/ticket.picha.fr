@@ -7,6 +7,7 @@ import {SocialPost, SocialPostStatus} from "../../../../types.ts";
 import {useGetSocialConnection} from "../../../../queries/useGetSocialConnection.ts";
 import {useGetSocialPosts} from "../../../../queries/useGetSocialPosts.ts";
 import {useGetSocialFeed} from "../../../../queries/useGetSocialFeed.ts";
+import {useGetSocialStories} from "../../../../queries/useGetSocialStories.ts";
 import {useGetOrganizer} from "../../../../queries/useGetOrganizer.ts";
 import {useScheduleSocialPost} from "../../../../mutations/useScheduleSocialPost.ts";
 import {useCancelSocialPost} from "../../../../mutations/useCancelSocialPost.ts";
@@ -18,8 +19,9 @@ import {PageBody} from "../../../common/PageBody";
 import {PageTitle} from "../../../common/PageTitle";
 import {PostFormModal} from "./PostFormModal.tsx";
 import {PostCard, PostActions} from "./PostCard.tsx";
-import {FeedView, fromEntry, fromPost} from "./feedView.ts";
+import {FeedView, fromEntry, fromItem, fromPost} from "./feedView.ts";
 import {PostViewer} from "./PostViewer.tsx";
+import {StoriesBar} from "./StoriesBar.tsx";
 import {postTabLabel} from "./labels.ts";
 import classes from "./Publications.module.scss";
 
@@ -33,11 +35,13 @@ const Publications = () => {
     const [page, setPage] = useState(1);
     const [creating, setCreating] = useState(false);
     const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+    const [storyIndex, setStoryIndex] = useState<number | null>(null);
     const [feedLimit, setFeedLimit] = useState(FEED_PAGE);
     const isFeed = status === ALL;
     const {data: organizer} = useGetOrganizer(organizerId);
     const connectionQuery = useGetSocialConnection(organizerId);
     const feedQuery = useGetSocialFeed(organizerId, feedLimit, isFeed);
+    const storiesQuery = useGetSocialStories(organizerId, isFeed);
     const postsQuery = useGetSocialPosts(organizerId, {status: isFeed ? undefined : status as SocialPostStatus, page});
     const pendingQuery = useGetSocialPosts(organizerId, {status: 'PENDING_APPROVAL', page: 1});
     const scheduleMutation = useScheduleSocialPost();
@@ -49,6 +53,8 @@ const Publications = () => {
     const views = useMemo<FeedView[]>(() => isFeed
         ? (feedQuery.data?.data ?? []).map(fromEntry)
         : (postsQuery.data?.data ?? []).map(fromPost), [isFeed, feedQuery.data, postsQuery.data]);
+    const stories = useMemo(() => storiesQuery.data?.data ?? [], [storiesQuery.data]);
+    const storyViews = useMemo<FeedView[]>(() => stories.map(story => fromItem(story)), [stories]);
     const meta = postsQuery.data?.meta;
     const activeQuery = isFeed ? feedQuery : postsQuery;
     const pendingCount = pendingQuery.data?.meta?.total ?? 0;
@@ -141,6 +147,8 @@ const Publications = () => {
                     </Tabs.List>
                 </Tabs>
 
+                {isFeed && <StoriesBar stories={stories} timezone={timezone} onOpen={setStoryIndex}/>}
+
                 {activeQuery.isLoading && <Skeleton height={480} radius="md"/>}
 
                 {activeQuery.isFetched && views.length === 0 && (
@@ -185,6 +193,19 @@ const Publications = () => {
                     actions={actions}
                     onChange={setViewerIndex}
                     onClose={() => setViewerIndex(null)}
+                />
+            )}
+
+            {storyIndex !== null && (
+                <PostViewer
+                    organizerId={organizerId!}
+                    posts={storyViews}
+                    index={storyIndex}
+                    connection={connection}
+                    timezone={timezone}
+                    actions={actions}
+                    onChange={setStoryIndex}
+                    onClose={() => setStoryIndex(null)}
                 />
             )}
 

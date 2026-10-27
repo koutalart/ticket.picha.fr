@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\LiveChat;
 
+use HiEvents\DomainObjects\LiveChatMessageDomainObject;
 use HiEvents\Exceptions\SmsAssistantLimitReachedException;
 use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
 use HiEvents\Services\Domain\LiveChat\DTO\LiveChatRequestDTO;
@@ -109,6 +110,157 @@ class LiveChatReplyGeneratorTest extends TestCase
         $this->generator($claude, $calls)->generate($this->request());
     }
 
+    public function test_model_bubbles_are_kept_in_order_and_cleaned(): void
+    {
+        $reply = $this->generator($this->claudeAnswering([
+            'messages' => ['**Les portes ouvrent à 20h** — pas avant.', 'Tu veux le lien pour ta place ?'],
+            'needs_follow_up' => false,
+            'ask_contact' => false,
+            'reason' => null,
+            'intent' => 'none',
+        ]), $this->calls())->generate($this->request());
+
+        $this->assertSame(['Les portes ouvrent à 20h, pas avant.', 'Tu veux le lien pour ta place ?'], $reply->messages);
+        $this->assertSame("Les portes ouvrent à 20h, pas avant.\nTu veux le lien pour ta place ?", $reply->text());
+    }
+
+    public function test_more_than_three_bubbles_are_merged_into_the_last_one(): void
+    {
+        $this->assertSame(
+            ['Un.', 'Deux.', 'Trois. Quatre.'],
+            LiveChatReplyGenerator::bubbles(['Un.', 'Deux.', '', 'Trois.', 'Quatre.'], null),
+        );
+    }
+
+    public function test_an_older_single_reply_is_split_on_blank_lines_only(): void
+    {
+        $this->assertSame(
+            ['Le DJ commence à 22h.', 'Tu as déjà ta place ?'],
+            LiveChatReplyGenerator::bubbles(null, "Le DJ commence à 22h.\n\nTu as déjà ta place ?"),
+        );
+        $this->assertSame(
+            ["Le DJ commence à 22h.\nOuverture à 20h."],
+            LiveChatReplyGenerator::bubbles(null, "Le DJ commence à 22h.\nOuverture à 20h."),
+        );
+    }
+
+    public function test_heyy_greetings_are_removed(): void
+    {
+        $this->assertSame(
+            ["Bien reçu, je transmets ta demande à l'organisateur."],
+            LiveChatReplyGenerator::bubbles(["Heyy masta ! Bien reçu, je transmets ta demande à l'organisateur."], null),
+        );
+        $this->assertSame(['Tu peux prendre ta place en ligne.'], LiveChatReplyGenerator::bubbles(['Heeyy tu peux prendre ta place en ligne.'], null));
+        $this->assertSame(['Hey, la soirée commence à 20h.'], LiveChatReplyGenerator::bubbles(['Hey, la soirée commence à 20h.'], null));
+    }
+
+    public function test_an_exclamation_already_used_is_not_repeated(): void
+    {
+        $previous = ["Trop bien ! C'est quel type d'événement ?", "Merci, c'est noté."];
+
+        $this->assertSame(
+            ["C'est pour quelle date ?"],
+            LiveChatReplyGenerator::bubbles(["Trop bien ! C'est pour quelle date ?"], null, $previous),
+        );
+        $this->assertSame(
+            ['Merci, il te répond vite.'],
+            LiveChatReplyGenerator::bubbles(['Merci, il te répond vite.'], null, $previous),
+        );
+        $this->assertSame('trop bien', LiveChatReplyGenerator::opening('Trop bien, ça me fait plaisir !'));
+        $this->assertNull(LiveChatReplyGenerator::opening('Le billet est à 25 euros, frais en plus.'));
+    }
+
+    public function test_a_bubble_already_sent_is_not_sent_again(): void
+    {
+        $this->assertSame(
+            ['Laisse-moi ton numéro, il te répond par SMS.'],
+            LiveChatReplyGenerator::bubbles(
+                ["Je transmets à l'organisateur.", 'Laisse-moi ton numéro, il te répond par SMS.'],
+                null,
+                ["Je transmets à l'organisateur."],
+            ),
+        );
+    }
+
+    public function test_context_gives_the_history_the_used_openings_and_the_hand_off(): void
+    {
+        $claude = Mockery::mock(ClaudeStructuredOutputClient::class);
+        $claude->shouldReceive('isConfigured')->andReturn(true);
+        $claude->shouldReceive('askWithUsage')
+            ->once()
+            ->withArgs(function (string $system, array $content, array $schema) {
+                $text = $content[0]['text'];
+
+                return $schema['properties']['messages']['type'] === 'array'
+                    && in_array('messages', $schema['required'], true)
+                    && ! isset($schema['properties']['reply'])
+                    && str_contains($system, 'Tu es Anicka')
+                    && str_contains($system, 'Jamais « Heyy »')
+                    && str_contains($text, "Forme d'adresse : tutoiement")
+                    && str_contains($text, "Demande déjà transmise à l'organisateur : oui")
+                    && str_contains($text, "Message d'accueil déjà affiché par la fenêtre :\nBonjour ! Pose-moi ta question")
+                    && str_contains($text, "Tes débuts de messages déjà employés (ne les réutilise pas) :\nbonjour\ntrop bien")
+                    && str_contains($text, "Visiteur : J'aimerais organiser un anniversaire\nToi : Trop bien ! C'est pour quand ?\nVisiteur : 10 décembre");
+            })
+            ->andReturn(new ClaudeStructuredAnswerDTO(
+                data: ['messages' => ["C'est noté pour le 10 décembre.", "L'organisateur te recontacte pour en parler."], 'needs_follow_up' => true, 'ask_contact' => false, 'reason' => 'Anniversaire privé', 'intent' => 'none'],
+                model: 'claude-haiku-5-5',
+                inputTokens: 10,
+                outputTokens: 5,
+            ));
+
+        $reply = $this->generator($claude, $this->calls())->generate($this->request(
+            contactKnown: true,
+            tutoiement: true,
+            handedOff: true,
+            thread: [
+                ['VISITOR', "J'aimerais organiser un anniversaire"],
+                ['AGENT', "Trop bien ! C'est pour quand ?"],
+                ['VISITOR', '10 décembre'],
+            ],
+        ));
+
+        $this->assertCount(2, $reply->messages);
+        $this->assertTrue($reply->needsFollowUp);
+        $this->assertFalse($reply->askContact);
+    }
+
+    public function test_an_answer_without_any_text_fails(): void
+    {
+        $this->expectException(\HiEvents\Exceptions\SmsAssistantFailedException::class);
+
+        $this->generator($this->claudeAnswering([
+            'messages' => ['', '   '],
+            'needs_follow_up' => false,
+            'ask_contact' => false,
+            'reason' => null,
+            'intent' => 'none',
+        ]), $this->calls())->generate($this->request());
+    }
+
+    private function claudeAnswering(array $data)
+    {
+        $claude = Mockery::mock(ClaudeStructuredOutputClient::class);
+        $claude->shouldReceive('isConfigured')->andReturn(true);
+        $claude->shouldReceive('askWithUsage')->once()->andReturn(new ClaudeStructuredAnswerDTO(
+            data: $data,
+            model: 'claude-haiku-5-5',
+            inputTokens: 10,
+            outputTokens: 5,
+        ));
+
+        return $claude;
+    }
+
+    private function calls()
+    {
+        $calls = Mockery::mock(SmsAssistantCallRepositoryInterface::class);
+        $calls->shouldReceive('countWhere')->andReturn(0);
+        $calls->shouldReceive('create');
+
+        return $calls;
+    }
+
     private function generator($claude, $calls): LiveChatReplyGenerator
     {
         return new LiveChatReplyGenerator(
@@ -119,8 +271,16 @@ class LiveChatReplyGeneratorTest extends TestCase
         );
     }
 
-    private function request(bool $contactKnown = false, bool $refundAvailable = false): LiveChatRequestDTO
-    {
+    /**
+     * @param  list<array{0: string, 1: string}>  $thread
+     */
+    private function request(
+        bool $contactKnown = false,
+        bool $refundAvailable = false,
+        bool $tutoiement = false,
+        bool $handedOff = false,
+        array $thread = [],
+    ): LiveChatRequestDTO {
         return new LiveChatRequestDTO(
             organizerId: 1,
             sessionId: 1,
@@ -128,12 +288,16 @@ class LiveChatReplyGeneratorTest extends TestCase
             organizerName: 'Innocent Event',
             timezone: 'Indian/Mayotte',
             instructions: null,
-            tutoiement: false,
+            tutoiement: $tutoiement,
             contactKnown: $contactKnown,
             currentEventId: null,
-            thread: collect(),
+            thread: collect($thread)->map(fn (array $line) => (new LiveChatMessageDomainObject)
+                ->setAuthorType($line[0])
+                ->setContent($line[1])),
             events: collect(),
             refundAvailable: $refundAvailable,
+            greeting: LiveChatService::greeting($tutoiement),
+            handedOff: $handedOff,
         );
     }
 }

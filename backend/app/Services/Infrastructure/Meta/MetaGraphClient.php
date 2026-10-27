@@ -298,6 +298,38 @@ class MetaGraphClient
     }
 
     /**
+     * Stories of an Instagram professional account still online (Instagram keeps them 24 hours).
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws MetaGraphApiException
+     */
+    public function getInstagramStories(string $instagramAccountId, string $accessToken): array
+    {
+        return $this->get($instagramAccountId.'/stories', $accessToken, [
+            'fields' => 'id,caption,media_type,media_product_type,media_url,thumbnail_url,permalink,timestamp',
+        ])->json('data', []);
+    }
+
+    /**
+     * Copies a media file served by the Meta CDN to a local path.
+     *
+     * @throws MetaGraphApiException
+     */
+    public function downloadMedia(string $url, string $localPath): void
+    {
+        try {
+            $response = Http::timeout(config('services.meta.publishing_timeout_seconds', 60))->sink($localPath)->get($url);
+        } catch (ConnectionException $exception) {
+            throw new MetaGraphApiException($exception->getMessage(), retryable: true, previous: $exception);
+        }
+
+        if ($response->failed()) {
+            throw new MetaGraphApiException('Media download failed', retryable: $response->serverError(), code: $response->status());
+        }
+    }
+
+    /**
      * Top-level comments of an Instagram media, with their replies.
      *
      * @return array<int, array<string, mixed>>

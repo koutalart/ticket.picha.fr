@@ -22,4 +22,12 @@ interface SocialCommentRepositoryInterface extends RepositoryInterface
      * @return Collection<int, SocialCommentDomainObject>
      */
     public function findForFeedItem(int $feedItemId): Collection;
+
+    /**
+     * The most recent top-level comments of each post, newest first, keyed by post.
+     *
+     * @param  int[]  $feedItemIds
+     * @return Collection<int, Collection<int, SocialCommentDomainObject>>
+     */
+    public function findLatestTopLevelForFeedItems(array $feedItemIds, int $perItem): Collection;
 }

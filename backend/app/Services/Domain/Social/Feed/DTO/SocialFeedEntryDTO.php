@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use HiEvents\DataTransferObjects\BaseDataObject;
 use HiEvents\DomainObjects\SocialFeedItemDomainObject;
 use HiEvents\DomainObjects\SocialPostDomainObject;
+use Illuminate\Support\Collection;
 
 /**
  * One entry of the feed: a post prepared in PICHA, a post read on Instagram or Facebook, or both when PICHA published it.
@@ -18,5 +19,6 @@ class SocialFeedEntryDTO extends BaseDataObject
         public readonly Carbon $date,
         public readonly ?SocialPostDomainObject $post = null,
         public readonly ?SocialFeedItemDomainObject $item = null,
+        public readonly ?Collection $latestComments = null,
     ) {}
 }

@@ -15,23 +15,29 @@ use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
 use HiEvents\DomainObjects\SocialFeedItemDomainObject;
 use HiEvents\DomainObjects\SocialPostDomainObject;
 use HiEvents\DomainObjects\Status\SocialConnectionStatus;
+use HiEvents\Exceptions\InvalidSocialMediaFileException;
 use HiEvents\Exceptions\MetaGraphApiException;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialCommentRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialFeedItemRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
+use HiEvents\Services\Domain\Social\Media\SocialMediaFileService;
 use HiEvents\Services\Domain\Social\MetaConnectionService;
 use HiEvents\Services\Infrastructure\Meta\MetaGraphClient;
 use Psr\Log\LoggerInterface;
 
 /**
- * Copies the latest Instagram and Facebook posts of an organizer, and their comments, so the PICHA feed shows them.
+ * Copies the latest Instagram and Facebook posts of an organizer, their comments and the Instagram stories, so PICHA shows them.
  */
 class SocialFeedSyncService
 {
     public const FEED_LIMIT = 25;
 
     public const COMMENTS_FRESH_SECONDS = 30;
+
+    public const STORY_RETENTION_DAYS = 90;
+
+    private const STORY = 'STORY';
 
     public function __construct(
         private readonly MetaGraphClient $client,
@@ -40,6 +46,7 @@ class SocialFeedSyncService
         private readonly SocialCommentRepositoryInterface $commentRepository,
         private readonly SocialPostRepositoryInterface $postRepository,
         private readonly MetaConnectionService $connectionService,
+        private readonly SocialMediaFileService $mediaFileService,
         private readonly LoggerInterface $logger,
     ) {}
 
@@ -71,7 +78,86 @@ class SocialFeedSyncService
             }
         } catch (MetaGraphApiException $exception) {
             $this->handleError($connection, $exception);
+
+            return;
         }
+
+        $this->syncStories($connection);
+    }
+
+    /**
+     * Instagram removes a story after 24 hours: each new one is copied while it is online.
+     */
+    private function syncStories(OrganizerSocialConnectionDomainObject $connection): void
+    {
+        if (! $connection->getInstagramAccountId()) {
+            return;
+        }
+
+        try {
+            $stories = $this->client->getInstagramStories($connection->getInstagramAccountId(), $connection->getPageAccessToken());
+        } catch (MetaGraphApiException $exception) {
+            $this->handleError($connection, $exception);
+
+            return;
+        }
+
+        foreach ($stories as $story) {
+            $this->storeStory($connection, $story);
+        }
+    }
+
+    private function storeStory(OrganizerSocialConnectionDomainObject $connection, array $story): void
+    {
+        $externalId = (string) $story['id'];
+
+        /** @var SocialFeedItemDomainObject|null $existing */
+        $existing = $this->feedItemRepository->findFirstWhere([
+            SocialFeedItemDomainObjectAbstract::ORGANIZER_ID => $connection->getOrganizerId(),
+            SocialFeedItemDomainObjectAbstract::NETWORK => SocialNetwork::INSTAGRAM->name,
+            SocialFeedItemDomainObjectAbstract::EXTERNAL_ID => $externalId,
+        ]);
+
+        if ($existing !== null || empty($story['media_url'])) {
+            return;
+        }
+
+        $publishedAt = $this->date($story['timestamp'] ?? null) ?? Carbon::now();
+        $type = ($story['media_type'] ?? 'IMAGE') === 'VIDEO' ? SocialMediaType::VIDEO : SocialMediaType::IMAGE;
+        $localPath = tempnam(sys_get_temp_dir(), 'story');
+
+        try {
+            $this->client->downloadMedia((string) $story['media_url'], $localPath);
+            $file = $this->mediaFileService->storeCopy(
+                $connection->getAccountId(),
+                $connection->getOrganizerId(),
+                $localPath,
+                'story-'.$externalId,
+                $publishedAt->copy()->addDays(self::STORY_RETENTION_DAYS),
+            );
+        } catch (MetaGraphApiException|InvalidSocialMediaFileException $exception) {
+            $this->logger->warning('Instagram story could not be copied', [
+                'organizer_id' => $connection->getOrganizerId(),
+                'story_id' => $externalId,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return;
+        } finally {
+            if (is_file($localPath)) {
+                unlink($localPath);
+            }
+        }
+
+        $this->feedItemRepository->upsertFromNetwork($connection->getOrganizerId(), SocialNetwork::INSTAGRAM->name, $externalId, [
+            SocialFeedItemDomainObjectAbstract::ACCOUNT_ID => $connection->getAccountId(),
+            SocialFeedItemDomainObjectAbstract::MEDIA_TYPE => $type->name,
+            SocialFeedItemDomainObjectAbstract::MEDIA_PRODUCT_TYPE => self::STORY,
+            SocialFeedItemDomainObjectAbstract::CAPTION => $story['caption'] ?? null,
+            SocialFeedItemDomainObjectAbstract::CHILDREN => [['file_id' => $file->getId(), 'type' => $type->name]],
+            SocialFeedItemDomainObjectAbstract::PERMALINK => $story['permalink'] ?? null,
+            SocialFeedItemDomainObjectAbstract::PUBLISHED_AT => $publishedAt,
+        ]);
     }
 
     /**

@@ -28,7 +28,8 @@ export type ConfigKeys =
     | 'VITE_COOKIE_CONSENT_TEXT'
     | 'VITE_SHOP_URL'
     | 'VITE_LANDING_VIDEO_URL'
-    | 'VITE_LANDING_VIDEO_POSTER';
+    | 'VITE_LANDING_VIDEO_POSTER'
+    | 'VITE_FACEBOOK_APP_ID';
 
 export enum StripePlatform {
     Canada = 'ca',
@@ -1895,6 +1896,7 @@ export interface SocialFeedEntry {
     source: 'PICHA' | 'NETWORK';
     post: SocialPost | null;
     item: SocialFeedItem | null;
+    latest_comments: SocialComment[];
 }
 
 export interface SocialComment {

@@ -59,8 +59,11 @@ import {useRegisteredOnDevice} from "../../../hooks/useRegisteredOnDevice.ts";
 import {AlreadyRegisteredLink, AttendanceAccessModal, RegisteredNotice} from "./AttendanceAccess";
 import {alignTicketsOnArrival, scrollToTicketsSection} from "../../../utilites/ticketsAnchor.ts";
 import {useGetLiveChatConfig} from "../../../queries/useGetLiveChatConfig.ts";
+import {Helmet} from "react-helmet-async";
 
 const VIDEO_PAUSE_PROGRESS = 0.6;
+// React 18 has no fetchPriority prop: passed as a plain attribute.
+const HIGH_FETCH_PRIORITY = {fetchpriority: 'high'} as Record<string, string>;
 
 interface EventHomepageProps {
     event?: Event;
@@ -359,6 +362,11 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                 />
 
                 {event && <EventDocumentHead event={event}/>}
+                {coverImage && (
+                    <Helmet>
+                        <link rel="preload" as="image" href={coverImage} {...HIGH_FETCH_PRIORITY}/>
+                    </Helmet>
+                )}
 
                 {attendanceEnabled && attendanceAccessMounted && (
                     <AttendanceAccessModal
@@ -411,7 +419,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     preload="metadata"
                                 />
                             ) : coverImage ? (
-                                <img src={coverImage} alt="" aria-hidden="true" className={classes.fullscreenMedia}/>
+                                <img src={coverImage} alt="" aria-hidden="true" className={classes.fullscreenMedia}
+                                     {...HIGH_FETCH_PRIORITY}/>
                             ) : null}
                             <div className={classes.fullscreenVeil}/>
                             <div className={classes.fullscreenTopBar}>
@@ -561,6 +570,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                     src={coverImage}
                                                     alt={event.title}
                                                     className={classes.coverImage}
+                                                    {...HIGH_FETCH_PRIORITY}
                                                 />
                                             ) : null}
                                             <div className={classes.heroGradient}/>
@@ -767,6 +777,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                     src={organizerLogo}
                                                     alt={organizer.name}
                                                     className={classes.organizerAvatar}
+                                                    loading="lazy"
                                                 />
                                             ) : (
                                                 <div className={classes.organizerAvatarPlaceholder}>

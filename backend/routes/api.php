@@ -6,6 +6,7 @@ use HiEvents\Http\Actions\Social\GetSocialCommentsAction;
 use HiEvents\Http\Actions\Social\GetSocialFeedAction;
 use HiEvents\Http\Actions\Social\GetSocialMediaActionPublic;
 use HiEvents\Http\Actions\Social\GetSocialMediaContentAction;
+use HiEvents\Http\Actions\Social\GetSocialStoriesAction;
 use HiEvents\Http\Actions\Social\ReceiveMetaWebhookActionPublic;
 use HiEvents\Http\Actions\Social\ReplyToSocialCommentAction;
 use HiEvents\Http\Actions\Social\StartSocialMediaUploadAction;
@@ -586,6 +587,7 @@ $router->middleware(['auth:api'])->group(
         $router->get('/organizers/{organizer_id}/social/media/{file_id}/content', GetSocialMediaContentAction::class)
             ->where('file_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/social/feed', GetSocialFeedAction::class);
+        $router->get('/organizers/{organizer_id}/social/stories', GetSocialStoriesAction::class);
         $router->get('/organizers/{organizer_id}/social/feed-items/{feed_item_id}/comments', GetSocialCommentsAction::class)
             ->where('feed_item_id', '[0-9]+');
         $router->post('/organizers/{organizer_id}/social/comments/{comment_id}/suggest-reply', SuggestSocialCommentReplyAction::class)
