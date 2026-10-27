@@ -17,7 +17,7 @@ import {downloadBinary} from "../../../utilites/download.ts";
 import {withLoadingNotification} from "../../../utilites/withLoadingNotification.tsx";
 import {useAbandonOrderPublic} from "../../../mutations/useAbandonOrderPublic.ts";
 import {showError, showInfo} from "../../../utilites/notifications.tsx";
-import {isDateInFuture} from "../../../utilites/dates.ts";
+import {isDateInFuture, parseUtcTimestamp} from "../../../utilites/dates.ts";
 import {detectMode} from "../../../utilites/themeUtils.ts";
 import {CheckoutThemeProvider} from "./CheckoutThemeProvider.tsx";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
@@ -62,6 +62,8 @@ const Checkout = () => {
         return 'details';
     };
     const currentStep = getCurrentStep();
+
+    const hasValidReservationDeadline = parseUtcTimestamp(order?.reserved_until) !== null;
 
     const isOrderReservedAndNotExpired = orderIsReserved && order?.reserved_until
         && isDateInFuture(order.reserved_until);
@@ -180,6 +182,7 @@ const Checkout = () => {
                 eventName: 'InitiateCheckout',
                 contentName: event.title,
                 contentId: event.id,
+                eventId: order?.short_id ? `checkout_${order.short_id}` : undefined,
             });
         }
     }, [event?.id, orderIsReserved, consentGranted]);
@@ -261,7 +264,7 @@ const Checkout = () => {
                                         </span>
                                     )}
 
-                                    {orderIsReserved && (
+                                    {orderIsReserved && hasValidReservationDeadline && (
                                         <Group gap="5px" className={classes.timerGroup}>
                                             <span className={classes.timerLabel}>
                                                 {t`Time left:`}

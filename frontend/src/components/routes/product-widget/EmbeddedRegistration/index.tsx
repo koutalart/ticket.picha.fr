@@ -502,11 +502,6 @@ export const EmbeddedRegistration = ({
             if (!EMAIL_PATTERN.test(order.email.trim())) {
                 errors['order.email'] = t`A valid email is required`;
             }
-            if (!order.email_confirmation.trim()) {
-                errors['order.email_confirmation'] = t`Please confirm your email address`;
-            } else if (order.email_confirmation.trim() !== order.email.trim()) {
-                errors['order.email_confirmation'] = t`Email addresses do not match`;
-            }
         }
 
         [...current.questionIndexes, ...current.consentIndexes].forEach(index =>
@@ -1233,15 +1228,6 @@ export const EmbeddedRegistration = ({
                                 {...form.getInputProps('order.email')}
                                 type="email"
                                 label={t`Email Address`}
-                                withAsterisk
-                                autoComplete="email"
-                                inputMode="email"
-                                classNames={fieldClassNames}
-                            />
-                            <TextInput
-                                {...form.getInputProps('order.email_confirmation')}
-                                type="email"
-                                label={t`Confirm Email Address`}
                                 withAsterisk
                                 autoComplete="email"
                                 inputMode="email"

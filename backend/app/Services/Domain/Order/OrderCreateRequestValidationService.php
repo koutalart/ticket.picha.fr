@@ -16,6 +16,7 @@ use HiEvents\Helper\Currency;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
+use HiEvents\Services\Domain\Order\RefundProtection\OrderRefundProtectionService;
 use HiEvents\Services\Domain\Product\AvailableProductQuantitiesFetchService;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesDTO;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesResponseDTO;
@@ -177,6 +178,8 @@ class OrderCreateRequestValidationService
      * A required product that cannot currently be bought online (hidden, paused,
      * locked, promo code only, outside its sale dates, sold out) is skipped so it
      * never blocks a sale. Not applied when the event allows a single product per order.
+     * A required cancellation protection is not checked here: it is added by the server
+     * after the order lines are saved (OrderRefundProtectionService).
      *
      * @throws ValidationException
      */
@@ -206,7 +209,8 @@ class OrderCreateRequestValidationService
             ->findWhere([
                 ProductDomainObjectAbstract::EVENT_ID => $event->getId(),
                 ProductDomainObjectAbstract::IS_REQUIRED => true,
-            ]);
+            ])
+            ->reject(fn (ProductDomainObject $product) => OrderRefundProtectionService::isCheckoutRefundProtection($product));
 
         if ($requiredProducts->isEmpty()) {
             return;

@@ -14,11 +14,14 @@ use HiEvents\DomainObjects\SocialPostDomainObject;
 use HiEvents\DomainObjects\Status\SocialConnectionStatus;
 use HiEvents\DomainObjects\Status\SocialPostStatus;
 use HiEvents\Exceptions\MetaGraphApiException;
+use HiEvents\Exceptions\SocialMediaFileNotFoundException;
 use HiEvents\Exceptions\SocialPublishingLimitReachedException;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
 use HiEvents\Services\Domain\Social\DTO\SocialMediaItemDTO;
 use HiEvents\Services\Domain\Social\DTO\SocialPublishResultDTO;
+use HiEvents\Services\Domain\Social\Media\SocialMediaFileService;
+use HiEvents\Services\Domain\Social\Media\SocialMediaUrlGenerator;
 use HiEvents\Services\Infrastructure\Meta\MetaGraphClient;
 use Psr\Log\LoggerInterface;
 
@@ -39,6 +42,8 @@ class SocialPublishingService
         private readonly MetaConnectionService $connectionService,
         private readonly SocialPostService $postService,
         private readonly LoggerInterface $logger,
+        private readonly SocialMediaFileService $mediaFileService,
+        private readonly SocialMediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     public function publish(int $postId): SocialPublishResultDTO
@@ -63,6 +68,8 @@ class SocialPublishingService
             return SocialNetwork::fromName($post->getNetwork()) === SocialNetwork::INSTAGRAM
                 ? $this->publishToInstagram($post, $connection)
                 : $this->publishToFacebook($post, $connection);
+        } catch (SocialMediaFileNotFoundException) {
+            return $this->fail($post, __('An imported media is no longer available. Import it again.'));
         } catch (SocialPublishingLimitReachedException $exception) {
             return $this->reschedule($post, Carbon::now()->addMinutes(self::PUBLISHING_LIMIT_DELAY_MINUTES), $exception->getMessage(), countAttempt: false);
         } catch (MetaGraphApiException $exception) {
@@ -111,7 +118,7 @@ class SocialPublishingService
      */
     private function createInstagramContainer(SocialPostDomainObject $post, string $instagramId, string $token): string
     {
-        $media = $this->postService->mediaFromPost($post);
+        $media = $this->resolvedMedia($post);
         $caption = $post->getCaption();
         $first = $media[0] ?? null;
 
@@ -158,7 +165,7 @@ class SocialPublishingService
     {
         $token = $connection->getPageAccessToken();
         $pageId = $connection->getFacebookPageId();
-        $media = $this->postService->mediaFromPost($post);
+        $media = $this->resolvedMedia($post);
         $caption = $post->getCaption();
         $first = $media[0] ?? null;
 
@@ -183,6 +190,29 @@ class SocialPublishingService
         };
 
         return $this->markPublished($post, $postId, $this->safePermalink($postId, $token, 'permalink_url'));
+    }
+
+    /**
+     * Imported files are given to Meta through a signed URL valid long enough for a retried or delayed publication.
+     *
+     * @return SocialMediaItemDTO[]
+     *
+     * @throws SocialMediaFileNotFoundException
+     */
+    private function resolvedMedia(SocialPostDomainObject $post): array
+    {
+        return array_map(function (SocialMediaItemDTO $item) use ($post) {
+            if (! $item->isFile()) {
+                return $item;
+            }
+
+            $file = $this->mediaFileService->findReady($post->getOrganizerId(), (int) $item->fileId);
+
+            return $item->withUrl($this->mediaUrlGenerator->publicUrl(
+                $file,
+                Carbon::now()->addHours(SocialMediaUrlGenerator::PUBLISHING_VALIDITY_HOURS),
+            ));
+        }, $this->postService->mediaFromPost($post));
     }
 
     private function handleGraphError(
@@ -248,6 +278,11 @@ class SocialPublishingService
             SocialPostDomainObjectAbstract::NEXT_ATTEMPT_AT => null,
             SocialPostDomainObjectAbstract::LAST_ERROR => null,
         ]);
+
+        $this->mediaFileService->purgeAfterDays(
+            $this->postService->fileIds($this->postService->mediaFromPost($post)),
+            SocialMediaFileService::PUBLISHED_RETENTION_DAYS,
+        );
 
         return new SocialPublishResultDTO(SocialPostStatus::PUBLISHED);
     }

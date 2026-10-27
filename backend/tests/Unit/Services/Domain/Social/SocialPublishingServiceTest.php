@@ -6,12 +6,17 @@ use HiEvents\DomainObjects\Enums\SocialNetwork;
 use HiEvents\DomainObjects\Enums\SocialPostFormat;
 use HiEvents\DomainObjects\Generated\SocialPostDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
+use HiEvents\DomainObjects\SocialMediaFileDomainObject;
 use HiEvents\DomainObjects\SocialPostDomainObject;
 use HiEvents\DomainObjects\Status\SocialConnectionStatus;
 use HiEvents\DomainObjects\Status\SocialPostStatus;
 use HiEvents\Exceptions\MetaGraphApiException;
+use HiEvents\Exceptions\SocialMediaFileNotFoundException;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
+use HiEvents\Services\Domain\Social\Media\SocialMediaFileService;
+use HiEvents\Services\Domain\Social\Media\SocialMediaRules;
+use HiEvents\Services\Domain\Social\Media\SocialMediaUrlGenerator;
 use HiEvents\Services\Domain\Social\MetaConnectionService;
 use HiEvents\Services\Domain\Social\SocialPostService;
 use HiEvents\Services\Domain\Social\SocialPostValidator;
@@ -38,6 +43,8 @@ class SocialPublishingServiceTest extends TestCase
 
     private MetaConnectionService|MockInterface $connectionService;
 
+    private SocialMediaFileService|MockInterface $mediaFileService;
+
     private SocialPublishingService $service;
 
     /** @var array<int, array> */
@@ -51,6 +58,8 @@ class SocialPublishingServiceTest extends TestCase
         $this->postRepository = Mockery::mock(SocialPostRepositoryInterface::class);
         $this->connectionRepository = Mockery::mock(OrganizerSocialConnectionRepositoryInterface::class);
         $this->connectionService = Mockery::mock(MetaConnectionService::class);
+        $this->mediaFileService = Mockery::mock(SocialMediaFileService::class);
+        $this->mediaFileService->shouldReceive('purgeAfterDays')->byDefault();
 
         $this->postRepository->shouldReceive('updateFromArray')
             ->andReturnUsing(function (int $id, array $attributes) {
@@ -64,8 +73,10 @@ class SocialPublishingServiceTest extends TestCase
             $this->postRepository,
             $this->connectionRepository,
             $this->connectionService,
-            new SocialPostService($this->postRepository, $this->connectionService, new SocialPostValidator, app('db')),
+            new SocialPostService($this->postRepository, $this->connectionService, new SocialPostValidator(new SocialMediaRules), app('db'), $this->mediaFileService),
             new NullLogger,
+            $this->mediaFileService,
+            app(SocialMediaUrlGenerator::class),
         );
     }
 
@@ -87,6 +98,34 @@ class SocialPublishingServiceTest extends TestCase
             SocialPostDomainObjectAbstract::EXTERNAL_ID => 'media-1',
             SocialPostDomainObjectAbstract::PERMALINK => 'https://www.instagram.com/p/abc/',
         ]);
+    }
+
+    public function test_imported_file_is_given_to_meta_through_a_signed_url(): void
+    {
+        config(['app.api_url' => 'https://ticket.example.test/api']);
+        $this->givenPost(SocialNetwork::INSTAGRAM, SocialPostFormat::IMAGE, [['file_id' => 42, 'type' => 'IMAGE']]);
+        $this->mediaFileService->shouldReceive('findReady')->with(4, 42)->andReturn(
+            (new SocialMediaFileDomainObject)->setId(42)->setOrganizerId(4)->setMimeType('image/jpeg'),
+        );
+        $this->mediaFileService->shouldReceive('purgeAfterDays')->once()->with([42], SocialMediaFileService::PUBLISHED_RETENTION_DAYS);
+        $this->client->shouldReceive('getInstagramPublishingQuota')->andReturn(null);
+        $this->client->shouldReceive('createInstagramContainer')->once()
+            ->withArgs(fn (string $igId, string $token, array $params) => str_starts_with($params['image_url'], 'https://ticket.example.test/api/public/social/media/42/media-42.jpg?expires='))
+            ->andReturn('container-9');
+        $this->client->shouldReceive('getInstagramContainerStatus')->andReturn('FINISHED');
+        $this->client->shouldReceive('publishInstagramContainer')->andReturn('media-9');
+        $this->client->shouldReceive('getPermalink')->andReturn(null);
+
+        $this->assertSame(SocialPostStatus::PUBLISHED, $this->service->publish(1)->status);
+    }
+
+    public function test_missing_imported_file_fails_the_post(): void
+    {
+        $this->givenPost(SocialNetwork::FACEBOOK, SocialPostFormat::IMAGE, [['file_id' => 42, 'type' => 'IMAGE']]);
+        $this->mediaFileService->shouldReceive('findReady')->andThrow(new SocialMediaFileNotFoundException('missing'));
+        $this->client->shouldNotReceive('publishPagePhoto');
+
+        $this->assertSame(SocialPostStatus::FAILED, $this->service->publish(1)->status);
     }
 
     public function test_instagram_reel_waits_while_the_video_is_processed(): void

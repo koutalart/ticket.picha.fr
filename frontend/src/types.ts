@@ -636,6 +636,7 @@ export interface OrganizerSettings {
     meta_conversions_api_configured?: boolean;
     meta_test_event_code?: string | null;
     meta_conversions_api_token?: string | null;
+    meta_capi_send_without_consent?: boolean;
     email_sender_name?: string | null;
     customer_address_form?: CustomerAddressForm;
 }
@@ -1026,6 +1027,21 @@ export interface OrderItem {
     price: number;
     quantity: number;
     total_gross?: number;
+}
+
+export interface RefundProtectionOffer {
+    product_id: number;
+    title: string;
+    description: string | null;
+    quantity: number;
+    is_per_ticket: boolean;
+    total_before_additions: number;
+    total_tax: number;
+    total_fee: number;
+    total_gross: number;
+    currency: string;
+    is_selected: boolean;
+    is_locked: boolean;
 }
 
 export interface StripePaymentIntent {
@@ -1789,6 +1805,7 @@ export interface SocialConnection {
     instagram_account_id: string | null;
     instagram_username: string | null;
     granted_scopes: string[];
+    missing_scopes: string[];
     user_access_token_expires_at: string | null;
     last_error: string | null;
     last_error_at: string | null;
@@ -1806,6 +1823,8 @@ export interface MetaPage {
 export interface SocialMediaItem {
     url: string;
     type: SocialMediaType;
+    file_id?: number;
+    thumbnail_url?: string | null;
 }
 
 export interface SocialPost {
@@ -1829,4 +1848,60 @@ export interface SocialPost {
     approved_at: string | null;
     created_at: string;
     updated_at: string;
+}
+
+export type SocialMediaFileStatus = 'UPLOADING' | 'READY';
+
+export interface SocialMediaFile {
+    id: number;
+    status: SocialMediaFileStatus;
+    media_type: SocialMediaType;
+    mime_type: string;
+    original_name: string;
+    size_bytes: number;
+    received_bytes: number;
+    chunk_size: number;
+    width: number | null;
+    height: number | null;
+    duration_ms: number | null;
+    video_codec: string | null;
+    audio_codec: string | null;
+    preview_url: string | null;
+}
+
+export type SocialFeedItemFormat = SocialPostFormat | 'VIDEO';
+
+export interface SocialFeedItem {
+    id: number;
+    network: SocialNetwork;
+    format: SocialFeedItemFormat;
+    caption: string | null;
+    media: SocialMediaItem[];
+    permalink: string | null;
+    published_at: string | null;
+    like_count: number;
+    comments_count: number;
+    social_post_id: number | null;
+}
+
+export interface SocialFeedEntry {
+    key: string;
+    date: string;
+    source: 'PICHA' | 'NETWORK';
+    post: SocialPost | null;
+    item: SocialFeedItem | null;
+}
+
+export interface SocialComment {
+    id: number;
+    feed_item_id: number;
+    network: SocialNetwork;
+    thread_key: string;
+    is_reply: boolean;
+    author_name: string | null;
+    message: string | null;
+    like_count: number;
+    is_from_page: boolean;
+    replied_by_user_id: number | null;
+    commented_at: string | null;
 }

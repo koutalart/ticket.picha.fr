@@ -45,6 +45,7 @@ import {getSessionIdentifier} from "../../../../utilites/sessionIdentifier.ts";
 import {Constants} from "../../../../constants.ts";
 import {applyRequiredProducts, isEnforceableRequiredProduct, isRequiredPerTicket} from "../../../../utilites/requiredProducts.ts";
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
+import {withoutCheckoutRefundProtection} from "../../../../utilites/refundProtection.ts";
 import {customDomainOrigin} from "../../../../utilites/urlHelper.ts";
 
 const AFFILIATE_EXPIRY_DAYS = 30;
@@ -219,7 +220,10 @@ const SelectProducts = (props: SelectProductsProps) => {
         },
     });
 
-    const productCategories = event?.product_categories || [];
+    const productCategories = useMemo(
+        () => withoutCheckoutRefundProtection(event?.product_categories || []),
+        [event?.product_categories]
+    );
     const [searchParams] = useSearchParams();
     const requestedCategory = PRODUCT_CATEGORY_QUERY_PARAMS.map(param => searchParams.get(param)).find(Boolean);
     const visibleCategories = filterProductCategories(productCategories, requestedCategory);

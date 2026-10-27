@@ -122,6 +122,51 @@ class LiveChatRefundAmountCalculatorTest extends TestCase
         $this->assertSame(45.00, $this->calculator->total($this->calculator->select($coverage, [1001, 1002, 1003])));
     }
 
+    public function test_optional_protection_ticked_before_payment_covers_the_whole_order(): void
+    {
+        $products = $this->products();
+        $products->get(self::OPTION)
+            ->setIsRequired(false)
+            ->setRequiredQuantityMode(RequiredQuantityMode::PER_ORDER->name);
+
+        $coverage = $this->calculator->coverage(
+            collect([
+                $this->item(10, self::TICKET, 101, price: 15.00, quantity: 2),
+                $this->item(11, self::OPTION, 102, price: 0.49, quantity: 1),
+            ]),
+            $products,
+            collect([
+                $this->attendee(1001, self::TICKET, 101),
+                $this->attendee(1002, self::TICKET, 101),
+            ]),
+        );
+
+        $this->assertSame(2, $coverage->maxTickets);
+    }
+
+    public function test_optional_protection_sold_as_a_ticket_still_covers_its_quantity(): void
+    {
+        $products = $this->products();
+        $products->get(self::OPTION)
+            ->setIsRequired(false)
+            ->setProductType(ProductType::TICKET->name)
+            ->setRequiredQuantityMode(RequiredQuantityMode::PER_ORDER->name);
+
+        $coverage = $this->calculator->coverage(
+            collect([
+                $this->item(10, self::TICKET, 101, price: 15.00, quantity: 2),
+                $this->item(11, self::OPTION, 102, price: 0.49, quantity: 1),
+            ]),
+            $products,
+            collect([
+                $this->attendee(1001, self::TICKET, 101),
+                $this->attendee(1002, self::TICKET, 101),
+            ]),
+        );
+
+        $this->assertSame(1, $coverage->maxTickets);
+    }
+
     public function test_order_without_protection_is_not_covered(): void
     {
         $coverage = $this->calculator->coverage(

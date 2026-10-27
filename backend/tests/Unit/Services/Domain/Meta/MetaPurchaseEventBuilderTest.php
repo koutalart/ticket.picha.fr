@@ -59,6 +59,41 @@ class MetaPurchaseEventBuilderTest extends TestCase
         $this->assertSame('o_abc123', $payload['custom_data']['order_id']);
     }
 
+    public function test_adds_phone_and_rebuilds_fbc_from_fbclid(): void
+    {
+        $order = (new OrderDomainObject)
+            ->setShortId('o_y')
+            ->setEmail('a@b.fr')
+            ->setCurrency('EUR')
+            ->setTotalGross(10)
+            ->setTrackingContext(['consent' => true, 'fbclid' => 'IwAR_click']);
+
+        $payload = (new MetaPurchaseEventBuilder(new MetaUserDataHasher))
+            ->build($order, (new EventDomainObject)->setId(1)->setTitle('Gala'), '+262 639 25 02 06');
+
+        $this->assertSame([hash('sha256', '262639250206')], $payload['user_data']['ph']);
+        $this->assertMatchesRegularExpression('/^fb\.1\.\d{13}\.IwAR_click$/', $payload['user_data']['fbc']);
+    }
+
+    public function test_ignores_advertising_identifiers_without_consent(): void
+    {
+        $order = (new OrderDomainObject)
+            ->setShortId('o_z')
+            ->setEmail('a@b.fr')
+            ->setCurrency('EUR')
+            ->setTotalGross(10)
+            ->setTrackingContext([
+                'consent' => false,
+                'fbp' => 'fb.1.1700000000000.1',
+                'client_ip_address' => '1.2.3.4',
+            ]);
+
+        $payload = (new MetaPurchaseEventBuilder(new MetaUserDataHasher))
+            ->build($order, (new EventDomainObject)->setId(1)->setTitle('Gala'));
+
+        $this->assertSame(['em'], array_keys($payload['user_data']));
+    }
+
     public function test_omits_missing_user_data(): void
     {
         $order = (new OrderDomainObject)

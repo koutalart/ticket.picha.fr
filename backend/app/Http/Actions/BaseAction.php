@@ -158,6 +158,11 @@ abstract class BaseAction extends Controller
         return Response::make($xmlContent, $statusCode, $allHeaders);
     }
 
+    protected function textResponse(string $content, int $statusCode = ResponseCodes::HTTP_OK): LaravelResponse
+    {
+        return new LaravelResponse($content, $statusCode, ['Content-Type' => 'text/plain; charset=UTF-8']);
+    }
+
     protected function redirectResponse(string $url): RedirectResponse
     {
         return new RedirectResponse($url);

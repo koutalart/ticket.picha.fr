@@ -138,6 +138,7 @@ class PartialUpdateOrganizerSettingsRequest extends BaseRequest
             'tracking_consent_acknowledged' => ['sometimes', 'nullable', 'boolean'],
             'meta_conversions_api_token' => ['sometimes', 'nullable', 'string', 'min:20', 'max:1024', 'regex:/^[A-Za-z0-9_\-]+$/'],
             'meta_test_event_code' => ['sometimes', 'nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9_\-]+$/'],
+            'meta_capi_send_without_consent' => ['sometimes', 'boolean'],
 
             'email_sender_name' => [
                 'sometimes',

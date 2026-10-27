@@ -2,17 +2,15 @@ import {useRef, useState} from "react";
 import {t} from "@lingui/macro";
 import {IconAlignLeft, IconChevronLeft, IconChevronRight} from "@tabler/icons-react";
 import classNames from "classnames";
-import {SocialPost} from "../../../../types.ts";
+import {FeedView, isVertical} from "./feedView.ts";
 import {MediaPreview} from "./MediaPreview.tsx";
 import classes from "./Publications.module.scss";
 
 interface PostMediaProps {
-    post: SocialPost;
+    post: FeedView;
     onOpen?: () => void;
     fullscreen?: boolean;
 }
-
-export const isVertical = (post: SocialPost): boolean => post.format === 'REEL' || post.format === 'STORY';
 
 export const PostMedia = ({post, onOpen, fullscreen = false}: PostMediaProps) => {
     const trackRef = useRef<HTMLDivElement>(null);

@@ -2,6 +2,7 @@ import {useEffect, useMemo, useState, useRef} from 'react';
 import {TrackingPixelConfig} from '../types';
 import {initializeTrackingPixels, trackPageView, cleanup} from '../utilites/trackingPixels';
 import {CONSENT_CHANGE_EVENT, getConsentState, initGoogleConsentMode} from '../utilites/trackingPixels/consent';
+import {getPageViewEventId} from '../utilites/trackingPixels/metaServerEvents';
 
 interface UseOrganizerTrackingPixelsReturn {
     consentGranted: boolean;
@@ -52,7 +53,7 @@ export function useOrganizerTrackingPixels(
 
         // Delay pageview to allow vendor scripts to load asynchronously
         const timer = setTimeout(() => {
-            trackPageView();
+            trackPageView({eventId: getPageViewEventId()});
         }, 100);
 
         return () => {
