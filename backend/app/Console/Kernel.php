@@ -2,7 +2,9 @@
 
 namespace HiEvents\Console;
 
+use HiEvents\Console\Commands\ProcessLiveChatQuestionsCommand;
 use HiEvents\Console\Commands\ProcessRefundApprovalsCommand;
+use HiEvents\Console\Commands\SnapshotLiveChatEventsCommand;
 use HiEvents\Console\Commands\PurgeLiveChatsCommand;
 use HiEvents\Console\Commands\SendEventDailyReportsCommand;
 use HiEvents\Console\Commands\SendOrganizerNudgesCommand;
@@ -35,6 +37,8 @@ class Kernel extends ConsoleKernel
         $schedule->command(SendEventDailyReportsCommand::class)->everyMinute()->withoutOverlapping(5);
         $schedule->command(SendOrganizerNudgesCommand::class)->everyFifteenMinutes()->withoutOverlapping(10);
         $schedule->command(ProcessRefundApprovalsCommand::class)->everyMinute()->withoutOverlapping(5);
+        $schedule->command(ProcessLiveChatQuestionsCommand::class)->everyMinute()->withoutOverlapping(5);
+        $schedule->command(SnapshotLiveChatEventsCommand::class)->everyTenMinutes()->withoutOverlapping(10);
         $schedule->command('contacts:sync')->dailyAt('03:30')->withoutOverlapping();
         $schedule->command(PurgeLiveChatsCommand::class)->dailyAt('03:45')->withoutOverlapping();
         $schedule->command(PurgeOrganizerCalendarConsultationsCommand::class)->dailyAt('03:50')->withoutOverlapping();

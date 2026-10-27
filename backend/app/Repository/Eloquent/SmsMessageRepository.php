@@ -215,4 +215,17 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->where('sms_messages.id', '>', $afterMessageId)
             ->exists();
     }
+
+    public function hasInboundFromPhoneSince(int $organizerId, string $phone, string $since, int $exceptMessageId): bool
+    {
+        return SmsMessage::query()
+            ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
+            ->where('sms_messages.organizer_id', $organizerId)
+            ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
+            ->where('sms_conversations.phone', $phone)
+            ->where('sms_messages.direction', SmsMessageDirection::INBOUND->name)
+            ->where('sms_messages.created_at', '>=', $since)
+            ->where('sms_messages.id', '!=', $exceptMessageId)
+            ->exists();
+    }
 }

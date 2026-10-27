@@ -15,6 +15,7 @@ use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Services\Application\Handlers\LiveChat\Approval\DecideLiveChatRefundHandler;
 use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
+use HiEvents\Services\Domain\LiveChat\Question\LiveChatQuestionService;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
@@ -65,6 +66,7 @@ class HandleHttpSmsWebhookHandler
         private readonly LoggerInterface $logger,
         private readonly SmsTeamInboundService $teamInboundService,
         private readonly DecideLiveChatRefundHandler $refundDecisionHandler,
+        private readonly LiveChatQuestionService $questionService,
     ) {}
 
     /**
@@ -165,12 +167,21 @@ class HandleHttpSmsWebhookHandler
                         return;
                     }
 
+                    // An answer to a chat question goes to the visitor: never to the customer assistant nor the organizer assistant.
+                    if ($this->questionService->handleTeamSms($teamRoute->settings, $message, $sms->contact)) {
+                        return;
+                    }
+
                     if (! $this->teamInboundService->organizerAssistantActiveFor($teamRoute->settings)) {
                         $this->alertService->notifyInbound($teamRoute->settings, $message);
                     }
                     $this->teamInboundService->afterInbound($teamRoute, $message);
                 }
 
+                return;
+            }
+
+            if ($this->teamInboundService->isSupervisor($sms->contact) && $this->handleSupervisorAnswer($settings, $candidates, $sms)) {
                 return;
             }
 
@@ -221,6 +232,32 @@ class HandleHttpSmsWebhookHandler
             errorMessage: $data['error_message'] ?? null,
             timestamp: $data['timestamp'] ?? null,
         ), organizerIds: $organizerIds, lineSettingsId: $settings->getId());
+    }
+
+    /**
+     * « Q12 … » from a platform supervisor answers the chat question of an organizer of the line.
+     *
+     * @param  Collection<int, OrganizerSmsSettingDomainObject>  $candidates
+     *
+     * @throws Throwable
+     */
+    private function handleSupervisorAnswer(OrganizerSmsSettingDomainObject $line, Collection $candidates, InboundSmsDTO $sms): bool
+    {
+        $question = $this->questionService->findForSupervisorAnswer(
+            $candidates->map(fn (OrganizerSmsSettingDomainObject $candidate) => $candidate->getOrganizerId())->values()->all(),
+            $sms->content,
+        );
+        if ($question === null) {
+            return false;
+        }
+
+        $owner = $candidates->first(fn (OrganizerSmsSettingDomainObject $candidate) => $candidate->getOrganizerId() === $question->getOrganizerId());
+        $message = $this->inboundService->recordInbound($owner, $sms, lineSettingsId: $line->getId());
+        if ($message !== null) {
+            $this->questionService->answerFromSupervisor($question, $sms->content, $sms->contact);
+        }
+
+        return true;
     }
 
     /**

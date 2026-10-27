@@ -34,7 +34,10 @@ use HiEvents\Services\Domain\LiveChat\DTO\LiveChatConfigDTO;
 use HiEvents\Services\Domain\LiveChat\DTO\LiveChatReplyDTO;
 use HiEvents\Services\Domain\LiveChat\DTO\LiveChatRequestDTO;
 use HiEvents\Services\Domain\LiveChat\DTO\LiveChatTurnDTO;
+use HiEvents\Services\Domain\LiveChat\Knowledge\EventAssistantKnowledgeService;
+use HiEvents\Services\Domain\LiveChat\Question\LiveChatQuestionService;
 use HiEvents\Services\Domain\LiveChat\Refund\LiveChatRefundProtectionService;
+use HiEvents\Services\Domain\Sms\DTO\SmsAssistantEventInfoDTO;
 use HiEvents\Services\Domain\Sms\SmsAssistantEventCatalogService;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Config\Repository;
@@ -53,6 +56,8 @@ class LiveChatService
     private const TRANSCRIPT_LENGTH = 80;
 
     private const RATE_WINDOW_SECONDS = 3600;
+
+    public const CONTACT_FROM_MESSAGE = 3;
 
     private const HOLDING_REPLIES_VOUS = [
         "Je transmets votre question à l'organisateur, il va regarder ça.",
@@ -80,6 +85,8 @@ class LiveChatService
         private readonly RateLimiter $rateLimiter,
         private readonly Repository $config,
         private readonly DatabaseManager $databaseManager,
+        private readonly LiveChatQuestionService $questionService,
+        private readonly EventAssistantKnowledgeService $knowledgeService,
     ) {}
 
     public function getConfig(int $organizerId): LiveChatConfigDTO
@@ -174,7 +181,53 @@ class LiveChatService
         return new LiveChatTurnDTO(
             session: $session,
             messages: $this->messageRepository->findLatestForSession($session->getId(), self::TRANSCRIPT_LENGTH),
+            askContact: $this->contactFormShown($session),
+            pendingQuestion: $this->questionService->awaitingForSession($session->getId())->isNotEmpty(),
         );
+    }
+
+    /**
+     * Contact details are asked from the third message of the visitor, unless they offer them or ask to be called
+     * back; never after a refusal. Once asked, the small form stays until given or refused.
+     */
+    public static function contactAllowed(int $visitorMessageCount, string $lastVisitorMessage, bool $contactKnown, bool $declined): bool
+    {
+        if ($contactKnown || $declined) {
+            return false;
+        }
+
+        return $visitorMessageCount >= self::CONTACT_FROM_MESSAGE || self::offersContact($lastVisitorMessage);
+    }
+
+    public static function offersContact(string $message): bool
+    {
+        return preg_match('/(\+?\d[\d\s.\-]{7,}\d)|([^\s@]+@[^\s@]+\.[^\s@]+)|\b(rappel|rappeler|rappelle|recontact|appelle[rz]?|appel|joindre|mon num|mon numéro|mon tel|mon tél|mon mail|mon e-?mail)/iu', $message) === 1;
+    }
+
+    public static function refusesContact(string $message): bool
+    {
+        return preg_match('/^\s*(non|nan|nope|no|pas besoin|non merci|ça ira|ca ira|sans façon|je (ne )?pr[ée]f[èe]re pas|pas maintenant|pas la peine|pas de num[ée]ro|je (ne )?veux pas)\b/iu', $message) === 1;
+    }
+
+    private function contactFormShown(LiveChatSessionDomainObject $session): bool
+    {
+        return $session->getContactAskedAt() !== null
+            && $session->getContactDeclinedAt() === null
+            && ! $this->contactKnown($session);
+    }
+
+    private function contactPolicy(LiveChatSessionDomainObject $session, string $lastVisitorMessage, bool $contactKnown): string
+    {
+        return match (true) {
+            $contactKnown => 'inutile, elles sont déjà connues',
+            $session->getContactDeclinedAt() !== null => 'refusée par le visiteur, ne la refais jamais',
+            $session->getContactAskedAt() !== null => 'déjà faite, le formulaire reste affiché, ne la refais pas dans le texte',
+            ! self::contactAllowed($session->getVisitorMessageCount(), $lastVisitorMessage, false, false) => sprintf(
+                'pas encore (avant le %de message du visiteur), sauf s\'il propose lui-même son numéro ou demande à être rappelé',
+                self::CONTACT_FROM_MESSAGE,
+            ),
+            default => 'permise si utile',
+        };
     }
 
     /**
@@ -208,6 +261,13 @@ class LiveChatService
         $contactKnown = $this->contactKnown($session);
         $sensitive = SmsSensitiveTopicDetector::isSensitive($content);
 
+        if (! $contactKnown && $session->getContactAskedAt() !== null && $session->getContactDeclinedAt() === null
+            && self::refusesContact($content)) {
+            $session = $this->sessionRepository->updateFromArray($session->getId(), [
+                LiveChatSessionDomainObjectAbstract::CONTACT_DECLINED_AT => now()->toDateTimeString(),
+            ]);
+        }
+
         if ($session->getSmsConversationId() !== null) {
             $this->handoffService->appendToConversation($settings, $session, $visitorMessage, $sensitive);
         }
@@ -227,7 +287,7 @@ class LiveChatService
             return new LiveChatTurnDTO(session: $session, messages: collect([$visitorMessage, $holding]));
         }
 
-        $reply = $this->reply($session, $settings, $contactKnown);
+        $reply = $this->reply($session, $settings, $contactKnown, $content);
         if ($sensitive && ! $reply->needsFollowUp && ! $reply->refundRequest) {
             $reply = new LiveChatReplyDTO(
                 messages: $reply->messages,
@@ -237,11 +297,27 @@ class LiveChatService
             );
         }
 
+        if ($reply->questionForOrganizer !== null && ! $reply->needsFollowUp && ! $reply->refundRequest
+            && $this->questionService->ask($session, $reply->questionForOrganizer, $content) === null) {
+            $reply = new LiveChatReplyDTO(
+                messages: $reply->messages,
+                needsFollowUp: true,
+                askContact: ! $contactKnown,
+                reason: mb_substr(__('question to check: :question', ['question' => $reply->questionForOrganizer]), 0, 255),
+            );
+        }
+
+        $askContact = ! $reply->refundRequest
+            && self::contactAllowed($session->getVisitorMessageCount(), $content, $contactKnown, $session->getContactDeclinedAt() !== null)
+            && ($reply->askContact || $session->getContactAskedAt() !== null);
+
         $agentMessages = collect();
         foreach ($reply->messages as $index => $bubble) {
             $agentMessages->push($this->addMessage($session, LiveChatAuthorType::AGENT, $bubble, $index === 0 ? [
                 LiveChatSessionDomainObjectAbstract::NEEDS_FOLLOW_UP => $session->getNeedsFollowUp() || $reply->needsFollowUp,
                 LiveChatSessionDomainObjectAbstract::FOLLOW_UP_REASON => $reply->reason ?? $session->getFollowUpReason(),
+                LiveChatSessionDomainObjectAbstract::CONTACT_ASKED_AT => $session->getContactAskedAt()
+                    ?? ($askContact ? now()->toDateTimeString() : null),
             ] : [], countModelCall: $index === 0));
         }
         $session = $this->sessionRepository->findById($session->getId());
@@ -255,8 +331,9 @@ class LiveChatService
         return new LiveChatTurnDTO(
             session: $session,
             messages: collect([$visitorMessage, ...$agentMessages]),
-            askContact: $reply->askContact && ! $contactKnown,
+            askContact: $askContact,
             refundForm: $reply->refundRequest,
+            pendingQuestion: $this->questionService->awaitingForSession($session->getId())->isNotEmpty(),
         );
     }
 
@@ -409,10 +486,12 @@ class LiveChatService
         LiveChatSessionDomainObject $session,
         OrganizerSmsSettingDomainObject $settings,
         bool $contactKnown,
+        string $content,
     ): LiveChatReplyDTO {
         /** @var OrganizerDomainObject $organizer */
         $organizer = $this->organizerRepository->findById($session->getOrganizerId());
         $tutoiement = $this->isTutoiement($session->getOrganizerId());
+        $events = $this->catalogService->getUpcomingEvents($session->getOrganizerId(), withDetails: true);
 
         try {
             return $this->generator->generate(new LiveChatRequestDTO(
@@ -426,13 +505,24 @@ class LiveChatService
                 contactKnown: $contactKnown,
                 currentEventId: $session->getEventId(),
                 thread: $this->messageRepository->findLatestForSession($session->getId(), self::THREAD_LENGTH),
-                events: $this->catalogService->getUpcomingEvents($session->getOrganizerId(), withDetails: true),
+                events: $events,
                 refundAvailable: $session->getRefundedAt() === null
                     && $this->refundProtectionService->isAvailableForOrganizer($session->getOrganizerId()),
                 greeting: self::greeting($tutoiement),
                 handedOff: $session->getNeedsFollowUp()
                     || $session->getStatus() === LiveChatSessionStatus::HANDED_OFF->name
                     || $session->getSmsConversationId() !== null,
+                visitorMessageNumber: $session->getVisitorMessageCount(),
+                contactPolicy: $this->contactPolicy($session, $content, $contactKnown),
+                pendingQuestions: $this->questionService->awaitingForSession($session->getId())
+                    ->map(fn ($question) => $question->getQuestion())
+                    ->values()
+                    ->all(),
+                knowledge: $this->knowledgeService->forEvents(
+                    $session->getOrganizerId(),
+                    $events->map(fn (SmsAssistantEventInfoDTO $event) => $event->id)->filter()->values()->all(),
+                ),
+                publications: $this->knowledgeService->publications($session->getOrganizerId()),
             ));
         } catch (SmsAssistantUnavailableException|SmsAssistantFailedException|SmsAssistantLimitReachedException) {
             $replies = $tutoiement ? self::HOLDING_REPLIES_TU : self::HOLDING_REPLIES_VOUS;

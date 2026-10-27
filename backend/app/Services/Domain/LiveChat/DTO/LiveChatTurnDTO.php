@@ -26,5 +26,6 @@ class LiveChatTurnDTO extends BaseDataObject
         public readonly bool $contactFormFallback = false,
         public readonly ?string $greeting = null,
         public readonly bool $refundForm = false,
+        public readonly bool $pendingQuestion = false,
     ) {}
 }

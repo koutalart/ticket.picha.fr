@@ -225,6 +225,82 @@ class LiveChatReplyGeneratorTest extends TestCase
         $this->assertFalse($reply->askContact);
     }
 
+    public function test_context_gives_the_facts_of_the_event_and_the_questions_waiting(): void
+    {
+        $claude = Mockery::mock(ClaudeStructuredOutputClient::class);
+        $claude->shouldReceive('isConfigured')->andReturn(true);
+        $claude->shouldReceive('askWithUsage')
+            ->once()
+            ->withArgs(function (string $system, array $content, array $schema) {
+                $text = $content[0]['text'];
+
+                return in_array('question_for_organizer', $schema['required'], true)
+                    && str_contains($system, "Ne dis jamais que tu n'as pas l'info")
+                    && str_contains($system, 'Jamais avant son 3e message')
+                    && str_contains($text, '"faits_confirmes"')
+                    && str_contains($text, 'Jah D One a été remplacé par Terrell Elymoor')
+                    && str_contains($text, '"annonces_envoyees"')
+                    && str_contains($text, 'Message du visiteur n° 2 dans cette conversation.')
+                    && str_contains($text, 'Demande de coordonnées : pas encore')
+                    && str_contains($text, "en attente de sa réponse (ne les repose pas) :\nLe parking est-il gratuit ?")
+                    && str_contains($text, "Dernières publications de l'organisateur sur ses réseaux :\n[");
+            })
+            ->andReturn(new ClaudeStructuredAnswerDTO(
+                data: ['messages' => ['Il est remplacé par Terrell Elymoor.'], 'needs_follow_up' => false, 'ask_contact' => false, 'reason' => null, 'intent' => 'none', 'question_for_organizer' => null],
+                model: 'claude-haiku-5-5',
+                inputTokens: 10,
+                outputTokens: 5,
+            ));
+
+        $reply = $this->generator($claude, $this->calls())->generate(new LiveChatRequestDTO(
+            organizerId: 4,
+            sessionId: 1,
+            smsConversationId: null,
+            organizerName: 'Innocent Event',
+            timezone: 'Indian/Mayotte',
+            instructions: null,
+            tutoiement: true,
+            contactKnown: false,
+            currentEventId: 7,
+            thread: collect([(new LiveChatMessageDomainObject)->setAuthorType('VISITOR')->setContent('jah d one ne sera pas présent ?')]),
+            events: collect([new \HiEvents\Services\Domain\Sms\DTO\SmsAssistantEventInfoDTO(
+                title: 'Halloween',
+                startsAt: '2026-10-31 20:00',
+                endsAt: null,
+                venue: '5/5',
+                url: 'https://innocent976.yt',
+                tickets: [],
+                id: 7,
+            )]),
+            visitorMessageNumber: 2,
+            contactPolicy: 'pas encore (avant le 3e message du visiteur)',
+            pendingQuestions: ['Le parking est-il gratuit ?'],
+            knowledge: [7 => [
+                'faits_confirmes' => [['reponse' => 'Jah D One a été remplacé par Terrell Elymoor', 'date' => '27 octobre 2026']],
+                'annonces' => [['date' => '21 octobre 2026', 'texte' => 'Le 31 octobre c\'est Halloween']],
+            ]],
+            publications: [['date' => '26 octobre 2026', 'texte' => 'Programme complet']],
+        ));
+
+        $this->assertNull($reply->questionForOrganizer);
+        $this->assertSame(['Il est remplacé par Terrell Elymoor.'], $reply->messages);
+    }
+
+    public function test_a_holding_line_replaces_missing_information_and_the_question_goes_to_the_organizer(): void
+    {
+        $reply = $this->generator($this->claudeAnswering([
+            'messages' => ["Je n'ai pas l'info pour Jah D One."],
+            'needs_follow_up' => false,
+            'ask_contact' => false,
+            'reason' => null,
+            'intent' => 'none',
+            'question_for_organizer' => null,
+        ]), $this->calls())->generate($this->request(tutoiement: true, thread: [['VISITOR', 'jah d one ne sera pas présent ?']]));
+
+        $this->assertSame(['Je demande confirmation et je te redis ici.'], $reply->messages);
+        $this->assertSame('jah d one ne sera pas présent ?', $reply->questionForOrganizer);
+    }
+
     public function test_an_answer_without_any_text_fails(): void
     {
         $this->expectException(\HiEvents\Exceptions\SmsAssistantFailedException::class);

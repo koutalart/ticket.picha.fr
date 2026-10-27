@@ -23,6 +23,7 @@ class LiveChatTurnResource extends BaseResource
             'ask_contact' => $this->askContact,
             'contact_form_fallback' => $this->contactFormFallback,
             'refund_form' => $this->refundForm,
+            'pending_question' => $this->pendingQuestion,
             'contact_given' => $this->session->getVisitorPhone() !== null || $this->session->getVisitorEmail() !== null,
         ];
     }
