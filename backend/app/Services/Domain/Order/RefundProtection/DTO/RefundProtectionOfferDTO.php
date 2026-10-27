@@ -21,5 +21,9 @@ class RefundProtectionOfferDTO extends BaseDataObject
         public readonly string $currency,
         public readonly bool $is_selected,
         public readonly bool $is_locked,
+        public readonly int $mandatory_quantity = 0,
+        public readonly float $mandatory_total_gross = 0.0,
+        public readonly ?float $mandatory_above = null,
+        public readonly bool $is_required_by_organizer = false,
     ) {}
 }

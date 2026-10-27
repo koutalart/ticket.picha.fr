@@ -22,6 +22,23 @@ class ProductPriceDomainObject extends Generated\ProductPriceDomainObjectAbstrac
 
     private ?int $quantityRemaining = null;
 
+    private ?float $refundProtectionIncluded = null;
+
+    /**
+     * Unit amount of the mandatory cancellation protection added to each ticket of this price, shown in the ticket price.
+     */
+    public function getRefundProtectionIncluded(): ?float
+    {
+        return $this->refundProtectionIncluded;
+    }
+
+    public function setRefundProtectionIncluded(?float $refundProtectionIncluded): self
+    {
+        $this->refundProtectionIncluded = $refundProtectionIncluded;
+
+        return $this;
+    }
+
     public function getQuantityRemaining(): ?int
     {
         return $this->quantityRemaining;

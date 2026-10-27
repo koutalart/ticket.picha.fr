@@ -209,6 +209,80 @@ class LiveChatRefundAmountCalculatorTest extends TestCase
         $this->calculator->select($coverage, []);
     }
 
+    public function test_mandatory_protection_covers_only_the_tickets_above_the_threshold_saved_at_purchase(): void
+    {
+        $products = $this->checkoutProducts();
+        $coverage = $this->calculator->coverage(
+            collect([
+                $this->item(10, self::VIP, 201, price: 20.00, quantity: 1),
+                $this->item(11, self::TICKET, 101, price: 10.00, quantity: 2),
+                $this->item(12, self::OPTION, 102, price: 0.49, quantity: 1),
+            ]),
+            $products,
+            collect([
+                $this->attendee(1001, self::VIP, 201),
+                $this->attendee(1002, self::TICKET, 101),
+                $this->attendee(1003, self::TICKET, 101),
+            ]),
+            ['mandatory_quantity' => 1, 'optional_selected' => false, 'mandatory_above' => 15.00],
+        );
+
+        $this->assertSame([1001], $coverage->tickets->map(fn ($ticket) => $ticket->attendeeId)->all());
+        $this->assertSame(1, $coverage->maxTickets);
+        $this->assertSame(20.00, $this->calculator->total($this->calculator->select($coverage, [1001])));
+
+        $this->expectException(LiveChatRefundSelectionException::class);
+        $this->calculator->select($coverage, [1002]);
+    }
+
+    public function test_checked_box_on_a_mixed_order_covers_the_whole_order(): void
+    {
+        $coverage = $this->calculator->coverage(
+            collect([
+                $this->item(10, self::VIP, 201, price: 20.00, quantity: 1),
+                $this->item(11, self::TICKET, 101, price: 10.00, quantity: 2),
+                $this->item(12, self::OPTION, 102, price: 0.49, quantity: 2),
+            ]),
+            $this->checkoutProducts(),
+            collect([
+                $this->attendee(1001, self::VIP, 201),
+                $this->attendee(1002, self::TICKET, 101),
+                $this->attendee(1003, self::TICKET, 101),
+            ]),
+            ['mandatory_quantity' => 1, 'optional_selected' => true, 'mandatory_above' => 15.00],
+        );
+
+        $this->assertSame(3, $coverage->maxTickets);
+        $this->assertSame(40.00, $this->calculator->total($this->calculator->select($coverage, [1001, 1002, 1003])));
+    }
+
+    public function test_a_ticket_whose_tariff_equals_the_threshold_is_not_covered_by_the_mandatory_part(): void
+    {
+        $coverage = $this->calculator->coverage(
+            collect([
+                $this->item(10, self::VIP, 201, price: 15.00, quantity: 1),
+                $this->item(12, self::OPTION, 102, price: 0.49, quantity: 1),
+            ]),
+            $this->checkoutProducts(),
+            collect([$this->attendee(1001, self::VIP, 201)]),
+            ['mandatory_quantity' => 0, 'optional_selected' => false, 'mandatory_above' => 15.00],
+        );
+
+        $this->assertTrue($coverage->tickets->isEmpty());
+    }
+
+    /**
+     * @return Collection<int, ProductDomainObject>
+     */
+    private function checkoutProducts(): Collection
+    {
+        return $this->products()->put(self::OPTION, (new ProductDomainObject)->setId(self::OPTION)->setTitle('Option sérénité')
+            ->setProductType(ProductType::GENERAL->name)
+            ->setIsRequired(false)
+            ->setRequiredQuantityMode(RequiredQuantityMode::PER_ORDER->name)
+            ->setIsRefundProtection(true));
+    }
+
     /**
      * @return Collection<int, ProductDomainObject>
      */

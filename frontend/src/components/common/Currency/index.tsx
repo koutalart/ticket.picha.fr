@@ -4,6 +4,7 @@ import {Product, ProductPrice} from "../../../types.ts";
 import {t} from "@lingui/macro";
 import {Popover} from "@mantine/core";
 import {IconInfoCircle} from "@tabler/icons-react";
+import {getIncludedRefundProtection} from "../../../utilites/refundProtection.ts";
 
 interface CurrencyProps {
     price?: number | null | undefined;
@@ -54,7 +55,8 @@ export const ProductPriceDisplay: React.FC<ProductPriceProps> = ({
                                                                    freeLabel,
                                                                    taxAndServiceFeeDisplayType = 'exclusive',
                                                                }) => {
-    let displayPrice = price.price;
+    const includedProtection = getIncludedRefundProtection(price);
+    let displayPrice = Math.round((Number(price.price) + includedProtection) * 100) / 100;
     const totalTaxAndFees = (price.tax_total || 0) + (price.fee_total || 0);
 
     // Order taxes and service fees for display
@@ -93,6 +95,11 @@ export const ProductPriceDisplay: React.FC<ProductPriceProps> = ({
     return (
         <div className={className}>
             <div>{formattedPrice}</div>
+            {includedProtection > 0 && (
+                <div className={'hi-price-protection-included'} style={{fontSize: '.8em', opacity: .8}}>
+                    {t`Peace of mind option included`}
+                </div>
+            )}
             <div>{appendedText}</div>
         </div>
     );

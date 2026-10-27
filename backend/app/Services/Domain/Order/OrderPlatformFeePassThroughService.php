@@ -5,6 +5,7 @@ namespace HiEvents\Services\Domain\Order;
 use Brick\Money\Currency as BrickCurrency;
 use HiEvents\DomainObjects\AccountConfigurationDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
+use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\Helper\Currency;
 use HiEvents\Services\Infrastructure\CurrencyConversion\CurrencyConversionClientInterface;
 use Illuminate\Config\Repository;
@@ -16,6 +17,15 @@ class OrderPlatformFeePassThroughService
     public static function getPlatformFeeName(): string
     {
         return __('Platform Fee');
+    }
+
+    /**
+     * The platform fee is charged once, on the tickets: never on a required product,
+     * never on the cancellation protection (is_refund_protection), whether it is mandatory or optional.
+     */
+    public static function isExemptProduct(ProductDomainObject $product): bool
+    {
+        return $product->getIsRequired() === true || $product->getIsRefundProtection() === true;
     }
 
     public function __construct(

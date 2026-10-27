@@ -146,7 +146,7 @@ class OrderItemProcessingService
         $totalFee = $taxesAndFees->feeTotal;
         $rollUp = $taxesAndFees->rollUp;
 
-        $platformFee = $product->getIsRequired()
+        $platformFee = OrderPlatformFeePassThroughService::isExemptProduct($product)
             ? 0.0
             : $this->calculatePlatformFee(
                 $itemTotalWithDiscount + $taxesAndFees->feeTotal + $taxesAndFees->taxTotal,

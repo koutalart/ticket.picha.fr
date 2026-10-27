@@ -18,6 +18,17 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
     const price = formatCurrency(offer.total_before_additions, offer.currency);
     const extraFees = Math.round((Number(offer.total_fee) + Number(offer.total_tax)) * 100) / 100;
     const formattedFees = formatCurrency(extraFees, offer.currency);
+    const mandatoryQuantity = Number(offer.mandatory_quantity) || 0;
+    const isMixed = mandatoryQuantity > 0 && !offer.is_locked;
+    const mandatoryAmount = formatCurrency(Number(offer.mandatory_total_gross) || 0, offer.currency);
+    const threshold = offer.mandatory_above !== null && offer.mandatory_above !== undefined
+        ? formatCurrency(Number(offer.mandatory_above), offer.currency)
+        : null;
+    const label = offer.is_locked
+        ? t`Peace of mind option included: ${price}`
+        : isMixed
+            ? t`Add the peace of mind option to your other tickets for ${price}`
+            : t`Add the peace of mind option for ${price}`;
     const unitPrice = offer.quantity > 0
         ? formatCurrency(Number(offer.total_before_additions) / offer.quantity, offer.currency)
         : price;
@@ -29,11 +40,14 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
         })}>
             <IconShieldCheck size={22} className={classes.icon}/>
             <div className={classes.body}>
-                <div className={classes.label}>
-                    {offer.is_locked
-                        ? t`Peace of mind option included: ${price}`
-                        : t`Add the peace of mind option for ${price}`}
-                </div>
+                {isMixed && (
+                    <div className={classes.details}>
+                        {threshold
+                            ? t`Peace of mind option included for tickets above ${threshold}: ${mandatoryAmount}`
+                            : t`Peace of mind option included: ${mandatoryAmount}`}
+                    </div>
+                )}
+                <div className={classes.label}>{label}</div>
                 {offer.is_per_ticket && offer.quantity > 1 && (
                     <div className={classes.details}>{t`${unitPrice} per ticket`}</div>
                 )}
@@ -44,7 +58,11 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
                     <div className={classes.details}>{t`+ ${formattedFees} in fees`}</div>
                 )}
                 {offer.is_locked && (
-                    <div className={classes.details}>{t`Included in every order for this event.`}</div>
+                    <div className={classes.details}>
+                        {!offer.is_required_by_organizer && mandatoryQuantity > 0 && threshold
+                            ? t`Required for tickets above ${threshold}.`
+                            : t`Included in every order for this event.`}
+                    </div>
                 )}
             </div>
             <Checkbox
@@ -52,7 +70,7 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
                 checked={checked}
                 disabled={isDisabled}
                 onChange={(event) => onChange(event.currentTarget.checked)}
-                aria-label={t`Add the peace of mind option for ${price}`}
+                aria-label={label}
             />
         </label>
     );

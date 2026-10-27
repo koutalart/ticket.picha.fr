@@ -5,6 +5,7 @@ import {formatEventDateRange} from "../../../utilites/dates.ts";
 import {formatAddress, isAddressSet} from "../../../utilites/addressUtilities.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {getStructuredDataProducts} from "../../../utilites/eventStructuredData.ts";
+import {withIncludedRefundProtection} from "../../../utilites/refundProtection.ts";
 
 interface EventFactSummaryProps {
     event: Event;
@@ -18,7 +19,8 @@ const getTicketProducts = (event: Event): Product[] =>
 const lowestTicketPrice = (tickets: Product[]): number | null => {
     const prices = tickets
         .flatMap(product => product.prices || [])
-        .map(price => Number(price.price))
+        .filter(price => Number(price.price) > 0)
+        .map(price => withIncludedRefundProtection(Number(price.price), price))
         .filter(price => Number.isFinite(price) && price > 0);
     return prices.length ? Math.min(...prices) : null;
 };

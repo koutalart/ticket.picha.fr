@@ -13,6 +13,7 @@ use HiEvents\Repository\Interfaces\AccountRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\Order\OrderPlatformFeePassThroughService;
+use HiEvents\Services\Domain\Order\RefundProtection\RefundProtectionPolicy;
 use HiEvents\Services\Domain\Product\AvailableProductQuantitiesFetchService;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesDTO;
 use HiEvents\Services\Domain\Product\DTO\AvailableProductQuantitiesResponseDTO;
@@ -47,6 +48,7 @@ class ProductFilterServiceTest extends TestCase
             $this->accountRepository,
             $this->eventRepository,
             new ProductUnlockService(m::mock(ProductRepositoryInterface::class), $this->quantitiesService),
+            new RefundProtectionPolicy(app('config')),
         );
     }
 

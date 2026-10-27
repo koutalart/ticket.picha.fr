@@ -28,6 +28,7 @@ use HiEvents\Repository\Interfaces\OrderItemRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\LiveChat\Refund\DTO\LiveChatRefundEligibilityDTO;
+use HiEvents\Services\Domain\Order\RefundProtection\OrderRefundProtectionService;
 use Illuminate\Support\Collection;
 
 /**
@@ -136,7 +137,7 @@ class LiveChatRefundEligibilityService
             ->findById($order->getEventId());
 
         $items = $this->orderItemRepository->findWhere([OrderItemDomainObjectAbstract::ORDER_ID => $order->getId()]);
-        $coverage = $this->calculator->coverage($items, $this->products($items), $this->attendees($order));
+        $coverage = $this->calculator->coverage($items, $this->products($items), $this->attendees($order), $this->protectionSnapshot($order));
 
         if (! $coverage->hasProtection) {
             throw new LiveChatRefundNotEligibleException(LiveChatRefundRefusal::NO_PROTECTION);
@@ -169,6 +170,22 @@ class LiveChatRefundEligibilityService
         if ($hours > 0 && $now->copy()->addHours($hours)->greaterThan($start)) {
             throw new LiveChatRefundNotEligibleException(LiveChatRefundRefusal::DEADLINE_PASSED);
         }
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function protectionSnapshot(OrderDomainObject $order): ?array
+    {
+        $data = $order->getPointInTimeData();
+
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
+
+        $snapshot = is_array($data) ? ($data[OrderRefundProtectionService::SNAPSHOT_KEY] ?? null) : null;
+
+        return is_array($snapshot) ? $snapshot : null;
     }
 
     /**
