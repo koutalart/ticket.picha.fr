@@ -74,4 +74,14 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
      * @param  array<int, int>  $organizerIds
      */
     public function findLastInboundOrganizerId(array $organizerIds, string $phone): ?int;
+
+    /**
+     * The latest SMS of the organizer to this number that waits for an answer (failed or expired ones left aside).
+     */
+    public function findLatestAwaitingReply(int $organizerId, string $phone): ?SmsMessageDomainObject;
+
+    /**
+     * Whether this number wrote to the organizer after the given message.
+     */
+    public function hasInboundFromPhoneAfter(int $organizerId, string $phone, int $afterMessageId): bool;
 }

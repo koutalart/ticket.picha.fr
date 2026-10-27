@@ -186,4 +186,33 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
 
         return $organizerId === null ? null : (int) $organizerId;
     }
+
+    public function findLatestAwaitingReply(int $organizerId, string $phone): ?SmsMessageDomainObject
+    {
+        $message = SmsMessage::query()
+            ->select('sms_messages.*')
+            ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
+            ->where('sms_messages.organizer_id', $organizerId)
+            ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
+            ->where('sms_conversations.phone', $phone)
+            ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+            ->where('sms_messages.awaits_reply', true)
+            ->whereNotIn('sms_messages.status', [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name])
+            ->orderByDesc('sms_messages.id')
+            ->first();
+
+        return $message === null ? null : $this->handleSingleResult($message);
+    }
+
+    public function hasInboundFromPhoneAfter(int $organizerId, string $phone, int $afterMessageId): bool
+    {
+        return SmsMessage::query()
+            ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
+            ->where('sms_messages.organizer_id', $organizerId)
+            ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
+            ->where('sms_conversations.phone', $phone)
+            ->where('sms_messages.direction', SmsMessageDirection::INBOUND->name)
+            ->where('sms_messages.id', '>', $afterMessageId)
+            ->exists();
+    }
 }

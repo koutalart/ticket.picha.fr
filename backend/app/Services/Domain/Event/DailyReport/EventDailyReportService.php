@@ -13,6 +13,7 @@ use HiEvents\Exceptions\EventDailyReportException;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
 use HiEvents\Repository\Interfaces\EventDailyReportRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
+use HiEvents\Services\Domain\Event\DailyReport\DTO\EventDailyActivityDTO;
 use HiEvents\Services\Domain\Event\DailyReport\DTO\EventDailyReportDTO;
 use HiEvents\Services\Domain\Event\DailyReport\DTO\EventDailyReportSendResultDTO;
 use HiEvents\Services\Domain\Sms\Team\OrganizerTeamContactService;
@@ -25,7 +26,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * The daily SMS report of an event to the organizer team (ORGANIZER and COPY contacts), and in option to the platform
- * supervisors. It leaves once per local day, as soon as the local time reaches the chosen time.
+ * supervisors. It leaves once per local day, as soon as the local time reaches the chosen time. When the activity
+ * option is on, the SMS on the exchanges of the day follows it, to the same people.
  */
 class EventDailyReportService
 {
@@ -43,6 +45,7 @@ class EventDailyReportService
         private readonly OrganizerTeamContactService $teamContactService,
         private readonly PlatformSupervisorService $supervisorService,
         private readonly SmsDirectSendService $directSendService,
+        private readonly EventDailyActivityService $activityService,
         private readonly CacheManager $cache,
         private readonly LoggerInterface $logger,
     ) {}
@@ -61,6 +64,7 @@ class EventDailyReportService
         ?string $sendTime = null,
         ?string $timezone = null,
         ?bool $copySupervisors = null,
+        ?bool $activityEnabled = null,
     ): EventDailyReportDomainObject {
         $attributes = [];
 
@@ -81,6 +85,10 @@ class EventDailyReportService
 
         if ($copySupervisors !== null) {
             $attributes[EventDailyReportDomainObjectAbstract::COPY_SUPERVISORS] = $copySupervisors;
+        }
+
+        if ($activityEnabled !== null) {
+            $attributes[EventDailyReportDomainObjectAbstract::ACTIVITY_ENABLED] = $activityEnabled;
         }
 
         $existing = $this->find($eventId);
@@ -152,6 +160,18 @@ class EventDailyReportService
         );
     }
 
+    /**
+     * @throws EventDailyReportException
+     */
+    public function buildActivity(int $eventId, ?Carbon $now = null): EventDailyActivityDTO
+    {
+        $event = $this->findEvent($eventId);
+        $timezone = $this->find($eventId)?->getTimezone() ?: self::DEFAULT_TIMEZONE;
+        $local = ($now ?? Carbon::now('UTC'))->copy()->setTimezone($timezone);
+
+        return $this->activityService->build($eventId, (int) $event->getOrganizerId(), $local);
+    }
+
     public static function formatAmount(float $amount, string $currency): string
     {
         $decimals = abs($amount - round($amount)) < 0.005 ? 0 : 2;
@@ -169,8 +189,10 @@ class EventDailyReportService
     public function sendNow(int $eventId, ?Carbon $now = null): EventDailyReportSendResultDTO
     {
         $report = $this->build($eventId, $now);
+        $settings = $this->find($eventId);
+        $activity = $settings?->getActivityEnabled() ? $this->buildActivity($eventId, $now) : null;
 
-        return $this->deliver($report, (bool) $this->find($eventId)?->getCopySupervisors());
+        return $this->deliver($report, (bool) $settings?->getCopySupervisors(), $activity);
     }
 
     /**
@@ -202,7 +224,11 @@ class EventDailyReportService
                     continue;
                 }
 
-                $results[] = $this->deliver($this->build($report->getEventId(), $now), $report->getCopySupervisors());
+                $results[] = $this->deliver(
+                    $this->build($report->getEventId(), $now),
+                    $report->getCopySupervisors(),
+                    $report->getActivityEnabled() ? $this->buildActivity($report->getEventId(), $now) : null,
+                );
             } catch (EventDailyReportException|SmsGatewayNotConfiguredException $exception) {
                 $this->logger->warning('Daily event report not sent', [
                     'event_id' => $report->getEventId(),
@@ -235,7 +261,7 @@ class EventDailyReportService
     /**
      * @throws SmsGatewayNotConfiguredException
      */
-    private function deliver(EventDailyReportDTO $report, bool $copySupervisors): EventDailyReportSendResultDTO
+    private function deliver(EventDailyReportDTO $report, bool $copySupervisors, ?EventDailyActivityDTO $activity = null): EventDailyReportSendResultDTO
     {
         $phones = $this->teamContactService->list($report->organizerId)
             ->map(fn (OrganizerTeamContactDomainObject $contact) => $contact->getPhone())
@@ -250,14 +276,22 @@ class EventDailyReportService
             $supervision = $this->directSendService->sendToMany($report->organizerId, $supervisors, $report->text, isSupervision: true);
         }
 
+        if ($activity !== null) {
+            $this->directSendService->sendToMany($report->organizerId, $phones, $activity->text);
+            if ($copySupervisors && $supervisors !== []) {
+                $this->directSendService->sendToMany($report->organizerId, $supervisors, $activity->text, isSupervision: true);
+            }
+        }
+
         $this->logger->info('Daily event report sent', [
             'event_id' => $report->eventId,
+            'with_activity' => $activity !== null,
             'sent' => count($team->sent) + count($supervision?->sent ?? []),
             'opted_out' => count($team->optedOut) + count($supervision?->optedOut ?? []),
             'failed' => count($team->failed) + count($supervision?->failed ?? []),
         ]);
 
-        return new EventDailyReportSendResultDTO($report->eventId, $report, $team, $supervision);
+        return new EventDailyReportSendResultDTO($report->eventId, $report, $team, $supervision, $activity);
     }
 
     /**

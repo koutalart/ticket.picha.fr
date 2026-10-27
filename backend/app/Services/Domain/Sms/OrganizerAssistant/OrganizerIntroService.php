@@ -55,6 +55,7 @@ class OrganizerIntroService
             $this->recipients($organizerId),
             SmsAssistantReplyGenerator::cleanText($text),
             SmsMessageAuthorType::AGENT,
+            awaitsReply: true,
         );
     }
 }

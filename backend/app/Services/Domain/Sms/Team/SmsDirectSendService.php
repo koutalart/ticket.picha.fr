@@ -36,6 +36,7 @@ class SmsDirectSendService
         string $content,
         SmsMessageAuthorType $authorType = SmsMessageAuthorType::AUTOMATIC,
         bool $isSupervision = false,
+        bool $awaitsReply = false,
     ): SmsBulkSendResultDTO {
         $sent = [];
         $optedOut = [];
@@ -50,6 +51,7 @@ class SmsDirectSendService
                     authorType: $authorType,
                     keepDraft: true,
                     isSupervision: $isSupervision,
+                    awaitsReply: $awaitsReply,
                 ));
                 $sent[] = $phone;
             } catch (SmsRecipientOptedOutException) {

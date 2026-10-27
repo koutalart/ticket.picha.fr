@@ -166,6 +166,7 @@ class OrganizerAssistantService
                 autoReplyType: $result->needsHuman ? SmsAutoReplyType::HOLDING : SmsAutoReplyType::ANSWER,
                 keepDraft: true,
                 replyInConversation: true,
+                awaitsReply: self::asksQuestion($result),
             ));
         } catch (SmsRecipientOptedOutException|SmsGatewayNotConfiguredException|InvalidSmsPhoneNumberException|SmsGatewayException $exception) {
             $this->logger->warning('Organizer assistant: reply not sent', [
@@ -173,6 +174,15 @@ class OrganizerAssistantService
                 'error' => $exception->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * An answer that asks the organizer something waits for a reply, and the organizer is nudged when it never comes.
+     * A holding reply asks nothing: a human answers next.
+     */
+    public static function asksQuestion(OrganizerAssistantResultDTO $result): bool
+    {
+        return ! $result->needsHuman && str_contains($result->reply, '?');
     }
 
     private function alert(
