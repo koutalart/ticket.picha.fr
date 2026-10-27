@@ -106,7 +106,6 @@ export const CollectInformation = () => {
                 first_name: "",
                 last_name: "",
                 email: "",
-                email_confirmation: "",
                 address: {},
                 questions: {},
                 opted_into_marketing: false,
@@ -115,7 +114,6 @@ export const CollectInformation = () => {
                 first_name: "",
                 last_name: "",
                 email: "",
-                email_confirmation: "",
                 product_price_id: "",
                 product_id: "",
                 birth_date: "",
@@ -123,19 +121,7 @@ export const CollectInformation = () => {
             }],
         },
         validate: {
-            order: {
-                email_confirmation: (value, values) =>
-                    value !== values.order.email ? t`Email addresses do not match` : null,
-            },
             products: {
-                email_confirmation: (value, values, path) => {
-                    const index = parseInt(path.split('.')[1]);
-                    const product = values.products[index];
-                    if (product && product.email !== value) {
-                        return t`Email addresses do not match`;
-                    }
-                    return null;
-                },
                 birth_date: (value, _values, path) => {
                     const index = parseInt(path.split('.')[1]);
                     if (isAgeCheckEnabled && getTicketAttendeeIndices().includes(index) && !value) {
@@ -192,7 +178,6 @@ export const CollectInformation = () => {
                         first_name: form.values.order.first_name,
                         last_name: form.values.order.last_name,
                         email: form.values.order.email,
-                        email_confirmation: form.values.order.email,
                     };
                 } else {
                     return {
@@ -200,7 +185,6 @@ export const CollectInformation = () => {
                         first_name: "",
                         last_name: "",
                         email: "",
-                        email_confirmation: "",
                     };
                 }
             }
@@ -302,7 +286,6 @@ export const CollectInformation = () => {
                     first_name: "",
                     last_name: "",
                     email: "",
-                    email_confirmation: "",
                     birth_date: "",
                     questions: productIdToQuestionMap.get(orderItem?.product_id)?.map((question: Question) => {
                         return {
@@ -342,7 +325,6 @@ export const CollectInformation = () => {
                         first_name: firstParticipant.first_name,
                         last_name: firstParticipant.last_name,
                         email: firstParticipant.email,
-                        email_confirmation: firstParticipant.email_confirmation,
                     },
                 });
                 return;
@@ -502,24 +484,15 @@ export const CollectInformation = () => {
                         />
                     </InputGroup>
 
-                    <InputGroup>
-                        <TextInput
-                            withAsterisk
-                            type={"email"}
-                            label={t`Email Address`}
-                            placeholder={t`Email Address`}
-                            rightSection={isEmailValid(form.values.order.email) ? <EmailCheckIcon/> : null}
-                            {...form.getInputProps("order.email")}
-                        />
-                        <TextInput
-                            withAsterisk
-                            type={"email"}
-                            label={t`Confirm Email Address`}
-                            placeholder={t`Confirm Email Address`}
-                            rightSection={isEmailValid(form.values.order.email_confirmation) ? <EmailCheckIcon/> : null}
-                            {...form.getInputProps("order.email_confirmation")}
-                        />
-                    </InputGroup>
+                    <TextInput
+                        withAsterisk
+                        type={"email"}
+                        autoComplete="email"
+                        label={t`Email Address`}
+                        placeholder={t`Email Address`}
+                        rightSection={isEmailValid(form.values.order.email) ? <EmailCheckIcon/> : null}
+                        {...form.getInputProps("order.email")}
+                    />
 
                     {orderRequiresAttendeeDetails && !isPerOrderCollection && totalTicketAttendees > 0 && (
                         <div className={classes.copyDetailsSection}>
@@ -725,26 +698,16 @@ export const CollectInformation = () => {
                                                     />
                                                 </InputGroup>
 
-                                                <InputGroup>
-                                                    <TextInput
-                                                        withAsterisk
-                                                        type={"email"}
-                                                        label={t`Email Address`}
-                                                        placeholder={t`Email Address`}
-                                                        rightSection={isEmailValid(form.values.products[currentProductIndex]?.email || '') ?
-                                                            <EmailCheckIcon/> : null}
-                                                        {...form.getInputProps(`products.${currentProductIndex}.email`)}
-                                                    />
-                                                    <TextInput
-                                                        withAsterisk
-                                                        type={"email"}
-                                                        label={t`Confirm Email Address`}
-                                                        placeholder={t`Confirm Email Address`}
-                                                        rightSection={isEmailValid(form.values.products[currentProductIndex]?.email_confirmation || '') ?
-                                                            <EmailCheckIcon/> : null}
-                                                        {...form.getInputProps(`products.${currentProductIndex}.email_confirmation`)}
-                                                    />
-                                                </InputGroup>
+                                                <TextInput
+                                                    withAsterisk
+                                                    type={"email"}
+                                                    autoComplete="email"
+                                                    label={t`Email Address`}
+                                                    placeholder={t`Email Address`}
+                                                    rightSection={isEmailValid(form.values.products[currentProductIndex]?.email || '') ?
+                                                        <EmailCheckIcon/> : null}
+                                                    {...form.getInputProps(`products.${currentProductIndex}.email`)}
+                                                />
                                             </>
                                         )}
 

@@ -1,10 +1,7 @@
-import {useEffect, useState} from 'react';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import {useEffect, useRef, useState} from 'react';
 import {t} from '@lingui/macro';
 import classNames from "classnames";
-
-dayjs.extend(utc);
+import {parseUtcTimestamp} from "../../../utilites/dates.ts";
 
 interface CountdownProps {
     targetDate: string;
@@ -14,6 +11,36 @@ interface CountdownProps {
     displayType?: 'short' | 'long';
 }
 
+const formatTimeLeft = (diff: number, displayType: 'short' | 'long'): string => {
+    if (diff <= 0) {
+        return displayType === 'short' ? '0:00' : t`0 minutes and 0 seconds`;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / 1000 / 60) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    if (displayType === 'short') {
+        const totalHours = days * 24 + hours;
+        const formattedSeconds = String(seconds).padStart(2, '0');
+
+        if (totalHours > 0) {
+            return `${totalHours}:${String(minutes).padStart(2, '0')}:${formattedSeconds}`;
+        }
+
+        return `${minutes}:${formattedSeconds}`;
+    }
+
+    if (days > 0) {
+        return t`${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+    }
+    if (hours > 0) {
+        return t`${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+    }
+    return t`${minutes} minutes and ${seconds} seconds`;
+};
+
 export const Countdown = ({
                               targetDate,
                               onExpiry,
@@ -21,67 +48,55 @@ export const Countdown = ({
                               displayType = 'long',
                               closeToExpiryClassName = ''
                           }: CountdownProps) => {
-    const [timeLeft, setTimeLeft] = useState('');
+    const [timeLeft, setTimeLeft] = useState<string | null>(null);
     const [closeToExpiry, setCloseToExpiry] = useState(false);
+    const onExpiryRef = useRef(onExpiry);
+    onExpiryRef.current = onExpiry;
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            const now = dayjs();
-            const dateInUTC = dayjs.utc(targetDate);
-            const diff = dateInUTC.diff(now);
+        const target = parseUtcTimestamp(targetDate);
+
+        if (target === null) {
+            setTimeLeft(null);
+            return;
+        }
+
+        let interval: ReturnType<typeof setInterval> | undefined;
+
+        const tick = (): boolean => {
+            const diff = target - Date.now();
+            setTimeLeft(formatTimeLeft(diff, displayType));
+            setCloseToExpiry(diff > 0 && diff < 5 * 60 * 1000);
 
             if (diff <= 0) {
-                setTimeLeft(displayType === 'short' ? '0:00' : t`0 minutes and 0 seconds`);
-                clearInterval(interval);
-                onExpiry && onExpiry();
-                return;
-            }
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((diff / 1000 / 60) % 60);
-            const seconds = Math.floor((diff / 1000) % 60);
-
-            if (!closeToExpiry) {
-                setCloseToExpiry(days === 0 && hours === 0 && minutes < 5)
-            }
-
-            if (displayType === 'short') {
-                const totalHours = days * 24 + hours;
-                const formattedMinutes = String(minutes).padStart(2, '0');
-
-                let display: string;
-
-                if (totalHours > 0) {
-                    display = `${totalHours}:${formattedMinutes}:${String(seconds).padStart(2, '0')}`;
-                } else if (minutes > 0) {
-                    display = seconds > 0
-                        ? `${minutes}:${String(seconds).padStart(2, '0')}`
-                        : `${minutes}:00`;
-                } else {
-                    display = String(seconds);
+                if (interval) {
+                    clearInterval(interval);
                 }
-
-                setTimeLeft(display);
-            } else {
-                if (days > 0) {
-                    setTimeLeft(t`${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds`);
-                } else if (hours > 0) {
-                    setTimeLeft(t`${hours} hours, ${minutes} minutes, and ${seconds} seconds`);
-                } else {
-                    setTimeLeft(t`${minutes} minutes and ${seconds} seconds`);
-                }
+                onExpiryRef.current?.();
+                return false;
             }
-        }, 1000);
+
+            return true;
+        };
+
+        if (tick()) {
+            interval = setInterval(tick, 1000);
+        }
 
         return () => {
-            clearInterval(interval);
+            if (interval) {
+                clearInterval(interval);
+            }
         };
-    }, [targetDate, onExpiry, displayType]);
+    }, [targetDate, displayType]);
+
+    if (timeLeft === null) {
+        return null;
+    }
 
     return (
         <span className={classNames(className, closeToExpiry ? closeToExpiryClassName : '')}>
-             {timeLeft === '' ? '--:--' : timeLeft}
+             {timeLeft}
         </span>
     );
 };
