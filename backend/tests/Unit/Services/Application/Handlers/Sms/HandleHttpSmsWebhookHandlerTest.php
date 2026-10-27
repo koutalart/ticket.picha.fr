@@ -13,6 +13,7 @@ use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Services\Application\Handlers\LiveChat\Approval\DecideLiveChatRefundHandler;
 use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
 use HiEvents\Services\Application\Handlers\Sms\HandleHttpSmsWebhookHandler;
+use HiEvents\Services\Domain\LiveChat\Question\LiveChatQuestionService;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
@@ -92,6 +93,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             new NullLogger,
             $this->teamInboundService,
             Mockery::mock(DecideLiveChatRefundHandler::class),
+            Mockery::mock(LiveChatQuestionService::class),
         );
 
         $this->settings = (new OrganizerSmsSettingDomainObject)

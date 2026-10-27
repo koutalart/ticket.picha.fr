@@ -14,6 +14,9 @@ class LiveChatRequestDTO extends BaseDataObject
     /**
      * @param  Collection<int, LiveChatMessageDomainObject>  $thread  oldest first, ends with the visitor message to answer
      * @param  Collection<int, SmsAssistantEventInfoDTO>  $events
+     * @param  list<string>  $pendingQuestions  questions already sent to the organizer and not answered yet
+     * @param  array<int, array<string, array<int, array<string, string>>>>  $knowledge  per event id: confirmed facts, changes, announcements
+     * @param  array<int, array<string, string>>  $publications  latest publications of the organizer
      */
     public function __construct(
         public readonly int $organizerId,
@@ -30,5 +33,10 @@ class LiveChatRequestDTO extends BaseDataObject
         public readonly bool $refundAvailable = false,
         public readonly ?string $greeting = null,
         public readonly bool $handedOff = false,
+        public readonly int $visitorMessageNumber = 0,
+        public readonly ?string $contactPolicy = null,
+        public readonly array $pendingQuestions = [],
+        public readonly array $knowledge = [],
+        public readonly array $publications = [],
     ) {}
 }

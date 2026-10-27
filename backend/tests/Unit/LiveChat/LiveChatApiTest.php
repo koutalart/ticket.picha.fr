@@ -256,6 +256,7 @@ class LiveChatApiTest extends TestCase
             askContact: true,
             reason: 'Demande de remboursement',
         ));
+        $this->visitorAlreadyWrote($sessionId, 2);
 
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Je veux être remboursé'])
             ->assertOk()
@@ -498,6 +499,7 @@ class LiveChatApiTest extends TestCase
         $this->settings();
         $sessionId = $this->openChat();
         $this->claude->shouldReceive('askWithUsage')->andThrow(new \HiEvents\Exceptions\EventAssistantFailedException('boom'));
+        $this->visitorAlreadyWrote($sessionId, 2);
 
         $response = $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Bonjour'])
             ->assertOk()
@@ -512,6 +514,7 @@ class LiveChatApiTest extends TestCase
         $this->settings();
         $sessionId = $this->openChat();
         $this->claude->shouldReceive('askWithUsage')->andReturn($this->answer("Je regarde avec l'organisateur."));
+        $this->visitorAlreadyWrote($sessionId, 2);
 
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Je veux un remboursement de ma commande'])
             ->assertOk()
@@ -529,6 +532,72 @@ class LiveChatApiTest extends TestCase
         $this->organizerApi("/organizers/{$this->organizerId}/live-chats/{$id}")
             ->assertOk()
             ->assertJsonCount(2, 'data.messages');
+    }
+
+    public function test_contact_is_not_asked_before_the_third_message_of_the_visitor(): void
+    {
+        $this->settings();
+        $sessionId = $this->openChat();
+        $this->claude->shouldReceive('askWithUsage')
+            ->withArgs(fn (string $system, array $content) => str_contains($content[0]['text'], 'Demande de coordonnées : pas encore'))
+            ->twice()
+            ->andReturn($this->answer('Je transmets.', needsFollowUp: true, askContact: true, reason: 'Litige'));
+
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Je suis pas content'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', false);
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Toujours pas content'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', false);
+
+        $this->claude->shouldReceive('askWithUsage')
+            ->withArgs(fn (string $system, array $content) => str_contains($content[0]['text'], 'Message du visiteur n° 3')
+                && str_contains($content[0]['text'], 'Demande de coordonnées : permise'))
+            ->once()
+            ->andReturn($this->answer('Laisse-moi ton numéro.', needsFollowUp: true, askContact: true, reason: 'Litige'));
+
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Et alors ?'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', true);
+        $this->assertNotNull(DB::table('live_chat_sessions')->where('public_id', $sessionId)->value('contact_asked_at'));
+    }
+
+    public function test_contact_offered_by_the_visitor_can_be_taken_at_once(): void
+    {
+        $this->settings();
+        $sessionId = $this->openChat();
+        $this->claude->shouldReceive('askWithUsage')->andReturn($this->answer('Je transmets.', needsFollowUp: true, askContact: true, reason: 'Rappel'));
+
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => "Rappelez-moi s'il vous plaît"])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', true);
+    }
+
+    public function test_contact_is_never_asked_again_after_a_refusal(): void
+    {
+        $this->settings();
+        $sessionId = $this->openChat();
+        $this->visitorAlreadyWrote($sessionId, 2);
+        $this->claude->shouldReceive('askWithUsage')
+            ->withArgs(fn (string $system, array $content) => ! str_contains($content[0]['text'], 'refusée'))
+            ->once()
+            ->andReturn($this->answer('Laisse-moi ton numéro.', needsFollowUp: true, askContact: true, reason: 'Litige'));
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Un souci'])->assertJsonPath('data.ask_contact', true);
+
+        $this->claude->shouldReceive('askWithUsage')
+            ->withArgs(fn (string $system, array $content) => str_contains($content[0]['text'], 'Demande de coordonnées : refusée par le visiteur'))
+            ->once()
+            ->andReturn($this->answer('Pas de souci.', needsFollowUp: true, askContact: true, reason: 'Litige'));
+
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'non'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', false);
+        $this->assertNotNull(DB::table('live_chat_sessions')->where('public_id', $sessionId)->value('contact_declined_at'));
+    }
+
+    private function visitorAlreadyWrote(string $sessionId, int $count): void
+    {
+        DB::table('live_chat_sessions')->where('public_id', $sessionId)->update(['visitor_message_count' => $count]);
     }
 
     private function settings(bool $enabled = true, ?string $relayLabel = null, bool $withLine = true): int

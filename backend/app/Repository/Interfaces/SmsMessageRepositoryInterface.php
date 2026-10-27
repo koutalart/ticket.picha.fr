@@ -84,4 +84,9 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
      * Whether this number wrote to the organizer after the given message.
      */
     public function hasInboundFromPhoneAfter(int $organizerId, string $phone, int $afterMessageId): bool;
+
+    /**
+     * Whether the number wrote to the organizer since the given moment, other than the given message.
+     */
+    public function hasInboundFromPhoneSince(int $organizerId, string $phone, string $since, int $exceptMessageId): bool;
 }

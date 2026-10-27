@@ -1620,6 +1620,7 @@ export interface LiveChatTurn {
     contact_form_fallback: boolean;
     contact_given: boolean;
     refund_form: boolean;
+    pending_question?: boolean;
 }
 
 export type LiveChatRefundStepName = 'code' | 'tickets' | 'pending' | 'refunded' | 'unavailable';

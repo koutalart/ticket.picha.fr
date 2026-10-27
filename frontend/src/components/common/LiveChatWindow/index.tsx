@@ -52,6 +52,9 @@ const readingDelay = () => between(1000, 2000);
 const pauseBetweenBubbles = () => between(600, 1200);
 const typingDelay = (text: string) => Math.min(6000, Math.max(1500, text.length * between(25, 40)));
 
+// While a question waits for the organizer, the window checks now and then whether the answer arrived.
+const ANSWER_POLL_MS = 15000;
+
 /**
  * « Assistance en direct »: answers the visitor right away with the organizer's assistant. Full screen on a phone,
  * side panel on a desktop. The contact details are only asked when the organizer must follow up.
@@ -72,6 +75,8 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
     const [refundOpen, setRefundOpen] = useState(false);
     const [typing, setTyping] = useState(false);
     const [revealing, setRevealing] = useState(false);
+    const [pendingQuestion, setPendingQuestion] = useState(false);
+    const messagesRef = useRef<LiveChatMessage[]>([]);
     const logRef = useRef<HTMLDivElement>(null);
     const timers = useRef<number[]>([]);
     const revealRun = useRef(0);
@@ -82,6 +87,7 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
     const maxLength = config.max_message_length || 800;
 
     const applyTurnState = (turn: LiveChatTurn) => {
+        setPendingQuestion(Boolean(turn.pending_question));
         setAskContact(turn.ask_contact && !turn.contact_given);
         setContactGiven(turn.contact_given);
         if (turn.refund_form) {
@@ -196,6 +202,35 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                 start();
             });
     }, [opened]);
+
+    useEffect(() => {
+        messagesRef.current = messages;
+    }, [messages]);
+
+    useEffect(() => {
+        if (!opened || !sessionId || !pendingQuestion || revealing || postMutation.isPending) {
+            return;
+        }
+
+        const timer = window.setInterval(() => {
+            if (document.visibilityState !== 'visible') {
+                return;
+            }
+            liveChatPublicClient.messages(sessionId)
+                .then(({data}) => {
+                    const lastKnownId = Math.max(0, ...messagesRef.current.map((message) => message.id));
+                    const answers = data.messages.filter((message) => message.id > lastKnownId && message.author_type !== 'VISITOR');
+                    if (answers.length > 0) {
+                        void revealTurn({...data, messages: answers}, Date.now() + pauseBetweenBubbles());
+                    } else {
+                        setPendingQuestion(Boolean(data.pending_question));
+                    }
+                })
+                .catch(() => undefined);
+        }, ANSWER_POLL_MS);
+
+        return () => window.clearInterval(timer);
+    }, [opened, sessionId, pendingQuestion, revealing, postMutation.isPending]);
 
     useEffect(() => {
         const log = logRef.current;

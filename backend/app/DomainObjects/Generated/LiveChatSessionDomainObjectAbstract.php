@@ -29,6 +29,8 @@ abstract class LiveChatSessionDomainObjectAbstract extends \HiEvents\DomainObjec
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
     final public const REFUNDED_AT = 'refunded_at';
+    final public const CONTACT_ASKED_AT = 'contact_asked_at';
+    final public const CONTACT_DECLINED_AT = 'contact_declined_at';
 
     protected int $id;
     protected int $account_id;
@@ -49,6 +51,8 @@ abstract class LiveChatSessionDomainObjectAbstract extends \HiEvents\DomainObjec
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
     protected ?string $refunded_at = null;
+    protected ?string $contact_asked_at = null;
+    protected ?string $contact_declined_at = null;
 
     public function toArray(): array
     {
@@ -72,6 +76,8 @@ abstract class LiveChatSessionDomainObjectAbstract extends \HiEvents\DomainObjec
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
                     'refunded_at' => $this->refunded_at ?? null,
+                    'contact_asked_at' => $this->contact_asked_at ?? null,
+                    'contact_declined_at' => $this->contact_declined_at ?? null,
                 ];
     }
 
@@ -282,5 +288,27 @@ abstract class LiveChatSessionDomainObjectAbstract extends \HiEvents\DomainObjec
     public function getRefundedAt(): ?string
     {
         return $this->refunded_at;
+    }
+
+    public function setContactAskedAt(?string $contact_asked_at): self
+    {
+        $this->contact_asked_at = $contact_asked_at;
+        return $this;
+    }
+
+    public function getContactAskedAt(): ?string
+    {
+        return $this->contact_asked_at;
+    }
+
+    public function setContactDeclinedAt(?string $contact_declined_at): self
+    {
+        $this->contact_declined_at = $contact_declined_at;
+        return $this;
+    }
+
+    public function getContactDeclinedAt(): ?string
+    {
+        return $this->contact_declined_at;
     }
 }
