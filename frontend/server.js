@@ -313,6 +313,22 @@ Sitemap: ${frontendUrl}/sitemap.xml
         }
     });
     const QR_SHORT_ID = /^[A-Za-z0-9]{4,32}$/;
+    // "/q/abc?acheter=1" keeps the buy intent on the event page (the "#tickets" fragment is kept by the browser).
+    const withBuyIntent = (redirectUrl, req) => {
+        const intent = req.query?.acheter;
+        if (intent === undefined || Array.isArray(intent)) {
+            return redirectUrl;
+        }
+        try {
+            const target = new URL(redirectUrl, platformBaseUrl(req));
+            if (!target.searchParams.has('acheter')) {
+                target.searchParams.set('acheter', String(intent) || '1');
+            }
+            return target.toString();
+        } catch {
+            return redirectUrl;
+        }
+    };
     const clientIp = (req) => (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.socket?.remoteAddress || '';
 
     app.get('/q/:shortId', async (req, res, next) => {
@@ -346,7 +362,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 const {data} = await response.json();
                 if (data?.redirect_url) {
                     res.setHeader('Cache-Control', 'no-store');
-                    return res.redirect(302, data.redirect_url);
+                    return res.redirect(302, withBuyIntent(data.redirect_url, req));
                 }
             }
         } catch (error) {
