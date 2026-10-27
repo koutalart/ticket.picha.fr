@@ -2,7 +2,8 @@
 import {Helmet} from "react-helmet-async";
 import {t} from "@lingui/macro";
 import {Event, EventPages, EventPageSlug} from "../../../types.ts";
-import {eventHomepageUrl, eventShareImageUrl} from "../../../utilites/urlHelper.ts";
+import {eventHomepageUrl, eventShareImage} from "../../../utilites/urlHelper.ts";
+import {OpenGraphExtraMeta} from "../../common/OpenGraphExtraMeta";
 import {utcToTz} from "../../../utilites/dates.ts";
 import {
     artistAnchor,
@@ -65,7 +66,8 @@ export const EventDedicatedPageHead = ({event, pages, page}: EventDedicatedPageH
     const baseTitle = `${label} | ${event.settings?.seo_title || event.title} | ${event.organizer?.name}`;
     const title = event.status === 'DRAFT' ? 'DRAFT - ' + baseTitle : baseTitle;
     const description = truncateText(htmlToText(pageDescription(event, pages, page)), 160);
-    const image = eventShareImageUrl(event);
+    const shareImage = eventShareImage(event);
+    const image = shareImage?.url;
 
     const breadcrumb = {
         "@context": "https://schema.org",
@@ -124,6 +126,7 @@ export const EventDedicatedPageHead = ({event, pages, page}: EventDedicatedPageH
     }
 
     return (
+        <>
         <Helmet>
             <title>{title}</title>
             <meta name="description" content={description}/>
@@ -142,5 +145,7 @@ export const EventDedicatedPageHead = ({event, pages, page}: EventDedicatedPageH
                 <script key={index} type="application/ld+json">{jsonLdScript(data)}</script>
             ))}
         </Helmet>
+        <OpenGraphExtraMeta image={shareImage} imageAlt={event.title} siteName={event.organizer?.name}/>
+        </>
     );
 };

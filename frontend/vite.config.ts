@@ -49,6 +49,10 @@ export default defineConfig({
     ssr: {
         noExternal: ["react-helmet-async"],
     },
+    build: {
+        // Read by server.js to link a page to the chunks and styles of its route.
+        manifest: true,
+    },
     css: {
         preprocessorOptions: {
             scss: {

@@ -1,7 +1,8 @@
 /* eslint-disable lingui/no-unlocalized-strings */
 import {Helmet} from "react-helmet-async";
 import {Event} from "../../../types";
-import {eventHomepageUrl, eventShareImageUrl, organizerCanonicalUrl} from "../../../utilites/urlHelper.ts";
+import {eventHomepageUrl, eventShareImage, organizerCanonicalUrl} from "../../../utilites/urlHelper.ts";
+import {OpenGraphExtraMeta} from "../OpenGraphExtraMeta";
 import {
     buildEventBreadcrumbJsonLd,
     buildEventJsonLd,
@@ -17,7 +18,8 @@ export const EventDocumentHead = ({event}: EventDocumentHeadProps) => {
     const title = (eventSettings?.seo_title ?? event.title) + ' | ' + event.organizer?.name;
     const description = eventSettings?.seo_description ?? event.description_preview;
     const keywords = eventSettings?.seo_keywords;
-    const image = eventShareImageUrl(event);
+    const shareImage = eventShareImage(event);
+    const image = shareImage?.url;
     const url = eventHomepageUrl(event);
     const organizerUrl = event.organizer?.id && event.organizer?.slug
         ? organizerCanonicalUrl(event.organizer)
@@ -27,6 +29,7 @@ export const EventDocumentHead = ({event}: EventDocumentHeadProps) => {
     const breadcrumbJsonLd = serializeJsonLd(buildEventBreadcrumbJsonLd(event, structuredDataUrls));
 
     return (
+        <>
         <Helmet>
             <title>{event.status === 'DRAFT' ? 'DRAFT - ' + title : title}</title>
             <meta name="description" content={description}/>
@@ -54,5 +57,7 @@ export const EventDocumentHead = ({event}: EventDocumentHeadProps) => {
                 {breadcrumbJsonLd}
             </script>
         </Helmet>
+        <OpenGraphExtraMeta image={shareImage} imageAlt={event.title} siteName={event.organizer?.name}/>
+        </>
     );
 }

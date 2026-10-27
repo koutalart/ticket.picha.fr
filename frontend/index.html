@@ -20,10 +20,18 @@
       <meta name="theme-color" content="#40296C">
       <meta name="msapplication-TileColor" content="#18181b">
 
+      <!-- Fonts: loaded without blocking the first paint nor the app scripts (text shows in the fallback font first) -->
+      <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+      <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.bunny.net/outfit/files/outfit-latin-400-normal.woff2">
+      <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.bunny.net/outfit/files/outfit-latin-600-normal.woff2">
+      <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.bunny.net/outfit/files/outfit-latin-700-normal.woff2">
       <link
-      rel="stylesheet"
+      rel="preload"
+      as="style"
       href="https://fonts.bunny.net/css?family=outfit:400,500,600,700,800|plus-jakarta-sans:400,500,600,700|fraunces:600,700&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+      <noscript><link rel="stylesheet" href="https://fonts.bunny.net/css?family=outfit:400,500,600,700,800|plus-jakarta-sans:400,500,600,700|fraunces:600,700&display=swap"></noscript>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--render-helmet--><title>PICHA Ticket</title><!--/render-helmet-->
     <!--environment-variables-->

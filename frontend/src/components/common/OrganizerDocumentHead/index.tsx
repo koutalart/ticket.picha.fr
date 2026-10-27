@@ -2,6 +2,7 @@
 import {Helmet} from "react-helmet-async";
 import {Organizer} from "../../../types";
 import {organizerCanonicalUrl} from "../../../utilites/urlHelper.ts";
+import {OpenGraphExtraMeta} from "../OpenGraphExtraMeta";
 
 interface OrganizerDocumentHeadProps {
     organizer: Organizer;
@@ -12,9 +13,10 @@ export const OrganizerDocumentHead = ({organizer}: OrganizerDocumentHeadProps) =
     const title = organizerSettings?.seo_title || `${organizer.name} - Events`;
     const description = organizerSettings?.seo_description || `Discover upcoming events by ${organizer.name}.`;
     const keywords = organizerSettings?.seo_keywords || `${organizer.name}, events, tickets, concerts, sell tickets online`;
-    const logoImage = organizer.images?.find(img => img.type === 'ORGANIZER_LOGO')?.url;
-    const coverImage = organizer.images?.find(img => img.type === 'ORGANIZER_COVER')?.url;
-    const image = coverImage || logoImage;
+    const logo = organizer.images?.find(img => img.type === 'ORGANIZER_LOGO');
+    const logoImage = logo?.url;
+    const shareImage = organizer.images?.find(img => img.type === 'ORGANIZER_COVER') ?? logo;
+    const image = shareImage?.url;
     const url = organizerCanonicalUrl(organizer);
 
     const address = organizerSettings?.location_details ? {
@@ -82,6 +84,7 @@ export const OrganizerDocumentHead = ({organizer}: OrganizerDocumentHeadProps) =
     const allowIndexing = organizerSettings?.allow_search_engine_indexing !== false;
 
     return (
+        <>
         <Helmet>
             <title>{title}</title>
             <meta name="description" content={description}/>
@@ -106,5 +109,7 @@ export const OrganizerDocumentHead = ({organizer}: OrganizerDocumentHeadProps) =
                 {JSON.stringify(schemaOrgJSONLD)}
             </script>
         </Helmet>
+        <OpenGraphExtraMeta image={shareImage} imageAlt={organizer.name} siteName={organizer.name}/>
+        </>
     );
 }
