@@ -26,7 +26,7 @@ export const StoriesBar = ({stories, timezone, onOpen}: StoriesBarProps) => {
                         <button key={story.id} type="button" className={classes.storyBubble} onClick={() => onOpen(index)}>
                             <span className={classes.storyRing}>
                                 {media?.type === 'VIDEO'
-                                    ? <video src={media.url} muted playsInline preload="metadata"/>
+                                    ? <video src={`${media.url}#t=0.5`} muted playsInline preload="metadata"/>
                                     : <img src={media?.url} alt="" loading="lazy"/>}
                             </span>
                             <span className={classes.storyDate}>
