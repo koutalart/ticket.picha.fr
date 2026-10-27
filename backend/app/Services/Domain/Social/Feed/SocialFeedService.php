@@ -7,6 +7,7 @@ namespace HiEvents\Services\Domain\Social\Feed;
 use Carbon\Carbon;
 use HiEvents\DomainObjects\SocialFeedItemDomainObject;
 use HiEvents\DomainObjects\SocialPostDomainObject;
+use HiEvents\Repository\Interfaces\SocialCommentRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialFeedItemRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
 use HiEvents\Services\Domain\Social\Feed\DTO\SocialFeedEntryDTO;
@@ -19,9 +20,12 @@ class SocialFeedService
 {
     public const MAX_ENTRIES = 200;
 
+    public const PREVIEW_COMMENTS = 2;
+
     public function __construct(
         private readonly SocialPostRepositoryInterface $postRepository,
         private readonly SocialFeedItemRepositoryInterface $feedItemRepository,
+        private readonly SocialCommentRepositoryInterface $commentRepository,
     ) {}
 
     /**
@@ -34,11 +38,17 @@ class SocialFeedService
         $posts = $this->postRepository->paginateForOrganizer($organizerId, null, $limit + 1)->getCollection();
         $postsById = $posts->keyBy(fn (SocialPostDomainObject $post) => $post->getId());
         $linkedPostIds = $items->map(fn (SocialFeedItemDomainObject $item) => $item->getSocialPostId())->filter()->all();
+        $latestComments = $this->commentRepository->findLatestTopLevelForFeedItems(
+            $items->filter(fn (SocialFeedItemDomainObject $item) => $item->getCommentsCount() > 0)
+                ->map(fn (SocialFeedItemDomainObject $item) => $item->getId())->values()->all(),
+            self::PREVIEW_COMMENTS,
+        );
 
         $entries = $items->map(fn (SocialFeedItemDomainObject $item) => new SocialFeedEntryDTO(
             date: Carbon::parse($item->getPublishedAt() ?? $item->getCreatedAt()),
             post: $item->getSocialPostId() ? $postsById->get($item->getSocialPostId()) : null,
             item: $item,
+            latestComments: $latestComments->get($item->getId(), new Collection),
         ));
 
         $pichaOnly = $posts

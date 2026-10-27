@@ -6,6 +6,7 @@ namespace HiEvents\Resources\Social;
 
 use HiEvents\DomainObjects\SocialFeedItemDomainObject;
 use HiEvents\Resources\BaseResource;
+use HiEvents\Services\Domain\Social\Media\SocialMediaUrlGenerator;
 
 /**
  * A post read on Instagram or Facebook.
@@ -27,12 +28,25 @@ class SocialFeedItemResource extends BaseResource
             'network' => $this->getNetwork(),
             'format' => $this->format(),
             'caption' => $this->getCaption(),
-            'media' => is_array($media) ? array_values($media) : [],
+            'media' => is_array($media) ? array_map(fn (array $entry) => $this->mediaEntry($entry), array_values($media)) : [],
             'permalink' => $this->getPermalink(),
             'published_at' => $this->getPublishedAt(),
             'like_count' => $this->getLikeCount(),
             'comments_count' => $this->getCommentsCount(),
             'social_post_id' => $this->getSocialPostId(),
+        ];
+    }
+
+    private function mediaEntry(array $entry): array
+    {
+        if (! isset($entry['file_id'])) {
+            return $entry;
+        }
+
+        return [
+            'url' => app(SocialMediaUrlGenerator::class)->previewUrl($this->getOrganizerId(), (int) $entry['file_id']),
+            'type' => $entry['type'] ?? null,
+            'thumbnail_url' => null,
         ];
     }
 

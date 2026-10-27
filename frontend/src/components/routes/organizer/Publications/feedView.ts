@@ -1,5 +1,6 @@
 import {t} from "@lingui/macro";
 import {
+    SocialComment,
     SocialConnection,
     SocialFeedEntry,
     SocialFeedItem,
@@ -30,6 +31,7 @@ export interface FeedView {
     commentsCount: number | null;
     post: SocialPost | null;
     item: SocialFeedItem | null;
+    latestComments: SocialComment[];
 }
 
 export const fromPost = (post: SocialPost): FeedView => ({
@@ -48,6 +50,26 @@ export const fromPost = (post: SocialPost): FeedView => ({
     commentsCount: null,
     post,
     item: null,
+    latestComments: [],
+});
+
+export const fromItem = (item: SocialFeedItem, post: SocialPost | null = null, key = `network-${item.id}`): FeedView => ({
+    key,
+    network: item.network,
+    format: item.format,
+    caption: item.caption,
+    link: null,
+    media: item.media,
+    status: post ? post.status : 'PUBLISHED',
+    fromAssistant: post?.source === 'ASSISTANT',
+    fromPicha: !!post,
+    permalink: item.permalink,
+    lastError: null,
+    likeCount: item.like_count,
+    commentsCount: item.comments_count,
+    post,
+    item,
+    latestComments: [],
 });
 
 export const fromEntry = (entry: SocialFeedEntry): FeedView => {
@@ -55,24 +77,9 @@ export const fromEntry = (entry: SocialFeedEntry): FeedView => {
         return fromPost(entry.post!);
     }
 
-    const item = entry.item;
-
     return {
-        key: entry.key,
-        network: item.network,
-        format: item.format,
-        caption: item.caption,
-        link: null,
-        media: item.media,
-        status: entry.post ? entry.post.status : 'PUBLISHED',
-        fromAssistant: entry.post?.source === 'ASSISTANT',
-        fromPicha: !!entry.post,
-        permalink: item.permalink,
-        lastError: null,
-        likeCount: item.like_count,
-        commentsCount: item.comments_count,
-        post: entry.post,
-        item,
+        ...fromItem(entry.item, entry.post, entry.key),
+        latestComments: entry.latest_comments ?? [],
     };
 };
 

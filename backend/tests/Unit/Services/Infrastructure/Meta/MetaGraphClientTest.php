@@ -149,6 +149,30 @@ class MetaGraphClientTest extends TestCase
         $this->assertSame(['usage' => 12, 'total' => 100], $this->client->getInstagramPublishingQuota('1784', 'page-token'));
     }
 
+    public function test_stories_are_read_and_their_media_downloaded(): void
+    {
+        Http::fake([
+            'graph.facebook.com/v24.0/1784/stories*' => Http::response(['data' => [['id' => 'st-1', 'media_type' => 'IMAGE', 'media_url' => 'https://cdn.test/st.jpg']]]),
+            'cdn.test/st.jpg' => Http::response('jpeg-bytes'),
+            'cdn.test/gone.jpg' => Http::response('', 404),
+        ]);
+        $path = tempnam(sys_get_temp_dir(), 'test');
+
+        $stories = $this->client->getInstagramStories('1784', 'page-token');
+        $this->client->downloadMedia('https://cdn.test/st.jpg', $path);
+
+        $this->assertSame('st-1', $stories[0]['id']);
+        $this->assertSame('jpeg-bytes', file_get_contents($path));
+        Http::assertSent(fn (Request $request) => str_contains($request->url(), '/1784/stories') && str_contains($request->url(), 'media_url'));
+
+        $this->expectException(MetaGraphApiException::class);
+        try {
+            $this->client->downloadMedia('https://cdn.test/gone.jpg', $path);
+        } finally {
+            unlink($path);
+        }
+    }
+
     public function test_instagram_container_is_created_then_published(): void
     {
         Http::fake([

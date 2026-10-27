@@ -388,8 +388,8 @@
   align-items: center;
   gap: var(--mantine-spacing-md);
   margin-bottom: 6px;
-  font-size: var(--mantine-font-size-sm);
-  font-weight: 600;
+  font-size: var(--mantine-font-size-md);
+  font-weight: 700;
 
   span,
   .statsButton {
@@ -532,4 +532,64 @@
   position: absolute;
   top: 6px;
   right: 6px;
+}
+
+.latestComments {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  cursor: pointer;
+  word-break: break-word;
+}
+
+.storiesBar {
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.storiesTrack {
+  display: flex;
+  gap: var(--mantine-spacing-sm);
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+
+.storyBubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.storyRing {
+  display: block;
+  width: 68px;
+  height: 68px;
+  padding: 3px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+
+  img,
+  video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid var(--mantine-color-body);
+    object-fit: cover;
+    background: var(--mantine-color-gray-2);
+  }
+}
+
+.storyDate {
+  font-size: var(--mantine-font-size-xs);
+  color: var(--mantine-color-dimmed);
 }

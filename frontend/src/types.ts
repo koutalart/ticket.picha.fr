@@ -1896,6 +1896,7 @@ export interface SocialFeedEntry {
     source: 'PICHA' | 'NETWORK';
     post: SocialPost | null;
     item: SocialFeedItem | null;
+    latest_comments: SocialComment[];
 }
 
 export interface SocialComment {

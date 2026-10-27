@@ -1267,7 +1267,7 @@ msgstr "Toutes"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:233
-#: src/components/routes/organizer/Publications/index.tsx:129
+#: src/components/routes/organizer/Publications/index.tsx:135
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
@@ -1616,7 +1616,7 @@ msgstr "Approuver"
 msgid "Approve Message"
 msgstr "Approuver le message"
 
-#: src/components/routes/organizer/Publications/index.tsx:64
+#: src/components/routes/organizer/Publications/index.tsx:70
 msgid "Approve this post? {when}"
 msgstr "Approuver cette publication ? {when}"
 
@@ -1824,7 +1824,7 @@ msgstr "Artistes à l'affiche"
 msgid "As shown on your identity document."
 msgstr "Tels qu'ils figurent sur la pièce d'identité."
 
-#: src/components/routes/organizer/Publications/feedView.ts:96
+#: src/components/routes/organizer/Publications/feedView.ts:103
 msgid "As soon as approved"
 msgstr "Dès l'approbation"
 
@@ -3321,6 +3321,7 @@ msgstr "Mots-clés séparés par des virgules qui décrivent l'événement. Ceux
 msgid "Command to run on the venue computer"
 msgstr "Commande à lancer sur l'ordinateur du lieu"
 
+#: src/components/routes/organizer/Publications/PostCard.tsx:108
 #: src/components/routes/organizer/Publications/PostViewer.tsx:105
 msgid "Comments"
 msgstr "Commentaires"
@@ -3548,7 +3549,7 @@ msgstr "Connecter et mettre à niveau"
 msgid "Connect a Facebook page"
 msgstr "Connecter une page Facebook"
 
-#: src/components/routes/organizer/Publications/index.tsx:109
+#: src/components/routes/organizer/Publications/index.tsx:115
 msgid "Connect a Facebook page to publish on Facebook and Instagram."
 msgstr "Connectez une page Facebook pour publier sur Facebook et Instagram."
 
@@ -4657,7 +4658,7 @@ msgstr "Supprimer la réponse toute faite \"{0}\" ?"
 msgid "Delete the subscriber"
 msgstr "Supprimer l'abonné"
 
-#: src/components/routes/organizer/Publications/index.tsx:78
+#: src/components/routes/organizer/Publications/index.tsx:84
 msgid "Delete this post from the log?"
 msgstr "Supprimer cette publication du journal ?"
 
@@ -7674,6 +7675,14 @@ msgstr "Instagram"
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr "Profil Instagram, vidéo, site… Les scans sont comptés, mais aucun pixel ne peut se déclencher."
 
+#: src/components/routes/organizer/Publications/StoriesBar.tsx:39
+msgid "Instagram removes stories after 24 hours, PICHA keeps a copy for 90 days."
+msgstr "Instagram efface les stories au bout de 24 heures, PICHA en garde une copie pendant 90 jours."
+
+#: src/components/routes/organizer/Publications/StoriesBar.tsx:20
+msgid "Instagram stories"
+msgstr "Stories Instagram"
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:198
 msgid "Install the PICHA SMS app on your Android phone and sign in on <0>sms.picha.fr</0>."
 msgstr "Installez l'application PICHA SMS sur votre téléphone Android et connectez-vous sur <0>sms.picha.fr</0>."
@@ -7891,11 +7900,11 @@ msgstr "Ce compte est-il enregistré à la TVA dans l'UE ?"
 msgid "It stays a draft until you publish it."
 msgstr "Il reste en brouillon tant que vous ne le publiez pas."
 
-#: src/components/routes/organizer/Publications/index.tsx:61
+#: src/components/routes/organizer/Publications/index.tsx:67
 msgid "It will be published on {0}."
 msgstr "Elle sera publiée le {0}."
 
-#: src/components/routes/organizer/Publications/index.tsx:62
+#: src/components/routes/organizer/Publications/index.tsx:68
 msgid "It will be published within a minute."
 msgstr "Elle sera publiée dans la minute."
 
@@ -8257,6 +8266,10 @@ msgstr "Light (300)"
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:181
 msgid "Lighter version, for example 720p, used on phones."
 msgstr "Version plus légère, par exemple 720p, utilisée sur téléphone."
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:107
+msgid "Likes"
+msgstr "J'aime"
 
 #: src/components/forms/PromoCodeForm/index.tsx:128
 msgid "Limit (tickets, date, number of uses)"
@@ -9109,7 +9122,7 @@ msgstr "nouveau mot de passe"
 msgid "New permissions to grant"
 msgstr "Nouvelles autorisations à accorder"
 
-#: src/components/routes/organizer/Publications/index.tsx:101
+#: src/components/routes/organizer/Publications/index.tsx:107
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:120
 msgid "New post"
 msgstr "Nouvelle publication"
@@ -9519,7 +9532,7 @@ msgstr "Aucun paiement requis"
 msgid "No popular events in the last 14 days"
 msgstr "Aucun événement populaire au cours des 14 derniers jours"
 
-#: src/components/routes/organizer/Publications/index.tsx:147
+#: src/components/routes/organizer/Publications/index.tsx:155
 msgid "No post yet."
 msgstr "Aucune publication pour l'instant."
 
@@ -10217,8 +10230,8 @@ msgstr "Ouvrir la fiche client"
 msgid "Open the event flyer"
 msgstr "Ouvrir l'affiche de l'événement"
 
-#: src/components/routes/organizer/Publications/index.tsx:112
-#: src/components/routes/organizer/Publications/index.tsx:122
+#: src/components/routes/organizer/Publications/index.tsx:118
+#: src/components/routes/organizer/Publications/index.tsx:128
 msgid "Open the settings"
 msgstr "Ouvrir les paramètres"
 
@@ -11313,7 +11326,7 @@ msgstr "Placez ceci dans le <head> de votre site web."
 msgid "Plan at least one presale, online or physical."
 msgstr "Prévoyez au moins une prévente, en ligne ou physique."
 
-#: src/components/routes/organizer/Publications/feedView.ts:94
+#: src/components/routes/organizer/Publications/feedView.ts:101
 msgid "Planned for {0}"
 msgstr "Prévue le {0}"
 
@@ -11545,11 +11558,11 @@ msgstr "Événements populaires (14 derniers jours)"
 msgid "Portuguese"
 msgstr "Portugais"
 
-#: src/components/routes/organizer/Publications/index.tsx:66
+#: src/components/routes/organizer/Publications/index.tsx:72
 msgid "Post approved"
 msgstr "Publication approuvée"
 
-#: src/components/routes/organizer/Publications/index.tsx:73
+#: src/components/routes/organizer/Publications/index.tsx:79
 msgid "Post cancelled"
 msgstr "Publication annulée"
 
@@ -11562,7 +11575,7 @@ msgstr "Message après le paiement"
 msgid "Post Checkout Message"
 msgstr "Message Post-Commande"
 
-#: src/components/routes/organizer/Publications/index.tsx:81
+#: src/components/routes/organizer/Publications/index.tsx:87
 msgid "Post deleted"
 msgstr "Publication supprimée"
 
@@ -12012,7 +12025,7 @@ msgid "Publication time"
 msgstr "Heure de publication"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:76
-#: src/components/routes/organizer/Publications/index.tsx:99
+#: src/components/routes/organizer/Publications/index.tsx:105
 msgid "Publications"
 msgstr "Publications"
 
@@ -12050,7 +12063,7 @@ msgstr "Publiée directement sur Facebook"
 msgid "Published directly on Instagram"
 msgstr "Publiée directement sur Instagram"
 
-#: src/components/routes/organizer/Publications/feedView.ts:91
+#: src/components/routes/organizer/Publications/feedView.ts:98
 msgid "Published on {0}"
 msgstr "Publiée le {0}"
 
@@ -12346,7 +12359,7 @@ msgstr "Les destinataires sont disponibles après l'envoi du message"
 msgid "Reconnect"
 msgstr "Reconnecter"
 
-#: src/components/routes/organizer/Publications/index.tsx:119
+#: src/components/routes/organizer/Publications/index.tsx:125
 msgid "Reconnect the Facebook page to read and answer the comments of your posts."
 msgstr "Reconnectez la page Facebook pour lire les commentaires de vos publications et y répondre."
 
@@ -14213,7 +14226,7 @@ msgstr "Afficher la case d'opt-in marketing"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "Afficher la case d'opt-in marketing par défaut"
 
-#: src/components/routes/organizer/Publications/index.tsx:166
+#: src/components/routes/organizer/Publications/index.tsx:174
 #: src/components/routes/product-widget/SelectProducts/index.tsx:537
 #: src/components/routes/product-widget/SelectProducts/index.tsx:652
 msgid "Show more"
@@ -14470,6 +14483,7 @@ msgid "Some tickets could not be printed."
 msgstr "Certains billets n'ont pas pu être imprimés."
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:79
+#: src/components/routes/organizer/Publications/PostCard.tsx:128
 msgid "Someone"
 msgstr "Quelqu'un"
 
@@ -14707,6 +14721,10 @@ msgstr "Arrêter l'usurpation"
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:213
 msgid "Stored encrypted. It is never displayed again."
 msgstr "Stockée chiffrée. Elle n'est plus jamais affichée."
+
+#: src/components/routes/organizer/Publications/StoriesBar.tsx:19
+msgid "Stories"
+msgstr "Stories"
 
 #: src/components/routes/organizer/Publications/labels.ts:50
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:162
@@ -15415,7 +15433,7 @@ msgstr "L'événement que vous recherchez n'est pas disponible pour le moment. I
 msgid "The Facebook connection link has expired. Please try again."
 msgstr "Le lien de connexion Facebook a expiré. Veuillez réessayer."
 
-#: src/components/routes/organizer/Publications/index.tsx:108
+#: src/components/routes/organizer/Publications/index.tsx:114
 msgid "The Facebook connection must be renewed before anything can be published."
 msgstr "La connexion Facebook doit être renouvelée avant toute publication."
 
@@ -16590,11 +16608,11 @@ msgstr "Type de billet"
 msgid "Typography"
 msgstr "Typographie"
 
-#: src/components/routes/organizer/Publications/index.tsx:67
+#: src/components/routes/organizer/Publications/index.tsx:73
 msgid "Unable to approve the post"
 msgstr "Impossible d'approuver la publication"
 
-#: src/components/routes/organizer/Publications/index.tsx:74
+#: src/components/routes/organizer/Publications/index.tsx:80
 msgid "Unable to cancel the post"
 msgstr "Impossible d'annuler la publication"
 
@@ -16627,7 +16645,7 @@ msgstr "Impossible de créer une question. Veuillez vérifier vos coordonnées"
 msgid "Unable to delete the campaign"
 msgstr "Impossible de supprimer la campagne"
 
-#: src/components/routes/organizer/Publications/index.tsx:84
+#: src/components/routes/organizer/Publications/index.tsx:90
 msgid "Unable to delete the post"
 msgstr "Impossible de supprimer la publication"
 
