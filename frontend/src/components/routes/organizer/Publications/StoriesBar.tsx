@@ -1,3 +1,4 @@
+import {useEffect, useRef} from "react";
 import {t} from "@lingui/macro";
 import {Text} from "@mantine/core";
 import {SocialFeedItem} from "../../../../types.ts";
@@ -11,6 +12,15 @@ interface StoriesBarProps {
 }
 
 export const StoriesBar = ({stories, timezone, onOpen}: StoriesBarProps) => {
+    const trackRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const track = trackRef.current;
+        if (track) {
+            track.scrollLeft = track.scrollWidth;
+        }
+    }, [stories.length]);
+
     if (stories.length === 0) {
         return null;
     }
@@ -18,7 +28,7 @@ export const StoriesBar = ({stories, timezone, onOpen}: StoriesBarProps) => {
     return (
         <section className={classes.storiesBar} aria-label={t`Stories`}>
             <Text size="sm" fw={600} mb={6}>{t`Instagram stories`}</Text>
-            <div className={classes.storiesTrack}>
+            <div ref={trackRef} className={classes.storiesTrack}>
                 {stories.map((story, index) => {
                     const media = story.media[0];
 
