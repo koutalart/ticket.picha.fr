@@ -19,9 +19,10 @@ import {PageBody} from "../../../common/PageBody";
 import {PageTitle} from "../../../common/PageTitle";
 import {PostFormModal} from "./PostFormModal.tsx";
 import {PostCard, PostActions} from "./PostCard.tsx";
-import {FeedView, fromEntry, fromItem, fromPost} from "./feedView.ts";
+import {FeedView, fromEntry, fromPost} from "./feedView.ts";
 import {PostViewer} from "./PostViewer.tsx";
 import {StoriesBar} from "./StoriesBar.tsx";
+import {StoryViewer} from "./StoryViewer.tsx";
 import {postTabLabel} from "./labels.ts";
 import classes from "./Publications.module.scss";
 
@@ -53,8 +54,7 @@ const Publications = () => {
     const views = useMemo<FeedView[]>(() => isFeed
         ? (feedQuery.data?.data ?? []).map(fromEntry)
         : (postsQuery.data?.data ?? []).map(fromPost), [isFeed, feedQuery.data, postsQuery.data]);
-    const stories = useMemo(() => storiesQuery.data?.data ?? [], [storiesQuery.data]);
-    const storyViews = useMemo<FeedView[]>(() => stories.map(story => fromItem(story)), [stories]);
+    const stories = useMemo(() => [...(storiesQuery.data?.data ?? [])].reverse(), [storiesQuery.data]);
     const meta = postsQuery.data?.meta;
     const activeQuery = isFeed ? feedQuery : postsQuery;
     const pendingCount = pendingQuery.data?.meta?.total ?? 0;
@@ -197,13 +197,9 @@ const Publications = () => {
             )}
 
             {storyIndex !== null && (
-                <PostViewer
-                    organizerId={organizerId!}
-                    posts={storyViews}
+                <StoryViewer
+                    stories={stories}
                     index={storyIndex}
-                    connection={connection}
-                    timezone={timezone}
-                    actions={actions}
                     onChange={setStoryIndex}
                     onClose={() => setStoryIndex(null)}
                 />
