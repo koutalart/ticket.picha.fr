@@ -12,6 +12,7 @@ import * as nodePath from "node:path";
 import * as nodeUrl from "node:url";
 import "dotenv/config";
 import {sitemapIndexHandler, sitemapEventsHandler, sitemapOrganizersHandler} from "./src/sitemap/proxy.js";
+import {createRouteAssets} from "./src/ssr/routeAssets.js";
 
 installGlobals();
 
@@ -65,8 +66,21 @@ async function main() {
         app.use(vite.middlewares);
     } else {
         app.use(compression());
-        app.use(base, sirv(path.join(__dirname, "./dist/client"), { extensions: [] }));
+        app.use(base, sirv(path.join(__dirname, "./dist/client"), {
+            extensions: [],
+            brotli: true,
+            gzip: true,
+            setHeaders: (res, pathname) => {
+                if (pathname.startsWith('/assets/')) {
+                    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+                }
+            },
+        }));
     }
+
+    const routeAssets = createRouteAssets(isProduction
+        ? JSON.parse(await fs.readFile("./dist/client/.vite/manifest.json", "utf-8").catch(() => "{}"))
+        : {});
 
     const CUSTOM_DOMAIN_HEADER = 'x-picha-custom-domain-organizer';
     const CUSTOM_DOMAIN_CACHE_TTL_MS = 60 * 1000;
@@ -170,6 +184,8 @@ async function main() {
         }
         return JSON.stringify({...envVars, ...overrides});
     };
+
+    const storageBaseUrl = (apiUrl) => apiUrl ? `${apiUrl.replace(/\/$/, '')}/storage/` : null;
 
     const xmlEscape = (value) => String(value).replace(/[<>&'"]/g, (char) => (
         {'<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;'}[char]
@@ -527,17 +543,37 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 .map((value) => value.toString() || "")
                 .join(" ");
 
+            let pageHtml = appHtml;
+            const headSnippets = [];
+
             if (customDomain && platformUrl) {
                 for (const path of PARTICIPANT_PATHS) {
                     helmetHtml = helmetHtml.split(`${platformUrl}${path}`).join(`https://${requestHost}${path}`);
                 }
             }
 
+            // Images and videos of an organizer with its own domain are served from that domain (proxied /api/):
+            // the browser reuses the page connection and link previews see og:image on the og:url domain.
+            const platformStorageUrl = storageBaseUrl(process.env.VITE_API_URL_CLIENT);
+            let stateJson = stringifiedState;
+            if (customDomain && platformStorageUrl) {
+                const protocol = (req.get('x-forwarded-proto') || req.protocol).split(',')[0].trim() === 'http' ? 'http' : 'https';
+                const host = /^[a-z0-9.-]+(:\d+)?$/i.test(req.get('host') || '') ? req.get('host') : requestHost;
+                const customStorageUrl = `${protocol}://${host}/api/storage/`;
+                helmetHtml = helmetHtml.split(platformStorageUrl).join(customStorageUrl);
+                pageHtml = pageHtml.split(platformStorageUrl).join(customStorageUrl);
+                stateJson = stateJson.split(platformStorageUrl).join(customStorageUrl);
+            }
+
+            const assets = routeAssets(req.originalUrl, {locale, customerAddressForm});
+            if (assets.html && assets.showsContentBeforeHydration) {
+                headSnippets.push('<style>.ssr-loader{display:none!important}</style>');
+            }
+
             const envVariablesHtml = `<script>window.hievents = ${getViteEnvironmentVariables(
                 customDomain ? {VITE_FRONTEND_URL: `https://${requestHost}`} : {}
             )};window.__CUSTOM_DOMAIN_ORGANIZER__ = ${JSON.stringify(customDomain).replace(/</g, '\\u003c')};</script>`;
 
-            const headSnippets = [];
             if (process.env.VITE_FATHOM_SITE_ID) {
                 headSnippets.push(`
                 <script src="https://cdn.usefathom.com/script.js" data-spa="auto" data-site="${process.env.VITE_FATHOM_SITE_ID}" defer></script>
@@ -547,12 +583,13 @@ Sitemap: ${frontendUrl}/sitemap.xml
             const html = template
                 .replace('<html lang="en">', `<html lang="${htmlLang}" data-locale="${locale}"${customerAddressForm === 'tu' ? ' data-address-form="tu"' : ''}>`)
                 .replace("<!--head-snippets-->", headSnippets.join("\n"))
-                .replace("<!--app-html-->", appHtml)
-                .replace("<!--dehydrated-state-->", `<script>window.__REHYDRATED_STATE__ = ${stringifiedState}</script>`)
-                .replace("<!--environment-variables-->", envVariablesHtml)
-                .replace(/<!--render-helmet-->.*?<!--\/render-helmet-->/s, helmetHtml);
+                .replace("<!--app-html-->", () => pageHtml)
+                .replace("<!--dehydrated-state-->", () => `<script>window.__REHYDRATED_STATE__ = ${stateJson}</script>`)
+                .replace("<!--environment-variables-->", () => envVariablesHtml)
+                .replace(/<!--render-helmet-->.*?<!--\/render-helmet-->/s, () => helmetHtml)
+                .replace("</head>", () => `${assets.html}</head>`);
 
-            res.setHeader("Content-Type", "text/html");
+            res.setHeader("Content-Type", "text/html; charset=utf-8");
             return res.status(statusCode || 200).end(html);
         } catch (error) {
             if (error instanceof Response) {

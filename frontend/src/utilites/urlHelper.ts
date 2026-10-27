@@ -69,9 +69,13 @@ export const eventHomepageUrl = (event: Event, organizer?: PublicUrlOwner) => {
     return publicBaseUrl(event?.organizer ?? organizer) + eventHomepagePath(event);
 }
 
+export const eventShareImage = (event: Event): Image | undefined => {
+    return event?.images?.find((image) => image.type === 'EVENT_SHARE_IMAGE')
+        ?? event?.images?.find((image) => image.type === 'EVENT_COVER');
+}
+
 export const eventShareImageUrl = (event: Event) => {
-    return event?.images?.find((image) => image.type === 'EVENT_SHARE_IMAGE')?.url
-        ?? event?.images?.find((image) => image.type === 'EVENT_COVER')?.url;
+    return eventShareImage(event)?.url;
 }
 
 export const eventCoverImageUrl = (event: Event) => {

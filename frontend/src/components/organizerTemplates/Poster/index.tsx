@@ -12,7 +12,8 @@ import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {getConfig} from "../../../utilites/config.ts";
-import {eventHomepagePath, eventHomepageUrl, eventShareImageUrl, organizerHomepagePath} from "../../../utilites/urlHelper.ts";
+import {eventHomepagePath, eventHomepageUrl, eventShareImage, eventShareImageUrl, organizerHomepagePath} from "../../../utilites/urlHelper.ts";
+import {OpenGraphExtraMeta} from "../../common/OpenGraphExtraMeta";
 import {buildEventJsonLd, formatFromPrice, getTicketTiers, getVenue} from "./eventData.ts";
 import {getFaq} from "./faq.ts";
 import {areaSuffix, longDate, PosterPageProps, stripHtml} from "./shared.tsx";
@@ -192,6 +193,7 @@ export const PosterTemplate = ({
     };
 
     const shareImage = (featured && eventShareImageUrl(featured)) || content.about_image_url || logo?.url;
+    const featuredShareImage = featured ? eventShareImage(featured) : undefined;
 
     return (
         <>
@@ -219,6 +221,11 @@ export const PosterTemplate = ({
                     {JSON.stringify({'@context': 'https://schema.org', '@graph': jsonLdGraph})}
                 </script>
             </Helmet>
+            <OpenGraphExtraMeta
+                image={featuredShareImage?.url === shareImage ? featuredShareImage : undefined}
+                imageAlt={featured?.title}
+                siteName={organizer.name}
+            />
             <SsrLoaderStyle background="#000000" accent={accent} logoUrl={logo?.url}/>
 
             <div className={classes.page} style={{'--poster-accent': accent} as React.CSSProperties}>
