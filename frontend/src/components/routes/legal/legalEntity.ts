@@ -2,30 +2,26 @@
 
 /**
  * Informations légales de l'éditeur, reprises dans toutes les pages /legal/*.
- * Remplacer chaque « [À COMPLÉTER] » avant la mise en production.
+ * mediator reste null tant qu'aucun médiateur de la consommation n'est désigné.
  */
 export const legalEntity = {
     brand: "PICHA Ticket",
-    companyName: "[À COMPLÉTER : raison sociale]",
-    legalForm: "[À COMPLÉTER : forme juridique, ex. SAS]",
-    shareCapital: "[À COMPLÉTER : capital social]",
-    address: "[À COMPLÉTER : adresse du siège social]",
-    registration: "[À COMPLÉTER : RCS ville + numéro, ou n° de répertoire des métiers]",
-    siren: "[À COMPLÉTER : SIREN]",
-    vatNumber: "[À COMPLÉTER : n° de TVA intracommunautaire]",
-    phone: "[À COMPLÉTER : téléphone]",
-    email: "ticket@picha.fr",
-    publicationDirector: "[À COMPLÉTER : nom du directeur de la publication]",
+    companyName: "DIGIT",
+    legalForm: "SAS",
+    shareCapital: "500 €",
+    address: "1 rue Citronnelle, BP 66, 97660 Dembeni, Mayotte",
+    registration: "RCS Mamoudzou 897 877 122 (SIRET 897 877 122 00019)",
+    siren: "897 877 122",
+    vatNumber: "FR63897877122",
+    phone: "06 39 78 07 73",
+    email: "direction@picha.fr",
+    publicationDirector: "Josué Koutala, Président",
     privacyContactEmail: "ticket@picha.fr",
-    mediator: {
-        name: "[À COMPLÉTER : nom du médiateur de la consommation]",
-        address: "[À COMPLÉTER : adresse du médiateur]",
-        website: "[À COMPLÉTER : site internet du médiateur]",
-    },
+    mediator: null as null | {name: string, address: string, website: string},
     host: {
         name: "OVH SAS",
         address: "2 rue Kellermann, 59100 Roubaix, France",
         website: "https://www.ovhcloud.com",
     },
-    lastUpdated: "23 octobre 2026",
+    lastUpdated: "27 octobre 2026",
 };
