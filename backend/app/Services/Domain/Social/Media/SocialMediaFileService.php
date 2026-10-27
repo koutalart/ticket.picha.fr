@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Services\Domain\Social\Media;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use HiEvents\DomainObjects\Enums\SocialPostFormat;
 use HiEvents\DomainObjects\Generated\SocialMediaFileDomainObjectAbstract;
 use HiEvents\DomainObjects\SocialMediaFileDomainObject;
@@ -186,6 +187,58 @@ class SocialMediaFileService
             SocialMediaFileDomainObjectAbstract::VIDEO_CODEC => $metadata->videoCodec,
             SocialMediaFileDomainObjectAbstract::AUDIO_CODEC => $metadata->audioCodec,
             SocialMediaFileDomainObjectAbstract::PURGE_AFTER => Carbon::now()->addDays(self::ORPHAN_RETENTION_DAYS),
+        ]);
+    }
+
+    /**
+     * Keeps a copy of a file read on a network (a story disappears from Instagram after 24 hours).
+     *
+     * @throws InvalidSocialMediaFileException
+     */
+    public function storeCopy(int $accountId, int $organizerId, string $localPath, string $originalName, CarbonInterface $purgeAfter): SocialMediaFileDomainObject
+    {
+        $mimeType = $this->detectMimeType($localPath);
+        $type = $this->rules->typeForMime($mimeType);
+        $sizeBytes = (int) filesize($localPath);
+        $this->rules->assertSize($type, $sizeBytes);
+        $metadata = $this->probe->probe($localPath, $type);
+        $disk = (string) $this->config->get('filesystems.private', 'local');
+        $path = sprintf('%s/%d/%s.%s', self::FINAL_DIRECTORY, $organizerId, Str::uuid(), SocialMediaRules::EXTENSIONS[$mimeType]);
+        $stream = fopen($localPath, 'rb');
+
+        try {
+            $this->filesystemManager->disk($disk)->writeStream($path, $stream);
+        } catch (Throwable $exception) {
+            $this->logger->error('Social media copy could not be stored', [
+                'organizer_id' => $organizerId,
+                'disk' => $disk,
+                'message' => $exception->getMessage(),
+            ]);
+
+            throw new InvalidSocialMediaFileException(__('The file could not be stored. Please try again.'));
+        } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }
+
+        return $this->fileRepository->create([
+            SocialMediaFileDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+            SocialMediaFileDomainObjectAbstract::ACCOUNT_ID => $accountId,
+            SocialMediaFileDomainObjectAbstract::STATUS => SocialMediaFileStatus::READY->name,
+            SocialMediaFileDomainObjectAbstract::DISK => $disk,
+            SocialMediaFileDomainObjectAbstract::PATH => $path,
+            SocialMediaFileDomainObjectAbstract::ORIGINAL_NAME => Str::limit(basename($originalName), 250, ''),
+            SocialMediaFileDomainObjectAbstract::MIME_TYPE => $mimeType,
+            SocialMediaFileDomainObjectAbstract::MEDIA_TYPE => $type->name,
+            SocialMediaFileDomainObjectAbstract::SIZE_BYTES => $sizeBytes,
+            SocialMediaFileDomainObjectAbstract::RECEIVED_BYTES => $sizeBytes,
+            SocialMediaFileDomainObjectAbstract::WIDTH => $metadata->width,
+            SocialMediaFileDomainObjectAbstract::HEIGHT => $metadata->height,
+            SocialMediaFileDomainObjectAbstract::DURATION_MS => $metadata->durationMs,
+            SocialMediaFileDomainObjectAbstract::VIDEO_CODEC => $metadata->videoCodec,
+            SocialMediaFileDomainObjectAbstract::AUDIO_CODEC => $metadata->audioCodec,
+            SocialMediaFileDomainObjectAbstract::PURGE_AFTER => $purgeAfter,
         ]);
     }
 

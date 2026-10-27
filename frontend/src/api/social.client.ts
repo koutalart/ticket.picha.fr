@@ -7,6 +7,7 @@ import {
     SocialComment,
     SocialConnection,
     SocialFeedEntry,
+    SocialFeedItem,
     SocialMediaFile,
     SocialMediaItem,
     SocialNetwork,
@@ -90,6 +91,10 @@ export const socialClient = {
     },
     feed: async (organizerId: IdParam, limit: number) => {
         const response = await api.get<SocialFeedResponse>(`organizers/${organizerId}/social/feed`, {params: {limit}});
+        return response.data;
+    },
+    stories: async (organizerId: IdParam) => {
+        const response = await api.get<GenericDataResponse<SocialFeedItem[]>>(`organizers/${organizerId}/social/stories`);
         return response.data;
     },
     comments: async (organizerId: IdParam, feedItemId: IdParam) => {

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services\Domain\Social\Media;
 
+use Carbon\Carbon;
 use HiEvents\DomainObjects\Enums\SocialPostFormat;
 use HiEvents\DomainObjects\SocialMediaFileDomainObject;
 use HiEvents\DomainObjects\Status\SocialMediaFileStatus;
@@ -90,6 +91,21 @@ class SocialMediaFileServiceTest extends TestCase
         $this->assertSame($bytes, Storage::disk('private-test')->get($file->getPath()));
         $this->assertFalse(Storage::disk('local')->exists('social-uploads/7.part'));
         $this->assertNotNull($file->getPurgeAfter());
+    }
+
+    public function test_keeps_a_copy_of_a_story_read_on_instagram(): void
+    {
+        $source = base_path('tests/Fixtures/Social/vertical-9x16.mp4');
+        $purgeAfter = Carbon::parse('2027-01-25 10:00:00');
+
+        $file = $this->service->storeCopy(3, 4, $source, 'story-1789', $purgeAfter);
+
+        $this->assertSame(SocialMediaFileStatus::READY->name, $file->getStatus());
+        $this->assertSame('video/mp4', $file->getMimeType());
+        $this->assertSame(192, $file->getHeight());
+        $this->assertSame(filesize($source), $file->getSizeBytes());
+        $this->assertSame(file_get_contents($source), Storage::disk('private-test')->get($file->getPath()));
+        $this->assertEquals($purgeAfter, $file->getPurgeAfter());
     }
 
     public function test_refuses_a_horizontal_video_for_a_reel_and_discards_it(): void

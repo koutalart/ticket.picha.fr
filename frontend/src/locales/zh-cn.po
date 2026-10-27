@@ -1267,7 +1267,7 @@ msgstr "全部"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:233
-#: src/components/routes/organizer/Publications/index.tsx:129
+#: src/components/routes/organizer/Publications/index.tsx:135
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
@@ -1616,7 +1616,7 @@ msgstr "批准"
 msgid "Approve Message"
 msgstr "批准消息"
 
-#: src/components/routes/organizer/Publications/index.tsx:64
+#: src/components/routes/organizer/Publications/index.tsx:70
 msgid "Approve this post? {when}"
 msgstr "批准此帖子？{when}"
 
@@ -1824,7 +1824,7 @@ msgstr ""
 msgid "As shown on your identity document."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/feedView.ts:96
+#: src/components/routes/organizer/Publications/feedView.ts:103
 msgid "As soon as approved"
 msgstr "批准后立即发布"
 
@@ -3321,6 +3321,7 @@ msgstr "以逗号分隔的描述活动的关键字。搜索引擎将使用这些
 msgid "Command to run on the venue computer"
 msgstr "在场地电脑上运行的命令"
 
+#: src/components/routes/organizer/Publications/PostCard.tsx:108
 #: src/components/routes/organizer/Publications/PostViewer.tsx:105
 msgid "Comments"
 msgstr "评论"
@@ -3548,7 +3549,7 @@ msgstr "连接并升级"
 msgid "Connect a Facebook page"
 msgstr "连接 Facebook 主页"
 
-#: src/components/routes/organizer/Publications/index.tsx:109
+#: src/components/routes/organizer/Publications/index.tsx:115
 msgid "Connect a Facebook page to publish on Facebook and Instagram."
 msgstr "连接 Facebook 主页即可在 Facebook 和 Instagram 上发布。"
 
@@ -4657,7 +4658,7 @@ msgstr "删除快捷回复“{0}”？"
 msgid "Delete the subscriber"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:78
+#: src/components/routes/organizer/Publications/index.tsx:84
 msgid "Delete this post from the log?"
 msgstr "从记录中删除此帖子？"
 
@@ -7672,6 +7673,14 @@ msgstr "Instagram"
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
+#: src/components/routes/organizer/Publications/StoriesBar.tsx:39
+msgid "Instagram removes stories after 24 hours, PICHA keeps a copy for 90 days."
+msgstr "Instagram 会在 24 小时后删除快拍，PICHA 会保留副本 90 天。"
+
+#: src/components/routes/organizer/Publications/StoriesBar.tsx:20
+msgid "Instagram stories"
+msgstr "Instagram 快拍"
+
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:198
 msgid "Install the PICHA SMS app on your Android phone and sign in on <0>sms.picha.fr</0>."
 msgstr "在 Android 手机上安装 PICHA SMS 应用，并登录 <0>sms.picha.fr</0>。"
@@ -7889,11 +7898,11 @@ msgstr "此账户是否在欧盟注册增值税？"
 msgid "It stays a draft until you publish it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:61
+#: src/components/routes/organizer/Publications/index.tsx:67
 msgid "It will be published on {0}."
 msgstr "将于 {0} 发布。"
 
-#: src/components/routes/organizer/Publications/index.tsx:62
+#: src/components/routes/organizer/Publications/index.tsx:68
 msgid "It will be published within a minute."
 msgstr "将在一分钟内发布。"
 
@@ -8255,6 +8264,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:181
 msgid "Lighter version, for example 720p, used on phones."
 msgstr ""
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:107
+msgid "Likes"
+msgstr "点赞"
 
 #: src/components/forms/PromoCodeForm/index.tsx:128
 msgid "Limit (tickets, date, number of uses)"
@@ -9104,7 +9117,7 @@ msgstr "新密码"
 msgid "New permissions to grant"
 msgstr "需要授予新权限"
 
-#: src/components/routes/organizer/Publications/index.tsx:101
+#: src/components/routes/organizer/Publications/index.tsx:107
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:120
 msgid "New post"
 msgstr "新帖子"
@@ -9514,7 +9527,7 @@ msgstr "无需支付"
 msgid "No popular events in the last 14 days"
 msgstr "过去14天没有热门活动"
 
-#: src/components/routes/organizer/Publications/index.tsx:147
+#: src/components/routes/organizer/Publications/index.tsx:155
 msgid "No post yet."
 msgstr "暂无帖子。"
 
@@ -10212,8 +10225,8 @@ msgstr "打开客户档案"
 msgid "Open the event flyer"
 msgstr "打开活动海报"
 
-#: src/components/routes/organizer/Publications/index.tsx:112
-#: src/components/routes/organizer/Publications/index.tsx:122
+#: src/components/routes/organizer/Publications/index.tsx:118
+#: src/components/routes/organizer/Publications/index.tsx:128
 msgid "Open the settings"
 msgstr "打开设置"
 
@@ -11308,7 +11321,7 @@ msgstr "将此放置在您网站的 <head> 中。"
 msgid "Plan at least one presale, online or physical."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/feedView.ts:94
+#: src/components/routes/organizer/Publications/feedView.ts:101
 msgid "Planned for {0}"
 msgstr "计划于 {0}"
 
@@ -11540,11 +11553,11 @@ msgstr "热门活动（过去14天）"
 msgid "Portuguese"
 msgstr "葡萄牙语"
 
-#: src/components/routes/organizer/Publications/index.tsx:66
+#: src/components/routes/organizer/Publications/index.tsx:72
 msgid "Post approved"
 msgstr "帖子已批准"
 
-#: src/components/routes/organizer/Publications/index.tsx:73
+#: src/components/routes/organizer/Publications/index.tsx:79
 msgid "Post cancelled"
 msgstr "帖子已取消"
 
@@ -11557,7 +11570,7 @@ msgstr "结账后信息"
 msgid "Post Checkout Message"
 msgstr "结账后消息"
 
-#: src/components/routes/organizer/Publications/index.tsx:81
+#: src/components/routes/organizer/Publications/index.tsx:87
 msgid "Post deleted"
 msgstr "帖子已删除"
 
@@ -12004,7 +12017,7 @@ msgid "Publication time"
 msgstr "发布时间"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:76
-#: src/components/routes/organizer/Publications/index.tsx:99
+#: src/components/routes/organizer/Publications/index.tsx:105
 msgid "Publications"
 msgstr "发布"
 
@@ -12042,7 +12055,7 @@ msgstr "直接发布在 Facebook"
 msgid "Published directly on Instagram"
 msgstr "直接发布在 Instagram"
 
-#: src/components/routes/organizer/Publications/feedView.ts:91
+#: src/components/routes/organizer/Publications/feedView.ts:98
 msgid "Published on {0}"
 msgstr "发布于 {0}"
 
@@ -12338,7 +12351,7 @@ msgstr "收件人在消息发送后可用"
 msgid "Reconnect"
 msgstr "重新连接"
 
-#: src/components/routes/organizer/Publications/index.tsx:119
+#: src/components/routes/organizer/Publications/index.tsx:125
 msgid "Reconnect the Facebook page to read and answer the comments of your posts."
 msgstr "重新连接 Facebook 主页，即可查看并回复帖子评论。"
 
@@ -14205,7 +14218,7 @@ msgstr "显示营销订阅复选框"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "默认显示营销订阅复选框"
 
-#: src/components/routes/organizer/Publications/index.tsx:166
+#: src/components/routes/organizer/Publications/index.tsx:174
 #: src/components/routes/product-widget/SelectProducts/index.tsx:537
 #: src/components/routes/product-widget/SelectProducts/index.tsx:652
 msgid "Show more"
@@ -14462,6 +14475,7 @@ msgid "Some tickets could not be printed."
 msgstr "部分门票未能打印。"
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:79
+#: src/components/routes/organizer/Publications/PostCard.tsx:128
 msgid "Someone"
 msgstr "某人"
 
@@ -14699,6 +14713,10 @@ msgstr "停止模拟"
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:213
 msgid "Stored encrypted. It is never displayed again."
 msgstr "加密存储，之后不会再显示。"
+
+#: src/components/routes/organizer/Publications/StoriesBar.tsx:19
+msgid "Stories"
+msgstr "快拍"
 
 #: src/components/routes/organizer/Publications/labels.ts:50
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:162
@@ -15406,7 +15424,7 @@ msgstr "您查找的活动目前不可用。它可能已被删除、过期或 UR
 msgid "The Facebook connection link has expired. Please try again."
 msgstr "Facebook 连接链接已过期。请重试。"
 
-#: src/components/routes/organizer/Publications/index.tsx:108
+#: src/components/routes/organizer/Publications/index.tsx:114
 msgid "The Facebook connection must be renewed before anything can be published."
 msgstr "发布之前需要续期 Facebook 连接。"
 
@@ -16581,11 +16599,11 @@ msgstr "门票类型"
 msgid "Typography"
 msgstr "排版"
 
-#: src/components/routes/organizer/Publications/index.tsx:67
+#: src/components/routes/organizer/Publications/index.tsx:73
 msgid "Unable to approve the post"
 msgstr "无法批准帖子"
 
-#: src/components/routes/organizer/Publications/index.tsx:74
+#: src/components/routes/organizer/Publications/index.tsx:80
 msgid "Unable to cancel the post"
 msgstr "无法取消帖子"
 
@@ -16618,7 +16636,7 @@ msgstr "无法创建问题。请检查您的详细信息"
 msgid "Unable to delete the campaign"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:84
+#: src/components/routes/organizer/Publications/index.tsx:90
 msgid "Unable to delete the post"
 msgstr "无法删除帖子"
 

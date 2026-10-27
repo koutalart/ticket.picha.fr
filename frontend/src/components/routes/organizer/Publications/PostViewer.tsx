@@ -100,7 +100,7 @@ export const PostViewer = ({organizerId, posts, index, connection, timezone, act
                         <Text size="xs" c={post.status === 'FAILED' ? 'red' : 'orange'}>{post.lastError}</Text>
                     )}
                     <PostActionButtons view={post} actions={actions}/>
-                    {post.item && (
+                    {post.item && post.format !== 'STORY' && (
                         <>
                             <Divider label={t`Comments`} labelPosition="left"/>
                             <CommentsPanel organizerId={organizerId} feedItemId={post.item.id} canReply={actions.canPublish}/>

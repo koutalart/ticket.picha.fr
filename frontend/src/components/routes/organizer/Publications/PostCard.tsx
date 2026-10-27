@@ -104,9 +104,9 @@ export const PostCard = ({view, connection, timezone, actions, onOpen}: PostCard
         <div className={classes.cardBody}>
             {view.item && (
                 <div className={classes.stats}>
-                    <span><IconHeart size={18}/> {formatNumber(view.likeCount ?? 0)}</span>
-                    <button type="button" className={classes.statsButton} onClick={onOpen}>
-                        <IconMessageCircle size={18}/> {formatNumber(view.commentsCount ?? 0)}
+                    <span title={t`Likes`}><IconHeart size={24}/> {formatNumber(view.likeCount ?? 0)}</span>
+                    <button type="button" className={classes.statsButton} onClick={onOpen} title={t`Comments`}>
+                        <IconMessageCircle size={24}/> {formatNumber(view.commentsCount ?? 0)}
                     </button>
                 </div>
             )}
@@ -120,6 +120,15 @@ export const PostCard = ({view, connection, timezone, actions, onOpen}: PostCard
                 <button type="button" className={classes.commentsLink} onClick={onOpen}>
                     {t`View the ${formatNumber(view.commentsCount ?? 0)} comments`}
                 </button>
+            )}
+            {view.latestComments.length > 0 && (
+                <div className={classes.latestComments} onClick={onOpen}>
+                    {view.latestComments.map(comment => (
+                        <Text key={comment.id} size="sm" lineClamp={2}>
+                            <strong>{comment.author_name || t`Someone`}</strong> {comment.message}
+                        </Text>
+                    ))}
+                </div>
             )}
             {view.lastError && (
                 <Text size="xs" c={view.status === 'FAILED' ? 'red' : 'orange'} mt={6}>{view.lastError}</Text>

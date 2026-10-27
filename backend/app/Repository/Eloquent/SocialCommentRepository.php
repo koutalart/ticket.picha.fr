@@ -54,4 +54,26 @@ class SocialCommentRepository extends BaseRepository implements SocialCommentRep
             ->orderBy(SocialCommentDomainObjectAbstract::ID)
             ->get());
     }
+
+    public function findLatestTopLevelForFeedItems(array $feedItemIds, int $perItem): Collection
+    {
+        if ($feedItemIds === []) {
+            return new Collection;
+        }
+
+        $ranked = SocialComment::query()
+            ->select('*')
+            ->selectRaw('row_number() over (partition by social_feed_item_id order by commented_at desc nulls last, id desc) as position')
+            ->whereIn(SocialCommentDomainObjectAbstract::SOCIAL_FEED_ITEM_ID, $feedItemIds)
+            ->whereNull(SocialCommentDomainObjectAbstract::PARENT_EXTERNAL_ID);
+
+        return $this->handleResults(SocialComment::query()
+            ->fromSub($ranked, 'social_comments')
+            ->where('position', '<=', $perItem)
+            ->orderByDesc(SocialCommentDomainObjectAbstract::COMMENTED_AT)
+            ->orderByDesc(SocialCommentDomainObjectAbstract::ID)
+            ->get())
+            ->groupBy(fn (SocialCommentDomainObject $comment) => $comment->getSocialFeedItemId())
+            ->map(fn (Collection $comments) => $comments->take($perItem)->values());
+    }
 }
