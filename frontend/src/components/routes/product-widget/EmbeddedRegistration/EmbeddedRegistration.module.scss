@@ -1290,6 +1290,57 @@ textarea.fieldInput {
   color: $text-muted;
 }
 
+.root .nav[data-step-kind] {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+
+  .nextButton {
+    order: 1;
+    width: 100%;
+    height: 56px;
+  }
+
+  .backButton {
+    order: 2;
+    align-self: center;
+    width: auto;
+    height: 40px;
+    padding: 0 12px;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: $text-muted;
+  }
+
+  .enterHint {
+    display: none;
+  }
+
+  > :not(.nextButton):not(.backButton) {
+    order: 3;
+  }
+}
+
+.runningTotal {
+  margin-top: 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--er-veil-14);
+  font-size: 1rem;
+
+  strong {
+    font-size: 1.2rem;
+  }
+}
+
+.selectionCard .feesHint {
+  margin-top: 6px;
+  padding: 0;
+  text-align: left;
+  font-size: 0.8rem;
+  color: $text-muted;
+}
+
 .nav[data-step-kind="selection"] {
   .nextButton {
     width: 100%;
