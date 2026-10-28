@@ -78,6 +78,7 @@ import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 import {UserGeneratedContent} from "../../../common/UserGeneratedContent";
 import {SaleCountdown} from "./SaleCountdown.tsx";
 import {LineDescription} from "./LineDescription.tsx";
+import {LowStockIndicator} from "../../../common/LowStockIndicator";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import classes from "./EmbeddedRegistration.module.scss";
@@ -1740,6 +1741,7 @@ export const EmbeddedRegistration = ({
                                                     <span className={classes.protectionIncluded}>{t`Peace of mind option included`}</span>
                                                 )}
                                             </span>
+                                            <LowStockIndicator price={line.price} currency={event.currency} unitPrice={unitPrice}/>
                                         </div>
                                         <div className={classes.stepper} role="group" aria-label={t`Quantity for ${label}`}>
                                             <button

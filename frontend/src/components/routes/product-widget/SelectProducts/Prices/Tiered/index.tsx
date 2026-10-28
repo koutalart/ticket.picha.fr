@@ -7,6 +7,7 @@ import {t} from "@lingui/macro";
 import {ProductPriceAvailability} from "../../../../../common/ProductPriceAvailability";
 import {getCurrencySymbol} from "../../../../../../utilites/currency.ts";
 import {withIncludedRefundProtection} from "../../../../../../utilites/refundProtection.ts";
+import {LowStockIndicator} from "../../../../../common/LowStockIndicator";
 
 interface TieredPricingProps {
     event: Event;
@@ -70,6 +71,13 @@ export const TieredPricing = ({product, event, form, productIndex, singleSelecti
                                         />
                                     )}
                                 </div>
+                                {(isSelectable && product.type !== 'DONATION') && (
+                                    <LowStockIndicator
+                                        price={price}
+                                        currency={event?.currency}
+                                        priceDisplayMode={event?.settings?.price_display_mode}
+                                    />
+                                )}
                             </div>
                             <div className={'hi-product-quantity-selector'}>
                                 {(isSelectable && singleSelection) && (

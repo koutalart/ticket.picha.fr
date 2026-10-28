@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace HiEvents\Repository\Interfaces;
 
+use Carbon\CarbonInterface;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\Http\DTO\QueryParamsDTO;
+use HiEvents\Repository\DTO\RecentTicketPurchaseDTO;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeOrderFilterDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -42,6 +44,13 @@ interface OrderRepositoryInterface extends RepositoryInterface
     ): LengthAwarePaginator;
 
     public function hasCompletedPaidOrderForAccount(int $accountId): bool;
+
+    /**
+     * Latest completed online orders containing tickets, newest first, anonymous (quantity and date only).
+     *
+     * @return Collection<int, RecentTicketPurchaseDTO>
+     */
+    public function findRecentOnlineTicketPurchases(int $eventId, CarbonInterface $since, int $limit): Collection;
 
     /**
      * Completed, awaiting-offline-payment and cancelled orders of one event,
