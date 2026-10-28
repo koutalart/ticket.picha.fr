@@ -1596,6 +1596,9 @@ export const EmbeddedRegistration = ({
                     <>
                         {renderBuyerIdentity()}
                         <h2 className={classes.stepTitle} id={titleId}>{t`Where should we send your tickets?`}</h2>
+                        {isPaidMode && (
+                            <div className={classes.summaryCode}>{renderCodeRow()}</div>
+                        )}
                         <div className={phoneQuestion ? classes.fieldRow : classes.fieldStack}>
                             <TextInput
                                 {...form.getInputProps('order.email')}
@@ -2207,9 +2210,6 @@ export const EmbeddedRegistration = ({
                     {isLast && isPaidMode && renderReassurance()}
                 </div>
 
-                {current.kind === 'contact' && isPaidMode && (
-                    <div className={classes.summaryCode}>{renderCodeRow()}</div>
-                )}
                 {current.kind === 'contact' && !!event.settings?.pre_checkout_message && (
                     <UserGeneratedContent
                         className={classes.preCheckout}
