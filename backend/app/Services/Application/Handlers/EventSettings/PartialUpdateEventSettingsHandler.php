@@ -174,6 +174,9 @@ class PartialUpdateEventSettingsHandler
                     ? $eventSettingsDTO->settings['homepage_footer_settings']
                     : $existingSettings->getHomepageFooterSettings(),
                 'schema_event_type' => $eventSettingsDTO->settings['schema_event_type'] ?? $existingSettings->getSchemaEventType(),
+                'highlighted_promo_code' => array_key_exists('highlighted_promo_code', $eventSettingsDTO->settings)
+                    ? $eventSettingsDTO->settings['highlighted_promo_code']
+                    : $existingSettings->getHighlightedPromoCode(),
             ]),
         );
     }

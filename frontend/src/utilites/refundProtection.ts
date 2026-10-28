@@ -1,5 +1,8 @@
 import {Product, ProductCategory, ProductPrice} from "../types.ts";
 
+/** Navigation state set by the embedded form when it already offered the option, so the payment page does not offer it twice. */
+export const REFUND_PROTECTION_OFFERED_STATE = 'refundProtectionOffered';
+
 /**
  * The cancellation protection (not sold as a ticket) is offered right before payment,
  * never in the product list. Mirrors OrderRefundProtectionService::isCheckoutRefundProtection.

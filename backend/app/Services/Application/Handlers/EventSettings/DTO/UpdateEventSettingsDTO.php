@@ -117,6 +117,7 @@ class UpdateEventSettingsDTO extends BaseDTO
         public readonly bool                    $rich_footer_enabled = false,
         public readonly ?array                  $homepage_footer_settings = null,
         public readonly string                  $schema_event_type = 'Event',
+        public readonly ?string                 $highlighted_promo_code = null,
     )
     {
     }
@@ -216,6 +217,7 @@ class UpdateEventSettingsDTO extends BaseDTO
             rich_footer_enabled: false,
             homepage_footer_settings: null,
             schema_event_type: 'Event',
+            highlighted_promo_code: null,
         );
     }
 }

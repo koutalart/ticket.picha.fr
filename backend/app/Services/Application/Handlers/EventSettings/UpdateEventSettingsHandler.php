@@ -131,6 +131,7 @@ class UpdateEventSettingsHandler
                     'rich_footer_enabled' => $settings->rich_footer_enabled,
                     'homepage_footer_settings' => $this->footerSettingsSanitizer->sanitize($settings->homepage_footer_settings),
                     'schema_event_type' => $settings->schema_event_type,
+                    'highlighted_promo_code' => $this->normalizePromoCode($settings->highlighted_promo_code),
                 ],
                 where: [
                     'event_id' => $settings->event_id,
@@ -161,5 +162,12 @@ class UpdateEventSettingsHandler
         $message = trim(strip_tags((string) $message));
 
         return $message === '' ? null : $message;
+    }
+
+    private function normalizePromoCode(?string $code): ?string
+    {
+        $code = strtolower(trim(strip_tags((string) $code)));
+
+        return $code === '' ? null : $code;
     }
 }

@@ -32,7 +32,7 @@ class CompleteOrderActionPublic extends BaseAction
             $order = $this->orderService->handle($orderShortId, CompleteOrderDTO::fromArray([
                 'order' => CompleteOrderOrderDTO::fromArray([
                     'first_name' => $request->validated('order.first_name'),
-                    'last_name' => $request->validated('order.last_name'),
+                    'last_name' => $request->validated('order.last_name') ?? '',
                     'email' => $request->validated('order.email'),
                     'address' => $request->validated('order.address'),
                     'questions' => $request->has('order.questions')
