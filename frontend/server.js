@@ -13,6 +13,7 @@ import * as nodeUrl from "node:url";
 import "dotenv/config";
 import {sitemapIndexHandler, sitemapEventsHandler, sitemapOrganizersHandler} from "./src/sitemap/proxy.js";
 import {createRouteAssets} from "./src/ssr/routeAssets.js";
+import {forwardTrackingParams} from "./src/ssr/trackingParams.js";
 
 installGlobals();
 
@@ -425,7 +426,10 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 const {data} = await response.json();
                 if (data?.redirect_url) {
                     res.setHeader('Cache-Control', 'no-store');
-                    return res.redirect(302, await withBuyIntent(data.redirect_url, req));
+                    return res.redirect(302, await withBuyIntent(
+                        forwardTrackingParams(data.redirect_url, req.query, platformBaseUrl(req)),
+                        req,
+                    ));
                 }
             }
         } catch (error) {

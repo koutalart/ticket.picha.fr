@@ -10,6 +10,7 @@ const EXPIRY_DAYS = 30;
 const SHORT_ID_PATTERN = /^[a-z0-9]{4,32}$/;
 
 let landingVisitRecorded = false;
+let rememberedCode: string | null = null;
 
 const normalizeQrLinkCode = (code: string | null | undefined): string | null => {
     const normalized = code?.trim().toLowerCase();
@@ -21,6 +22,8 @@ export const rememberQrLinkCode = (code: string | null | undefined): void => {
 
     const normalized = normalizeQrLinkCode(code);
     if (!normalized) return;
+
+    rememberedCode = normalized;
 
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({code: normalized, timestamp: Date.now()}));
@@ -62,9 +65,7 @@ export const captureQrLinkCodeFromUrl = (): void => {
     recordLandingVisit(code, params.has(COUNTED_PARAM));
 };
 
-export const getQrLinkCode = (): string | null => {
-    if (isSsr()) return null;
-
+const readStoredQrLinkCode = (): string | null => {
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (!stored) return null;
@@ -75,10 +76,22 @@ export const getQrLinkCode = (): string | null => {
             return null;
         }
 
-        return typeof code === 'string' ? code : null;
+        return normalizeQrLinkCode(typeof code === 'string' ? code : null);
     } catch {
         return null;
     }
+};
+
+/**
+ * The QR / campaign link of the visit: the link in the current URL first, then the one remembered on this browser.
+ * The in-memory copy covers in-app browsers where storage is blocked.
+ */
+export const getQrLinkCode = (): string | null => {
+    if (isSsr()) return null;
+
+    return normalizeQrLinkCode(new URLSearchParams(window.location.search).get(QUERY_PARAM))
+        ?? readStoredQrLinkCode()
+        ?? rememberedCode;
 };
 
 export const getOrderTrackingContext = (): OrderTrackingContext | null => getAttributionTrackingContext();
