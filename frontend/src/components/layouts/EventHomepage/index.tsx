@@ -96,7 +96,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
     useGetLiveChatConfig(event?.organizer?.id);
 
-    const toastAvoidRefs = useMemo(() => [ticketsSectionRef, fullscreenHeroRef], []);
+    const toastSectionRefs = useMemo(() => [ticketsSectionRef], []);
     const [startCountdown, setStartCountdown] = useState<string | null>(null);
     useEffect(() => {
         const update = () => setStartCountdown(formatEventCountdown(event?.start_date, event?.timezone, new Date()));
@@ -912,7 +912,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                     <RecentPurchaseToast
                         eventId={event.id}
                         enabled={canShowRecentPurchases}
-                        avoidRefs={toastAvoidRefs}
+                        sectionRefs={toastSectionRefs}
+                        heroRef={fullscreenHeroRef}
                         aboveBuyBar={showScrollButton && !isEmbeddedRegistration}
                     />
 

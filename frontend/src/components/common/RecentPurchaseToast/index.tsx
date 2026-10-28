@@ -9,11 +9,14 @@ const FIRST_DELAY_MS = 8000;
 const INTERVAL_MS = 25000;
 const VISIBLE_MS = 5000;
 const MAX_TOASTS = 4;
+const TICK_MS = 2000;
+const HERO_COVER_RATIO = 0.6;
 
 interface RecentPurchaseToastProps {
     eventId?: IdParam;
     enabled: boolean;
-    avoidRefs?: RefObject<HTMLElement | null>[];
+    sectionRefs?: RefObject<HTMLElement | null>[];
+    heroRef?: RefObject<HTMLElement | null>;
     aboveBuyBar?: boolean;
 }
 
@@ -49,13 +52,14 @@ const describe = (purchase: RecentPurchase, elapsedMinutes: number) => {
 /**
  * Discreet, anonymous social proof built from real recent orders (quantity and age only).
  */
-export const RecentPurchaseToast = ({eventId, enabled, avoidRefs, aboveBuyBar}: RecentPurchaseToastProps) => {
+export const RecentPurchaseToast = ({eventId, enabled, sectionRefs, heroRef, aboveBuyBar}: RecentPurchaseToastProps) => {
     const [mounted, setMounted] = useState(false);
     const [current, setCurrent] = useState<{ title: string, when: string } | null>(null);
     const [dismissed, setDismissed] = useState(false);
     const shownCount = useRef(0);
     const typing = useRef(false);
-    const avoidInView = useRef(false);
+    const heroCovers = useRef(false);
+    const [atTop, setAtTop] = useState(false);
 
     useEffect(() => setMounted(true), []);
 
@@ -83,21 +87,36 @@ export const RecentPurchaseToast = ({eventId, enabled, avoidRefs, aboveBuyBar}: 
     }, [mounted]);
 
     useEffect(() => {
-        const targets = (avoidRefs ?? []).map(ref => ref.current).filter((el): el is HTMLElement => !!el);
-        if (!mounted || targets.length === 0 || typeof IntersectionObserver === 'undefined') {
+        const sections = (sectionRefs ?? []).map(ref => ref.current).filter((el): el is HTMLElement => !!el);
+        const hero = heroRef?.current;
+        if (!mounted || typeof IntersectionObserver === 'undefined') {
             return;
         }
-        const visible = new Set<Element>();
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target));
-            avoidInView.current = visible.size > 0;
-            if (avoidInView.current) {
-                setCurrent(null);
-            }
-        }, {threshold: 0.05});
-        targets.forEach(target => observer.observe(target));
-        return () => observer.disconnect();
-    }, [mounted, avoidRefs]);
+        const visibleSections = new Set<Element>();
+        const sectionObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => entry.isIntersecting ? visibleSections.add(entry.target) : visibleSections.delete(entry.target));
+            setAtTop(visibleSections.size > 0);
+        });
+        sections.forEach(section => sectionObserver.observe(section));
+
+        const heroObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                heroCovers.current = entry.isIntersecting
+                    && entry.intersectionRect.height >= window.innerHeight * HERO_COVER_RATIO;
+                if (heroCovers.current) {
+                    setCurrent(null);
+                }
+            });
+        }, {threshold: [0, 0.2, 0.4, 0.6, 0.8, 1]});
+        if (hero) {
+            heroObserver.observe(hero);
+        }
+
+        return () => {
+            sectionObserver.disconnect();
+            heroObserver.disconnect();
+        };
+    }, [mounted, sectionRefs, heroRef]);
 
     useEffect(() => {
         if (!mounted || !enabled || dismissed || !purchases || purchases.length === 0) {
@@ -106,41 +125,30 @@ export const RecentPurchaseToast = ({eventId, enabled, avoidRefs, aboveBuyBar}: 
 
         let hideTimer: ReturnType<typeof setTimeout> | undefined;
         let index = shownCount.current % purchases.length;
+        let nextAt = Date.now() + FIRST_DELAY_MS;
 
-        const tryShow = () => {
+        const tick = () => {
             if (shownCount.current >= MAX_TOASTS) {
-                return false;
+                clearInterval(interval);
+                return;
             }
-            if (document.visibilityState === 'hidden' || typing.current || avoidInView.current
-                || isTypingTarget(document.activeElement) || isModalOpen()) {
-                return true;
+            if (Date.now() < nextAt || document.visibilityState === 'hidden' || typing.current
+                || heroCovers.current || isTypingTarget(document.activeElement) || isModalOpen()) {
+                return;
             }
 
             const elapsedMinutes = Math.max(0, Math.floor((Date.now() - dataUpdatedAt) / 60000));
             setCurrent(describe(purchases[index], elapsedMinutes));
             index = (index + 1) % purchases.length;
             shownCount.current += 1;
+            nextAt = Date.now() + INTERVAL_MS;
             hideTimer = setTimeout(() => setCurrent(null), VISIBLE_MS);
-            return true;
         };
 
-        let interval: ReturnType<typeof setInterval> | undefined;
-        const firstTimer = setTimeout(() => {
-            if (!tryShow()) {
-                return;
-            }
-            interval = setInterval(() => {
-                if (!tryShow() && interval) {
-                    clearInterval(interval);
-                }
-            }, INTERVAL_MS);
-        }, FIRST_DELAY_MS);
+        const interval = setInterval(tick, TICK_MS);
 
         return () => {
-            clearTimeout(firstTimer);
-            if (interval) {
-                clearInterval(interval);
-            }
+            clearInterval(interval);
             if (hideTimer) {
                 clearTimeout(hideTimer);
             }
@@ -153,7 +161,7 @@ export const RecentPurchaseToast = ({eventId, enabled, avoidRefs, aboveBuyBar}: 
 
     return (
         <div
-            className={`${classes.toast} ${aboveBuyBar ? classes.aboveBuyBar : ''}`}
+            className={`${classes.toast} ${atTop ? classes.top : (aboveBuyBar ? classes.aboveBuyBar : '')}`}
             role="status"
             aria-live="polite"
         >
