@@ -1,7 +1,7 @@
 import classes from "./EventHomepage.module.scss";
 import SelectProducts from "../../routes/product-widget/SelectProducts";
 import "../../../styles/widget/default.scss";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {EventDocumentHead} from "../../common/EventDocumentHead";
 import {eventCoverImage, eventHomepageUrl, imageUrl, organizerHomepageUrl} from "../../../utilites/urlHelper.ts";
 import {Event, IdParam, OrganizerStatus} from "../../../types.ts";
@@ -60,6 +60,8 @@ import {AlreadyRegisteredLink, AttendanceAccessModal, RegisteredNotice} from "./
 import {alignTicketsOnArrival, scrollToTicketsSection} from "../../../utilites/ticketsAnchor.ts";
 import {useGetLiveChatConfig} from "../../../queries/useGetLiveChatConfig.ts";
 import {Helmet} from "react-helmet-async";
+import {formatCompactCurrency, formatEventCountdown, getLowestAvailablePrice} from "../../../utilites/eventConversion.ts";
+import {RecentPurchaseToast} from "../../common/RecentPurchaseToast";
 
 const VIDEO_PAUSE_PROGRESS = 0.6;
 // React 18 has no fetchPriority prop: passed as a plain attribute.
@@ -92,6 +94,15 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     };
 
     useGetLiveChatConfig(event?.organizer?.id);
+
+    const toastAvoidRefs = useMemo(() => [ticketsSectionRef, fullscreenHeroRef], []);
+    const [startCountdown, setStartCountdown] = useState<string | null>(null);
+    useEffect(() => {
+        const update = () => setStartCountdown(formatEventCountdown(event?.start_date, event?.timezone, new Date()));
+        update();
+        const timer = window.setInterval(update, 60 * 1000);
+        return () => window.clearInterval(timer);
+    }, [event?.start_date, event?.timezone]);
 
     useEffect(() => alignTicketsOnArrival(), []);
 
@@ -297,6 +308,11 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     };
 
     const statusBadge = getStatusBadge();
+
+    const lowestPrice = getLowestAvailablePrice(event);
+    const lowestPriceLabel = lowestPrice !== null ? formatCompactCurrency(lowestPrice, event.currency) : '';
+    const canShowRecentPurchases = statusBadge?.variant === 'success'
+        && !(event.end_date && isDateInPast(event.end_date));
 
     const isFullscreenHero = themeSettings.hero_layout === 'FULLSCREEN' && !!(coverVideo || coverImage);
     const isFreeEvent = (event.products || event.product_categories?.flatMap(c => c.products || []) || [])
@@ -878,9 +894,26 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             onClick={scrollToTickets}
                         >
                             <IconTicket size={18}/>
-                            {isFreeEvent ? t`Register for free` : t`Buy`}
+                            <span className={classes.scrollToTicketsLabel}>
+                                {isFreeEvent ? t`Register for free` : t`Buy`}
+                                {lowestPrice !== null && !isFreeEvent && (
+                                    <span className={classes.scrollToTicketsFrom}>
+                                        {t`from ${lowestPriceLabel}`}
+                                    </span>
+                                )}
+                            </span>
+                            {startCountdown && (
+                                <span className={classes.scrollToTicketsCountdown}>{startCountdown}</span>
+                            )}
                         </button>
                     )}
+
+                    <RecentPurchaseToast
+                        eventId={event.id}
+                        enabled={canShowRecentPurchases}
+                        avoidRefs={toastAvoidRefs}
+                        aboveBuyBar={showScrollButton && !isEmbeddedRegistration}
+                    />
 
                     <PublicOverlayTheme {...overlayTheme}>
                         {contactModalMounted && (

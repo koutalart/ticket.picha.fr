@@ -1147,8 +1147,12 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 20px var(--accent-soft);
-  animation: fadeInUp 0.4s ease-out;
+  animation: fadeInUp 0.4s ease-out, ctaPulse 6s ease-in-out 2s infinite;
   transition: all $transition-fast;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 
   @include mixins.respond-below(sm) {
     left: 16px;
@@ -1169,6 +1173,42 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:active {
     transform: translateY(0);
+  }
+}
+
+.scrollToTicketsLabel {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.scrollToTicketsFrom {
+  font-weight: 500;
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+
+.scrollToTicketsCountdown {
+  margin-left: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: color-mix(in srgb, currentColor 16%, transparent);
+
+  @include mixins.respond-below(sm) {
+    margin-left: auto;
+  }
+}
+
+@keyframes ctaPulse {
+  0%, 88%, 100% {
+    scale: 1;
+  }
+  93% {
+    scale: 1.04;
   }
 }
 

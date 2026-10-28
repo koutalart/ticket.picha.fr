@@ -31,6 +31,7 @@ class ProductPriceResourcePublic extends BaseResource
             'is_available' => $this->isAvailable(),
             'is_sold_out' => $this->isSoldOut(),
             'refund_protection_included' => $this->getRefundProtectionIncluded(),
+            'low_stock' => $this->getLowStock(),
             $this->mergeWhen($this->getAdditionalDataByKey(self::SHOW_QUANTITY_AVAILABLE), fn() => [
                 'quantity_remaining' => $this->getQuantityAvailable(),
             ]),

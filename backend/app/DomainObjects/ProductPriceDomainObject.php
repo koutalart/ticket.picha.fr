@@ -8,6 +8,8 @@ use LogicException;
 
 class ProductPriceDomainObject extends Generated\ProductPriceDomainObjectAbstract
 {
+    public const LOW_STOCK_MAX_REMAINING = 30;
+
     public ?ProductDomainObject $product = null;
 
     private ?float $priceBeforeDiscount = null;
@@ -122,6 +124,34 @@ class ProductPriceDomainObject extends Generated\ProductPriceDomainObjectAbstrac
         }
 
         return $this->getQuantitySold() >= $this->getInitialQuantityAvailable();
+    }
+
+    /**
+     * Real remaining stock of a limited price, only once it runs low (few places left, or a small share of the initial stock).
+     *
+     * @return array{remaining: int, percent_remaining: int}|null
+     */
+    public function getLowStock(): ?array
+    {
+        $initial = $this->getInitialQuantityAvailable();
+        $remaining = $this->getQuantityAvailable();
+
+        if ($initial === null || $initial <= 0 || $remaining === null || $remaining <= 0 || $this->isSoldOut()) {
+            return null;
+        }
+
+        $remaining = min($remaining, $initial);
+        $isFewLeft = $remaining <= self::LOW_STOCK_MAX_REMAINING && $remaining * 2 <= $initial;
+        $isSmallShareLeft = $remaining * 4 <= $initial;
+
+        if (!$isFewLeft && !$isSmallShareLeft) {
+            return null;
+        }
+
+        return [
+            'remaining' => $remaining,
+            'percent_remaining' => max(1, (int)round($remaining * 100 / $initial)),
+        ];
     }
 
     public function isAvailable(): ?bool

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace HiEvents\Repository\Eloquent;
 
+use Carbon\CarbonInterface;
 use HiEvents\DomainObjects\AttendeeDomainObject;
+use HiEvents\DomainObjects\Enums\ProductType;
 use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
@@ -13,6 +15,7 @@ use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Http\DTO\QueryParamsDTO;
 use HiEvents\Models\Order;
 use HiEvents\Models\OrderItem;
+use HiEvents\Repository\DTO\RecentTicketPurchaseDTO;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Services\Application\Handlers\BoxOffice\DTO\BoxOfficeOrderFilterDTO;
@@ -241,6 +244,33 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         ], name: 'event'));
 
         return $this->paginate($perPage);
+    }
+
+    public function findRecentOnlineTicketPurchases(int $eventId, CarbonInterface $since, int $limit): Collection
+    {
+        return Order::query()
+            ->toBase()
+            ->join('order_items', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'products.id', '=', 'order_items.product_id')
+            ->leftJoin('box_office_sales', 'box_office_sales.order_id', '=', 'orders.id')
+            ->where('orders.event_id', $eventId)
+            ->where('orders.status', OrderStatus::COMPLETED->name)
+            ->where('orders.is_manually_created', false)
+            ->where('orders.created_at', '>=', $since)
+            ->whereNull('box_office_sales.id')
+            ->whereNull('order_items.deleted_at')
+            ->where('order_items.product_type', ProductType::TICKET->name)
+            ->where('products.is_refund_protection', false)
+            ->groupBy('orders.id', 'orders.created_at')
+            ->havingRaw('SUM(order_items.quantity) > 0')
+            ->orderByDesc('orders.created_at')
+            ->limit($limit)
+            ->get(['orders.created_at', DB::raw('SUM(order_items.quantity) as quantity')])
+            ->map(static fn(object $row) => new RecentTicketPurchaseDTO(
+                quantity: (int)$row->quantity,
+                purchasedAt: (string)$row->created_at,
+            ))
+            ->values();
     }
 
     public function hasCompletedPaidOrderForAccount(int $accountId): bool
