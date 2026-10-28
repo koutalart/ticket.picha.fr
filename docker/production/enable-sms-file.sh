@@ -10,7 +10,7 @@ set -euo pipefail
 APP_DIR="${APP_DIR:-/opt/picha-ticket}"
 ENV_FILE="$APP_DIR/backend/.env.production"
 SECRET_FILE="${SECRET_FILE:-/opt/picha-sms/secrets/file-sms.env}"
-COMPOSE=(docker compose -p picha-ticket-prod -f "$APP_DIR/docker/production/docker-compose.prod.yml")
+COMPOSE=(docker compose -p picha-ticket-prod --env-file "$APP_DIR/docker/production/.env" -f "$APP_DIR/docker/production/docker-compose.prod.yml")
 FILE_URL="${FILE_URL:-http://172.22.0.1:8097}"
 
 [[ -f "$ENV_FILE" ]] || { echo "Fichier absent : $ENV_FILE" >&2; exit 1; }
