@@ -37,6 +37,7 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
         <label className={classNames(classes.option, {
             [classes.checked]: checked,
             [classes.disabled]: isDisabled,
+            [classes.invite]: !checked && !isDisabled,
         })}>
             <IconShieldCheck size={22} className={classes.icon}/>
             <div className={classes.body}>

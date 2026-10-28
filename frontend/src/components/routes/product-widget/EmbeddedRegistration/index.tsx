@@ -12,7 +12,6 @@ import {
     IconCheck,
     IconCornerDownLeft,
     IconDeviceMobile,
-    IconDeviceMobileMessage,
     IconLock,
     IconMail,
     IconMinus,
@@ -219,6 +218,12 @@ const largeFieldClassNames = {
     label: classNames(classes.fieldLabel, classes.questionLabel),
 };
 
+/**
+ * The peace of mind option and the amounts are offered on the payment page, not on the contact step.
+ * Set to true to show them again on the contact step (the payment page then skips the option).
+ */
+const SHOW_PROTECTION_AND_TOTAL_ON_CONTACT_STEP = false;
+
 export const EmbeddedRegistration = ({
     event: initialEvent,
     promoCode: initialPromoCode,
@@ -360,9 +365,9 @@ export const EmbeddedRegistration = ({
         }] : [];
     const protectionItems: EmbeddedCheckoutItem[] = [
         ...protectionItem('refund-protection-included', coveredTicketCount, true),
-        ...(protectionOptIn ? protectionItem('refund-protection-optional', optionalProtectionQuantity, false) : []),
+        ...(SHOW_PROTECTION_AND_TOTAL_ON_CONTACT_STEP && protectionOptIn ? protectionItem('refund-protection-optional', optionalProtectionQuantity, false) : []),
     ];
-    const isProtectionAdded = protectionOptIn && optionalProtectionQuantity > 0;
+    const isProtectionAdded = SHOW_PROTECTION_AND_TOTAL_ON_CONTACT_STEP && protectionOptIn && optionalProtectionQuantity > 0;
     const totals = computeCheckoutTotals([...checkoutItems, ...protectionItems]);
     const totalWithoutFees = Math.round((totals.total - totals.fees) * 100) / 100;
     const hasServiceFees = checkoutLines.some(line => Number(line.price.fee_total) > 0);
@@ -506,10 +511,6 @@ export const EmbeddedRegistration = ({
                     : previous.products,
             });
             setRestoreStepId(LEGACY_CONTACT_STEP_IDS.includes(draft.stepId) ? 'contact' : (draft.stepId || null));
-            if (draft.delivery) {
-                deliveryTouched.current = true;
-                form.setFieldValue('delivery', {email: true, phone: draft.delivery.phone});
-            }
             if (draft.awaitingPayment) {
                 const pending = draft.awaitingPayment;
                 setAwaitingPayment(pending);
@@ -555,35 +556,7 @@ export const EmbeddedRegistration = ({
 
     const phoneQuestionIndex = orderQuestions.findIndex(question => question.type === QuestionType.PHONE);
     const phoneQuestion = phoneQuestionIndex >= 0 ? orderQuestions[phoneQuestionIndex] : null;
-    const isPhoneLocked = !!phoneQuestion?.required;
-    const isPhoneSelected = !!phoneQuestion && (form.values.delivery.phone || isPhoneLocked);
-    const deliveryTouched = useRef(false);
-    const [emailNoteVisible, setEmailNoteVisible] = useState(false);
-
-    useEffect(() => {
-        if (!memoryReady || deliveryTouched.current || phoneQuestionIndex < 0) {
-            return;
-        }
-        const values = form.getValues();
-        if (!values.delivery.phone && !isAnswerEmpty(values.order.questions[phoneQuestionIndex]?.response.answer)) {
-            deliveryTouched.current = true;
-            form.setFieldValue('delivery.phone', true);
-        }
-    });
-
-    const togglePhoneDelivery = () => {
-        if (isPhoneLocked) {
-            return;
-        }
-        hasInteracted.current = true;
-        deliveryTouched.current = true;
-        const next = !form.values.delivery.phone;
-        form.setFieldValue('delivery.phone', next);
-        form.clearFieldError(`order.questions.${phoneQuestionIndex}.response.answer`);
-        if (next) {
-            pendingFocus.current = 'delivery-phone';
-        }
-    };
+    const isPhoneSelected = !!phoneQuestion;
 
     const steps = useMemo<Step[]>(() => {
         const result: Step[] = [
@@ -856,7 +829,8 @@ export const EmbeddedRegistration = ({
     });
 
     const paymentPageState = () => ({
-        [REFUND_PROTECTION_OFFERED_STATE]: !!checkoutProtection && (coveredTicketCount > 0 || optionalProtectionQuantity > 0),
+        [REFUND_PROTECTION_OFFERED_STATE]: SHOW_PROTECTION_AND_TOTAL_ON_CONTACT_STEP
+            && !!checkoutProtection && (coveredTicketCount > 0 || optionalProtectionQuantity > 0),
     });
 
     const navigateAfterCompletion = (
@@ -1495,10 +1469,10 @@ export const EmbeddedRegistration = ({
             : Number(price.price) + (Number(price.tax_total) || 0);
     };
 
-    const renderRunningTotal = () => (
+    const renderRunningTotal = (label?: string) => (
         <>
             <div className={classes.runningTotal}>
-                <span>{t`Total`}</span>
+                <span>{label ?? t`Total`}</span>
                 <strong>{formatAmount(totalWithoutFees)}</strong>
             </div>
             {hasServiceFees && (
@@ -1625,40 +1599,6 @@ export const EmbeddedRegistration = ({
                     <>
                         {renderBuyerIdentity()}
                         <h2 className={classes.stepTitle} id={titleId}>{t`Where should we send your tickets?`}</h2>
-                        {phoneQuestion ? (
-                            <>
-                                <p className={classes.stepHelp}>{t`You can pick both.`}</p>
-                                <div className={classes.channels} role="group" aria-label={t`How to receive your tickets`}>
-                                    <button
-                                        type="button"
-                                        className={classes.channel}
-                                        aria-pressed={true}
-                                        aria-disabled={true}
-                                        onClick={() => setEmailNoteVisible(true)}
-                                    >
-                                        <IconMail size={18} aria-hidden="true"/>
-                                        {t`Email`}
-                                        <IconCheck size={16} className={classes.channelCheck} aria-hidden="true"/>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={classes.channel}
-                                        aria-pressed={isPhoneSelected}
-                                        aria-disabled={isPhoneLocked || undefined}
-                                        onClick={togglePhoneDelivery}
-                                    >
-                                        <IconDeviceMobileMessage size={18} aria-hidden="true"/>
-                                        {t`Phone`}
-                                        {isPhoneSelected && <IconCheck size={16} className={classes.channelCheck} aria-hidden="true"/>}
-                                    </button>
-                                </div>
-                                <p className={classes.channelNote} aria-live="polite">
-                                    {emailNoteVisible ? t`Your tickets are always sent by email.` : ''}
-                                </p>
-                            </>
-                        ) : (
-                            <p className={classes.stepHelp}>{t`Your tickets will be sent to this address.`}</p>
-                        )}
                         <div className={classes.fieldStack}>
                             <TextInput
                                 {...form.getInputProps('order.email')}
@@ -1673,7 +1613,7 @@ export const EmbeddedRegistration = ({
                                 spellCheck={false}
                                 classNames={fieldClassNames}
                             />
-                            {isPhoneSelected && phoneQuestion && (
+                            {phoneQuestion && (
                                 <TextInput
                                     {...form.getInputProps(`order.questions.${phoneQuestionIndex}.response.answer`)}
                                     type="tel"
@@ -1693,9 +1633,13 @@ export const EmbeddedRegistration = ({
                         {renderDeviceMemoryNote(step)}
                         {renderConsents(step)}
                         {renderAgreements()}
-                        {isPaidMode && renderIncludedProtection()}
-                        {isPaidMode && renderProtectionOffer()}
-                        {isPaidMode && renderPayableTotal()}
+                        {isPaidMode && SHOW_PROTECTION_AND_TOTAL_ON_CONTACT_STEP && (
+                            <>
+                                {renderIncludedProtection()}
+                                {renderProtectionOffer()}
+                                {renderPayableTotal()}
+                            </>
+                        )}
                     </>
                 );
             case 'questions': {
@@ -1849,64 +1793,71 @@ export const EmbeddedRegistration = ({
                 return (
                     <>
                         <h2 className={classes.stepTitle} id={titleId}>{t`How many participants?`}</h2>
-                        <p className={classes.stepHelp}>{t`Choose the number of places for each ticket.`}</p>
-                        <ul className={classes.lines}>
-                            {checkoutLines.map(line => {
-                                const quantity = Math.min(selection[line.key] ?? 0, line.max);
-                                const label = lineLabel(line);
-                                const unitPrice = withIncludedRefundProtection(priceWithoutFees(line.price), line.price);
-                                return (
-                                    <li key={line.key} className={classes.line}>
+                        <div className={classes.selectionCard}>
+                            <ul className={classes.lines}>
+                                {checkoutLines.map(line => {
+                                    const quantity = Math.min(selection[line.key] ?? 0, line.max);
+                                    const label = lineLabel(line);
+                                    const unitPrice = withIncludedRefundProtection(priceWithoutFees(line.price), line.price);
+                                    const formattedUnitPrice = formatAmount(unitPrice);
+                                    return (
+                                        <li key={line.key} className={classes.line}>
+                                            <div className={classes.lineInfo}>
+                                                <span className={classes.lineTitle}>{label}</span>
+                                                <span className={classes.linePrice}>
+                                                    {unitPrice > 0 ? t`${formattedUnitPrice} per place` : t`Free`}
+                                                </span>
+                                                <LowStockIndicator
+                                                    price={line.price}
+                                                    currency={event.currency}
+                                                    unitPrice={unitPrice}
+                                                    className={classes.lineLowStock}
+                                                />
+                                                <LineDescription html={line.product.description}/>
+                                            </div>
+                                            <div className={classes.stepper} role="group" aria-label={t`Quantity for ${label}`}>
+                                                <button
+                                                    type="button"
+                                                    className={classes.stepperButton}
+                                                    onClick={() => changeQuantity(line.key, -1)}
+                                                    disabled={quantity <= 0}
+                                                    aria-label={t`Remove one`}
+                                                >
+                                                    <IconMinus size={20} stroke={2.4} aria-hidden="true"/>
+                                                </button>
+                                                <span className={classes.stepperValue} aria-live="polite">{quantity}</span>
+                                                <button
+                                                    type="button"
+                                                    className={classes.stepperButton}
+                                                    onClick={() => changeQuantity(line.key, 1)}
+                                                    disabled={quantity >= line.max}
+                                                    aria-label={t`Add one`}
+                                                >
+                                                    <IconPlus size={20} stroke={2.4} aria-hidden="true"/>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                                {selectedTicketCount > 0 && requiredItems.map(item => (
+                                    <li key={item.key} className={classNames(classes.line, classes.lineLocked)}>
                                         <div className={classes.lineInfo}>
-                                            <span className={classes.lineTitle}>{label}</span>
+                                            <span className={classes.lineTitle}>{lineLabel(item)}</span>
                                             <span className={classes.linePrice}>
-                                                {unitPrice > 0 ? formatAmount(unitPrice) : t`Free`}
+                                                {formatAmount(priceWithoutFees(item.price))}
+                                                {renderRequiredBadge()}
                                             </span>
-                                            <LowStockIndicator price={line.price} currency={event.currency} unitPrice={unitPrice}/>
+                                            <LineDescription html={item.product.description}/>
                                         </div>
-                                        <div className={classes.stepper} role="group" aria-label={t`Quantity for ${label}`}>
-                                            <button
-                                                type="button"
-                                                className={classes.stepperButton}
-                                                onClick={() => changeQuantity(line.key, -1)}
-                                                disabled={quantity <= 0}
-                                                aria-label={t`Remove one`}
-                                            >
-                                                <IconMinus size={18} aria-hidden="true"/>
-                                            </button>
-                                            <span className={classes.stepperValue} aria-live="polite">{quantity}</span>
-                                            <button
-                                                type="button"
-                                                className={classes.stepperButton}
-                                                onClick={() => changeQuantity(line.key, 1)}
-                                                disabled={quantity >= line.max}
-                                                aria-label={t`Add one`}
-                                            >
-                                                <IconPlus size={18} aria-hidden="true"/>
-                                            </button>
+                                        <div className={classes.stepper} aria-label={t`Quantity`}>
+                                            <span className={classes.stepperValue}>{item.quantity}</span>
                                         </div>
-                                        <LineDescription html={line.product.description}/>
                                     </li>
-                                );
-                            })}
-                            {selectedTicketCount > 0 && requiredItems.map(item => (
-                                <li key={item.key} className={classNames(classes.line, classes.lineLocked)}>
-                                    <div className={classes.lineInfo}>
-                                        <span className={classes.lineTitle}>{lineLabel(item)}</span>
-                                        <span className={classes.linePrice}>
-                                            {formatAmount(priceWithoutFees(item.price))}
-                                            {renderRequiredBadge()}
-                                        </span>
-                                    </div>
-                                    <div className={classes.stepper} aria-label={t`Quantity`}>
-                                        <span className={classes.stepperValue}>{item.quantity}</span>
-                                    </div>
-                                    <LineDescription html={item.product.description}/>
-                                </li>
-                            ))}
-                        </ul>
+                                ))}
+                            </ul>
+                            {renderRunningTotal(t`Total tickets`)}
+                        </div>
                         {renderHighlightedPromo()}
-                        {renderRunningTotal()}
                     </>
                 );
         }
@@ -2249,7 +2200,7 @@ export const EmbeddedRegistration = ({
                     </div>
                 )}
 
-                <div className={classes.nav}>
+                <div className={classes.nav} data-step-kind={current.kind}>
                     {index > 0 && (
                         <button
                             type="button"
