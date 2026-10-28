@@ -65,12 +65,14 @@ find "$BACKUP_DIR" -maxdepth 1 -name "picha-ticket-${STAMP%-*}-*.sql.gz" ! -name
 # Une seule archive par jour : les sauvegardes faites avant chaque mise en ligne ne gardent que la base.
 TODAY_FILES=$(ls -t "$BACKUP_DIR"/picha-ticket-files-"${STAMP%-*}"-*.tar.gz 2>/dev/null | head -1 || true)
 if [ -n "$TODAY_FILES" ] && [ "${FORCE_FILES_BACKUP:-0}" != "1" ]; then
+    FILES_PATH="$TODAY_FILES"
     FILES_FILE="$TODAY_FILES (archive du jour réutilisée)"
 else
     FILES_FILE="$BACKUP_DIR/picha-ticket-files-$STAMP.tar.gz"
     $COMPOSE exec -T backend tar -czf - -C /var/www/html/storage app > "$FILES_FILE.part"
     gzip -t "$FILES_FILE.part"
     mv "$FILES_FILE.part" "$FILES_FILE"
+    FILES_PATH="$FILES_FILE"
 fi
 
 find "$BACKUP_DIR" -name 'picha-ticket-*.gz' -mtime +"$RETENTION_DAYS" -delete
@@ -79,9 +81,9 @@ find "$BACKUP_DIR" -name 'picha-ticket-*.part' -delete
 if [ -n "$OFFSITE_REMOTE" ]; then
     RCLONE="docker run --rm -v $RCLONE_CONFIG_DIR:/config/rclone -v $BACKUP_DIR:/data:ro rclone/rclone:1"
     $RCLONE copy /data "$OFFSITE_REMOTE" \
-        --include "picha-ticket-$STAMP.sql.gz" --include "picha-ticket-files-$STAMP.tar.gz"
+        --include "picha-ticket-$STAMP.sql.gz" --include "$(basename "$FILES_PATH")"
     $RCLONE cryptcheck /data "$OFFSITE_REMOTE" --one-way \
-        --include "picha-ticket-$STAMP.sql.gz" --include "picha-ticket-files-$STAMP.tar.gz"
+        --include "picha-ticket-$STAMP.sql.gz" --include "$(basename "$FILES_PATH")"
     $RCLONE delete "$OFFSITE_REMOTE" --min-age "${OFFSITE_RETENTION_DAYS}d"
     OFFSITE_NOTE=", copie chiffrée hors serveur OK"
 else
