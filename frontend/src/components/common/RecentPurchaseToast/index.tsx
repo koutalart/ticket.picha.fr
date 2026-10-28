@@ -25,7 +25,8 @@ const isTypingTarget = (element: Element | null): boolean =>
         || (element as HTMLElement).isContentEditable);
 
 const isModalOpen = (): boolean =>
-    !!document.querySelector('[role="dialog"][aria-modal="true"], .mantine-Modal-root, .mantine-Drawer-root');
+    Array.from(document.querySelectorAll('[role="dialog"], .mantine-Modal-content, .mantine-Drawer-content'))
+        .some(element => element.getClientRects().length > 0);
 
 const describe = (purchase: RecentPurchase, elapsedMinutes: number) => {
     const quantity = purchase.quantity;
