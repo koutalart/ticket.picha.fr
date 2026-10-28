@@ -40,6 +40,19 @@ return [
         'detached_line_transition_days' => (int) env('HTTPSMS_DETACHED_LINE_TRANSITION_DAYS', 30),
     ],
 
+    // Central SMS queue (picha-sms-file): urgent SMS are handed over at once, campaigns are paced by the queue.
+    'sms_file' => [
+        'enabled' => filter_var(env('SMS_FILE_ENABLED', false), FILTER_VALIDATE_BOOLEAN),
+        'url' => env('SMS_FILE_URL', 'http://172.22.0.1:8097'),
+        'key' => env('SMS_FILE_KEY', env('FILE_SMS_KEY')),
+        'connect_timeout_seconds' => (int) env('SMS_FILE_CONNECT_TIMEOUT_SECONDS', 2),
+        'timeout_seconds' => (int) env('SMS_FILE_TIMEOUT_SECONDS', 10),
+        'batch_timeout_seconds' => (int) env('SMS_FILE_BATCH_TIMEOUT_SECONDS', 30),
+        'sync_limit' => (int) env('SMS_FILE_SYNC_LIMIT', 100),
+        'sync_interval_minutes' => (int) env('SMS_FILE_SYNC_INTERVAL_MINUTES', 5),
+        'alert_cooldown_minutes' => (int) env('SMS_FILE_ALERT_COOLDOWN_MINUTES', 60),
+    ],
+
     'platform_supervisor' => [
         // Comma separated E.164 numbers of the platform supervisors. They belong to no organizer team.
         'phones' => env('PLATFORM_SUPERVISOR_PHONES', ''),

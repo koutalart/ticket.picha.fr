@@ -5,6 +5,7 @@ import {messageStatusLabel} from "./labels.ts";
 import classes from "./Sms.module.scss";
 
 const ICONS = {
+    QUEUED: IconClock,
     PENDING: IconClock,
     SENT: IconCheck,
     DELIVERED: IconChecks,

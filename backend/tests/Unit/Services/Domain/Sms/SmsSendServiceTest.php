@@ -15,10 +15,13 @@ use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Services\Domain\Sms\DTO\SendSmsDTO;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
+use HiEvents\Services\Domain\Sms\SmsFileStatusService;
 use HiEvents\Services\Domain\Sms\SmsSendService;
+use HiEvents\Services\Infrastructure\SmsFile\SmsFileClient;
 use HiEvents\Services\Infrastructure\HttpSms\HttpSmsClient;
 use Mockery;
 use Mockery\MockInterface;
+use Psr\Log\NullLogger;
 use Tests\TestCase;
 
 class SmsSendServiceTest extends TestCase
@@ -49,6 +52,9 @@ class SmsSendServiceTest extends TestCase
         $this->lineService = Mockery::mock(SmsLineService::class);
         $this->lineService->shouldReceive('resolveLine')->andReturnUsing(fn ($settings) => $settings)->byDefault();
 
+        $fileClient = Mockery::mock(SmsFileClient::class);
+        $fileClient->shouldReceive('isEnabled')->andReturnFalse();
+
         $this->service = new SmsSendService(
             $this->settingsRepository,
             $this->messageRepository,
@@ -56,6 +62,9 @@ class SmsSendServiceTest extends TestCase
             $this->conversationService,
             $this->client,
             $this->lineService,
+            $fileClient,
+            Mockery::mock(SmsFileStatusService::class),
+            new NullLogger,
         );
     }
 

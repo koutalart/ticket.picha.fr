@@ -11,6 +11,7 @@ enum SmsMessageStatus: string
     use BaseEnum;
 
     case RECEIVED = 'RECEIVED';
+    case QUEUED = 'QUEUED';
     case PENDING = 'PENDING';
     case SENT = 'SENT';
     case DELIVERED = 'DELIVERED';

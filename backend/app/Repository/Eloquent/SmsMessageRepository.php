@@ -169,6 +169,23 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
         return $this->handleResults($messages)->reverse()->values();
     }
 
+    public function findQueuedForSync(string $createdSince, string $checkedBefore, int $limit): Collection
+    {
+        $messages = SmsMessage::query()
+            ->whereNotNull(SmsMessageDomainObjectAbstract::QUEUE_MESSAGE_ID)
+            ->whereIn(SmsMessageDomainObjectAbstract::STATUS, [SmsMessageStatus::QUEUED->name, SmsMessageStatus::PENDING->name])
+            ->where(SmsMessageDomainObjectAbstract::CREATED_AT, '>=', $createdSince)
+            ->where(fn (EloquentBuilder $query) => $query
+                ->whereNull(SmsMessageDomainObjectAbstract::QUEUE_CHECKED_AT)
+                ->orWhere(SmsMessageDomainObjectAbstract::QUEUE_CHECKED_AT, '<=', $checkedBefore))
+            ->orderByRaw('queue_checked_at asc nulls first')
+            ->orderBy(SmsMessageDomainObjectAbstract::ID)
+            ->limit($limit)
+            ->get();
+
+        return $this->handleResults($messages);
+    }
+
     public function findLastInboundOrganizerId(array $organizerIds, string $phone): ?int
     {
         if ($organizerIds === []) {

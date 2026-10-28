@@ -30,6 +30,8 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     final public const CHANNEL = 'channel';
     final public const IS_SUPERVISION = 'is_supervision';
     final public const AWAITS_REPLY = 'awaits_reply';
+    final public const QUEUE_MESSAGE_ID = 'queue_message_id';
+    final public const QUEUE_CHECKED_AT = 'queue_checked_at';
 
     protected int $id;
     protected int $sms_conversation_id;
@@ -51,6 +53,8 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     protected ?string $channel = null;
     protected bool $is_supervision = false;
     protected bool $awaits_reply = false;
+    protected ?int $queue_message_id = null;
+    protected ?string $queue_checked_at = null;
 
     public function toArray(): array
     {
@@ -75,6 +79,8 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
                     'channel' => $this->channel ?? null,
                     'is_supervision' => $this->is_supervision ?? null,
                     'awaits_reply' => $this->awaits_reply ?? null,
+                    'queue_message_id' => $this->queue_message_id ?? null,
+                    'queue_checked_at' => $this->queue_checked_at ?? null,
                 ];
     }
 
@@ -296,5 +302,27 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     public function getAwaitsReply(): bool
     {
         return $this->awaits_reply;
+    }
+
+    public function setQueueMessageId(?int $queue_message_id): self
+    {
+        $this->queue_message_id = $queue_message_id;
+        return $this;
+    }
+
+    public function getQueueMessageId(): ?int
+    {
+        return $this->queue_message_id;
+    }
+
+    public function setQueueCheckedAt(?string $queue_checked_at): self
+    {
+        $this->queue_checked_at = $queue_checked_at;
+        return $this;
+    }
+
+    public function getQueueCheckedAt(): ?string
+    {
+        return $this->queue_checked_at;
     }
 }

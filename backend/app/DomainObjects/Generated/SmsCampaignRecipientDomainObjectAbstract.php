@@ -13,6 +13,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     final public const ID = 'id';
     final public const SMS_CAMPAIGN_ID = 'sms_campaign_id';
     final public const QR_LINK_ID = 'qr_link_id';
+    final public const ATTENDEE_ID = 'attendee_id';
     final public const CONTACT_ID = 'contact_id';
     final public const PHONE = 'phone';
     final public const CONTACT_NAME = 'contact_name';
@@ -24,11 +25,12 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     final public const DELIVERED_AT = 'delivered_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
-    final public const ATTENDEE_ID = 'attendee_id';
+    final public const QUEUE_MESSAGE_ID = 'queue_message_id';
 
     protected int $id;
     protected int $sms_campaign_id;
     protected ?int $qr_link_id = null;
+    protected ?int $attendee_id = null;
     protected ?int $contact_id = null;
     protected string $phone;
     protected ?string $contact_name = null;
@@ -40,7 +42,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     protected ?string $delivered_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
-    protected ?int $attendee_id = null;
+    protected ?int $queue_message_id = null;
 
     public function toArray(): array
     {
@@ -48,6 +50,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
                     'id' => $this->id ?? null,
                     'sms_campaign_id' => $this->sms_campaign_id ?? null,
                     'qr_link_id' => $this->qr_link_id ?? null,
+                    'attendee_id' => $this->attendee_id ?? null,
                     'contact_id' => $this->contact_id ?? null,
                     'phone' => $this->phone ?? null,
                     'contact_name' => $this->contact_name ?? null,
@@ -59,7 +62,7 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
                     'delivered_at' => $this->delivered_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
-                    'attendee_id' => $this->attendee_id ?? null,
+                    'queue_message_id' => $this->queue_message_id ?? null,
                 ];
     }
 
@@ -94,6 +97,17 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
     public function getQrLinkId(): ?int
     {
         return $this->qr_link_id;
+    }
+
+    public function setAttendeeId(?int $attendee_id): self
+    {
+        $this->attendee_id = $attendee_id;
+        return $this;
+    }
+
+    public function getAttendeeId(): ?int
+    {
+        return $this->attendee_id;
     }
 
     public function setContactId(?int $contact_id): self
@@ -217,14 +231,14 @@ abstract class SmsCampaignRecipientDomainObjectAbstract extends \HiEvents\Domain
         return $this->updated_at;
     }
 
-    public function setAttendeeId(?int $attendee_id): self
+    public function setQueueMessageId(?int $queue_message_id): self
     {
-        $this->attendee_id = $attendee_id;
+        $this->queue_message_id = $queue_message_id;
         return $this;
     }
 
-    public function getAttendeeId(): ?int
+    public function getQueueMessageId(): ?int
     {
-        return $this->attendee_id;
+        return $this->queue_message_id;
     }
 }

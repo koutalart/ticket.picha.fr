@@ -26,11 +26,12 @@ use Throwable;
 class SmsInboundService
 {
     private const STATUS_RANK = [
-        'PENDING' => 0,
-        'EXPIRED' => 1,
-        'FAILED' => 1,
-        'SENT' => 2,
-        'DELIVERED' => 3,
+        'QUEUED' => 0,
+        'PENDING' => 1,
+        'EXPIRED' => 2,
+        'FAILED' => 2,
+        'SENT' => 3,
+        'DELIVERED' => 4,
     ];
 
     public function __construct(
@@ -206,9 +207,17 @@ class SmsInboundService
         ]);
     }
 
+    /**
+     * « picha-sms-{id} » for an SMS sent straight to sms.picha.fr, « file-{queue id} » for one sent by the central queue.
+     */
     private function findByRequestId(array $organizerIds, ?string $requestId): ?SmsMessageDomainObject
     {
-        if ($requestId === null || ! str_starts_with($requestId, SmsSendService::REQUEST_ID_PREFIX)) {
+        $queueId = SmsFileStatusService::queueIdFromRequestId($requestId);
+        if ($queueId !== null) {
+            [$column, $value] = [SmsMessageDomainObjectAbstract::QUEUE_MESSAGE_ID, $queueId];
+        } elseif ($requestId !== null && str_starts_with($requestId, SmsSendService::REQUEST_ID_PREFIX)) {
+            [$column, $value] = [SmsMessageDomainObjectAbstract::REQUEST_ID, $requestId];
+        } else {
             return null;
         }
 
@@ -217,11 +226,11 @@ class SmsInboundService
         return $this->messageRepository->findFirstWhere(count($organizerIds) === 1
             ? [
                 SmsMessageDomainObjectAbstract::ORGANIZER_ID => $organizerIds[0],
-                SmsMessageDomainObjectAbstract::REQUEST_ID => $requestId,
+                $column => $value,
             ]
             : [
                 [SmsMessageDomainObjectAbstract::ORGANIZER_ID, 'in', $organizerIds],
-                SmsMessageDomainObjectAbstract::REQUEST_ID => $requestId,
+                $column => $value,
             ]);
     }
 
