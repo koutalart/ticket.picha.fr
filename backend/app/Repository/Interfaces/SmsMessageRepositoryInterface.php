@@ -69,6 +69,14 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
     public function findUndeliveredOutbound(array $organizerIds, string $since, string $pendingBefore, int $limit): Collection;
 
     /**
+     * SMS handed to the central queue, not sent yet, created since the date and not checked since the given date.
+     * The least recently checked first.
+     *
+     * @return Collection<int, SmsMessageDomainObject>
+     */
+    public function findQueuedForSync(string $createdSince, string $checkedBefore, int $limit): Collection;
+
+    /**
      * The organizer this number wrote to last, among the given organizers.
      *
      * @param  array<int, int>  $organizerIds

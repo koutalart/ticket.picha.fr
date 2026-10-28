@@ -14,6 +14,8 @@ export const conversationStatusLabel = (status: SmsConversationStatus): string =
 
 export const messageStatusLabel = (message: SmsMessage): string | null => {
     switch (message.status) {
+        case 'QUEUED':
+            return t`In the sending queue`;
         case 'PENDING':
             return t`Sending`;
         case 'SENT':

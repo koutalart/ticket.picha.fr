@@ -214,6 +214,7 @@ class HandleHttpSmsWebhookHandler
 
         $members = $this->lineService->candidates($settings);
         $organizerIds = $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all();
+        $requestId = isset($data['request_id']) && is_scalar($data['request_id']) && $data['request_id'] !== '' ? (string) $data['request_id'] : null;
 
         $this->campaignDeliveryService->applyProviderStatus(
             organizerIds: $organizerIds,
@@ -221,14 +222,15 @@ class HandleHttpSmsWebhookHandler
             status: SmsCampaignRecipientStatus::from($status->value),
             failureReason: $data['error_message'] ?? null,
             timestamp: $data['timestamp'] ?? null,
+            requestId: $requestId,
         );
 
-        $this->inboundService->recordOutboundEvent($this->outboundOwner($settings, $members, $messageId), new OutboundSmsEventDTO(
+        $this->inboundService->recordOutboundEvent($this->outboundOwner($settings, $members, $messageId, $requestId), new OutboundSmsEventDTO(
             status: $status,
             providerMessageId: $messageId,
             contact: $data['contact'],
             content: isset($data['content']) ? (string) $data['content'] : null,
-            requestId: isset($data['request_id']) && $data['request_id'] !== '' ? (string) $data['request_id'] : null,
+            requestId: $requestId,
             errorMessage: $data['error_message'] ?? null,
             timestamp: $data['timestamp'] ?? null,
         ), organizerIds: $organizerIds, lineSettingsId: $settings->getId());
@@ -303,7 +305,7 @@ class HandleHttpSmsWebhookHandler
      *
      * @param  Collection<int, OrganizerSmsSettingDomainObject>  $members
      */
-    private function outboundOwner(OrganizerSmsSettingDomainObject $line, Collection $members, string $providerMessageId): OrganizerSmsSettingDomainObject
+    private function outboundOwner(OrganizerSmsSettingDomainObject $line, Collection $members, string $providerMessageId, ?string $requestId = null): OrganizerSmsSettingDomainObject
     {
         if ($members->count() <= 1) {
             return $line;
@@ -312,6 +314,7 @@ class HandleHttpSmsWebhookHandler
         $organizerId = $this->campaignDeliveryService->findCampaignOrganizerId(
             $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all(),
             $providerMessageId,
+            $requestId,
         );
 
         return $members->first(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId() === $organizerId) ?? $line;

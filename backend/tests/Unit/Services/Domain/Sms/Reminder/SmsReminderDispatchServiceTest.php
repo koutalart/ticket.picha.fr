@@ -23,7 +23,10 @@ use HiEvents\Services\Domain\Sms\Reminder\SmsReminderDispatchService;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderMessageRenderer;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderPersonalLinkProviderInterface;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderSchedulingService;
+use HiEvents\Services\Domain\Sms\SmsFileAlertService;
+use HiEvents\Services\Domain\Sms\SmsFileStatusService;
 use HiEvents\Services\Domain\Sms\SmsSendService;
+use HiEvents\Services\Infrastructure\SmsFile\SmsFileClient;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -129,6 +132,9 @@ class SmsReminderDispatchServiceTest extends TestCase
             }));
         })->byDefault();
 
+        $fileClient = Mockery::mock(SmsFileClient::class);
+        $fileClient->shouldReceive('isEnabled')->andReturnFalse();
+
         $config = new ConfigRepository(['services' => ['httpsms' => ['reminder_batch_size' => 10, 'reminder_pause_ms' => 0]]]);
 
         $this->service = new SmsReminderDispatchService(
@@ -143,6 +149,9 @@ class SmsReminderDispatchServiceTest extends TestCase
             $this->sendService,
             $config,
             new NullLogger,
+            $fileClient,
+            Mockery::mock(SmsFileStatusService::class),
+            Mockery::mock(SmsFileAlertService::class),
         );
     }
 
@@ -326,6 +335,9 @@ class SmsReminderDispatchServiceTest extends TestCase
             $this->sendService,
             new ConfigRepository(['services' => ['httpsms' => ['reminder_batch_size' => 10, 'reminder_pause_ms' => 0]]]),
             new NullLogger,
+            Mockery::mock(SmsFileClient::class)->shouldReceive('isEnabled')->andReturnFalse()->getMock(),
+            Mockery::mock(SmsFileStatusService::class),
+            Mockery::mock(SmsFileAlertService::class),
         );
     }
 

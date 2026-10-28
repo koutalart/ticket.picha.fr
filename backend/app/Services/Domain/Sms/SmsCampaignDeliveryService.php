@@ -39,14 +39,18 @@ class SmsCampaignDeliveryService
         SmsCampaignRecipientStatus $status,
         ?string $failureReason = null,
         ?string $timestamp = null,
+        ?string $requestId = null,
     ): bool {
-        $recipient = $this->findRecipient($providerMessageId);
+        $recipient = $this->findRecipient($providerMessageId, $requestId);
 
         if ($recipient === null || ! in_array($this->campaignOrganizerId($recipient), $organizerIds, true)) {
             return false;
         }
 
         $attributes = $this->statusAttributes($recipient, $status, $failureReason, $timestamp);
+        if ($recipient->getProviderMessageId() === null && SmsFileStatusService::queueIdFromRequestId($requestId) !== null) {
+            $attributes[SmsCampaignRecipientDomainObjectAbstract::PROVIDER_MESSAGE_ID] = $providerMessageId;
+        }
         if ($attributes === []) {
             return false;
         }
@@ -104,18 +108,30 @@ class SmsCampaignDeliveryService
      *
      * @param  array<int, int>  $organizerIds
      */
-    public function findCampaignOrganizerId(array $organizerIds, string $providerMessageId): ?int
+    public function findCampaignOrganizerId(array $organizerIds, string $providerMessageId, ?string $requestId = null): ?int
     {
-        $recipient = $this->findRecipient($providerMessageId);
+        $recipient = $this->findRecipient($providerMessageId, $requestId);
         $organizerId = $recipient === null ? null : $this->campaignOrganizerId($recipient);
 
         return $organizerId !== null && in_array($organizerId, $organizerIds, true) ? $organizerId : null;
     }
 
-    private function findRecipient(string $providerMessageId): ?SmsCampaignRecipientDomainObject
+    /**
+     * By sms.picha.fr id, or, for an SMS of the central queue not linked yet, by its queue id (request_id « file-{id} »).
+     */
+    private function findRecipient(string $providerMessageId, ?string $requestId = null): ?SmsCampaignRecipientDomainObject
     {
-        return $this->recipientRepository->findFirstWhere([
+        $recipient = $this->recipientRepository->findFirstWhere([
             SmsCampaignRecipientDomainObjectAbstract::PROVIDER_MESSAGE_ID => $providerMessageId,
+        ]);
+
+        $queueId = SmsFileStatusService::queueIdFromRequestId($requestId);
+        if ($recipient !== null || $queueId === null) {
+            return $recipient;
+        }
+
+        return $this->recipientRepository->findFirstWhere([
+            SmsCampaignRecipientDomainObjectAbstract::QUEUE_MESSAGE_ID => $queueId,
         ]);
     }
 

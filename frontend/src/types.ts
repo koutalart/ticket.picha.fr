@@ -1491,7 +1491,7 @@ export interface EnqueueKioskPrintJobsResponse {
 }
 
 export type SmsConversationStatus = 'OPEN' | 'NEEDS_HUMAN' | 'CLOSED';
-export type SmsMessageStatus = 'RECEIVED' | 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED' | 'EXPIRED';
+export type SmsMessageStatus = 'RECEIVED' | 'QUEUED' | 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED' | 'EXPIRED';
 export type SmsMessageDirection = 'INBOUND' | 'OUTBOUND';
 export type SmsMessageAuthorType = 'CONTACT' | 'HUMAN' | 'AGENT' | 'CAMPAIGN' | 'AUTOMATIC';
 export type SmsConversationFilter = 'all' | 'unread' | 'needs_human';

@@ -171,7 +171,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
         $this->campaignDeliveryService->shouldReceive('applyProviderStatus')
             ->once()
-            ->with([4], 'prov-1', SmsCampaignRecipientStatus::DELIVERED, null, null)
+            ->with([4], 'prov-1', SmsCampaignRecipientStatus::DELIVERED, null, null, 'picha-sms-5')
             ->andReturnTrue();
 
         $this->inboundService->shouldReceive('recordOutboundEvent')
@@ -335,9 +335,9 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
         $this->campaignDeliveryService->shouldReceive('applyProviderStatus')
             ->once()
-            ->with([4, 8], 'prov-1', SmsCampaignRecipientStatus::DELIVERED, null, null)
+            ->with([4, 8], 'prov-1', SmsCampaignRecipientStatus::DELIVERED, null, null, Mockery::any())
             ->andReturnTrue();
-        $this->campaignDeliveryService->shouldReceive('findCampaignOrganizerId')->with([4, 8], 'prov-1')->andReturn(8);
+        $this->campaignDeliveryService->shouldReceive('findCampaignOrganizerId')->with([4, 8], 'prov-1', Mockery::any())->andReturn(8);
 
         $this->inboundService->shouldReceive('recordOutboundEvent')
             ->once()
