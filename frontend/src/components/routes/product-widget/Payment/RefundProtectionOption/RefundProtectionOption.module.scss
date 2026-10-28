@@ -49,3 +49,25 @@
   flex-shrink: 0;
   margin-top: 2px;
 }
+
+.invite {
+  border-color: color-mix(in srgb, var(--checkout-accent, var(--mantine-primary-color-filled)) 45%, transparent);
+  animation: inviteGlow 2.5s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes inviteGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--checkout-accent, var(--mantine-primary-color-filled)) 0%, transparent);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--checkout-accent, var(--mantine-primary-color-filled)) 22%, transparent),
+      0 0 18px 2px color-mix(in srgb, var(--checkout-accent, var(--mantine-primary-color-filled)) 18%, transparent);
+  }
+}
