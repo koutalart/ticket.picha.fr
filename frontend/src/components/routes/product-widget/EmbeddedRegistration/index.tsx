@@ -1495,10 +1495,10 @@ export const EmbeddedRegistration = ({
             : Number(price.price) + (Number(price.tax_total) || 0);
     };
 
-    const renderRunningTotal = () => (
+    const renderRunningTotal = (label?: string) => (
         <>
             <div className={classes.runningTotal}>
-                <span>{t`Total`}</span>
+                <span>{label ?? t`Total`}</span>
                 <strong>{formatAmount(totalWithoutFees)}</strong>
             </div>
             {hasServiceFees && (
@@ -1849,64 +1849,71 @@ export const EmbeddedRegistration = ({
                 return (
                     <>
                         <h2 className={classes.stepTitle} id={titleId}>{t`How many participants?`}</h2>
-                        <p className={classes.stepHelp}>{t`Choose the number of places for each ticket.`}</p>
-                        <ul className={classes.lines}>
-                            {checkoutLines.map(line => {
-                                const quantity = Math.min(selection[line.key] ?? 0, line.max);
-                                const label = lineLabel(line);
-                                const unitPrice = withIncludedRefundProtection(priceWithoutFees(line.price), line.price);
-                                return (
-                                    <li key={line.key} className={classes.line}>
+                        <div className={classes.selectionCard}>
+                            <ul className={classes.lines}>
+                                {checkoutLines.map(line => {
+                                    const quantity = Math.min(selection[line.key] ?? 0, line.max);
+                                    const label = lineLabel(line);
+                                    const unitPrice = withIncludedRefundProtection(priceWithoutFees(line.price), line.price);
+                                    const formattedUnitPrice = formatAmount(unitPrice);
+                                    return (
+                                        <li key={line.key} className={classes.line}>
+                                            <div className={classes.lineInfo}>
+                                                <span className={classes.lineTitle}>{label}</span>
+                                                <span className={classes.linePrice}>
+                                                    {unitPrice > 0 ? t`${formattedUnitPrice} per place` : t`Free`}
+                                                </span>
+                                                <LowStockIndicator
+                                                    price={line.price}
+                                                    currency={event.currency}
+                                                    unitPrice={unitPrice}
+                                                    className={classes.lineLowStock}
+                                                />
+                                                <LineDescription html={line.product.description}/>
+                                            </div>
+                                            <div className={classes.stepper} role="group" aria-label={t`Quantity for ${label}`}>
+                                                <button
+                                                    type="button"
+                                                    className={classes.stepperButton}
+                                                    onClick={() => changeQuantity(line.key, -1)}
+                                                    disabled={quantity <= 0}
+                                                    aria-label={t`Remove one`}
+                                                >
+                                                    <IconMinus size={20} stroke={2.4} aria-hidden="true"/>
+                                                </button>
+                                                <span className={classes.stepperValue} aria-live="polite">{quantity}</span>
+                                                <button
+                                                    type="button"
+                                                    className={classes.stepperButton}
+                                                    onClick={() => changeQuantity(line.key, 1)}
+                                                    disabled={quantity >= line.max}
+                                                    aria-label={t`Add one`}
+                                                >
+                                                    <IconPlus size={20} stroke={2.4} aria-hidden="true"/>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                                {selectedTicketCount > 0 && requiredItems.map(item => (
+                                    <li key={item.key} className={classNames(classes.line, classes.lineLocked)}>
                                         <div className={classes.lineInfo}>
-                                            <span className={classes.lineTitle}>{label}</span>
+                                            <span className={classes.lineTitle}>{lineLabel(item)}</span>
                                             <span className={classes.linePrice}>
-                                                {unitPrice > 0 ? formatAmount(unitPrice) : t`Free`}
+                                                {formatAmount(priceWithoutFees(item.price))}
+                                                {renderRequiredBadge()}
                                             </span>
-                                            <LowStockIndicator price={line.price} currency={event.currency} unitPrice={unitPrice}/>
+                                            <LineDescription html={item.product.description}/>
                                         </div>
-                                        <div className={classes.stepper} role="group" aria-label={t`Quantity for ${label}`}>
-                                            <button
-                                                type="button"
-                                                className={classes.stepperButton}
-                                                onClick={() => changeQuantity(line.key, -1)}
-                                                disabled={quantity <= 0}
-                                                aria-label={t`Remove one`}
-                                            >
-                                                <IconMinus size={18} aria-hidden="true"/>
-                                            </button>
-                                            <span className={classes.stepperValue} aria-live="polite">{quantity}</span>
-                                            <button
-                                                type="button"
-                                                className={classes.stepperButton}
-                                                onClick={() => changeQuantity(line.key, 1)}
-                                                disabled={quantity >= line.max}
-                                                aria-label={t`Add one`}
-                                            >
-                                                <IconPlus size={18} aria-hidden="true"/>
-                                            </button>
+                                        <div className={classes.stepper} aria-label={t`Quantity`}>
+                                            <span className={classes.stepperValue}>{item.quantity}</span>
                                         </div>
-                                        <LineDescription html={line.product.description}/>
                                     </li>
-                                );
-                            })}
-                            {selectedTicketCount > 0 && requiredItems.map(item => (
-                                <li key={item.key} className={classNames(classes.line, classes.lineLocked)}>
-                                    <div className={classes.lineInfo}>
-                                        <span className={classes.lineTitle}>{lineLabel(item)}</span>
-                                        <span className={classes.linePrice}>
-                                            {formatAmount(priceWithoutFees(item.price))}
-                                            {renderRequiredBadge()}
-                                        </span>
-                                    </div>
-                                    <div className={classes.stepper} aria-label={t`Quantity`}>
-                                        <span className={classes.stepperValue}>{item.quantity}</span>
-                                    </div>
-                                    <LineDescription html={item.product.description}/>
-                                </li>
-                            ))}
-                        </ul>
+                                ))}
+                            </ul>
+                            {renderRunningTotal(t`Total tickets`)}
+                        </div>
                         {renderHighlightedPromo()}
-                        {renderRunningTotal()}
                     </>
                 );
         }
@@ -2249,7 +2256,7 @@ export const EmbeddedRegistration = ({
                     </div>
                 )}
 
-                <div className={classes.nav}>
+                <div className={classes.nav} data-step-kind={current.kind}>
                     {index > 0 && (
                         <button
                             type="button"
