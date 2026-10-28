@@ -216,6 +216,21 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
         scrollToTicketsSection(ticketsSectionRef.current);
     };
 
+    const coverWrapperRef = useRef<HTMLDivElement>(null);
+    const [isCoverTooShort, setIsCoverTooShort] = useState(false);
+
+    useEffect(() => {
+        const element = coverWrapperRef.current;
+        if (!element || typeof ResizeObserver === 'undefined') {
+            return;
+        }
+        const observer = new ResizeObserver(entries => {
+            setIsCoverTooShort(entries[0].contentRect.height < MIN_COVER_HEIGHT_FOR_BADGE);
+        });
+        observer.observe(element);
+        return () => observer.disconnect();
+    }, [event?.images]);
+
     if (!event) {
         return <EventNotAvailable/>;
     }
@@ -565,6 +580,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     {(coverImage || coverVideo) && !isFullscreenHero && (
                                         <div
                                             className={classes.coverWrapper}
+                                            ref={coverWrapperRef}
                                             data-wide={isWideCover || undefined}
                                             style={coverVideo ? {
                                                 '--cover-aspect-ratio': coverVideoAspectRatio,
@@ -601,7 +617,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                 />
                                             ) : null}
                                             <div className={classes.heroGradient}/>
-                                            {statusBadge && (
+                                            {statusBadge && !isCoverTooShort && (
                                                 <div className={classes.statusBadges}>
                                                     <span className={classes.statusBadge}>
                                                         <IconTicket/>
@@ -942,5 +958,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
         </>
     );
 };
+
+const MIN_COVER_HEIGHT_FOR_BADGE = 140;
 
 export default EventHomepage;
