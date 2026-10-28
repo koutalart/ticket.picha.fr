@@ -46,6 +46,7 @@ import {ShareComponent} from "../../common/ShareIcon";
 import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isDateInPast} from "../../../utilites/dates.ts";
+import {hasVisibleHtmlContent} from "../../../utilites/helpers.ts";
 import {RichDescription} from "../../common/RichDescription";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
@@ -734,12 +735,12 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                 </div>
 
                                 {/* About Section */}
-                                {event?.description && (
+                                {hasVisibleHtmlContent(event?.description) && (
                                     <div className={classes.section}>
                                         <div className={classes.sectionHeader}>
                                             <h2 className={classes.sectionTitle}>{t`About`}</h2>
                                         </div>
-                                        <RichDescription className={classes.description} html={event.description}/>
+                                        <RichDescription className={classes.description} html={event.description as string}/>
                                     </div>
                                 )}
 

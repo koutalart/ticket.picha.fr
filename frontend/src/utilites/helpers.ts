@@ -101,6 +101,23 @@ export const isHiEvents = () => {
     return getConfig('VITE_FRONTEND_URL')?.includes('.hi.events');
 }
 
+export const hasVisibleHtmlContent = (html?: string | null): boolean => {
+    if (!html) {
+        return false;
+    }
+
+    if (/<(img|iframe|video|audio|embed|object|svg|picture)\b/i.test(html)) {
+        return true;
+    }
+
+    const text = html
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;|&#160;|&#xa0;/gi, '')
+        .replace(/[\s\u00a0\u200b]+/g, '');
+
+    return text.length > 0;
+};
+
 export const isEmptyHtml = (content: string) => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = content;
