@@ -29,7 +29,7 @@
 
 @foreach($transcript as $message)
 <div style="border-radius: 5px; background-color: {{ $message->getAuthorType() === 'VISITOR' ? '#eeeeee' : '#f7f4ff' }}; margin: 10px 0; padding: 12px 18px;">
-<strong>{{ $message->getAuthorType() === 'VISITOR' ? __('Visitor') : __('Assistant') }}</strong><br>
+<strong>{{ $message->getAuthorType() === 'VISITOR' ? __('Visitor') : 'Anicka' }}</strong><br>
 {!! nl2br(e($message->getContent())) !!}
 </div>
 @endforeach

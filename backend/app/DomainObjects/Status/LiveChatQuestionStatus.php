@@ -10,6 +10,7 @@ enum LiveChatQuestionStatus: string
 {
     use BaseEnum;
 
+    case AWAITING_CONTACT = 'AWAITING_CONTACT';
     case AWAITING = 'AWAITING';
     case ANSWERED = 'ANSWERED';
     case RELAYED = 'RELAYED';

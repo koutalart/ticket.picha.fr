@@ -33,7 +33,7 @@ export const messageStatusLabel = (message: SmsMessage): string | null => {
 
 export const messageAuthorLabel = (message: SmsMessage): string | null => {
     if (message.channel === 'WEB_CHAT') {
-        return message.direction === 'INBOUND' ? t`Web chat` : t`Web chat assistant`;
+        return message.direction === 'INBOUND' ? t`Web chat` : t`Anicka (web chat)`;
     }
 
     if (message.auto_sent) {

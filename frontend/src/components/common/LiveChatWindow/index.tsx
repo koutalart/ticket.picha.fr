@@ -379,12 +379,12 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                                 key={message.id}
                                 className={`${classes.bubble} ${message.author_type === 'VISITOR' ? classes.visitor : classes.agent}`}
                             >
-                                <VisuallyHidden>{message.author_type === 'VISITOR' ? t`You:` : t`Assistant:`}</VisuallyHidden>
+                                <VisuallyHidden>{message.author_type === 'VISITOR' ? t`You:` : t`Anicka:`}</VisuallyHidden>
                                 {message.content}
                             </div>
                         ))}
                         {(typing || startMutation.isPending) && (
-                            <div className={`${classes.bubble} ${classes.agent} ${classes.typing}`} role="status" aria-label={t`The assistant is writing`}>
+                            <div className={`${classes.bubble} ${classes.agent} ${classes.typing}`} role="status" aria-label={t`Anicka is writing`}>
                                 <span/><span/><span/>
                             </div>
                         )}

@@ -139,7 +139,7 @@ class LiveChatRefundApiTest extends TestCase
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Je veux un remboursement'])
             ->assertOk()
             ->assertJsonPath('data.refund_form', false)
-            ->assertJsonPath('data.ask_contact', false);
+            ->assertJsonPath('data.ask_contact', true);
 
         $this->assertTrue((bool) DB::table('live_chat_sessions')->where('public_id', $sessionId)->value('needs_follow_up'));
     }

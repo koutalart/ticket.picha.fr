@@ -12,6 +12,7 @@ use HiEvents\Models\Event;
 use HiEvents\Models\OrganizerSmsSetting;
 use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
 use HiEvents\Services\Application\Handlers\Sms\HandleHttpSmsWebhookHandler;
+use HiEvents\Services\Domain\LiveChat\LiveChatService;
 use HiEvents\Services\Domain\LiveChat\Question\LiveChatQuestionService;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
 use HiEvents\Services\Domain\Sms\Team\OrganizerTeamContactService;
@@ -122,7 +123,7 @@ class LiveChatQuestionFlowTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_missing_information_is_never_said_and_the_question_goes_to_the_organizer_only(): void
+    public function test_missing_information_is_never_said_and_the_question_waits_for_contact_details(): void
     {
         $sessionId = $this->openChat();
         $this->chatAnswer(["Je n'ai pas l'info pour Jah D One. Le D est bien au programme samedi."]);
@@ -130,28 +131,178 @@ class LiveChatQuestionFlowTest extends TestCase
         $response = $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])
             ->assertOk()
             ->assertJsonPath('data.pending_question', true)
-            ->assertJsonPath('data.ask_contact', false);
+            ->assertJsonPath('data.ask_contact', true);
 
         $agent = collect($response->json('data.messages'))->where('author_type', 'AGENT')->pluck('content')->all();
-        $this->assertSame(['Le D est bien au programme samedi.', 'Je demande confirmation et je vous redis ici.'], $agent);
+        $this->assertSame([
+            'Le D est bien au programme samedi.',
+            'Je demande confirmation et je vous redis ici.',
+            "Je la transmets à l'organisateur. Vous me laissez votre numéro ou votre e-mail pour qu'il puisse vous répondre ?",
+        ], $agent);
 
         $question = DB::table('live_chat_questions')->where('organizer_id', $this->organizerId)->first();
-        $this->assertSame('AWAITING', $question->status);
+        $this->assertSame('AWAITING_CONTACT', $question->status);
+        $this->assertSame(1, (int) $question->contact_requests);
         $this->assertSame(self::QUESTION, $question->question);
-        $this->assertSame(self::ORGANIZER, $question->notified_phones);
         $this->assertSame((int) $this->event->id, (int) $question->event_id);
+        $this->assertSame([], $this->sent, 'nothing goes to the organizer before the visitor can be reached');
+    }
+
+    public function test_a_number_typed_in_the_chat_sends_the_question_with_it(): void
+    {
+        $sessionId = $this->openChat();
+        $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'À partir de quel âge les enfants peuvent-ils participer ?');
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'à partir de quel âge les enfants peuvent-ils participer?'])->assertOk();
+
+        $response = $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'oui c\'est le 06 39 44 45 55'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', false)
+            ->assertJsonPath('data.pending_question', true);
+
+        $this->assertSame(
+            ["Merci, je transmets votre question à l'organisateur, il vous répond au ".self::VISITOR.'.'],
+            collect($response->json('data.messages'))->where('author_type', 'AGENT')->pluck('content')->values()->all(),
+        );
+        $question = DB::table('live_chat_questions')->first();
+        $this->assertSame('AWAITING', $question->status);
+        $this->assertSame(self::ORGANIZER, $question->notified_phones);
+        $this->assertSame(self::VISITOR, DB::table('live_chat_sessions')->where('public_id', $sessionId)->value('visitor_phone'));
 
         $this->assertSame([self::ORGANIZER], array_column($this->sent, 'to'));
-        $this->assertStringStartsWith("Q{$question->id}, question d'un visiteur (Halloween) :\n« ".self::QUESTION.' »', $this->sent[0]['content']);
-        $this->assertStringContainsString("écris Q{$question->id} suivi de la réponse", $this->sent[0]['content']);
+        $this->assertSame(
+            "Q{$question->id}, Anicka te transmet la question d'un visiteur (Halloween) :\n« À partir de quel âge les enfants peuvent-ils participer ? »\n"
+            .'Coordonnées du visiteur : '.self::VISITOR."\nRéponds à ce SMS, ou écris Q{$question->id} suivi de la réponse. Je la transmets au visiteur.",
+            $this->sent[0]['content'],
+        );
+    }
+
+    public function test_the_contact_form_sends_the_held_question(): void
+    {
+        $sessionId = $this->openChat();
+        $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
+
+        $this->chat('post', '/public/live-chat/contact', $sessionId, ['email' => 'Visiteur@Example.com'])
+            ->assertOk()
+            ->assertJsonPath('data.messages.0.content', "Merci, je transmets votre question à l'organisateur, il vous répond par e-mail à visiteur@example.com.")
+            ->assertJsonPath('data.pending_question', true);
+
+        $this->assertSame('AWAITING', DB::table('live_chat_questions')->value('status'));
+        $this->assertSame([self::ORGANIZER], array_column($this->sent, 'to'));
+        $this->assertStringContainsString('Coordonnées du visiteur : visiteur@example.com', $this->sent[0]['content']);
+    }
+
+    public function test_contact_is_asked_again_once_then_the_question_leaves_without_it(): void
+    {
+        $sessionId = $this->openChat();
+        $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
+
+        $this->claude->shouldReceive('askWithUsage')
+            ->once()
+            ->withArgs(fn (string $system, array $content) => str_contains($content[0]['text'], 'Coordonnées pour la question transmise : Ta question')
+                && str_contains($content[0]['text'], 'redemande-les une seule fois'))
+            ->andReturn($this->answer(['messages' => ["C'est à Mamoudzou."], 'needs_follow_up' => false, 'ask_contact' => false, 'reason' => null, 'intent' => 'none', 'question_for_organizer' => null]));
+        $second = $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => "et c'est où ?"])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', true);
+        $this->assertSame(
+            ["C'est à Mamoudzou.", "Vous pouvez me laisser un numéro ou un e-mail juste en dessous ? C'est pour que l'organisateur puisse vous répondre."],
+            collect($second->json('data.messages'))->where('author_type', 'AGENT')->pluck('content')->values()->all(),
+        );
+        $this->assertSame(2, (int) DB::table('live_chat_questions')->value('contact_requests'));
+        $this->assertSame([], $this->sent);
+
+        $this->claude->shouldReceive('askWithUsage')
+            ->once()
+            ->withArgs(fn (string $system, array $content) => str_contains($content[0]['text'], 'vient de partir chez l\'organisateur sans coordonnées'))
+            ->andReturn($this->answer(['messages' => ['Bonne soirée à vous.'], 'needs_follow_up' => false, 'ask_contact' => false, 'reason' => null, 'intent' => 'none', 'question_for_organizer' => null]));
+        $third = $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'ok merci'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', true)
+            ->assertJsonPath('data.pending_question', true);
+
+        $this->assertSame(
+            ['Bonne soirée à vous.', "Pas de souci, je transmets quand même votre question à l'organisateur. Sans numéro ni e-mail, on ne pourra pas vous prévenir : sa réponse s'affichera ici, si vous revenez sur cette page depuis le même appareil."],
+            collect($third->json('data.messages'))->where('author_type', 'AGENT')->pluck('content')->values()->all(),
+        );
+        $this->assertSame('AWAITING', DB::table('live_chat_questions')->value('status'));
+        $this->assertSame([self::ORGANIZER], array_column($this->sent, 'to'));
+        $this->assertStringContainsString("Le visiteur n'a pas laissé de coordonnées : ta réponse s'affichera seulement dans son chat.", $this->sent[0]['content']);
+    }
+
+    public function test_a_refusal_sends_the_question_at_once_and_says_where_the_answer_will_be(): void
+    {
+        $sessionId = $this->openChat();
+        $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
+        $this->chatAnswer(['Très bien.']);
+
+        $response = $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'non merci'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', false);
+
+        $this->assertStringContainsString(
+            "sa réponse s'affichera ici",
+            (string) collect($response->json('data.messages'))->where('author_type', 'AGENT')->pluck('content')->last(),
+        );
+        $this->assertNotNull(DB::table('live_chat_sessions')->where('public_id', $sessionId)->value('contact_declined_at'));
+        $this->assertSame('AWAITING', DB::table('live_chat_questions')->value('status'));
+        $this->assertSame([self::ORGANIZER], array_column($this->sent, 'to'));
+    }
+
+    public function test_a_visitor_who_left_has_the_question_sent_after_ten_minutes(): void
+    {
+        $sessionId = $this->openChat();
+        $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
+        $service = app(LiveChatQuestionService::class);
+
+        $service->processDue(Carbon::now('UTC')->addMinutes(9));
+        $this->assertSame([], $this->sent);
+
+        $service->processDue(Carbon::now('UTC')->addMinutes(10));
+        $this->assertSame('AWAITING', DB::table('live_chat_questions')->value('status'));
+        $this->assertSame([self::ORGANIZER], array_column($this->sent, 'to'));
+        $this->assertStringContainsString("Le visiteur n'a pas laissé de coordonnées", $this->sent[0]['content']);
+    }
+
+    public function test_a_hand_over_asks_for_contact_details_from_the_first_message(): void
+    {
+        $sessionId = $this->openChat();
+        $this->claude->shouldReceive('askWithUsage')->once()->andReturn($this->answer([
+            'messages' => ["Je fais suivre votre demande à l'organisateur."],
+            'needs_follow_up' => true,
+            'ask_contact' => false,
+            'reason' => 'demande de partenariat',
+            'intent' => 'none',
+            'question_for_organizer' => null,
+        ]));
+
+        $response = $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'on voudrait un partenariat avec vous'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', true);
+
+        $this->assertSame(
+            ["Je fais suivre votre demande à l'organisateur.", "Vous me laissez votre numéro ou votre e-mail pour que l'organisateur puisse vous répondre ?"],
+            collect($response->json('data.messages'))->where('author_type', 'AGENT')->pluck('content')->values()->all(),
+        );
+    }
+
+    public function test_contact_details_written_in_a_message_are_recognised(): void
+    {
+        $this->assertSame(['phone' => '+262639444555', 'email' => null], LiveChatService::extractContact('mon num 0639 44 45 55'));
+        $this->assertSame(['phone' => null, 'email' => 'jo@picha.fr'], LiveChatService::extractContact('écrivez à Jo@Picha.fr.'));
+        $this->assertNull(LiveChatService::extractContact('pour 4 personnes le 12'));
+        $this->assertSame(['Déjà un e-mail ?'], LiveChatService::withContactRequest(['Déjà un e-mail ?'], 'X'));
+        $this->assertSame(['a', 'b', 'c X'], LiveChatService::withContactRequest(['a', 'b', 'c'], 'X'));
     }
 
     public function test_the_reply_of_the_organizer_reaches_the_visitor_and_becomes_a_fact(): void
     {
-        $sessionId = $this->openChat();
+        $sessionId = $this->openChatWithContact();
         $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent à Halloween ?');
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
-        DB::table('live_chat_sessions')->where('public_id', $sessionId)->update(['visitor_phone' => self::VISITOR]);
         DB::table('organizer_sms_settings')->where('id', $this->line->id)->update(['organizer_assistant_enabled' => true]);
         $questionId = (int) DB::table('live_chat_questions')->value('id');
         $this->sent = [];
@@ -211,7 +362,7 @@ class LiveChatQuestionFlowTest extends TestCase
 
     public function test_an_answer_with_the_reference_is_relayed_even_when_the_model_fails(): void
     {
-        $sessionId = $this->openChat();
+        $sessionId = $this->openChatWithContact();
         $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
         $questionId = (int) DB::table('live_chat_questions')->value('id');
@@ -230,7 +381,7 @@ class LiveChatQuestionFlowTest extends TestCase
 
     public function test_a_reply_is_not_taken_as_the_answer_once_the_organizer_wrote_something_else(): void
     {
-        $sessionId = $this->openChat();
+        $sessionId = $this->openChatWithContact();
         $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
         $questionId = (int) DB::table('live_chat_questions')->value('id');
@@ -243,7 +394,7 @@ class LiveChatQuestionFlowTest extends TestCase
 
     public function test_copy_contacts_and_acknowledgements_do_not_answer(): void
     {
-        $sessionId = $this->openChat();
+        $sessionId = $this->openChatWithContact();
         $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
         $questionId = (int) DB::table('live_chat_questions')->value('id');
@@ -258,7 +409,7 @@ class LiveChatQuestionFlowTest extends TestCase
 
     public function test_one_reminder_after_two_hours_and_the_supervision_is_alerted(): void
     {
-        $sessionId = $this->openChat();
+        $sessionId = $this->openChatWithContact();
         $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
         $questionId = (int) DB::table('live_chat_questions')->value('id');
@@ -271,6 +422,7 @@ class LiveChatQuestionFlowTest extends TestCase
 
         $this->assertSame(self::ORGANIZER, $this->sent[0]['to']);
         $this->assertStringStartsWith("Rappel Q{$questionId}, le visiteur attend toujours (Halloween)", $this->sent[0]['content']);
+        $this->assertStringContainsString('Coordonnées du visiteur : '.self::VISITOR, $this->sent[0]['content']);
         $this->assertSame(self::SUPERVISOR, $this->sent[1]['to']);
         $this->assertStringStartsWith("Alerte PICHA : Q{$questionId}", $this->sent[1]['content']);
         $this->assertCount(2, $this->sent);
@@ -288,7 +440,7 @@ class LiveChatQuestionFlowTest extends TestCase
 
     public function test_the_same_question_is_not_sent_twice(): void
     {
-        $sessionId = $this->openChat();
+        $sessionId = $this->openChatWithContact();
         $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
 
@@ -317,7 +469,7 @@ class LiveChatQuestionFlowTest extends TestCase
     public function test_without_sms_line_the_question_falls_back_on_the_usual_hand_over(): void
     {
         DB::table('organizer_sms_settings')->where('id', $this->line->id)->update(['api_key' => null, 'from_number' => null]);
-        $sessionId = $this->openChat();
+        $sessionId = $this->openChatWithContact();
         $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
 
         $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])
@@ -362,6 +514,14 @@ class LiveChatQuestionFlowTest extends TestCase
                 'timestamp' => Carbon::now('UTC')->toIso8601String(),
             ]]),
         ));
+    }
+
+    private function openChatWithContact(): string
+    {
+        $sessionId = $this->openChat();
+        DB::table('live_chat_sessions')->where('public_id', $sessionId)->update(['visitor_phone' => self::VISITOR]);
+
+        return $sessionId;
     }
 
     private function openChat(): string
