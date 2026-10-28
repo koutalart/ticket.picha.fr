@@ -262,6 +262,10 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const coverVideoAspectRatio = coverVideoData?.width && coverVideoData?.height
         ? `${coverVideoData.width} / ${coverVideoData.height}`
         : '16 / 9';
+    const coverRatio = coverVideo
+        ? (coverVideoData?.width && coverVideoData?.height ? coverVideoData.width / coverVideoData.height : 16 / 9)
+        : (coverImageData?.width && coverImageData?.height ? coverImageData.width / coverImageData.height : 0);
+    const isWideCover = coverRatio > 16 / 9 + 0.01;
     const flyer = event?.images?.find((image) => image.type === 'EVENT_FLYER')?.url;
     const heroPartnerLogo = event?.images?.find((image) => image.type === 'EVENT_HERO_PARTNER_LOGO')?.url;
     const heroSignatureLogo = event?.images?.find((image) => image.type === 'EVENT_HERO_SIGNATURE_LOGO')?.url;
@@ -561,6 +565,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     {(coverImage || coverVideo) && !isFullscreenHero && (
                                         <div
                                             className={classes.coverWrapper}
+                                            data-wide={isWideCover || undefined}
                                             style={coverVideo ? {
                                                 '--cover-aspect-ratio': coverVideoAspectRatio,
                                             } as React.CSSProperties : (coverImageData?.width && coverImageData?.height) ? {
