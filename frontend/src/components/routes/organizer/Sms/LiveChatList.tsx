@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {t} from "@lingui/macro";
 import {Alert, Anchor, Badge, Button, Drawer, Group, Pagination, Skeleton, Stack, Text} from "@mantine/core";
-import {IconMail, IconMessage} from "@tabler/icons-react";
+import {IconMail, IconMessage, IconPhone} from "@tabler/icons-react";
 import {IdParam, LiveChatSession} from "../../../../types.ts";
 import {useGetOrganizerLiveChats} from "../../../../queries/useGetOrganizerLiveChats.ts";
 import {useGetOrganizerLiveChat} from "../../../../queries/useGetOrganizerLiveChat.ts";
@@ -15,6 +15,8 @@ interface LiveChatListProps {
 
 const contactLabel = (session: LiveChatSession) => session.visitor_phone || session.visitor_email || t`No contact details`;
 
+const ASSISTANT_NAME = 'Anicka';
+
 /**
  * « Chats web »: what visitors asked in the chat of the public pages. Chats with a phone number are also
  * in the SMS conversations (« To handle »); chats without contact details are only kept here, for 90 days.
@@ -27,6 +29,7 @@ export const LiveChatList = ({organizerId, onOpenConversation}: LiveChatListProp
     const sessions = listQuery.data?.data ?? [];
     const lastPage = listQuery.data?.meta?.last_page ?? 1;
     const detail = detailQuery.data;
+    const visitorContact = detail ? [detail.visitor_phone, detail.visitor_email].filter(Boolean).join(', ') : '';
 
     if (listQuery.isLoading) {
         return <Skeleton height={220} radius="md"/>;
@@ -80,7 +83,23 @@ export const LiveChatList = ({organizerId, onOpenConversation}: LiveChatListProp
                 {detailQuery.isLoading && <Skeleton height={200}/>}
                 {detail && (
                     <Stack gap="sm">
+                        <Text size="sm">
+                            {visitorContact !== ''
+                                ? t`Visitor contact details: ${visitorContact}`
+                                :t`The visitor left no contact details. Answers to their questions are shown in their chat.`}
+                        </Text>
                         <Group gap="xs">
+                            {detail.visitor_phone && (
+                                <Button
+                                    size="xs"
+                                    variant="light"
+                                    component="a"
+                                    href={`tel:${detail.visitor_phone}`}
+                                    leftSection={<IconPhone size={14}/>}
+                                >
+                                    {t`Call`}
+                                </Button>
+                            )}
                             {detail.sms_conversation_id && (
                                 <Button
                                     size="xs"
@@ -106,7 +125,7 @@ export const LiveChatList = ({organizerId, onOpenConversation}: LiveChatListProp
                         {(detail.messages ?? []).map((message) => (
                             <div key={message.id} className={classes.liveChatMessage} data-author={message.author_type}>
                                 <Text size="xs" c="dimmed">
-                                    {message.author_type === 'VISITOR' ? t`Visitor` : t`Assistant`}
+                                    {message.author_type === 'VISITOR' ? t`Visitor` : ASSISTANT_NAME}
                                     {', '}
                                     {new Date(message.created_at).toLocaleString(undefined, {dateStyle: 'short', timeStyle: 'short'})}
                                 </Text>

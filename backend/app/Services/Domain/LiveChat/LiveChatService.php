@@ -12,9 +12,11 @@ use HiEvents\DomainObjects\Generated\LiveChatMessageDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\LiveChatSessionDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\OrganizerSmsSettingDomainObjectAbstract;
 use HiEvents\DomainObjects\LiveChatMessageDomainObject;
+use HiEvents\DomainObjects\LiveChatQuestionDomainObject;
 use HiEvents\DomainObjects\LiveChatSessionDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
+use HiEvents\DomainObjects\Status\LiveChatQuestionStatus;
 use HiEvents\DomainObjects\Status\LiveChatSessionStatus;
 use HiEvents\Exceptions\LiveChatInvalidContactException;
 use HiEvents\Exceptions\LiveChatLimitReachedException;
@@ -69,6 +71,54 @@ class LiveChatService
         "Je transmets ta question à l'organisateur, il va regarder ça.",
         "Bonne question, je la fais suivre à l'organisateur pour être sûre de bien te répondre.",
         "Je préfère laisser l'organisateur te répondre là-dessus, je lui transmets.",
+    ];
+
+    private const CONTACT_FOR_QUESTION_VOUS = [
+        "Je la transmets à l'organisateur. Vous me laissez votre numéro ou votre e-mail pour qu'il puisse vous répondre ?",
+        "Je pose la question à l'organisateur. Laissez-moi un numéro ou un e-mail pour que sa réponse vous arrive.",
+        "Je transmets à l'organisateur. Pour qu'il vous réponde, il me faut votre numéro de téléphone ou votre e-mail.",
+    ];
+
+    private const CONTACT_FOR_QUESTION_TU = [
+        "Je la transmets à l'organisateur. Tu me laisses ton numéro ou ton e-mail pour qu'il puisse te répondre ?",
+        "Je pose la question à l'organisateur. Laisse-moi un numéro ou un e-mail pour que sa réponse t'arrive.",
+        "Je transmets à l'organisateur. Pour qu'il te réponde, il me faut ton numéro de téléphone ou ton e-mail.",
+    ];
+
+    private const CONTACT_FOR_FOLLOW_UP_VOUS = [
+        'Vous me laissez votre numéro ou votre e-mail pour que l\'organisateur puisse vous répondre ?',
+        'Laissez-moi un numéro ou un e-mail, c\'est pour que l\'organisateur puisse revenir vers vous.',
+    ];
+
+    private const CONTACT_FOR_FOLLOW_UP_TU = [
+        'Tu me laisses ton numéro ou ton e-mail pour que l\'organisateur puisse te répondre ?',
+        'Laisse-moi un numéro ou un e-mail, c\'est pour que l\'organisateur puisse revenir vers toi.',
+    ];
+
+    /**
+     * Sensitive topics on which a general question (minimum age, access for a wheelchair) still goes to the organizer
+     * as a question: the organizer answers it himself, nothing is answered automatically.
+     */
+    private const TOPICS_ASKED_AS_QUESTION = ['minor', 'accessibility'];
+
+    private const CONTACT_AGAIN_VOUS = [
+        'Juste un numéro ou un e-mail dans le petit formulaire en dessous, et la réponse de l\'organisateur vous arrive directement.',
+        'Vous pouvez me laisser un numéro ou un e-mail juste en dessous ? C\'est pour que l\'organisateur puisse vous répondre.',
+    ];
+
+    private const CONTACT_AGAIN_TU = [
+        'Juste un numéro ou un e-mail dans le petit formulaire en dessous, et la réponse de l\'organisateur t\'arrive directement.',
+        'Tu peux me laisser un numéro ou un e-mail juste en dessous ? C\'est pour que l\'organisateur puisse te répondre.',
+    ];
+
+    private const WITHOUT_CONTACT_VOUS = [
+        'Pas de souci, je transmets quand même votre question à l\'organisateur. Sans numéro ni e-mail, on ne pourra pas vous prévenir : sa réponse s\'affichera ici, si vous revenez sur cette page depuis le même appareil.',
+        'D\'accord, je transmets votre question à l\'organisateur. Comme je n\'ai pas de quoi vous joindre, sa réponse s\'affichera ici quand vous reviendrez sur cette page, depuis le même appareil.',
+    ];
+
+    private const WITHOUT_CONTACT_TU = [
+        'Pas de souci, je transmets quand même ta question à l\'organisateur. Sans numéro ni e-mail, on ne pourra pas te prévenir : sa réponse s\'affichera ici, si tu reviens sur cette page depuis le même appareil.',
+        'D\'accord, je transmets ta question à l\'organisateur. Comme je n\'ai pas de quoi te joindre, sa réponse s\'affichera ici quand tu reviendras sur cette page, depuis le même appareil.',
     ];
 
     public function __construct(
@@ -182,7 +232,7 @@ class LiveChatService
             session: $session,
             messages: $this->messageRepository->findLatestForSession($session->getId(), self::TRANSCRIPT_LENGTH),
             askContact: $this->contactFormShown($session),
-            pendingQuestion: $this->questionService->awaitingForSession($session->getId())->isNotEmpty(),
+            pendingQuestion: $this->questionService->openForSession($session->getId())->isNotEmpty(),
         );
     }
 
@@ -223,7 +273,7 @@ class LiveChatService
             $session->getContactDeclinedAt() !== null => 'refusée par le visiteur, ne la refais jamais',
             $session->getContactAskedAt() !== null => 'déjà faite, le formulaire reste affiché, ne la refais pas dans le texte',
             ! self::contactAllowed($session->getVisitorMessageCount(), $lastVisitorMessage, false, false) => sprintf(
-                'pas encore (avant le %de message du visiteur), sauf s\'il propose lui-même son numéro ou demande à être rappelé',
+                'pas encore (avant le %de message du visiteur), sauf s\'il propose lui-même son numéro, demande à être rappelé, ou si tu transmets sa demande ou une question à l\'organisateur',
                 self::CONTACT_FROM_MESSAGE,
             ),
             default => 'permise si utile',
@@ -259,7 +309,8 @@ class LiveChatService
         ]);
         $session = $this->sessionRepository->findById($session->getId());
         $contactKnown = $this->contactKnown($session);
-        $sensitive = SmsSensitiveTopicDetector::isSensitive($content);
+        $sensitiveTopic = SmsSensitiveTopicDetector::detect($content);
+        $sensitive = $sensitiveTopic !== null;
 
         if (! $contactKnown && $session->getContactAskedAt() !== null && $session->getContactDeclinedAt() === null
             && self::refusesContact($content)) {
@@ -270,6 +321,25 @@ class LiveChatService
 
         if ($session->getSmsConversationId() !== null) {
             $this->handoffService->appendToConversation($settings, $session, $visitorMessage, $sensitive);
+        }
+
+        $held = $contactKnown ? collect() : $this->questionService->heldForSession($session->getId());
+        $typedContact = $held->isNotEmpty() ? self::extractContact($content) : null;
+        if ($typedContact !== null) {
+            return $this->forwardWithTypedContact($session, $settings, $visitorMessage, $typedContact['phone'], $typedContact['email']);
+        }
+
+        $forwardedWithoutContact = false;
+        $contactAgain = false;
+        if ($held->isNotEmpty()) {
+            $requests = (int) $held->max(fn (LiveChatQuestionDomainObject $question) => $question->getContactRequests());
+            if ($session->getContactDeclinedAt() !== null || $requests >= LiveChatQuestionService::MAX_CONTACT_REQUESTS) {
+                $this->questionService->releaseHeld($session->getId());
+                $session = $this->sessionRepository->findById($session->getId());
+                $forwardedWithoutContact = true;
+            } else {
+                $contactAgain = true;
+            }
         }
 
         if (! $this->generator->isUnderDailyLimit($session->getOrganizerId())) {
@@ -287,8 +357,13 @@ class LiveChatService
             return new LiveChatTurnDTO(session: $session, messages: collect([$visitorMessage, $holding]));
         }
 
-        $reply = $this->reply($session, $settings, $contactKnown, $content);
-        if ($sensitive && ! $reply->needsFollowUp && ! $reply->refundRequest) {
+        $reply = $this->reply($session, $settings, $contactKnown, $content, match (true) {
+            $contactAgain => 'Ta question à l\'organisateur attend encore son numéro ou son e-mail : redemande-les une seule fois, poliment et autrement que la première fois, en une phrase (le petit formulaire est affiché sous ta réponse).',
+            $forwardedWithoutContact => 'Sa question vient de partir chez l\'organisateur sans coordonnées. Une phrase l\'explique automatiquement après ta réponse : ne parle ni de coordonnées ni de transmission.',
+            default => null,
+        });
+        $askedAsQuestion = $reply->questionForOrganizer !== null && in_array($sensitiveTopic, self::TOPICS_ASKED_AS_QUESTION, true);
+        if ($sensitive && ! $askedAsQuestion && ! $reply->needsFollowUp && ! $reply->refundRequest) {
             $reply = new LiveChatReplyDTO(
                 messages: $reply->messages,
                 needsFollowUp: true,
@@ -297,22 +372,55 @@ class LiveChatService
             );
         }
 
-        if ($reply->questionForOrganizer !== null && ! $reply->needsFollowUp && ! $reply->refundRequest
-            && $this->questionService->ask($session, $reply->questionForOrganizer, $content) === null) {
-            $reply = new LiveChatReplyDTO(
-                messages: $reply->messages,
-                needsFollowUp: true,
-                askContact: ! $contactKnown,
-                reason: mb_substr(__('question to check: :question', ['question' => $reply->questionForOrganizer]), 0, 255),
-            );
+        $declined = $session->getContactDeclinedAt() !== null;
+        $contactForQuestion = false;
+        if ($reply->questionForOrganizer !== null && ! $reply->needsFollowUp && ! $reply->refundRequest) {
+            $openIds = $this->questionService->openForSession($session->getId())
+                ->map(fn (LiveChatQuestionDomainObject $question) => $question->getId())
+                ->all();
+            $asked = $this->questionService->ask($session, $reply->questionForOrganizer, $content, holdForContact: ! $contactKnown && ! $declined);
+
+            if ($asked === null) {
+                $reply = new LiveChatReplyDTO(
+                    messages: $reply->messages,
+                    needsFollowUp: true,
+                    askContact: ! $contactKnown,
+                    reason: mb_substr(__('question to check: :question', ['question' => $reply->questionForOrganizer]), 0, 255),
+                );
+            } elseif (! in_array($asked->getId(), $openIds, true)) {
+                $contactForQuestion = $asked->getStatus() === LiveChatQuestionStatus::AWAITING_CONTACT->name;
+                $forwardedWithoutContact = $forwardedWithoutContact || (! $contactKnown && ! $contactForQuestion);
+            }
+        }
+
+        $tutoiement = $this->isTutoiement($session->getOrganizerId());
+        $variant = $session->getModelCallCount();
+        $bubbles = $reply->messages;
+        if ($contactForQuestion && ! $contactAgain) {
+            $bubbles = self::withContactRequest($bubbles, self::pick($tutoiement ? self::CONTACT_FOR_QUESTION_TU : self::CONTACT_FOR_QUESTION_VOUS, $variant));
+        } elseif ($contactAgain) {
+            $bubbles = self::withContactRequest($bubbles, self::pick($tutoiement ? self::CONTACT_AGAIN_TU : self::CONTACT_AGAIN_VOUS, $variant));
+            $this->questionService->markContactRequested($session->getId());
+        }
+        $contactForFollowUp = $reply->needsFollowUp && ! $reply->refundRequest && ! $contactKnown && ! $declined
+            && ! $contactForQuestion && ! $contactAgain && $session->getContactAskedAt() === null;
+        if ($contactForFollowUp) {
+            $bubbles = self::withContactRequest($bubbles, self::pick($tutoiement ? self::CONTACT_FOR_FOLLOW_UP_TU : self::CONTACT_FOR_FOLLOW_UP_VOUS, $variant));
+        }
+        if ($forwardedWithoutContact) {
+            $bubbles = self::withExtraBubble($bubbles, self::pick($tutoiement ? self::WITHOUT_CONTACT_TU : self::WITHOUT_CONTACT_VOUS, $variant));
         }
 
         $askContact = ! $reply->refundRequest
-            && self::contactAllowed($session->getVisitorMessageCount(), $content, $contactKnown, $session->getContactDeclinedAt() !== null)
-            && ($reply->askContact || $session->getContactAskedAt() !== null);
+            && ! $contactKnown
+            && ! $declined
+            && ($contactForQuestion || $contactAgain || $contactForFollowUp || $session->getContactAskedAt() !== null || (
+                self::contactAllowed($session->getVisitorMessageCount(), $content, $contactKnown, $declined)
+                && $reply->askContact
+            ));
 
         $agentMessages = collect();
-        foreach ($reply->messages as $index => $bubble) {
+        foreach ($bubbles as $index => $bubble) {
             $agentMessages->push($this->addMessage($session, LiveChatAuthorType::AGENT, $bubble, $index === 0 ? [
                 LiveChatSessionDomainObjectAbstract::NEEDS_FOLLOW_UP => $session->getNeedsFollowUp() || $reply->needsFollowUp,
                 LiveChatSessionDomainObjectAbstract::FOLLOW_UP_REASON => $reply->reason ?? $session->getFollowUpReason(),
@@ -333,8 +441,128 @@ class LiveChatService
             messages: collect([$visitorMessage, ...$agentMessages]),
             askContact: $askContact,
             refundForm: $reply->refundRequest,
-            pendingQuestion: $this->questionService->awaitingForSession($session->getId())->isNotEmpty(),
+            pendingQuestion: $this->questionService->openForSession($session->getId())->isNotEmpty(),
         );
+    }
+
+    /**
+     * A phone number or an e-mail written in the message itself, valid as in the contact form.
+     *
+     * @return array{phone: ?string, email: ?string}|null
+     */
+    public static function extractContact(string $message): ?array
+    {
+        $email = preg_match('/[^\s@<>()"\',;:]+@[^\s@<>()"\',;:]+\.[a-z]{2,}/iu', $message, $match) === 1
+            ? Str::lower(rtrim($match[0], '.'))
+            : null;
+
+        $phone = null;
+        if (preg_match('/\+?\d[\d\s.\-]{7,}\d/u', $message, $match) === 1) {
+            $phone = SmsPhoneNormalizer::normalize($match[0]);
+            if ($phone !== null && preg_match('/^\+[1-9]\d{7,14}$/', $phone) !== 1) {
+                $phone = null;
+            }
+        }
+
+        return $phone === null && $email === null ? null : ['phone' => $phone, 'email' => $email];
+    }
+
+    public static function asksForContact(string $text): bool
+    {
+        return preg_match('/num[ée]ro|t[ée]l[ée]phone|\bt[ée]l\b|e-?mail|\bmail\b|coordonn[ée]es/iu', $text) === 1;
+    }
+
+    /**
+     * Makes sure the reply asks for a phone number or an e-mail: the line is added only when no bubble does.
+     *
+     * @param  list<string>  $bubbles
+     * @return list<string>
+     */
+    public static function withContactRequest(array $bubbles, string $line): array
+    {
+        foreach ($bubbles as $bubble) {
+            if (self::asksForContact($bubble)) {
+                return $bubbles;
+            }
+        }
+
+        return self::withExtraBubble($bubbles, $line);
+    }
+
+    /**
+     * @param  list<string>  $bubbles
+     * @return list<string>
+     */
+    public static function withExtraBubble(array $bubbles, string $line): array
+    {
+        if (count($bubbles) < LiveChatReplyGenerator::MAX_BUBBLES) {
+            return [...$bubbles, $line];
+        }
+
+        $last = count($bubbles) - 1;
+        $bubbles[$last] .= ' '.$line;
+
+        return $bubbles;
+    }
+
+    /**
+     * @param  list<string>  $lines
+     */
+    private static function pick(array $lines, int $variant): string
+    {
+        return $lines[abs($variant) % count($lines)];
+    }
+
+    /**
+     * The visitor wrote their number or e-mail in the chat after being asked for it about a question: they are kept
+     * as the contact details of the chat and the held questions leave for the organizer at once.
+     *
+     * @throws Throwable
+     */
+    private function forwardWithTypedContact(
+        LiveChatSessionDomainObject $session,
+        OrganizerSmsSettingDomainObject $settings,
+        LiveChatMessageDomainObject $visitorMessage,
+        ?string $phone,
+        ?string $email,
+    ): LiveChatTurnDTO {
+        $session = $this->sessionRepository->updateFromArray($session->getId(), [
+            LiveChatSessionDomainObjectAbstract::VISITOR_PHONE => $phone ?? $session->getVisitorPhone(),
+            LiveChatSessionDomainObjectAbstract::VISITOR_EMAIL => $email ?? $session->getVisitorEmail(),
+            LiveChatSessionDomainObjectAbstract::CONTACT_GIVEN_AT => now()->toDateTimeString(),
+        ]);
+
+        $held = $this->questionService->heldForSession($session->getId())->count();
+        $sent = $this->questionService->releaseHeld($session->getId());
+
+        $agentMessage = $this->addMessage(
+            $session,
+            LiveChatAuthorType::AGENT,
+            self::forwardConfirmation($this->isTutoiement($session->getOrganizerId()), $phone, $email),
+        );
+        $session = $this->sessionRepository->findById($session->getId());
+
+        if ($session->getSmsConversationId() !== null) {
+            $this->handoffService->appendToConversation($settings, $session, $agentMessage, $sent < $held);
+        } elseif ($sent < $held) {
+            $session = $this->handOffKnownContact($session);
+        }
+
+        return new LiveChatTurnDTO(
+            session: $session,
+            messages: collect([$visitorMessage, $agentMessage]),
+            pendingQuestion: $this->questionService->openForSession($session->getId())->isNotEmpty(),
+        );
+    }
+
+    public static function forwardConfirmation(bool $tutoiement, ?string $phone, ?string $email): string
+    {
+        return match (true) {
+            $phone !== null && $tutoiement => "Merci, je transmets ta question à l'organisateur, il te répond au {$phone}.",
+            $phone !== null => "Merci, je transmets votre question à l'organisateur, il vous répond au {$phone}.",
+            $tutoiement => "Merci, je transmets ta question à l'organisateur, il te répond par e-mail à {$email}.",
+            default => "Merci, je transmets votre question à l'organisateur, il vous répond par e-mail à {$email}.",
+        };
     }
 
     /**
@@ -362,7 +590,9 @@ class LiveChatService
 
         $tutoiement = $this->isTutoiement($session->getOrganizerId());
         $bySms = $normalizedPhone !== null && $this->handoffService->canRelayBySms($settings);
+        $hasHeldQuestion = $this->questionService->heldForSession($session->getId())->isNotEmpty();
         $confirmation = match (true) {
+            $hasHeldQuestion => self::forwardConfirmation($tutoiement, $normalizedPhone, $email),
             $bySms && $tutoiement => "Merci, c'est noté. L'organisateur te répond par SMS au {$normalizedPhone}.",
             $bySms => "Merci, c'est noté. L'organisateur vous répond par SMS au {$normalizedPhone}.",
             $normalizedPhone !== null && $tutoiement => "Merci, c'est noté. L'organisateur te recontacte au {$normalizedPhone}.",
@@ -371,7 +601,7 @@ class LiveChatService
             default => "Merci, c'est noté. L'organisateur vous répond par e-mail à {$email}.",
         };
 
-        return $this->databaseManager->transaction(function () use ($session, $settings, $normalizedPhone, $email, $confirmation, $bySms) {
+        $turn = $this->databaseManager->transaction(function () use ($session, $settings, $normalizedPhone, $email, $confirmation, $bySms) {
             $this->sessionRepository->updateFromArray($session->getId(), [
                 LiveChatSessionDomainObjectAbstract::VISITOR_PHONE => $normalizedPhone ?? $session->getVisitorPhone(),
                 LiveChatSessionDomainObjectAbstract::VISITOR_EMAIL => $email ?? $session->getVisitorEmail(),
@@ -401,6 +631,18 @@ class LiveChatService
 
             return new LiveChatTurnDTO(session: $session, messages: collect([$agentMessage]));
         });
+
+        if (! $hasHeldQuestion) {
+            return $turn;
+        }
+
+        $this->questionService->releaseHeld($session->getId());
+
+        return new LiveChatTurnDTO(
+            session: $this->sessionRepository->findById($session->getId()),
+            messages: $turn->messages,
+            pendingQuestion: $this->questionService->openForSession($session->getId())->isNotEmpty(),
+        );
     }
 
     /**
@@ -487,6 +729,7 @@ class LiveChatService
         OrganizerSmsSettingDomainObject $settings,
         bool $contactKnown,
         string $content,
+        ?string $questionContactNote = null,
     ): LiveChatReplyDTO {
         /** @var OrganizerDomainObject $organizer */
         $organizer = $this->organizerRepository->findById($session->getOrganizerId());
@@ -514,7 +757,7 @@ class LiveChatService
                     || $session->getSmsConversationId() !== null,
                 visitorMessageNumber: $session->getVisitorMessageCount(),
                 contactPolicy: $this->contactPolicy($session, $content, $contactKnown),
-                pendingQuestions: $this->questionService->awaitingForSession($session->getId())
+                pendingQuestions: $this->questionService->openForSession($session->getId())
                     ->map(fn ($question) => $question->getQuestion())
                     ->values()
                     ->all(),
@@ -523,6 +766,7 @@ class LiveChatService
                     $events->map(fn (SmsAssistantEventInfoDTO $event) => $event->id)->filter()->values()->all(),
                 ),
                 publications: $this->knowledgeService->publications($session->getOrganizerId()),
+                questionContactNote: $questionContactNote,
             ));
         } catch (SmsAssistantUnavailableException|SmsAssistantFailedException|SmsAssistantLimitReachedException) {
             $replies = $tutoiement ? self::HOLDING_REPLIES_TU : self::HOLDING_REPLIES_VOUS;

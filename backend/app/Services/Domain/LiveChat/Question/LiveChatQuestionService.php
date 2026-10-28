@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\Enums\OrganizerTeamContactRole;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\LiveChatQuestionDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\LiveChatSessionDomainObjectAbstract;
 use HiEvents\DomainObjects\LiveChatQuestionDomainObject;
 use HiEvents\DomainObjects\LiveChatSessionDomainObject;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
@@ -21,6 +22,7 @@ use HiEvents\Jobs\LiveChat\RelayLiveChatAnswerJob;
 use HiEvents\Repository\Eloquent\Value\OrderAndDirection;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatQuestionRepositoryInterface;
+use HiEvents\Repository\Interfaces\LiveChatSessionRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Services\Domain\LiveChat\Refund\Approval\RefundApprovalSchedule;
@@ -39,6 +41,10 @@ use Psr\Log\LoggerInterface;
  * « Q12 » and the answer; the answer goes back to the visitor and becomes a confirmed fact of the event.
  * Without answer within 2 hours (counted between 8:00 and 21:00 Mayotte time), one reminder is sent and the
  * supervision is alerted.
+ *
+ * Before it is sent, a question waits for the contact details of the visitor (AWAITING_CONTACT), so that someone can
+ * answer them: it leaves as soon as they are given, after a refusal or a second request without them, or after
+ * HOLD_MINUTES when the visitor has left. The SMS to the organizer always says how to reach the visitor.
  */
 class LiveChatQuestionService
 {
@@ -48,12 +54,17 @@ class LiveChatQuestionService
 
     public const REMINDER_HOURS = 2;
 
+    public const HOLD_MINUTES = 10;
+
+    public const MAX_CONTACT_REQUESTS = 2;
+
     private const MAX_QUESTION_LENGTH = 300;
 
     private const BATCH = 100;
 
     public function __construct(
         private readonly LiveChatQuestionRepositoryInterface $questionRepository,
+        private readonly LiveChatSessionRepositoryInterface $sessionRepository,
         private readonly EventRepositoryInterface $eventRepository,
         private readonly OrganizerRepositoryInterface $organizerRepository,
         private readonly SmsMessageRepositoryInterface $messageRepository,
@@ -109,24 +120,56 @@ class LiveChatQuestionService
         );
     }
 
+    /**
+     * Questions kept until the visitor gives a phone number or an e-mail.
+     *
+     * @return Collection<int, LiveChatQuestionDomainObject>
+     */
+    public function heldForSession(int $sessionId): Collection
+    {
+        return $this->questionRepository->findWhere(
+            [
+                LiveChatQuestionDomainObjectAbstract::LIVE_CHAT_SESSION_ID => $sessionId,
+                LiveChatQuestionDomainObjectAbstract::STATUS => LiveChatQuestionStatus::AWAITING_CONTACT->name,
+            ],
+            orderAndDirections: [new OrderAndDirection(LiveChatQuestionDomainObjectAbstract::ID, 'asc')],
+        );
+    }
+
+    /**
+     * Held and sent questions without answer yet: the assistant must not ask them again.
+     *
+     * @return Collection<int, LiveChatQuestionDomainObject>
+     */
+    public function openForSession(int $sessionId): Collection
+    {
+        return $this->heldForSession($sessionId)->concat($this->awaitingForSession($sessionId))->values();
+    }
+
     public function find(int $questionId): ?LiveChatQuestionDomainObject
     {
         return $this->questionRepository->findFirstWhere([LiveChatQuestionDomainObjectAbstract::ID => $questionId]);
     }
 
     /**
-     * Sends the question to the organizer. Returns null when nobody could be reached (no SMS line): the chat then falls
-     * back on the usual hand-over to the organizer.
+     * Sends the question to the organizer, or keeps it until the visitor gives contact details ($holdForContact).
+     * Returns null when nobody could be reached (no SMS line): the chat then falls back on the usual hand-over to the
+     * organizer.
      */
-    public function ask(LiveChatSessionDomainObject $session, string $question, string $visitorMessage, ?Carbon $now = null): ?LiveChatQuestionDomainObject
-    {
+    public function ask(
+        LiveChatSessionDomainObject $session,
+        string $question,
+        string $visitorMessage,
+        ?Carbon $now = null,
+        bool $holdForContact = false,
+    ): ?LiveChatQuestionDomainObject {
         $now = ($now ?? Carbon::now('UTC'))->copy()->utc();
         $question = mb_substr(trim($question), 0, self::MAX_QUESTION_LENGTH);
         if ($question === '') {
             return null;
         }
 
-        $awaiting = $this->awaitingForSession($session->getId());
+        $awaiting = $this->openForSession($session->getId());
         $same = $awaiting->first(fn (LiveChatQuestionDomainObject $existing) => self::normalize($existing->getQuestion()) === self::normalize($question));
         if ($same !== null) {
             return $same;
@@ -142,8 +185,15 @@ class LiveChatQuestionService
             LiveChatQuestionDomainObjectAbstract::LIVE_CHAT_SESSION_ID => $session->getId(),
             LiveChatQuestionDomainObjectAbstract::QUESTION => $question,
             LiveChatQuestionDomainObjectAbstract::VISITOR_MESSAGE => mb_substr($visitorMessage, 0, 1000),
-            LiveChatQuestionDomainObjectAbstract::STATUS => LiveChatQuestionStatus::AWAITING->name,
+            LiveChatQuestionDomainObjectAbstract::STATUS => $holdForContact
+                ? LiveChatQuestionStatus::AWAITING_CONTACT->name
+                : LiveChatQuestionStatus::AWAITING->name,
+            LiveChatQuestionDomainObjectAbstract::CONTACT_REQUESTS => $holdForContact ? 1 : 0,
         ]);
+
+        if ($holdForContact) {
+            return $this->find($created->getId());
+        }
 
         if (! $this->notify($created, false, $now)) {
             $this->questionRepository->deleteById($created->getId());
@@ -152,6 +202,40 @@ class LiveChatQuestionService
         }
 
         return $this->find($created->getId());
+    }
+
+    /**
+     * The visitor was asked once more for contact details about the held questions.
+     */
+    public function markContactRequested(int $sessionId): void
+    {
+        foreach ($this->heldForSession($sessionId) as $question) {
+            /** @var LiveChatQuestionDomainObject $question */
+            $this->questionRepository->updateFromArray($question->getId(), [
+                LiveChatQuestionDomainObjectAbstract::CONTACT_REQUESTS => $question->getContactRequests() + 1,
+            ]);
+        }
+    }
+
+    /**
+     * Sends the held questions of the chat to the organizer, with the contact details known by then. A question that
+     * cannot be sent (no SMS line) is removed and the chat is marked to follow up.
+     *
+     * @return int The number of questions sent
+     */
+    public function releaseHeld(int $sessionId, ?Carbon $now = null): int
+    {
+        $now = ($now ?? Carbon::now('UTC'))->copy()->utc();
+        $sent = 0;
+
+        foreach ($this->heldForSession($sessionId) as $question) {
+            /** @var LiveChatQuestionDomainObject $question */
+            if ($this->release($question, $now)) {
+                $sent++;
+            }
+        }
+
+        return $sent;
     }
 
     /**
@@ -231,6 +315,8 @@ class LiveChatQuestionService
         $now = ($now ?? Carbon::now('UTC'))->copy()->utc();
         $sent = 0;
 
+        $this->releaseAbandoned($now);
+
         $due = $this->questionRepository->findWhere([
             LiveChatQuestionDomainObjectAbstract::STATUS => LiveChatQuestionStatus::AWAITING->name,
             LiveChatQuestionDomainObjectAbstract::REMINDERS_COUNT => 0,
@@ -263,6 +349,50 @@ class LiveChatQuestionService
     public function nextReminderAt(Carbon $sentAt): Carbon
     {
         return RefundApprovalSchedule::withinDay($sentAt->copy()->addHours(self::REMINDER_HOURS));
+    }
+
+    /**
+     * A visitor who left without giving contact details: the question still goes to the organizer, the answer will
+     * be shown in the chat if they come back.
+     */
+    private function releaseAbandoned(Carbon $now): void
+    {
+        $held = $this->questionRepository->findWhere([
+            LiveChatQuestionDomainObjectAbstract::STATUS => LiveChatQuestionStatus::AWAITING_CONTACT->name,
+            [LiveChatQuestionDomainObjectAbstract::CREATED_AT, '<=', $now->copy()->subMinutes(self::HOLD_MINUTES)->toDateTimeString()],
+        ])->take(self::BATCH);
+
+        foreach ($held as $question) {
+            /** @var LiveChatQuestionDomainObject $question */
+            $this->release($question, $now);
+        }
+    }
+
+    private function release(LiveChatQuestionDomainObject $question, Carbon $now): bool
+    {
+        $claimed = $this->questionRepository->updateWhere([
+            LiveChatQuestionDomainObjectAbstract::STATUS => LiveChatQuestionStatus::AWAITING->name,
+        ], [
+            LiveChatQuestionDomainObjectAbstract::ID => $question->getId(),
+            LiveChatQuestionDomainObjectAbstract::STATUS => LiveChatQuestionStatus::AWAITING_CONTACT->name,
+        ]);
+        if ($claimed !== 1) {
+            return false;
+        }
+
+        if ($this->notify($question, false, $now)) {
+            return true;
+        }
+
+        $this->questionRepository->deleteById($question->getId());
+        if ($question->getLiveChatSessionId() !== null) {
+            $this->sessionRepository->updateFromArray($question->getLiveChatSessionId(), [
+                LiveChatSessionDomainObjectAbstract::NEEDS_FOLLOW_UP => true,
+                LiveChatSessionDomainObjectAbstract::FOLLOW_UP_REASON => mb_substr(__('question to check: :question', ['question' => $question->getQuestion()]), 0, 255),
+            ]);
+        }
+
+        return false;
     }
 
     private function answer(LiveChatQuestionDomainObject $question, string $answer, string $phone, Carbon $now): void
@@ -323,6 +453,7 @@ class LiveChatQuestionService
         $supervisors = $this->supervisorService->phones();
         $reference = self::reference($question);
         $eventTitle = $this->eventTitle($question);
+        $contact = $this->visitorContactLine($question);
 
         try {
             $reached = [];
@@ -331,11 +462,11 @@ class LiveChatQuestionService
                     $question->getOrganizerId(),
                     $organizerPhones,
                     $isReminder
-                        ? __("Reminder :reference, the visitor is still waiting (:event):\n« :question »\nReply to this SMS, or write :reference followed by the answer.", [
-                            'reference' => $reference, 'event' => $eventTitle, 'question' => $question->getQuestion(),
+                        ? __("Reminder :reference, the visitor is still waiting (:event):\n« :question »\n:contact\nReply to this SMS, or write :reference followed by the answer.", [
+                            'reference' => $reference, 'event' => $eventTitle, 'question' => $question->getQuestion(), 'contact' => $contact,
                         ], 'fr')
-                        : __(":reference, question from a visitor (:event):\n« :question »\nReply to this SMS, or write :reference followed by the answer. I pass it on to the visitor.", [
-                            'reference' => $reference, 'event' => $eventTitle, 'question' => $question->getQuestion(),
+                        : __(":reference, Anicka passes on a question from a visitor (:event):\n« :question »\n:contact\nReply to this SMS, or write :reference followed by the answer. I pass it on to the visitor.", [
+                            'reference' => $reference, 'event' => $eventTitle, 'question' => $question->getQuestion(), 'contact' => $contact,
                         ], 'fr'),
                 )->sent;
             }
@@ -345,8 +476,8 @@ class LiveChatQuestionService
                 $this->directSendService->sendToMany(
                     $question->getOrganizerId(),
                     $supervisors,
-                    __(":reference, :organizer has no organizer contact who could be reached. Question from a visitor (:event):\n« :question »\nAnswer with :reference followed by the answer.", [
-                        'reference' => $reference, 'organizer' => $this->organizerName($question), 'event' => $eventTitle, 'question' => $question->getQuestion(),
+                    __(":reference, :organizer has no organizer contact who could be reached. Question from a visitor passed on by Anicka (:event):\n« :question »\n:contact\nAnswer with :reference followed by the answer.", [
+                        'reference' => $reference, 'organizer' => $this->organizerName($question), 'event' => $eventTitle, 'question' => $question->getQuestion(), 'contact' => $contact,
                     ], 'fr'),
                     isSupervision: true,
                 );
@@ -390,11 +521,32 @@ class LiveChatQuestionService
             intro: __('The organizer has not answered this question from a visitor of the chat for 2 hours. A reminder was sent.'),
             details: [
                 __('Question') => $reference.' : '.$question->getQuestion(),
+                __('Visitor') => $this->visitorContactLine($question),
                 __('Organizer') => $organizer.' (#'.$question->getOrganizerId().')',
                 __('Event') => $this->eventTitle($question),
             ],
             url: null,
         );
+    }
+
+    /**
+     * How the organizer can reach the visitor, read from the chat when the SMS leaves (the visitor may have given
+     * their details after the question).
+     */
+    private function visitorContactLine(LiveChatQuestionDomainObject $question): string
+    {
+        /** @var LiveChatSessionDomainObject|null $session */
+        $session = $question->getLiveChatSessionId() === null ? null : $this->sessionRepository->findFirstWhere([
+            LiveChatSessionDomainObjectAbstract::ID => $question->getLiveChatSessionId(),
+        ]);
+        $contact = array_values(array_filter([
+            trim((string) $session?->getVisitorPhone()),
+            trim((string) $session?->getVisitorEmail()),
+        ]));
+
+        return $contact !== []
+            ? __('Visitor contact details: :contact', ['contact' => implode(', ', $contact)], 'fr')
+            : __('The visitor left no contact details: your answer will only be shown in their chat.', [], 'fr');
     }
 
     private function eventTitle(LiveChatQuestionDomainObject $question): string

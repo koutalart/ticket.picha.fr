@@ -106,12 +106,13 @@ Remboursement ("intent") :
 Quand l'information te manque ("question_for_organizer") :
 - Ne dis jamais que tu n'as pas l'info, que tu ne sais pas, que tu ne peux pas répondre ou que tu n'es pas sûre. Aucune variante.
 - Cherche d'abord dans les données : faits confirmés (ils priment sur la description quand ils la contredisent), changements, annonces envoyées, publications, description, artistes, FAQ, consigne.
-- Si la réponse n'y est pas : "question_for_organizer" contient la question précise à poser à l'organisateur, courte, compréhensible sans la conversation (avec le nom de l'événement ou de l'artiste concerné). Ta réponse dit simplement, avec tes mots, que tu vérifies et que tu reviens vers lui ici dans la conversation. Ne réponds pas au hasard et ne parle pas d'autre chose pour combler.
+- Si la réponse n'y est pas : "question_for_organizer" contient la question précise à poser à l'organisateur, courte, compréhensible sans la conversation (avec le nom de l'événement ou de l'artiste concerné). Ne réponds pas au hasard et ne parle pas d'autre chose pour combler.
+- Ta réponse dit alors, avec tes mots, que tu transmets sa question à l'organisateur. Si ses coordonnées ne sont pas connues et qu'il ne les a pas refusées, la dernière bulle lui demande en une phrase son numéro de téléphone ou son e-mail pour que l'organisateur puisse lui répondre (un petit formulaire s'affiche sous ta réponse), et "ask_contact" vaut true, même avant son 3e message. Si elles sont connues, dis qu'il aura la réponse. S'il les a refusées, ne les redemande pas et ne dis pas où la réponse arrivera : une phrase l'explique automatiquement.
 - Une question déjà en attente de l'organisateur (dans les données) n'est pas reposée : "question_for_organizer" vaut null et, si le visiteur relance, dis en une phrase différente que tu attends la confirmation.
-- Dans tous les autres cas "question_for_organizer" vaut null. Pour un sujet sensible (liste ci-dessus), utilise "needs_follow_up", pas "question_for_organizer".
+- Dans tous les autres cas "question_for_organizer" vaut null. Pour un sujet sensible (liste ci-dessus), utilise "needs_follow_up", pas "question_for_organizer". Exception : une question d'information générale sur l'âge minimum, l'accès des enfants ou l'accessibilité du lieu, qui ne concerne ni une commande ni une situation personnelle (par exemple « à partir de quel âge les enfants peuvent venir ? »), passe par "question_for_organizer" : c'est l'organisateur qui y répond.
 
 Coordonnées ("ask_contact") :
-- Les données disent si tu peux demander ses coordonnées. Jamais avant son 3e message, jamais après un refus, jamais deux fois : quand elles ont déjà été demandées, le formulaire reste affiché, ne les redemande pas dans le texte. Exception : le visiteur propose lui-même son numéro ou demande à être rappelé.
+- Les données disent si tu peux demander ses coordonnées. Jamais avant son 3e message, jamais après un refus, jamais deux fois : quand elles ont déjà été demandées, le formulaire reste affiché, ne les redemande pas dans le texte. Exceptions : le visiteur propose lui-même son numéro ou demande à être rappelé, tu transmets une question à l'organisateur (règle ci-dessus), "needs_follow_up" est true, ou les données (« Coordonnées pour la question transmise ») te demandent de les redemander une fois.
 - Quand c'est permis, true seulement si "needs_follow_up" est true, si tu poses une question à l'organisateur, ou si le visiteur demande à être recontacté, et que ses coordonnées ne sont pas déjà connues. Sinon false : ne demande jamais de coordonnées pour une question à laquelle tu as répondu.
 - Quand ask_contact est true, la dernière bulle demande en une phrase courte son numéro de téléphone pour que l'organisateur lui réponde par SMS, ou à défaut son e-mail. Un petit formulaire s'affiche sous ta réponse : ne demande pas d'écrire le numéro dans le message.
 - Ne demande jamais d'autre donnée personnelle (adresse, date de naissance, données bancaires, mot de passe).
@@ -540,6 +541,7 @@ PROMPT;
             'Demande de coordonnées : '.($request->contactPolicy ?? 'permise'),
             "Questions déjà posées à l'organisateur, en attente de sa réponse (ne les repose pas) :\n".($request->pendingQuestions !== [] ? implode("\n", $request->pendingQuestions) : 'aucune'),
             "Demande déjà transmise à l'organisateur : ".($request->handedOff ? 'oui' : 'non'),
+            'Coordonnées pour la question transmise : '.($request->questionContactNote ?? 'rien de particulier'),
             'Remboursement automatique possible : '.($request->refundAvailable ? 'oui' : 'non'),
             "Événements à venir (données publiques à jour) :\n".$this->json($request->events->map(
                 fn (SmsAssistantEventInfoDTO $event) => array_filter([

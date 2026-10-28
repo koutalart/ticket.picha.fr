@@ -541,12 +541,12 @@ class LiveChatApiTest extends TestCase
         $this->claude->shouldReceive('askWithUsage')
             ->withArgs(fn (string $system, array $content) => str_contains($content[0]['text'], 'Demande de coordonnées : pas encore'))
             ->twice()
-            ->andReturn($this->answer('Je transmets.', needsFollowUp: true, askContact: true, reason: 'Litige'));
+            ->andReturn($this->answer('Je regarde.', askContact: true));
 
-        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Je suis pas content'])
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Bonjour'])
             ->assertOk()
             ->assertJsonPath('data.ask_contact', false);
-        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Toujours pas content'])
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Vous êtes là ?'])
             ->assertOk()
             ->assertJsonPath('data.ask_contact', false);
 
@@ -560,6 +560,22 @@ class LiveChatApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.ask_contact', true);
         $this->assertNotNull(DB::table('live_chat_sessions')->where('public_id', $sessionId)->value('contact_asked_at'));
+    }
+
+    public function test_a_hand_over_asks_for_contact_at_once_and_keeps_the_form(): void
+    {
+        $this->settings();
+        $sessionId = $this->openChat();
+        $this->claude->shouldReceive('askWithUsage')
+            ->twice()
+            ->andReturn($this->answer('Je transmets.', needsFollowUp: true, askContact: false, reason: 'Litige'));
+
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Je suis pas content'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', true);
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => 'Toujours pas content'])
+            ->assertOk()
+            ->assertJsonPath('data.ask_contact', true);
     }
 
     public function test_contact_offered_by_the_visitor_can_be_taken_at_once(): void

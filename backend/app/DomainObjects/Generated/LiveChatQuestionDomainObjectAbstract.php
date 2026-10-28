@@ -29,6 +29,7 @@ abstract class LiveChatQuestionDomainObjectAbstract extends \HiEvents\DomainObje
     final public const RELAYED_AT = 'relayed_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const CONTACT_REQUESTS = 'contact_requests';
 
     protected int $id;
     protected int $organizer_id;
@@ -49,6 +50,7 @@ abstract class LiveChatQuestionDomainObjectAbstract extends \HiEvents\DomainObje
     protected ?string $relayed_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected int $contact_requests = 0;
 
     public function toArray(): array
     {
@@ -72,6 +74,7 @@ abstract class LiveChatQuestionDomainObjectAbstract extends \HiEvents\DomainObje
                     'relayed_at' => $this->relayed_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'contact_requests' => $this->contact_requests ?? null,
                 ];
     }
 
@@ -282,5 +285,16 @@ abstract class LiveChatQuestionDomainObjectAbstract extends \HiEvents\DomainObje
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setContactRequests(int $contact_requests): self
+    {
+        $this->contact_requests = $contact_requests;
+        return $this;
+    }
+
+    public function getContactRequests(): int
+    {
+        return $this->contact_requests;
     }
 }

@@ -17,6 +17,7 @@ class LiveChatRequestDTO extends BaseDataObject
      * @param  list<string>  $pendingQuestions  questions already sent to the organizer and not answered yet
      * @param  array<int, array<string, array<int, array<string, string>>>>  $knowledge  per event id: confirmed facts, changes, announcements
      * @param  array<int, array<string, string>>  $publications  latest publications of the organizer
+     * @param  string|null  $questionContactNote  what to say about the contact details of a question kept for them
      */
     public function __construct(
         public readonly int $organizerId,
@@ -38,5 +39,6 @@ class LiveChatRequestDTO extends BaseDataObject
         public readonly array $pendingQuestions = [],
         public readonly array $knowledge = [],
         public readonly array $publications = [],
+        public readonly ?string $questionContactNote = null,
     ) {}
 }
