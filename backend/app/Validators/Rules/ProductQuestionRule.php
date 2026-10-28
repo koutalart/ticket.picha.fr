@@ -105,7 +105,7 @@ class ProductQuestionRule extends BaseQuestionRule
 
         $validator = Validator::make($productRequestData, [
             'first_name' => ['required', 'string', 'min:1', 'max:100'],
-            'last_name' => ['required', 'string', 'min:1', 'max:100'],
+            'last_name' => ['nullable', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:100'],
             'email_confirmation' => ['nullable', 'string', 'email', 'max:100', 'same:email'],
         ], [

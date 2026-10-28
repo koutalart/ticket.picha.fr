@@ -81,7 +81,7 @@ class CompleteOrderValidator extends BaseValidator
 
         return [
             'order.first_name' => ['required', 'string', 'max:40'],
-            'order.last_name' => ['required', 'string', 'max:40'],
+            'order.last_name' => ['nullable', 'string', 'max:40'],
             'order.questions' => (new OrderQuestionRule($orderQuestions, $products))
                 ->setUploadedFiles($uploadedFiles),
             'order.email' => 'required|email',
@@ -116,7 +116,6 @@ class CompleteOrderValidator extends BaseValidator
             'order.first_name.max' => 'First name must be under 40 characters',
             'order.last_name.max' => 'Last name must be under 40 characters',
             'order.first_name.required' => __('First name is required'),
-            'order.last_name.required' => __('Last name is required'),
             'order.email' => __('A valid email is required'),
             'order.email_confirmation.same' => __('Email addresses do not match'),
             'order.address.address_line_1.required' => __('Address line 1 is required'),

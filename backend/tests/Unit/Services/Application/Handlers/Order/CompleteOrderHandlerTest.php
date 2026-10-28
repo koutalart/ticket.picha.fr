@@ -385,6 +385,82 @@ class CompleteOrderHandlerTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testBuyerWithoutLastNameIsStoredWithEmptyLastName(): void
+    {
+        $this->prepareSimpleOrder();
+        $this->orderRepository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(fn($id, array $attributes) => $attributes['last_name'] === '')
+            ->andReturn($this->createMockOrder());
+        $this->attendeeRepository->shouldReceive('insert')
+            ->once()
+            ->withArgs(fn(array $inserts) => $inserts[0]['last_name'] === '' && $inserts[0]['first_name'] === 'Jo')
+            ->andReturn(true);
+
+        $this->completeOrderHandler->handle('ABC123', new CompleteOrderDTO(
+            order: new CompleteOrderOrderDTO(first_name: 'Jo', last_name: '', email: 'jo@example.com', questions: null),
+            products: new Collection([new CompleteOrderProductDataDTO(
+                product_price_id: 1,
+                first_name: 'Jo',
+                last_name: null,
+                email: 'jo@example.com',
+            )]),
+            event_id: 1,
+        ));
+
+        $this->assertTrue(true);
+    }
+
+    public function testMarketingConsentIsTimestampedWhenTicked(): void
+    {
+        $this->prepareSimpleOrder();
+        $this->orderRepository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(fn($id, array $attributes) => $attributes['opted_into_marketing_at'] instanceof Carbon
+                && $attributes['opted_into_marketing_at']->isToday())
+            ->andReturn($this->createMockOrder());
+        $this->attendeeRepository->shouldReceive('insert')->andReturn(true);
+
+        $this->completeOrderHandler->handle('ABC123', new CompleteOrderDTO(
+            order: new CompleteOrderOrderDTO(
+                first_name: 'Jo',
+                last_name: '',
+                email: 'jo@example.com',
+                questions: null,
+                opted_into_marketing: true,
+            ),
+            products: $this->createMockCompleteOrderDTO()->products,
+            event_id: 1,
+        ));
+
+        $this->assertTrue(true);
+    }
+
+    public function testMarketingConsentStaysEmptyWhenNotTicked(): void
+    {
+        $this->prepareSimpleOrder();
+        $this->orderRepository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(fn($id, array $attributes) => array_key_exists('opted_into_marketing_at', $attributes)
+                && $attributes['opted_into_marketing_at'] === null)
+            ->andReturn($this->createMockOrder());
+        $this->attendeeRepository->shouldReceive('insert')->andReturn(true);
+
+        $this->completeOrderHandler->handle('ABC123', $this->createMockCompleteOrderDTO());
+
+        $this->assertTrue(true);
+    }
+
+    private function prepareSimpleOrder(): void
+    {
+        $this->orderRepository->shouldReceive('findByShortId')->with('ABC123')->andReturn($this->createMockOrder());
+        $this->orderRepository->shouldReceive('loadRelation')->andReturnSelf();
+        $this->productPriceRepository->shouldReceive('findWhereIn')->andReturn(new Collection([$this->createMockProductPrice()]));
+        $this->attendeeRepository->shouldReceive('findWhereIn')->andReturn(new Collection([$this->createMockAttendee()]));
+        $this->productQuantityUpdateService->shouldReceive('updateQuantitiesFromOrder');
+        $this->eventSettingsRepository->shouldReceive('findFirstWhere')->andReturn($this->createMockEventSetting());
+    }
+
     private function prepareAgeRestrictedOrder(AgeRestrictionRule $rule): void
     {
         $this->orderRepository->shouldReceive('findByShortId')->with('ABC123')->andReturn($this->createMockOrder());
