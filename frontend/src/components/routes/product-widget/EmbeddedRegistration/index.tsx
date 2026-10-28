@@ -11,6 +11,7 @@ import {
     IconBrandVisa,
     IconCheck,
     IconCornerDownLeft,
+    IconDeviceMobile,
     IconDeviceMobileMessage,
     IconLock,
     IconMail,
@@ -54,6 +55,7 @@ import {
     getCheckoutRefundProtection,
     getIncludedRefundProtection,
     getPlainTextSummary,
+    REFUND_PROTECTION_OFFERED_STATE,
     withIncludedRefundProtection,
 } from "../../../../utilites/refundProtection.ts";
 import {getContactCode} from "../../../../utilites/contactLinkAttribution.ts";
@@ -83,6 +85,7 @@ import {UserGeneratedContent} from "../../../common/UserGeneratedContent";
 import {SaleCountdown} from "./SaleCountdown.tsx";
 import {LineDescription} from "./LineDescription.tsx";
 import {LowStockIndicator} from "../../../common/LowStockIndicator";
+import {HighlightedPromo} from "./HighlightedPromo.tsx";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import classes from "./EmbeddedRegistration.module.scss";
@@ -291,6 +294,14 @@ export const EmbeddedRegistration = ({
     }, [codeOpen]);
 
     const questionsQuery = useGetEventQuestionsPublic(eventId);
+    const highlightedPromoCode = (initialEvent.settings?.highlighted_promo_code ?? '').trim().toLowerCase() || null;
+    const highlightedPromoQuery = useQuery({
+        queryKey: ['embeddedRegistrationHighlightedPromo', eventId, highlightedPromoCode],
+        queryFn: () => promoCodeClientPublic.validateCode(eventId, highlightedPromoCode),
+        enabled: isPaidMode && !!highlightedPromoCode,
+        refetchOnWindowFocus: false,
+        retry: 0,
+    });
     const publicEventQuery = useQuery({
         queryKey: ['embeddedRegistrationPublicEvent', eventId],
         queryFn: async () => (await eventsClientPublic.findByID(eventId, null)).data,
@@ -844,6 +855,10 @@ export const EmbeddedRegistration = ({
         session_identifier: getSessionIdentifier(),
     });
 
+    const paymentPageState = () => ({
+        [REFUND_PROTECTION_OFFERED_STATE]: !!checkoutProtection && (coveredTicketCount > 0 || optionalProtectionQuantity > 0),
+    });
+
     const navigateAfterCompletion = (
         completedOrder: { is_payment_required?: boolean, short_id: string, reserved_until?: string },
         resumeSignature?: string,
@@ -864,7 +879,7 @@ export const EmbeddedRegistration = ({
             }), eventEnd);
         }
         const nextPage = completedOrder.is_payment_required ? 'payment' : 'summary';
-        navigate(eventCheckoutPath(eventId as number, completedOrder.short_id, nextPage));
+        navigate(eventCheckoutPath(eventId as number, completedOrder.short_id, nextPage), {state: paymentPageState()});
     };
 
     const submitPaidOrder = () => {
@@ -920,7 +935,7 @@ export const EmbeddedRegistration = ({
                 || dayjs.utc(awaitingPayment.reservedUntil).valueOf() > Date.now() + 30_000;
             if (stillReserved && awaitingPayment.signature === resumeSignature) {
                 draftClosed.current = true;
-                navigate(eventCheckoutPath(eventId as number, awaitingPayment.shortId, 'payment'));
+                navigate(eventCheckoutPath(eventId as number, awaitingPayment.shortId, 'payment'), {state: paymentPageState()});
                 return;
             }
             if (stillReserved) {
@@ -1312,11 +1327,12 @@ export const EmbeddedRegistration = ({
         },
     });
 
-    const applyPromoCode = (code: string) => {
+    const applyPromoCode = (code: string, onInvalid?: () => void) => {
         promoMutation.mutate(code, {
             onSuccess: (result) => {
                 if (!result.valid) {
                     setCodeError(t`That promo code is invalid`);
+                    onInvalid?.();
                     return;
                 }
                 setEvent(result.event);
@@ -1607,6 +1623,7 @@ export const EmbeddedRegistration = ({
             case 'contact':
                 return (
                     <>
+                        {renderBuyerIdentity()}
                         <h2 className={classes.stepTitle} id={titleId}>{t`Where should we send your tickets?`}</h2>
                         {phoneQuestion ? (
                             <>
@@ -1676,15 +1693,9 @@ export const EmbeddedRegistration = ({
                         {renderDeviceMemoryNote(step)}
                         {renderConsents(step)}
                         {renderAgreements()}
+                        {isPaidMode && renderIncludedProtection()}
                         {isPaidMode && renderProtectionOffer()}
-                        {isPaidMode && <div className={classes.summaryCode}>{renderCodeRow()}</div>}
                         {isPaidMode && renderPayableTotal()}
-                        {!!event.settings?.pre_checkout_message && (
-                            <UserGeneratedContent
-                                className={classes.preCheckout}
-                                dangerouslySetInnerHTML={{__html: event.settings.pre_checkout_message}}
-                            />
-                        )}
                     </>
                 );
             case 'questions': {
@@ -1850,9 +1861,6 @@ export const EmbeddedRegistration = ({
                                             <span className={classes.lineTitle}>{label}</span>
                                             <span className={classes.linePrice}>
                                                 {unitPrice > 0 ? formatAmount(unitPrice) : t`Free`}
-                                                {getIncludedRefundProtection(line.price) > 0 && (
-                                                    <span className={classes.protectionIncluded}>{t`Peace of mind option included`}</span>
-                                                )}
                                             </span>
                                             <LowStockIndicator price={line.price} currency={event.currency} unitPrice={unitPrice}/>
                                         </div>
@@ -1897,6 +1905,7 @@ export const EmbeddedRegistration = ({
                                 </li>
                             ))}
                         </ul>
+                        {renderHighlightedPromo()}
                         {renderRunningTotal()}
                     </>
                 );
@@ -1988,6 +1997,86 @@ export const EmbeddedRegistration = ({
             </div>
         </dl>
     );
+
+    const renderBuyerIdentity = () => {
+        const {order} = form.values;
+        const name = `${order.first_name.trim()} ${order.last_name.trim()}`.trim();
+        if (!name) {
+            return null;
+        }
+        const hasEmail = EMAIL_PATTERN.test(order.email.trim());
+        const phone = buyerPhone();
+        const hasPhone = !!phone && PHONE_PATTERN.test(phone);
+        return (
+            <div className={classes.identity}>
+                <span className={classes.identityName}>{name}</span>
+                <span
+                    className={classes.identityIcon}
+                    data-active={hasEmail}
+                    role="img"
+                    aria-label={hasEmail ? t`Email provided` : t`Email missing`}
+                >
+                    <IconMail size={18} aria-hidden="true"/>
+                </span>
+                <span
+                    className={classes.identityIcon}
+                    data-active={hasPhone}
+                    role="img"
+                    aria-label={hasPhone ? t`Phone provided` : t`Phone missing`}
+                >
+                    <IconDeviceMobile size={18} aria-hidden="true"/>
+                </span>
+            </div>
+        );
+    };
+
+    const renderIncludedProtection = () => {
+        if (coveredTicketCount <= 0) {
+            return null;
+        }
+        const hint = checkoutProtection ? getPlainTextSummary(checkoutProtection.product.description) : '';
+        return (
+            <div className={classes.protectionOffer} data-checked="true">
+                <IconShieldCheck size={22} className={classes.protectionIcon} aria-hidden="true"/>
+                <span className={classes.protectionBody}>
+                    <span className={classes.protectionLabel}>{t`Peace of mind option included`}</span>
+                    {hint && <span className={classes.protectionHint}>{hint}</span>}
+                </span>
+            </div>
+        );
+    };
+
+    const renderHighlightedPromo = () => {
+        const promo = highlightedPromoQuery.data;
+        if (!highlightedPromoCode || !promo?.valid) {
+            return null;
+        }
+        const isApplied = (promoCode ?? '').trim().toLowerCase() === highlightedPromoCode;
+        if (promoCode && !isApplied) {
+            return null;
+        }
+        const eligibleIds = (promo.applicable_product_ids ?? []).map(Number);
+        if (eligibleIds.length > 0) {
+            const candidates = (selectedTicketItems.length > 0 ? selectedTicketItems : ticketLines)
+                .map(item => Number(item.product.id));
+            if (!candidates.some(id => eligibleIds.includes(id))) {
+                return null;
+            }
+        }
+        return (
+            <HighlightedPromo
+                code={highlightedPromoCode}
+                promo={promo}
+                currency={currency}
+                applied={isApplied}
+                applying={promoMutation.isPending}
+                onApply={() => {
+                    hasInteracted.current = true;
+                    applyPromoCode(highlightedPromoCode, () => highlightedPromoQuery.refetch());
+                }}
+            />
+        );
+    };
 
     const renderReassurance = () => (
         <div className={classes.reassurance}>
@@ -2176,9 +2265,10 @@ export const EmbeddedRegistration = ({
                         type={active ? 'submit' : 'button'}
                         className={classes.nextButton}
                         loading={active && completeMutation.isPending}
+                        leftSection={isLast && isPaidMode ? <IconLock size={18}/> : undefined}
                         rightSection={isLast && !isPaidMode ? <IconCheck size={20}/> : <IconArrowRight size={20}/>}
                     >
-                        {isLast ? (isPaidMode ? t`Continue to payment` : t`Confirm my registration`) : t`Next`}
+                        {isLast ? (isPaidMode ? t`Payment` : t`Confirm my registration`) : t`Next`}
                     </Button>
                     {!isLast && (
                         <span className={classes.enterHint} aria-hidden="true">
@@ -2187,6 +2277,16 @@ export const EmbeddedRegistration = ({
                     )}
                     {isLast && isPaidMode && renderReassurance()}
                 </div>
+
+                {current.kind === 'contact' && isPaidMode && (
+                    <div className={classes.summaryCode}>{renderCodeRow()}</div>
+                )}
+                {current.kind === 'contact' && !!event.settings?.pre_checkout_message && (
+                    <UserGeneratedContent
+                        className={classes.preCheckout}
+                        dangerouslySetInnerHTML={{__html: event.settings.pre_checkout_message}}
+                    />
+                )}
             </>
         );
     };

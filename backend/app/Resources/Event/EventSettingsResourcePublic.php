@@ -106,6 +106,7 @@ class EventSettingsResourcePublic extends JsonResource
             'rich_footer_enabled' => $this->getRichFooterEnabled(),
             'homepage_footer_settings' => $this->getHomepageFooterSettings(),
             'schema_event_type' => $this->getSchemaEventType(),
+            'highlighted_promo_code' => $this->getHighlightedPromoCode(),
         ];
     }
 }

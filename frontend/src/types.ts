@@ -257,6 +257,7 @@ export interface EventSettings {
 
     // Marketing settings
     show_marketing_opt_in?: boolean;
+    highlighted_promo_code?: string | null;
 
     // Attendee detail copy control
     allow_copy_details_to_all_attendees?: boolean;
