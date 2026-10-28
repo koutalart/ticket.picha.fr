@@ -2,7 +2,8 @@
 # Sauvegarde quotidienne de PICHA Ticket (production). Cron sur le VPS :
 #   0 3 * * * /opt/picha-ticket/docker/production/backup.sh >> /var/log/picha-backup.log 2>&1
 #
-# 1. Dump de la base + archive des fichiers téléversés dans $BACKUP_DIR (14 jours).
+# 1. Dump de la base + archive des fichiers téléversés dans $BACKUP_DIR (14 jours),
+#    une seule sauvegarde par jour : un nouveau dump remplace ceux du même jour.
 # 2. Si OFFSITE_REMOTE est défini : copie chiffrée hors du serveur avec rclone
 #    (remote « crypt » : le stockage ne voit jamais les données en clair),
 #    rétention OFFSITE_RETENTION_DAYS jours.
@@ -55,6 +56,10 @@ if [ "$(gzip -dc "$DB_FILE.part" 2>/dev/null | head -c 4096 | wc -c || true)" -l
     false
 fi
 mv "$DB_FILE.part" "$DB_FILE"
+
+# Une seule sauvegarde de la base par jour : la plus récente remplace celles du même jour
+# (sauvegarde de 3 h, puis celles faites avant chaque mise en ligne).
+find "$BACKUP_DIR" -maxdepth 1 -name "picha-ticket-${STAMP%-*}-*.sql.gz" ! -name "picha-ticket-$STAMP.sql.gz" -delete
 
 # Fichiers téléversés (logos, couvertures, sponsors) : volume backend_storage.
 # Une seule archive par jour : les sauvegardes faites avant chaque mise en ligne ne gardent que la base.
