@@ -23,5 +23,5 @@ export const legalEntity = {
         address: "2 rue Kellermann, 59100 Roubaix, France",
         website: "https://www.ovhcloud.com",
     },
-    lastUpdated: "27 octobre 2026",
+    lastUpdated: "28 octobre 2026",
 };

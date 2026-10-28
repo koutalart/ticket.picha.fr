@@ -158,6 +158,7 @@ use HiEvents\Http\Actions\EventAssistant\ResearchEventDescriptionAction;
 use HiEvents\Http\Actions\Events\DuplicateEventAction;
 use HiEvents\Http\Actions\Events\GetEventAction;
 use HiEvents\Http\Actions\Events\GetEventPublicAction;
+use HiEvents\Http\Actions\Events\GetRecentEventPurchasesActionPublic;
 use HiEvents\Http\Actions\Events\Pages\GetEventPagesAction;
 use HiEvents\Http\Actions\Events\Pages\GetEventPagesPublicAction;
 use HiEvents\Http\Actions\Events\Pages\UpdateEventPagesAction;
@@ -861,6 +862,9 @@ $router->prefix('/public')->group(
         $router->post('/events/{event_id}/page-signals', TrackMetaPageEventActionPublic::class)
             ->where('event_id', '[0-9]+')
             ->middleware('throttle:60,1');
+        $router->get('/events/{event_id}/recent-purchases', GetRecentEventPurchasesActionPublic::class)
+            ->where('event_id', '[0-9]+')
+            ->middleware('throttle:30,1');
 
         // Organizers
         $router->get('/organizers/{organizer_id}', GetPublicOrganizerAction::class);

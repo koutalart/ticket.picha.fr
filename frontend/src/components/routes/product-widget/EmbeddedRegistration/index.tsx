@@ -7,12 +7,18 @@ import {ActionIcon, Button, Checkbox, Radio, Select, Textarea, TextInput} from "
 import {
     IconArrowLeft,
     IconArrowRight,
+    IconBrandMastercard,
+    IconBrandVisa,
     IconCheck,
     IconCornerDownLeft,
+    IconDeviceMobile,
+    IconDeviceMobileMessage,
     IconLock,
+    IconMail,
     IconMinus,
     IconPlus,
     IconShieldCheck,
+    IconShieldLock,
     IconTicket,
     IconX
 } from "@tabler/icons-react";
@@ -49,6 +55,7 @@ import {
     getCheckoutRefundProtection,
     getIncludedRefundProtection,
     getPlainTextSummary,
+    REFUND_PROTECTION_OFFERED_STATE,
     withIncludedRefundProtection,
 } from "../../../../utilites/refundProtection.ts";
 import {getContactCode} from "../../../../utilites/contactLinkAttribution.ts";
@@ -73,18 +80,21 @@ import {getOrderTrackingContext, getQrLinkCode} from "../../../../utilites/qrAtt
 import {addQueryStringToUrl, removeQueryStringFromUrl} from "../../../../utilites/helpers.ts";
 import {eventCheckoutPath} from "../../../../utilites/urlHelper.ts";
 import {AnalyticsEvents, trackEvent} from "../../../../utilites/analytics.ts";
-import {getConfig} from "../../../../utilites/config.ts";
-import {getAppName, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
+import {getPrivacyPolicyUrl, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 import {UserGeneratedContent} from "../../../common/UserGeneratedContent";
 import {SaleCountdown} from "./SaleCountdown.tsx";
 import {LineDescription} from "./LineDescription.tsx";
+import {LowStockIndicator} from "../../../common/LowStockIndicator";
+import {HighlightedPromo} from "./HighlightedPromo.tsx";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import classes from "./EmbeddedRegistration.module.scss";
 
 dayjs.extend(utc);
 
-type StepKind = 'selection' | 'name' | 'email' | 'phone' | 'questions' | 'participants' | 'confirm' | 'summary';
+type StepKind = 'selection' | 'name' | 'questions' | 'participants' | 'contact';
+
+const LEGACY_CONTACT_STEP_IDS = ['email', 'phone', 'summary', 'confirm'];
 
 interface Step {
     id: string;
@@ -107,6 +117,11 @@ interface ParticipantValue {
     questions: QuestionAnswerValue[];
 }
 
+interface DeliveryChannels {
+    email: boolean;
+    phone: boolean;
+}
+
 interface RegistrationFormValues {
     order: {
         first_name: string;
@@ -117,6 +132,8 @@ interface RegistrationFormValues {
         opted_into_marketing: boolean;
     };
     products: ParticipantValue[];
+    delivery: DeliveryChannels;
+    terms_accepted: boolean;
 }
 
 interface EmbeddedRegistrationProps {
@@ -265,6 +282,8 @@ export const EmbeddedRegistration = ({
                 opted_into_marketing: false,
             },
             products: [{key: 'participant-buyer', first_name: '', last_name: '', birth_date: '', questions: []}],
+            delivery: {email: true, phone: false},
+            terms_accepted: false,
         },
     });
 
@@ -275,6 +294,14 @@ export const EmbeddedRegistration = ({
     }, [codeOpen]);
 
     const questionsQuery = useGetEventQuestionsPublic(eventId);
+    const highlightedPromoCode = (initialEvent.settings?.highlighted_promo_code ?? '').trim().toLowerCase() || null;
+    const highlightedPromoQuery = useQuery({
+        queryKey: ['embeddedRegistrationHighlightedPromo', eventId, highlightedPromoCode],
+        queryFn: () => promoCodeClientPublic.validateCode(eventId, highlightedPromoCode),
+        enabled: isPaidMode && !!highlightedPromoCode,
+        refetchOnWindowFocus: false,
+        retry: 0,
+    });
     const publicEventQuery = useQuery({
         queryKey: ['embeddedRegistrationPublicEvent', eventId],
         queryFn: async () => (await eventsClientPublic.findByID(eventId, null)).data,
@@ -478,7 +505,11 @@ export const EmbeddedRegistration = ({
                     }))
                     : previous.products,
             });
-            setRestoreStepId(draft.stepId || null);
+            setRestoreStepId(LEGACY_CONTACT_STEP_IDS.includes(draft.stepId) ? 'contact' : (draft.stepId || null));
+            if (draft.delivery) {
+                deliveryTouched.current = true;
+                form.setFieldValue('delivery', {email: true, phone: draft.delivery.phone});
+            }
             if (draft.awaitingPayment) {
                 const pending = draft.awaitingPayment;
                 setAwaitingPayment(pending);
@@ -522,37 +553,65 @@ export const EmbeddedRegistration = ({
         || isAgeCheckEnabled
         || selectedTicketItems.some(item => questionsForProduct(item.product.id).length > 0);
 
+    const phoneQuestionIndex = orderQuestions.findIndex(question => question.type === QuestionType.PHONE);
+    const phoneQuestion = phoneQuestionIndex >= 0 ? orderQuestions[phoneQuestionIndex] : null;
+    const isPhoneLocked = !!phoneQuestion?.required;
+    const isPhoneSelected = !!phoneQuestion && (form.values.delivery.phone || isPhoneLocked);
+    const deliveryTouched = useRef(false);
+    const [emailNoteVisible, setEmailNoteVisible] = useState(false);
+
+    useEffect(() => {
+        if (!memoryReady || deliveryTouched.current || phoneQuestionIndex < 0) {
+            return;
+        }
+        const values = form.getValues();
+        if (!values.delivery.phone && !isAnswerEmpty(values.order.questions[phoneQuestionIndex]?.response.answer)) {
+            deliveryTouched.current = true;
+            form.setFieldValue('delivery.phone', true);
+        }
+    });
+
+    const togglePhoneDelivery = () => {
+        if (isPhoneLocked) {
+            return;
+        }
+        hasInteracted.current = true;
+        deliveryTouched.current = true;
+        const next = !form.values.delivery.phone;
+        form.setFieldValue('delivery.phone', next);
+        form.clearFieldError(`order.questions.${phoneQuestionIndex}.response.answer`);
+        if (next) {
+            pendingFocus.current = 'delivery-phone';
+        }
+    };
+
     const steps = useMemo<Step[]>(() => {
         const result: Step[] = [
             ...(isPaidMode ? [{id: 'selection', kind: 'selection' as StepKind, questionIndexes: [], consentIndexes: []}] : []),
             {id: 'name', kind: 'name', questionIndexes: [], consentIndexes: []},
-            {id: 'email', kind: 'email', questionIndexes: [], consentIndexes: []},
         ];
-        let anchor = result[result.length - 1];
-        const phoneIndex = orderQuestions.findIndex(question => question.type === QuestionType.PHONE);
-        if (phoneIndex >= 0) {
-            anchor = {id: 'phone', kind: 'phone', questionIndexes: [phoneIndex], consentIndexes: []};
-            result.push(anchor);
-        }
+        const contact: Step = {
+            id: 'contact',
+            kind: 'contact',
+            questionIndexes: phoneQuestionIndex >= 0 ? [phoneQuestionIndex] : [],
+            consentIndexes: [],
+        };
         orderQuestions.forEach((question, index) => {
-            if (index === phoneIndex) {
+            if (index === phoneQuestionIndex) {
                 return;
             }
             if (isSingleConsentQuestion(question)) {
-                anchor.consentIndexes.push(index);
+                contact.consentIndexes.push(index);
                 return;
             }
-            anchor = {id: `questions-${index}`, kind: 'questions', questionIndexes: [index], consentIndexes: []};
-            result.push(anchor);
+            result.push({id: `questions-${index}`, kind: 'questions', questionIndexes: [index], consentIndexes: []});
         });
         if (needsParticipantsStep) {
             result.push({id: 'participants', kind: 'participants', questionIndexes: [], consentIndexes: []});
         }
-        result.push(isPaidMode
-            ? {id: 'summary', kind: 'summary', questionIndexes: [], consentIndexes: []}
-            : {id: 'confirm', kind: 'confirm', questionIndexes: [], consentIndexes: []});
+        result.push(contact);
         return result;
-    }, [orderQuestions, isPaidMode, needsParticipantsStep]);
+    }, [orderQuestions, isPaidMode, needsParticipantsStep, phoneQuestionIndex]);
 
     const safeStepIndex = Math.min(stepIndex, steps.length - 1);
     const step = steps[safeStepIndex];
@@ -656,26 +715,30 @@ export const EmbeddedRegistration = ({
 
         if (current.kind === 'name') {
             if (!order.first_name.trim()) errors['order.first_name'] = requiredMessage;
-            if (!order.last_name.trim()) errors['order.last_name'] = requiredMessage;
             if (order.first_name.length > 40) errors['order.first_name'] = t`First name must be under 40 characters`;
             if (order.last_name.length > 40) errors['order.last_name'] = t`Last name must be under 40 characters`;
         }
 
-        if (current.kind === 'email') {
+        if (current.kind === 'contact') {
             if (!EMAIL_PATTERN.test(order.email.trim())) {
                 errors['order.email'] = t`A valid email is required`;
             }
+            if (isPhoneSelected && phoneQuestion && isAnswerEmpty(form.values.order.questions[phoneQuestionIndex]?.response.answer)) {
+                errors[`order.questions.${phoneQuestionIndex}.response.answer`] = requiredMessage;
+            }
+            if (!form.values.terms_accepted) {
+                errors['terms_accepted'] = t`Please accept the terms of sale and the privacy policy.`;
+            }
         }
 
-        [...current.questionIndexes, ...current.consentIndexes].forEach(index =>
-            validateQuestion(orderQuestions[index], `order.questions.${index}`, errors)
-        );
+        [...current.questionIndexes, ...current.consentIndexes]
+            .filter(index => index !== phoneQuestionIndex || isPhoneSelected)
+            .forEach(index => validateQuestion(orderQuestions[index], `order.questions.${index}`, errors));
 
         if (current.kind === 'participants') {
             products.forEach((participant, index) => {
                 if (isPaidMode ? isPerTicket : index > 0) {
                     if (!participant.first_name.trim()) errors[`products.${index}.first_name`] = requiredMessage;
-                    if (!participant.last_name.trim()) errors[`products.${index}.last_name`] = requiredMessage;
                 }
                 if (isAgeCheckEnabled && !participant.birth_date) {
                     errors[`products.${index}.birth_date`] = t`Date of birth is required`;
@@ -702,7 +765,7 @@ export const EmbeddedRegistration = ({
             return key.startsWith('promo_code') ? lastStepIndex : indexOf('selection');
         }
         if (key.startsWith('order.first_name') || key.startsWith('order.last_name')) return indexOf('name');
-        if (key.startsWith('order.email')) return indexOf('email');
+        if (key.startsWith('order.email')) return indexOf('contact');
         const questionMatch = key.match(/^order\.questions\.(\d+)/);
         if (questionMatch) {
             const questionIndex = Number(questionMatch[1]);
@@ -758,6 +821,10 @@ export const EmbeddedRegistration = ({
         response: isAnswerEmpty(answer.response.answer) ? {} : {answer: answer.response.answer},
     }));
 
+    const orderAnswersForSubmit = () => toAnswers(form.values.order.questions.map((answer, index) =>
+        index === phoneQuestionIndex && !isPhoneSelected ? {...answer, response: {answer: ''}} : answer
+    ));
+
     const groupByProduct = (items: EmbeddedCheckoutItem[]) => {
         const grouped = new Map<number, { price_id: number, quantity: number }[]>();
         items.forEach(item => grouped.set(Number(item.product.id), [
@@ -788,6 +855,10 @@ export const EmbeddedRegistration = ({
         session_identifier: getSessionIdentifier(),
     });
 
+    const paymentPageState = () => ({
+        [REFUND_PROTECTION_OFFERED_STATE]: !!checkoutProtection && (coveredTicketCount > 0 || optionalProtectionQuantity > 0),
+    });
+
     const navigateAfterCompletion = (
         completedOrder: { is_payment_required?: boolean, short_id: string, reserved_until?: string },
         resumeSignature?: string,
@@ -808,7 +879,7 @@ export const EmbeddedRegistration = ({
             }), eventEnd);
         }
         const nextPage = completedOrder.is_payment_required ? 'payment' : 'summary';
-        navigate(eventCheckoutPath(eventId as number, completedOrder.short_id, nextPage));
+        navigate(eventCheckoutPath(eventId as number, completedOrder.short_id, nextPage), {state: paymentPageState()});
     };
 
     const submitPaidOrder = () => {
@@ -835,7 +906,7 @@ export const EmbeddedRegistration = ({
                 email,
                 email_confirmation: email,
                 address: {},
-                questions: toAnswers(order.questions),
+                questions: orderAnswersForSubmit(),
                 opted_into_marketing: order.opted_into_marketing,
             },
             products: [
@@ -864,7 +935,7 @@ export const EmbeddedRegistration = ({
                 || dayjs.utc(awaitingPayment.reservedUntil).valueOf() > Date.now() + 30_000;
             if (stillReserved && awaitingPayment.signature === resumeSignature) {
                 draftClosed.current = true;
-                navigate(eventCheckoutPath(eventId as number, awaitingPayment.shortId, 'payment'));
+                navigate(eventCheckoutPath(eventId as number, awaitingPayment.shortId, 'payment'), {state: paymentPageState()});
                 return;
             }
             if (stillReserved) {
@@ -919,7 +990,7 @@ export const EmbeddedRegistration = ({
                 email,
                 email_confirmation: email,
                 address: {},
-                questions: toAnswers(order.questions),
+                questions: orderAnswersForSubmit(),
                 opted_into_marketing: order.opted_into_marketing,
             },
             products: [
@@ -1141,8 +1212,7 @@ export const EmbeddedRegistration = ({
     });
 
     const buyerPhone = () => {
-        const index = orderQuestions.findIndex(question => question.type === QuestionType.PHONE);
-        const answer = index >= 0 ? form.values.order.questions[index]?.response.answer : '';
+        const answer = isPhoneSelected ? form.values.order.questions[phoneQuestionIndex]?.response.answer : '';
         return typeof answer === 'string' ? answer.trim() : '';
     };
 
@@ -1171,6 +1241,7 @@ export const EmbeddedRegistration = ({
             questions: toDraftAnswers(participant.questions),
         })),
         protectionOptIn,
+        delivery: form.values.delivery,
         awaitingPayment: pendingPayment,
     });
 
@@ -1256,11 +1327,12 @@ export const EmbeddedRegistration = ({
         },
     });
 
-    const applyPromoCode = (code: string) => {
+    const applyPromoCode = (code: string, onInvalid?: () => void) => {
         promoMutation.mutate(code, {
             onSuccess: (result) => {
                 if (!result.valid) {
                     setCodeError(t`That promo code is invalid`);
+                    onInvalid?.();
                     return;
                 }
                 setEvent(result.event);
@@ -1539,8 +1611,7 @@ export const EmbeddedRegistration = ({
                             />
                             <TextInput
                                 {...form.getInputProps('order.last_name')}
-                                label={t`Last Name`}
-                                withAsterisk
+                                label={t`Last name (optional)`}
                                 name="family-name"
                                 autoComplete="family-name"
                                 autoCapitalize="words"
@@ -1549,11 +1620,45 @@ export const EmbeddedRegistration = ({
                         </div>
                     </>
                 );
-            case 'email':
+            case 'contact':
                 return (
                     <>
+                        {renderBuyerIdentity()}
                         <h2 className={classes.stepTitle} id={titleId}>{t`Where should we send your tickets?`}</h2>
-                        <p className={classes.stepHelp}>{t`Your tickets will be sent to this address.`}</p>
+                        {phoneQuestion ? (
+                            <>
+                                <p className={classes.stepHelp}>{t`You can pick both.`}</p>
+                                <div className={classes.channels} role="group" aria-label={t`How to receive your tickets`}>
+                                    <button
+                                        type="button"
+                                        className={classes.channel}
+                                        aria-pressed={true}
+                                        aria-disabled={true}
+                                        onClick={() => setEmailNoteVisible(true)}
+                                    >
+                                        <IconMail size={18} aria-hidden="true"/>
+                                        {t`Email`}
+                                        <IconCheck size={16} className={classes.channelCheck} aria-hidden="true"/>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={classes.channel}
+                                        aria-pressed={isPhoneSelected}
+                                        aria-disabled={isPhoneLocked || undefined}
+                                        onClick={togglePhoneDelivery}
+                                    >
+                                        <IconDeviceMobileMessage size={18} aria-hidden="true"/>
+                                        {t`Phone`}
+                                        {isPhoneSelected && <IconCheck size={16} className={classes.channelCheck} aria-hidden="true"/>}
+                                    </button>
+                                </div>
+                                <p className={classes.channelNote} aria-live="polite">
+                                    {emailNoteVisible ? t`Your tickets are always sent by email.` : ''}
+                                </p>
+                            </>
+                        ) : (
+                            <p className={classes.stepHelp}>{t`Your tickets will be sent to this address.`}</p>
+                        )}
                         <div className={classes.fieldStack}>
                             <TextInput
                                 {...form.getInputProps('order.email')}
@@ -1568,10 +1673,31 @@ export const EmbeddedRegistration = ({
                                 spellCheck={false}
                                 classNames={fieldClassNames}
                             />
+                            {isPhoneSelected && phoneQuestion && (
+                                <TextInput
+                                    {...form.getInputProps(`order.questions.${phoneQuestionIndex}.response.answer`)}
+                                    type="tel"
+                                    inputMode="tel"
+                                    autoComplete="tel"
+                                    name="tel"
+                                    label={phoneQuestion.title}
+                                    withAsterisk
+                                    data-focus-key="delivery-phone"
+                                    description={phoneQuestion.description
+                                        ? <UserGeneratedContent dangerouslySetInnerHTML={{__html: phoneQuestion.description}}/>
+                                        : undefined}
+                                    classNames={fieldClassNames}
+                                />
+                            )}
                         </div>
+                        {renderDeviceMemoryNote(step)}
+                        {renderConsents(step)}
+                        {renderAgreements()}
+                        {isPaidMode && renderIncludedProtection()}
+                        {isPaidMode && renderProtectionOffer()}
+                        {isPaidMode && renderPayableTotal()}
                     </>
                 );
-            case 'phone':
             case 'questions': {
                 const index = step.questionIndexes[0];
                 return renderQuestion(orderQuestions[index], `order.questions.${index}`, true, titleId);
@@ -1652,8 +1778,7 @@ export const EmbeddedRegistration = ({
                                                 />
                                                 <TextInput
                                                     {...form.getInputProps(`products.${index}.last_name`)}
-                                                    label={t`Last Name`}
-                                                    withAsterisk
+                                                    label={t`Last name (optional)`}
                                                     classNames={fieldClassNames}
                                                 />
                                             </div>
@@ -1736,10 +1861,8 @@ export const EmbeddedRegistration = ({
                                             <span className={classes.lineTitle}>{label}</span>
                                             <span className={classes.linePrice}>
                                                 {unitPrice > 0 ? formatAmount(unitPrice) : t`Free`}
-                                                {getIncludedRefundProtection(line.price) > 0 && (
-                                                    <span className={classes.protectionIncluded}>{t`Peace of mind option included`}</span>
-                                                )}
                                             </span>
+                                            <LowStockIndicator price={line.price} currency={event.currency} unitPrice={unitPrice}/>
                                         </div>
                                         <div className={classes.stepper} role="group" aria-label={t`Quantity for ${label}`}>
                                             <button
@@ -1782,107 +1905,8 @@ export const EmbeddedRegistration = ({
                                 </li>
                             ))}
                         </ul>
+                        {renderHighlightedPromo()}
                         {renderRunningTotal()}
-                    </>
-                );
-            case 'confirm':
-                return (
-                    <>
-                        <h2 className={classes.stepTitle} id={titleId}>{t`Ready to confirm?`}</h2>
-                        <dl className={classes.summary}>
-                            <div>
-                                <dt>{t`Registration`}</dt>
-                                <dd>{ticket?.product.title}</dd>
-                            </div>
-                            {requiredItems.length > 0 && (
-                                <div>
-                                    <dt>{t`Included by default`}</dt>
-                                    <dd>
-                                        {requiredItems.map(item => (
-                                            <span key={item.key} className={classes.summaryLine}>{lineLabel(item)}</span>
-                                        ))}
-                                    </dd>
-                                </div>
-                            )}
-                            <div>
-                                <dt>{t`Contact`}</dt>
-                                <dd>{form.values.order.first_name} {form.values.order.last_name}<br/>{form.values.order.email}</dd>
-                            </div>
-                            <div>
-                                <dt>{t`Participants`}</dt>
-                                <dd>
-                                    {form.values.products.map((participant, index) => (
-                                        <span key={participant.key} className={classes.summaryLine}>
-                                            {index === 0
-                                                ? `${form.values.order.first_name} ${form.values.order.last_name}`
-                                                : `${participant.first_name} ${participant.last_name}`}
-                                        </span>
-                                    ))}
-                                </dd>
-                            </div>
-                        </dl>
-                        {renderCheckoutNotices()}
-                    </>
-                );
-            case 'summary':
-                return (
-                    <>
-                        <h2 className={classes.stepTitle} id={titleId}>{t`Your order`}</h2>
-                        <p className={classes.stepHelp}>{t`Check your order before continuing to payment.`}</p>
-                        <div className={classes.receipt}>
-                            <ul className={classes.receiptLines}>
-                                {[...checkoutItems, ...protectionItems].map(item => (
-                                    <li key={item.key} className={classes.receiptLine}>
-                                        <span className={classes.receiptLabel}>
-                                            <span>{`${item.quantity} × ${lineLabel(item)}`}</span>
-                                            {item.isRequired && renderRequiredBadge()}
-                                        </span>
-                                        <span className={classes.receiptAmount}>
-                                            {formatAmount(Number(item.price.price) * item.quantity)}
-                                        </span>
-                                    </li>
-                                ))}
-                            </ul>
-                            <dl className={classes.receiptTotals}>
-                                {totals.fees > 0 && (
-                                    <div>
-                                        <dt>{totals.feeNames.length === 1 ? totals.feeNames[0] : t`Fees`}</dt>
-                                        <dd>{formatAmount(totals.fees)}</dd>
-                                    </div>
-                                )}
-                                {totals.taxes > 0 && (
-                                    <div>
-                                        <dt>{t`Taxes`}</dt>
-                                        <dd>{formatAmount(totals.taxes)}</dd>
-                                    </div>
-                                )}
-                                <div className={classes.receiptTotal}>
-                                    <dt>{t`Total`}</dt>
-                                    <dd>{formatAmount(totals.total)}</dd>
-                                </div>
-                            </dl>
-                        </div>
-                        <div className={classes.summaryCode}>{renderCodeRow()}</div>
-                        {renderProtectionOffer()}
-                        <dl className={classes.summary}>
-                            <div>
-                                <dt>{t`Contact`}</dt>
-                                <dd>{form.values.order.first_name} {form.values.order.last_name}<br/>{form.values.order.email}</dd>
-                            </div>
-                            {isPerTicket && form.values.products.length > 0 && (
-                                <div>
-                                    <dt>{t`Participants`}</dt>
-                                    <dd>
-                                        {form.values.products.map(participant => (
-                                            <span key={participant.key} className={classes.summaryLine}>
-                                                {`${participant.first_name} ${participant.last_name}`}
-                                            </span>
-                                        ))}
-                                    </dd>
-                                </div>
-                            )}
-                        </dl>
-                        {renderCheckoutNotices()}
                     </>
                 );
         }
@@ -1916,29 +1940,163 @@ export const EmbeddedRegistration = ({
         );
     };
 
-    const renderCheckoutNotices = () => (
-        <>
-            {!!event.settings?.pre_checkout_message && (
-                <UserGeneratedContent
-                    className={classes.preCheckout}
-                    dangerouslySetInnerHTML={{__html: event.settings.pre_checkout_message}}
+    const consentClassNames = {
+        root: classes.consent,
+        body: classes.consentBody,
+        label: classes.consentLabel,
+        input: classes.consentInput,
+        error: classes.fieldError,
+    };
+
+    const renderAgreements = () => (
+        <div className={classes.consents}>
+            <Checkbox
+                {...form.getInputProps('terms_accepted', {type: 'checkbox'})}
+                required
+                color="var(--event-primary-color)"
+                iconColor="var(--event-accent-contrast)"
+                classNames={consentClassNames}
+                label={(
+                    <>
+                        <Trans>
+                            I accept the <a href={getTermsOfSaleUrl()} target="_blank" rel="noopener noreferrer">terms of sale</a> and the <a href={getPrivacyPolicyUrl()} target="_blank" rel="noopener noreferrer">privacy policy</a>
+                        </Trans>
+                        <span className={classes.fieldRequired} aria-hidden="true"> *</span>
+                    </>
+                )}
+            />
+            {event.settings?.show_marketing_opt_in !== false && (
+                <Checkbox
+                    {...form.getInputProps('order.opted_into_marketing', {type: 'checkbox'})}
+                    color="var(--event-primary-color)"
+                    iconColor="var(--event-accent-contrast)"
+                    classNames={consentClassNames}
+                    label={t`I would like to receive news and offers from the organizer`}
                 />
             )}
-            {!!getConfig('VITE_TOS_URL') && (
-                <p className={classes.tosNotice}>
-                    <Trans>
-                        By continuing, you agree to the{' '}
-                        <a
-                            href={getTermsOfSaleUrl() as string}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            {getAppName()} Terms of Service
-                        </a>
-                    </Trans>
-                </p>
+        </div>
+    );
+
+    const renderPayableTotal = () => (
+        <dl className={classNames(classes.receiptTotals, classes.payableTotal)}>
+            {totals.fees > 0 && (
+                <div>
+                    <dt>{totals.feeNames.length === 1 ? totals.feeNames[0] : t`Fees`}</dt>
+                    <dd>{formatAmount(totals.fees)}</dd>
+                </div>
             )}
-        </>
+            {totals.taxes > 0 && (
+                <div>
+                    <dt>{t`Taxes`}</dt>
+                    <dd>{formatAmount(totals.taxes)}</dd>
+                </div>
+            )}
+            <div className={classes.receiptTotal}>
+                <dt>{t`Total`}</dt>
+                <dd>{formatAmount(totals.total)}</dd>
+            </div>
+        </dl>
+    );
+
+    const renderBuyerIdentity = () => {
+        const {order} = form.values;
+        const name = `${order.first_name.trim()} ${order.last_name.trim()}`.trim();
+        if (!name) {
+            return null;
+        }
+        const hasEmail = EMAIL_PATTERN.test(order.email.trim());
+        const phone = buyerPhone();
+        const hasPhone = !!phone && PHONE_PATTERN.test(phone);
+        return (
+            <div className={classes.identity}>
+                <span className={classes.identityName}>{name}</span>
+                <span
+                    className={classes.identityIcon}
+                    data-active={hasEmail}
+                    role="img"
+                    aria-label={hasEmail ? t`Email provided` : t`Email missing`}
+                >
+                    <IconMail size={18} aria-hidden="true"/>
+                </span>
+                <span
+                    className={classes.identityIcon}
+                    data-active={hasPhone}
+                    role="img"
+                    aria-label={hasPhone ? t`Phone provided` : t`Phone missing`}
+                >
+                    <IconDeviceMobile size={18} aria-hidden="true"/>
+                </span>
+            </div>
+        );
+    };
+
+    const renderIncludedProtection = () => {
+        if (coveredTicketCount <= 0) {
+            return null;
+        }
+        const hint = checkoutProtection ? getPlainTextSummary(checkoutProtection.product.description) : '';
+        return (
+            <div className={classes.protectionOffer} data-checked="true">
+                <IconShieldCheck size={22} className={classes.protectionIcon} aria-hidden="true"/>
+                <span className={classes.protectionBody}>
+                    <span className={classes.protectionLabel}>{t`Peace of mind option included`}</span>
+                    {hint && <span className={classes.protectionHint}>{hint}</span>}
+                </span>
+            </div>
+        );
+    };
+
+    const renderHighlightedPromo = () => {
+        const promo = highlightedPromoQuery.data;
+        if (!highlightedPromoCode || !promo?.valid) {
+            return null;
+        }
+        const isApplied = (promoCode ?? '').trim().toLowerCase() === highlightedPromoCode;
+        if (promoCode && !isApplied) {
+            return null;
+        }
+        const eligibleIds = (promo.applicable_product_ids ?? []).map(Number);
+        if (eligibleIds.length > 0) {
+            const candidates = (selectedTicketItems.length > 0 ? selectedTicketItems : ticketLines)
+                .map(item => Number(item.product.id));
+            if (!candidates.some(id => eligibleIds.includes(id))) {
+                return null;
+            }
+        }
+        return (
+            <HighlightedPromo
+                code={highlightedPromoCode}
+                promo={promo}
+                currency={currency}
+                applied={isApplied}
+                applying={promoMutation.isPending}
+                onApply={() => {
+                    hasInteracted.current = true;
+                    applyPromoCode(highlightedPromoCode, () => highlightedPromoQuery.refetch());
+                }}
+            />
+        );
+    };
+
+    const renderReassurance = () => (
+        <div className={classes.reassurance}>
+            {event.settings?.payment_providers?.includes('STRIPE') && (
+                <span className={classes.reassuranceItem}>
+                    <IconShieldLock size={16} aria-hidden="true"/>
+                    {t`Secure payment by Stripe`}
+                </span>
+            )}
+            <span className={classes.reassuranceItem}>
+                <IconLock size={16} aria-hidden="true"/>
+                {t`Data protected (GDPR)`}
+            </span>
+            {event.settings?.payment_providers?.includes('STRIPE') && (
+                <span className={classes.reassuranceCards} role="img" aria-label={t`Accepted cards: Visa, Mastercard`}>
+                    <IconBrandVisa size={22} aria-hidden="true"/>
+                    <IconBrandMastercard size={22} aria-hidden="true"/>
+                </span>
+            )}
+        </div>
     );
 
     const renderConsents = (current: Step) => current.consentIndexes.length > 0 && (
@@ -2050,9 +2208,8 @@ export const EmbeddedRegistration = ({
         const {order} = form.values;
         const isPrefilled = {
             name: sameText(order.first_name, profile.first_name) || sameText(order.last_name, profile.last_name),
-            email: sameText(order.email, profile.email),
-            phone: sameText(buyerPhone(), profile.phone),
-        }[current.kind as 'name' | 'email' | 'phone'];
+            contact: sameText(order.email, profile.email) || sameText(buyerPhone(), profile.phone),
+        }[current.kind as 'name' | 'contact'];
         if (!isPrefilled) {
             return null;
         }
@@ -2075,9 +2232,9 @@ export const EmbeddedRegistration = ({
         return (
             <>
                 {renderStepContent(current, currentTitleId)}
-                {renderDeviceMemoryNote(current)}
-                {renderConsents(current)}
-                {current.kind === 'summary' && awaitingPayment && (
+                {current.kind !== 'contact' && renderDeviceMemoryNote(current)}
+                {current.kind !== 'contact' && renderConsents(current)}
+                {current.kind === 'contact' && isPaidMode && awaitingPayment && (
                     <p className={classes.resumeNotice}>{t`Your order is still reserved. Continue to payment to finish it.`}</p>
                 )}
 
@@ -2108,16 +2265,28 @@ export const EmbeddedRegistration = ({
                         type={active ? 'submit' : 'button'}
                         className={classes.nextButton}
                         loading={active && completeMutation.isPending}
+                        leftSection={isLast && isPaidMode ? <IconLock size={18}/> : undefined}
                         rightSection={isLast && !isPaidMode ? <IconCheck size={20}/> : <IconArrowRight size={20}/>}
                     >
-                        {isLast ? (isPaidMode ? t`Continue to payment` : t`Confirm my registration`) : t`Next`}
+                        {isLast ? (isPaidMode ? t`Payment` : t`Confirm my registration`) : t`Next`}
                     </Button>
                     {!isLast && (
                         <span className={classes.enterHint} aria-hidden="true">
                             {t`or press Enter`} <IconCornerDownLeft size={14}/>
                         </span>
                     )}
+                    {isLast && isPaidMode && renderReassurance()}
                 </div>
+
+                {current.kind === 'contact' && isPaidMode && (
+                    <div className={classes.summaryCode}>{renderCodeRow()}</div>
+                )}
+                {current.kind === 'contact' && !!event.settings?.pre_checkout_message && (
+                    <UserGeneratedContent
+                        className={classes.preCheckout}
+                        dangerouslySetInnerHTML={{__html: event.settings.pre_checkout_message}}
+                    />
+                )}
             </>
         );
     };

@@ -49,6 +49,7 @@ export interface CheckoutDraft {
     };
     participants: DraftParticipant[];
     protectionOptIn: boolean;
+    delivery?: { email: boolean; phone: boolean } | null;
     awaitingPayment?: DraftAwaitingPayment | null;
 }
 
@@ -130,6 +131,9 @@ export const readCheckoutDraft = (eventId: IdParam): CheckoutDraft | null => {
         },
         participants: Array.isArray(stored.participants) ? stored.participants : [],
         protectionOptIn: !!stored.protectionOptIn,
+        delivery: isObject(stored.delivery) && (!!stored.delivery.email || !!stored.delivery.phone)
+            ? {email: !!stored.delivery.email, phone: !!stored.delivery.phone}
+            : null,
         awaitingPayment: isObject(stored.awaitingPayment) && typeof stored.awaitingPayment.shortId === 'string'
             ? stored.awaitingPayment as DraftAwaitingPayment
             : null,

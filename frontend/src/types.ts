@@ -257,6 +257,7 @@ export interface EventSettings {
 
     // Marketing settings
     show_marketing_opt_in?: boolean;
+    highlighted_promo_code?: string | null;
 
     // Attendee detail copy control
     allow_copy_details_to_all_attendees?: boolean;
@@ -824,6 +825,21 @@ export interface ProductPrice {
     is_hidden?: boolean;
     quantity_remaining?: number;
     refund_protection_included?: number | null;
+    low_stock?: ProductPriceLowStock | null;
+}
+
+export interface ProductPriceLowStock {
+    remaining: number;
+    percent_remaining: number;
+}
+
+export interface RecentPurchase {
+    quantity: number;
+    minutes_ago: number;
+}
+
+export interface RecentPurchases {
+    purchases: RecentPurchase[];
 }
 
 export type RequiredQuantityMode = 'PER_ORDER' | 'PER_TICKET';

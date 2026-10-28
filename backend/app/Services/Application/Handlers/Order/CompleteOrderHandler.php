@@ -185,7 +185,7 @@ class CompleteOrderHandler
                     : AttendeeStatus::ACTIVE->name,
                 AttendeeDomainObjectAbstract::EMAIL => $isPerOrderCollection ? $orderDTO->email : $attendee->email,
                 AttendeeDomainObjectAbstract::FIRST_NAME => $isPerOrderCollection ? $orderDTO->first_name : $attendee->first_name,
-                AttendeeDomainObjectAbstract::LAST_NAME => $isPerOrderCollection ? $orderDTO->last_name : $attendee->last_name,
+                AttendeeDomainObjectAbstract::LAST_NAME => ($isPerOrderCollection ? $orderDTO->last_name : $attendee->last_name) ?? '',
                 AttendeeDomainObjectAbstract::ORDER_ID => $order->getId(),
                 AttendeeDomainObjectAbstract::PUBLIC_ID => IdHelper::publicId(IdHelper::ATTENDEE_PREFIX),
                 AttendeeDomainObjectAbstract::SHORT_ID => $shortId,

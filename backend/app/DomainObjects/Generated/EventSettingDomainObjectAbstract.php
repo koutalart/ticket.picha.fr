@@ -85,6 +85,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const SMS_CANCELLATION_CONFIRMATION_ON_ORGANIZER_CANCEL = 'sms_cancellation_confirmation_on_organizer_cancel';
     final public const TICKET_FOOTER_USE_ORGANIZER_DOMAIN = 'ticket_footer_use_organizer_domain';
     final public const REFUND_PROTECTION_DEADLINE_HOURS = 'refund_protection_deadline_hours';
+    final public const HIGHLIGHTED_PROMO_CODE = 'highlighted_promo_code';
 
     protected int $id;
     protected int $event_id;
@@ -161,6 +162,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected bool $sms_cancellation_confirmation_on_organizer_cancel = false;
     protected bool $ticket_footer_use_organizer_domain = false;
     protected int $refund_protection_deadline_hours = 0;
+    protected ?string $highlighted_promo_code = null;
 
     public function toArray(): array
     {
@@ -240,6 +242,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'sms_cancellation_confirmation_on_organizer_cancel' => $this->sms_cancellation_confirmation_on_organizer_cancel ?? null,
                     'ticket_footer_use_organizer_domain' => $this->ticket_footer_use_organizer_domain ?? null,
                     'refund_protection_deadline_hours' => $this->refund_protection_deadline_hours ?? null,
+                    'highlighted_promo_code' => $this->highlighted_promo_code ?? null,
                 ];
     }
 
@@ -1067,5 +1070,16 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getRefundProtectionDeadlineHours(): int
     {
         return $this->refund_protection_deadline_hours;
+    }
+
+    public function setHighlightedPromoCode(?string $highlighted_promo_code): self
+    {
+        $this->highlighted_promo_code = $highlighted_promo_code;
+        return $this;
+    }
+
+    public function getHighlightedPromoCode(): ?string
+    {
+        return $this->highlighted_promo_code;
     }
 }

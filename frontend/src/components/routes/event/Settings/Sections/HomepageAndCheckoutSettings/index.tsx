@@ -1,5 +1,5 @@
 import {t} from "@lingui/macro";
-import {Button, NumberInput, Switch} from "@mantine/core";
+import {Button, NumberInput, Switch, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {useParams} from "react-router";
 import {useEffect} from "react";
@@ -29,9 +29,11 @@ export const HomepageAndCheckoutSettings = () => {
             allow_copy_details_to_all_attendees: true,
             age_restriction_rule: 'NONE' as AgeRestrictionRule,
             age_restriction_minimum_age: 18,
+            highlighted_promo_code: '',
         },
         transformValues: (values) => ({
             ...values,
+            highlighted_promo_code: values.highlighted_promo_code.trim() || null,
             pre_checkout_message: isEmptyHtml(values.pre_checkout_message) ? null : values.pre_checkout_message,
             post_checkout_message: isEmptyHtml(values.post_checkout_message) ? null : values.post_checkout_message,
         }),
@@ -84,6 +86,7 @@ export const HomepageAndCheckoutSettings = () => {
                 allow_copy_details_to_all_attendees: eventSettingsQuery.data.allow_copy_details_to_all_attendees ?? true,
                 age_restriction_rule: eventSettingsQuery.data.age_restriction_rule || 'NONE',
                 age_restriction_minimum_age: eventSettingsQuery.data.age_restriction_minimum_age ?? 18,
+                highlighted_promo_code: (eventSettingsQuery.data.highlighted_promo_code ?? '').toUpperCase(),
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -165,6 +168,16 @@ export const HomepageAndCheckoutSettings = () => {
                         label={t`Order timeout`}
                         description={t`How many minutes the customer has to complete their order. We recommend at least 15 minutes`}
                         {...form.getInputProps('order_timeout_in_minutes')}
+                    />
+
+                    <TextInput
+                        mt="md"
+                        label={t`Highlighted promo code`}
+                        description={t`Shown in the purchase form with a one-tap button and a countdown to the code's expiry date. The code must exist in Promo Codes. Leave empty to show nothing.`}
+                        placeholder={t`e.g. SUMMER5`}
+                        maxLength={50}
+                        autoCapitalize="characters"
+                        {...form.getInputProps('highlighted_promo_code')}
                     />
 
                     <Switch

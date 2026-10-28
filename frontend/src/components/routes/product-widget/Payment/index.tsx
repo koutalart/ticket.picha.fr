@@ -1,5 +1,6 @@
 import React, {useState} from "react";
-import {useNavigate, useParams} from "react-router";
+import {useLocation, useNavigate, useParams} from "react-router";
+import {REFUND_PROTECTION_OFFERED_STATE} from "../../../../utilites/refundProtection.ts";
 import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
 import {CheckoutContent} from "../../../layouts/Checkout/CheckoutContent";
 import {StripePaymentMethod} from "./PaymentMethods/Stripe";
@@ -30,6 +31,8 @@ import {RefundProtectionOption} from "./RefundProtectionOption";
 const Payment = () => {
     const navigate = useNavigate();
     const {eventId, orderShortId} = useParams();
+    const location = useLocation();
+    const refundProtectionAlreadyOffered = !!(location.state as Record<string, unknown> | null)?.[REFUND_PROTECTION_OFFERED_STATE];
     const {data: event, isFetched: isEventFetched} = useGetEventPublic(eventId);
     const {data: order, isFetched: isOrderFetched} = useGetOrderPublic(eventId, orderShortId, ['event']);
     const isLoading = !isOrderFetched;
@@ -130,7 +133,7 @@ const Payment = () => {
                 {(event && order) && (
                     <InlineOrderSummary event={event} order={order} defaultExpanded={false}/>
                 )}
-                {refundProtection && (
+                {refundProtection && !refundProtectionAlreadyOffered && (
                     <RefundProtectionOption
                         offer={refundProtection}
                         checked={isRefundProtectionChecked}

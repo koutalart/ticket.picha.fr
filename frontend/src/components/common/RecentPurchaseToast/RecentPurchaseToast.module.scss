@@ -1,0 +1,105 @@
+@use "../../../styles/mixins.scss";
+
+.toast {
+  position: fixed;
+  left: 24px;
+  bottom: calc(24px + var(--picha-cookie-bar-height, 0px));
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 320px;
+  padding: 10px 10px 10px 12px;
+  border-radius: 14px;
+  background: var(--event-content-bg-color, #fff);
+  color: var(--event-primary-text-color, #1a1a1a);
+  border: 1px solid var(--event-border-color, rgba(0, 0, 0, 0.08));
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  font-family: var(--theme-font-family, inherit);
+  animation: toastIn 0.35s ease-out;
+
+  @include mixins.respond-below(sm) {
+    left: 16px;
+    max-width: calc(100% - 96px);
+    bottom: calc(16px + var(--picha-cookie-bar-height, env(safe-area-inset-bottom, 0px)));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.aboveBuyBar {
+  @include mixins.respond-below(sm) {
+    bottom: calc(76px + var(--picha-cookie-bar-height, env(safe-area-inset-bottom, 0px)));
+  }
+}
+
+.top {
+  @include mixins.respond-below(sm) {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    bottom: auto;
+  }
+}
+
+.icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--event-accent-soft, rgba(0, 0, 0, 0.06));
+  color: var(--event-primary-color, currentColor);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.title {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.when {
+  font-size: 0.75rem;
+  color: var(--event-secondary-color, inherit);
+  opacity: 0.85;
+}
+
+.close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

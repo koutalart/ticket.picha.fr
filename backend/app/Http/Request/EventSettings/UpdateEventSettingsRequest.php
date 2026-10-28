@@ -165,6 +165,7 @@ class UpdateEventSettingsRequest extends BaseRequest
             'homepage_footer_settings.related_links.*.url' => self::FOOTER_URL_RULES,
             'homepage_footer_settings.related_links.*.image_url' => self::FOOTER_URL_RULES,
             'schema_event_type' => [Rule::in(SchemaEventType::valuesArray())],
+            'highlighted_promo_code' => ['nullable', 'string', 'max:50'],
         ];
     }
 
