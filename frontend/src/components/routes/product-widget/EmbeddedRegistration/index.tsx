@@ -11,14 +11,11 @@ import {
     IconBrandVisa,
     IconCheck,
     IconCornerDownLeft,
-    IconDeviceMobile,
     IconLock,
-    IconMail,
     IconMinus,
     IconPlus,
     IconShieldCheck,
     IconShieldLock,
-    IconTicket,
     IconX
 } from "@tabler/icons-react";
 import classNames from "classnames";
@@ -1585,7 +1582,7 @@ export const EmbeddedRegistration = ({
                             />
                             <TextInput
                                 {...form.getInputProps('order.last_name')}
-                                label={t`Last name (optional)`}
+                                label={t`Last name`}
                                 name="family-name"
                                 autoComplete="family-name"
                                 autoCapitalize="words"
@@ -1599,7 +1596,7 @@ export const EmbeddedRegistration = ({
                     <>
                         {renderBuyerIdentity()}
                         <h2 className={classes.stepTitle} id={titleId}>{t`Where should we send your tickets?`}</h2>
-                        <div className={classes.fieldStack}>
+                        <div className={phoneQuestion ? classes.fieldRow : classes.fieldStack}>
                             <TextInput
                                 {...form.getInputProps('order.email')}
                                 type="email"
@@ -1722,7 +1719,7 @@ export const EmbeddedRegistration = ({
                                                 />
                                                 <TextInput
                                                     {...form.getInputProps(`products.${index}.last_name`)}
-                                                    label={t`Last name (optional)`}
+                                                    label={t`Last name`}
                                                     classNames={fieldClassNames}
                                                 />
                                             </div>
@@ -1955,28 +1952,9 @@ export const EmbeddedRegistration = ({
         if (!name) {
             return null;
         }
-        const hasEmail = EMAIL_PATTERN.test(order.email.trim());
-        const phone = buyerPhone();
-        const hasPhone = !!phone && PHONE_PATTERN.test(phone);
         return (
             <div className={classes.identity}>
                 <span className={classes.identityName}>{name}</span>
-                <span
-                    className={classes.identityIcon}
-                    data-active={hasEmail}
-                    role="img"
-                    aria-label={hasEmail ? t`Email provided` : t`Email missing`}
-                >
-                    <IconMail size={18} aria-hidden="true"/>
-                </span>
-                <span
-                    className={classes.identityIcon}
-                    data-active={hasPhone}
-                    role="img"
-                    aria-label={hasPhone ? t`Phone provided` : t`Phone missing`}
-                >
-                    <IconDeviceMobile size={18} aria-hidden="true"/>
-                </span>
             </div>
         );
     };
@@ -2256,12 +2234,6 @@ export const EmbeddedRegistration = ({
                     <p className={classes.loading} role="status">{t`Loading...`}</p>
                 ) : (
                     <>
-                        <div className={classes.header}>
-                            <span className={classes.eyebrow}>
-                                <IconTicket size={16} aria-hidden="true"/>
-                                {isPaidMode ? t`Registration` : t`Free registration`}
-                            </span>
-                        </div>
                         <div
                             className={classes.progress}
                             role="progressbar"
