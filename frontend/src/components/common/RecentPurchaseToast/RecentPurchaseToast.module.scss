@@ -35,6 +35,13 @@
   }
 }
 
+.top {
+  @include mixins.respond-below(sm) {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    bottom: auto;
+  }
+}
+
 .icon {
   flex: none;
   display: inline-flex;
