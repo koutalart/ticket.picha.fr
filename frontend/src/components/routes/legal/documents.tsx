@@ -268,7 +268,10 @@ const confidentialite: LegalDocument = {
                 <li>Mesure d'audience exemptée (origine des visites et des ventes) : intérêt légitime
                     (art. 6.1.f), avec droit d'opposition ;</li>
                 <li>Communications marketing et traceurs publicitaires : consentement (art. 6.1.a), retirable
-                    à tout moment.</li>
+                    à tout moment ;</li>
+                <li>Mesure de l'efficacité des publicités de l'organisateur auprès de Meta, décrite à la
+                    section <a href="#mesure-meta">Destinataires</a> : intérêt légitime de l'organisateur
+                    (art. 6.1.f), avec droit d'opposition.</li>
             </ul>
 
             <h2>4. Destinataires</h2>
@@ -278,10 +281,19 @@ const confidentialite: LegalDocument = {
                 d'e-mails et paiement en ligne. Ces prestataires agissent sur instruction et sont tenus à la
                 confidentialité.
             </p>
+            <p id="mesure-meta">
+                Pour les organisateurs qui l'activent, lorsqu'un achat est finalisé, {e.brand} envoie à Meta
+                (API Conversions) un événement d'achat comprenant l'e-mail, le téléphone, le prénom, le nom et
+                le pays de l'acheteur sous forme hachée (SHA-256, procédé irréversible), le montant de la
+                commande et l'événement concerné, sans adresse IP ni identifiant du navigateur. Cet envoi a
+                lieu même si l'acheteur a refusé les cookies publicitaires, sur la base de l'intérêt légitime
+                de l'organisateur à mesurer l'efficacité de ses publicités. Vous pouvez vous y opposer en
+                écrivant à <Mail address={e.privacyContactEmail}/>.
+            </p>
 
             <h2>5. Transferts hors Union européenne</h2>
             <p>
-                Certains prestataires (paiement, envoi d'e-mails) peuvent traiter des données hors de l'Union
+                Certains prestataires (paiement, envoi d'e-mails, mesure publicitaire Meta) peuvent traiter des données hors de l'Union
                 européenne. Ces transferts sont encadrés par une décision d'adéquation ou par les clauses
                 contractuelles types de la Commission européenne.
             </p>
@@ -457,6 +469,11 @@ const cookies: LegalDocument = {
                 Meta (API Conversions) pour mesurer l'efficacité des publicités. Sans votre consentement, aucun
                 de ces traceurs n'est déposé ni transmis. Si vous retirez votre consentement, ils sont supprimés
                 de votre appareil.
+            </p>
+            <p>
+                Indépendamment de ces traceurs, un événement d'achat sans identifiant du navigateur peut être
+                transmis à Meta, comme décrit dans la
+                {" "}<a href="/legal/confidentialite#mesure-meta">politique de confidentialité</a>.
             </p>
 
             <h2>4. Durée</h2>
