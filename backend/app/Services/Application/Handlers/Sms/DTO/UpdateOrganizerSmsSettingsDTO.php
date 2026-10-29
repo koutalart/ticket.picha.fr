@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Services\Application\Handlers\Sms\DTO;
 
 use HiEvents\DataTransferObjects\BaseDataObject;
+use HiEvents\DomainObjects\Enums\LiveChatStyle;
 use Spatie\LaravelData\Optional;
 
 class UpdateOrganizerSmsSettingsDTO extends BaseDataObject
@@ -22,6 +23,7 @@ class UpdateOrganizerSmsSettingsDTO extends BaseDataObject
         public readonly bool|Optional $assistantHoldingReplyEnabled = new Optional,
         public readonly bool|Optional $liveChatEnabled = new Optional,
         public readonly string|Optional|null $liveChatRelayLabel = new Optional,
+        public readonly LiveChatStyle|Optional $liveChatStyle = new Optional,
         public readonly bool|Optional $defaultRemindersEnabled = new Optional,
         public readonly bool|Optional $organizerAssistantEnabled = new Optional,
         public readonly string|Optional|null $organizerAssistantInstructions = new Optional,

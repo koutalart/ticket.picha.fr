@@ -18,6 +18,7 @@ import {EventDedicatedPageHead} from "./EventDedicatedPageHead.tsx";
 import classes from "./EventDedicatedPage.module.scss";
 import {organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
 import {useConsentBannerTheme} from "../../../utilites/consentBannerTheme.ts";
+import {LiveChatLauncher} from "../../common/LiveChatWindow/LiveChatLauncher.tsx";
 
 interface LoaderData {
     event: Event;
@@ -179,6 +180,7 @@ export const EventDedicatedPage = () => {
                     </div>
                     {tabsAndBody}
                 </div>
+                <LiveChatLauncher organizer={event.organizer} eventId={event.id}/>
             </EventImmersiveShell>
         );
     }
@@ -248,6 +250,7 @@ export const EventDedicatedPage = () => {
             <footer className={classes.footer}>
                 <PoweredByFooter/>
             </footer>
+            <LiveChatLauncher organizer={event.organizer} eventId={event.id}/>
         </main>
     );
 };

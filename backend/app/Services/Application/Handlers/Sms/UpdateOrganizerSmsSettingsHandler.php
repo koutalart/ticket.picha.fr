@@ -71,6 +71,10 @@ class UpdateOrganizerSmsSettingsHandler
             $attributes[OrganizerSmsSettingDomainObjectAbstract::LIVE_CHAT_ENABLED] = $dto->liveChatEnabled;
         }
 
+        if ($dto->wasProvided('liveChatStyle')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::LIVE_CHAT_STYLE] = $dto->liveChatStyle->value;
+        }
+
         if ($dto->wasProvided('liveChatRelayLabel')) {
             $label = $this->cleanInstructions($dto->liveChatRelayLabel);
             $attributes[OrganizerSmsSettingDomainObjectAbstract::LIVE_CHAT_RELAY_LABEL] = $label !== null

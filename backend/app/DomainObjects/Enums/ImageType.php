@@ -33,6 +33,7 @@ enum ImageType
     case ORGANIZER_COVER;
     case ORGANIZER_COVER_VIDEO;
     case ORGANIZER_COVER_VIDEO_MOBILE;
+    case ORGANIZER_CHAT_AVATAR;
     case QR_POSTER_BACKGROUND;
 
     public static function eventImageTypes(): array
@@ -61,6 +62,7 @@ enum ImageType
             self::ORGANIZER_COVER,
             self::ORGANIZER_COVER_VIDEO,
             self::ORGANIZER_COVER_VIDEO_MOBILE,
+            self::ORGANIZER_CHAT_AVATAR,
             self::QR_POSTER_BACKGROUND,
         ];
     }
@@ -104,6 +106,7 @@ enum ImageType
             self::ORGANIZER_LOGO->name => [100, 100],
             self::ORGANIZER_EMAIL_LOGO->name => [100, 100],
             self::ORGANIZER_COVER->name => [600, 50],
+            self::ORGANIZER_CHAT_AVATAR->name => [100, 100],
             self::QR_POSTER_BACKGROUND->name => [600, 600],
         ];
 

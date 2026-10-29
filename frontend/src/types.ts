@@ -192,7 +192,7 @@ export interface Image {
     lqip_base64?: string | null;
 }
 
-export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_COVER_VIDEO_MOBILE' | 'EVENT_FLYER' | 'EVENT_HERO_PARTNER_LOGO' | 'EVENT_HERO_SIGNATURE_LOGO' | 'EVENT_HERO_BRAND_LOGO' | 'EVENT_ARTIST_PHOTO' | 'EVENT_EMAIL_LOGO' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_EMAIL_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_COVER_VIDEO' | 'ORGANIZER_COVER_VIDEO_MOBILE' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
+export type ImageType = 'EVENT_COVER' | 'EVENT_COVER_VIDEO' | 'EVENT_COVER_VIDEO_MOBILE' | 'EVENT_FLYER' | 'EVENT_HERO_PARTNER_LOGO' | 'EVENT_HERO_SIGNATURE_LOGO' | 'EVENT_HERO_BRAND_LOGO' | 'EVENT_ARTIST_PHOTO' | 'EVENT_EMAIL_LOGO' | 'EVENT_SHARE_IMAGE' | 'EDITOR_IMAGE' | 'ORGANIZER_LOGO' | 'ORGANIZER_EMAIL_LOGO' | 'ORGANIZER_COVER' | 'ORGANIZER_COVER_VIDEO' | 'ORGANIZER_COVER_VIDEO_MOBILE' | 'ORGANIZER_CHAT_AVATAR' | 'ORGANIZER_IMAGE' | 'QR_POSTER_BACKGROUND' | 'TICKET_LOGO' | 'TICKET_SPONSOR_LOGO';
 
 export type PaymentProvider = 'STRIPE' | 'OFFLINE';
 
@@ -1532,6 +1532,7 @@ export interface OrganizerSmsSettings {
     live_chat_enabled: boolean;
     live_chat_relay_label: string | null;
     live_chat_relay_line: string;
+    live_chat_style: LiveChatStyle;
     sms_default_reminders_enabled: boolean;
     organizer_assistant_enabled: boolean;
     organizer_assistant_instructions: string | null;
@@ -1621,11 +1622,15 @@ export interface LiveChatMessage {
     created_at: string;
 }
 
+export type LiveChatStyle = 'CLASSIC' | 'MESSAGING';
+
 export interface LiveChatConfig {
     enabled: boolean;
     organizer_name: string | null;
     relay_line: string | null;
     max_message_length: number;
+    style?: LiveChatStyle;
+    avatar_url?: string | null;
 }
 
 export interface LiveChatTurn {

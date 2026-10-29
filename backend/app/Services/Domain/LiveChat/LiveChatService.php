@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace HiEvents\Services\Domain\LiveChat;
 
 use HiEvents\DomainObjects\Enums\CustomerAddressForm;
+use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\Enums\LiveChatAuthorType;
+use HiEvents\DomainObjects\Enums\LiveChatStyle;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\ImageDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\LiveChatMessageDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\LiveChatSessionDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\OrganizerSmsSettingDomainObjectAbstract;
+use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\LiveChatMessageDomainObject;
 use HiEvents\DomainObjects\LiveChatQuestionDomainObject;
 use HiEvents\DomainObjects\LiveChatSessionDomainObject;
@@ -26,7 +30,9 @@ use HiEvents\Exceptions\SmsAssistantLimitReachedException;
 use HiEvents\Exceptions\SmsAssistantUnavailableException;
 use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Helper\SmsSensitiveTopicDetector;
+use HiEvents\Helper\Url;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
+use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatSessionRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
@@ -137,6 +143,7 @@ class LiveChatService
         private readonly DatabaseManager $databaseManager,
         private readonly LiveChatQuestionService $questionService,
         private readonly EventAssistantKnowledgeService $knowledgeService,
+        private readonly ImageRepositoryInterface $imageRepository,
     ) {}
 
     public function getConfig(int $organizerId): LiveChatConfigDTO
@@ -153,7 +160,21 @@ class LiveChatService
             organizerName: $organizer->getName(),
             relayLine: self::relayLine($settings->getLiveChatRelayLabel()),
             maxMessageLength: self::MAX_MESSAGE_LENGTH,
+            style: LiveChatStyle::tryFrom((string) $settings->getLiveChatStyle()) ?? LiveChatStyle::CLASSIC,
+            avatarUrl: $this->avatarUrl($organizerId),
         );
+    }
+
+    private function avatarUrl(int $organizerId): ?string
+    {
+        /** @var ImageDomainObject|null $avatar */
+        $avatar = $this->imageRepository->findFirstWhere([
+            ImageDomainObjectAbstract::ENTITY_ID => $organizerId,
+            ImageDomainObjectAbstract::ENTITY_TYPE => OrganizerDomainObject::class,
+            ImageDomainObjectAbstract::TYPE => ImageType::ORGANIZER_CHAT_AVATAR->name,
+        ]);
+
+        return $avatar !== null && ! empty($avatar->getPath()) ? Url::getCdnUrl($avatar->getPath()) : null;
     }
 
     public static function relayLine(?string $label): string
@@ -871,6 +892,7 @@ class LiveChatService
             ->setOrganizerId($organizerId)
             ->setAccountId($organizer->getAccountId())
             ->setLiveChatEnabled(true)
+            ->setLiveChatStyle(LiveChatStyle::CLASSIC->value)
             ->setNotifyOnInboundSms(true);
     }
 
