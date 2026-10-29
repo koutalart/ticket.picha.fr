@@ -1436,7 +1436,20 @@ export const EmbeddedRegistration = ({
 
     useKeyboardAwareActionBar(panelRef, `.${classes.nav}`, !forceClassic && !cannotEmbed && questionsQuery.isFetched);
 
-    const formInProgress = safeStepIndex > 0 && !forceClassic && !cannotEmbed;
+    const [isPanelOnScreen, setIsPanelOnScreen] = useState(false);
+    useEffect(() => {
+        const panel = panelRef.current;
+        if (!panel || typeof IntersectionObserver === 'undefined') {
+            return;
+        }
+        const observer = new IntersectionObserver(([entry]) => setIsPanelOnScreen(entry.isIntersecting), {threshold: 0.25});
+        observer.observe(panel);
+        return () => observer.disconnect();
+    });
+
+    const currentStepKind = steps[safeStepIndex]?.kind;
+    const formInProgress = !forceClassic && !cannotEmbed && isPanelOnScreen
+        && currentStepKind !== undefined && currentStepKind !== 'selection' && currentStepKind !== 'name';
     useEffect(() => {
         if (!formInProgress || typeof document === 'undefined') {
             return;
