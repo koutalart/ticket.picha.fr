@@ -68,6 +68,21 @@ final class SmsPhoneNormalizer
         return $e164;
     }
 
+    /**
+     * The number and, for a Mayotte or La Réunion number, the same number written with +33, as rows saved before
+     * that rewrite may still hold it.
+     *
+     * @return array<int, string>
+     */
+    public static function equivalents(string $e164): array
+    {
+        if (! preg_match('/^\+262(\d{9})$/', $e164, $matches) || self::overseasFromFrench('+33'.$matches[1]) !== $e164) {
+            return [$e164];
+        }
+
+        return [$e164, '+33'.$matches[1]];
+    }
+
     public static function matchingSuffix(string $phone): ?string
     {
         $digits = preg_replace('/\D+/', '', $phone) ?? '';

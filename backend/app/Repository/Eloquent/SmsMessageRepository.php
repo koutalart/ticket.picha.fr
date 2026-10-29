@@ -72,28 +72,31 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
         $sentAt = 'COALESCE(sms_messages.provider_timestamp, sms_messages.created_at)';
 
         $message = SmsMessage::query()
+            ->when($lineSettingsId !== null, fn (EloquentBuilder $query) => $query->where('sms_messages.line_settings_id', $lineSettingsId))
             ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
-            ->when($lineSettingsId !== null, fn (EloquentBuilder $query) => $query->where(fn (EloquentBuilder $line) => $line
-                ->where('sms_messages.line_settings_id', $lineSettingsId)
-                ->orWhere(fn (EloquentBuilder $withoutLine) => $withoutLine
-                    ->whereNull('sms_messages.line_settings_id')
-                    ->where(fn (EloquentBuilder $conversation) => $conversation
-                        ->where('sms_conversations.line_settings_id', $lineSettingsId)
-                        ->orWhereNull('sms_conversations.line_settings_id')))))
             ->whereIn('sms_messages.organizer_id', $organizerIds)
             ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
             ->where('sms_conversations.phone', $phone)
-            ->where('sms_conversations.is_team', false)
             ->where('sms_messages.is_supervision', false)
             ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+            ->whereNull('sms_messages.channel')
             ->whereNotIn('sms_messages.status', [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name])
             ->whereRaw($sentAt.' >= ?', [$since])
             ->when($until !== null, fn (EloquentBuilder $query) => $query->whereRaw($sentAt.' <= ?', [$until]))
+            ->orderByDesc('sms_conversations.is_team')
             ->orderByRaw($sentAt.' DESC')
             ->orderByDesc('sms_messages.id')
-            ->selectRaw('sms_messages.organizer_id as organizer_id, '.$sentAt.' as sent_at')
+            ->selectRaw('sms_messages.organizer_id as organizer_id, sms_conversations.is_team as is_team, '.$sentAt.' as sent_at')
             ->toBase()
             ->first();
+
+        if ($message !== null && (bool) $message->is_team) {
+            return new SmsLastSenderDTO(
+                organizerId: (int) $message->organizer_id,
+                sentAt: Carbon::parse((string) $message->sent_at)->toDateTimeString(),
+                isTeam: true,
+            );
+        }
 
         $recipientSentAt = 'COALESCE(sms_campaign_recipients.sent_at, sms_campaign_recipients.delivered_at)';
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Sms\Team;
 
+use HiEvents\DomainObjects\Enums\OrganizerTeamContactRole;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
 use HiEvents\DomainObjects\OrganizerTeamContactDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
@@ -56,7 +57,7 @@ class SmsTeamInboundService
 
         $contacts = $this->teamContactService->findForPhone($organizerIds, $phone);
         if ($contacts->isEmpty()) {
-            return null;
+            return $this->routeToTeamConversation($candidates, $organizerIds, $phone);
         }
 
         $contact = $contacts->count() === 1 ? $contacts->first() : $this->pick($contacts, $phone);
@@ -77,6 +78,30 @@ class SmsTeamInboundService
     public function organizerAssistantActiveFor(OrganizerSmsSettingDomainObject $settings): bool
     {
         return $this->organizerAssistantService->isActiveFor($settings);
+    }
+
+    /**
+     * A conversation still marked « Équipe » while its number is no longer found in the team (removed outside PICHA,
+     * saved in another format): the SMS stays in that team conversation, as a copy contact so that no assistant answers.
+     *
+     * @param  Collection<int, OrganizerSmsSettingDomainObject>  $candidates
+     * @param  array<int, int>  $organizerIds
+     */
+    private function routeToTeamConversation(Collection $candidates, array $organizerIds, string $phone): ?SmsTeamRouteDTO
+    {
+        $organizerId = $this->conversationRepository->findLatestTeamConversationOrganizerId($organizerIds, $phone);
+        $settings = $organizerId === null
+            ? null
+            : $candidates->first(fn (OrganizerSmsSettingDomainObject $candidate) => $candidate->getOrganizerId() === $organizerId);
+
+        if ($settings === null) {
+            return null;
+        }
+
+        return new SmsTeamRouteDTO($settings, (new OrganizerTeamContactDomainObject)
+            ->setOrganizerId($organizerId)
+            ->setPhone($phone)
+            ->setRole(OrganizerTeamContactRole::COPY->name));
     }
 
     /**

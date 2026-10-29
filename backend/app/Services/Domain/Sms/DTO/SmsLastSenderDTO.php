@@ -11,5 +11,6 @@ class SmsLastSenderDTO extends BaseDataObject
     public function __construct(
         public readonly int $organizerId,
         public readonly string $sentAt,
+        public readonly bool $isTeam = false,
     ) {}
 }

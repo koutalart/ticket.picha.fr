@@ -244,58 +244,54 @@ class SmsSharedLineReplyAttributionTest extends TestCase
         $this->assertSame(0, SmsMessage::query()->where('provider_message_id', 'old-4')->count());
     }
 
-    public function test_brayan_reply_reaches_his_existing_conversation_fed_by_the_web_chat(): void
+    public function test_brayan_team_reply_stays_in_his_team_conversation_even_without_his_team_contact_row(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-10-28 20:43:43', 'UTC'));
-        $this->outbound($this->raidId, daysAgo: 10);
-        $conversation = SmsConversation::create([
-            'account_id' => Organizer::find($this->innocentId)->account_id,
-            'organizer_id' => $this->innocentId,
-            'phone' => self::CONTACT,
-            'status' => 'OPEN',
-            'line_settings_id' => $this->line->id,
-        ]);
-        SmsMessage::create([
-            'sms_conversation_id' => $conversation->id,
-            'organizer_id' => $this->innocentId,
-            'direction' => 'OUTBOUND',
-            'author_type' => 'AGENT',
-            'content' => 'On te répond par SMS',
-            'status' => 'DELIVERED',
-            'channel' => 'WEB_CHAT',
-            'provider_timestamp' => '2026-10-28 20:40:17',
-        ]);
+        $this->outbound($this->raidId, daysAgo: 1, phone: self::CONTACT);
+        $conversation = $this->teamConversation('2026-10-28 20:40:17');
 
-        $this->receive('in-brayan', 'Ok merci');
+        $this->assertNull(DB::table('sms_messages')
+            ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
+            ->where('sms_conversations.id', $conversation->id)
+            ->where('sms_conversations.is_team', false)
+            ->first(), 'The former query, with is_team = false, could not see Brayan conversation');
+
+        $this->receive('in-brayan', 'Scan ok, 120 entrées');
 
         $reply = SmsMessage::query()->where('provider_message_id', 'in-brayan')->sole();
         $this->assertSame($this->innocentId, $reply->organizer_id);
         $this->assertSame($conversation->id, $reply->sms_conversation_id);
+        $this->assertTrue((bool) $conversation->fresh()->is_team);
         $this->assertSame(0, SmsUnattributedMessage::query()->count());
+        $this->assertSame(1, SmsConversation::query()->where('phone', self::CONTACT)->where('organizer_id', $this->innocentId)->count());
+        $this->assistant->shouldNotHaveReceived('queueDraftIfEligible');
     }
 
-    public function test_reply_reaches_a_conversation_of_the_line_whose_sms_has_no_line_of_its_own(): void
+    public function test_team_member_saved_with_plus_33_is_still_recognised(): void
     {
-        $conversation = SmsConversation::create([
-            'account_id' => Organizer::find($this->kulturmId)->account_id,
-            'organizer_id' => $this->kulturmId,
-            'phone' => self::CONTACT,
-            'status' => 'OPEN',
-            'line_settings_id' => $this->line->id,
-        ]);
-        SmsMessage::create([
-            'sms_conversation_id' => $conversation->id,
-            'organizer_id' => $this->kulturmId,
-            'direction' => 'OUTBOUND',
-            'author_type' => 'HUMAN',
-            'content' => 'Bonjour',
-            'status' => 'DELIVERED',
-            'provider_timestamp' => Carbon::now('UTC')->subMinutes(3),
+        $conversation = $this->teamConversation(Carbon::now('UTC')->subMinutes(3)->toDateTimeString());
+        DB::table('organizer_team_contacts')->insert([
+            'organizer_id' => $this->innocentId, 'phone' => '+33639651126', 'name' => 'Brayan', 'role' => 'COPY',
+            'created_at' => now(), 'updated_at' => now(),
         ]);
 
-        $this->receive('in-6', 'Bonjour !');
+        $this->receive('in-team', 'Ok');
 
-        $this->assertSame($this->kulturmId, SmsMessage::query()->where('provider_message_id', 'in-6')->sole()->organizer_id);
+        $this->assertSame($conversation->id, SmsMessage::query()->where('provider_message_id', 'in-team')->sole()->sms_conversation_id);
+    }
+
+    public function test_backfill_attaches_a_team_reply_to_the_existing_team_conversation(): void
+    {
+        $conversation = $this->teamConversation(Carbon::now('UTC')->subHours(2)->toDateTimeString());
+        $this->outbound($this->raidId, daysAgo: 0, phone: self::CONTACT);
+        $this->unattributed('old-team', self::CONTACT, Carbon::now('UTC')->toDateTimeString());
+
+        $this->assertSame(0, Artisan::call('sms:attribute-unattributed'));
+
+        $created = SmsMessage::query()->where('provider_message_id', 'old-team')->sole();
+        $this->assertSame($this->innocentId, $created->organizer_id);
+        $this->assertSame($conversation->id, $created->sms_conversation_id);
+        $this->assertSame(1, SmsConversation::query()->where('organizer_id', $this->innocentId)->where('phone', self::CONTACT)->count());
     }
 
     public function test_fix_phones_dry_run_only_shows_then_renames_or_merges_and_fixes_the_stop(): void
@@ -327,8 +323,12 @@ class SmsSharedLineReplyAttributionTest extends TestCase
             'created_at' => now(), 'updated_at' => now(),
         ]);
 
+        DB::table('organizer_team_contacts')->insert([
+            'organizer_id' => $this->innocentId, 'phone' => '+33693514915', 'role' => 'COPY', 'created_at' => now(), 'updated_at' => now(),
+        ]);
+
         $this->assertSame(0, Artisan::call('sms:attribute-unattributed', ['--fix-phones' => true, '--dry-run' => true]));
-        $this->assertStringContainsString('Numbers written with +33 instead of +262: 3.', Artisan::output());
+        $this->assertStringContainsString('Numbers written with +33 instead of +262: 4.', Artisan::output());
         $this->assertSame('+33693514915', $wrong->fresh()->phone);
         $this->assertSame('+33639123456', $alone->fresh()->phone);
 
@@ -343,6 +343,7 @@ class SmsSharedLineReplyAttributionTest extends TestCase
         $this->assertSame('+33612345678', $france->fresh()->phone);
         $this->assertSame(1, DB::table('sms_opt_outs')->where('organizer_id', $this->kulturmId)->where('phone', '+262639123456')->count());
         $this->assertSame(0, DB::table('sms_opt_outs')->where('phone', '+33639123456')->count());
+        $this->assertSame(1, DB::table('organizer_team_contacts')->where('organizer_id', $this->innocentId)->where('phone', '+262693514915')->count());
 
         Artisan::call('sms:attribute-unattributed', ['--fix-phones' => true]);
         $this->assertStringContainsString('Numbers written with +33 instead of +262: 0.', Artisan::output());
@@ -386,10 +387,36 @@ class SmsSharedLineReplyAttributionTest extends TestCase
         return SmsMessage::query()->where('organizer_id', $organizerId)->where('direction', 'INBOUND');
     }
 
-    private function outbound(int $organizerId, int $daysAgo): void
+    private function teamConversation(string $sentAt): SmsConversation
+    {
+        $conversation = SmsConversation::create([
+            'account_id' => Organizer::find($this->innocentId)->account_id,
+            'organizer_id' => $this->innocentId,
+            'phone' => self::CONTACT,
+            'contact_name' => 'Brayan',
+            'status' => 'OPEN',
+            'is_team' => true,
+            'line_settings_id' => $this->line->id,
+            'last_message_at' => $sentAt,
+        ]);
+        SmsMessage::create([
+            'sms_conversation_id' => $conversation->id,
+            'organizer_id' => $this->innocentId,
+            'direction' => 'OUTBOUND',
+            'author_type' => 'HUMAN',
+            'content' => 'Tu peux ouvrir les portes',
+            'status' => 'DELIVERED',
+            'line_settings_id' => $this->line->id,
+            'provider_timestamp' => $sentAt,
+        ]);
+
+        return $conversation;
+    }
+
+    private function outbound(int $organizerId, int $daysAgo, string $phone = self::CONTACT): void
     {
         $conversation = SmsConversation::query()->firstOrCreate(
-            ['organizer_id' => $organizerId, 'phone' => self::CONTACT],
+            ['organizer_id' => $organizerId, 'phone' => $phone],
             ['account_id' => Organizer::find($organizerId)->account_id, 'status' => 'OPEN', 'line_settings_id' => $this->line->id],
         );
         $at = Carbon::now('UTC')->subDays($daysAgo);

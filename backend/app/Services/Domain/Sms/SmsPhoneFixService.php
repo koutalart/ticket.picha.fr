@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Sms;
 
+use HiEvents\DomainObjects\Generated\OrganizerTeamContactDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsConversationDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsOptOutDomainObjectAbstract;
+use HiEvents\DomainObjects\OrganizerTeamContactDomainObject;
 use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\SmsOptOutDomainObject;
 use HiEvents\Helper\SmsPhoneNormalizer;
+use HiEvents\Repository\Interfaces\OrganizerTeamContactRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
 use HiEvents\Services\Domain\Sms\DTO\SmsPhoneFixItemDTO;
 use Illuminate\Database\DatabaseManager;
 
 /**
- * Conversations and STOP saved with a Mayotte or La Réunion number written with +33 (+33693… instead of +262693…).
+ * Conversations, STOP and team numbers saved with a Mayotte or La Réunion number written with +33 (+33693… instead of +262693…).
  * A conversation already existing under the right number for the same organizer receives the messages of the wrong
  * one instead of being duplicated. Only inserts and moves rows: no alert, no automatic reply.
  */
@@ -30,6 +33,7 @@ class SmsPhoneFixService
     public function __construct(
         private readonly SmsConversationRepositoryInterface $conversationRepository,
         private readonly SmsOptOutRepositoryInterface $optOutRepository,
+        private readonly OrganizerTeamContactRepositoryInterface $teamContactRepository,
         private readonly DatabaseManager $databaseManager,
     ) {}
 
@@ -48,6 +52,11 @@ class SmsPhoneFixService
         /** @var SmsOptOutDomainObject $optOut */
         foreach ($this->optOutRepository->findWithFrenchOverseasPhones() as $optOut) {
             $items[] = $this->fixOptOut($optOut, $dryRun);
+        }
+
+        /** @var OrganizerTeamContactDomainObject $contact */
+        foreach ($this->teamContactRepository->findWithFrenchOverseasPhones() as $contact) {
+            $items[] = $this->fixTeamContact($contact, $dryRun);
         }
 
         return $items;
@@ -83,6 +92,33 @@ class SmsPhoneFixService
             action: $target === null ? self::ACTION_RENAMED : self::ACTION_MERGED,
             mergedIntoId: $target?->getId(),
             movedMessages: $moved,
+        );
+    }
+
+    private function fixTeamContact(OrganizerTeamContactDomainObject $contact, bool $dryRun): SmsPhoneFixItemDTO
+    {
+        $phone = SmsPhoneNormalizer::overseasFromFrench($contact->getPhone());
+
+        $existing = $this->teamContactRepository->findFirstWhere([
+            OrganizerTeamContactDomainObjectAbstract::ORGANIZER_ID => $contact->getOrganizerId(),
+            OrganizerTeamContactDomainObjectAbstract::PHONE => $phone,
+        ]);
+
+        if (! $dryRun) {
+            if ($existing !== null) {
+                $this->teamContactRepository->deleteWhere([OrganizerTeamContactDomainObjectAbstract::ID => $contact->getId()]);
+            } else {
+                $this->teamContactRepository->updateFromArray($contact->getId(), [OrganizerTeamContactDomainObjectAbstract::PHONE => $phone]);
+            }
+        }
+
+        return new SmsPhoneFixItemDTO(
+            type: 'team',
+            id: $contact->getId(),
+            organizerId: $contact->getOrganizerId(),
+            from: $contact->getPhone(),
+            to: $phone,
+            action: $existing !== null ? self::ACTION_DUPLICATE_REMOVED : self::ACTION_RENAMED,
         );
     }
 
