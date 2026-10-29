@@ -220,6 +220,7 @@ const largeFieldClassNames = {
  * Set to true to show them again on the contact step (the payment page then skips the option).
  */
 const SHOW_PROTECTION_AND_TOTAL_ON_CONTACT_STEP = false;
+const FORM_IN_PROGRESS_ATTR = 'data-picha-form-in-progress';
 
 export const EmbeddedRegistration = ({
     event: initialEvent,
@@ -605,6 +606,18 @@ export const EmbeddedRegistration = ({
             'input:not([type="hidden"]):not([disabled]), textarea, [role="radio"], [role="checkbox"]'
         ) ?? container;
         target.focus({preventScroll: true});
+
+        const viewport = window.visualViewport;
+        if (target !== container && window.matchMedia?.('(max-width: 600px)').matches) {
+            const visibleTop = viewport ? viewport.offsetTop : 0;
+            const visibleHeight = viewport ? viewport.height : window.innerHeight;
+            const fieldTop = target.getBoundingClientRect().top;
+            const wanted = visibleTop + visibleHeight * 0.3;
+            if (Math.abs(fieldTop - wanted) > visibleHeight * 0.2) {
+                window.scrollBy({top: fieldTop - wanted, behavior: 'auto'});
+            }
+            return;
+        }
 
         const panel = panelRef.current;
         if (panel) {
@@ -1423,6 +1436,29 @@ export const EmbeddedRegistration = ({
 
     useKeyboardAwareActionBar(panelRef, `.${classes.nav}`, !forceClassic && !cannotEmbed && questionsQuery.isFetched);
 
+    const [isPanelOnScreen, setIsPanelOnScreen] = useState(false);
+    useEffect(() => {
+        const panel = panelRef.current;
+        if (!panel || typeof IntersectionObserver === 'undefined') {
+            return;
+        }
+        const observer = new IntersectionObserver(([entry]) => setIsPanelOnScreen(entry.isIntersecting), {threshold: 0.25});
+        observer.observe(panel);
+        return () => observer.disconnect();
+    });
+
+    const currentStepKind = steps[safeStepIndex]?.kind;
+    const formInProgress = !forceClassic && !cannotEmbed && isPanelOnScreen
+        && currentStepKind !== undefined && currentStepKind !== 'selection' && currentStepKind !== 'name';
+    useEffect(() => {
+        if (!formInProgress || typeof document === 'undefined') {
+            return;
+        }
+        const root = document.documentElement;
+        root.setAttribute(FORM_IN_PROGRESS_ATTR, '');
+        return () => root.removeAttribute(FORM_IN_PROGRESS_ATTR);
+    }, [formInProgress]);
+
     if (!forceClassic && hasNothingToRegister && upcomingSaleStart) {
         return (
             <section className={rootClassName} data-variant={variant} ref={sectionRef} id="tickets" aria-label={t`Registration`}>
@@ -1956,9 +1992,9 @@ export const EmbeddedRegistration = ({
             return null;
         }
         return (
-            <div className={classes.identity}>
-                <span className={classes.identityName}>{name}</span>
-            </div>
+            <p className={classes.identity}>
+                <span className={classes.identityName}>{t`Tickets in the name of ${name}`}</span>
+            </p>
         );
     };
 
@@ -2181,18 +2217,23 @@ export const EmbeddedRegistration = ({
                     </div>
                 )}
 
+                {index > 0 && (
+                    <div className={classes.stepFooter}>
+                        {index > 0 && (
+                            <button
+                                type="button"
+                                className={classes.backButton}
+                                onClick={() => goToStep(index - 1)}
+                                disabled={completeMutation.isPending}
+                            >
+                                <IconArrowLeft size={16} aria-hidden="true"/>
+                                {t`Previous`}
+                            </button>
+                        )}
+                    </div>
+                )}
+
                 <div className={classes.nav} data-step-kind={current.kind}>
-                    {index > 0 && (
-                        <button
-                            type="button"
-                            className={classes.backButton}
-                            onClick={() => goToStep(index - 1)}
-                            disabled={completeMutation.isPending}
-                        >
-                            <IconArrowLeft size={18} aria-hidden="true"/>
-                            {t`Previous`}
-                        </button>
-                    )}
                     <Button
                         type={active ? 'submit' : 'button'}
                         className={classes.nextButton}
@@ -2207,8 +2248,11 @@ export const EmbeddedRegistration = ({
                             {t`or press Enter`} <IconCornerDownLeft size={14}/>
                         </span>
                     )}
-                    {isLast && isPaidMode && renderReassurance()}
                 </div>
+
+                {isLast && isPaidMode && (
+                    <div className={classes.reassuranceBelow}>{renderReassurance()}</div>
+                )}
 
                 {current.kind === 'contact' && !!event.settings?.pre_checkout_message && (
                     <UserGeneratedContent

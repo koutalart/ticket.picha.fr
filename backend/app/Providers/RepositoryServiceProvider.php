@@ -57,6 +57,7 @@ use HiEvents\Repository\Eloquent\SmsAssistantCallRepository;
 use HiEvents\Repository\Eloquent\LiveChatMessageRepository;
 use HiEvents\Repository\Eloquent\LiveChatRefundRequestRepository;
 use HiEvents\Repository\Eloquent\LiveChatRefundRequestLogRepository;
+use HiEvents\Repository\Eloquent\LiveChatTicketResendRequestRepository;
 use HiEvents\Repository\Eloquent\LiveChatQuestionRepository;
 use HiEvents\Repository\Eloquent\EventAssistantFactRepository;
 use HiEvents\Repository\Eloquent\EventAssistantSnapshotRepository;
@@ -159,6 +160,7 @@ use HiEvents\Repository\Interfaces\SmsAssistantCallRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatRefundRequestRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatRefundRequestLogRepositoryInterface;
+use HiEvents\Repository\Interfaces\LiveChatTicketResendRequestRepositoryInterface;
 use HiEvents\Repository\Interfaces\LiveChatQuestionRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventAssistantFactRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventAssistantSnapshotRepositoryInterface;
@@ -249,6 +251,7 @@ class RepositoryServiceProvider extends ServiceProvider
         LiveChatMessageRepositoryInterface::class => LiveChatMessageRepository::class,
         LiveChatRefundRequestRepositoryInterface::class => LiveChatRefundRequestRepository::class,
         LiveChatRefundRequestLogRepositoryInterface::class => LiveChatRefundRequestLogRepository::class,
+        LiveChatTicketResendRequestRepositoryInterface::class => LiveChatTicketResendRequestRepository::class,
         LiveChatQuestionRepositoryInterface::class => LiveChatQuestionRepository::class,
         EventAssistantFactRepositoryInterface::class => EventAssistantFactRepository::class,
         EventAssistantSnapshotRepositoryInterface::class => EventAssistantSnapshotRepository::class,

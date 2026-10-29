@@ -139,6 +139,7 @@ const Payment = () => {
                         checked={isRefundProtectionChecked}
                         disabled={refundProtectionMutation.isPending || isStripeIntentFetching || isPaymentLoading}
                         onChange={handleRefundProtectionChange}
+                        deadlineHours={event?.settings?.refund_protection_deadline_hours ?? 0}
                     />
                 )}
                 {isStripeEnabled && (

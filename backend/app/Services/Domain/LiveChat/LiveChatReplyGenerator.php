@@ -96,12 +96,19 @@ Cohérence avec la transmission à l'organisateur :
 
 Ce que tu traites seule : questions sur les événements, dates, horaires, lieu, tarifs, billets en vente, lien d'achat, informations pratiques, artistes et FAQ présents dans les données, simple remerciement ou salutation.
 
-Suivi par l'organisateur ("needs_follow_up" = true) pour : remboursement, annulation, échange ou revente de billet, litige, réclamation, mécontentement, problème de paiement, billet non reçu ou introuvable, modification d'une commande, demande d'invitation, de geste commercial, de partenariat, de prestation ou de liste d'invités, presse ou journaliste, accessibilité ou handicap, mineur ou enfant, demande inhabituelle, insulte ou menace, visiteur qui veut parler à quelqu'un ou être recontacté. Dans ces cas, ta réponse est une réponse d'attente : courte, naturelle, jamais formulée deux fois de la même façon, elle dit que l'organisateur va regarder sa demande, ne répond pas sur le fond et ne promet rien (ni place, ni invitation, ni remboursement, ni délai précis, ni prix).
+Suivi par l'organisateur ("needs_follow_up" = true) pour : remboursement, annulation, échange ou revente de billet, litige, réclamation, mécontentement, problème de paiement, billet non reçu ou introuvable (sauf renvoi par code SMS, voir plus bas), modification d'une commande, demande d'invitation, de geste commercial, de partenariat, de prestation ou de liste d'invités, presse ou journaliste, accessibilité ou handicap, mineur ou enfant, demande inhabituelle, insulte ou menace, visiteur qui veut parler à quelqu'un ou être recontacté. Dans ces cas, ta réponse est une réponse d'attente : courte, naturelle, jamais formulée deux fois de la même façon, elle dit que l'organisateur va regarder sa demande, ne répond pas sur le fond et ne promet rien (ni place, ni invitation, ni remboursement, ni délai précis, ni prix).
 
 Remboursement ("intent") :
 - "intent" vaut "refund_request" quand le visiteur demande à être remboursé ou à annuler sa commande ou ses billets, et seulement si "Remboursement automatique possible" vaut oui dans les données. Sinon "none".
 - Avec "refund_request" : "needs_follow_up" et "ask_contact" sont false, et ta réponse dit en une ou deux phrases qu'on va vérifier sa commande et l'invite à remplir le petit formulaire qui s'affiche sous ta réponse (numéro de commande et e-mail de la commande). Ne promets jamais de remboursement, ni de montant, ni de délai : c'est la vérification qui décide. Ne demande pas ces informations dans le message.
 - Si "Remboursement automatique possible" vaut non, une demande de remboursement suit la règle du suivi par l'organisateur ci-dessus.
+
+Billet non reçu ("intent" = "ticket_resend") :
+- Quand le visiteur dit qu'il n'a pas reçu son billet ou demande qu'on le lui renvoie, et seulement si "Renvoi des billets par code SMS possible" vaut oui dans les données : "intent" vaut "ticket_resend", "needs_follow_up" et "ask_contact" sont false.
+- Demande-lui seulement, en une phrase courte, son prénom et le numéro de téléphone utilisé pour la commande. Rien d'autre : ni e-mail, ni numéro de commande. Ne dis pas à quelle adresse le billet partira.
+- Dès que son prénom et son numéro figurent dans ses messages, recopie-les tels qu'il les a écrits dans "resend_first_name" et "resend_phone" (sinon null, n'invente jamais). Écris une phrase courte : elle sera remplacée par la réponse automatique (code envoyé par SMS si les infos correspondent à une commande).
+- Le visiteur tape ensuite le code reçu par SMS directement dans la conversation, c'est vérifié automatiquement. S'il dit ne pas avoir reçu de code, ou que le renvoi n'a pas marché, applique la règle du suivi par l'organisateur.
+- Si "Renvoi des billets par code SMS possible" vaut non, un billet non reçu suit la règle du suivi par l'organisateur ci-dessus. Dans tous les autres cas "resend_first_name" et "resend_phone" valent null.
 
 Quand l'information te manque ("question_for_organizer") :
 - Ne dis jamais que tu n'as pas l'info, que tu ne sais pas, que tu ne peux pas répondre ou que tu n'es pas sûre. Aucune variante.
@@ -423,24 +430,30 @@ PROMPT;
         }
 
         $refundRequest = $request->refundAvailable && ($data['intent'] ?? null) === 'refund_request';
-        $needsFollowUp = ! $refundRequest && ($data['needs_follow_up'] ?? null) === true;
+        $ticketResend = ! $refundRequest && $request->ticketResendAvailable && ($data['intent'] ?? null) === 'ticket_resend';
+        $needsFollowUp = ! $refundRequest && ! $ticketResend && ($data['needs_follow_up'] ?? null) === true;
         $reason = is_string($data['reason'] ?? null) ? self::cleanText($data['reason']) : '';
-        $question = ! $refundRequest && ! $needsFollowUp && is_string($data['question_for_organizer'] ?? null)
+        $resendFirstName = $ticketResend && is_string($data['resend_first_name'] ?? null) ? trim($data['resend_first_name']) : '';
+        $resendPhone = $ticketResend && is_string($data['resend_phone'] ?? null) ? trim($data['resend_phone']) : '';
+        $question = ! $refundRequest && ! $ticketResend && ! $needsFollowUp && is_string($data['question_for_organizer'] ?? null)
             ? trim(self::cleanText($data['question_for_organizer']))
             : '';
 
         [$bubbles, $missingInfo] = self::withoutMissingInfo($bubbles, $request->tutoiement, count($this->agentMessages($request)));
-        if ($missingInfo && $question === '' && ! $refundRequest && ! $needsFollowUp && $request->pendingQuestions === []) {
+        if ($missingInfo && $question === '' && ! $refundRequest && ! $ticketResend && ! $needsFollowUp && $request->pendingQuestions === []) {
             $question = trim((string) $this->lastVisitorMessage($request));
         }
 
         return new LiveChatReplyDTO(
             messages: $bubbles,
             needsFollowUp: $needsFollowUp,
-            askContact: ! $refundRequest && ! $request->contactKnown && ($data['ask_contact'] ?? null) === true,
+            askContact: ! $refundRequest && ! $ticketResend && ! $request->contactKnown && ($data['ask_contact'] ?? null) === true,
             reason: $needsFollowUp && $reason !== '' ? mb_substr($reason, 0, self::MAX_REASON_LENGTH) : null,
             refundRequest: $refundRequest,
             questionForOrganizer: $question !== '' ? $question : null,
+            ticketResend: $ticketResend,
+            ticketResendFirstName: $resendFirstName !== '' ? mb_substr($resendFirstName, 0, 100) : null,
+            ticketResendPhone: $resendPhone !== '' ? mb_substr($resendPhone, 0, 40) : null,
         );
     }
 
@@ -543,6 +556,7 @@ PROMPT;
             "Demande déjà transmise à l'organisateur : ".($request->handedOff ? 'oui' : 'non'),
             'Coordonnées pour la question transmise : '.($request->questionContactNote ?? 'rien de particulier'),
             'Remboursement automatique possible : '.($request->refundAvailable ? 'oui' : 'non'),
+            'Renvoi des billets par code SMS possible : '.($request->ticketResendAvailable ? 'oui' : 'non'),
             "Événements à venir (données publiques à jour) :\n".$this->json($request->events->map(
                 fn (SmsAssistantEventInfoDTO $event) => array_filter([
                     'titre' => $event->title,
@@ -602,10 +616,12 @@ PROMPT;
                 'needs_follow_up' => ['type' => 'boolean'],
                 'ask_contact' => ['type' => 'boolean'],
                 'reason' => ['type' => ['string', 'null']],
-                'intent' => ['type' => 'string', 'enum' => ['none', 'refund_request']],
+                'intent' => ['type' => 'string', 'enum' => ['none', 'refund_request', 'ticket_resend']],
                 'question_for_organizer' => ['type' => ['string', 'null']],
+                'resend_first_name' => ['type' => ['string', 'null']],
+                'resend_phone' => ['type' => ['string', 'null']],
             ],
-            'required' => ['messages', 'needs_follow_up', 'ask_contact', 'reason', 'intent', 'question_for_organizer'],
+            'required' => ['messages', 'needs_follow_up', 'ask_contact', 'reason', 'intent', 'question_for_organizer', 'resend_first_name', 'resend_phone'],
             'additionalProperties' => false,
         ];
     }

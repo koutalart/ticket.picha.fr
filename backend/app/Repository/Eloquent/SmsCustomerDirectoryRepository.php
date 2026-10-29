@@ -7,6 +7,7 @@ namespace HiEvents\Repository\Eloquent;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Repository\Interfaces\SmsCustomerDirectoryRepositoryInterface;
+use HiEvents\Services\Domain\LiveChat\TicketResend\DTO\LiveChatTicketResendCandidateDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsCustomerContactDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
 use Illuminate\Database\Query\Builder;
@@ -132,6 +133,68 @@ class SmsCustomerDirectoryRepository implements SmsCustomerDirectoryRepositoryIn
                     lastName: $row->last_name,
                 );
             });
+    }
+
+    public function findOrdersWithPhoneSuffix(int $organizerId, ?int $eventId, string $phoneSuffix, int $limit): Collection
+    {
+        $phones = DB::table('question_answers')
+            ->join('questions', 'questions.id', '=', 'question_answers.question_id')
+            ->where('questions.type', 'PHONE')
+            ->whereNull('question_answers.deleted_at')
+            ->whereRaw("right(regexp_replace(question_answers.answer::text, '\\D', '', 'g'), 9) = ?", [$phoneSuffix])
+            ->select('question_answers.order_id', DB::raw('question_answers.answer::text as phone'))
+            ->unionAll(
+                DB::table('box_office_sales')
+                    ->whereNotNull('box_office_sales.order_id')
+                    ->whereRaw("right(regexp_replace(coalesce(box_office_sales.phone, ''), '\\D', '', 'g'), 9) = ?", [$phoneSuffix])
+                    ->select('box_office_sales.order_id', 'box_office_sales.phone')
+            );
+
+        $orders = DB::table('orders')
+            ->join('events', 'events.id', '=', 'orders.event_id')
+            ->where('events.organizer_id', $organizerId)
+            ->when($eventId !== null, fn ($query) => $query->where('orders.event_id', $eventId))
+            ->whereNull('orders.deleted_at')
+            ->whereNull('events.deleted_at')
+            ->whereIn('orders.id', DB::query()->fromSub($phones, 'matching')->select('order_id'))
+            ->orderByDesc('orders.created_at')
+            ->limit($limit)
+            ->get(['orders.id', 'orders.event_id', 'orders.email', 'orders.first_name', 'orders.status', 'orders.payment_status']);
+
+        if ($orders->isEmpty()) {
+            return collect();
+        }
+
+        $orderIds = $orders->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $phonesByOrder = DB::query()->fromSub($phones, 'matching')
+            ->whereIn('order_id', $orderIds)
+            ->get()
+            ->groupBy('order_id');
+        $attendeeNames = DB::table('attendees')
+            ->whereIn('order_id', $orderIds)
+            ->whereNull('deleted_at')
+            ->get(['order_id', 'first_name'])
+            ->groupBy('order_id');
+
+        return $orders->map(fn (object $row) => new LiveChatTicketResendCandidateDTO(
+            orderId: (int) $row->id,
+            eventId: (int) $row->event_id,
+            email: $row->email,
+            status: (string) $row->status,
+            paymentStatus: $row->payment_status,
+            phones: collect($phonesByOrder->get($row->id, []))
+                ->map(fn (object $phone) => trim((string) $phone->phone, " \t\n\r\"[]"))
+                ->filter(fn (string $phone) => $phone !== '')
+                ->values()
+                ->all(),
+            firstNames: collect([$row->first_name])
+                ->merge(collect($attendeeNames->get($row->id, []))->pluck('first_name'))
+                ->map(fn ($name) => trim((string) $name))
+                ->filter(fn (string $name) => $name !== '')
+                ->unique()
+                ->values()
+                ->all(),
+        ))->values();
     }
 
     public function findConversationNames(int $organizerId): array

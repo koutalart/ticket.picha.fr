@@ -86,3 +86,9 @@
     transform: none;
   }
 }
+
+:global(html[data-picha-form-in-progress]) .launcher {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
