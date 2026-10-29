@@ -473,6 +473,8 @@ Sitemap: ${frontendUrl}/sitemap.xml
     app.get('/sitemap-events-:page.xml', sitemapEventsHandler);
     app.get('/sitemap-organizers-:page.xml', sitemapOrganizersHandler);
 
+    const LINK_PREVIEW_BOTS = /facebookexternalhit|facebookcatalog|meta-externalagent|WhatsApp|Snapchat|Twitterbot|LinkedInBot|Slackbot|TelegramBot|Discordbot|Pinterest|SkypeUriPreview|Applebot|iMessage|redditbot|Embedly/i;
+
     app.use("*", async (req, res) => {
         let url = req.originalUrl.replace(base, "");
 
@@ -505,9 +507,16 @@ Sitemap: ${frontendUrl}/sitemap.xml
             }
 
             if (pathname === '/' && customDomain.current_event && !new URLSearchParams(search || '').has('accueil')) {
-                res.setHeader('Cache-Control', 'no-store');
-                res.redirect(302, `/event/${customDomain.current_event.id}/${customDomain.current_event.slug}${search ? `?${search}` : ''}`);
-                return;
+                const currentEventPath = `/event/${customDomain.current_event.id}/${customDomain.current_event.slug}${search ? `?${search}` : ''}`;
+                if (LINK_PREVIEW_BOTS.test(req.get('user-agent') || '')) {
+                    url = currentEventPath.replace(/^\//, '');
+                    req.url = currentEventPath;
+                    req.originalUrl = currentEventPath;
+                } else {
+                    res.setHeader('Cache-Control', 'no-store');
+                    res.redirect(302, currentEventPath);
+                    return;
+                }
             }
 
             if (!req.cookies?.locale && !req.headers['accept-language']) {
