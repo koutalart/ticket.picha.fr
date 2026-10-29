@@ -83,6 +83,28 @@ class SmsFileSyncService
         return $checked;
     }
 
+    /**
+     * The organizer the queue sent this SMS for (sms-masse, scripts): PICHA Ticket only learns about such an SMS
+     * through the sms.picha.fr webhook. Null when the queue is off, cannot be reached or does not know the SMS.
+     */
+    public function findQueueOrganizerId(int $queueMessageId): ?int
+    {
+        if (! $this->fileClient->isEnabled()) {
+            return null;
+        }
+
+        try {
+            return $this->fileClient->find($queueMessageId)->organizerId;
+        } catch (SmsFileUnavailableException|SmsFileRejectedException $exception) {
+            $this->logger->warning('SMS queue could not tell the organizer of an SMS', [
+                'queue_message_id' => $queueMessageId,
+                'error' => $exception->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
     private function markChecked(SmsMessageDomainObject $message): void
     {
         $this->messageRepository->updateFromArray($message->getId(), [

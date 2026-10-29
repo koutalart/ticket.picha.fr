@@ -20,6 +20,7 @@ use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
 use HiEvents\Services\Domain\Sms\SmsAlertService;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
+use HiEvents\Services\Domain\Sms\SmsFileSyncService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
@@ -49,6 +50,8 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
     private SmsLineService|MockInterface $lineService;
 
     private SmsUnattributedSmsService|MockInterface $unattributedService;
+
+    private SmsFileSyncService|MockInterface $fileSyncService;
 
     private SmsTeamInboundService|MockInterface $teamInboundService;
 
@@ -80,6 +83,10 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->teamInboundService->shouldReceive('route')->andReturnNull()->byDefault();
         $this->teamInboundService->shouldReceive('isSupervisor')->andReturnFalse()->byDefault();
 
+        $this->fileSyncService = Mockery::mock(SmsFileSyncService::class);
+        $this->fileSyncService->shouldReceive('findQueueOrganizerId')->andReturnNull()->byDefault();
+        $this->inboundService->shouldReceive('isKnownOutbound')->andReturnFalse()->byDefault();
+
         $this->handler = new HandleHttpSmsWebhookHandler(
             $this->settingsService,
             $this->settingsRepository,
@@ -94,6 +101,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             $this->teamInboundService,
             Mockery::mock(DecideLiveChatRefundHandler::class),
             Mockery::mock(LiveChatQuestionService::class),
+            $this->fileSyncService,
         );
 
         $this->settings = (new OrganizerSmsSettingDomainObject)
@@ -349,6 +357,68 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             'id' => 'prov-1',
             'contact' => '+262639123456',
             'owner' => '+262639000000',
+        ]));
+    }
+
+    public function test_shared_line_status_of_a_queue_sms_unknown_to_picha_goes_to_the_organizer_the_queue_sent_it_for(): void
+    {
+        $this->expectVerified();
+        $this->expectSharedLine();
+
+        $this->campaignDeliveryService->shouldReceive('applyProviderStatus')->andReturnFalse();
+        $this->campaignDeliveryService->shouldReceive('findCampaignOrganizerId')->andReturnNull();
+        $this->inboundService->shouldReceive('isKnownOutbound')->with('prov-3', 321)->andReturnFalse();
+        $this->fileSyncService->shouldReceive('findQueueOrganizerId')->once()->with(321)->andReturn(8);
+
+        $this->inboundService->shouldReceive('recordOutboundEvent')
+            ->once()
+            ->withArgs(fn ($owner, OutboundSmsEventDTO $event) => $owner === $this->member && $event->requestId === 'file-321');
+
+        $this->handler->handle($this->dto('message.phone.sent', [
+            'id' => 'prov-3',
+            'contact' => '+262639123456',
+            'owner' => '+262639000000',
+            'request_id' => 'file-321',
+        ]));
+    }
+
+    public function test_queue_is_not_asked_about_an_sms_picha_already_stores(): void
+    {
+        $this->expectVerified();
+        $this->expectSharedLine();
+
+        $this->campaignDeliveryService->shouldReceive('applyProviderStatus')->andReturnFalse();
+        $this->campaignDeliveryService->shouldReceive('findCampaignOrganizerId')->andReturnNull();
+        $this->inboundService->shouldReceive('isKnownOutbound')->with('prov-4', 322)->andReturnTrue();
+        $this->fileSyncService->shouldNotReceive('findQueueOrganizerId');
+        $this->inboundService->shouldReceive('recordOutboundEvent')->once();
+
+        $this->handler->handle($this->dto('message.phone.delivered', [
+            'id' => 'prov-4',
+            'contact' => '+262639123456',
+            'owner' => '+262639000000',
+            'request_id' => 'file-322',
+        ]));
+    }
+
+    public function test_queue_organizer_outside_the_line_never_gets_the_sms(): void
+    {
+        $this->expectVerified();
+        $this->expectSharedLine();
+
+        $this->campaignDeliveryService->shouldReceive('applyProviderStatus')->andReturnFalse();
+        $this->campaignDeliveryService->shouldReceive('findCampaignOrganizerId')->andReturnNull();
+        $this->fileSyncService->shouldReceive('findQueueOrganizerId')->with(323)->andReturn(99);
+
+        $this->inboundService->shouldReceive('recordOutboundEvent')
+            ->once()
+            ->withArgs(fn ($owner) => $owner === $this->settings);
+
+        $this->handler->handle($this->dto('message.phone.sent', [
+            'id' => 'prov-5',
+            'contact' => '+262639123456',
+            'owner' => '+262639000000',
+            'request_id' => 'file-323',
         ]));
     }
 

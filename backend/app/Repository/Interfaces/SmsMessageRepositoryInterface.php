@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Repository\Interfaces;
 
 use HiEvents\DomainObjects\SmsMessageDomainObject;
+use HiEvents\Services\Domain\Sms\DTO\SmsLastSenderDTO;
 use Illuminate\Support\Collection;
 
 /**
@@ -25,12 +26,19 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
     public function findLatestForConversation(int $conversationId, int $limit): Collection;
 
     /**
-     * The organizer, among the given ones, who sent the most recent SMS to this number since the given date,
-     * from the given line when one is given. Messages of team conversations and supervision copies do not count.
+     * The organizer, among the given ones, who sent the most recent SMS to this number between the given dates, and when.
+     * Looks at the SMS recorded in conversations (from the given line when one is given; team conversations and
+     * supervision copies do not count) and at the campaign recipients the SMS reached.
      *
      * @param  array<int, int>  $organizerIds
      */
-    public function findLastOutboundOrganizerId(array $organizerIds, string $phone, string $since, ?int $lineSettingsId = null): ?int;
+    public function findLastSender(
+        array $organizerIds,
+        string $phone,
+        string $since,
+        ?int $lineSettingsId = null,
+        ?string $until = null,
+    ): ?SmsLastSenderDTO;
 
     /**
      * Whether one of the given organizers sent (or tried to send) an SMS to this number after the given message,

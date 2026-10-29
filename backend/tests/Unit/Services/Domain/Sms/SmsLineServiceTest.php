@@ -13,6 +13,7 @@ use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsLineFormerMemberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
+use HiEvents\Services\Domain\Sms\DTO\SmsLastSenderDTO;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use Illuminate\Config\Repository as ConfigRepository;
@@ -94,24 +95,24 @@ class SmsLineServiceTest extends TestCase
 
     public function test_line_with_a_single_organizer_gives_every_sms_to_it(): void
     {
-        $this->messageRepository->shouldNotReceive('findLastOutboundOrganizerId');
+        $this->messageRepository->shouldNotReceive('findLastSender');
 
         $this->assertSame($this->line, $this->service->attributeInbound($this->line, collect([$this->line]), '+262639123456'));
     }
 
     public function test_sms_goes_to_the_organizer_who_wrote_last_within_30_days_by_default(): void
     {
-        $this->messageRepository->shouldReceive('findLastOutboundOrganizerId')
+        $this->messageRepository->shouldReceive('findLastSender')
             ->once()
-            ->with([4, 8], '+262639123456', '2026-09-22 12:00:00', 1)
-            ->andReturn(8);
+            ->with([4, 8], '+262639123456', '2026-09-22 12:00:00', 1, null)
+            ->andReturn(new SmsLastSenderDTO(organizerId: 8, sentAt: '2026-10-20 10:00:00'));
 
         $this->assertSame($this->member, $this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456'));
     }
 
     public function test_line_owner_gets_the_sms_when_it_wrote_last(): void
     {
-        $this->messageRepository->shouldReceive('findLastOutboundOrganizerId')->andReturn(4);
+        $this->messageRepository->shouldReceive('findLastSender')->andReturn(new SmsLastSenderDTO(organizerId: 4, sentAt: '2026-10-20 10:00:00'));
 
         $this->assertSame($this->line, $this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456'));
     }
@@ -120,24 +121,24 @@ class SmsLineServiceTest extends TestCase
     {
         $this->config->set('services.httpsms.shared_line_attribution_days', 7);
 
-        $this->messageRepository->shouldReceive('findLastOutboundOrganizerId')
+        $this->messageRepository->shouldReceive('findLastSender')
             ->once()
-            ->with([4, 8], '+262639123456', '2026-10-15 12:00:00', 1)
-            ->andReturn(8);
+            ->with([4, 8], '+262639123456', '2026-10-15 12:00:00', 1, null)
+            ->andReturn(new SmsLastSenderDTO(organizerId: 8, sentAt: '2026-10-20 10:00:00'));
 
         $this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456');
     }
 
     public function test_sms_is_unattributed_when_nobody_wrote_within_the_window(): void
     {
-        $this->messageRepository->shouldReceive('findLastOutboundOrganizerId')->once()->andReturnNull();
+        $this->messageRepository->shouldReceive('findLastSender')->once()->andReturnNull();
 
         $this->assertNull($this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456'));
     }
 
     public function test_organizer_outside_the_line_never_gets_the_sms(): void
     {
-        $this->messageRepository->shouldReceive('findLastOutboundOrganizerId')->andReturn(99);
+        $this->messageRepository->shouldReceive('findLastSender')->andReturn(new SmsLastSenderDTO(organizerId: 99, sentAt: '2026-10-20 10:00:00'));
 
         $this->assertNull($this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456'));
     }
@@ -225,10 +226,10 @@ class SmsLineServiceTest extends TestCase
     {
         $former = $this->formerSettings();
 
-        $this->messageRepository->shouldReceive('findLastOutboundOrganizerId')
+        $this->messageRepository->shouldReceive('findLastSender')
             ->once()
-            ->with([4, 8], '+262639123456', '2026-09-22 12:00:00', 1)
-            ->andReturn(8);
+            ->with([4, 8], '+262639123456', '2026-09-22 12:00:00', 1, null)
+            ->andReturn(new SmsLastSenderDTO(organizerId: 8, sentAt: '2026-10-20 10:00:00'));
 
         $this->assertSame($former, $this->service->attributeInbound($this->line, collect([$this->line, $former]), '+262639123456'));
     }
@@ -237,7 +238,7 @@ class SmsLineServiceTest extends TestCase
     {
         $former = $this->formerSettings();
 
-        $this->messageRepository->shouldReceive('findLastOutboundOrganizerId')->once()->andReturnNull();
+        $this->messageRepository->shouldReceive('findLastSender')->once()->andReturnNull();
 
         $this->assertSame($this->line, $this->service->attributeInbound($this->line, collect([$this->line, $former]), '+262639123456'));
     }

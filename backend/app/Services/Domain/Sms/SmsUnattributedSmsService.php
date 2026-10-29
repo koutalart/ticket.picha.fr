@@ -22,6 +22,8 @@ use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
+use HiEvents\Services\Domain\Sms\DTO\SmsUnattributedBackfillItemDTO;
+use HiEvents\Services\Domain\Sms\DTO\SmsUnattributedBackfillResultDTO;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
@@ -164,6 +166,107 @@ class SmsUnattributedSmsService
 
             return $message;
         });
+    }
+
+    /**
+     * Gives each SMS still waiting for the platform to the organizer of its line who wrote last to the number within
+     * the window before the SMS was received. Only inserts the message: no alert, no assistant, no automatic reply.
+     * The message keeps the date the SMS was received. Run again, it only looks at the SMS still waiting.
+     *
+     * @throws InvalidSmsPhoneNumberException
+     * @throws Throwable
+     */
+    public function attributeFromHistory(int $windowDays, bool $dryRun): SmsUnattributedBackfillResultDTO
+    {
+        $pending = $this->unattributedRepository->findWhere(
+            where: [[SmsUnattributedMessageDomainObjectAbstract::ASSIGNED_AT, 'null', null]],
+            orderAndDirections: [new OrderAndDirection(SmsUnattributedMessageDomainObjectAbstract::ID, 'asc')],
+        );
+
+        $lines = [];
+        $attributed = [];
+        $unattributed = [];
+        $skipped = [];
+
+        /** @var SmsUnattributedMessageDomainObject $message */
+        foreach ($pending as $message) {
+            $lineId = $message->getLineSettingsId();
+            if (! array_key_exists($lineId, $lines)) {
+                /** @var OrganizerSmsSettingDomainObject|null $line */
+                $line = $this->settingsRepository->findFirstWhere([OrganizerSmsSettingDomainObjectAbstract::ID => $lineId]);
+                $lines[$lineId] = $line === null ? null : [$line, $this->lineService->candidates($line)];
+            }
+
+            $last = $lines[$lineId] === null ? null : $this->lineService->lastSender(
+                $lines[$lineId][0],
+                $lines[$lineId][1],
+                $message->getPhone(),
+                $message->getProviderTimestamp() ?? $message->getCreatedAt(),
+                $windowDays,
+            );
+
+            if ($last === null) {
+                $unattributed[] = new SmsUnattributedBackfillItemDTO(unattributedId: $message->getId(), phone: $message->getPhone(), organizerId: null);
+
+                continue;
+            }
+
+            $organizerId = $last->settings->getOrganizerId();
+
+            if ($dryRun) {
+                $attributed[] = new SmsUnattributedBackfillItemDTO(
+                    unattributedId: $message->getId(),
+                    phone: $message->getPhone(),
+                    organizerId: $organizerId,
+                    lastSentAt: $last->sentAt,
+                );
+
+                continue;
+            }
+
+            $created = $this->databaseManager->transaction(function () use ($message, $last, $organizerId) {
+                $created = $this->inboundService->recordInbound($last->settings, new InboundSmsDTO(
+                    providerMessageId: $message->getProviderMessageId(),
+                    contact: $message->getPhone(),
+                    content: $message->getContent(),
+                    timestamp: $message->getProviderTimestamp(),
+                ), lineSettingsId: $message->getLineSettingsId(), createdAt: $message->getCreatedAt());
+
+                if ($created === null) {
+                    return null;
+                }
+
+                $this->unattributedRepository->updateFromArray($message->getId(), [
+                    SmsUnattributedMessageDomainObjectAbstract::ASSIGNED_ORGANIZER_ID => $organizerId,
+                    SmsUnattributedMessageDomainObjectAbstract::SMS_MESSAGE_ID => $created->getId(),
+                    SmsUnattributedMessageDomainObjectAbstract::ASSIGNED_AT => Carbon::now('UTC')->toDateTimeString(),
+                ]);
+
+                return $created;
+            });
+
+            if ($created === null) {
+                $skipped[] = $message->getId();
+
+                continue;
+            }
+
+            $attributed[] = new SmsUnattributedBackfillItemDTO(
+                unattributedId: $message->getId(),
+                phone: $message->getPhone(),
+                organizerId: $organizerId,
+                smsMessageId: $created->getId(),
+                lastSentAt: $last->sentAt,
+            );
+        }
+
+        return new SmsUnattributedBackfillResultDTO(
+            dryRun: $dryRun,
+            scanned: count($pending),
+            attributed: $attributed,
+            unattributed: $unattributed,
+            skippedIds: $skipped,
+        );
     }
 
     private function optOut(int $organizerId, string $phone): void

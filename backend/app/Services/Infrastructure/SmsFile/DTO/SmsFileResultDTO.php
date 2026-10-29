@@ -16,6 +16,7 @@ class SmsFileResultDTO extends BaseDataObject
         public readonly ?string $ref = null,
         public readonly ?string $reason = null,
         public readonly bool $duplicate = false,
+        public readonly ?int $organizerId = null,
     ) {}
 
     public static function fromResponse(array $row): ?self
@@ -34,6 +35,7 @@ class SmsFileResultDTO extends BaseDataObject
             ref: isset($row['ref']) && is_scalar($row['ref']) ? (string) $row['ref'] : null,
             reason: isset($row['raison']) && is_scalar($row['raison']) ? mb_substr((string) $row['raison'], 0, 500) : null,
             duplicate: (bool) ($row['doublon'] ?? false),
+            organizerId: is_numeric($row['organisateur'] ?? null) ? (int) $row['organisateur'] : null,
         );
     }
 }
