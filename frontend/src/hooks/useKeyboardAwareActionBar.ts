@@ -81,10 +81,10 @@ export const useKeyboardAwareActionBar = (
             const fieldRect = field.getBoundingClientRect();
             const visibleTop = viewport ? viewport.offsetTop : 0;
             const margin = 12;
-            if (fieldRect.bottom > barTop - margin) {
-                window.scrollBy({top: fieldRect.bottom - barTop + margin, behavior: 'smooth'});
-            } else if (fieldRect.top < visibleTop + margin) {
-                window.scrollBy({top: fieldRect.top - visibleTop - margin, behavior: 'smooth'});
+            if (fieldRect.bottom > barTop - margin || fieldRect.top < visibleTop + margin) {
+                const visibleCenter = visibleTop + Math.max(0, barTop - visibleTop) / 2;
+                const fieldCenter = fieldRect.top + Math.min(fieldRect.height, barTop - visibleTop) / 2;
+                window.scrollBy({top: fieldCenter - visibleCenter, behavior: 'smooth'});
             }
         };
 
