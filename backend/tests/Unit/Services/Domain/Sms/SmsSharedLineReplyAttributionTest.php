@@ -244,6 +244,110 @@ class SmsSharedLineReplyAttributionTest extends TestCase
         $this->assertSame(0, SmsMessage::query()->where('provider_message_id', 'old-4')->count());
     }
 
+    public function test_brayan_reply_reaches_his_existing_conversation_fed_by_the_web_chat(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-10-28 20:43:43', 'UTC'));
+        $this->outbound($this->raidId, daysAgo: 10);
+        $conversation = SmsConversation::create([
+            'account_id' => Organizer::find($this->innocentId)->account_id,
+            'organizer_id' => $this->innocentId,
+            'phone' => self::CONTACT,
+            'status' => 'OPEN',
+            'line_settings_id' => $this->line->id,
+        ]);
+        SmsMessage::create([
+            'sms_conversation_id' => $conversation->id,
+            'organizer_id' => $this->innocentId,
+            'direction' => 'OUTBOUND',
+            'author_type' => 'AGENT',
+            'content' => 'On te répond par SMS',
+            'status' => 'DELIVERED',
+            'channel' => 'WEB_CHAT',
+            'provider_timestamp' => '2026-10-28 20:40:17',
+        ]);
+
+        $this->receive('in-brayan', 'Ok merci');
+
+        $reply = SmsMessage::query()->where('provider_message_id', 'in-brayan')->sole();
+        $this->assertSame($this->innocentId, $reply->organizer_id);
+        $this->assertSame($conversation->id, $reply->sms_conversation_id);
+        $this->assertSame(0, SmsUnattributedMessage::query()->count());
+    }
+
+    public function test_reply_reaches_a_conversation_of_the_line_whose_sms_has_no_line_of_its_own(): void
+    {
+        $conversation = SmsConversation::create([
+            'account_id' => Organizer::find($this->kulturmId)->account_id,
+            'organizer_id' => $this->kulturmId,
+            'phone' => self::CONTACT,
+            'status' => 'OPEN',
+            'line_settings_id' => $this->line->id,
+        ]);
+        SmsMessage::create([
+            'sms_conversation_id' => $conversation->id,
+            'organizer_id' => $this->kulturmId,
+            'direction' => 'OUTBOUND',
+            'author_type' => 'HUMAN',
+            'content' => 'Bonjour',
+            'status' => 'DELIVERED',
+            'provider_timestamp' => Carbon::now('UTC')->subMinutes(3),
+        ]);
+
+        $this->receive('in-6', 'Bonjour !');
+
+        $this->assertSame($this->kulturmId, SmsMessage::query()->where('provider_message_id', 'in-6')->sole()->organizer_id);
+    }
+
+    public function test_fix_phones_dry_run_only_shows_then_renames_or_merges_and_fixes_the_stop(): void
+    {
+        $accountId = Organizer::find($this->innocentId)->account_id;
+        $wrong = SmsConversation::create([
+            'account_id' => $accountId, 'organizer_id' => $this->innocentId, 'phone' => '+33693514915',
+            'status' => 'OPEN', 'line_settings_id' => $this->line->id, 'unread_count' => 1,
+            'last_message_at' => Carbon::now('UTC')->subMinute(), 'last_message_preview' => 'Merci',
+        ]);
+        $wrongMessage = SmsMessage::create([
+            'sms_conversation_id' => $wrong->id, 'organizer_id' => $this->innocentId, 'direction' => 'OUTBOUND',
+            'author_type' => 'HUMAN', 'content' => 'Ton billet', 'status' => 'DELIVERED', 'line_settings_id' => $this->line->id,
+        ]);
+        $right = SmsConversation::create([
+            'account_id' => $accountId, 'organizer_id' => $this->innocentId, 'phone' => '+262693514915',
+            'status' => 'OPEN', 'line_settings_id' => $this->line->id, 'unread_count' => 2,
+            'last_message_at' => Carbon::now('UTC')->subHour(),
+        ]);
+        $alone = SmsConversation::create([
+            'account_id' => Organizer::find($this->kulturmId)->account_id, 'organizer_id' => $this->kulturmId,
+            'phone' => '+33639123456', 'status' => 'OPEN', 'line_settings_id' => $this->line->id,
+        ]);
+        $france = SmsConversation::create([
+            'account_id' => $accountId, 'organizer_id' => $this->innocentId, 'phone' => '+33612345678', 'status' => 'OPEN',
+        ]);
+        DB::table('sms_opt_outs')->insert([
+            'organizer_id' => $this->kulturmId, 'phone' => '+33639123456', 'source' => 'KEYWORD',
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+
+        $this->assertSame(0, Artisan::call('sms:attribute-unattributed', ['--fix-phones' => true, '--dry-run' => true]));
+        $this->assertStringContainsString('Numbers written with +33 instead of +262: 3.', Artisan::output());
+        $this->assertSame('+33693514915', $wrong->fresh()->phone);
+        $this->assertSame('+33639123456', $alone->fresh()->phone);
+
+        $this->assertSame(0, Artisan::call('sms:attribute-unattributed', ['--fix-phones' => true]));
+
+        $this->assertNull($wrong->fresh());
+        $this->assertSame($right->id, $wrongMessage->fresh()->sms_conversation_id);
+        $right->refresh();
+        $this->assertSame(3, $right->unread_count);
+        $this->assertSame('Merci', $right->last_message_preview);
+        $this->assertSame('+262639123456', $alone->fresh()->phone);
+        $this->assertSame('+33612345678', $france->fresh()->phone);
+        $this->assertSame(1, DB::table('sms_opt_outs')->where('organizer_id', $this->kulturmId)->where('phone', '+262639123456')->count());
+        $this->assertSame(0, DB::table('sms_opt_outs')->where('phone', '+33639123456')->count());
+
+        Artisan::call('sms:attribute-unattributed', ['--fix-phones' => true]);
+        $this->assertStringContainsString('Numbers written with +33 instead of +262: 0.', Artisan::output());
+    }
+
     private function receive(string $messageId, string $content): void
     {
         app(HandleHttpSmsWebhookHandler::class)->handle(new HttpSmsWebhookDTO(

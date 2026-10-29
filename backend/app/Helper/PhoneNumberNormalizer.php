@@ -67,6 +67,6 @@ class PhoneNumberNormalizer
             return null;
         }
 
-        return '+' . $digits;
+        return SmsPhoneNormalizer::overseasFromFrench('+' . $digits);
     }
 }

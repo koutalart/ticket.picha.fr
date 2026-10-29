@@ -2,7 +2,9 @@
 
 namespace HiEvents\Console\Commands;
 
+use HiEvents\Services\Domain\Sms\DTO\SmsPhoneFixItemDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsUnattributedBackfillItemDTO;
+use HiEvents\Services\Domain\Sms\SmsPhoneFixService;
 use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
 use Illuminate\Console\Command;
 use Throwable;
@@ -11,12 +13,14 @@ class AttributeUnattributedSmsCommand extends Command
 {
     protected $signature = 'sms:attribute-unattributed
         {--dry-run : Show what would be attributed without writing anything}
-        {--days=30 : Attribution window, in days before each SMS was received}';
+        {--days=30 : Attribution window, in days before each SMS was received}
+        {--fix-phones : First rewrite with +262 the conversations and STOP saved with a Mayotte or La Réunion number written with +33}';
 
     protected $description = 'Give the SMS kept unattributed on a shared line to the organizer of the line who wrote last to the number, without any alert or automatic reply';
 
     public function __construct(
         private readonly SmsUnattributedSmsService $unattributedService,
+        private readonly SmsPhoneFixService $phoneFixService,
     ) {
         parent::__construct();
     }
@@ -33,6 +37,10 @@ class AttributeUnattributedSmsCommand extends Command
         $dryRun = (bool) $this->option('dry-run');
 
         try {
+            if ($this->option('fix-phones')) {
+                $this->fixPhones($dryRun);
+            }
+
             $result = $this->unattributedService->attributeFromHistory($days, $dryRun);
         } catch (Throwable $exception) {
             $this->error($exception->getMessage());
@@ -77,5 +85,28 @@ class AttributeUnattributedSmsCommand extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    private function fixPhones(bool $dryRun): void
+    {
+        $items = $this->phoneFixService->fix($dryRun);
+
+        $this->info(sprintf('%sNumbers written with +33 instead of +262: %d.', $dryRun ? '[dry run] ' : '', count($items)));
+
+        if ($items !== []) {
+            $this->table(
+                ['Type', 'ID', 'Organizer', 'From', 'To', 'Action', 'Merged into', 'Messages moved'],
+                array_map(fn (SmsPhoneFixItemDTO $item) => [
+                    $item->type,
+                    $item->id,
+                    $item->organizerId,
+                    $item->from,
+                    $item->to,
+                    $item->action,
+                    $item->mergedIntoId ?? '-',
+                    $dryRun ? '-' : $item->movedMessages,
+                ], $items),
+            );
+        }
     }
 }

@@ -43,4 +43,20 @@ interface SmsConversationRepositoryInterface extends RepositoryInterface
      * @param  array<int, int>  $organizerIds
      */
     public function findLatestTeamConversationOrganizerId(array $organizerIds, string $phone): ?int;
+
+    /**
+     * Conversations whose number is a Mayotte or La Réunion number written with +33 (+33639…, +33692…, +33693…,
+     * +33262…, +33263…, +33269…).
+     *
+     * @return Collection<int, SmsConversationDomainObject>
+     */
+    public function findWithFrenchOverseasPhones(): Collection;
+
+    /**
+     * Moves the messages, web chats and assistant calls of a conversation into another one of the same organizer,
+     * keeps the latest activity and the unread count of both, then removes the emptied conversation.
+     *
+     * @return int the number of messages moved
+     */
+    public function mergeInto(int $sourceId, int $targetId): int;
 }

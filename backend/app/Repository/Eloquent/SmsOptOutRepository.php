@@ -9,6 +9,7 @@ use HiEvents\Models\SmsOptOut;
 use HiEvents\Repository\Interfaces\SmsOptOutRepositoryInterface;
 use HiEvents\Services\Domain\Sms\DTO\SmsOptOutSearchDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
  * @extends BaseRepository<SmsOptOutDomainObject>
@@ -56,5 +57,13 @@ class SmsOptOutRepository extends BaseRepository implements SmsOptOutRepositoryI
             ->paginate(perPage: $search->perPage, page: $search->page);
 
         return $this->handleResults($results);
+    }
+
+    public function findWithFrenchOverseasPhones(): Collection
+    {
+        return $this->handleResults(SmsOptOut::query()
+            ->whereRaw("phone ~ '^\\+33(639|692|693|262|263|269)[0-9]{6}$'")
+            ->orderBy('id')
+            ->get());
     }
 }

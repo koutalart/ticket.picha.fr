@@ -27,8 +27,9 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
 
     /**
      * The organizer, among the given ones, who sent the most recent SMS to this number between the given dates, and when.
-     * Looks at the SMS recorded in conversations (from the given line when one is given; team conversations and
-     * supervision copies do not count) and at the campaign recipients the SMS reached.
+     * Looks at the messages of its conversations (sent from the given line when one is given, or without a line of
+     * their own, like the web chat answers copied into the conversation; team conversations and supervision copies do
+     * not count) and at the campaign recipients the SMS reached.
      *
      * @param  array<int, int>  $organizerIds
      */
