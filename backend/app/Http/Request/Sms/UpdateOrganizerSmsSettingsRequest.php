@@ -29,6 +29,7 @@ class UpdateOrganizerSmsSettingsRequest extends BaseRequest
             'assistant_holding_reply' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_HOLDING_REPLY_LENGTH],
             'assistant_instructions' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_INSTRUCTIONS_LENGTH],
             'live_chat_enabled' => ['sometimes', 'boolean'],
+            'checkin_welcome_sms_enabled' => ['sometimes', 'boolean'],
             'live_chat_style' => ['sometimes', Rule::in(LiveChatStyle::valuesArray())],
             'organizer_assistant_enabled' => ['sometimes', 'boolean'],
             'organizer_assistant_instructions' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_INSTRUCTIONS_LENGTH],

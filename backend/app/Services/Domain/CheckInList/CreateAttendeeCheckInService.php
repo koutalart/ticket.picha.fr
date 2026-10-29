@@ -136,6 +136,7 @@ class CreateAttendeeCheckInService
     {
         $errors = new ErrorBagDTO();
         $checkIns = new Collection();
+        $createdCheckIns = new Collection();
 
         foreach ($attendees as $attendee) {
             $result = $this->processIndividualCheckIn(
@@ -148,7 +149,11 @@ class CreateAttendeeCheckInService
             );
 
             if ($result->checkIn) {
+                $result->checkIn->setAttendee($attendee);
                 $checkIns->push($result->checkIn);
+                if ($result->error === null) {
+                    $createdCheckIns->push($result->checkIn);
+                }
             }
             if ($result->error) {
                 $errors->addError($attendee->getPublicId(), $result->error);
@@ -158,6 +163,7 @@ class CreateAttendeeCheckInService
         return new CreateAttendeeCheckInsResponseDTO(
             attendeeCheckIns: $checkIns,
             errors: $errors,
+            createdAttendeeCheckIns: $createdCheckIns,
         );
     }
 

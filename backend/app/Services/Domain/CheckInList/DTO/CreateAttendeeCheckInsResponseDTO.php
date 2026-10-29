@@ -11,6 +11,7 @@ class CreateAttendeeCheckInsResponseDTO extends BaseDTO
     public function __construct(
         public Collection  $attendeeCheckIns,
         public ErrorBagDTO $errors,
+        public ?Collection $createdAttendeeCheckIns = null,
     )
     {
     }

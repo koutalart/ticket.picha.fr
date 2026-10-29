@@ -71,6 +71,10 @@ class UpdateOrganizerSmsSettingsHandler
             $attributes[OrganizerSmsSettingDomainObjectAbstract::LIVE_CHAT_ENABLED] = $dto->liveChatEnabled;
         }
 
+        if ($dto->wasProvided('checkinWelcomeSmsEnabled')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::CHECKIN_WELCOME_SMS_ENABLED] = $dto->checkinWelcomeSmsEnabled;
+        }
+
         if ($dto->wasProvided('liveChatStyle')) {
             $attributes[OrganizerSmsSettingDomainObjectAbstract::LIVE_CHAT_STYLE] = $dto->liveChatStyle->value;
         }
