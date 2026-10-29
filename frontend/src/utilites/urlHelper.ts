@@ -61,7 +61,15 @@ export const organizerCanonicalUrl = (organizer: Organizer) => {
     return origin ? `${origin}/` : organizerHomepageUrl(organizer);
 }
 
-export const eventCheckoutUrl = (eventId: IdParam, orderShortId: IdParam, subPage = '', organizer?: PublicUrlOwner) => {
+/**
+ * The organizer's llms.txt: at the root of its own domain, under its page on the platform.
+ */
+export const organizerLlmsTxtUrl = (organizer: Organizer) => {
+    const origin = customDomainOrigin(organizer);
+    return origin ? `${origin}/llms.txt` : `${organizerHomepageUrl(organizer)}/llms.txt`;
+}
+
+export const eventCheckoutUrl =(eventId: IdParam, orderShortId: IdParam, subPage = '', organizer?: PublicUrlOwner) => {
     return publicBaseUrl(organizer) + eventCheckoutPath(eventId, orderShortId, subPage);
 }
 

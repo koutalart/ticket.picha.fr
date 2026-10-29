@@ -1,7 +1,12 @@
 /* eslint-disable lingui/no-unlocalized-strings */
 import {Helmet} from "react-helmet-async";
 import {Event} from "../../../types";
-import {eventHomepageUrl, eventShareImage, organizerCanonicalUrl} from "../../../utilites/urlHelper.ts";
+import {
+    eventHomepageUrl,
+    eventShareImage,
+    organizerCanonicalUrl,
+    organizerLlmsTxtUrl
+} from "../../../utilites/urlHelper.ts";
 import {OpenGraphExtraMeta} from "../OpenGraphExtraMeta";
 import {
     buildEventBreadcrumbJsonLd,
@@ -23,6 +28,9 @@ export const EventDocumentHead = ({event}: EventDocumentHeadProps) => {
     const url = eventHomepageUrl(event);
     const organizerUrl = event.organizer?.id && event.organizer?.slug
         ? organizerCanonicalUrl(event.organizer)
+        : undefined;
+    const llmsTxtUrl = event.organizer?.id && event.organizer?.slug
+        ? organizerLlmsTxtUrl(event.organizer)
         : undefined;
     const structuredDataUrls = {eventUrl: url, organizerUrl};
     const eventJsonLd = serializeJsonLd(buildEventJsonLd(event, structuredDataUrls));
@@ -49,6 +57,7 @@ export const EventDocumentHead = ({event}: EventDocumentHeadProps) => {
             <meta name="robots" content="index, follow"/>
 
             <link rel="canonical" href={url}/>
+            {llmsTxtUrl && <link rel="alternate" type="text/plain" title="llms.txt" href={llmsTxtUrl}/>}
 
             <script type="application/ld+json">
                 {eventJsonLd}

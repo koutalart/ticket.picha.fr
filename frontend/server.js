@@ -225,14 +225,24 @@ async function main() {
         res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`);
     };
 
+    const AI_CRAWLER_USER_AGENTS = [
+        'GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User',
+        'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'CCBot', 'meta-externalagent',
+    ];
+
     app.get('/robots.txt', async (req, res) => {
         const customDomain = await resolveCustomDomain(normalizeHost(req.get('host')));
         const frontendUrl = customDomain
             ? `https://${customDomain.domain}`
             : process.env.VITE_FRONTEND_URL || `${req.protocol}://${req.get('host')}`;
-        const disallow = customDomain ? '\nDisallow: /checkout/\nDisallow: /order/' : '';
-        const robotsTxt = `User-agent: *
-Allow: /${disallow}
+        const rules = ['Allow: /', ...(customDomain ? ['Disallow: /checkout/', 'Disallow: /order/'] : [])].join('\n');
+        const aiCrawlers = AI_CRAWLER_USER_AGENTS.map((agent) => `User-agent: ${agent}`).join('\n');
+        const robotsTxt = `# Summary for AI assistants and LLMs: ${frontendUrl}/llms.txt
+User-agent: *
+${rules}
+
+${aiCrawlers}
+${rules}
 
 Sitemap: ${frontendUrl}/sitemap.xml
 `;

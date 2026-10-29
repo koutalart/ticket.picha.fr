@@ -13,7 +13,7 @@ import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
-import {eventHomepagePath, eventHomepageUrl, organizerHomepagePath} from "../../../utilites/urlHelper.ts";
+import {eventHomepagePath, eventHomepageUrl, organizerHomepagePath, organizerLlmsTxtUrl} from "../../../utilites/urlHelper.ts";
 import {buildEventJsonLd, getVenue} from "../Poster/eventData.ts";
 import {dateBlock, eventAccent, eventFlyer, TOUR_FALLBACK_ACCENT, tourCity, tourPrice} from "./tourData.ts";
 import classes from "./Tour.module.scss";
@@ -117,6 +117,7 @@ export const TourTemplate = ({organizer, eventsData, siteOrigin}: OrganizerTempl
                 <title>{title}</title>
                 <meta name="description" content={description}/>
                 <link rel="canonical" href={canonicalUrl}/>
+                <link rel="alternate" type="text/plain" title="llms.txt" href={organizerLlmsTxtUrl(organizer)}/>
                 <meta property="og:title" content={title}/>
                 <meta property="og:description" content={description}/>
                 <meta property="og:type" content="website"/>

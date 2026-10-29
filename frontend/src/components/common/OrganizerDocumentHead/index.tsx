@@ -1,7 +1,8 @@
 /* eslint-disable lingui/no-unlocalized-strings */
 import {Helmet} from "react-helmet-async";
 import {Organizer} from "../../../types";
-import {organizerCanonicalUrl} from "../../../utilites/urlHelper.ts";
+import {organizerCanonicalUrl, organizerLlmsTxtUrl} from "../../../utilites/urlHelper.ts";
+import {getOrganizerSocialProfiles} from "../../../utilites/organizerSocialLinks.ts";
 import {OpenGraphExtraMeta} from "../OpenGraphExtraMeta";
 
 interface OrganizerDocumentHeadProps {
@@ -45,20 +46,10 @@ export const OrganizerDocumentHead = ({organizer}: OrganizerDocumentHeadProps) =
         address
     } : undefined;
 
-    // Collect social media links
-    const sameAs = [];
-    if (organizerSettings?.website_url) {
-        sameAs.push(organizerSettings.website_url);
-    }
-    if (organizerSettings?.social_media_handles) {
-        const socialHandles = organizerSettings.social_media_handles;
-        if (socialHandles.facebook) sameAs.push(`https://facebook.com/${socialHandles.facebook}`);
-        if (socialHandles.twitter) sameAs.push(`https://twitter.com/${socialHandles.twitter}`);
-        if (socialHandles.instagram) sameAs.push(`https://instagram.com/${socialHandles.instagram}`);
-        if (socialHandles.linkedin) sameAs.push(`https://linkedin.com/company/${socialHandles.linkedin}`);
-        if (socialHandles.youtube) sameAs.push(`https://youtube.com/@${socialHandles.youtube}`);
-        if (socialHandles.github) sameAs.push(`https://github.com/${socialHandles.github}`);
-    }
+    const sameAs = Array.from(new Set([
+        ...(organizerSettings?.website_url ? [organizerSettings.website_url] : []),
+        ...getOrganizerSocialProfiles(organizerSettings).map(profile => profile.url),
+    ]));
 
     const schemaOrgJSONLD = {
         "@context": "http://schema.org",
@@ -104,6 +95,7 @@ export const OrganizerDocumentHead = ({organizer}: OrganizerDocumentHeadProps) =
             <meta name="robots" content={allowIndexing ? "index, follow" : "noindex, nofollow"}/>
 
             <link rel="canonical" href={url}/>
+            <link rel="alternate" type="text/plain" title="llms.txt" href={organizerLlmsTxtUrl(organizer)}/>
 
             <script type="application/ld+json">
                 {JSON.stringify(schemaOrgJSONLD)}
