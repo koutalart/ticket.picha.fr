@@ -11,9 +11,10 @@ interface RefundProtectionOptionProps {
     checked: boolean;
     disabled?: boolean;
     onChange: (enabled: boolean) => void;
+    deadlineHours?: number;
 }
 
-export const RefundProtectionOption = ({offer, checked, disabled = false, onChange}: RefundProtectionOptionProps) => {
+export const RefundProtectionOption = ({offer, checked, disabled = false, onChange, deadlineHours = 0}: RefundProtectionOptionProps) => {
     const isDisabled = disabled || offer.is_locked;
     const price = formatCurrency(offer.total_before_additions, offer.currency);
     const extraFees = Math.round((Number(offer.total_fee) + Number(offer.total_tax)) * 100) / 100;
@@ -32,6 +33,49 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
     const unitPrice = offer.quantity > 0
         ? formatCurrency(Number(offer.total_before_additions) / offer.quantity, offer.currency)
         : price;
+
+    if (!offer.is_locked && !isMixed) {
+        const refundWindow = deadlineHours > 0
+            ? t`Refunded on request up to ${deadlineHours} h before the event starts.`
+            : t`Refunded on request until the event starts.`;
+
+        return (
+            <label className={classNames(classes.option, classes.highlight, {
+                [classes.checked]: checked,
+                [classes.disabled]: isDisabled,
+                [classes.invite]: !checked && !isDisabled,
+            })}>
+                <div className={classes.highlightHeader}>
+                    <span className={classes.badge}>{t`Recommended`}</span>
+                </div>
+                <div className={classes.highlightRow}>
+                    <IconShieldCheck size={30} className={classes.highlightIcon}/>
+                    <div className={classes.body}>
+                        <div className={classes.headline}>{t`Can't make it after all? Your ticket is refunded.`}</div>
+                        <ul className={classes.benefits}>
+                            <li>{refundWindow}</li>
+                            <li>{t`Without this option, your ticket is not refundable.`}</li>
+                        </ul>
+                        <div className={classes.label}>{label}</div>
+                        {offer.is_per_ticket && offer.quantity > 1 && (
+                            <div className={classes.details}>{t`${unitPrice} per ticket`}</div>
+                        )}
+                        {extraFees > 0 && (
+                            <div className={classes.details}>{t`+ ${formattedFees} in fees`}</div>
+                        )}
+                    </div>
+                    <Checkbox
+                        className={classes.checkbox}
+                        size="md"
+                        checked={checked}
+                        disabled={isDisabled}
+                        onChange={(event) => onChange(event.currentTarget.checked)}
+                        aria-label={label}
+                    />
+                </div>
+            </label>
+        );
+    }
 
     return (
         <label className={classNames(classes.option, {

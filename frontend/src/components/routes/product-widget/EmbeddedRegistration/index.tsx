@@ -2204,7 +2204,7 @@ export const EmbeddedRegistration = ({
                     </div>
                 )}
 
-                {(index > 0 || (isLast && isPaidMode)) && (
+                {index > 0 && (
                     <div className={classes.stepFooter}>
                         {index > 0 && (
                             <button
@@ -2217,7 +2217,6 @@ export const EmbeddedRegistration = ({
                                 {t`Previous`}
                             </button>
                         )}
-                        {isLast && isPaidMode && renderReassurance()}
                     </div>
                 )}
 
@@ -2237,6 +2236,10 @@ export const EmbeddedRegistration = ({
                         </span>
                     )}
                 </div>
+
+                {isLast && isPaidMode && (
+                    <div className={classes.reassuranceBelow}>{renderReassurance()}</div>
+                )}
 
                 {current.kind === 'contact' && !!event.settings?.pre_checkout_message && (
                     <UserGeneratedContent
