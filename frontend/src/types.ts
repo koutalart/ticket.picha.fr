@@ -555,7 +555,46 @@ export interface OrganizerSiteContent {
     notify_url?: string | null;
     videos?: { youtube_id: string; title: string; subtitle?: string | null }[] | null;
     practical?: { title: string; text?: string | null }[] | null;
+    seo_title_home?: string | null;
+    seo_title_services?: string | null;
+    seo_title_about?: string | null;
+    seo_title_partners?: string | null;
+    seo_title_events?: string | null;
+    seo_title_contact?: string | null;
+    about_button_label?: string | null;
+    partners_subtitle?: string | null;
+    services_cta_title?: string | null;
+    services_cta_text?: string | null;
+    partner_card_1_text?: string | null;
+    partner_card_2_text?: string | null;
+    partner_card_3_text?: string | null;
+    partners_button_label?: string | null;
+    contact_intro?: string | null;
+    contact_write_text?: string | null;
+    events_intro?: string | null;
 }
+
+export const ORGANIZER_SITE_LABEL_KEYS = [
+    'seo_title_home',
+    'seo_title_services',
+    'seo_title_about',
+    'seo_title_partners',
+    'seo_title_events',
+    'seo_title_contact',
+    'about_button_label',
+    'partners_subtitle',
+    'services_cta_title',
+    'services_cta_text',
+    'partner_card_1_text',
+    'partner_card_2_text',
+    'partner_card_3_text',
+    'partners_button_label',
+    'contact_intro',
+    'contact_write_text',
+    'events_intro',
+] as const;
+
+export type OrganizerSiteLabelKey = typeof ORGANIZER_SITE_LABEL_KEYS[number];
 
 export interface Organizer {
     id?: IdParam;

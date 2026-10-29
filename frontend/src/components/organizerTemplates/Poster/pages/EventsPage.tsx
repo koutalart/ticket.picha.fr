@@ -2,7 +2,7 @@ import {Link} from "react-router";
 import {t} from "@lingui/macro";
 import {IconArrowRight} from "@tabler/icons-react";
 import {organizerHomepagePath} from "../../../../utilites/urlHelper.ts";
-import {areaSuffix, PageIntro, PosterEventCard, PosterPageProps, SectionHead} from "../shared.tsx";
+import {areaSuffix, PageIntro, PosterEventCard, PosterPageProps, SectionHead, siteLabel} from "../shared.tsx";
 import classes from "../Poster.module.scss";
 
 export const EventsPage = ({organizer, eventsData, pastEventsData}: PosterPageProps) => {
@@ -14,9 +14,9 @@ export const EventsPage = ({organizer, eventsData, pastEventsData}: PosterPagePr
     return (
         <>
             <PageIntro
-                heading={t`Events${areaSuffix(organizer)} — ${organizer.name}`}
+                heading={t`Events${areaSuffix(organizer)} | ${organizer.name}`}
                 title={t`Line-up & archives.`}
-                lead={t`All upcoming dates by ${organizer.name}, and a look back at past editions.`}
+                lead={siteLabel(organizer, 'events_intro')}
             />
 
             <section className={classes.section} aria-labelledby="upcoming-title">
@@ -33,7 +33,7 @@ export const EventsPage = ({organizer, eventsData, pastEventsData}: PosterPagePr
             {past.length > 0 && (
                 <section className={classes.section} aria-labelledby="past-title">
                     <div className={classes.sectionHeadRow}>
-                        <SectionHead id="past-title" eyebrow={t`Archive`} title={t`Past events.`}/>
+                        <SectionHead id="past-title" eyebrow={t({message: 'Archive', context: 'past events section heading'})} title={t`Past events.`}/>
                         {(pastEventsData?.meta.last_page || 1) > 1 && (
                             <Link to={`${organizerHomepagePath(organizer)}/past-events`} className={classes.textLink}>
                                 {t`See all past events`} <IconArrowRight size={14}/>

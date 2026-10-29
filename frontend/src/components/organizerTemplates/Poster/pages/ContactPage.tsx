@@ -2,7 +2,7 @@ import {t} from "@lingui/macro";
 import {IconArrowRight, IconDownload, IconMail, IconMapPin, IconNews, IconPhone} from "@tabler/icons-react";
 import {socialMediaConfig} from "../../../../constants/socialMediaConfig";
 import {formatAddress} from "../../../../utilites/addressUtilities.ts";
-import {areaSuffix, PageIntro, PosterPageProps} from "../shared.tsx";
+import {areaSuffix, PageIntro, PosterPageProps, siteLabel} from "../shared.tsx";
 import classes from "../Poster.module.scss";
 
 export const ContactPage = ({organizer, openContact}: PosterPageProps) => {
@@ -23,7 +23,7 @@ export const ContactPage = ({organizer, openContact}: PosterPageProps) => {
             <PageIntro
                 heading={t`Contact ${organizer.name}${areaSuffix(organizer)}`}
                 title={t`Let's talk.`}
-                lead={t`A question about an event, a booking, a project? The ${organizer.name} team answers you.`}
+                lead={siteLabel(organizer, 'contact_intro')}
             />
 
             <section className={classes.section} aria-label={t`Contact details`}>
@@ -31,7 +31,7 @@ export const ContactPage = ({organizer, openContact}: PosterPageProps) => {
                     <article className={classes.contactCard}>
                         <IconMail size={28}/>
                         <h2>{t`Write to us`}</h2>
-                        <p>{t`Send us a message, we will reply by e-mail as soon as possible.`}</p>
+                        <p>{siteLabel(organizer, 'contact_write_text')}</p>
                         <button className={classes.primaryCta} onClick={openContact}>
                             {t`Send a message`} <IconArrowRight size={18}/>
                         </button>

@@ -16,7 +16,7 @@ import {eventHomepagePath, eventHomepageUrl, eventShareImage, eventShareImageUrl
 import {OpenGraphExtraMeta} from "../../common/OpenGraphExtraMeta";
 import {buildEventJsonLd, formatFromPrice, getTicketTiers, getVenue} from "./eventData.ts";
 import {getFaq} from "./faq.ts";
-import {areaSuffix, longDate, PosterPageProps, stripHtml} from "./shared.tsx";
+import {areaSuffix, longDate, PosterPageProps, siteLabel, stripHtml} from "./shared.tsx";
 import {HomePage} from "./pages/HomePage.tsx";
 import {UniversePage} from "./pages/UniversePage.tsx";
 import {EventsPage} from "./pages/EventsPage.tsx";
@@ -90,36 +90,32 @@ export const PosterTemplate = ({
 
     const where = areaSuffix(organizer);
     const featuredCity = featured ? getVenue(featured).city : undefined;
-    const featuredWhere = featuredCity ? ` · ${featuredCity}` : '';
-    const serviceList = (content.services || []).slice(0, 3).map(service => service.title.toLowerCase()).join(', ');
-    const serviceNames = serviceList.charAt(0).toUpperCase() + serviceList.slice(1);
+    const featuredWhere = featuredCity ? `, ${featuredCity}` : '';
     const seo: Record<OrganizerSitePage, { title: string; description: string }> = {
         home: {
-            title: organizer.settings?.seo_title || t`${organizer.name} — events and concerts${where} | Official ticketing`,
+            title: siteLabel(organizer, 'seo_title_home'),
             description: organizer.settings?.seo_description || (featured
                 ? t`${content.tagline || organizer.name}. Next event: ${featured.title}, ${longDate(featured)}${featuredWhere}. Book your tickets online: instant e-ticket, secure payment.`
                 : t`${content.tagline || organizer.name}. Discover the upcoming events and book your tickets online.`),
         },
         'a-propos': {
-            title: t`${organizer.name}: story, vision and team${where}`,
+            title: siteLabel(organizer, 'seo_title_about'),
             description: content.tagline || stripHtml(content.story).slice(0, 155) || t`Discover the story, the vision and the team of ${organizer.name}.`,
         },
         evenements: {
-            title: t`Events and concerts${where}: line-up and archives | ${organizer.name}`,
+            title: siteLabel(organizer, 'seo_title_events'),
             description: t`All upcoming events by ${organizer.name}${where}, official ticketing and a look back at past editions.`,
         },
         services: {
-            title: serviceNames
-                ? t`${serviceNames}${where} | ${organizer.name}`
-                : t`Services${where} | ${organizer.name}`,
+            title: siteLabel(organizer, 'seo_title_services'),
             description: content.services_intro || t`${organizer.name} supports companies, institutions and partners in creating their events${where}.`,
         },
         partenaires: {
-            title: t`Partners and sponsorship | ${organizer.name}`,
+            title: siteLabel(organizer, 'seo_title_partners'),
             description: content.partners_intro || t`Discover the partners of ${organizer.name} and how to associate your brand with our events.`,
         },
         contact: {
-            title: t`Contact and press | ${organizer.name}`,
+            title: siteLabel(organizer, 'seo_title_contact'),
             description: t`Contact ${organizer.name}${where}: questions, bookings, partnerships and press requests.`,
         },
     };
@@ -234,7 +230,7 @@ export const PosterTemplate = ({
 
                 <header className={classes.nav}>
                     <div className={classes.navInner}>
-                        <Link to={sitePath('home')} className={classes.navBrand} aria-label={t`${organizer.name} — home`}>
+                        <Link to={sitePath('home')} className={classes.navBrand} aria-label={t`${organizer.name}, home`}>
                             {logo
                                 ? <img src={logo.url} alt={organizer.name} className={classes.navLogo}/>
                                 : <span className={classes.wordmark}>{organizer.name}</span>}

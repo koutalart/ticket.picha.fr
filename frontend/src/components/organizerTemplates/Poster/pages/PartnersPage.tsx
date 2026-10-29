@@ -1,6 +1,6 @@
 import {t} from "@lingui/macro";
 import {IconArrowRight, IconChartBar, IconSpeakerphone, IconUsersGroup} from "@tabler/icons-react";
-import {PageIntro, PartnerLogos, PosterPageProps, SectionHead} from "../shared.tsx";
+import {PageIntro, PartnerLogos, PosterPageProps, SectionHead, siteLabel} from "../shared.tsx";
 import classes from "../Poster.module.scss";
 
 export const PartnersPage = ({organizer, openContact}: PosterPageProps) => {
@@ -16,7 +16,7 @@ export const PartnersPage = ({organizer, openContact}: PosterPageProps) => {
     return (
         <>
             <PageIntro
-                heading={t`Partners — ${organizer.name}`}
+                heading={t`Partners | ${organizer.name}`}
                 title={t`Together, further.`}
                 lead={content.partners_intro || t`Brands, institutions and media that support ${organizer.name}.`}
             />
@@ -39,12 +39,12 @@ export const PartnersPage = ({organizer, openContact}: PosterPageProps) => {
                 <div className={classes.visionBlock}>
                     <SectionHead id="become-partner-title" eyebrow={t`Become a partner`} title={t`Associate your brand with our events.`}/>
                     <ul className={classes.benefits}>
-                        <li><IconUsersGroup size={26}/><strong>{t`Reach an engaged audience`}</strong><span>{t`Meet our audience where emotions run high.`}</span></li>
-                        <li><IconSpeakerphone size={26}/><strong>{t`Gain visibility`}</strong><span>{t`On site, on our communication materials and on social media.`}</span></li>
-                        <li><IconChartBar size={26}/><strong>{t`Tailored partnership`}</strong><span>{t`Sponsorship, co-branding, hospitality: let's build it together.`}</span></li>
+                        <li><IconUsersGroup size={26}/><strong>{t`Reach an engaged audience`}</strong><span>{siteLabel(organizer, 'partner_card_1_text')}</span></li>
+                        <li><IconSpeakerphone size={26}/><strong>{t`Gain visibility`}</strong><span>{siteLabel(organizer, 'partner_card_2_text')}</span></li>
+                        <li><IconChartBar size={26}/><strong>{t`Tailored partnership`}</strong><span>{siteLabel(organizer, 'partner_card_3_text')}</span></li>
                     </ul>
                     <button className={classes.primaryCta} onClick={openContact}>
-                        {t`Contact us to become a partner`} <IconArrowRight size={18}/>
+                        {siteLabel(organizer, 'partners_button_label')} <IconArrowRight size={18}/>
                     </button>
                 </div>
             </section>

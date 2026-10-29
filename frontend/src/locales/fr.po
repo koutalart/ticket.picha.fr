@@ -33,6 +33,10 @@ msgstr "« S'inscrire » est toujours affiché. Ajoutez des liens vers d'autres 
 msgid "\"See also\" cards"
 msgstr "Cartes « Retrouvez aussi »"
 
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:253
+msgid "\"Write to us\" text"
+msgstr "Texte « Nous écrire »"
+
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:222
 msgid "(emoji or special characters: 70 characters per SMS)"
 msgstr "(emoji ou caractères spéciaux : 70 caractères par SMS)"
@@ -57,14 +61,6 @@ msgstr "{0, select, yes {Assistante virtuelle d'{organizerName}} other {Assistan
 msgid "{0}"
 msgstr "{0}"
 
-#: src/components/organizerTemplates/Poster/index.tsx:98
-msgid "{0} — events and concerts{where} | Official ticketing"
-msgstr "{0} — événements et concerts{where} | Billetterie officielle"
-
-#: src/components/organizerTemplates/Poster/index.tsx:236
-msgid "{0} — home"
-msgstr "{0} — accueil"
-
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:170
 msgid "{0} · {1} lines. Tell us what each column contains."
 msgstr "{0} · {1} lignes. Indiquez ce que contient chaque colonne."
@@ -88,6 +84,10 @@ msgstr "{0} <0>enregistré</0> avec succès"
 #: src/components/layouts/CheckIn/index.tsx:159
 msgid "{0} <0>checked out</0> successfully"
 msgstr "{0} <0>sorti</0> avec succès"
+
+#: src/components/organizerTemplates/Poster/siteLabels.ts:21
+msgid "{0} | Events and concerts{where}, official ticketing"
+msgstr "{0} | Événements et concerts{where}, billetterie officielle"
 
 #: src/components/routes/organizer/Contacts/index.tsx:284
 msgid "{0} accept emails"
@@ -223,7 +223,7 @@ msgstr "{0} abonné(s)"
 msgid "{0} supports companies, institutions and partners in creating their events."
 msgstr "{0} accompagne entreprises, institutions et partenaires dans la création de leurs événements."
 
-#: src/components/organizerTemplates/Poster/index.tsx:115
+#: src/components/organizerTemplates/Poster/index.tsx:111
 msgid "{0} supports companies, institutions and partners in creating their events{where}."
 msgstr "{0} accompagne entreprises, institutions et partenaires dans la création de leurs événements{where}."
 
@@ -240,19 +240,23 @@ msgstr "{0} billets créés"
 msgid "{0} updated successfully"
 msgstr "{0} mis à jour avec succès"
 
+#: src/components/organizerTemplates/Poster/index.tsx:233
+msgid "{0}, home"
+msgstr "{0}, accueil"
+
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:14
 msgid "{0}: story, vision and team"
 msgstr "{0} : histoire, vision et équipe"
 
-#: src/components/organizerTemplates/Poster/index.tsx:104
+#: src/components/organizerTemplates/Poster/siteLabels.ts:24
 msgid "{0}: story, vision and team{where}"
 msgstr "{0} : histoire, vision et équipe{where}"
 
-#: src/components/organizerTemplates/Poster/index.tsx:101
+#: src/components/organizerTemplates/Poster/index.tsx:99
 msgid "{0}. Discover the upcoming events and book your tickets online."
 msgstr "{0}. Découvrez les prochains événements et réservez vos billets en ligne."
 
-#: src/components/organizerTemplates/Poster/index.tsx:100
+#: src/components/organizerTemplates/Poster/index.tsx:98
 msgid "{0}. Next event: {1}, {2}{featuredWhere}. Book your tickets online: instant e-ticket, secure payment."
 msgstr "{0}. Prochain événement : {1}, {2}{featuredWhere}. Réservez vos billets en ligne : e-billet immédiat, paiement sécurisé."
 
@@ -322,7 +326,7 @@ msgstr "{participantsCount} sur {maxParticipants} places"
 msgid "{pausedCount} box office tickets are paused and hidden here."
 msgstr "{pausedCount} billets guichet sont en pause et masqués ici."
 
-#: src/components/organizerTemplates/Tour/index.tsx:223
+#: src/components/organizerTemplates/Tour/index.tsx:224
 msgid "{place}, from {0}"
 msgstr "{place}, dès {0}"
 
@@ -334,7 +338,7 @@ msgstr "{received} SMS reçus, {sent} SMS envoyés"
 msgid "{remaining} remaining"
 msgstr "{remaining} restants"
 
-#: src/components/organizerTemplates/Poster/index.tsx:113
+#: src/components/organizerTemplates/Poster/siteLabels.ts:23
 msgid "{serviceNames}{where} | {0}"
 msgstr "{serviceNames}{where} | {0}"
 
@@ -596,7 +600,7 @@ msgstr "Un pourcentage du prix du produit. Par exemple, 3,5 % du prix du produit
 msgid "A phone number input with basic format validation"
 msgstr "Un champ de numéro de téléphone avec une validation de format simple"
 
-#: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:26
+#: src/components/organizerTemplates/Poster/siteLabels.ts:35
 msgid "A question about an event, a booking, a project? The {0} team answers you."
 msgstr "Une question sur un événement, une réservation, un projet ? L'équipe {0} vous répond."
 
@@ -902,7 +906,7 @@ msgstr "Ajouter une description pour cette liste de pointage"
 msgid "Add a description so people know what to expect."
 msgstr "Ajoutez une description pour donner envie de venir."
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:257
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:317
 msgid "Add a figure"
 msgstr "Ajouter un chiffre"
 
@@ -924,11 +928,11 @@ msgstr "Ajouter une note"
 msgid "Add a participant"
 msgstr "Ajouter un participant"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:302
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:362
 msgid "Add a partner"
 msgstr "Ajouter un partenaire"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:292
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:352
 msgid "Add a photo"
 msgstr "Ajouter une photo"
 
@@ -944,7 +948,7 @@ msgstr "Ajouter une réponse toute faite"
 msgid "Add a section"
 msgstr "Ajouter une section"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:276
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:336
 msgid "Add a service"
 msgstr "Ajouter un service"
 
@@ -952,7 +956,7 @@ msgstr "Ajouter un service"
 msgid "Add a tag"
 msgstr "Ajouter un tag"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:284
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:344
 msgid "Add a team member"
 msgstr "Ajouter un membre"
 
@@ -960,7 +964,7 @@ msgstr "Ajouter un membre"
 msgid "Add a ticket"
 msgstr "Ajouter un billet"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:264
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:324
 msgid "Add a value"
 msgstr "Ajouter une valeur"
 
@@ -1366,7 +1370,7 @@ msgstr "Tous les statuts"
 msgid "All tickets"
 msgstr "Tous les billets"
 
-#: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:19
+#: src/components/organizerTemplates/Poster/siteLabels.ts:37
 msgid "All upcoming dates by {0}, and a look back at past editions."
 msgstr "Toutes les prochaines dates de {0}, et un retour sur les éditions passées."
 
@@ -1374,11 +1378,11 @@ msgstr "Toutes les prochaines dates de {0}, et un retour sur les éditions pass�
 msgid "All Upcoming Events"
 msgstr "Tous les événements à venir"
 
-#: src/components/organizerTemplates/Poster/index.tsx:109
+#: src/components/organizerTemplates/Poster/index.tsx:107
 msgid "All upcoming events by {0}{where}, official ticketing and a look back at past editions."
 msgstr "Tous les prochains événements signés {0}{where}, la billetterie officielle et les éditions passées."
 
-#: src/components/organizerTemplates/Tour/index.tsx:369
+#: src/components/organizerTemplates/Tour/index.tsx:370
 msgid "All you need to know before the night"
 msgstr "Tout savoir avant la soirée"
 
@@ -1675,6 +1679,10 @@ msgid "Approved, refund in progress"
 msgstr "Validée, remboursement en cours"
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:36
+msgctxt "past events section heading"
+msgid "Archive"
+msgstr "Archives"
+
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
 msgid "Archive"
@@ -1849,7 +1857,7 @@ msgstr "Êtes-vous sûr de vouloir supprimer cette liste de pointage ?"
 msgid "Are you VAT registered in the EU?"
 msgstr "Êtes-vous assujetti à la TVA dans l'UE ?"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:239
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:299
 msgid "Area"
 msgstr "Zone géographique"
 
@@ -2101,7 +2109,7 @@ msgstr "Les participants de tout âge peuvent s'inscrire. Aucune date de naissan
 msgid "Attendees registered"
 msgstr "Participants inscrits"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:259
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:319
 msgid "attendees since 2019"
 msgstr "spectateurs depuis 2019"
 
@@ -2380,8 +2388,8 @@ msgstr "Le corps est requis"
 msgid "Bold (700)"
 msgstr "Bold (700)"
 
-#: src/components/organizerTemplates/Poster/index.tsx:253
-#: src/components/organizerTemplates/Poster/index.tsx:324
+#: src/components/organizerTemplates/Poster/index.tsx:250
+#: src/components/organizerTemplates/Poster/index.tsx:321
 msgid "Book"
 msgstr "Réserver"
 
@@ -2626,7 +2634,7 @@ msgstr "Peut-on utiliser la plateforme en autonomie, sans accompagnement ?"
 #: src/components/common/QuestionAndAnswerList/index.tsx:174
 #: src/components/common/WaitlistTable/index.tsx:111
 #: src/components/common/WaitlistTable/index.tsx:132
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:323
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:405
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:65
@@ -2785,7 +2793,7 @@ msgstr "Attributions de capacité"
 msgid "Capacity Management"
 msgstr "Gestion de capacité"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:294
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:354
 msgid "Caption"
 msgstr "Légende"
 
@@ -2793,6 +2801,18 @@ msgstr "Légende"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:939
 msgid "Card"
 msgstr "Carte"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:244
+msgid "Card \"Gain visibility\""
+msgstr "Carte « Gagner en visibilité »"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:243
+msgid "Card \"Reach an engaged audience\""
+msgstr "Carte « Toucher un public engagé »"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:245
+msgid "Card \"Tailored partnership\""
+msgstr "Carte « Un partenariat sur mesure »"
 
 #: src/components/routes/organizer/Publications/labels.ts:46
 msgid "Carousel"
@@ -2826,7 +2846,7 @@ msgstr "Les catégories vous aident à organiser vos produits. Ce titre sera aff
 msgid "Categories reordered successfully."
 msgstr "Catégories réorganisées avec succès."
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:305
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:365
 #: src/components/routes/event/products.tsx:60
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:103
 msgid "Category"
@@ -3114,7 +3134,7 @@ msgstr "Choisissez comment la date de l'événement s'affiche sur le billet"
 msgid "Choose how the French pages of the ticketing site address your customers: event page, booking, order confirmation and ticket."
 msgstr "Choisissez comment les pages en français de la billetterie s'adressent à vos clients : page de l'événement, réservation, confirmation de commande et billet."
 
-#: src/components/organizerTemplates/Tour/index.tsx:413
+#: src/components/organizerTemplates/Tour/index.tsx:414
 msgid "Choose my city"
 msgstr "Choisir ma ville"
 
@@ -3178,7 +3198,7 @@ msgstr "Choisir…"
 msgid "City"
 msgstr "Ville"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:240
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:300
 msgid "City or region where the organizer operates. Used in page titles for search engines."
 msgstr "Ville ou région où l'organisateur est actif. Utilisée dans les titres de pages pour les moteurs de recherche."
 
@@ -3232,7 +3252,7 @@ msgid "Close"
 msgstr "Fermer"
 
 #: src/components/layouts/ManageShell/index.tsx:133
-#: src/components/organizerTemplates/Poster/index.tsx:262
+#: src/components/organizerTemplates/Poster/index.tsx:259
 #: src/components/routes/landing/MarketingHeader/index.tsx:69
 msgid "Close menu"
 msgstr "Fermer le menu"
@@ -3257,6 +3277,14 @@ msgstr "Fermer le chat"
 #: src/components/routes/organizer/Sms/labels.ts:9
 msgid "Closed"
 msgstr "Fermée"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:237
+msgid "Closing text"
+msgstr "Texte de fin"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:236
+msgid "Closing title"
+msgstr "Titre de fin"
 
 #: src/components/common/AffiliateTable/index.tsx:81
 #: src/components/forms/AffiliateForm/index.tsx:38
@@ -3716,8 +3744,8 @@ msgstr "Texte du consentement"
 #: src/components/layouts/EventHomepage/index.tsx:902
 #: src/components/layouts/OrganizerHomepage/index.tsx:269
 #: src/components/organizerTemplates/Poster/index.tsx:80
-#: src/components/organizerTemplates/Poster/index.tsx:255
-#: src/components/organizerTemplates/Tour/index.tsx:428
+#: src/components/organizerTemplates/Poster/index.tsx:252
+#: src/components/organizerTemplates/Tour/index.tsx:429
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:67
 #: src/components/routes/organizer/Contacts/index.tsx:372
 msgid "Contact"
@@ -3731,11 +3759,11 @@ msgstr "Contacter {0}"
 msgid "Contact {0}{1}"
 msgstr "Contacter {0}{1}"
 
-#: src/components/organizerTemplates/Poster/index.tsx:123
+#: src/components/organizerTemplates/Poster/index.tsx:119
 msgid "Contact {0}{where}: questions, bookings, partnerships and press requests."
 msgstr "Contacter {0}{where} : questions, réservations, partenariats et demandes presse."
 
-#: src/components/organizerTemplates/Poster/index.tsx:122
+#: src/components/organizerTemplates/Poster/siteLabels.ts:26
 msgid "Contact and press | {0}"
 msgstr "Contact et presse | {0}"
 
@@ -3756,8 +3784,20 @@ msgstr "E-mail de contact"
 msgid "Contact email for support"
 msgstr "Email de contact pour le support"
 
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:250
+msgid "Contact page"
+msgstr "Page Contact"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:252
+msgid "Contact page introduction"
+msgstr "Introduction de la page Contact"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:217
+msgid "Contact page title"
+msgstr "Titre de la page Contact"
+
 #: src/components/common/EventImmersiveFooter/index.tsx:34
-#: src/components/organizerTemplates/Poster/index.tsx:311
+#: src/components/organizerTemplates/Poster/index.tsx:308
 msgid "Contact the organizer"
 msgstr "Contacter l'organisateur"
 
@@ -3770,7 +3810,7 @@ msgstr "Contact mis à jour"
 msgid "Contact us"
 msgstr "Nous contacter"
 
-#: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:47
+#: src/components/organizerTemplates/Poster/siteLabels.ts:34
 msgid "Contact us to become a partner"
 msgstr "Nous contacter pour devenir partenaire"
 
@@ -3983,7 +4023,7 @@ msgstr "Copier le lien"
 msgid "Copy your API key from the PICHA SMS settings page and paste it below, with the phone number of the SIM used to send."
 msgstr "Copiez votre clé API depuis la page des paramètres PICHA SMS et collez-la ci-dessous, avec le numéro de la carte SIM utilisée pour envoyer."
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:277
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:337
 msgid "Corporate events"
 msgstr "Événements d'entreprise"
 
@@ -4575,12 +4615,12 @@ msgstr "Date à laquelle la commande a été passée"
 msgid "Date, venue and details filled in."
 msgstr "Date, lieu et détails renseignés."
 
-#: src/components/common/EventFactSummary/index.tsx:57
+#: src/components/common/EventFactSummary/index.tsx:37
 msgid "Date: {dateRange}"
 msgstr "Date : {dateRange}"
 
 #: src/components/organizerTemplates/Tour/index.tsx:108
-#: src/components/organizerTemplates/Tour/index.tsx:200
+#: src/components/organizerTemplates/Tour/index.tsx:201
 msgid "Dates"
 msgstr "Dates"
 
@@ -4752,8 +4792,8 @@ msgstr "Danemark"
 #: src/components/forms/ProductForm/index.tsx:324
 #: src/components/forms/TaxAndFeeForm/index.tsx:81
 #: src/components/modals/DuplicateEventModal/index.tsx:116
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:266
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:278
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:326
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:338
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:94
 #: src/components/routes/organizer/EventAssistant/index.tsx:536
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:86
@@ -4835,7 +4875,7 @@ msgstr "Remise en {0}"
 msgid "Discover our services"
 msgstr "Découvrir nos services"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:224
+#: src/components/organizerTemplates/Poster/siteLabels.ts:27
 msgid "Discover our story and vision"
 msgstr "Découvrir notre histoire et notre vision"
 
@@ -4847,11 +4887,11 @@ msgstr "Découvrir notre univers"
 msgid "Discover the artists of {title}: {names}. Biographies, performed songs and social networks."
 msgstr "{title} : découvrez les artistes à l'affiche, {names}. Biographies, titres interprétés et réseaux sociaux."
 
-#: src/components/organizerTemplates/Poster/index.tsx:119
+#: src/components/organizerTemplates/Poster/index.tsx:115
 msgid "Discover the partners of {0} and how to associate your brand with our events."
 msgstr "Découvrez les partenaires de {0} et comment associer votre marque à nos événements."
 
-#: src/components/organizerTemplates/Poster/index.tsx:105
+#: src/components/organizerTemplates/Poster/index.tsx:103
 msgid "Discover the story, the vision and the team of {0}."
 msgstr "Découvrez l'histoire, la vision et l'équipe de {0}."
 
@@ -5069,7 +5109,7 @@ msgstr "E-mail"
 msgid "E-ticket"
 msgstr "Billet électronique"
 
-#: src/components/organizerTemplates/Tour/index.tsx:203
+#: src/components/organizerTemplates/Tour/index.tsx:204
 msgid "E-tickets and secure payment"
 msgstr "Billets électroniques et paiement sécurisé"
 
@@ -6054,7 +6094,7 @@ msgstr "Événement mis à jour"
 msgid "Event Venue"
 msgstr "Lieu de l'Événement"
 
-#: src/components/common/EventFactSummary/index.tsx:55
+#: src/components/common/EventFactSummary/index.tsx:35
 #: src/components/routes/organizer/Contacts/index.tsx:100
 msgid "Event: {0}"
 msgstr "Événement : {0}"
@@ -6072,13 +6112,25 @@ msgstr "Événement : {0}"
 msgid "Events"
 msgstr "Événements"
 
-#: src/components/organizerTemplates/Poster/index.tsx:108
+#: src/components/organizerTemplates/Poster/siteLabels.ts:22
 msgid "Events and concerts{where}: line-up and archives | {0}"
 msgstr "Événements et concerts{where} : programmation et archives | {0}"
 
 #: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:24
 msgid "Events button"
 msgstr "Bouton Événements"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:228
+msgid "Events page"
+msgstr "Page Événements"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:230
+msgid "Events page introduction"
+msgstr "Introduction de la page Événements"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:213
+msgid "Events page title"
+msgstr "Titre de la page Événements"
 
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:120
 #: src/components/routes/organizer/Reports/index.tsx:23
@@ -6090,8 +6142,8 @@ msgid "Events Starting in Next 24 Hours"
 msgstr "Événements commençant dans les prochaines 24 heures"
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:17
-msgid "Events{0} — {1}"
-msgstr "Événements{0} — {1}"
+msgid "Events{0} | {1}"
+msgstr "Événements{0} | {1}"
 
 #: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:54
 msgid "Every day at the chosen time (Mayotte time), the team of the organizer gets by SMS the paid registrations, the registration revenue and the carts in progress."
@@ -6581,11 +6633,11 @@ msgstr "Moins de 50"
 msgid "Field"
 msgstr "Champ"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:258
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:318
 msgid "Figure"
 msgstr "Chiffre"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:227
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:286
 msgid "Figures & values"
 msgstr "Chiffres et valeurs"
 
@@ -6842,9 +6894,9 @@ msgstr "Format"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:159
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:177
 #: src/components/modals/CreateAttendeeModal/index.tsx:144
-#: src/components/organizerTemplates/Poster/eventData.ts:51
+#: src/components/organizerTemplates/Poster/eventData.ts:53
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:117
-#: src/components/organizerTemplates/Tour/index.tsx:229
+#: src/components/organizerTemplates/Tour/index.tsx:230
 #: src/components/routes/kiosk/Orders/index.tsx:289
 #: src/components/routes/kiosk/Orders/index.tsx:330
 #: src/components/routes/organizer/EventAssistant/index.tsx:433
@@ -6887,7 +6939,7 @@ msgstr "Inscriptions gratuites sans frais, 0,99 € par billet payant vendu"
 msgid "Free tickets: nothing to collect."
 msgstr "Billets gratuits : rien à encaisser."
 
-#: src/components/common/EventFactSummary/index.tsx:46
+#: src/components/common/EventFactSummary/index.tsx:26
 msgid "Free, registration required"
 msgstr "gratuit, sur inscription"
 
@@ -6908,12 +6960,12 @@ msgstr "Questions fréquentes sur {title}. {firstQuestion}"
 msgid "Frequently asked questions."
 msgstr "Questions fréquentes."
 
-#: src/components/organizerTemplates/Tour/index.tsx:230
+#: src/components/organizerTemplates/Tour/index.tsx:231
 msgid "from"
 msgstr "à partir de"
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:65
-#: src/components/organizerTemplates/Tour/index.tsx:223
+#: src/components/organizerTemplates/Tour/index.tsx:224
 msgid "From {0}"
 msgstr "À partir du {0}"
 
@@ -6921,11 +6973,11 @@ msgstr "À partir du {0}"
 msgid "From {0} at {1} to {2} at {3}"
 msgstr "Du {0} à {1} au {2} à {3}"
 
-#: src/components/organizerTemplates/Poster/eventData.ts:55
+#: src/components/organizerTemplates/Poster/eventData.ts:57
 msgid "from {formatted}"
 msgstr "dès {formatted}"
 
-#: src/components/common/EventFactSummary/index.tsx:48
+#: src/components/common/EventFactSummary/index.tsx:28
 msgctxt "lowest ticket price"
 msgid "From {formattedMinPrice}"
 msgstr "À partir de {formattedMinPrice}"
@@ -6963,7 +7015,7 @@ msgstr "Plein écran"
 msgid "Gain visibility"
 msgstr "Gagner en visibilité"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:230
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:289
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:51
 msgid "Gallery"
 msgstr "Galerie"
@@ -7037,8 +7089,8 @@ msgstr "Itinéraire"
 msgid "Get my ticket"
 msgstr "Prendre ma place"
 
-#: src/components/organizerTemplates/Tour/index.tsx:253
-#: src/components/organizerTemplates/Tour/index.tsx:256
+#: src/components/organizerTemplates/Tour/index.tsx:254
+#: src/components/organizerTemplates/Tour/index.tsx:257
 msgid "Get notified"
 msgstr "Être prévenu"
 
@@ -7055,7 +7107,7 @@ msgstr "Commencer"
 msgid "Get Tickets"
 msgstr "Obtenir des billets"
 
-#: src/components/organizerTemplates/Tour/index.tsx:411
+#: src/components/organizerTemplates/Tour/index.tsx:412
 msgid "Get your ticket for the tour"
 msgstr "Prends ta place pour la tournée"
 
@@ -7349,6 +7401,14 @@ msgstr "Réponse d'attente envoyée automatiquement"
 msgid "Home"
 msgstr "Accueil"
 
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:221
+msgid "Home page"
+msgstr "Page d'accueil"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:212
+msgid "Home page title"
+msgstr "Titre de la page d'accueil"
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:249
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:178
 msgid "Homepage Design"
@@ -7421,7 +7481,7 @@ msgstr "Comment connecter"
 msgid "How to pay offline"
 msgstr "Comment payer hors ligne"
 
-#: src/components/common/EventFactSummary/index.tsx:63
+#: src/components/common/EventFactSummary/index.tsx:43
 msgid "How to register: fill in the form in the tickets section of this page"
 msgstr "Comment s'inscrire : remplir le formulaire de la section billets de cette page"
 
@@ -7624,7 +7684,7 @@ msgstr "Important : La modification de votre adresse e-mail mettra à jour le li
 msgid "Improve with AI"
 msgstr "Améliorer avec l'IA"
 
-#: src/components/organizerTemplates/Poster/shared.tsx:117
+#: src/components/organizerTemplates/Poster/siteLabels.ts:12
 msgid "in {area}"
 msgstr "à {area}"
 
@@ -8120,15 +8180,15 @@ msgstr "Garder ma place"
 msgid "Key figures"
 msgstr "Chiffres clés"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:256
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:316
 msgid "Key figures (max 6)"
 msgstr "Chiffres clés (6 max.)"
 
-#: src/components/common/EventFactSummary/index.tsx:53
+#: src/components/common/EventFactSummary/index.tsx:33
 msgid "Key information"
 msgstr "L'essentiel"
 
-#: src/components/common/EventFactSummary/index.tsx:52
+#: src/components/common/EventFactSummary/index.tsx:32
 msgid "Key information about the event"
 msgstr "L'essentiel sur l'événement"
 
@@ -8142,7 +8202,7 @@ msgid "Kiosk operators"
 msgstr "Opérateurs de guichet"
 
 #: src/components/forms/ProductForm/index.tsx:100
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:259
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:319
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:82
 msgid "Label"
 msgstr "Étiquette"
@@ -8305,6 +8365,10 @@ msgstr "Dernières inscriptions"
 msgid "Learn more about equipment rental"
 msgstr "En savoir plus sur la location de matériel"
 
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:384
+msgid "Leave a field empty to keep the default text shown in grey."
+msgstr "Laisse un champ vide pour garder le texte par défaut affiché en gris."
+
 #: src/components/routes/event/Settings/Sections/PaymentSettings/index.tsx:191
 msgid "Leave blank to use the default word \"Invoice\""
 msgstr "Laisser vide pour utiliser le mot par défaut \"Facture\""
@@ -8342,7 +8406,7 @@ msgstr "Liens légaux"
 msgid "Legal notice"
 msgstr "Mentions légales"
 
-#: src/components/organizerTemplates/Poster/pages/ServicesPage.tsx:35
+#: src/components/organizerTemplates/Poster/siteLabels.ts:29
 msgid "Let's build your next event."
 msgstr "Construisons votre prochain événement."
 
@@ -8536,11 +8600,11 @@ msgstr "Numéro local sans le 0 initial."
 msgid "Location"
 msgstr "Lieu"
 
-#: src/components/common/EventFactSummary/index.tsx:60
+#: src/components/common/EventFactSummary/index.tsx:40
 msgid "Location: {venue}"
 msgstr "Lieu : {venue}"
 
-#: src/components/common/EventFactSummary/index.tsx:59
+#: src/components/common/EventFactSummary/index.tsx:39
 msgid "Location: online event"
 msgstr "Lieu : événement en ligne"
 
@@ -8557,7 +8621,7 @@ msgstr "Se connecter"
 msgid "Logging in"
 msgstr "Se connecter"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:306
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:366
 #: src/components/routes/event/TicketDesigner/index.tsx:144
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:225
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:474
@@ -8608,9 +8672,9 @@ msgstr "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam placerat el
 msgid "Madagascar"
 msgstr "Madagascar"
 
-#: src/components/organizerTemplates/Poster/index.tsx:241
-#: src/components/organizerTemplates/Poster/index.tsx:268
-#: src/components/organizerTemplates/Tour/index.tsx:149
+#: src/components/organizerTemplates/Poster/index.tsx:238
+#: src/components/organizerTemplates/Poster/index.tsx:265
+#: src/components/organizerTemplates/Tour/index.tsx:150
 msgid "Main menu"
 msgstr "Menu principal"
 
@@ -8618,7 +8682,7 @@ msgstr "Menu principal"
 msgid "Main navigation"
 msgstr "Navigation principale"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:305
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:365
 msgid "Main partners, Media, Institutions…"
 msgstr "Partenaires principaux, Médias, Institutions…"
 
@@ -8767,7 +8831,7 @@ msgstr "Support"
 msgid "Medium (500)"
 msgstr "Medium (500)"
 
-#: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:42
+#: src/components/organizerTemplates/Poster/siteLabels.ts:31
 msgid "Meet our audience where emotions run high."
 msgstr "Rencontrez notre public là où l'émotion est la plus forte."
 
@@ -8983,7 +9047,7 @@ msgstr "Plus"
 msgid "More actions"
 msgstr "Plus d'actions"
 
-#: src/components/organizerTemplates/Tour/index.tsx:247
+#: src/components/organizerTemplates/Tour/index.tsx:248
 msgid "MORE CITIES"
 msgstr "PROCHAINES VILLES"
 
@@ -9003,7 +9067,7 @@ msgstr "Plus de 1 000"
 msgid "Most orders"
 msgstr "Plus de commandes"
 
-#: src/components/organizerTemplates/Poster/eventData.ts:34
+#: src/components/organizerTemplates/Poster/eventData.ts:36
 msgid "Most popular"
 msgstr "Le plus demandé"
 
@@ -9031,13 +9095,13 @@ msgstr "Vidéo en motion design présentant {0} : de l'invitation au badge impri
 msgid "Move"
 msgstr "Déplacer"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:182
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:190
 #: src/components/routes/event/EventPages/index.tsx:95
 #: src/components/routes/event/EventPages/index.tsx:97
 msgid "Move down"
 msgstr "Descendre"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:178
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:186
 #: src/components/routes/event/EventPages/index.tsx:89
 #: src/components/routes/event/EventPages/index.tsx:91
 msgid "Move up"
@@ -9117,8 +9181,8 @@ msgstr "Nam placerat elementum..."
 #: src/components/forms/ProductForm/index.tsx:296
 #: src/components/forms/TaxAndFeeForm/index.tsx:61
 #: src/components/modals/DuplicateEventModal/index.tsx:110
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:285
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:304
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:345
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:364
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:63
 #: src/components/routes/admin/Configurations/index.tsx:219
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:98
@@ -9222,7 +9286,7 @@ msgstr "nouveaux contacts"
 msgid "New dates are coming soon. Follow us so you don't miss the on-sale date."
 msgstr "De nouvelles dates arrivent bientôt. Suivez-nous pour ne pas manquer l'ouverture de la billetterie."
 
-#: src/components/organizerTemplates/Tour/index.tsx:206
+#: src/components/organizerTemplates/Tour/index.tsx:207
 msgid "New dates will be announced soon."
 msgstr "De nouvelles dates seront annoncées très bientôt."
 
@@ -10106,7 +10170,7 @@ msgstr "En vente {0}"
 msgid "On sale soon"
 msgstr "Bientôt en vente"
 
-#: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:43
+#: src/components/organizerTemplates/Poster/siteLabels.ts:32
 msgid "On site, on our communication materials and on social media."
 msgstr "Sur site, sur nos supports de communication et sur les réseaux sociaux."
 
@@ -10162,7 +10226,7 @@ msgstr "Un par billet : la quantité suit le nombre de billets de la commande (3
 msgid "One platform for every type of event"
 msgstr "Une plateforme pour chaque type d'événement"
 
-#: src/components/organizerTemplates/Tour/index.tsx:350
+#: src/components/organizerTemplates/Tour/index.tsx:351
 msgid "One poster per date"
 msgstr "Une affiche par date"
 
@@ -10182,7 +10246,7 @@ msgstr "Un QR code par support permet de les comparer : affiche, flyer, écran, 
 msgid "One scan of the QR code and the entry is recorded: the badge prints or the wristband is handed over right away. Last-minute registrations are done on a tablet."
 msgstr "Un scan du QR code et l'entrée est enregistrée : le badge s'imprime ou le bracelet est remis dans la foulée. Les inscriptions de dernière minute se font sur tablette."
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:237
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:297
 msgid "One short sentence that sums up the organizer. Shown on the home page and in search results."
 msgstr "Une phrase courte qui résume l'organisateur. Affichée sur l'accueil et dans les résultats de recherche."
 
@@ -10337,7 +10401,7 @@ msgstr "Journées portes ouvertes, séminaires, salons de recrutement, événeme
 msgid "Open House"
 msgstr "Journée portes ouvertes"
 
-#: src/components/organizerTemplates/Poster/index.tsx:262
+#: src/components/organizerTemplates/Poster/index.tsx:259
 #: src/components/routes/landing/MarketingHeader/index.tsx:69
 msgid "Open menu"
 msgstr "Ouvrir le menu"
@@ -10865,7 +10929,7 @@ msgstr "Échec de la mise à jour du statut de l'organisateur. Veuillez réessay
 msgid "Organizer status updated"
 msgstr "Statut de l'organisateur mis à jour"
 
-#: src/components/common/EventFactSummary/index.tsx:56
+#: src/components/common/EventFactSummary/index.tsx:36
 msgid "Organizer: {organizerName}"
 msgstr "Organisateur : {organizerName}"
 
@@ -10920,7 +10984,7 @@ msgstr "Nos offres"
 msgid "Our partners."
 msgstr "Nos partenaires."
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:243
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:303
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:29
 msgid "Our story"
 msgstr "Notre histoire"
@@ -10933,7 +10997,7 @@ msgstr "Notre histoire sera bientôt racontée ici."
 msgid "Our values"
 msgstr "Nos valeurs"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:245
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:305
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:42
 msgid "Our vision"
 msgstr "Notre vision"
@@ -10974,6 +11038,10 @@ msgstr "Page en ligne"
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:357
 msgid "Page title"
 msgstr "Titre de la page"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:210
+msgid "Page titles (search engines)"
+msgstr "Titres des pages (moteurs de recherche)"
 
 #: src/components/modals/ShareModal/index.tsx:236
 msgid "Page URL"
@@ -11049,25 +11117,41 @@ msgstr "Participant {participantNumber}"
 msgid "Participants"
 msgstr "Participants"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:231
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:290
 #: src/components/organizerTemplates/Poster/index.tsx:79
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:235
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:26
-#: src/components/organizerTemplates/Tour/index.tsx:388
+#: src/components/organizerTemplates/Tour/index.tsx:389
 msgid "Partners"
 msgstr "Partenaires"
 
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:19
-msgid "Partners — {0}"
-msgstr "Partenaires — {0}"
+msgid "Partners | {0}"
+msgstr "Partenaires | {0}"
 
-#: src/components/organizerTemplates/Poster/index.tsx:118
+#: src/components/organizerTemplates/Poster/siteLabels.ts:25
 msgid "Partners and sponsorship | {0}"
 msgstr "Partenaires et sponsoring | {0}"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:300
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:241
+msgid "Partners page"
+msgstr "Page Partenaires"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:360
 msgid "Partners page introduction"
 msgstr "Introduction de la page partenaires"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:216
+msgid "Partners page title"
+msgstr "Titre de la page Partenaires"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:224
+msgid "Partners section title"
+msgstr "Titre de la section Partenaires"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:246
+msgid "Partnership button"
+msgstr "Bouton partenariat"
 
 #: src/components/common/PlatformFeesSettings/index.tsx:191
 msgid "Pass fee to buyer"
@@ -11421,8 +11505,8 @@ msgstr "Téléphone hors ligne"
 msgid "Phone online"
 msgstr "Téléphone en ligne"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:287
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:293
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:347
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:353
 msgid "Photo"
 msgstr "Photo"
 
@@ -11497,7 +11581,7 @@ msgstr "Rapport des frais de plateforme"
 msgid "Platform Revenue"
 msgstr "Revenus de la plateforme"
 
-#: src/components/organizerTemplates/Tour/index.tsx:328
+#: src/components/organizerTemplates/Tour/index.tsx:329
 msgid "Play {0}"
 msgstr "Lire {0}"
 
@@ -11737,7 +11821,7 @@ msgstr "Affiche de {0}"
 msgid "Poster or flyer"
 msgstr "Affiche ou flyer"
 
-#: src/components/organizerTemplates/Tour/index.tsx:349
+#: src/components/organizerTemplates/Tour/index.tsx:350
 msgid "Posters"
 msgstr "Affiches"
 
@@ -11748,7 +11832,7 @@ msgid "Powered by"
 msgstr "Propulsé par"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:139
-#: src/components/organizerTemplates/Tour/index.tsx:368
+#: src/components/organizerTemplates/Tour/index.tsx:369
 msgid "Practical info"
 msgstr "Infos pratiques"
 
@@ -11798,7 +11882,7 @@ msgstr "Présents"
 msgid "Present your event"
 msgstr "Présentez votre événement"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:232
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:291
 msgid "Press"
 msgstr "Presse"
 
@@ -11806,19 +11890,19 @@ msgstr "Presse"
 msgid "Press & media"
 msgstr "Presse et médias"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:315
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:375
 msgid "Press e-mail"
 msgstr "E-mail presse"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:314
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:374
 msgid "Press introduction"
 msgstr "Introduction presse"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:317
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:377
 msgid "Press kit link"
 msgstr "Lien du dossier de presse"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:316
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:376
 msgid "Press phone"
 msgstr "Téléphone presse"
 
@@ -11905,7 +11989,7 @@ msgstr "Type de prix"
 msgid "Price updated"
 msgstr "Prix mis à jour"
 
-#: src/components/common/EventFactSummary/index.tsx:61
+#: src/components/common/EventFactSummary/index.tsx:41
 msgid "Price: {price}"
 msgstr "Prix : {price}"
 
@@ -12820,7 +12904,7 @@ msgstr "retirer"
 #: src/components/common/OrganizerFontManager/index.tsx:204
 #: src/components/common/WaitlistTable/index.tsx:78
 #: src/components/common/WaitlistTable/index.tsx:111
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:186
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:194
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:100
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:159
 #: src/components/routes/event/HomepageDesigner/index.tsx:311
@@ -13249,7 +13333,7 @@ msgstr "Pied de page enrichi"
 msgid "Right after payment, by e-mail. Show the QR code at the entrance, on your phone or printed."
 msgstr "Dès le paiement validé, par e-mail. Présentez le QR code à l'entrée, sur votre téléphone ou imprimé."
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:286
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:346
 #: src/components/modals/EditUserModal/index.tsx:93
 #: src/components/modals/InviteUserModal/index.tsx:64
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:155
@@ -13377,7 +13461,7 @@ msgstr "San Francisco"
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:503
 #: src/components/common/QuestionAndAnswerList/index.tsx:167
 #: src/components/modals/EditOrganizerCustomDomainModal/index.tsx:74
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:324
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:406
 #: src/components/routes/event/EventPages/index.tsx:346
 #: src/components/routes/event/Settings/Sections/AttendanceResponseSettings/index.tsx:67
 #: src/components/routes/event/Settings/Sections/DailyReportSettings/index.tsx:97
@@ -13742,7 +13826,7 @@ msgstr "Voir nos événements"
 msgid "See prices"
 msgstr "Voir les tarifs"
 
-#: src/components/organizerTemplates/Tour/index.tsx:175
+#: src/components/organizerTemplates/Tour/index.tsx:176
 msgid "See the dates and book"
 msgstr "Voir les dates et réserver"
 
@@ -14065,7 +14149,7 @@ msgstr "Envoyez les achats de billets à Meta directement depuis nos serveurs. C
 msgid "Send tickets by email when possible"
 msgstr "Envoyer les billets par email lorsque cela est possible"
 
-#: src/components/organizerTemplates/Poster/pages/ContactPage.tsx:34
+#: src/components/organizerTemplates/Poster/siteLabels.ts:36
 msgid "Send us a message, we will reply by e-mail as soon as possible."
 msgstr "Envoyez-nous un message, nous vous répondrons par e-mail dans les meilleurs délais."
 
@@ -14179,7 +14263,7 @@ msgstr "Référencement (SEO)"
 msgid "SEO Title"
 msgstr "Titre SEO"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:277
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:337
 msgid "Service"
 msgstr "Service"
 
@@ -14191,17 +14275,25 @@ msgstr "Frais de service"
 msgid "Service fees"
 msgstr "Frais de service"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:228
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:287
 #: src/components/organizerTemplates/Poster/index.tsx:77
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:199
 msgid "Services"
 msgstr "Services"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:274
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:234
+msgid "Services page"
+msgstr "Page Services"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:334
 msgid "Services page introduction"
 msgstr "Introduction de la page Services"
 
-#: src/components/organizerTemplates/Poster/index.tsx:114
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:214
+msgid "Services page title"
+msgstr "Titre de la page Services"
+
+#: src/components/organizerTemplates/Poster/siteLabels.ts:23
 msgid "Services{where} | {0}"
 msgstr "Services{where} | {0}"
 
@@ -14484,11 +14576,11 @@ msgstr "Une seule inscription par commande"
 msgid "Site content"
 msgstr "Contenu du site"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:209
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:268
 msgid "Site content saved"
 msgstr "Contenu du site enregistré"
 
-#: src/components/organizerTemplates/Poster/index.tsx:297
+#: src/components/organizerTemplates/Poster/index.tsx:294
 msgid "Site map"
 msgstr "Plan du site"
 
@@ -14496,7 +14588,7 @@ msgstr "Plan du site"
 msgid "Skip this step"
 msgstr "Passer cette étape"
 
-#: src/components/organizerTemplates/Poster/index.tsx:232
+#: src/components/organizerTemplates/Poster/index.tsx:229
 #: src/components/routes/landing/index.tsx:329
 msgid "Skip to content"
 msgstr "Aller au contenu"
@@ -14602,7 +14694,7 @@ msgstr "Vendu uniquement au guichet"
 #: src/components/common/ProductPriceAvailability/index.tsx:50
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:446
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:120
-#: src/components/organizerTemplates/Tour/index.tsx:237
+#: src/components/organizerTemplates/Tour/index.tsx:238
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:852
 #: src/components/routes/event/EventDashboard/index.tsx:201
 msgid "Sold out"
@@ -14614,8 +14706,8 @@ msgid "Sold Out"
 msgstr "Épuisé"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:32
-msgid "Sold out — join the waitlist"
-msgstr "Complet — rejoindre la liste d'attente"
+msgid "Sold out, join the waitlist"
+msgstr "Complet, rejoindre la liste d'attente"
 
 #: src/components/routes/event/EventPages/index.tsx:212
 msgid "Solo artist"
@@ -14735,7 +14827,7 @@ msgstr "Logo du sponsor"
 msgid "Sponsor name"
 msgstr "Nom du sponsor"
 
-#: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:44
+#: src/components/organizerTemplates/Poster/siteLabels.ts:33
 msgid "Sponsorship, co-branding, hospitality: let's build it together."
 msgstr "Sponsoring, co-branding, hospitalité : construisons-le ensemble."
 
@@ -14894,7 +14986,7 @@ msgstr "Stories"
 msgid "Story"
 msgstr "Story"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:247
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:307
 msgid "Story photo"
 msgstr "Photo de l'histoire"
 
@@ -15244,7 +15336,7 @@ msgstr "Nom du tag"
 msgid "Tag: {0}"
 msgstr "Tag : {0}"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:237
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:297
 msgid "Tagline"
 msgstr "Accroche"
 
@@ -15334,7 +15426,7 @@ msgstr "Taxes configurées"
 msgid "Taxes, Fees, Visibility, Sale Period, Product Highlight & Order Limits"
 msgstr "Taxes, frais, visibilité, période de vente, mise en avant des produits et limites de commande"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:229
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:288
 #: src/components/routes/organizer/Sms/ConversationList.tsx:121
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:140
 #: src/components/routes/organizer/Sms/index.tsx:117
@@ -15377,7 +15469,7 @@ msgstr "Présentez-nous votre prochain événement : nous vous montrons, sur vot
 msgid "Tell us about your organization. This information will be displayed on your event pages."
 msgstr "Parlez-nous de votre organisation. Ces informations seront affichées sur vos pages d'événement."
 
-#: src/components/organizerTemplates/Poster/pages/ServicesPage.tsx:36
+#: src/components/organizerTemplates/Poster/siteLabels.ts:30
 msgid "Tell us about your project: we will get back to you with a tailored proposal."
 msgstr "Parlez-nous de votre projet : nous revenons vers vous avec une proposition sur mesure."
 
@@ -15637,7 +15729,7 @@ msgstr "L'adresse complète de l'événement"
 msgid "The full order amount will be refunded to the customer's original payment method."
 msgstr "Le montant total de la commande sera remboursé sur le mode de paiement original du client."
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:120
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:128
 msgid "The image could not be uploaded"
 msgstr "L'image n'a pas pu être envoyée"
 
@@ -15823,7 +15915,7 @@ msgid "The service fees and the option are not refunded."
 msgstr "Les frais de service et l'option ne sont pas remboursés"
 
 #: src/components/organizerTemplates/Tour/index.tsx:109
-#: src/components/organizerTemplates/Tour/index.tsx:269
+#: src/components/organizerTemplates/Tour/index.tsx:270
 msgid "The show"
 msgstr "Le show"
 
@@ -15913,6 +16005,10 @@ msgstr "Théâtre ou spectacle"
 msgid "Theme & Colors"
 msgstr "Thème et couleurs"
 
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:292
+msgid "Theme texts"
+msgstr "Textes du thème"
+
 #: src/components/modals/EditOrganizerCustomDomainModal/index.tsx:57
 msgid "Then enable HTTPS for the domain on the server with the add-custom-domain.sh script."
 msgstr "Activez ensuite le HTTPS pour ce domaine sur le serveur avec le script add-custom-domain.sh."
@@ -15971,11 +16067,11 @@ msgstr "Ces modèles seront utilisés comme valeurs par défaut pour tous les é
 msgid "These templates will override the organizer defaults for this event only. If no custom template is set here, the organizer template will be used instead."
 msgstr "Ces modèles remplaceront les paramètres par défaut de l'organisateur pour cet événement uniquement. Si aucun modèle personnalisé n'est défini ici, le modèle de l'organisateur sera utilisé à la place."
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:235
+#: src/components/organizerTemplates/Poster/siteLabels.ts:28
 msgid "They make it happen."
 msgstr "Ils rendent tout cela possible."
 
-#: src/components/organizerTemplates/Tour/index.tsx:389
+#: src/components/organizerTemplates/Tour/index.tsx:390
 msgid "They make the tour happen"
 msgstr "Ils font la tournée"
 
@@ -16368,8 +16464,8 @@ msgstr "Billets"
 
 #: src/components/organizerTemplates/Poster/pages/HomePage.tsx:110
 #: src/components/organizerTemplates/Poster/shared.tsx:55
-#: src/components/organizerTemplates/Tour/index.tsx:152
-#: src/components/organizerTemplates/Tour/index.tsx:237
+#: src/components/organizerTemplates/Tour/index.tsx:153
+#: src/components/organizerTemplates/Tour/index.tsx:238
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:470
 #: src/components/routes/event/EventDashboard/index.tsx:232
 #: src/components/routes/event/GettingStarted/index.tsx:83
@@ -16964,13 +17060,21 @@ msgstr "États-Unis"
 msgid "Units sold"
 msgstr "Unités vendues"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:226
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:285
 msgid "Universe"
 msgstr "Univers"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:242
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:223
+msgid "Universe button"
+msgstr "Bouton L'univers"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:302
 msgid "Universe page title"
 msgstr "Titre de la page Univers"
+
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:215
+msgid "Universe page title (search engines)"
+msgstr "Titre de la page L'univers (moteurs de recherche)"
 
 #: src/components/common/MessageList/index.tsx:44
 #: src/components/common/MessageList/index.tsx:49
@@ -17078,7 +17182,7 @@ msgstr "Jusqu'à 3 liens vers d'autres sites, avec une image facultative."
 msgid "Upcoming"
 msgstr "À venir"
 
-#: src/components/organizerTemplates/Tour/index.tsx:201
+#: src/components/organizerTemplates/Tour/index.tsx:202
 msgid "Upcoming dates"
 msgstr "Les prochaines dates"
 
@@ -17123,7 +17227,7 @@ msgstr "Importer"
 msgid "Upload a cover image for your organizer"
 msgstr "Téléchargez une image de couverture pour votre organisateur"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:137
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:145
 msgid "Upload an image"
 msgstr "Envoyer une image"
 
@@ -17234,7 +17338,7 @@ msgstr "Utilise le bouton Contact de cette page, on te répond rapidement."
 msgid "Use this background"
 msgstr "Utiliser ce fond"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:221
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:280
 msgid "Used by the Poster template. Empty sections are hidden on the website."
 msgstr "Utilisé par le template Affiche. Les sections vides sont masquées sur le site."
 
@@ -17326,11 +17430,11 @@ msgstr "Validé"
 msgid "Validating your VAT number..."
 msgstr "Validation de votre numéro de TVA..."
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:265
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:325
 msgid "Value"
 msgstr "Valeur"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:263
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:323
 msgid "Values (max 8)"
 msgstr "Valeurs (8 max.)"
 
@@ -17474,7 +17578,7 @@ msgid "Video for mobile (optional)"
 msgstr "Vidéo pour mobile (facultatif)"
 
 #: src/components/organizerTemplates/Tour/index.tsx:110
-#: src/components/organizerTemplates/Tour/index.tsx:302
+#: src/components/organizerTemplates/Tour/index.tsx:303
 msgid "Videos"
 msgstr "Clips"
 
@@ -17686,8 +17790,8 @@ msgstr "Offre de liste d'attente expirée"
 msgid "Warning: This is the system default configuration. Changes will affect all accounts that don't have a specific configuration assigned."
 msgstr "Attention : Il s'agit de la configuration par défaut du système. Les modifications affecteront tous les comptes auxquels aucune configuration spécifique n'est assignée."
 
-#: src/components/organizerTemplates/Tour/index.tsx:177
-#: src/components/organizerTemplates/Tour/index.tsx:303
+#: src/components/organizerTemplates/Tour/index.tsx:178
+#: src/components/organizerTemplates/Tour/index.tsx:304
 msgid "Watch the videos"
 msgstr "Regarder les clips"
 
@@ -17869,7 +17973,7 @@ msgstr "Webhooks"
 #: src/components/common/EventPagesContent/index.tsx:36
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:191
 #: src/components/layouts/QrLinkPage/index.tsx:194
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:307
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:367
 #: src/components/routes/event/EventPages/index.tsx:233
 #: src/components/routes/event/EventPages/index.tsx:234
 #: src/components/routes/organizer/QrCodes/posterLogos.tsx:40
@@ -17878,7 +17982,7 @@ msgstr "Webhooks"
 msgid "Website"
 msgstr "Site web"
 
-#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:217
+#: src/components/modals/EditOrganizerSiteContentModal/index.tsx:276
 msgid "Website content — {0}"
 msgstr "Contenu du site — {0}"
 
@@ -18831,7 +18935,7 @@ msgstr "Votre offre de liste d'attente a expiré et nous n'avons pas pu finalise
 msgid "YouTube"
 msgstr "YouTube"
 
-#: src/components/organizerTemplates/Tour/index.tsx:307
+#: src/components/organizerTemplates/Tour/index.tsx:308
 msgid "YouTube channel"
 msgstr "Chaîne YouTube"
 

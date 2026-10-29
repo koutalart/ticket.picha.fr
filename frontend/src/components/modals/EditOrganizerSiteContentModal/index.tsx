@@ -3,7 +3,7 @@ import {ActionIcon, Button, FileButton, Group, Image, Stack, Tabs, Text, Textare
 import {useForm} from "@mantine/form";
 import {t} from "@lingui/macro";
 import {IconArrowDown, IconArrowUp, IconPlus, IconTrash, IconUpload} from "@tabler/icons-react";
-import {GenericModalProps, IdParam, OrganizerSiteContent} from "../../../types";
+import {GenericModalProps, IdParam, ORGANIZER_SITE_LABEL_KEYS, OrganizerSiteContent, OrganizerSiteLabelKey} from "../../../types";
 import {Modal} from "../../common/Modal";
 import {Editor} from "../../common/Editor";
 import {AdminOrganizer} from "../../../api/admin.client";
@@ -11,6 +11,7 @@ import {useUpdateAdminOrganizerSiteContent} from "../../../mutations/useUpdateAd
 import {useUploadImage} from "../../../mutations/useUploadImage";
 import {useFormErrorResponseHandler} from "../../../hooks/useFormErrorResponseHandler";
 import {showError, showSuccess} from "../../../utilites/notifications";
+import {getSiteLabelDefaults} from "../../organizerTemplates/Poster/siteLabels";
 
 interface EditOrganizerSiteContentModalProps extends GenericModalProps {
     accountId: IdParam;
@@ -19,7 +20,9 @@ interface EditOrganizerSiteContentModalProps extends GenericModalProps {
 
 type ListField = { key: string; label: string; placeholder?: string; image?: boolean; multiline?: boolean };
 
-interface FormValues {
+type LabelValues = Record<OrganizerSiteLabelKey, string>;
+
+interface FormValues extends LabelValues {
     tagline: string;
     area: string;
     services_intro: string;
@@ -74,6 +77,7 @@ const toFormValues = (content?: OrganizerSiteContent | null): FormValues => {
         press_email: content?.press_email || '',
         press_phone: content?.press_phone || '',
         press_kit_url: content?.press_kit_url || '',
+        ...Object.fromEntries(ORGANIZER_SITE_LABEL_KEYS.map(key => [key, content?.[key] || ''])) as LabelValues,
     };
 };
 
@@ -95,6 +99,10 @@ const toPayload = (values: FormValues): OrganizerSiteContent => {
         press_phone: clean(values.press_phone),
         press_kit_url: clean(values.press_kit_url),
     };
+
+    ORGANIZER_SITE_LABEL_KEYS.forEach(key => {
+        payload[key] = clean(values[key]);
+    });
 
     LIST_KEYS.forEach(key => {
         payload[key] = values[key]
@@ -197,11 +205,62 @@ const ListEditor = ({form, name, fields, addLabel, emptyItem}: {
     );
 };
 
+const labelGroups = (): { title: string; fields: { key: OrganizerSiteLabelKey; label: string; multiline?: boolean }[] }[] => [
+    {
+        title: t`Page titles (search engines)`,
+        fields: [
+            {key: 'seo_title_home', label: t`Home page title`},
+            {key: 'seo_title_events', label: t`Events page title`},
+            {key: 'seo_title_services', label: t`Services page title`},
+            {key: 'seo_title_about', label: t`Universe page title (search engines)`},
+            {key: 'seo_title_partners', label: t`Partners page title`},
+            {key: 'seo_title_contact', label: t`Contact page title`},
+        ],
+    },
+    {
+        title: t`Home page`,
+        fields: [
+            {key: 'about_button_label', label: t`Universe button`},
+            {key: 'partners_subtitle', label: t`Partners section title`},
+        ],
+    },
+    {
+        title: t`Events page`,
+        fields: [
+            {key: 'events_intro', label: t`Events page introduction`, multiline: true},
+        ],
+    },
+    {
+        title: t`Services page`,
+        fields: [
+            {key: 'services_cta_title', label: t`Closing title`},
+            {key: 'services_cta_text', label: t`Closing text`, multiline: true},
+        ],
+    },
+    {
+        title: t`Partners page`,
+        fields: [
+            {key: 'partner_card_1_text', label: t`Card "Reach an engaged audience"`},
+            {key: 'partner_card_2_text', label: t`Card "Gain visibility"`},
+            {key: 'partner_card_3_text', label: t`Card "Tailored partnership"`},
+            {key: 'partners_button_label', label: t`Partnership button`},
+        ],
+    },
+    {
+        title: t`Contact page`,
+        fields: [
+            {key: 'contact_intro', label: t`Contact page introduction`, multiline: true},
+            {key: 'contact_write_text', label: t`"Write to us" text`, multiline: true},
+        ],
+    },
+];
+
 export const EditOrganizerSiteContentModal = ({onClose, accountId, organizer}: EditOrganizerSiteContentModalProps) => {
     const mutation = useUpdateAdminOrganizerSiteContent(accountId);
     const formErrorHandler = useFormErrorResponseHandler();
     const [tab, setTab] = useState<string | null>('universe');
     const form = useForm<FormValues>({initialValues: toFormValues(organizer.site_content)});
+    const labelDefaults = getSiteLabelDefaults(organizer);
 
     const handleSubmit = (values: FormValues) => {
         mutation.mutate({organizerId: organizer.id, siteContent: toPayload(values)}, {
@@ -230,6 +289,7 @@ export const EditOrganizerSiteContentModal = ({onClose, accountId, organizer}: E
                             <Tabs.Tab value="gallery">{t`Gallery`}</Tabs.Tab>
                             <Tabs.Tab value="partners">{t`Partners`}</Tabs.Tab>
                             <Tabs.Tab value="press">{t`Press`}</Tabs.Tab>
+                            <Tabs.Tab value="labels">{t`Theme texts`}</Tabs.Tab>
                         </Tabs.List>
 
                         <Tabs.Panel value="universe" pt="md">
@@ -315,6 +375,28 @@ export const EditOrganizerSiteContentModal = ({onClose, accountId, organizer}: E
                                 <TextInput label={t`Press e-mail`} type="email" {...form.getInputProps('press_email')}/>
                                 <TextInput label={t`Press phone`} {...form.getInputProps('press_phone')}/>
                                 <TextInput label={t`Press kit link`} placeholder="https://…" {...form.getInputProps('press_kit_url')}/>
+                            </Stack>
+                        </Tabs.Panel>
+
+                        <Tabs.Panel value="labels" pt="md">
+                            <Stack gap="lg">
+                                <Text size="sm" c="dimmed">
+                                    {t`Leave a field empty to keep the default text shown in grey.`}
+                                </Text>
+                                {labelGroups().map(group => (
+                                    <div key={group.title}>
+                                        <Text fw={600} mb="xs">{group.title}</Text>
+                                        <Stack gap="sm">
+                                            {group.fields.map(field => field.multiline ? (
+                                                <Textarea key={field.key} label={field.label} placeholder={labelDefaults[field.key]}
+                                                          autosize minRows={2} maxLength={600} {...form.getInputProps(field.key)}/>
+                                            ) : (
+                                                <TextInput key={field.key} label={field.label} placeholder={labelDefaults[field.key]}
+                                                           maxLength={200} {...form.getInputProps(field.key)}/>
+                                            ))}
+                                        </Stack>
+                                    </div>
+                                ))}
                             </Stack>
                         </Tabs.Panel>
                     </Tabs>

@@ -17,10 +17,46 @@ class UpdateOrganizerSiteContentAction extends BaseAction
 {
     private const URL_RULE = 'nullable|url:http,https|max:1000';
 
+    private const SEO_TITLE_KEYS = [
+        'seo_title_home',
+        'seo_title_services',
+        'seo_title_about',
+        'seo_title_partners',
+        'seo_title_events',
+        'seo_title_contact',
+    ];
+
+    private const LABEL_KEYS = [
+        'about_button_label',
+        'partners_subtitle',
+        'services_cta_title',
+        'services_cta_text',
+        'partner_card_1_text',
+        'partner_card_2_text',
+        'partner_card_3_text',
+        'partners_button_label',
+        'contact_intro',
+        'contact_write_text',
+        'events_intro',
+    ];
+
     public function __construct(
         private readonly UpdateOrganizerSiteContentHandler $handler,
     )
     {
+    }
+
+    private function labelRules(): array
+    {
+        $rules = [];
+        foreach (self::SEO_TITLE_KEYS as $key) {
+            $rules[$key] = 'nullable|string|max:200';
+        }
+        foreach (self::LABEL_KEYS as $key) {
+            $rules[$key] = 'nullable|string|max:600';
+        }
+
+        return $rules;
     }
 
     public function __invoke(Request $request, int $accountId, int $organizerId): JsonResponse
@@ -73,6 +109,7 @@ class UpdateOrganizerSiteContentAction extends BaseAction
             'practical.*.title' => 'required|string|max:80',
             'practical.*.text' => 'nullable|string|max:400',
             'redirect_to_current_event' => 'nullable|boolean',
+            ...$this->labelRules(),
         ]);
 
         try {

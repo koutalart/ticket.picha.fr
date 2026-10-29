@@ -49,6 +49,40 @@ class UpdateOrganizerSiteContentHandlerTest extends TestCase
         ));
     }
 
+    public function testKeepsExistingKeysThatAreNotSent(): void
+    {
+        $this->repository->shouldReceive('findFirstWhere')
+            ->andReturn((new OrganizerDomainObject())->setId(6)->setSiteContent([
+                'redirect_to_current_event' => true,
+                'videos' => [['youtube_id' => 'abcdefghijk', 'title' => 'Clip']],
+                'events_intro' => 'Ancien texte',
+                'tagline' => 'Ancienne accroche',
+            ]));
+
+        $this->repository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(function (int $id, array $data) {
+                $content = $data['site_content'];
+
+                return $content['redirect_to_current_event'] === true
+                    && $content['videos'][0]['title'] === 'Clip'
+                    && $content['events_intro'] === 'Nos prochaines dates.'
+                    && $content['seo_title_home'] === 'Innocent Event | Concerts'
+                    && $content['tagline'] === null;
+            })
+            ->andReturn(new OrganizerDomainObject());
+
+        $this->handler->handle(new UpdateOrganizerSiteContentDTO(
+            accountId: 1,
+            organizerId: 6,
+            siteContent: [
+                'events_intro' => 'Nos prochaines dates.',
+                'seo_title_home' => 'Innocent Event | Concerts',
+                'tagline' => null,
+            ],
+        ));
+    }
+
     public function testRejectsOrganizerFromAnotherAccount(): void
     {
         $this->repository->shouldReceive('findFirstWhere')->andReturn(null);
