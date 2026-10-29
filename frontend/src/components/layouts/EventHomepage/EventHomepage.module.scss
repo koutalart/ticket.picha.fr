@@ -1230,9 +1230,26 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-// Animate sections
+@keyframes slideInUp {
+  from {
+    transform: translateY(12px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+// Animate sections without hiding them: the content is visible from the first paint.
 .section {
-  animation: fadeInUp 0.4s ease-out backwards;
+  animation: slideInUp 0.35s ease-out backwards;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
+  &:has(#tickets) {
+    animation: none;
+  }
 
   &:nth-child(2) { animation-delay: 0.1s; }
   &:nth-child(3) { animation-delay: 0.15s; }
