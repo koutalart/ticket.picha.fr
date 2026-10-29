@@ -20,6 +20,7 @@ class CreateImageHandler
         ImageType::ORGANIZER_LOGO,
         ImageType::ORGANIZER_EMAIL_LOGO,
         ImageType::ORGANIZER_COVER,
+        ImageType::ORGANIZER_CHAT_AVATAR,
         ImageType::EVENT_COVER,
         ImageType::TICKET_LOGO,
         ImageType::TICKET_SPONSOR_LOGO,

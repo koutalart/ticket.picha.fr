@@ -41,6 +41,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const ORGANIZER_ASSISTANT_INSTRUCTIONS = 'organizer_assistant_instructions';
     final public const ASSISTANT_HOLDING_REPLY_ENABLED = 'assistant_holding_reply_enabled';
     final public const ORGANIZER_NUDGE_ENABLED = 'organizer_nudge_enabled';
+    final public const LIVE_CHAT_STYLE = 'live_chat_style';
 
     protected int $id;
     protected int $account_id;
@@ -73,6 +74,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected ?string $organizer_assistant_instructions = null;
     protected bool $assistant_holding_reply_enabled = true;
     protected bool $organizer_nudge_enabled = false;
+    protected string $live_chat_style = 'CLASSIC';
 
     public function toArray(): array
     {
@@ -108,6 +110,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'organizer_assistant_instructions' => $this->organizer_assistant_instructions ?? null,
                     'assistant_holding_reply_enabled' => $this->assistant_holding_reply_enabled ?? null,
                     'organizer_nudge_enabled' => $this->organizer_nudge_enabled ?? null,
+                    'live_chat_style' => $this->live_chat_style ?? null,
                 ];
     }
 
@@ -450,5 +453,16 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getOrganizerNudgeEnabled(): bool
     {
         return $this->organizer_nudge_enabled;
+    }
+
+    public function setLiveChatStyle(string $live_chat_style): self
+    {
+        $this->live_chat_style = $live_chat_style;
+        return $this;
+    }
+
+    public function getLiveChatStyle(): string
+    {
+        return $this->live_chat_style;
     }
 }

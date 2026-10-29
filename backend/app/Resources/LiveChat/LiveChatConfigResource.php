@@ -19,6 +19,8 @@ class LiveChatConfigResource extends BaseResource
             'organizer_name' => $this->organizerName,
             'relay_line' => $this->relayLine,
             'max_message_length' => $this->maxMessageLength,
+            'style' => $this->style->value,
+            'avatar_url' => $this->avatarUrl,
         ];
     }
 }

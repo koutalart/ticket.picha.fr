@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace HiEvents\Http\Request\Sms;
 
+use HiEvents\DomainObjects\Enums\LiveChatStyle;
 use HiEvents\Http\Request\BaseRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateOrganizerSmsSettingsRequest extends BaseRequest
 {
@@ -27,6 +29,7 @@ class UpdateOrganizerSmsSettingsRequest extends BaseRequest
             'assistant_holding_reply' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_HOLDING_REPLY_LENGTH],
             'assistant_instructions' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_INSTRUCTIONS_LENGTH],
             'live_chat_enabled' => ['sometimes', 'boolean'],
+            'live_chat_style' => ['sometimes', Rule::in(LiveChatStyle::valuesArray())],
             'organizer_assistant_enabled' => ['sometimes', 'boolean'],
             'organizer_assistant_instructions' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_INSTRUCTIONS_LENGTH],
             'live_chat_relay_label' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_RELAY_LABEL_LENGTH],

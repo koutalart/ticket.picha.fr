@@ -38,6 +38,7 @@ class OrganizerSmsSettingsResource extends BaseResource
             'assistant_holding_reply_enabled' => $settings->getAssistantHoldingReplyEnabled(),
             'live_chat_enabled' => $settings->getLiveChatEnabled(),
             'live_chat_relay_label' => $settings->getLiveChatRelayLabel(),
+            'live_chat_style' => $settings->getLiveChatStyle(),
             'live_chat_relay_line' => LiveChatService::relayLine($settings->getLiveChatRelayLabel()),
             'sms_default_reminders_enabled' => $this->defaultRemindersEnabled,
             'organizer_assistant_enabled' => $settings->getOrganizerAssistantEnabled(),

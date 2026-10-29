@@ -21,6 +21,7 @@ import {Anchor} from "@mantine/core";
 import {t} from "@lingui/macro";
 import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {ContactOrganizerModal} from "../../common/ContactOrganizerModal";
+import {LiveChatLauncher} from "../../common/LiveChatWindow/LiveChatLauncher.tsx";
 import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {
@@ -940,6 +941,12 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         enabled={canShowRecentPurchases}
                         sectionRefs={toastSectionRefs}
                         heroRef={fullscreenHeroRef}
+                        aboveBuyBar={showScrollButton && !isEmbeddedRegistration}
+                    />
+
+                    <LiveChatLauncher
+                        organizer={organizer}
+                        eventId={event.id}
                         aboveBuyBar={showScrollButton && !isEmbeddedRegistration}
                     />
 

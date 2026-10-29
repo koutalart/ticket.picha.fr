@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Http\Actions\Sms;
 
+use HiEvents\DomainObjects\Enums\LiveChatStyle;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
 use HiEvents\Http\Actions\BaseAction;
@@ -44,6 +45,7 @@ class UpdateOrganizerSmsSettingsAction extends BaseAction
                 assistantHoldingReply: array_key_exists('assistant_holding_reply', $validated) ? $validated['assistant_holding_reply'] : Optional::create(),
                 liveChatEnabled: array_key_exists('live_chat_enabled', $validated) ? (bool) $validated['live_chat_enabled'] : Optional::create(),
                 liveChatRelayLabel: array_key_exists('live_chat_relay_label', $validated) ? $validated['live_chat_relay_label'] : Optional::create(),
+                liveChatStyle: array_key_exists('live_chat_style', $validated) ? LiveChatStyle::from($validated['live_chat_style']) : Optional::create(),
                 defaultRemindersEnabled: array_key_exists('sms_default_reminders_enabled', $validated) ? (bool) $validated['sms_default_reminders_enabled'] : Optional::create(),
                 organizerAssistantEnabled: array_key_exists('organizer_assistant_enabled', $validated) ? (bool) $validated['organizer_assistant_enabled'] : Optional::create(),
                 organizerAssistantInstructions: array_key_exists('organizer_assistant_instructions', $validated) ? $validated['organizer_assistant_instructions'] : Optional::create(),

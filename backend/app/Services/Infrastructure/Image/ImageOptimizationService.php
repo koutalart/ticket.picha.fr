@@ -24,6 +24,8 @@ class ImageOptimizationService
 
     private const POSTER_MAX_DIMENSION = 3000;
 
+    private const CHAT_AVATAR_MAX_DIMENSION = 400;
+
     private const SKIPPED_MIME_TYPES = ['image/gif', 'image/svg+xml'];
 
     private const LOGO_TYPES = [
@@ -106,6 +108,10 @@ class ImageOptimizationService
     {
         if ($type === ImageType::EVENT_SHARE_IMAGE) {
             return ['jpeg', 'image/jpeg', 'jpg', self::SHARE_MAX_WIDTH, self::SHARE_MAX_WIDTH];
+        }
+
+        if ($type === ImageType::ORGANIZER_CHAT_AVATAR) {
+            return ['webp', 'image/webp', 'webp', self::CHAT_AVATAR_MAX_DIMENSION, self::CHAT_AVATAR_MAX_DIMENSION];
         }
 
         if ($type === ImageType::QR_POSTER_BACKGROUND) {

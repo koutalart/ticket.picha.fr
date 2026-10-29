@@ -17,6 +17,7 @@ import {
     SmsReminderPreview,
     SmsReplyTemplate,
     OrganizerTeamContact,
+    LiveChatStyle,
     OrganizerTeamContactRole,
 } from "../types";
 
@@ -31,6 +32,7 @@ export interface SmsSettingsRequest {
     assistant_holding_reply_enabled?: boolean;
     live_chat_enabled?: boolean;
     live_chat_relay_label?: string | null;
+    live_chat_style?: LiveChatStyle;
     sms_default_reminders_enabled?: boolean;
     organizer_assistant_enabled?: boolean;
     organizer_assistant_instructions?: string | null;

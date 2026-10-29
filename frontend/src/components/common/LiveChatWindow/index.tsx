@@ -1,14 +1,16 @@
 import {FormEvent, KeyboardEvent, useEffect, useRef, useState} from "react";
 import {ActionIcon, Anchor, Button, Drawer, Group, Text, Textarea, TextInput, VisuallyHidden} from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
-import {t, Trans} from "@lingui/macro";
-import {IconSend} from "@tabler/icons-react";
+import {select, t, Trans} from "@lingui/macro";
+import {IconArrowLeft, IconSend} from "@tabler/icons-react";
 import {IdParam, LiveChatConfig, LiveChatMessage, LiveChatTurn, Organizer} from "../../../types.ts";
 import {usePostLiveChatMessage, useStartLiveChat, useSubmitLiveChatContact} from "../../../mutations/useLiveChat.ts";
 import {liveChatPublicClient} from "../../../api/live-chat.client.ts";
 import {getPrivacyPolicyUrl} from "../../../utilites/branding.ts";
 import {ContactOrganizerForm} from "../ContactOrganizerModal/ContactOrganizerForm.tsx";
 import {LiveChatRefundCard} from "./LiveChatRefundCard.tsx";
+import {ASSISTANT_NAME, LiveChatAvatar} from "./LiveChatAvatar.tsx";
+import {LiveChatMessagingScope} from "./LiveChatMessagingScope.tsx";
 import classes from "./LiveChatWindow.module.scss";
 
 interface LiveChatWindowProps {
@@ -55,12 +57,47 @@ const typingDelay = (text: string) => Math.min(6000, Math.max(1500, text.length 
 // While a question waits for the organizer, the window checks now and then whether the answer arrived.
 const ANSWER_POLL_MS = 15000;
 
+const formatTime = (value?: string | null): string => {
+    if (!value) {
+        return '';
+    }
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '' : date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+};
+
+// French elides « de » before a vowel or a mute h: « Assistante virtuelle d'Innocent Event ».
+const startsWithVowel = (name: string) => /^[aeiouyhàâäéèêëîïôöùûüœæ]/i.test(name.trim()) ? 'yes' : 'no';
+
+type TickState = 'sent' | 'delivered' | 'read';
+
+const ReadTicks = ({state}: { state: TickState }) => (
+    <svg
+        className={`${classes.ticks} ${state === 'read' ? classes.ticksRead : ''}`}
+        viewBox="0 0 16 11"
+        width="16"
+        height="11"
+        aria-hidden="true"
+        focusable="false"
+    >
+        {state === 'sent' ? (
+            <path d="M4.5 8.6 1.4 5.5l-1 1 4.1 4.1L12 3.1l-1-1z" fill="currentColor"/>
+        ) : (
+            <path
+                d="M11.1 1.6 10.1.6 4.6 6.1l1 1zM14.6.6 8.1 7.1 6.6 5.6l-1 1 2.5 2.5 7.5-7.5zM.4 5.6l1-1 3.5 3.5-1 1z"
+                fill="currentColor"
+            />
+        )}
+    </svg>
+);
+
 /**
  * « Assistance en direct »: answers the visitor right away with the organizer's assistant. Full screen on a phone,
  * side panel on a desktop. The contact details are only asked when the organizer must follow up.
  */
 export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: LiveChatWindowProps) => {
     const isMobile = useMediaQuery('(max-width: 48em)');
+    const messaging = config.style === 'MESSAGING';
+    const [greetingAt, setGreetingAt] = useState<string | null>(null);
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [greeting, setGreeting] = useState<string | null>(null);
     const [messages, setMessages] = useState<LiveChatMessage[]>([]);
@@ -168,6 +205,7 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                 setSessionId(data.session_id);
                 storeSession(organizer.id, data.session_id);
                 setGreeting(data.greeting);
+                setGreetingAt(new Date().toISOString());
                 applyTurn(data, true);
             },
             onError: (error: any) => {
@@ -231,6 +269,39 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
 
         return () => window.clearInterval(timer);
     }, [opened, sessionId, pendingQuestion, revealing, postMutation.isPending]);
+
+    // On a phone the on-screen keyboard shrinks the visual viewport: the full screen chat follows it so that the
+    // input bar stays visible above the keyboard.
+    useEffect(() => {
+        if (!messaging || !opened || !isMobile || typeof window === 'undefined' || !window.visualViewport) {
+            return;
+        }
+        const viewport = window.visualViewport;
+        let frame = 0;
+        const update = () => {
+            window.cancelAnimationFrame(frame);
+            frame = window.requestAnimationFrame(() => {
+                const content = logRef.current?.closest<HTMLElement>('.mantine-Drawer-content');
+                if (!content) {
+                    return;
+                }
+                content.style.setProperty('--live-chat-viewport-height', `${Math.round(viewport.height)}px`);
+                content.style.setProperty('--live-chat-viewport-top', `${Math.round(viewport.offsetTop)}px`);
+                const log = logRef.current;
+                if (log) {
+                    log.scrollTop = log.scrollHeight;
+                }
+            });
+        };
+        update();
+        viewport.addEventListener('resize', update);
+        viewport.addEventListener('scroll', update);
+        return () => {
+            window.cancelAnimationFrame(frame);
+            viewport.removeEventListener('resize', update);
+            viewport.removeEventListener('scroll', update);
+        };
+    }, [messaging, opened, isMobile]);
 
     useEffect(() => {
         const log = logRef.current;
@@ -326,35 +397,96 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
         });
     };
 
-    const header = (
+    const organizerName = config.organizer_name || organizer.name || '';
+
+    const header = messaging ? (
+        <div className={classes.messagingHeader}>
+            <ActionIcon
+                variant="subtle"
+                color="white"
+                radius="xl"
+                size="lg"
+                onClick={onClose}
+                aria-label={t`Close the chat`}
+                className={classes.messagingBack}
+            >
+                <IconArrowLeft size={22}/>
+            </ActionIcon>
+            <span className={classes.messagingAvatarWrap}>
+                <LiveChatAvatar url={config.avatar_url} size={40}/>
+                <span className={classes.onlineDot} aria-hidden="true"/>
+            </span>
+            <span className={classes.messagingIdentity}>
+                <span className={classes.messagingName}>{ASSISTANT_NAME}</span>
+                <span className={classes.messagingStatus}>{t`Online`}</span>
+            </span>
+        </div>
+    ) : (
         <div className={classes.header}>
             <span className={classes.title}>{t`Assistance`}</span>
-            <span className={classes.organizerName}>{config.organizer_name || organizer.name}</span>
+            <span className={classes.organizerName}>{organizerName}</span>
             {config.relay_line && <span className={classes.relayLine}>{config.relay_line}</span>}
         </div>
     );
 
-    return (
+    const transparencyLine = select(startsWithVowel(organizerName), {
+        yes: `Virtual assistant of ${organizerName}`,
+        other: `Virtual assistant of ${organizerName}`,
+    });
+
+    let lastAgentIndex = -1;
+    messages.forEach((message, index) => {
+        if (message.author_type !== 'VISITOR') {
+            lastAgentIndex = index;
+        }
+    });
+
+    const tickState = (message: LiveChatMessage, index: number): TickState => {
+        if (message.id < 0) {
+            return 'sent';
+        }
+        return index < lastAgentIndex || typing ? 'read' : 'delivered';
+    };
+
+    const bubbleMeta = (createdAt: string | null, ticks?: TickState) => messaging ? (
+        <span className={classes.bubbleMeta}>
+            <span className={classes.bubbleTime}>{formatTime(createdAt)}</span>
+            {ticks && <ReadTicks state={ticks}/>}
+        </span>
+    ) : null;
+
+    const desktopPanel = messaging && !isMobile;
+
+    const drawer = (portalTarget?: HTMLElement) => (
         <Drawer
             opened={opened}
             onClose={onClose}
+            portalProps={portalTarget ? {target: portalTarget} : undefined}
             position="right"
-            size={isMobile ? '100%' : 420}
+            size={isMobile ? '100%' : (messaging ? 440 : 420)}
             title={header}
+            withCloseButton={!messaging}
+            overlayProps={messaging ? {backgroundOpacity: isMobile ? 0 : 0.25, blur: 0} : undefined}
             styles={{
-                content: {display: 'flex', flexDirection: 'column', height: '100%'},
-                header: {padding: '16px 16px 12px', alignItems: 'flex-start'},
+                inner: desktopPanel ? {alignItems: 'flex-end', padding: 24} : undefined,
+                content: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                    ...(desktopPanel ? {height: 'min(760px, calc(100dvh - 48px))', borderRadius: 16, overflow: 'hidden'} : {}),
+                },
+                header: messaging ? {padding: 0, alignItems: 'stretch'} : {padding: '16px 16px 12px', alignItems: 'flex-start'},
                 title: {flex: 1, minWidth: 0},
                 body: {display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, padding: 0},
             }}
             classNames={{
-                content: classes.content,
-                header: classes.drawerHeader,
+                content: `${classes.content} ${messaging ? classes.messaging : ''} ${messaging && isMobile ? classes.messagingFullScreen : ''}`,
+                header: messaging ? classes.messagingDrawerHeader : classes.drawerHeader,
                 body: classes.body,
                 close: classes.close,
             }}
             closeButtonProps={{'aria-label': t`Close the chat`}}
-            aria-label={t`Assistance`}
+            aria-label={messaging ? t`Chat with ${ASSISTANT_NAME}` : t`Assistance`}
         >
             {fallback ? (
                 <div className={classes.fallback}>
@@ -373,14 +505,27 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                         aria-relevant="additions"
                         aria-label={t`Conversation`}
                     >
-                        {greeting && <div className={`${classes.bubble} ${classes.agent}`}>{greeting}</div>}
-                        {messages.map((message) => (
+                        {messaging && (
+                            <div className={classes.systemNotice}>
+                                <span>{transparencyLine}</span>
+                                {config.relay_line && <span>{config.relay_line}</span>}
+                            </div>
+                        )}
+                        {greeting && (
+                            <div className={`${classes.bubble} ${classes.agent}`}>
+                                {messaging && <VisuallyHidden>{t`Anicka:`}</VisuallyHidden>}
+                                {greeting}
+                                {bubbleMeta(greetingAt)}
+                            </div>
+                        )}
+                        {messages.map((message, index) => (
                             <div
                                 key={message.id}
                                 className={`${classes.bubble} ${message.author_type === 'VISITOR' ? classes.visitor : classes.agent}`}
                             >
                                 <VisuallyHidden>{message.author_type === 'VISITOR' ? t`You:` : t`Anicka:`}</VisuallyHidden>
                                 {message.content}
+                                {bubbleMeta(message.created_at, message.author_type === 'VISITOR' ? tickState(message, index) : undefined)}
                             </div>
                         ))}
                         {(typing || startMutation.isPending) && (
@@ -446,24 +591,26 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                             value={draft}
                             onChange={(event) => setDraft(event.currentTarget.value)}
                             onKeyDown={onKeyDown}
-                            placeholder={t`Write your question...`}
+                            placeholder={messaging ? t`Message` : t`Write your question...`}
                             aria-label={t`Your message`}
                             autosize
                             minRows={1}
                             maxRows={5}
                             maxLength={maxLength}
                             className={classes.input}
+                            radius={messaging ? 'xl' : undefined}
                             disabled={!sessionId}
                             data-autofocus
                         />
                         <ActionIcon
                             type="submit"
-                            size="lg"
+                            size={messaging ? 44 : 'lg'}
                             radius="xl"
                             aria-label={t`Send`}
+                            className={messaging ? classes.sendButton : undefined}
                             disabled={!sessionId || !draft.trim() || postMutation.isPending || revealing}
                         >
-                            <IconSend size={18}/>
+                            <IconSend size={messaging ? 20 : 18}/>
                         </ActionIcon>
                     </form>
                     <p className={classes.notice}>
@@ -479,6 +626,8 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
             )}
         </Drawer>
     );
+
+    return messaging ? <LiveChatMessagingScope>{drawer}</LiveChatMessagingScope> : drawer();
 };
 
 export default LiveChatWindow;
