@@ -5,6 +5,7 @@ namespace HiEvents\Repository\Interfaces;
 use HiEvents\DomainObjects\CheckInListDomainObject;
 use HiEvents\Http\DTO\QueryParamsDTO;
 use HiEvents\Repository\DTO\CheckedInAttendeesCountDTO;
+use HiEvents\Repository\DTO\CheckInListLiveStatsDTO;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -23,4 +24,9 @@ interface CheckInListRepositoryInterface extends RepositoryInterface
      * @return Collection<CheckedInAttendeesCountDTO>
      */
     public function getCheckedInAttendeeCountByIds(array $checkInListIds): Collection;
+
+    /**
+     * Valid attendees of the list split between checked in and still outside, unscanned paper « Sur place » tickets apart.
+     */
+    public function getLiveStatsById(int $checkInListId): CheckInListLiveStatsDTO;
 }

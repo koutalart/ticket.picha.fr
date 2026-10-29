@@ -4,6 +4,7 @@ namespace HiEvents\Services\Application\Handlers\CheckInList\Public;
 
 use HiEvents\DomainObjects\AttendeeCheckInDomainObject;
 use HiEvents\Exceptions\CannotCheckInException;
+use HiEvents\Jobs\Sms\SendSmsCheckInWelcomeJob;
 use HiEvents\Services\Application\Handlers\CheckInList\Public\DTO\CreateAttendeeCheckInPublicDTO;
 use HiEvents\Services\Domain\CheckInList\CreateAttendeeCheckInService;
 use HiEvents\Services\Domain\CheckInList\DTO\CreateAttendeeCheckInsResponseDTO;
@@ -51,6 +52,26 @@ class CreateAttendeeCheckInPublicHandler
             );
         }
 
+        $this->queueWelcomeSms($checkIns);
+
         return $checkIns;
+    }
+
+    /**
+     * The welcome SMS never delays nor fails the scan.
+     */
+    private function queueWelcomeSms(CreateAttendeeCheckInsResponseDTO $checkIns): void
+    {
+        /** @var AttendeeCheckInDomainObject $checkIn */
+        foreach ($checkIns->createdAttendeeCheckIns ?? [] as $checkIn) {
+            try {
+                SendSmsCheckInWelcomeJob::dispatch($checkIn->getEventId(), $checkIn->getAttendeeId());
+            } catch (Throwable $exception) {
+                $this->logger->warning('Check-in welcome SMS could not be queued', [
+                    'attendee_id' => $checkIn->getAttendeeId(),
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+        }
     }
 }

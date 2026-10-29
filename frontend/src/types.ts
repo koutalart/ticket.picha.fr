@@ -993,7 +993,18 @@ export interface AttendeeAttendance {
     blocking_reason: string | null;
 }
 
-export type PublicCheckIn = Pick<AttendeeCheckIn, 'id' | 'order_id' | 'attendee_id' | 'check_in_list_id' | 'product_id' | 'event_id'>;
+export type PublicCheckIn = Pick<AttendeeCheckIn, 'id' | 'order_id' | 'attendee_id' | 'check_in_list_id' | 'product_id' | 'event_id'> & {
+    short_id?: string;
+    attendee?: Pick<Attendee, 'public_id' | 'first_name' | 'last_name'>;
+};
+
+export interface CheckInListLiveStats {
+    checked_in: number;
+    paper_checked_in: number;
+    outside: number;
+    paper_not_scanned: number;
+    expected: number;
+}
 
 export interface AttendeeCheckIn {
     id: IdParam;
@@ -1572,6 +1583,9 @@ export interface OrganizerSmsSettings {
     live_chat_relay_label: string | null;
     live_chat_relay_line: string;
     live_chat_style: LiveChatStyle;
+    checkin_welcome_sms_enabled: boolean;
+    checkin_welcome_sms_prompt: string | null;
+    checkin_welcome_sms_templates: string | null;
     sms_default_reminders_enabled: boolean;
     organizer_assistant_enabled: boolean;
     organizer_assistant_instructions: string | null;
