@@ -64,6 +64,8 @@ import {useGetLiveChatConfig} from "../../../queries/useGetLiveChatConfig.ts";
 import {Helmet} from "react-helmet-async";
 import {formatCompactCurrency, formatEventCountdown, getLowestAvailablePrice} from "../../../utilites/eventConversion.ts";
 import {RecentPurchaseToast} from "../../common/RecentPurchaseToast";
+import {LiveChatFooterLink} from "../../common/LiveChatWindow/LiveChatFooterLink.tsx";
+import {useStickyCtaHeight} from "../../../hooks/useStickyCtaHeight.ts";
 
 const VIDEO_PAUSE_PROGRESS = 0.6;
 // React 18 has no fetchPriority prop: passed as a plain attribute.
@@ -216,6 +218,9 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const scrollToTickets = () => {
         scrollToTicketsSection(ticketsSectionRef.current);
     };
+
+    const buyBarRef = useRef<HTMLButtonElement>(null);
+    useStickyCtaHeight(buyBarRef, showScrollButton);
 
     const coverWrapperRef = useRef<HTMLDivElement>(null);
     const [isCoverTooShort, setIsCoverTooShort] = useState(false);
@@ -569,6 +574,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                         </button>
                                     </div>
                                 )}
+                                <LiveChatFooterLink organizer={organizer} className={classes.liveChatFooterLink}/>
                                 <PoweredByFooter className={classes.landingPoweredBy}/>
                             </div>
                         </footer>
@@ -910,6 +916,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                             {/* Footer */}
                             <div className={classes.footerSection}>
+                                <LiveChatFooterLink organizer={organizer} className={classes.liveChatFooterLink}/>
                                 <PoweredByFooter className={classes.poweredByFooter}/>
                             </div>
                         </div>
@@ -917,6 +924,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                     {showScrollButton && !isEmbeddedRegistration && (
                         <button
+                            ref={buyBarRef}
                             type="button"
                             className={classes.scrollToTicketsButton}
                             onClick={scrollToTickets}
@@ -947,7 +955,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                     <LiveChatLauncher
                         organizer={organizer}
                         eventId={event.id}
-                        aboveBuyBar={showScrollButton && !isEmbeddedRegistration}
+                        event={event}
+                        onBook={scrollToTickets}
                     />
 
                     <PublicOverlayTheme {...overlayTheme}>

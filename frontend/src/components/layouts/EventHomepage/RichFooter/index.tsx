@@ -10,6 +10,7 @@ import {toParticipantUrl} from "../../../../utilites/urlHelper.ts";
 import {useSubscribeToOrganizerNewsletter} from "../../../../mutations/useSubscribeToOrganizerNewsletter.ts";
 import {showError} from "../../../../utilites/notifications.tsx";
 import {EMAIL_PATTERN} from "../../../../utilites/embeddedRegistration.ts";
+import {LiveChatFooterLink} from "../../../common/LiveChatWindow/LiveChatFooterLink.tsx";
 
 interface SocialLink {
     platform: string;
@@ -285,6 +286,7 @@ export const RichFooter = ({
                                 {t`Contact us`}
                             </button>
                         </li>
+                        <LiveChatFooterLink organizer={organizer} className={classes.linkButton} asListItem/>
                     </ul>
                 </nav>
             </div>

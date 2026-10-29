@@ -180,7 +180,7 @@ export const EventDedicatedPage = () => {
                     </div>
                     {tabsAndBody}
                 </div>
-                <LiveChatLauncher organizer={event.organizer} eventId={event.id}/>
+                <LiveChatLauncher organizer={event.organizer} eventId={event.id} event={event}/>
             </EventImmersiveShell>
         );
     }
@@ -250,7 +250,7 @@ export const EventDedicatedPage = () => {
             <footer className={classes.footer}>
                 <PoweredByFooter/>
             </footer>
-            <LiveChatLauncher organizer={event.organizer} eventId={event.id}/>
+            <LiveChatLauncher organizer={event.organizer} eventId={event.id} event={event}/>
         </main>
     );
 };

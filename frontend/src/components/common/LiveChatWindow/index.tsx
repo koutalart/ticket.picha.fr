@@ -1,16 +1,28 @@
 import {FormEvent, KeyboardEvent, useEffect, useRef, useState} from "react";
-import {ActionIcon, Anchor, Button, Drawer, Group, Text, Textarea, TextInput, VisuallyHidden} from "@mantine/core";
+import {ActionIcon, Anchor, Button, Drawer, Text, Textarea, TextInput, VisuallyHidden} from "@mantine/core";
 import {useMediaQuery} from "@mantine/hooks";
-import {select, t, Trans} from "@lingui/macro";
+import {useQueryClient} from "@tanstack/react-query";
+import {Select, t, Trans} from "@lingui/macro";
+import {I18nProvider} from "@lingui/react";
 import {IconArrowLeft, IconSend} from "@tabler/icons-react";
-import {IdParam, LiveChatConfig, LiveChatMessage, LiveChatTurn, Organizer} from "../../../types.ts";
+import {Event, IdParam, LiveChatConfig, LiveChatMessage, LiveChatTurn, Organizer} from "../../../types.ts";
 import {usePostLiveChatMessage, useStartLiveChat, useSubmitLiveChatContact} from "../../../mutations/useLiveChat.ts";
 import {liveChatPublicClient} from "../../../api/live-chat.client.ts";
+import {
+    cacheLiveChatMessages,
+    fetchLiveChatMessages,
+    forgetLiveChatMessages,
+    getCachedLiveChatMessages,
+} from "../../../queries/useGetLiveChatMessages.ts";
 import {getPrivacyPolicyUrl} from "../../../utilites/branding.ts";
 import {ContactOrganizerForm} from "../ContactOrganizerModal/ContactOrganizerForm.tsx";
 import {LiveChatRefundCard} from "./LiveChatRefundCard.tsx";
 import {ASSISTANT_NAME, LiveChatAvatar} from "./LiveChatAvatar.tsx";
 import {LiveChatMessagingScope} from "./LiveChatMessagingScope.tsx";
+import {LiveChatEventBar} from "./LiveChatEventBar.tsx";
+import {useLiveChatI18n} from "./liveChatI18n.ts";
+import {BUY_QUERY_PARAM, scrollToTicketsSection, TICKETS_SECTION_ID} from "../../../utilites/ticketsAnchor.ts";
+import {eventHomepagePath} from "../../../utilites/urlHelper.ts";
 import classes from "./LiveChatWindow.module.scss";
 
 interface LiveChatWindowProps {
@@ -18,10 +30,14 @@ interface LiveChatWindowProps {
     onClose: () => void;
     organizer: Organizer;
     eventId?: IdParam;
+    event?: Event | null;
+    onBook?: () => void;
     config: LiveChatConfig;
 }
 
 const STORAGE_PREFIX = 'picha-live-chat:';
+const CONTACT_DISMISSED_PREFIX = 'picha-live-chat-contact-later:';
+const CLOSE_BEFORE_BOOK_MS = 220;
 const PHONE_PATTERN = /^\+?[0-9\s().-]{8,20}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -45,7 +61,38 @@ const storeSession = (organizerId: IdParam, sessionId: string | null) => {
     }
 };
 
+// « Plus tard » on the contact request is remembered for the whole conversation.
+const readContactDismissed = (sessionId: string): boolean => {
+    try {
+        return window.sessionStorage.getItem(CONTACT_DISMISSED_PREFIX + sessionId) === '1';
+    } catch {
+        return false;
+    }
+};
+
+const storeContactDismissed = (sessionId: string) => {
+    try {
+        window.sessionStorage.setItem(CONTACT_DISMISSED_PREFIX + sessionId, '1');
+    } catch {
+        // Private browsing: the request may come back on the next page.
+    }
+};
+
+// While the full screen chat is open, the page cannot be zoomed in by a tap in a field (iOS, in-app browsers).
+const NO_ZOOM = 'maximum-scale=1';
+
 const statusOf = (error: any): number | undefined => error?.response?.status;
+
+// Messages already shown stay in place: the server copy replaces the known ones and the rest keeps its order.
+const mergeMessages = (current: LiveChatMessage[], incoming: LiveChatMessage[]): LiveChatMessage[] => {
+    const incomingIds = new Set(incoming.map((message) => message.id));
+    const known = [...incoming, ...current.filter((message) => message.id > 0 && !incomingIds.has(message.id))]
+        .sort((a, b) => a.id - b.id);
+    return [...known, ...current.filter((message) => message.id < 0)];
+};
+
+// Above this gap between the layout and the visual viewport, the on-screen keyboard is open.
+const KEYBOARD_THRESHOLD = 120;
 
 const between = (min: number, max: number) => min + Math.random() * (max - min);
 
@@ -94,10 +141,12 @@ const ReadTicks = ({state}: { state: TickState }) => (
  * « Assistance en direct »: answers the visitor right away with the organizer's assistant. Full screen on a phone,
  * side panel on a desktop. The contact details are only asked when the organizer must follow up.
  */
-export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: LiveChatWindowProps) => {
+export const LiveChatWindow = ({opened, onClose, organizer, eventId, event, onBook, config}: LiveChatWindowProps) => {
+    const i18n = useLiveChatI18n(organizer);
     const isMobile = useMediaQuery('(max-width: 48em)');
     const messaging = config.style === 'MESSAGING';
-    const [greetingAt, setGreetingAt] = useState<string | null>(null);
+    const queryClient = useQueryClient();
+    const [openedAt] = useState(() => new Date().toISOString());
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [greeting, setGreeting] = useState<string | null>(null);
     const [messages, setMessages] = useState<LiveChatMessage[]>([]);
@@ -105,14 +154,16 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
     const [askContact, setAskContact] = useState(false);
     const [contactGiven, setContactGiven] = useState(false);
     const [fallback, setFallback] = useState<{ notice: string | null; message: string } | null>(null);
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
+    const [contact, setContact] = useState('');
+    const [contactDismissed, setContactDismissed] = useState(false);
     const [contactError, setContactError] = useState<string | null>(null);
     const [startFailed, setStartFailed] = useState(false);
     const [refundOpen, setRefundOpen] = useState(false);
     const [typing, setTyping] = useState(false);
     const [revealing, setRevealing] = useState(false);
     const [pendingQuestion, setPendingQuestion] = useState(false);
+    const [restoring, setRestoring] = useState(false);
+    const portalRef = useRef<HTMLElement | undefined>(undefined);
     const messagesRef = useRef<LiveChatMessage[]>([]);
     const logRef = useRef<HTMLDivElement>(null);
     const timers = useRef<number[]>([]);
@@ -133,7 +184,7 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
     };
 
     const applyTurn = (turn: LiveChatTurn, replaceAll = false) => {
-        setMessages((current) => replaceAll ? turn.messages : [...current.filter((message) => message.id > 0), ...turn.messages]);
+        setMessages((current) => replaceAll ? mergeMessages(current, turn.messages) : [...current.filter((message) => message.id > 0), ...turn.messages]);
         applyTurnState(turn);
     };
 
@@ -204,8 +255,9 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
             onSuccess: ({data}) => {
                 setSessionId(data.session_id);
                 storeSession(organizer.id, data.session_id);
-                setGreeting(data.greeting);
-                setGreetingAt(new Date().toISOString());
+                if (data.greeting) {
+                    setGreeting(data.greeting);
+                }
                 applyTurn(data, true);
             },
             onError: (error: any) => {
@@ -229,21 +281,72 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
             return;
         }
 
-        liveChatPublicClient.messages(stored)
-            .then(({data}) => {
+        const cached = getCachedLiveChatMessages(queryClient, stored);
+        if (cached) {
+            setSessionId(stored);
+            applyTurn(cached, true);
+        } else {
+            setRestoring(true);
+        }
+
+        fetchLiveChatMessages(queryClient, stored)
+            .then((data) => {
                 setSessionId(stored);
-                setGreeting(null);
                 applyTurn(data, true);
             })
-            .catch(() => {
+            .catch((error) => {
+                if (cached && statusOf(error) !== 404) {
+                    return;
+                }
+                forgetLiveChatMessages(queryClient, stored);
                 storeSession(organizer.id, null);
+                setSessionId(null);
+                setMessages([]);
                 start();
-            });
+            })
+            .finally(() => setRestoring(false));
     }, [opened]);
+
+    // The conversation is kept in the query cache so that a chat mounted again (another page, the launcher hidden
+    // for a while) shows it at once.
+    useEffect(() => {
+        if (!sessionId) {
+            return;
+        }
+        cacheLiveChatMessages(queryClient, {
+            session_id: sessionId,
+            greeting: null,
+            messages: messages.filter((message) => message.id > 0),
+            ask_contact: askContact,
+            contact_form_fallback: false,
+            contact_given: contactGiven,
+            refund_form: false,
+            pending_question: pendingQuestion,
+        });
+    }, [sessionId, messages, askContact, contactGiven, pendingQuestion]);
 
     useEffect(() => {
         messagesRef.current = messages;
     }, [messages]);
+
+    useEffect(() => {
+        setContactDismissed(sessionId ? readContactDismissed(sessionId) : false);
+    }, [sessionId]);
+
+    useEffect(() => {
+        if (!messaging || !opened || typeof document === 'undefined') {
+            return;
+        }
+        const meta = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
+        if (!meta) {
+            return;
+        }
+        const original = meta.getAttribute('content') ?? '';
+        if (!original.includes('maximum-scale')) {
+            meta.setAttribute('content', original ? `${original}, ${NO_ZOOM}` : NO_ZOOM);
+        }
+        return () => meta.setAttribute('content', original);
+    }, [messaging, opened]);
 
     useEffect(() => {
         if (!opened || !sessionId || !pendingQuestion || revealing || postMutation.isPending) {
@@ -271,35 +374,50 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
     }, [opened, sessionId, pendingQuestion, revealing, postMutation.isPending]);
 
     // On a phone the on-screen keyboard shrinks the visual viewport: the full screen chat follows it so that the
-    // input bar stays visible above the keyboard.
+    // input bar stays visible above the keyboard. The size is read once on open, then only when the viewport
+    // changes, at most once per frame, and written only when it differs.
     useEffect(() => {
-        if (!messaging || !opened || !isMobile || typeof window === 'undefined' || !window.visualViewport) {
+        const target = portalRef.current;
+        if (!messaging || !opened || !isMobile || typeof window === 'undefined' || !target) {
             return;
         }
         const viewport = window.visualViewport;
         let frame = 0;
-        const update = () => {
-            window.cancelAnimationFrame(frame);
-            frame = window.requestAnimationFrame(() => {
-                const content = logRef.current?.closest<HTMLElement>('.mantine-Drawer-content');
-                if (!content) {
-                    return;
-                }
-                content.style.setProperty('--live-chat-viewport-height', `${Math.round(viewport.height)}px`);
-                content.style.setProperty('--live-chat-viewport-top', `${Math.round(viewport.offsetTop)}px`);
-                const log = logRef.current;
-                if (log) {
-                    log.scrollTop = log.scrollHeight;
-                }
-            });
+        let lastHeight = -1;
+        let lastTop = -1;
+
+        const apply = () => {
+            frame = 0;
+            const height = Math.round(viewport ? viewport.height : window.innerHeight);
+            const top = Math.round(viewport ? viewport.offsetTop : 0);
+            if (height === lastHeight && top === lastTop) {
+                return;
+            }
+            const shrank = lastHeight > 0 && height < lastHeight;
+            lastHeight = height;
+            lastTop = top;
+            target.style.setProperty('--live-chat-viewport-height', `${height}px`);
+            target.style.setProperty('--live-chat-viewport-top', `${top}px`);
+            target.toggleAttribute('data-live-chat-keyboard', window.innerHeight - height > KEYBOARD_THRESHOLD);
+            const log = logRef.current;
+            if (shrank && log) {
+                log.scrollTop = log.scrollHeight;
+            }
         };
-        update();
-        viewport.addEventListener('resize', update);
-        viewport.addEventListener('scroll', update);
+        const schedule = () => {
+            if (!frame) {
+                frame = window.requestAnimationFrame(apply);
+            }
+        };
+
+        apply();
+        viewport?.addEventListener('resize', schedule);
+        viewport?.addEventListener('scroll', schedule);
         return () => {
             window.cancelAnimationFrame(frame);
-            viewport.removeEventListener('resize', update);
-            viewport.removeEventListener('scroll', update);
+            viewport?.removeEventListener('resize', schedule);
+            viewport?.removeEventListener('scroll', schedule);
+            target.removeAttribute('data-live-chat-keyboard');
         };
     }, [messaging, opened, isMobile]);
 
@@ -308,18 +426,16 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
         if (log) {
             log.scrollTop = log.scrollHeight;
         }
-    }, [messages, typing, askContact, opened, refundOpen]);
+    }, [messages, typing, restoring, askContact, opened, refundOpen]);
 
-    const send = (event?: FormEvent) => {
-        event?.preventDefault();
-        const content = draft.trim();
+    const sendText = (text: string) => {
+        const content = text.trim();
         if (!content || !sessionId || postMutation.isPending || revealing) {
-            return;
+            return false;
         }
 
         const optimistic: LiveChatMessage = {id: -Date.now(), author_type: 'VISITOR', content, created_at: new Date().toISOString()};
         setMessages((current) => [...current, optimistic]);
-        setDraft('');
 
         const typingFrom = Date.now() + readingDelay();
         clearTimers();
@@ -353,30 +469,38 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                 setDraft(content);
             },
         });
+        return true;
     };
 
-    const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-        if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
-            event.preventDefault();
+    const send = (formEvent?: FormEvent) => {
+        formEvent?.preventDefault();
+        if (sendText(draft)) {
+            setDraft('');
+        }
+    };
+
+    const onKeyDown = (keyEvent: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (keyEvent.key === 'Enter' && !keyEvent.shiftKey && !keyEvent.nativeEvent.isComposing) {
+            keyEvent.preventDefault();
             send();
         }
     };
 
-    const submitContact = (event: FormEvent) => {
-        event.preventDefault();
-        const trimmedPhone = phone.trim();
-        const trimmedEmail = email.trim();
+    const submitContact = (formEvent: FormEvent) => {
+        formEvent.preventDefault();
+        const value = contact.trim();
 
-        if (!trimmedPhone && !trimmedEmail) {
-            setContactError(t`Enter your phone number or your email.`);
+        if (!value) {
+            setContactError(t(i18n)`Enter your phone number or your email.`);
             return;
         }
-        if (trimmedPhone && !PHONE_PATTERN.test(trimmedPhone)) {
-            setContactError(t`This phone number does not look valid.`);
+        const isEmail = value.includes('@');
+        if (isEmail && !EMAIL_PATTERN.test(value)) {
+            setContactError(t(i18n)`This email does not look valid.`);
             return;
         }
-        if (!trimmedPhone && !EMAIL_PATTERN.test(trimmedEmail)) {
-            setContactError(t`This email does not look valid.`);
+        if (!isEmail && !PHONE_PATTERN.test(value)) {
+            setContactError(t(i18n)`This phone number does not look valid.`);
             return;
         }
         if (!sessionId) {
@@ -386,18 +510,49 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
         setContactError(null);
         contactMutation.mutate({
             sessionId,
-            phone: trimmedPhone || null,
-            email: trimmedPhone ? null : trimmedEmail,
+            phone: isEmail ? null : value,
+            email: isEmail ? value : null,
         }, {
             onSuccess: ({data}) => applyTurn(data),
             onError: (error: any) => {
                 const errors = error?.response?.data?.errors;
-                setContactError(errors?.phone?.[0] || errors?.email?.[0] || t`We could not save your details. Please try again.`);
+                setContactError(errors?.phone?.[0] || errors?.email?.[0] || t(i18n)`We could not save your details. Please try again.`);
             },
         });
     };
 
+    const dismissContact = () => {
+        setContactDismissed(true);
+        if (sessionId) {
+            storeContactDismissed(sessionId);
+        }
+    };
+
+    // Takes the visitor to the ticket form: the chat closes first so that the page can scroll again.
+    const book = () => {
+        onClose();
+        window.setTimeout(() => {
+            if (onBook) {
+                onBook();
+                return;
+            }
+            const tickets = document.getElementById(TICKETS_SECTION_ID);
+            if (tickets) {
+                scrollToTicketsSection(tickets);
+            } else if (event) {
+                window.location.assign(`${eventHomepagePath(event)}?${BUY_QUERY_PARAM}=1`);
+            }
+        }, CLOSE_BEFORE_BOOK_MS);
+    };
+
     const organizerName = config.organizer_name || organizer.name || '';
+    const welcome = greeting || config.greeting || t(i18n)`Hello! Ask me your question about our events, I will answer right away.`;
+    const welcomeAt = messages.find((message) => message.id > 0)?.created_at ?? openedAt;
+    const privacyLink = (
+        <Anchor href={getPrivacyPolicyUrl()} target="_blank" rel="noopener" inherit>
+            {t(i18n)`Privacy policy`}
+        </Anchor>
+    );
 
     const header = messaging ? (
         <div className={classes.messagingHeader}>
@@ -407,7 +562,7 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
                 radius="xl"
                 size="lg"
                 onClick={onClose}
-                aria-label={t`Close the chat`}
+                aria-label={t(i18n)`Close the chat`}
                 className={classes.messagingBack}
             >
                 <IconArrowLeft size={22}/>
@@ -418,21 +573,24 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
             </span>
             <span className={classes.messagingIdentity}>
                 <span className={classes.messagingName}>{ASSISTANT_NAME}</span>
-                <span className={classes.messagingStatus}>{t`Online`}</span>
+                <span className={classes.messagingStatus}>{t(i18n)`Online`}</span>
             </span>
         </div>
     ) : (
         <div className={classes.header}>
-            <span className={classes.title}>{t`Assistance`}</span>
+            <span className={classes.title}>{t(i18n)`Assistance`}</span>
             <span className={classes.organizerName}>{organizerName}</span>
             {config.relay_line && <span className={classes.relayLine}>{config.relay_line}</span>}
         </div>
     );
 
-    const transparencyLine = select(startsWithVowel(organizerName), {
-        yes: `Virtual assistant of ${organizerName}`,
-        other: `Virtual assistant of ${organizerName}`,
-    });
+    const transparencyLine = (
+        <Select
+            value={startsWithVowel(organizerName)}
+            _yes={`Virtual assistant of ${organizerName}`}
+            other={`Virtual assistant of ${organizerName}`}
+        />
+    );
 
     let lastAgentIndex = -1;
     messages.forEach((message, index) => {
@@ -456,178 +614,225 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, config}: Li
     ) : null;
 
     const desktopPanel = messaging && !isMobile;
+    const fullScreen = messaging && isMobile;
+    const visitorHasWritten = messages.some((message) => message.author_type === 'VISITOR');
+    const busy = !sessionId || postMutation.isPending || revealing;
+    const showQuickReplies = messaging && !visitorHasWritten && !fallback && !restoring && !startMutation.isPending;
+    const showContactForm = askContact && !contactGiven && !refundOpen && !contactDismissed
+        && (!messaging || pendingQuestion);
 
-    const drawer = (portalTarget?: HTMLElement) => (
-        <Drawer
-            opened={opened}
-            onClose={onClose}
-            portalProps={portalTarget ? {target: portalTarget} : undefined}
-            position="right"
-            size={isMobile ? '100%' : (messaging ? 440 : 420)}
-            title={header}
-            withCloseButton={!messaging}
-            overlayProps={messaging ? {backgroundOpacity: isMobile ? 0 : 0.25, blur: 0} : undefined}
-            styles={{
-                inner: desktopPanel ? {alignItems: 'flex-end', padding: 24} : undefined,
-                content: {
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%',
-                    ...(desktopPanel ? {height: 'min(760px, calc(100dvh - 48px))', borderRadius: 16, overflow: 'hidden'} : {}),
-                },
-                header: messaging ? {padding: 0, alignItems: 'stretch'} : {padding: '16px 16px 12px', alignItems: 'flex-start'},
-                title: {flex: 1, minWidth: 0},
-                body: {display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, padding: 0},
-            }}
-            classNames={{
-                content: `${classes.content} ${messaging ? classes.messaging : ''} ${messaging && isMobile ? classes.messagingFullScreen : ''}`,
-                header: messaging ? classes.messagingDrawerHeader : classes.drawerHeader,
-                body: classes.body,
-                close: classes.close,
-            }}
-            closeButtonProps={{'aria-label': t`Close the chat`}}
-            aria-label={messaging ? t`Chat with ${ASSISTANT_NAME}` : t`Assistance`}
-        >
-            {fallback ? (
-                <div className={classes.fallback}>
-                    <Text size="sm" mb="md">
-                        {fallback.notice || t`The assistant cannot answer right now. Leave your message and the organizer will reply by email.`}
-                    </Text>
-                    <ContactOrganizerForm organizer={organizer} onDone={onClose} initialMessage={fallback.message}/>
-                </div>
-            ) : (
-                <>
-                    <div
-                        ref={logRef}
-                        className={classes.log}
-                        role="log"
-                        aria-live="polite"
-                        aria-relevant="additions"
-                        aria-label={t`Conversation`}
-                    >
-                        {messaging && (
-                            <div className={classes.systemNotice}>
-                                <span>{transparencyLine}</span>
-                                {config.relay_line && <span>{config.relay_line}</span>}
-                            </div>
-                        )}
-                        {greeting && (
-                            <div className={`${classes.bubble} ${classes.agent}`}>
-                                {messaging && <VisuallyHidden>{t`Anicka:`}</VisuallyHidden>}
-                                {greeting}
-                                {bubbleMeta(greetingAt)}
-                            </div>
-                        )}
-                        {messages.map((message, index) => (
-                            <div
-                                key={message.id}
-                                className={`${classes.bubble} ${message.author_type === 'VISITOR' ? classes.visitor : classes.agent}`}
-                            >
-                                <VisuallyHidden>{message.author_type === 'VISITOR' ? t`You:` : t`Anicka:`}</VisuallyHidden>
-                                {message.content}
-                                {bubbleMeta(message.created_at, message.author_type === 'VISITOR' ? tickState(message, index) : undefined)}
-                            </div>
-                        ))}
-                        {(typing || startMutation.isPending) && (
-                            <div className={`${classes.bubble} ${classes.agent} ${classes.typing}`} role="status" aria-label={t`Anicka is writing`}>
-                                <span/><span/><span/>
-                            </div>
-                        )}
-                        {startFailed && (
-                            <div className={classes.error}>
-                                <Text size="sm">{t`The chat could not start.`}</Text>
-                                <Button size="xs" variant="light" onClick={start}>{t`Try again`}</Button>
-                            </div>
-                        )}
-                        {refundOpen && sessionId && (
-                            <LiveChatRefundCard
-                                sessionId={sessionId}
-                                onMessages={appendMessages}
-                                onUnavailable={(ask, given) => {
-                                    setRefundOpen(false);
-                                    setContactGiven(given);
-                                    setAskContact(ask && !given);
-                                }}
-                                onDone={() => setRefundOpen(false)}
-                                onLimit={(notice) => {
-                                    setRefundOpen(false);
-                                    setFallback({notice, message: ''});
-                                }}
-                            />
-                        )}
-                        {askContact && !contactGiven && !refundOpen && (
-                            <form className={classes.contactForm} onSubmit={submitContact} noValidate>
-                                <Text size="sm" fw={600}>{t`So that the organizer can reply to you`}</Text>
-                                <TextInput
-                                    label={t`Phone (reply by SMS)`}
-                                    placeholder="0639 12 34 56"
-                                    type="tel"
-                                    autoComplete="tel"
-                                    inputMode="tel"
-                                    value={phone}
-                                    onChange={(event) => setPhone(event.currentTarget.value)}
-                                    maxLength={30}
-                                />
-                                <TextInput
-                                    label={t`Or your email`}
-                                    placeholder={t`you@example.com`}
-                                    type="email"
-                                    autoComplete="email"
-                                    value={email}
-                                    onChange={(event) => setEmail(event.currentTarget.value)}
-                                    maxLength={255}
-                                    disabled={phone.trim() !== ''}
-                                />
-                                {contactError && <Text size="xs" c="red" role="alert">{contactError}</Text>}
-                                <Group justify="flex-end">
-                                    <Button type="submit" size="xs" loading={contactMutation.isPending}>{t`Send my details`}</Button>
-                                </Group>
-                            </form>
-                        )}
+    const eventBar = messaging && event ? (
+        <LiveChatEventBar event={event} i18n={i18n} onBook={book}/>
+    ) : null;
+
+    const drawer = (portalTarget?: HTMLElement) => {
+        portalRef.current = portalTarget;
+        return (
+            <Drawer
+                opened={opened}
+                onClose={onClose}
+                portalProps={portalTarget ? {target: portalTarget} : undefined}
+                position="right"
+                size={isMobile ? '100%' : (messaging ? 440 : 420)}
+                title={header}
+                withCloseButton={!messaging}
+                overlayProps={messaging ? {backgroundOpacity: isMobile ? 0 : 0.25, blur: 0} : undefined}
+                transitionProps={fullScreen ? {
+                    transition: {
+                        in: {opacity: 1, transform: 'translate3d(0, 0, 0)'},
+                        out: {opacity: 0, transform: 'translate3d(0, 24px, 0)'},
+                        transitionProperty: 'opacity, transform',
+                    },
+                    duration: 200,
+                    timingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+                } : undefined}
+                styles={{
+                    inner: desktopPanel ? {alignItems: 'flex-end', padding: 24} : undefined,
+                    content: {
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100%',
+                        ...(desktopPanel ? {height: 'min(760px, calc(100dvh - 48px))', borderRadius: 16, overflow: 'hidden'} : {}),
+                    },
+                    header: messaging ? {padding: 0, alignItems: 'stretch'} : {padding: '16px 16px 12px', alignItems: 'flex-start'},
+                    title: {flex: 1, minWidth: 0},
+                    body: {display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, padding: 0},
+                }}
+                classNames={{
+                    content: `${classes.content} ${messaging ? classes.messaging : ''} ${fullScreen ? classes.messagingFullScreen : ''}`,
+                    header: messaging ? classes.messagingDrawerHeader : classes.drawerHeader,
+                    body: classes.body,
+                    close: classes.close,
+                }}
+                closeButtonProps={{'aria-label': t(i18n)`Close the chat`}}
+                aria-label={messaging ? t(i18n)`Chat with ${ASSISTANT_NAME}` : t(i18n)`Assistance`}
+            >
+                {fallback ? (
+                    <div className={classes.fallback}>
+                        <Text size="sm" mb="md">
+                            {fallback.notice || t(i18n)`The assistant cannot answer right now. Leave your message and the organizer will reply by email.`}
+                        </Text>
+                        <ContactOrganizerForm organizer={organizer} onDone={onClose} initialMessage={fallback.message}/>
                     </div>
-
-                    <form className={classes.composer} onSubmit={send}>
-                        <Textarea
-                            value={draft}
-                            onChange={(event) => setDraft(event.currentTarget.value)}
-                            onKeyDown={onKeyDown}
-                            placeholder={messaging ? t`Message` : t`Write your question...`}
-                            aria-label={t`Your message`}
-                            autosize
-                            minRows={1}
-                            maxRows={5}
-                            maxLength={maxLength}
-                            className={classes.input}
-                            radius={messaging ? 'xl' : undefined}
-                            disabled={!sessionId}
-                            data-autofocus
-                        />
-                        <ActionIcon
-                            type="submit"
-                            size={messaging ? 44 : 'lg'}
-                            radius="xl"
-                            aria-label={t`Send`}
-                            className={messaging ? classes.sendButton : undefined}
-                            disabled={!sessionId || !draft.trim() || postMutation.isPending || revealing}
+                ) : (
+                    <>
+                        {eventBar}
+                        <div
+                            ref={logRef}
+                            className={classes.log}
+                            role="log"
+                            aria-live="polite"
+                            aria-relevant="additions"
+                            aria-label={t(i18n)`Conversation`}
                         >
-                            <IconSend size={messaging ? 20 : 18}/>
-                        </ActionIcon>
-                    </form>
-                    <p className={classes.notice}>
-                        <Trans>
-                            Your messages are answered by the organizer's automatic assistant and passed on to the organizer
-                            if needed. Without contact details they are deleted after 90 days.
-                        </Trans>{' '}
-                        <Anchor href={getPrivacyPolicyUrl()} target="_blank" rel="noopener" inherit>
-                            {t`Privacy policy`}
-                        </Anchor>
-                    </p>
-                </>
-            )}
-        </Drawer>
-    );
+                            {messaging && (
+                                <div className={classes.systemNotice}>
+                                    <span>{transparencyLine}</span>
+                                    {config.relay_line && <span>{config.relay_line}</span>}
+                                    <span className={classes.systemNoticeLegal}>
+                                        {t(i18n)`Without contact details, messages are deleted after 90 days.`} {privacyLink}
+                                    </span>
+                                </div>
+                            )}
+                            <div className={`${classes.bubble} ${classes.agent}`}>
+                                {messaging && <VisuallyHidden>{t(i18n)`Anicka:`}</VisuallyHidden>}
+                                {welcome}
+                                {bubbleMeta(welcomeAt)}
+                            </div>
+                            {messages.map((message, index) => (
+                                <div
+                                    key={message.id}
+                                    className={`${classes.bubble} ${message.author_type === 'VISITOR' ? classes.visitor : classes.agent}`}
+                                >
+                                    <VisuallyHidden>{message.author_type === 'VISITOR' ? t(i18n)`You:` : t(i18n)`Anicka:`}</VisuallyHidden>
+                                    {message.content}
+                                    {bubbleMeta(message.created_at, message.author_type === 'VISITOR' ? tickState(message, index) : undefined)}
+                                </div>
+                            ))}
+                            {(typing || startMutation.isPending || restoring) && (
+                                <div className={`${classes.bubble} ${classes.agent} ${classes.typing}`} role="status" aria-label={t(i18n)`Anicka is writing`}>
+                                    <span/><span/><span/>
+                                </div>
+                            )}
+                            {startFailed && (
+                                <div className={classes.error}>
+                                    <Text size="sm">{t(i18n)`The chat could not start.`}</Text>
+                                    <Button size="xs" variant="light" onClick={start}>{t(i18n)`Try again`}</Button>
+                                </div>
+                            )}
+                            {refundOpen && sessionId && (
+                                <LiveChatRefundCard
+                                    sessionId={sessionId}
+                                    onMessages={appendMessages}
+                                    onUnavailable={(ask, given) => {
+                                        setRefundOpen(false);
+                                        setContactGiven(given);
+                                        setAskContact(ask && !given);
+                                    }}
+                                    onDone={() => setRefundOpen(false)}
+                                    onLimit={(notice) => {
+                                        setRefundOpen(false);
+                                        setFallback({notice, message: ''});
+                                    }}
+                                />
+                            )}
+                            {showContactForm && (
+                                <form className={classes.contactForm} onSubmit={submitContact} noValidate>
+                                    <div className={classes.contactRow}>
+                                        <TextInput
+                                            aria-label={t(i18n)`Your number or your email`}
+                                            placeholder={t(i18n)`Your number or your email`}
+                                            type="text"
+                                            autoComplete="tel"
+                                            value={contact}
+                                            onChange={(changeEvent) => setContact(changeEvent.currentTarget.value)}
+                                            maxLength={255}
+                                            className={classes.contactInput}
+                                            radius="xl"
+                                            error={contactError ? true : undefined}
+                                        />
+                                        <Button type="submit" radius="xl" loading={contactMutation.isPending}>
+                                            {t(i18n)`Send`}
+                                        </Button>
+                                    </div>
+                                    {contactError && <Text size="xs" c="red" role="alert">{contactError}</Text>}
+                                    <button type="button" className={classes.contactLater} onClick={dismissContact}>
+                                        {t(i18n)`Later`}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
 
-    return messaging ? <LiveChatMessagingScope>{drawer}</LiveChatMessagingScope> : drawer();
+                        {showQuickReplies && (
+                            <div className={classes.quickReplies}>
+                                <button
+                                    type="button"
+                                    className={classes.quickReply}
+                                    disabled={busy}
+                                    onClick={() => sendText(t(i18n)`The prices`)}
+                                >
+                                    {t(i18n)`The prices`}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={classes.quickReply}
+                                    disabled={busy}
+                                    onClick={() => sendText(t(i18n)`The times`)}
+                                >
+                                    {t(i18n)`The times`}
+                                </button>
+                                {event && (
+                                    <button type="button" className={`${classes.quickReply} ${classes.quickReplyPrimary}`} onClick={book}>
+                                        {t(i18n)`I'm booking my place`}
+                                    </button>
+                                )}
+                            </div>
+                        )}
+
+                        <form className={classes.composer} onSubmit={send}>
+                            <Textarea
+                                value={draft}
+                                onChange={(changeEvent) => setDraft(changeEvent.currentTarget.value)}
+                                onKeyDown={onKeyDown}
+                                placeholder={messaging ? t(i18n)`Message` : t(i18n)`Write your question...`}
+                                aria-label={t(i18n)`Your message`}
+                                autosize
+                                minRows={1}
+                                maxRows={5}
+                                maxLength={maxLength}
+                                className={classes.input}
+                                radius={messaging ? 'xl' : undefined}
+                                data-autofocus={isMobile ? undefined : true}
+                            />
+                            <ActionIcon
+                                type="submit"
+                                size={messaging ? 44 : 'lg'}
+                                radius="xl"
+                                aria-label={t(i18n)`Send`}
+                                className={messaging ? classes.sendButton : undefined}
+                                disabled={busy || !draft.trim()}
+                            >
+                                <IconSend size={messaging ? 20 : 18}/>
+                            </ActionIcon>
+                        </form>
+                        {!messaging && (
+                            <p className={classes.notice}>
+                                <Trans>
+                                    Your messages are answered by the organizer's automatic assistant and passed on to the organizer
+                                    if needed. Without contact details they are deleted after 90 days.
+                                </Trans>{' '}
+                                {privacyLink}
+                            </p>
+                        )}
+                    </>
+                )}
+            </Drawer>
+        );
+    };
+
+    const content = messaging ? <LiveChatMessagingScope>{drawer}</LiveChatMessagingScope> : drawer();
+
+    return <I18nProvider i18n={i18n}>{content}</I18nProvider>;
 };
 
 export default LiveChatWindow;

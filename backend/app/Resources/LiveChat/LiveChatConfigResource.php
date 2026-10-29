@@ -21,6 +21,7 @@ class LiveChatConfigResource extends BaseResource
             'max_message_length' => $this->maxMessageLength,
             'style' => $this->style->value,
             'avatar_url' => $this->avatarUrl,
+            'greeting' => $this->greeting,
         ];
     }
 }

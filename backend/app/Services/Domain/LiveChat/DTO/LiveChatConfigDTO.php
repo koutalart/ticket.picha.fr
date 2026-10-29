@@ -16,5 +16,6 @@ class LiveChatConfigDTO extends BaseDataObject
         public readonly int $maxMessageLength = 0,
         public readonly LiveChatStyle $style = LiveChatStyle::CLASSIC,
         public readonly ?string $avatarUrl = null,
+        public readonly ?string $greeting = null,
     ) {}
 }

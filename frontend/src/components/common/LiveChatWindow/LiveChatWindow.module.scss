@@ -207,6 +207,13 @@
   background: var(--live-chat-wallpaper);
   color: #111b21;
   box-shadow: 0 12px 40px rgba(11, 20, 26, 0.28);
+  touch-action: pan-y;
+
+  // 16px at least in every field: iOS zooms the page in on a smaller one.
+  input,
+  textarea {
+    font-size: 16px !important;
+  }
 
   .body {
     background: var(--live-chat-wallpaper);
@@ -216,8 +223,8 @@
     gap: 4px;
     padding: 12px 12px 16px;
     background-color: var(--live-chat-wallpaper);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%23d9d0c3' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='14' cy='16' r='5'/%3E%3Cpath d='M40 10l4 8 8 1-6 5 2 8-8-4-8 4 2-8-6-5 8-1z'/%3E%3Cpath d='M10 52h18M19 43v18'/%3E%3Crect x='42' y='46' width='16' height='12' rx='3'/%3E%3Cpath d='M74 50c3 0 5 2 5 5s-2 5-5 5-5-2-5-5'/%3E%3Ccircle cx='22' cy='82' r='3'/%3E%3Cpath d='M44 78l6 8 6-8M70 76l12 12M82 76L70 88'/%3E%3Cpath d='M68 12c3-4 9-4 9 1 0 4-5 7-9 10-4-3-9-6-9-10 0-5 6-5 9-1z'/%3E%3C/g%3E%3C/svg%3E");
-    background-size: 120px 120px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%23d9d0c3' stroke-opacity='0.55' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='14' cy='16' r='5'/%3E%3Cpath d='M40 10l4 8 8 1-6 5 2 8-8-4-8 4 2-8-6-5 8-1z'/%3E%3Cpath d='M10 52h18M19 43v18'/%3E%3Crect x='42' y='46' width='16' height='12' rx='3'/%3E%3Cpath d='M74 50c3 0 5 2 5 5s-2 5-5 5-5-2-5-5'/%3E%3Ccircle cx='22' cy='82' r='3'/%3E%3Cpath d='M44 78l6 8 6-8M70 76l12 12M82 76L70 88'/%3E%3Cpath d='M68 12c3-4 9-4 9 1 0 4-5 7-9 10-4-3-9-6-9-10 0-5 6-5 9-1z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 60px 60px;
   }
 
   .bubble {
@@ -266,7 +273,7 @@
 
   .composer {
     align-items: flex-end;
-    padding: 8px 8px 6px;
+    padding: 8px 8px max(8px, env(safe-area-inset-bottom, 0px));
     border-top: 0;
     background: var(--live-chat-wallpaper);
   }
@@ -299,6 +306,11 @@
   }
 }
 
+// The on-screen keyboard covers the home indicator: no safe area under the composer then.
+:global([data-live-chat-keyboard]) .messaging .composer {
+  padding-bottom: 8px;
+}
+
 .messagingFullScreen {
   position: fixed;
   top: var(--live-chat-viewport-top, 0px);
@@ -309,6 +321,7 @@
   max-height: 100dvh;
   border-radius: 0;
   box-shadow: none;
+  will-change: transform, opacity;
 }
 
 .messagingDrawerHeader {
@@ -392,6 +405,146 @@
   line-height: 1.35;
   text-align: center;
   box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+}
+
+.systemNoticeLegal {
+  font-size: 11.5px;
+  color: #667781;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+.eventBar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid #e9edef;
+  box-shadow: 0 1px 2px rgba(11, 20, 26, 0.06);
+}
+
+.eventBarThumb {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #dfe5e7;
+}
+
+.eventBarText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.eventBarTitle {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.eventBarDetails {
+  overflow: hidden;
+  font-size: 12px;
+  color: #667781;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.eventBarCta {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #008069;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    background: #006e5a;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #008069;
+    outline-offset: 2px;
+  }
+}
+
+.quickReplies {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+  padding: 2px 8px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--live-chat-wallpaper, transparent);
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.quickReply {
+  flex-shrink: 0;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid #008069;
+  border-radius: 999px;
+  background: #fff;
+  color: #008069;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.quickReplyPrimary {
+  background: #008069;
+  color: #fff;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contactInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.contactLater {
+  align-self: flex-start;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: #667781;
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .bubbleMeta {

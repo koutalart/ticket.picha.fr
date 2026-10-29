@@ -1670,6 +1670,7 @@ export interface LiveChatConfig {
     max_message_length: number;
     style?: LiveChatStyle;
     avatar_url?: string | null;
+    greeting?: string | null;
 }
 
 export interface LiveChatTurn {
