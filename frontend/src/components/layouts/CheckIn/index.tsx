@@ -10,9 +10,11 @@ import classes from "./CheckIn.module.scss";
 import {ActionIcon, Modal} from "@mantine/core";
 import {SearchBar} from "../../common/SearchBar";
 import {IconInfoCircle, IconQrcode, IconVolume, IconVolumeOff} from "@tabler/icons-react";
-import {QRScannerComponent} from "../../common/AttendeeCheckInTable/QrScanner.tsx";
+import {QRScannerComponent, QrScanOutcome} from "../../common/AttendeeCheckInTable/QrScanner.tsx";
 import {useGetCheckInListAttendees} from "../../../queries/useGetCheckInListAttendeesPublic.ts";
 import {useCreateCheckInPublic} from "../../../mutations/useCreateCheckInPublic.ts";
+import {useGetCheckInListStatsPublic} from "../../../queries/useGetCheckInListStatsPublic.ts";
+import {LiveCounters} from "../../common/CheckIn/LiveCounters";
 import {useDeleteCheckInPublic} from "../../../mutations/useDeleteCheckInPublic.ts";
 import {NoResultsSplash} from "../../common/NoResultsSplash";
 import {Countdown} from "../../common/Countdown";
@@ -78,6 +80,11 @@ const CheckIn = () => {
         checkInList?.is_active && !checkInList?.is_expired,
     );
     const attendees = attendeesQuery?.data?.data;
+    const statsQuery = useGetCheckInListStatsPublic(
+        checkInListShortId,
+        !!checkInList?.is_active && !checkInList?.is_expired,
+    );
+    const stats = statsQuery.data;
     const checkInMutation = useCreateCheckInPublic(queryFilters);
     const deleteCheckInMutation = useDeleteCheckInPublic(queryFilters);
     const areOfflinePaymentsEnabled = eventSettings?.payment_providers?.includes('OFFLINE');
@@ -118,35 +125,59 @@ const CheckIn = () => {
         }
     }, [isSoundOn]);
 
-    const handleCheckInAction = (attendee: Attendee, action: 'check-in' | 'check-in-and-mark-order-as-paid') => {
-        checkInMutation.mutate({
-            checkInListShortId: checkInListShortId,
-            attendeePublicId: attendee.public_id,
-            action: action,
-        }, {
-            onSuccess: ({errors}) => {
-                if (errors && errors[attendee.public_id]) {
-                    showError(errors[attendee.public_id]);
-                    playErrorSound();
-                    return;
-                }
-                showSuccess(<Trans>{attendee.first_name} <b>checked in</b> successfully</Trans>);
-                playSuccessSound();
-                checkInModalHandlers.close();
-                setSelectedAttendee(null);
-            },
-            onError: (error) => {
-                playErrorSound();
-                if (!networkStatus.online) {
-                    showError(t`You are offline`);
-                    return;
-                }
+    const checkInErrorMessage = (error: unknown, fallback: string) => {
+        if (!networkStatus.online) {
+            return t`You are offline`;
+        }
+        if (error instanceof AxiosError) {
+            return error?.response?.data?.message || fallback;
+        }
+        return fallback;
+    };
 
-                if (error instanceof AxiosError) {
-                    showError(error?.response?.data?.message || t`Unable to check in attendee`);
-                }
+    /**
+     * One request: the check-in itself. The answer gives the first name, or the reason it was refused.
+     */
+    const checkInByPublicId = async (
+        attendeePublicId: string,
+        action: 'check-in' | 'check-in-and-mark-order-as-paid',
+        knownFirstName?: string,
+    ): Promise<boolean> => {
+        try {
+            const {data, errors} = await checkInMutation.mutateAsync({
+                checkInListShortId: checkInListShortId,
+                attendeePublicId: attendeePublicId,
+                action: action,
+            });
+
+            if (errors && errors[attendeePublicId]) {
+                showError(errors[attendeePublicId]);
+                playErrorSound();
+                return false;
             }
-        });
+
+            const attendee = {
+                first_name: data?.find((checkIn) => checkIn.attendee?.public_id === attendeePublicId)?.attendee?.first_name
+                    || knownFirstName
+                    || '',
+            };
+            showSuccess(<Trans>{attendee.first_name} <b>checked in</b> successfully</Trans>);
+            playSuccessSound();
+            return true;
+        } catch (error) {
+            playErrorSound();
+            showError(checkInErrorMessage(error, t`Unable to check in attendee`));
+            return false;
+        }
+    };
+
+    const handleCheckInAction = async (attendee: Attendee, action: 'check-in' | 'check-in-and-mark-order-as-paid') => {
+        const checkedIn = await checkInByPublicId(attendee.public_id, action, attendee.first_name);
+        if (checkedIn) {
+            checkInModalHandlers.close();
+            setSelectedAttendee(null);
+        }
+        return checkedIn;
     };
 
     const handleCheckInToggle = (attendee: Attendee) => {
@@ -192,82 +223,83 @@ const CheckIn = () => {
         handleCheckInAction(attendee, 'check-in');
     };
 
-    const handleQrCheckIn = useCallback(async (attendeePublicId: string) => {
-        // Prevent processing if already handling a request
+    const handleQrCheckIn = useCallback(async (attendeePublicId: string): Promise<QrScanOutcome> => {
         if (isProcessingRef.current) {
-            return;
+            return 'ignored';
         }
 
-        // Check if this barcode was recently processed (within last 3 seconds)
+        // Same code twice within 3 seconds (HID scanners can send it twice)
         const now = Date.now();
         if (processedBarcodesRef.current.has(attendeePublicId) &&
             now - lastScanTimeRef.current < 3000) {
             showError(t`This ticket was just scanned. Please wait before scanning again.`);
             playErrorSound();
-            return;
+            return 'error';
         }
 
         isProcessingRef.current = true;
         lastScanTimeRef.current = now;
 
-        // Find the attendee in the current list or fetch them
-        let attendee = attendees?.find(a => a.public_id === attendeePublicId);
+        try {
+            let attendee = attendees?.find(a => a.public_id === attendeePublicId);
 
-        if (!attendee) {
-            try {
-                const {data} = await publicCheckInClient.getCheckInListAttendee(checkInListShortId, attendeePublicId);
-                attendee = data;
-            } catch (error) {
-                showError(t`Unable to fetch attendee`);
+            if (attendee?.check_in) {
+                showError(<Trans>{attendee.first_name} {attendee.last_name} is already checked in</Trans>);
                 playErrorSound();
-                isProcessingRef.current = false;
-                return;
+                processedBarcodesRef.current.add(attendeePublicId);
+                return 'error';
             }
 
-            if (!attendee) {
-                showError(t`Attendee not found`);
-                playErrorSound();
-                isProcessingRef.current = false;
-                return;
-            }
-        }
+            // Only when unpaid orders may check in does the scanner need the attendee first, to offer « mark as paid ».
+            if (allowOrdersAwaitingOfflinePaymentToCheckIn && !attendee) {
+                try {
+                    const {data} = await publicCheckInClient.getCheckInListAttendee(checkInListShortId, attendeePublicId);
+                    attendee = data;
+                } catch (error) {
+                    showError(t`Unable to fetch attendee`);
+                    playErrorSound();
+                    return 'error';
+                }
 
-        // Check if already checked in
-        if (attendee.check_in) {
-            showError(<Trans>{attendee.first_name} {attendee.last_name} is already checked in</Trans>);
-            playErrorSound();
+                if (!attendee) {
+                    showError(t`Attendee not found`);
+                    playErrorSound();
+                    return 'error';
+                }
+
+                if (attendee.check_in) {
+                    showError(<Trans>{attendee.first_name} {attendee.last_name} is already checked in</Trans>);
+                    playErrorSound();
+                    processedBarcodesRef.current.add(attendeePublicId);
+                    return 'error';
+                }
+            }
+
+            const isAttendeeAwaitingPayment = attendee?.status === 'AWAITING_PAYMENT';
+
+            if (allowOrdersAwaitingOfflinePaymentToCheckIn && attendee && isAttendeeAwaitingPayment) {
+                setSelectedAttendee(attendee);
+                checkInModalHandlers.open();
+                return 'ignored';
+            }
+
+            if (!allowOrdersAwaitingOfflinePaymentToCheckIn && isAttendeeAwaitingPayment) {
+                showError(t`You cannot check in attendees with unpaid orders. This setting can be changed in the event settings.`);
+                playErrorSound();
+                return 'error';
+            }
+
             processedBarcodesRef.current.add(attendeePublicId);
+            setTimeout(() => {
+                processedBarcodesRef.current.delete(attendeePublicId);
+            }, 10000);
+
+            const checkedIn = await checkInByPublicId(attendeePublicId, 'check-in', attendee?.first_name);
+            return checkedIn ? 'success' : 'error';
+        } finally {
             isProcessingRef.current = false;
-            return;
         }
-
-        const isAttendeeAwaitingPayment = attendee.status === 'AWAITING_PAYMENT';
-
-        if (allowOrdersAwaitingOfflinePaymentToCheckIn && isAttendeeAwaitingPayment) {
-            setSelectedAttendee(attendee);
-            checkInModalHandlers.open();
-            isProcessingRef.current = false;
-            return;
-        }
-
-        if (!allowOrdersAwaitingOfflinePaymentToCheckIn && isAttendeeAwaitingPayment) {
-            showError(t`You cannot check in attendees with unpaid orders. This setting can be changed in the event settings.`);
-            playErrorSound();
-            isProcessingRef.current = false;
-            return;
-        }
-
-        // Add to processed set before making the request
-        processedBarcodesRef.current.add(attendeePublicId);
-
-        // Clear old entries from the set after 10 seconds
-        setTimeout(() => {
-            processedBarcodesRef.current.delete(attendeePublicId);
-        }, 10000);
-
-        await handleCheckInAction(attendee, 'check-in');
-        isProcessingRef.current = false;
-    }, [attendees, checkInListShortId, allowOrdersAwaitingOfflinePaymentToCheckIn, checkInModalHandlers, handleCheckInAction, playErrorSound]);
+    }, [attendees, checkInListShortId, allowOrdersAwaitingOfflinePaymentToCheckIn, checkInModalHandlers, checkInByPublicId, playErrorSound]);
 
 
     // Process completed barcode
@@ -428,6 +460,7 @@ const CheckIn = () => {
                         <Truncate text={checkInList?.name} length={30}/>
                     </h4>
                 </div>
+                <LiveCounters stats={stats}/>
                 <div className={classes.search}>
                     <div className={classes.searchBar}>
                         <SearchBar
@@ -508,6 +541,7 @@ const CheckIn = () => {
                             onAttendeeScanned={handleQrCheckIn}
                             onClose={() => setQrScannerOpen(false)}
                             isSoundOn={isSoundOn}
+                            topContent={<LiveCounters stats={stats} variant="scanner"/>}
                         />
                     </Modal.Content>
                 </Modal.Root>

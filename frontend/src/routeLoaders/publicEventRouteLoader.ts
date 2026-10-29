@@ -2,6 +2,9 @@ import {LoaderFunctionArgs, redirect} from "react-router";
 import {promoCodeClientPublic} from "../api/promo-code.client.ts";
 import {getEventPublicQuery} from "../queries/useGetEventPublic.ts";
 import {getQueryClient} from "../utilites/ssrQueryClient.ts";
+import {getEventQuestionsPublicQuery} from "../queries/useGetEventQuestionsPublic.ts";
+import {getHighlightedPromoQuery, normalizeHighlightedPromoCode} from "../queries/getHighlightedPromoQuery.ts";
+import {isEmbeddedRegistrationEnabled, isFreeEvent} from "../utilites/embeddedRegistration.ts";
 
 export const publicEventRouteLoader = async ({params, request}: LoaderFunctionArgs) => {
     try {
@@ -22,7 +25,9 @@ export const publicEventRouteLoader = async ({params, request}: LoaderFunctionAr
             promoCodeValid ?? false,
         );
 
-        const event = await getQueryClient().fetchQuery(eventQuery);
+        const queryClient = getQueryClient();
+        const questionsPrefetch = queryClient.prefetchQuery(getEventQuestionsPublicQuery(params.eventId));
+        const event = await queryClient.fetchQuery(eventQuery);
 
         if (event && event.slug && params.eventSlug !== event.slug) {
             const searchString = queryParams.toString();
@@ -30,6 +35,14 @@ export const publicEventRouteLoader = async ({params, request}: LoaderFunctionAr
                 `/event/${event.id}/${event.slug}${searchString ? `?${searchString}` : ''}`
             );
         }
+
+        const highlightedPromoCode = normalizeHighlightedPromoCode(event?.settings?.highlighted_promo_code);
+        await Promise.all([
+            questionsPrefetch,
+            event && highlightedPromoCode && isEmbeddedRegistrationEnabled(event) && !isFreeEvent(event)
+                ? queryClient.prefetchQuery(getHighlightedPromoQuery(event.id, highlightedPromoCode))
+                : null,
+        ]);
 
         return {event, promoCodeValid, promoCode};
     } catch (error: any) {

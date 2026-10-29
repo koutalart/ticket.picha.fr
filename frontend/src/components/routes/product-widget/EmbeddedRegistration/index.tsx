@@ -24,6 +24,7 @@ import {FinaliseOrderPayload, orderClientPublic, ProductFormPayload} from "../..
 import {eventsClientPublic} from "../../../../api/event.client.ts";
 import {promoCodeClientPublic} from "../../../../api/promo-code.client.ts";
 import {useGetEventQuestionsPublic} from "../../../../queries/useGetEventQuestionsPublic.ts";
+import {getHighlightedPromoQuery, normalizeHighlightedPromoCode} from "../../../../queries/getHighlightedPromoQuery.ts";
 import {
     EmbeddedRegistrationError,
     PendingEmbeddedOrder,
@@ -298,13 +299,10 @@ export const EmbeddedRegistration = ({
     }, [codeOpen]);
 
     const questionsQuery = useGetEventQuestionsPublic(eventId);
-    const highlightedPromoCode = (initialEvent.settings?.highlighted_promo_code ?? '').trim().toLowerCase() || null;
+    const highlightedPromoCode = normalizeHighlightedPromoCode(initialEvent.settings?.highlighted_promo_code);
     const highlightedPromoQuery = useQuery({
-        queryKey: ['embeddedRegistrationHighlightedPromo', eventId, highlightedPromoCode],
-        queryFn: () => promoCodeClientPublic.validateCode(eventId, highlightedPromoCode),
+        ...getHighlightedPromoQuery(eventId, highlightedPromoCode),
         enabled: isPaidMode && !!highlightedPromoCode,
-        refetchOnWindowFocus: false,
-        retry: 0,
     });
     const publicEventQuery = useQuery({
         queryKey: ['embeddedRegistrationPublicEvent', eventId],
@@ -1490,7 +1488,9 @@ export const EmbeddedRegistration = ({
         return <>{renderFallback()}</>;
     }
 
-    const isLoading = !questionsQuery.isFetched || (isPaidMode ? false : publicProductIds === null || !ticket);
+    const isLoading = isPaidMode
+        ? !questionsQuery.isFetched && step.kind !== 'selection'
+        : !questionsQuery.isFetched || publicProductIds === null || !ticket;
     const totalSteps = steps.length;
     const currentStepNumber = safeStepIndex + 1;
     const progress = totalSteps > 1 ? safeStepIndex / (totalSteps - 1) : 0;

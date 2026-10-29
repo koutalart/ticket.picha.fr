@@ -42,6 +42,9 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const ASSISTANT_HOLDING_REPLY_ENABLED = 'assistant_holding_reply_enabled';
     final public const ORGANIZER_NUDGE_ENABLED = 'organizer_nudge_enabled';
     final public const LIVE_CHAT_STYLE = 'live_chat_style';
+    final public const CHECKIN_WELCOME_SMS_ENABLED = 'checkin_welcome_sms_enabled';
+    final public const CHECKIN_WELCOME_SMS_PROMPT = 'checkin_welcome_sms_prompt';
+    final public const CHECKIN_WELCOME_SMS_TEMPLATES = 'checkin_welcome_sms_templates';
 
     protected int $id;
     protected int $account_id;
@@ -75,6 +78,9 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected bool $assistant_holding_reply_enabled = true;
     protected bool $organizer_nudge_enabled = false;
     protected string $live_chat_style = 'CLASSIC';
+    protected bool $checkin_welcome_sms_enabled = false;
+    protected ?string $checkin_welcome_sms_prompt = null;
+    protected ?string $checkin_welcome_sms_templates = null;
 
     public function toArray(): array
     {
@@ -111,6 +117,9 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'assistant_holding_reply_enabled' => $this->assistant_holding_reply_enabled ?? null,
                     'organizer_nudge_enabled' => $this->organizer_nudge_enabled ?? null,
                     'live_chat_style' => $this->live_chat_style ?? null,
+                    'checkin_welcome_sms_enabled' => $this->checkin_welcome_sms_enabled ?? null,
+                    'checkin_welcome_sms_prompt' => $this->checkin_welcome_sms_prompt ?? null,
+                    'checkin_welcome_sms_templates' => $this->checkin_welcome_sms_templates ?? null,
                 ];
     }
 
@@ -464,5 +473,38 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getLiveChatStyle(): string
     {
         return $this->live_chat_style;
+    }
+
+    public function setCheckinWelcomeSmsEnabled(bool $checkin_welcome_sms_enabled): self
+    {
+        $this->checkin_welcome_sms_enabled = $checkin_welcome_sms_enabled;
+        return $this;
+    }
+
+    public function getCheckinWelcomeSmsEnabled(): bool
+    {
+        return $this->checkin_welcome_sms_enabled;
+    }
+
+    public function setCheckinWelcomeSmsPrompt(?string $checkin_welcome_sms_prompt): self
+    {
+        $this->checkin_welcome_sms_prompt = $checkin_welcome_sms_prompt;
+        return $this;
+    }
+
+    public function getCheckinWelcomeSmsPrompt(): ?string
+    {
+        return $this->checkin_welcome_sms_prompt;
+    }
+
+    public function setCheckinWelcomeSmsTemplates(?string $checkin_welcome_sms_templates): self
+    {
+        $this->checkin_welcome_sms_templates = $checkin_welcome_sms_templates;
+        return $this;
+    }
+
+    public function getCheckinWelcomeSmsTemplates(): ?string
+    {
+        return $this->checkin_welcome_sms_templates;
     }
 }

@@ -6,10 +6,12 @@ namespace HiEvents\Services\Infrastructure\AI;
 
 use Anthropic\Client;
 use Anthropic\Core\Exceptions\AnthropicException;
+use GuzzleHttp\Client as GuzzleClient;
 use HiEvents\Exceptions\EventAssistantFailedException;
 use HiEvents\Exceptions\EventAssistantUnavailableException;
 use HiEvents\Services\Infrastructure\AI\DTO\ClaudeStructuredAnswerDTO;
 use Illuminate\Config\Repository;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -48,6 +50,7 @@ class ClaudeStructuredOutputClient
 
     /**
      * Same as ask(), with the model and token usage of the answer. $model overrides the configured model (e.g. a smaller one).
+     * $timeoutSeconds bounds the whole call (no retry) for callers that must not wait, e.g. a welcome SMS at the door.
      *
      * @param  array<int, array<string, mixed>>  $content
      * @param  array<string, mixed>  $schema
@@ -56,13 +59,23 @@ class ClaudeStructuredOutputClient
      * @throws EventAssistantUnavailableException
      * @throws EventAssistantFailedException
      */
-    public function askWithUsage(string $system, array $content, array $schema, array $tools = [], ?string $model = null, ?int $maxTokens = null): ClaudeStructuredAnswerDTO
+    public function askWithUsage(string $system, array $content, array $schema, array $tools = [], ?string $model = null, ?int $maxTokens = null, ?float $timeoutSeconds = null): ClaudeStructuredAnswerDTO
     {
         if (! $this->isConfigured()) {
             throw new EventAssistantUnavailableException(__('The assistant is not available.'));
         }
 
-        $client = new Client(apiKey: (string) $this->config->get('services.anthropic.api_key'));
+        $client = new Client(
+            apiKey: (string) $this->config->get('services.anthropic.api_key'),
+            requestOptions: $timeoutSeconds === null ? null : [
+                'timeout' => $timeoutSeconds,
+                'maxRetries' => 0,
+                'transporter' => new GuzzleClient([
+                    'timeout' => $timeoutSeconds,
+                    'connect_timeout' => min($timeoutSeconds, 2.0),
+                ]),
+            ],
+        );
         $model = $model !== null && trim($model) !== '' ? trim($model) : (string) $this->config->get('services.anthropic.model');
         $withFallbacks = self::supportsServerSideFallback($model);
         $messages = [['role' => 'user', 'content' => $content]];
@@ -93,7 +106,7 @@ class ClaudeStructuredOutputClient
                 }
                 $messages[] = ['role' => 'assistant', 'content' => $message->content];
             }
-        } catch (AnthropicException $exception) {
+        } catch (AnthropicException|ClientExceptionInterface $exception) {
             $this->logger->error('Event assistant: Claude request failed', ['exception' => $exception]);
 
             throw new EventAssistantFailedException(__('The assistant could not answer. Please try again or fill in the form yourself.'));

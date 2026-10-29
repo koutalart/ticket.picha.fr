@@ -1,6 +1,7 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {publicCheckInClient} from "../api/check-in.client";
 import {GET_CHECK_IN_LIST_ATTENDEES_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListAttendeesPublic.ts";
+import {GET_CHECK_IN_LIST_STATS_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListStatsPublic.ts";
 import {IdParam, QueryFilters} from "../types.ts";
 
 export const useCreateCheckInPublic = (pagination: QueryFilters) => {
@@ -15,6 +16,8 @@ export const useCreateCheckInPublic = (pagination: QueryFilters) => {
             publicCheckInClient.createCheckIn(checkInListShortId, attendeePublicId, action),
 
         onSuccess: (data, {checkInListShortId, action}) => {
+            queryClient.invalidateQueries({queryKey: [GET_CHECK_IN_LIST_STATS_PUBLIC_QUERY_KEY, checkInListShortId]});
+
             const markedAsPaid = action === 'check-in-and-mark-order-as-paid';
 
             queryClient.setQueryData(
