@@ -50,6 +50,8 @@ class UpdateOrganizerSmsSettingsAction extends BaseAction
                 organizerAssistantEnabled: array_key_exists('organizer_assistant_enabled', $validated) ? (bool) $validated['organizer_assistant_enabled'] : Optional::create(),
                 organizerAssistantInstructions: array_key_exists('organizer_assistant_instructions', $validated) ? $validated['organizer_assistant_instructions'] : Optional::create(),
                 checkinWelcomeSmsEnabled: array_key_exists('checkin_welcome_sms_enabled', $validated) ? (bool) $validated['checkin_welcome_sms_enabled'] : Optional::create(),
+                checkinWelcomeSmsPrompt: array_key_exists('checkin_welcome_sms_prompt', $validated) ? $validated['checkin_welcome_sms_prompt'] : Optional::create(),
+                checkinWelcomeSmsTemplates: array_key_exists('checkin_welcome_sms_templates', $validated) ? $validated['checkin_welcome_sms_templates'] : Optional::create(),
             ));
         } catch (InvalidSmsPhoneNumberException $exception) {
             throw ValidationException::withMessages(['from_number' => $exception->getMessage()]);

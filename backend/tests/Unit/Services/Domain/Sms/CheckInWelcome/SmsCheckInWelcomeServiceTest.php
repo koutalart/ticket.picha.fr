@@ -149,6 +149,26 @@ class SmsCheckInWelcomeServiceTest extends TestCase
         $this->assertNull($this->service->sendForAttendee(self::EVENT_ID, self::ATTENDEE_ID));
     }
 
+    public function test_passes_the_organizer_tone_and_templates_to_the_generator(): void
+    {
+        $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn(
+            (new OrganizerSmsSettingDomainObject)
+                ->setOrganizerId(self::ORGANIZER_ID)
+                ->setCheckinWelcomeSmsEnabled(true)
+                ->setCheckinWelcomeSmsPrompt('Tu es Innocent.')
+                ->setCheckinWelcomeSmsTemplates("Karibu {prenom} ! 🎃\n\nBienvenue {prenom} 👻")
+        );
+        $this->generator->shouldReceive('generate')->once()->with(
+            'Nadia',
+            'Halloween',
+            'Tu es Innocent.',
+            ['Karibu {prenom} ! 🎃', 'Bienvenue {prenom} 👻'],
+        )->andReturn(new SmsCheckInWelcomeMessageDTO(content: 'Karibu Nadia ! 🎃', source: SmsCheckInWelcomeMessageGenerator::SOURCE_TEMPLATE));
+        $this->sendService->shouldReceive('send')->once()->andReturn((new SmsMessageDomainObject)->setId(56));
+
+        $this->assertSame('SENT', $this->service->sendForAttendee(self::EVENT_ID, self::ATTENDEE_ID)?->getStatus());
+    }
+
     public function test_failed_send_is_recorded_and_not_thrown(): void
     {
         $this->sendService->shouldReceive('send')->andThrow(new SmsGatewayException('down'));

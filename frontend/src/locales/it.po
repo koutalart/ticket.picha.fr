@@ -80,7 +80,7 @@ msgstr "{0} / {INSTAGRAM_CAPTION_MAX_LENGTH} caratteri su Instagram"
 
 #: src/components/layouts/CheckIn/index.tsx:164
 msgid "{0} <0>checked in</0> successfully"
-msgstr ""
+msgstr "{0} <0>registrato</0> con successo"
 
 #: src/components/layouts/CheckIn/index.tsx:190
 msgid "{0} <0>checked out</0> successfully"
@@ -10531,6 +10531,14 @@ msgstr "Facoltativo. Una riga sotto il titolo, ad esempio un secondo evento la s
 msgid "Optional. A short, silent loop shown at the top of the organizer page by templates that support it. The cover image stays for thumbnails and sharing."
 msgstr "Facoltativo. Un breve loop senza audio mostrato in cima alla pagina dell'organizzatore dai modelli che lo supportano. L'immagine di copertina resta usata per anteprime e condivisioni."
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:96
+msgid "Optional. Added to the instructions used to write each SMS, for example who is speaking, the theme of the evening or the artists. Leave empty for the default tone."
+msgstr "Facoltativo. Aggiunto alle istruzioni usate per scrivere ogni SMS, ad esempio chi parla, il tema della serata o gli artisti. Lascia vuoto per il tono predefinito."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:105
+msgid "Optional. One template per line, with {firstNamePlaceholder} for the first name and {eventNamePlaceholder} for the event name. Used when the SMS cannot be written automatically. 155 characters at most, one emoji at most, no price, link, signature, « équipe », PICHA, scanner, beep or QR code. Leave empty for the default templates."
+msgstr "Facoltativo. Un modello per riga, con {firstNamePlaceholder} per il nome e {eventNamePlaceholder} per il nome dell'evento. Usati quando l'SMS non può essere scritto automaticamente. Al massimo 155 caratteri, al massimo un'emoji, niente prezzo, link, firma, « équipe », PICHA, scanner, bip o codice QR. Lascia vuoto per i modelli predefiniti."
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:316
 msgid "Optional. Replaces the cover image at the top of the page, without sound."
 msgstr "Facoltativo. Sostituisce l'immagine di copertina in alto, senza audio."
@@ -13500,6 +13508,7 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:168
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:111
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:226
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:123
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:163
@@ -14073,7 +14082,7 @@ msgstr "Invia un messaggio"
 msgid "Send a new code"
 msgstr "Invia un nuovo codice"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:39
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:84
 msgid "Send a welcome SMS when a ticket is scanned"
 msgstr "Invia un SMS di benvenuto quando un biglietto viene scansionato"
 
@@ -14248,7 +14257,7 @@ msgstr "Inviato ai clienti quando effettuano un ordine"
 msgid "Sent to each attendee with their ticket details"
 msgstr "Inviato a ogni partecipante con i dettagli del biglietto"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:43
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:88
 msgid "Sent to the attendee's phone, or to the order's phone. One SMS per phone number and per event, so a group with one buyer receives a single SMS. Paper tickets without a phone receive nothing."
 msgstr "Inviato al telefono del partecipante o a quello dell'ordine. Un SMS per numero e per evento: un gruppo con un solo acquirente riceve un solo SMS. I biglietti cartacei senza telefono non ricevono nulla."
 
@@ -17018,7 +17027,7 @@ msgstr "Impossibile rimuovere il numero"
 msgid "Unable to save the setting"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:25
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:51
 msgid "Unable to save the welcome SMS setting"
 msgstr "Impossibile salvare l'impostazione dell'SMS di benvenuto"
 
@@ -18048,15 +18057,19 @@ msgstr "Accoglienza · Ingresso principale"
 msgid "Welcome desk tablet showing “Access granted” for Camille Martin, with her badge printing."
 msgstr "Tablet di accoglienza che mostra «Accesso consentito» per Camille Martin, con il badge in stampa."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:32
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:77
 msgid "Welcome SMS at the door"
 msgstr "SMS di benvenuto all'ingresso"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:24
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:68
+msgid "Welcome SMS tone saved"
+msgstr "Tono dell'SMS di benvenuto salvato"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:50
 msgid "Welcome SMS turned off"
 msgstr "SMS di benvenuto disattivato"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:24
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:50
 msgid "Welcome SMS turned on"
 msgstr "SMS di benvenuto attivato"
 
@@ -18172,7 +18185,7 @@ msgstr "Quando un prodotto va esaurito, i clienti possono iscriversi a una lista
 msgid "When a rule is active, a date of birth is required for each attendee. Age is calculated on the event start date."
 msgstr "Quando una regola è attiva, la data di nascita è obbligatoria per ogni partecipante. L'età è calcolata alla data di inizio dell'evento."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:33
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:78
 msgid "When a ticket is scanned for the first time, the attendee receives a short, friendly SMS that welcomes them by first name, different every time."
 msgstr "Alla prima scansione del biglietto, il partecipante riceve un SMS breve e simpatico che lo accoglie per nome, diverso ogni volta."
 
@@ -18964,6 +18977,10 @@ msgstr ""
 msgid "Your tickets have been confirmed."
 msgstr "I tuoi biglietti sono stati confermati."
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:95
+msgid "Your tone for the welcome SMS"
+msgstr "Il tuo tono per l'SMS di benvenuto"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:72
 msgid "Your VAT number is queued for validation"
 msgstr "Il tuo numero di partita IVA è in coda per la convalida"
@@ -18975,6 +18992,10 @@ msgstr "La tua partita IVA verrà convalidata al momento del salvataggio"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:444
 msgid "Your waitlist offer has expired and we were unable to complete your order. Please rejoin the waitlist to be notified when more spots become available."
 msgstr "La tua offerta di iscrizione alla lista d'attesa è scaduta e non siamo stati in grado di completare il tuo ordine. Ti preghiamo di iscriverti nuovamente alla lista d'attesa per essere avvisato quando si libereranno dei posti."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:104
+msgid "Your welcome SMS templates"
+msgstr "I tuoi modelli di SMS di benvenuto"
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:67
 msgid "YouTube"

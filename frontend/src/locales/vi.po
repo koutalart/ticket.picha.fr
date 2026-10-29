@@ -80,7 +80,7 @@ msgstr "{0} / {INSTAGRAM_CAPTION_MAX_LENGTH} ký tự trên Instagram"
 
 #: src/components/layouts/CheckIn/index.tsx:164
 msgid "{0} <0>checked in</0> successfully"
-msgstr ""
+msgstr "{0} <0>checked in</0> thành công"
 
 #: src/components/layouts/CheckIn/index.tsx:190
 msgid "{0} <0>checked out</0> successfully"
@@ -10529,6 +10529,14 @@ msgstr ""
 msgid "Optional. A short, silent loop shown at the top of the organizer page by templates that support it. The cover image stays for thumbnails and sharing."
 msgstr "Không bắt buộc. Một đoạn video ngắn lặp lại, không tiếng, hiển thị ở đầu trang nhà tổ chức với các mẫu hỗ trợ. Ảnh bìa vẫn được dùng cho ảnh thu nhỏ và chia sẻ."
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:96
+msgid "Optional. Added to the instructions used to write each SMS, for example who is speaking, the theme of the evening or the artists. Leave empty for the default tone."
+msgstr "Tùy chọn. Được thêm vào hướng dẫn viết mỗi SMS, ví dụ ai đang nói, chủ đề buổi tối hoặc các nghệ sĩ. Để trống để dùng giọng điệu mặc định."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:105
+msgid "Optional. One template per line, with {firstNamePlaceholder} for the first name and {eventNamePlaceholder} for the event name. Used when the SMS cannot be written automatically. 155 characters at most, one emoji at most, no price, link, signature, « équipe », PICHA, scanner, beep or QR code. Leave empty for the default templates."
+msgstr "Tùy chọn. Mỗi dòng một mẫu, với {firstNamePlaceholder} cho tên và {eventNamePlaceholder} cho tên sự kiện. Dùng khi không thể tự động viết SMS. Tối đa 155 ký tự, tối đa một biểu tượng cảm xúc, không có giá, liên kết, chữ ký, « équipe », PICHA, máy quét, tiếng bíp hoặc mã QR. Để trống để dùng các mẫu mặc định."
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:316
 msgid "Optional. Replaces the cover image at the top of the page, without sound."
 msgstr ""
@@ -13496,6 +13504,7 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:168
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:111
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:226
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:123
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:163
@@ -14069,7 +14078,7 @@ msgstr "Gửi tin nhắn"
 msgid "Send a new code"
 msgstr "Gửi mã mới"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:39
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:84
 msgid "Send a welcome SMS when a ticket is scanned"
 msgstr "Gửi SMS chào mừng khi vé được quét"
 
@@ -14244,7 +14253,7 @@ msgstr "Gửi cho khách hàng khi họ đặt hàng"
 msgid "Sent to each attendee with their ticket details"
 msgstr "Gửi cho từng người tham dự với chi tiết vé của họ"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:43
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:88
 msgid "Sent to the attendee's phone, or to the order's phone. One SMS per phone number and per event, so a group with one buyer receives a single SMS. Paper tickets without a phone receive nothing."
 msgstr "Gửi tới số của người tham dự, hoặc số của đơn hàng. Một SMS cho mỗi số và mỗi sự kiện: nhóm có một người mua chỉ nhận một SMS. Vé giấy không có số điện thoại sẽ không nhận gì."
 
@@ -17014,7 +17023,7 @@ msgstr "Không thể xóa số"
 msgid "Unable to save the setting"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:25
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:51
 msgid "Unable to save the welcome SMS setting"
 msgstr "Không thể lưu cài đặt SMS chào mừng"
 
@@ -18044,15 +18053,19 @@ msgstr "Đón tiếp · Lối vào chính"
 msgid "Welcome desk tablet showing “Access granted” for Camille Martin, with her badge printing."
 msgstr "Máy tính bảng đón tiếp hiển thị \"Đã cho phép vào\" cho Camille Martin, thẻ đeo đang được in."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:32
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:77
 msgid "Welcome SMS at the door"
 msgstr "SMS chào mừng ở cổng"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:24
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:68
+msgid "Welcome SMS tone saved"
+msgstr "Đã lưu giọng điệu SMS chào mừng"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:50
 msgid "Welcome SMS turned off"
 msgstr "Đã tắt SMS chào mừng"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:24
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:50
 msgid "Welcome SMS turned on"
 msgstr "Đã bật SMS chào mừng"
 
@@ -18168,7 +18181,7 @@ msgstr ""
 msgid "When a rule is active, a date of birth is required for each attendee. Age is calculated on the event start date."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:33
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:78
 msgid "When a ticket is scanned for the first time, the attendee receives a short, friendly SMS that welcomes them by first name, different every time."
 msgstr "Khi vé được quét lần đầu, người tham dự nhận một SMS ngắn, thân thiện chào đón bằng tên, mỗi lần một khác."
 
@@ -18960,6 +18973,10 @@ msgstr ""
 msgid "Your tickets have been confirmed."
 msgstr "Vé của bạn đã được xác nhận."
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:95
+msgid "Your tone for the welcome SMS"
+msgstr "Giọng điệu của bạn cho SMS chào mừng"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:72
 msgid "Your VAT number is queued for validation"
 msgstr "Số VAT của bạn đang trong hàng đợi để xác thực"
@@ -18971,6 +18988,10 @@ msgstr "Số VAT của bạn sẽ được xác thực khi bạn lưu"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:444
 msgid "Your waitlist offer has expired and we were unable to complete your order. Please rejoin the waitlist to be notified when more spots become available."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:104
+msgid "Your welcome SMS templates"
+msgstr "Mẫu SMS chào mừng của bạn"
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:67
 msgid "YouTube"

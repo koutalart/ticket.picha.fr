@@ -40,6 +40,8 @@ class OrganizerSmsSettingsResource extends BaseResource
             'live_chat_relay_label' => $settings->getLiveChatRelayLabel(),
             'live_chat_style' => $settings->getLiveChatStyle(),
             'checkin_welcome_sms_enabled' => $settings->getCheckinWelcomeSmsEnabled(),
+            'checkin_welcome_sms_prompt' => $settings->getCheckinWelcomeSmsPrompt(),
+            'checkin_welcome_sms_templates' => $settings->getCheckinWelcomeSmsTemplates(),
             'live_chat_relay_line' => LiveChatService::relayLine($settings->getLiveChatRelayLabel()),
             'sms_default_reminders_enabled' => $this->defaultRemindersEnabled,
             'organizer_assistant_enabled' => $settings->getOrganizerAssistantEnabled(),

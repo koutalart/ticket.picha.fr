@@ -80,7 +80,7 @@ msgstr "Instagram 上 {0} / {INSTAGRAM_CAPTION_MAX_LENGTH} 個字元"
 
 #: src/components/layouts/CheckIn/index.tsx:164
 msgid "{0} <0>checked in</0> successfully"
-msgstr ""
+msgstr "{0} <0>簽到</0>成功"
 
 #: src/components/layouts/CheckIn/index.tsx:190
 msgid "{0} <0>checked out</0> successfully"
@@ -10529,6 +10529,14 @@ msgstr ""
 msgid "Optional. A short, silent loop shown at the top of the organizer page by templates that support it. The cover image stays for thumbnails and sharing."
 msgstr "可選。於支援的範本中，顯示在主辦單位頁面頂部的無聲短循環影片。封面圖片仍用於縮圖及分享。"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:96
+msgid "Optional. Added to the instructions used to write each SMS, for example who is speaking, the theme of the evening or the artists. Leave empty for the default tone."
+msgstr "可選。加入撰寫每則短訊的指示中，例如誰在說話、當晚的主題或藝人。留空則使用預設語氣。"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:105
+msgid "Optional. One template per line, with {firstNamePlaceholder} for the first name and {eventNamePlaceholder} for the event name. Used when the SMS cannot be written automatically. 155 characters at most, one emoji at most, no price, link, signature, « équipe », PICHA, scanner, beep or QR code. Leave empty for the default templates."
+msgstr "可選。每行一個範本，用 {firstNamePlaceholder} 表示名字，用 {eventNamePlaceholder} 表示活動名稱。在無法自動撰寫短訊時使用。最多 155 個字元，最多一個表情，不可包含價格、連結、簽名、« équipe »、PICHA、掃描、提示音或 QR 碼。留空則使用預設範本。"
+
 #: src/components/routes/event/HomepageDesigner/index.tsx:316
 msgid "Optional. Replaces the cover image at the top of the page, without sound."
 msgstr ""
@@ -13496,6 +13504,7 @@ msgstr "舊金山"
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:168
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:111
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:226
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:123
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:163
@@ -14069,7 +14078,7 @@ msgstr "發送信息"
 msgid "Send a new code"
 msgstr "重新發送驗證碼"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:39
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:84
 msgid "Send a welcome SMS when a ticket is scanned"
 msgstr "掃描門票時發送歡迎短訊"
 
@@ -14244,7 +14253,7 @@ msgstr "客戶下訂時發送"
 msgid "Sent to each attendee with their ticket details"
 msgstr "發送給每位參會者及其門票詳情"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:43
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:88
 msgid "Sent to the attendee's phone, or to the order's phone. One SMS per phone number and per event, so a group with one buyer receives a single SMS. Paper tickets without a phone receive nothing."
 msgstr "發送到參加者的電話，否則發送到訂單的電話。每個號碼每個活動只發一則：同一買家的團體只收到一則短訊。沒有電話的紙本門票不會收到。"
 
@@ -17014,7 +17023,7 @@ msgstr "無法移除號碼"
 msgid "Unable to save the setting"
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:25
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:51
 msgid "Unable to save the welcome SMS setting"
 msgstr "無法儲存歡迎短訊設定"
 
@@ -18044,15 +18053,19 @@ msgstr "接待處 · 正門"
 msgid "Welcome desk tablet showing “Access granted” for Camille Martin, with her badge printing."
 msgstr "接待平板電腦顯示 Camille Martin「准許入場」，其名牌正在列印。"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:32
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:77
 msgid "Welcome SMS at the door"
 msgstr "入場歡迎短訊"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:24
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:68
+msgid "Welcome SMS tone saved"
+msgstr "歡迎短訊語氣已儲存"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:50
 msgid "Welcome SMS turned off"
 msgstr "歡迎短訊已關閉"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:24
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:50
 msgid "Welcome SMS turned on"
 msgstr "歡迎短訊已開啟"
 
@@ -18168,7 +18181,7 @@ msgstr ""
 msgid "When a rule is active, a date of birth is required for each attendee. Age is calculated on the event start date."
 msgstr ""
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:33
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:78
 msgid "When a ticket is scanned for the first time, the attendee receives a short, friendly SMS that welcomes them by first name, different every time."
 msgstr "門票首次掃描時，參加者會收到一則簡短友善的短訊，以名字歡迎他，每次內容都不同。"
 
@@ -18960,6 +18973,10 @@ msgstr ""
 msgid "Your tickets have been confirmed."
 msgstr "您的門票已確認。"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:95
+msgid "Your tone for the welcome SMS"
+msgstr "你的歡迎短訊語氣"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:72
 msgid "Your VAT number is queued for validation"
 msgstr "您的增值稅號碼已排隊等待驗證"
@@ -18971,6 +18988,10 @@ msgstr "保存時將驗證您的增值稅號碼"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:444
 msgid "Your waitlist offer has expired and we were unable to complete your order. Please rejoin the waitlist to be notified when more spots become available."
 msgstr ""
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:104
+msgid "Your welcome SMS templates"
+msgstr "你的歡迎短訊範本"
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:67
 msgid "YouTube"

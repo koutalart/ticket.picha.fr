@@ -12,6 +12,7 @@ use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Sms\DTO\OrganizerSmsSettingsViewDTO;
 use HiEvents\Services\Application\Handlers\Sms\DTO\UpdateOrganizerSmsSettingsDTO;
 use HiEvents\Services\Domain\LiveChat\LiveChatReplyGenerator;
+use HiEvents\Services\Domain\Sms\CheckInWelcome\SmsCheckInWelcomeMessageGenerator;
 use HiEvents\Services\Domain\Sms\SmsAssistantReplyGenerator;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
@@ -73,6 +74,15 @@ class UpdateOrganizerSmsSettingsHandler
 
         if ($dto->wasProvided('checkinWelcomeSmsEnabled')) {
             $attributes[OrganizerSmsSettingDomainObjectAbstract::CHECKIN_WELCOME_SMS_ENABLED] = $dto->checkinWelcomeSmsEnabled;
+        }
+
+        if ($dto->wasProvided('checkinWelcomeSmsPrompt')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::CHECKIN_WELCOME_SMS_PROMPT] = $this->cleanInstructions($dto->checkinWelcomeSmsPrompt);
+        }
+
+        if ($dto->wasProvided('checkinWelcomeSmsTemplates')) {
+            $templates = SmsCheckInWelcomeMessageGenerator::templatesFromText($this->cleanInstructions($dto->checkinWelcomeSmsTemplates));
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::CHECKIN_WELCOME_SMS_TEMPLATES] = $templates === [] ? null : implode("\n", $templates);
         }
 
         if ($dto->wasProvided('liveChatStyle')) {

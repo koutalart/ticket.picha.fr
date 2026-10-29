@@ -28,5 +28,7 @@ class UpdateOrganizerSmsSettingsDTO extends BaseDataObject
         public readonly bool|Optional $organizerAssistantEnabled = new Optional,
         public readonly string|Optional|null $organizerAssistantInstructions = new Optional,
         public readonly bool|Optional $checkinWelcomeSmsEnabled = new Optional,
+        public readonly string|Optional|null $checkinWelcomeSmsPrompt = new Optional,
+        public readonly string|Optional|null $checkinWelcomeSmsTemplates = new Optional,
     ) {}
 }

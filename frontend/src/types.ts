@@ -1584,6 +1584,8 @@ export interface OrganizerSmsSettings {
     live_chat_relay_line: string;
     live_chat_style: LiveChatStyle;
     checkin_welcome_sms_enabled: boolean;
+    checkin_welcome_sms_prompt: string | null;
+    checkin_welcome_sms_templates: string | null;
     sms_default_reminders_enabled: boolean;
     organizer_assistant_enabled: boolean;
     organizer_assistant_instructions: string | null;

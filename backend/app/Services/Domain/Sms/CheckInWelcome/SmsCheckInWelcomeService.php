@@ -45,7 +45,12 @@ class SmsCheckInWelcomeService
     {
         /** @var EventDomainObject|null $event */
         $event = $this->eventRepository->findFirstWhere([EventDomainObjectAbstract::ID => $eventId]);
-        if ($event === null || $event->getOrganizerId() === null || ! $this->isEnabled($event->getOrganizerId())) {
+        if ($event === null || $event->getOrganizerId() === null) {
+            return null;
+        }
+
+        $settings = $this->findEnabledSettings($event->getOrganizerId());
+        if ($settings === null) {
             return null;
         }
 
@@ -63,7 +68,12 @@ class SmsCheckInWelcomeService
         }
 
         try {
-            $message = $this->messageGenerator->generate($firstName, $event->getTitle());
+            $message = $this->messageGenerator->generate(
+                $firstName,
+                $event->getTitle(),
+                $settings->getCheckinWelcomeSmsPrompt(),
+                SmsCheckInWelcomeMessageGenerator::templatesFromText($settings->getCheckinWelcomeSmsTemplates()),
+            );
 
             $sms = $this->sendService->send(new SendSmsDTO(
                 organizerId: $event->getOrganizerId(),
@@ -91,14 +101,14 @@ class SmsCheckInWelcomeService
         }
     }
 
-    private function isEnabled(int $organizerId): bool
+    private function findEnabledSettings(int $organizerId): ?OrganizerSmsSettingDomainObject
     {
         /** @var OrganizerSmsSettingDomainObject|null $settings */
         $settings = $this->settingsRepository->findFirstWhere([
             OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ID => $organizerId,
         ]);
 
-        return $settings !== null && $settings->getCheckinWelcomeSmsEnabled();
+        return $settings !== null && $settings->getCheckinWelcomeSmsEnabled() ? $settings : null;
     }
 
     /**

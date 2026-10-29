@@ -10,6 +10,8 @@ return new class extends Migration
     {
         Schema::table('organizer_sms_settings', function (Blueprint $table) {
             $table->boolean('checkin_welcome_sms_enabled')->default(false);
+            $table->text('checkin_welcome_sms_prompt')->nullable();
+            $table->text('checkin_welcome_sms_templates')->nullable();
         });
 
         Schema::create('sms_checkin_welcomes', function (Blueprint $table) {
@@ -33,7 +35,7 @@ return new class extends Migration
         Schema::dropIfExists('sms_checkin_welcomes');
 
         Schema::table('organizer_sms_settings', function (Blueprint $table) {
-            $table->dropColumn('checkin_welcome_sms_enabled');
+            $table->dropColumn(['checkin_welcome_sms_enabled', 'checkin_welcome_sms_prompt', 'checkin_welcome_sms_templates']);
         });
     }
 };
