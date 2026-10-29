@@ -54,7 +54,7 @@ interface LiveChatLauncherProps {
  * bar, can be hidden for the session and comes back from the « Une question ? » footer link.
  */
 export const LiveChatLauncher = ({organizer, eventId, event, onBook}: LiveChatLauncherProps) => {
-    const config = useGetLiveChatConfig(organizer?.id);
+    const config = useGetLiveChatConfig(organizer?.id, eventId ?? event?.id);
     const chatI18n = useLiveChatI18n(organizer);
     const [mounted, setMounted] = useState(false);
     const [opened, setOpened] = useState(false);

@@ -50,12 +50,26 @@ export const fixedTopOffset = (): number => {
 const ticketsTop = (target: HTMLElement): number =>
     Math.max(0, Math.round(target.getBoundingClientRect().top + window.scrollY - fixedTopOffset() - ANCHOR_GAP));
 
+// scrollIntoView also scrolls a page whose scrolling container is not the window (immersive layouts); the top margin
+// keeps the form clear of a sticky header.
 export const scrollToTicketsSection = (target: HTMLElement | null, smooth = true) => {
     if (!target) {
         return;
     }
     const reduceMotion = !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    window.scrollTo({top: ticketsTop(target), behavior: smooth && !reduceMotion ? 'smooth' : 'instant' as ScrollBehavior});
+    target.style.scrollMarginTop = `${Math.round(fixedTopOffset() + ANCHOR_GAP)}px`;
+    target.scrollIntoView({block: 'start', behavior: smooth && !reduceMotion ? 'smooth' : 'auto'});
+};
+
+const FOCUSABLE = 'button:not([disabled]), a[href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/**
+ * Moves the keyboard focus to the first control of the ticket form (the current step) without scrolling again.
+ */
+export const focusTicketsSection = (target: HTMLElement | null) => {
+    const first = Array.from(target?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])
+        .find((element) => element.getClientRects().length > 0 && !element.closest('[aria-hidden="true"], [inert]'));
+    first?.focus({preventScroll: true});
 };
 
 /**

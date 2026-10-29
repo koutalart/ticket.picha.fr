@@ -286,7 +286,7 @@ export const RichFooter = ({
                                 {t`Contact us`}
                             </button>
                         </li>
-                        <LiveChatFooterLink organizer={organizer} className={classes.linkButton} asListItem/>
+                        <LiveChatFooterLink organizer={organizer} eventId={event.id} className={classes.linkButton} asListItem/>
                     </ul>
                 </nav>
             </div>

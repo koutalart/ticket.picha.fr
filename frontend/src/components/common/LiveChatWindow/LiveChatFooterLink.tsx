@@ -1,5 +1,5 @@
 import {t} from "@lingui/macro";
-import {Organizer} from "../../../types.ts";
+import {IdParam, Organizer} from "../../../types.ts";
 import {useGetLiveChatConfig} from "../../../queries/useGetLiveChatConfig.ts";
 import {ASSISTANT_NAME} from "./LiveChatAvatar.tsx";
 import {openLiveChat} from "./LiveChatLauncher.tsx";
@@ -7,6 +7,7 @@ import {useLiveChatI18n} from "./liveChatI18n.ts";
 
 interface LiveChatFooterLinkProps {
     organizer?: Organizer | null;
+    eventId?: IdParam;
     className?: string;
     asListItem?: boolean;
 }
@@ -14,8 +15,8 @@ interface LiveChatFooterLinkProps {
 /**
  * Discreet footer link that opens the « Messagerie » chat, also when the visitor hid the bubble.
  */
-export const LiveChatFooterLink = ({organizer, className, asListItem = false}: LiveChatFooterLinkProps) => {
-    const config = useGetLiveChatConfig(organizer?.id);
+export const LiveChatFooterLink = ({organizer, eventId, className, asListItem = false}: LiveChatFooterLinkProps) => {
+    const config = useGetLiveChatConfig(organizer?.id, eventId);
     const chatI18n = useLiveChatI18n(organizer);
 
     if (!organizer?.id || !config.data?.enabled || config.data.style !== 'MESSAGING') {

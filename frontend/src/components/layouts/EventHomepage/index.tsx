@@ -97,7 +97,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
         setContactModalOpen(true);
     };
 
-    useGetLiveChatConfig(event?.organizer?.id);
+    useGetLiveChatConfig(event?.organizer?.id, event?.id);
 
     const toastSectionRefs = useMemo(() => [ticketsSectionRef], []);
     const [startCountdown, setStartCountdown] = useState<string | null>(null);
@@ -574,7 +574,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                         </button>
                                     </div>
                                 )}
-                                <LiveChatFooterLink organizer={organizer} className={classes.liveChatFooterLink}/>
+                                <LiveChatFooterLink organizer={organizer} eventId={event.id} className={classes.liveChatFooterLink}/>
                                 <PoweredByFooter className={classes.landingPoweredBy}/>
                             </div>
                         </footer>
@@ -916,7 +916,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
                             {/* Footer */}
                             <div className={classes.footerSection}>
-                                <LiveChatFooterLink organizer={organizer} className={classes.liveChatFooterLink}/>
+                                <LiveChatFooterLink organizer={organizer} eventId={event.id} className={classes.liveChatFooterLink}/>
                                 <PoweredByFooter className={classes.poweredByFooter}/>
                             </div>
                         </div>

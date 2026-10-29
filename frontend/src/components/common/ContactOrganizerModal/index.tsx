@@ -17,7 +17,7 @@ interface ContactOrganizerModalProps {
  * « Contacter l'organisateur »: the live chat when the organizer turned it on, the classic contact form otherwise.
  */
 export const ContactOrganizerModal = ({opened, onClose, organizer, eventId}: ContactOrganizerModalProps) => {
-    const liveChatConfig = useGetLiveChatConfig(organizer?.id);
+    const liveChatConfig = useGetLiveChatConfig(organizer?.id, eventId);
 
     if (liveChatConfig.isPending && !!organizer?.id) {
         return null;

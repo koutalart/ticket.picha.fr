@@ -21,9 +21,9 @@ class PublicLiveChatHandler
         private readonly LiveChatService $liveChatService,
     ) {}
 
-    public function getConfig(int $organizerId): LiveChatConfigDTO
+    public function getConfig(int $organizerId, ?int $eventId = null): LiveChatConfigDTO
     {
-        return $this->liveChatService->getConfig($organizerId);
+        return $this->liveChatService->getConfig($organizerId, $eventId);
     }
 
     /**

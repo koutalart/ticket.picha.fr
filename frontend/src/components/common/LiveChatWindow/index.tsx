@@ -21,7 +21,12 @@ import {ASSISTANT_NAME, LiveChatAvatar} from "./LiveChatAvatar.tsx";
 import {LiveChatMessagingScope} from "./LiveChatMessagingScope.tsx";
 import {LiveChatEventBar} from "./LiveChatEventBar.tsx";
 import {useLiveChatI18n} from "./liveChatI18n.ts";
-import {BUY_QUERY_PARAM, scrollToTicketsSection, TICKETS_SECTION_ID} from "../../../utilites/ticketsAnchor.ts";
+import {
+    BUY_QUERY_PARAM,
+    focusTicketsSection,
+    scrollToTicketsSection,
+    TICKETS_SECTION_ID,
+} from "../../../utilites/ticketsAnchor.ts";
 import {eventHomepagePath} from "../../../utilites/urlHelper.ts";
 import classes from "./LiveChatWindow.module.scss";
 
@@ -38,6 +43,9 @@ interface LiveChatWindowProps {
 const STORAGE_PREFIX = 'picha-live-chat:';
 const CONTACT_DISMISSED_PREFIX = 'picha-live-chat-contact-later:';
 const CLOSE_BEFORE_BOOK_MS = 220;
+const SCROLL_LOCK_ATTRIBUTE = 'data-scroll-locked';
+const SCROLL_UNLOCK_POLL_MS = 30;
+const SCROLL_UNLOCK_MAX_WAIT_MS = 600;
 const PHONE_PATTERN = /^\+?[0-9\s().-]{8,20}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -168,6 +176,7 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, event, onBo
     const logRef = useRef<HTMLDivElement>(null);
     const timers = useRef<number[]>([]);
     const revealRun = useRef(0);
+    const bookPending = useRef(false);
 
     const startMutation = useStartLiveChat();
     const postMutation = usePostLiveChatMessage();
@@ -528,21 +537,41 @@ export const LiveChatWindow = ({opened, onClose, organizer, eventId, event, onBo
         }
     };
 
-    // Takes the visitor to the ticket form: the chat closes first so that the page can scroll again.
-    const book = () => {
-        onClose();
-        window.setTimeout(() => {
-            if (onBook) {
-                onBook();
+    const goToTickets = () => {
+        if (!bookPending.current) {
+            return;
+        }
+        bookPending.current = false;
+        const tickets = document.getElementById(TICKETS_SECTION_ID);
+        if (onBook) {
+            onBook();
+        } else if (tickets) {
+            scrollToTicketsSection(tickets);
+        } else if (event) {
+            window.location.assign(`${eventHomepagePath(event)}?${BUY_QUERY_PARAM}=1#${TICKETS_SECTION_ID}`);
+            return;
+        }
+        focusTicketsSection(tickets);
+    };
+
+    // Waits until the drawer has released the page scroll lock, then one more frame for the page to lay out again.
+    const afterClose = () => {
+        const startedAt = Date.now();
+        const poll = () => {
+            if (document.body.hasAttribute(SCROLL_LOCK_ATTRIBUTE) && Date.now() - startedAt < SCROLL_UNLOCK_MAX_WAIT_MS) {
+                window.setTimeout(poll, SCROLL_UNLOCK_POLL_MS);
                 return;
             }
-            const tickets = document.getElementById(TICKETS_SECTION_ID);
-            if (tickets) {
-                scrollToTicketsSection(tickets);
-            } else if (event) {
-                window.location.assign(`${eventHomepagePath(event)}?${BUY_QUERY_PARAM}=1`);
-            }
-        }, CLOSE_BEFORE_BOOK_MS);
+            window.setTimeout(goToTickets, SCROLL_UNLOCK_POLL_MS);
+        };
+        poll();
+    };
+
+    // Takes the visitor to the ticket form once the chat is closed: a page still locked by the drawer would not scroll.
+    const book = () => {
+        bookPending.current = true;
+        onClose();
+        window.setTimeout(afterClose, CLOSE_BEFORE_BOOK_MS);
     };
 
     const organizerName = config.organizer_name || organizer.name || '';
