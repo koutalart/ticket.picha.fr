@@ -12,7 +12,7 @@ import {PublicOverlayTheme} from "../../common/PublicOverlayTheme";
 import {socialMediaConfig} from "../../../constants/socialMediaConfig";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {getConfig} from "../../../utilites/config.ts";
-import {eventHomepagePath, eventHomepageUrl, eventShareImage, eventShareImageUrl, organizerHomepagePath} from "../../../utilites/urlHelper.ts";
+import {eventHomepagePath, eventHomepageUrl, eventShareImage, eventShareImageUrl, organizerHomepagePath, organizerLlmsTxtUrl} from "../../../utilites/urlHelper.ts";
 import {OpenGraphExtraMeta} from "../../common/OpenGraphExtraMeta";
 import {buildEventJsonLd, formatFromPrice, getTicketTiers, getVenue} from "./eventData.ts";
 import {getFaq} from "./faq.ts";
@@ -201,6 +201,7 @@ export const PosterTemplate = ({
                 <title>{seo[sitePage].title}</title>
                 <meta name="description" content={seo[sitePage].description}/>
                 <link rel="canonical" href={canonicalUrl}/>
+                <link rel="alternate" type="text/plain" title="llms.txt" href={organizerLlmsTxtUrl(organizer)}/>
                 <meta property="og:title" content={seo[sitePage].title}/>
                 <meta property="og:description" content={seo[sitePage].description}/>
                 <meta property="og:type" content="website"/>

@@ -1,6 +1,7 @@
 /* eslint-disable lingui/no-unlocalized-strings */
 import {Event, Organizer} from "../types.ts";
-import {getStructuredDataProducts, isEventFree} from "../utilites/eventStructuredData.ts";
+import {getEventSeoName, getLowestOfferPrice, isEventFree, stripEmojis} from "../utilites/eventStructuredData.ts";
+import {getOrganizerSocialProfiles} from "../utilites/organizerSocialLinks.ts";
 
 export interface OrganizerLlmsTxtInput {
     origin: string;
@@ -69,11 +70,19 @@ const eventPrice = (event: Event): string | null => {
     if (isEventFree(event)) {
         return "gratuit, sur inscription";
     }
-    const prices = getStructuredDataProducts(event)
-        .flatMap(product => product.prices || [])
-        .map(price => Number(price.price))
-        .filter(price => Number.isFinite(price) && price > 0);
-    return prices.length ? `à partir de ${formatPrice(Math.min(...prices), event.currency)}` : null;
+    const lowest = getLowestOfferPrice(event);
+    return lowest !== null ? `à partir de ${formatPrice(lowest, event.currency)}` : null;
+};
+
+const DESCRIPTION_EXCERPT_LENGTH = 600;
+
+const descriptionExcerpt = (event: Event, summary: string): string | null => {
+    const text = truncate(stripEmojis(cleanPublicText(event.description)), DESCRIPTION_EXCERPT_LENGTH);
+    if (!text) {
+        return null;
+    }
+    const comparable = (value: string) => value.replace(/\.\.\.$/, "").toLowerCase();
+    return summary && comparable(summary).startsWith(comparable(text).slice(0, 120)) ? null : text;
 };
 
 const eventLocation = (event: Event): string | null => {
@@ -110,15 +119,26 @@ export const renderOrganizerLlmsTxt = ({origin, organizer, events, customDomain}
         .filter(isIndexable)
         .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
 
+    const socialProfiles = getOrganizerSocialProfiles(organizer.settings);
+
     const eventSections = publishedEvents.map(event => {
         const url = eventUrl(event);
         const price = eventPrice(event);
         const location = eventLocation(event);
-        const summary = truncate(cleanPublicText(event.settings?.seo_description || event.description_preview), 300);
+        const summary = truncate(stripEmojis(cleanPublicText(event.settings?.seo_description || event.description_preview)), 300);
+        const excerpt = descriptionExcerpt(event, summary);
+        const title = cleanPublicText(stripEmojis(event.title) || event.title);
+        const name = cleanPublicText(getEventSeoName(event, event.organizer?.name ?? organizer.name));
         return [
-            `### ${cleanPublicText(event.title)}`,
+            `### ${name}`,
             "",
             ...(summary ? [summary, ""] : []),
+            ...(excerpt ? [`Présentation : ${excerpt}`, ""] : []),
+            ...(name !== title ? [`- Nom de l'événement : ${title}`] : []),
+            ...(organizerName ? [`- Organisateur : ${organizerName}`] : []),
+            ...(socialProfiles.length
+                ? [`- Réseaux sociaux de l'organisateur : ${socialProfiles.map(profile => `${profile.label} ${profile.url}`).join(", ")}`]
+                : []),
             `- Date : ${formatDate(event.start_date, event.timezone)}${event.end_date ? `, jusqu'au ${formatDate(event.end_date, event.timezone)}` : ""}`,
             ...(location ? [`- Lieu : ${location}`] : []),
             ...(price ? [`- Prix : ${price}`] : []),
@@ -129,6 +149,7 @@ export const renderOrganizerLlmsTxt = ({origin, organizer, events, customDomain}
 
     const contact = [
         ...(organizer.website ? [`- Site web : ${organizer.website}`] : []),
+        ...socialProfiles.map(profile => `- ${profile.label} : ${profile.url}`),
         customDomain
             ? `- Formulaire de contact : ${base}/contact`
             : `- Contact : bouton « Contact » sur ${organizerPage}`,

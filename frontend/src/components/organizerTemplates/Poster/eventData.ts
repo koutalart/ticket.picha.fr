@@ -3,6 +3,7 @@ import {Event, Product} from "../../../types.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {getProductsFromEvent} from "../../../utilites/helpers.ts";
 import {formatAddress} from "../../../utilites/addressUtilities.ts";
+import {getEventSeoName, isEventFree, isEventFullyPaid} from "../../../utilites/eventStructuredData.ts";
 
 export interface TicketTier {
     id: string;
@@ -15,6 +16,7 @@ export interface TicketTier {
 }
 
 const isVisibleTicket = (product: Product) => !product.is_hidden
+    && !product.is_refund_protection
     && !product.is_hidden_without_promo_code
     && (!product.product_type || product.product_type === 'TICKET');
 
@@ -82,7 +84,7 @@ export const buildEventJsonLd = (event: Event, url: string, organizerName: strin
 
     return {
         '@type': 'Event',
-        name: event.title,
+        name: getEventSeoName(event, organizerName),
         startDate: toIso(event.start_date),
         endDate: toIso(event.end_date),
         eventStatus: 'https://schema.org/EventScheduled',
@@ -103,6 +105,7 @@ export const buildEventJsonLd = (event: Event, url: string, organizerName: strin
                 addressCountry: details?.country,
             },
         },
+        isAccessibleForFree: isEventFree(event) ? true : (isEventFullyPaid(event) ? false : undefined),
         organizer: {'@type': 'Organization', name: organizerName},
         offers: lowest === null ? undefined : {
             '@type': 'AggregateOffer',
