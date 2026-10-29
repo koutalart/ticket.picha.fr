@@ -45,6 +45,8 @@ use HiEvents\Services\Domain\LiveChat\DTO\LiveChatTurnDTO;
 use HiEvents\Services\Domain\LiveChat\Knowledge\EventAssistantKnowledgeService;
 use HiEvents\Services\Domain\LiveChat\Question\LiveChatQuestionService;
 use HiEvents\Services\Domain\LiveChat\Refund\LiveChatRefundProtectionService;
+use HiEvents\Services\Domain\LiveChat\TicketResend\DTO\LiveChatTicketResendReplyDTO;
+use HiEvents\Services\Domain\LiveChat\TicketResend\LiveChatTicketResendService;
 use HiEvents\Services\Domain\Sms\DTO\SmsAssistantEventInfoDTO;
 use HiEvents\Services\Domain\Sms\SmsAssistantEventCatalogService;
 use Illuminate\Cache\RateLimiter;
@@ -144,6 +146,7 @@ class LiveChatService
         private readonly LiveChatQuestionService $questionService,
         private readonly EventAssistantKnowledgeService $knowledgeService,
         private readonly ImageRepositoryInterface $imageRepository,
+        private readonly LiveChatTicketResendService $ticketResendService,
     ) {}
 
     public function getConfig(int $organizerId): LiveChatConfigDTO
@@ -344,7 +347,18 @@ class LiveChatService
             $this->handoffService->appendToConversation($settings, $session, $visitorMessage, $sensitive);
         }
 
-        $held = $contactKnown ? collect() : $this->questionService->heldForSession($session->getId());
+        $resendCode = LiveChatTicketResendService::extractCode($content);
+        if ($resendCode !== null && $this->ticketResendService->hasPendingCode($session)) {
+            return $this->ticketResendTurn(
+                $session,
+                $settings,
+                $visitorMessage,
+                $this->ticketResendService->verifyCode($session, $resendCode, $ip),
+                $contactKnown,
+            );
+        }
+
+        $held =$contactKnown ? collect() : $this->questionService->heldForSession($session->getId());
         $typedContact = $held->isNotEmpty() ? self::extractContact($content) : null;
         if ($typedContact !== null) {
             return $this->forwardWithTypedContact($session, $settings, $visitorMessage, $typedContact['phone'], $typedContact['email']);
@@ -383,8 +397,24 @@ class LiveChatService
             $forwardedWithoutContact => 'Sa question vient de partir chez l\'organisateur sans coordonnées. Une phrase l\'explique automatiquement après ta réponse : ne parle ni de coordonnées ni de transmission.',
             default => null,
         });
+        if ($reply->ticketResend && $reply->ticketResendFirstName !== null && $reply->ticketResendPhone !== null) {
+            $resend = $this->ticketResendService->requestCode(
+                $session,
+                $reply->ticketResendFirstName,
+                $reply->ticketResendPhone,
+                $this->visitorTexts($session),
+                $ip,
+            );
+            $reply = new LiveChatReplyDTO(
+                messages: $resend->messages,
+                needsFollowUp: $resend->needsFollowUp,
+                askContact: false,
+                reason: $resend->reason,
+                ticketResend: true,
+            );
+        }
         $askedAsQuestion = $reply->questionForOrganizer !== null && in_array($sensitiveTopic, self::TOPICS_ASKED_AS_QUESTION, true);
-        if ($sensitive && ! $askedAsQuestion && ! $reply->needsFollowUp && ! $reply->refundRequest) {
+        if ($sensitive && ! $askedAsQuestion && ! $reply->needsFollowUp && ! $reply->refundRequest && ! $reply->ticketResend) {
             $reply = new LiveChatReplyDTO(
                 messages: $reply->messages,
                 needsFollowUp: true,
@@ -464,6 +494,54 @@ class LiveChatService
             refundForm: $reply->refundRequest,
             pendingQuestion: $this->questionService->openForSession($session->getId())->isNotEmpty(),
         );
+    }
+
+    /**
+     * A step of the ticket resend (code checked, too many codes) answered without the model.
+     */
+    private function ticketResendTurn(
+        LiveChatSessionDomainObject $session,
+        OrganizerSmsSettingDomainObject $settings,
+        LiveChatMessageDomainObject $visitorMessage,
+        LiveChatTicketResendReplyDTO $resend,
+        bool $contactKnown,
+    ): LiveChatTurnDTO {
+        $askContact = $resend->needsFollowUp && ! $contactKnown && $session->getContactDeclinedAt() === null;
+        $agentMessages = collect();
+        foreach ($resend->messages as $index => $bubble) {
+            $agentMessages->push($this->addMessage($session, LiveChatAuthorType::AGENT, $bubble, $index === 0 ? [
+                LiveChatSessionDomainObjectAbstract::NEEDS_FOLLOW_UP => $session->getNeedsFollowUp() || $resend->needsFollowUp,
+                LiveChatSessionDomainObjectAbstract::FOLLOW_UP_REASON => $resend->reason ?? $session->getFollowUpReason(),
+                LiveChatSessionDomainObjectAbstract::CONTACT_ASKED_AT => $session->getContactAskedAt()
+                    ?? ($askContact ? now()->toDateTimeString() : null),
+            ] : []));
+        }
+        $session = $this->sessionRepository->findById($session->getId());
+
+        if ($session->getSmsConversationId() !== null) {
+            foreach ($agentMessages as $agentMessage) {
+                $this->handoffService->appendToConversation($settings, $session, $agentMessage, $resend->needsFollowUp);
+            }
+        }
+
+        return new LiveChatTurnDTO(
+            session: $session,
+            messages: collect([$visitorMessage, ...$agentMessages]),
+            askContact: $askContact,
+            pendingQuestion: $this->questionService->openForSession($session->getId())->isNotEmpty(),
+        );
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function visitorTexts(LiveChatSessionDomainObject $session): array
+    {
+        return $this->messageRepository->findLatestForSession($session->getId(), self::THREAD_LENGTH)
+            ->filter(fn (LiveChatMessageDomainObject $message) => $message->getAuthorType() === LiveChatAuthorType::VISITOR->name)
+            ->map(fn (LiveChatMessageDomainObject $message) => (string) $message->getContent())
+            ->values()
+            ->all();
     }
 
     /**
@@ -788,6 +866,7 @@ class LiveChatService
                 ),
                 publications: $this->knowledgeService->publications($session->getOrganizerId()),
                 questionContactNote: $questionContactNote,
+                ticketResendAvailable: $this->handoffService->canRelayBySms($settings),
             ));
         } catch (SmsAssistantUnavailableException|SmsAssistantFailedException|SmsAssistantLimitReachedException) {
             $replies = $tutoiement ? self::HOLDING_REPLIES_TU : self::HOLDING_REPLIES_VOUS;

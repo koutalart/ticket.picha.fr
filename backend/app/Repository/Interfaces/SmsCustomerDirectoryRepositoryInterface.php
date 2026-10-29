@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Repository\Interfaces;
 
+use HiEvents\Services\Domain\LiveChat\TicketResend\DTO\LiveChatTicketResendCandidateDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsCustomerContactDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
 use Illuminate\Support\Collection;
@@ -34,4 +35,12 @@ interface SmsCustomerDirectoryRepositoryInterface
      * @return Collection<int, SmsReminderAttendeeDTO>
      */
     public function findAttendeesWithPhone(int $eventId, array $attendeeIds): Collection;
+
+    /**
+     * Orders of the organizer (of one event when given) with a phone ending with these 9 digits: order or attendee
+     * answer, or box office sale. Most recent first.
+     *
+     * @return Collection<int, LiveChatTicketResendCandidateDTO>
+     */
+    public function findOrdersWithPhoneSuffix(int $organizerId, ?int $eventId, string $phoneSuffix, int $limit): Collection;
 }
