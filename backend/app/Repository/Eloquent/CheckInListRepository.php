@@ -8,6 +8,8 @@ use HiEvents\DomainObjects\Generated\CheckInListDomainObjectAbstract;
 use HiEvents\Http\DTO\QueryParamsDTO;
 use HiEvents\Models\CheckInList;
 use HiEvents\Repository\DTO\CheckedInAttendeesCountDTO;
+use HiEvents\Repository\DTO\CheckInListLiveStatsDTO;
+use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Repository\Interfaces\CheckInListRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -72,6 +74,66 @@ class CheckInListRepository extends BaseRepository implements CheckInListReposit
             checkInListId: $checkInListId,
             checkedInCount: $query->checked_in_attendees ?? 0,
             totalAttendeesCount: $query->total_attendees ?? 0,
+        );
+    }
+
+    public function getLiveStatsById(int $checkInListId): CheckInListLiveStatsDTO
+    {
+        $sql = <<<SQL
+            WITH valid_attendees AS (
+                SELECT a.id,
+                       (
+                           o.payment_status = 'AWAITING_OFFLINE_PAYMENT'
+                           AND o.payment_provider = 'OFFLINE'
+                           AND (
+                               o.is_manually_created = true
+                               OR LOWER(COALESCE(o.email, '')) LIKE :sentinel_order
+                               OR LOWER(COALESCE(a.email, '')) LIKE :sentinel_attendee
+                           )
+                       ) AS is_paper
+                FROM attendees a
+                         JOIN product_check_in_lists pcil ON a.product_id = pcil.product_id
+                         JOIN orders o ON a.order_id = o.id
+                         JOIN check_in_lists cil ON pcil.check_in_list_id = cil.id
+                         JOIN event_settings es ON cil.event_id = es.event_id
+                WHERE a.deleted_at IS NULL
+                  AND pcil.deleted_at IS NULL
+                  AND a.event_id = cil.event_id
+                  AND pcil.check_in_list_id = :check_in_list_id
+                  AND (
+                      (es.allow_orders_awaiting_offline_payment_to_check_in = true AND a.status IN ('ACTIVE', 'AWAITING_PAYMENT') AND o.status IN ('COMPLETED', 'AWAITING_OFFLINE_PAYMENT'))
+                      OR
+                      (es.allow_orders_awaiting_offline_payment_to_check_in = false AND a.status = 'ACTIVE' AND o.status = 'COMPLETED')
+                  )
+            ),
+                 checked_in AS (
+                     SELECT DISTINCT attendee_id
+                     FROM attendee_check_ins
+                     WHERE deleted_at IS NULL
+                       AND check_in_list_id = :check_in_list_id_check_ins
+                 )
+            SELECT
+                COUNT(*) FILTER (WHERE ci.attendee_id IS NOT NULL) AS checked_in,
+                COUNT(*) FILTER (WHERE ci.attendee_id IS NOT NULL AND va.is_paper) AS paper_checked_in,
+                COUNT(*) FILTER (WHERE ci.attendee_id IS NULL AND NOT va.is_paper) AS outside,
+                COUNT(*) FILTER (WHERE ci.attendee_id IS NULL AND va.is_paper) AS paper_not_scanned
+            FROM valid_attendees va
+                     LEFT JOIN checked_in ci ON ci.attendee_id = va.id;
+        SQL;
+
+        $sentinel = '%@'.KioskSentinelEmail::DOMAIN;
+        $row = $this->db->selectOne($sql, [
+            'check_in_list_id' => $checkInListId,
+            'check_in_list_id_check_ins' => $checkInListId,
+            'sentinel_order' => $sentinel,
+            'sentinel_attendee' => $sentinel,
+        ]);
+
+        return new CheckInListLiveStatsDTO(
+            checkedIn: (int) ($row->checked_in ?? 0),
+            paperCheckedIn: (int) ($row->paper_checked_in ?? 0),
+            outside: (int) ($row->outside ?? 0),
+            paperNotScanned: (int) ($row->paper_not_scanned ?? 0),
         );
     }
 
