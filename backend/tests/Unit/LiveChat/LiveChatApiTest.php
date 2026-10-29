@@ -148,6 +148,18 @@ class LiveChatApiTest extends TestCase
             ->assertJsonPath('data.greeting', 'Bonjour ! Posez-moi votre question sur nos événements, je vous réponds tout de suite.');
     }
 
+    public function test_config_greeting_names_the_event_of_the_page(): void
+    {
+        $this->settings();
+
+        $greeting = $this->getJson("/public/organizers/{$this->organizerId}/live-chat?event_id={$this->event->id}")
+            ->assertOk()
+            ->json('data.greeting');
+
+        $this->assertStringStartsWith('Bonjour ! Une question sur '.$this->event->title, $greeting);
+        $this->assertStringEndsWith('Je vous réponds tout de suite.', $greeting);
+    }
+
     public function test_session_creation_returns_an_opaque_id_in_the_body(): void
     {
         $this->settings();
@@ -159,7 +171,7 @@ class LiveChatApiTest extends TestCase
 
         $sessionId = $response->json('data.session_id');
         $this->assertSame(48, strlen($sessionId));
-        $this->assertStringContainsString('Posez-moi votre question', $response->json('data.greeting'));
+        $this->assertStringStartsWith('Bonjour ! Une question sur '.$this->event->title, $response->json('data.greeting'));
 
         $session = DB::table('live_chat_sessions')->where('public_id', $sessionId)->first();
         $this->assertSame($this->organizerId, (int) $session->organizer_id);

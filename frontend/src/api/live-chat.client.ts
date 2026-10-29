@@ -18,8 +18,11 @@ const SESSION_HEADER = 'X-Chat-Session';
 const sessionHeaders = (sessionId: string) => ({headers: {[SESSION_HEADER]: sessionId}});
 
 export const liveChatPublicClient = {
-    config: async (organizerId: IdParam) => {
-        const response = await publicApi.get<GenericDataResponse<LiveChatConfig>>(`organizers/${organizerId}/live-chat`);
+    config: async (organizerId: IdParam, eventId?: IdParam | null) => {
+        const response = await publicApi.get<GenericDataResponse<LiveChatConfig>>(
+            `organizers/${organizerId}/live-chat`,
+            eventId ? {params: {event_id: eventId}} : undefined,
+        );
         return response.data;
     },
     start: async (organizerId: IdParam, eventId?: IdParam | null) => {

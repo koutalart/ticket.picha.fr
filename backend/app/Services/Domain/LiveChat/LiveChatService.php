@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\Enums\LiveChatAuthorType;
 use HiEvents\DomainObjects\Enums\LiveChatStyle;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\EventDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\ImageDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\LiveChatMessageDomainObjectAbstract;
@@ -28,6 +29,7 @@ use HiEvents\Exceptions\LiveChatUnavailableException;
 use HiEvents\Exceptions\SmsAssistantFailedException;
 use HiEvents\Exceptions\SmsAssistantLimitReachedException;
 use HiEvents\Exceptions\SmsAssistantUnavailableException;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Helper\SmsSensitiveTopicDetector;
 use HiEvents\Helper\Url;
@@ -150,7 +152,7 @@ class LiveChatService
         private readonly LiveChatPromoContextBuilder $promoContextBuilder,
     ) {}
 
-    public function getConfig(int $organizerId): LiveChatConfigDTO
+    public function getConfig(int $organizerId, ?int $eventId = null): LiveChatConfigDTO
     {
         $settings = $this->findEnabledSettings($organizerId);
         $organizer = $settings !== null ? $this->organizerRepository->findFirstWhere(['id' => $organizerId]) : null;
@@ -166,7 +168,7 @@ class LiveChatService
             maxMessageLength: self::MAX_MESSAGE_LENGTH,
             style: LiveChatStyle::tryFrom((string) $settings->getLiveChatStyle()) ?? LiveChatStyle::CLASSIC,
             avatarUrl: $this->avatarUrl($organizerId),
-            greeting: self::greeting($this->isTutoiement($organizerId)),
+            greeting: $this->greetingFor($organizerId, $this->eventOfOrganizer($organizerId, $eventId)),
         );
     }
 
@@ -207,12 +209,14 @@ class LiveChatService
             LiveChatLimitReachedException::NEW_SESSIONS,
         );
 
+        $event = $this->eventOfOrganizer($organizerId, $eventId);
+
         /** @var LiveChatSessionDomainObject $session */
         $session = $this->sessionRepository->create([
             LiveChatSessionDomainObjectAbstract::PUBLIC_ID => Str::random(48),
             LiveChatSessionDomainObjectAbstract::ACCOUNT_ID => $settings->getAccountId(),
             LiveChatSessionDomainObjectAbstract::ORGANIZER_ID => $organizerId,
-            LiveChatSessionDomainObjectAbstract::EVENT_ID => $this->eventOfOrganizer($organizerId, $eventId)?->getId(),
+            LiveChatSessionDomainObjectAbstract::EVENT_ID => $event?->getId(),
             LiveChatSessionDomainObjectAbstract::STATUS => LiveChatSessionStatus::OPEN->name,
             LiveChatSessionDomainObjectAbstract::IP_HASH => $ipHash,
         ]);
@@ -220,15 +224,62 @@ class LiveChatService
         return new LiveChatTurnDTO(
             session: $session,
             messages: collect(),
-            greeting: self::greeting($this->isTutoiement($organizerId)),
+            greeting: $this->greetingFor($organizerId, $event),
         );
     }
 
-    public static function greeting(bool $tutoiement): string
+    /**
+     * Welcome line of the chat: about the event of the page when there is one, about the organizer's events otherwise.
+     */
+    public static function greeting(bool $tutoiement, ?string $eventTitle = null, ?string $venueName = null): string
     {
-        return $tutoiement
-            ? 'Bonjour ! Pose-moi ta question sur nos événements, je te réponds tout de suite.'
-            : 'Bonjour ! Posez-moi votre question sur nos événements, je vous réponds tout de suite.';
+        $eventTitle = self::label($eventTitle);
+        if ($eventTitle === '') {
+            return $tutoiement
+                ? 'Bonjour ! Pose-moi ta question sur nos événements, je te réponds tout de suite.'
+                : 'Bonjour ! Posez-moi votre question sur nos événements, je vous réponds tout de suite.';
+        }
+
+        $locale = $tutoiement ? CustomerLocale::FRENCH_TUTOIEMENT : 'fr';
+        $venueName = self::label($venueName);
+
+        return $venueName !== ''
+            ? __('Hello! A question about :event at :venue? I will answer right away.', ['event' => $eventTitle, 'venue' => $venueName], $locale)
+            : __('Hello! A question about :event? I will answer right away.', ['event' => $eventTitle], $locale);
+    }
+
+    private static function label(?string $text): string
+    {
+        return trim(preg_replace('/\s+/u', ' ', LiveChatReplyGenerator::cleanText((string) $text)) ?? '');
+    }
+
+    private function greetingFor(int $organizerId, ?EventDomainObject $event): string
+    {
+        return self::greeting(
+            $this->isTutoiement($organizerId),
+            $event?->getTitle(),
+            $event !== null ? self::venueName($event) : null,
+        );
+    }
+
+    public static function venueName(EventDomainObject $event): ?string
+    {
+        $settings = $event->getEventSettings();
+        if ($settings?->getIsOnlineEvent()) {
+            return null;
+        }
+
+        foreach ([$event->getLocationDetails(), $settings?->getLocationDetails()] as $details) {
+            if (is_string($details)) {
+                $details = json_decode($details, true);
+            }
+            $venue = is_array($details) ? trim((string) ($details['venue_name'] ?? '')) : '';
+            if ($venue !== '') {
+                return $venue;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -862,7 +913,7 @@ class LiveChatService
                 events: $events,
                 refundAvailable: $session->getRefundedAt() === null
                     && $this->refundProtectionService->isAvailableForOrganizer($session->getOrganizerId()),
-                greeting: self::greeting($tutoiement),
+                greeting: $this->greetingFor($session->getOrganizerId(), $this->eventOfOrganizer($session->getOrganizerId(), $session->getEventId())),
                 handedOff: $session->getNeedsFollowUp()
                     || $session->getStatus() === LiveChatSessionStatus::HANDED_OFF->name
                     || $session->getSmsConversationId() !== null,
@@ -996,7 +1047,7 @@ class LiveChatService
             return null;
         }
 
-        return $this->eventRepository->findFirstWhere([
+        return $this->eventRepository->loadRelation(EventSettingDomainObject::class)->findFirstWhere([
             EventDomainObjectAbstract::ID => $eventId,
             EventDomainObjectAbstract::ORGANIZER_ID => $organizerId,
         ]);
