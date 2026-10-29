@@ -6,6 +6,7 @@ export const STICKY_CTA_ATTR = 'data-picha-sticky-cta';
 // A bar counts when it is pinned to the bottom of the screen: its bottom edge sits within this distance of it.
 const PINNED_MARGIN = 80;
 const SETTLE_MS = 600;
+const FALLBACK_MS = 120;
 
 const heights = new Map<symbol, number>();
 
@@ -42,8 +43,13 @@ export const useStickyCtaHeight = (target: StickyTarget, active = true) => {
             ? new ResizeObserver(() => schedule())
             : null;
 
+        let fallback = 0;
+
         const measure = () => {
+            window.cancelAnimationFrame(frame);
+            window.clearTimeout(fallback);
             frame = 0;
+            fallback = 0;
             const element = resolve();
             if (element !== observed) {
                 if (observed) {
@@ -60,9 +66,11 @@ export const useStickyCtaHeight = (target: StickyTarget, active = true) => {
             heights.set(key, pinned && rect ? Math.round(layoutHeight - rect.top) : 0);
             publish();
         };
+        // Next frame, or a short timer when frames are paused or throttled (background tab, some in-app browsers).
         function schedule() {
-            if (!frame) {
+            if (!frame && !fallback) {
                 frame = window.requestAnimationFrame(measure);
+                fallback = window.setTimeout(measure, FALLBACK_MS);
             }
         }
 
@@ -80,6 +88,7 @@ export const useStickyCtaHeight = (target: StickyTarget, active = true) => {
 
         return () => {
             window.cancelAnimationFrame(frame);
+            window.clearTimeout(fallback);
             window.clearTimeout(settleTimer);
             window.removeEventListener('load', schedule);
             resizeObserver?.disconnect();

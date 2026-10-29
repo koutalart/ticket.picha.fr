@@ -370,7 +370,7 @@ class LiveChatService
             );
         }
 
-        $held =$contactKnown ? collect() : $this->questionService->heldForSession($session->getId());
+        $held = $contactKnown ? collect() : $this->questionService->heldForSession($session->getId());
         $typedContact = $held->isNotEmpty() ? self::extractContact($content) : null;
         if ($typedContact !== null) {
             return $this->forwardWithTypedContact($session, $settings, $visitorMessage, $typedContact['phone'], $typedContact['email']);
