@@ -61,6 +61,8 @@ class LiveChatService
 {
     public const MAX_MESSAGE_LENGTH = 800;
 
+    private const MAX_GREETING_VENUE_LENGTH = 30;
+
     public const DEFAULT_RELAY_LABEL = "l'organisateur";
 
     private const THREAD_LENGTH = 40;
@@ -241,11 +243,46 @@ class LiveChatService
         }
 
         $locale = $tutoiement ? CustomerLocale::FRENCH_TUTOIEMENT : 'fr';
-        $venueName = self::label($venueName);
+        $venueName = self::shortVenueName($venueName);
+        if ($venueName !== '' && str_starts_with($locale, 'fr')) {
+            $venueName = self::frenchPlace($venueName);
+        }
 
         return $venueName !== ''
             ? __('Hello! A question about :event at :venue? I will answer right away.', ['event' => $eventTitle, 'venue' => $venueName], $locale)
             : __('Hello! A question about :event? I will answer right away.', ['event' => $eventTitle], $locale);
+    }
+
+    /**
+     * « Le 5/5 - Bar / Restaurant / Live » → « Le 5/5 »; empty when the short name is still too long for a greeting.
+     */
+    public static function shortVenueName(?string $venueName): string
+    {
+        $parts = preg_split('/\s*[-|,(]/u', self::label($venueName), 2);
+        $short = trim((string) ($parts[0] ?? ''));
+
+        return mb_strlen($short) > self::MAX_GREETING_VENUE_LENGTH ? '' : $short;
+    }
+
+    /**
+     * French preposition contracted with the article of the place: « au 5/5 », « à la Plage », « aux Arènes »,
+     * « à l'Escale », « à Mamoudzou ».
+     */
+    public static function frenchPlace(string $venueName): string
+    {
+        if (preg_match('/^l[\'’]\s*(.+)$/iu', $venueName, $matches)) {
+            return "à l'".$matches[1];
+        }
+
+        if (preg_match('/^(les|le|la)\s+(.+)$/iu', $venueName, $matches)) {
+            return match (mb_strtolower($matches[1])) {
+                'le' => 'au '.$matches[2],
+                'la' => 'à la '.$matches[2],
+                default => 'aux '.$matches[2],
+            };
+        }
+
+        return 'à '.$venueName;
     }
 
     private static function label(?string $text): string
