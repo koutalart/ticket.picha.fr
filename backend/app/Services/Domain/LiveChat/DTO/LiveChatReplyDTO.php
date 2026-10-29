@@ -18,6 +18,9 @@ class LiveChatReplyDTO extends BaseDataObject
         public readonly ?string $reason,
         public readonly bool $refundRequest = false,
         public readonly ?string $questionForOrganizer = null,
+        public readonly bool $ticketResend = false,
+        public readonly ?string $ticketResendFirstName = null,
+        public readonly ?string $ticketResendPhone = null,
     ) {}
 
     public function text(): string

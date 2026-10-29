@@ -40,5 +40,6 @@ class LiveChatRequestDTO extends BaseDataObject
         public readonly array $knowledge = [],
         public readonly array $publications = [],
         public readonly ?string $questionContactNote = null,
+        public readonly bool $ticketResendAvailable = false,
     ) {}
 }
