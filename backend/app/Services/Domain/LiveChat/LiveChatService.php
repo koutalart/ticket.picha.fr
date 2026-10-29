@@ -258,7 +258,7 @@ class LiveChatService
      */
     public static function shortVenueName(?string $venueName): string
     {
-        $parts = preg_split('/\s*[-|,(]/u', self::label($venueName), 2);
+        $parts = preg_split('/\s+-\s*|\s*[|,(]/u', self::label($venueName), 2);
         $short = trim((string) ($parts[0] ?? ''));
 
         return mb_strlen($short) > self::MAX_GREETING_VENUE_LENGTH ? '' : $short;

@@ -30,7 +30,8 @@ class LiveChatGreetingTest extends TestCase
     public function test_venue_is_cut_at_the_first_separator(): void
     {
         $this->assertSame('Le 5/5', LiveChatService::shortVenueName('  Le 5/5 - Bar / Restaurant / Live '));
-        $this->assertSame('Le 5/5', LiveChatService::shortVenueName('Le 5/5-Bar'));
+        $this->assertSame('Saint-Denis', LiveChatService::shortVenueName('Saint-Denis'));
+        $this->assertSame('Le 5/5', LiveChatService::shortVenueName('Le 5/5 -Bar'));
         $this->assertSame('La Plage', LiveChatService::shortVenueName('La Plage | Sakouli'));
         $this->assertSame('Le Five', LiveChatService::shortVenueName('Le Five, Mamoudzou'));
         $this->assertSame('Le Five', LiveChatService::shortVenueName('Le Five (Kawéni)'));
