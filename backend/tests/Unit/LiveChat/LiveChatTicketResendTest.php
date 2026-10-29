@@ -93,7 +93,7 @@ class LiveChatTicketResendTest extends TestCase
         $orderId = $this->order(firstName: 'elodie', phone: '+262 639 12 34 56');
         $sessionId = $this->openChat();
 
-        $this->post($sessionId, self::VISITOR_MESSAGE)
+        $this->say($sessionId, self::VISITOR_MESSAGE)
             ->assertOk()
             ->assertJsonPath('data.messages.1.content', 'Si ces infos correspondent à une commande, vous allez recevoir un code par SMS. Écrivez-le-moi ici.');
 
@@ -107,7 +107,7 @@ class LiveChatTicketResendTest extends TestCase
             ->once()
             ->with($orderId, $this->event->id, Mockery::type('string'), 'PICHA live chat');
 
-        $response = $this->post($sessionId, substr($code, 0, 3).' '.substr($code, 3))->assertOk();
+        $response = $this->say($sessionId, substr($code, 0, 3).' '.substr($code, 3))->assertOk();
 
         $reply = (string) $response->json('data.messages.1.content');
         $this->assertSame("C'est fait, je viens de renvoyer vos billets à e***@g***.com. Pensez à regarder dans les spams.", $reply);
@@ -121,14 +121,14 @@ class LiveChatTicketResendTest extends TestCase
         $this->order(firstName: 'Awa', phone: '0639123456');
         $sessionId = $this->openChat();
 
-        $this->post($sessionId, self::VISITOR_MESSAGE)
+        $this->say($sessionId, self::VISITOR_MESSAGE)
             ->assertOk()
             ->assertJsonPath('data.messages.1.content', 'Si ces infos correspondent à une commande, vous allez recevoir un code par SMS. Écrivez-le-moi ici.');
 
         $this->assertSame([], $this->sentSms);
         $this->resendService->shouldNotReceive('resendOrderConfirmation');
 
-        $this->post($sessionId, '123456')
+        $this->say($sessionId, '123456')
             ->assertOk()
             ->assertJsonPath('data.messages.1.content', "Ce code n'est pas le bon. Essais restants : 2.");
     }
@@ -140,7 +140,7 @@ class LiveChatTicketResendTest extends TestCase
         $this->order(firstName: 'Élodie', phone: '0639123456', status: 'AWAITING_OFFLINE_PAYMENT');
         $sessionId = $this->openChat();
 
-        $this->post($sessionId, self::VISITOR_MESSAGE)->assertOk();
+        $this->say($sessionId, self::VISITOR_MESSAGE)->assertOk();
 
         $this->assertSame([], $this->sentSms);
         $this->assertSame('[]', DB::table('live_chat_ticket_resend_requests')->value('order_ids'));
@@ -158,10 +158,10 @@ class LiveChatTicketResendTest extends TestCase
         ]);
         $this->order(firstName: 'Élodie', phone: '0639123456', eventId: $otherEvent->id);
 
-        $this->post($this->openChat($this->event->id), self::VISITOR_MESSAGE)->assertOk();
+        $this->say($this->openChat($this->event->id), self::VISITOR_MESSAGE)->assertOk();
         $this->assertSame([], $this->sentSms);
 
-        $this->post($this->openChat(), self::VISITOR_MESSAGE)->assertOk();
+        $this->say($this->openChat(), self::VISITOR_MESSAGE)->assertOk();
         $this->assertCount(1, $this->sentSms);
     }
 
@@ -169,13 +169,13 @@ class LiveChatTicketResendTest extends TestCase
     {
         $this->order(firstName: 'Élodie', phone: '0639123456');
         $sessionId = $this->openChat();
-        $this->post($sessionId, self::VISITOR_MESSAGE);
+        $this->say($sessionId, self::VISITOR_MESSAGE);
         $wrong = $this->sentCode() === '000000' ? '111111' : '000000';
         $this->resendService->shouldNotReceive('resendOrderConfirmation');
 
-        $this->post($sessionId, $wrong)->assertJsonPath('data.messages.1.content', "Ce code n'est pas le bon. Essais restants : 2.");
-        $this->post($sessionId, $wrong)->assertJsonPath('data.messages.1.content', "Ce code n'est pas le bon. Essais restants : 1.");
-        $this->post($sessionId, $wrong)->assertJsonPath('data.messages.1.content', 'Trop de codes incorrects. Redonnez-moi votre prénom et votre numéro pour recevoir un nouveau code.');
+        $this->say($sessionId, $wrong)->assertJsonPath('data.messages.1.content', "Ce code n'est pas le bon. Essais restants : 2.");
+        $this->say($sessionId, $wrong)->assertJsonPath('data.messages.1.content', "Ce code n'est pas le bon. Essais restants : 1.");
+        $this->say($sessionId, $wrong)->assertJsonPath('data.messages.1.content', 'Trop de codes incorrects. Redonnez-moi votre prénom et votre numéro pour recevoir un nouveau code.');
 
         $this->assertSame('BLOCKED', DB::table('live_chat_ticket_resend_requests')->value('status'));
         $this->assertSame(3, (int) DB::table('live_chat_ticket_resend_requests')->value('attempts'));
@@ -186,11 +186,11 @@ class LiveChatTicketResendTest extends TestCase
         $this->order(firstName: 'Élodie', phone: '0639123456');
         $sessionId = $this->openChat();
         Carbon::setTestNow(Carbon::parse('2026-10-29 10:00:00', 'UTC'));
-        $this->post($sessionId, self::VISITOR_MESSAGE);
+        $this->say($sessionId, self::VISITOR_MESSAGE);
         $this->resendService->shouldNotReceive('resendOrderConfirmation');
 
         Carbon::setTestNow(Carbon::parse('2026-10-29 10:20:00', 'UTC'));
-        $this->post($sessionId, $this->sentCode())
+        $this->say($sessionId, $this->sentCode())
             ->assertJsonPath('data.messages.1.content', 'Ce code a expiré. Redonnez-moi votre prénom et votre numéro pour en recevoir un nouveau.');
 
         $this->assertSame('EXPIRED', DB::table('live_chat_ticket_resend_requests')->value('status'));
@@ -202,9 +202,9 @@ class LiveChatTicketResendTest extends TestCase
         $sessionId = $this->openChat();
 
         for ($i = 0; $i < LiveChatTicketResendService::MAX_SENDS_PER_PHONE_PER_SESSION; $i++) {
-            $this->post($sessionId, self::VISITOR_MESSAGE)->assertOk();
+            $this->say($sessionId, self::VISITOR_MESSAGE)->assertOk();
         }
-        $this->post($sessionId, self::VISITOR_MESSAGE)
+        $this->say($sessionId, self::VISITOR_MESSAGE)
             ->assertOk()
             ->assertJsonPath('data.messages.1.content', "Plusieurs codes ont déjà été demandés. Je transmets votre demande à l'organisateur, il va regarder ça.");
 
@@ -218,7 +218,7 @@ class LiveChatTicketResendTest extends TestCase
         $this->order(firstName: 'Élodie', phone: '0639123456');
         $this->claude->shouldReceive('askWithUsage')->andReturn($this->resendAnswer('Élodie', '0639 12 34 56'));
 
-        $this->post($this->openChat(), "C'est Élodie, j'ai pas reçu mon billet")
+        $this->say($this->openChat(), "C'est Élodie, j'ai pas reçu mon billet")
             ->assertOk()
             ->assertJsonPath('data.messages.1.content', 'Pour vous renvoyer vos billets, il me faut votre prénom et le numéro de téléphone utilisé pour la commande.');
 
@@ -233,7 +233,7 @@ class LiveChatTicketResendTest extends TestCase
                 && in_array('ticket_resend', $schema['properties']['intent']['enum'], true))
             ->andReturn($this->resendAnswer(null, null, 'Tu me donnes ton prénom et le numéro utilisé pour la commande ?'));
 
-        $this->post($this->openChat(), "J'ai pas reçu mon billet")
+        $this->say($this->openChat(), "J'ai pas reçu mon billet")
             ->assertOk()
             ->assertJsonPath('data.messages.1.content', 'Tu me donnes ton prénom et le numéro utilisé pour la commande ?')
             ->assertJsonPath('data.ask_contact', false);
@@ -369,7 +369,7 @@ class LiveChatTicketResendTest extends TestCase
             ->json('data.session_id');
     }
 
-    private function post(string $sessionId, string $message): TestResponse
+    private function say(string $sessionId, string $message): TestResponse
     {
         return $this->json('POST', '/public/live-chat/messages', ['message' => $message], ['X-Chat-Session' => $sessionId]);
     }
