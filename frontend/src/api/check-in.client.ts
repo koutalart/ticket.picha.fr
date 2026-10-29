@@ -2,6 +2,7 @@ import {publicApi} from "./public-client";
 import {
     Attendee,
     CheckInList,
+    CheckInListLiveStats,
     GenericDataResponse,
     GenericPaginatedResponse,
     IdParam, PublicCheckIn,
@@ -12,6 +13,10 @@ import {queryParamsHelper} from "../utilites/queryParamsHelper";
 export const publicCheckInClient = {
     getCheckInList: async (checkInListShortId: IdParam) => {
         const response = await publicApi.get<GenericDataResponse<CheckInList>>(`/check-in-lists/${checkInListShortId}`);
+        return response.data;
+    },
+    getCheckInListStats: async (checkInListShortId: IdParam) => {
+        const response = await publicApi.get<GenericDataResponse<CheckInListLiveStats>>(`/check-in-lists/${checkInListShortId}/stats`);
         return response.data;
     },
     getCheckInListAttendees: async (checkInListShortId: IdParam, pagination: QueryFilters) => {

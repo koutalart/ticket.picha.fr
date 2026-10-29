@@ -33,6 +33,7 @@ export interface SmsSettingsRequest {
     live_chat_enabled?: boolean;
     live_chat_relay_label?: string | null;
     live_chat_style?: LiveChatStyle;
+    checkin_welcome_sms_enabled?: boolean;
     sms_default_reminders_enabled?: boolean;
     organizer_assistant_enabled?: boolean;
     organizer_assistant_instructions?: string | null;

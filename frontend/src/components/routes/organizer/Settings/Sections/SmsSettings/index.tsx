@@ -20,6 +20,7 @@ import {confirmationDialog} from "../../../../../../utilites/confirmationDialog.
 import {relativeDate} from "../../../../../../utilites/dates.ts";
 import {SmsAssistantSettings} from "./SmsAssistantSettings.tsx";
 import {LiveChatSettings} from "./LiveChatSettings.tsx";
+import {CheckInWelcomeSmsSettings} from "./CheckInWelcomeSmsSettings.tsx";
 
 export const SmsSettings = () => {
     const {organizerId} = useParams();
@@ -335,6 +336,7 @@ export const SmsSettings = () => {
         </Card>
         <SmsAssistantSettings/>
         <LiveChatSettings/>
+        <CheckInWelcomeSmsSettings/>
         </>
     );
 };

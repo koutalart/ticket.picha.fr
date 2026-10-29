@@ -69,7 +69,8 @@ msgstr "{0} · {1} lignes. Indiquez ce que contient chaque colonne."
 msgid "{0} {1}"
 msgstr "{0} {1}"
 
-#: src/components/layouts/CheckIn/index.tsx:237
+#: src/components/layouts/CheckIn/index.tsx:247
+#: src/components/layouts/CheckIn/index.tsx:271
 msgid "{0} {1} is already checked in"
 msgstr "{0} {1} est déjà enregistré"
 
@@ -77,11 +78,11 @@ msgstr "{0} {1} est déjà enregistré"
 msgid "{0} / {INSTAGRAM_CAPTION_MAX_LENGTH} characters on Instagram"
 msgstr "{0} / {INSTAGRAM_CAPTION_MAX_LENGTH} caractères sur Instagram"
 
-#: src/components/layouts/CheckIn/index.tsx:133
+#: src/components/layouts/CheckIn/index.tsx:164
 msgid "{0} <0>checked in</0> successfully"
-msgstr "{0} <0>enregistré</0> avec succès"
+msgstr ""
 
-#: src/components/layouts/CheckIn/index.tsx:159
+#: src/components/layouts/CheckIn/index.tsx:190
 msgid "{0} <0>checked out</0> successfully"
 msgstr "{0} <0>sorti</0> avec succès"
 
@@ -576,7 +577,7 @@ msgstr "Quelques mots pour donner envie de venir. Vous pouvez aussi le faire plu
 msgid "A fixed amount per product. E.g, $0.50 per product"
 msgstr "Un montant fixe par produit. Par exemple, 0,50 $ par produit"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:212
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:213
 msgid "A key is saved. Paste a new one to replace it."
 msgstr "Une clé est enregistrée. Collez-en une nouvelle pour la remplacer."
 
@@ -1603,7 +1604,7 @@ msgstr "Tout participant n'ayant pas l'âge limite est refusé."
 msgid "Any queries from product holders will be sent to this email address. This will also be used as the \"reply-to\" address for all emails sent from this event"
 msgstr "Toute question des détenteurs de produits sera envoyée à cette adresse e-mail. Elle sera également utilisée comme adresse de réponse pour tous les e-mails envoyés depuis cet événement"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:89
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:90
 msgid "API key removed"
 msgstr "Clé API supprimée"
 
@@ -2053,7 +2054,7 @@ msgstr "Liste des participants"
 msgid "Attendee Name"
 msgstr "Nom du participant"
 
-#: src/components/layouts/CheckIn/index.tsx:228
+#: src/components/layouts/CheckIn/index.tsx:265
 msgid "Attendee not found"
 msgstr "Participant non trouvé"
 
@@ -2166,11 +2167,11 @@ msgstr "Automatique"
 msgid "Automatic message"
 msgstr "Envoi automatique"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:119
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
 msgid "Automatic reminders disabled"
 msgstr "Rappels automatiques désactivés"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:119
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
 msgid "Automatic reminders enabled"
 msgstr "Rappels automatiques activés"
 
@@ -2186,7 +2187,7 @@ msgstr "Proposer automatiquement des billets à la personne suivante lorsque des
 msgid "Automatically resize the widget height based on the content. When disabled, the widget will fill the height of the container."
 msgstr "Redimensionner automatiquement la hauteur du widget en fonction du contenu. Lorsque désactivé, le widget remplira la hauteur du conteneur."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:258
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:259
 msgid "Automatically schedule 3 SMS reminders for each new event"
 msgstr "Programmer automatiquement 3 rappels SMS pour chaque nouvel événement"
 
@@ -2979,15 +2980,15 @@ msgstr "Liste d'Enregistrement Créée !"
 msgid "Check-In List deleted successfully"
 msgstr "Liste de pointage supprimée avec succès"
 
-#: src/components/layouts/CheckIn/index.tsx:363
+#: src/components/layouts/CheckIn/index.tsx:395
 msgid "Check-in list has expired"
 msgstr "La liste de pointage a expiré"
 
-#: src/components/layouts/CheckIn/index.tsx:380
+#: src/components/layouts/CheckIn/index.tsx:412
 msgid "Check-in list is not active"
 msgstr "La liste de pointage n'est pas active"
 
-#: src/components/layouts/CheckIn/index.tsx:348
+#: src/components/layouts/CheckIn/index.tsx:380
 msgid "Check-in list not found"
 msgstr "Liste de pointage non trouvée"
 
@@ -3039,6 +3040,10 @@ msgstr "Les options de case à cocher permettent plusieurs sélections"
 #: src/components/forms/QuestionForm/index.tsx:114
 msgid "Checkboxes"
 msgstr "Cases à cocher"
+
+#: src/components/common/CheckIn/LiveCounters/index.tsx:19
+msgid "Checked in"
+msgstr "Entrés"
 
 #: src/components/common/AttendeeTable/index.tsx:339
 #: src/components/common/CheckInStatusModal/index.tsx:110
@@ -3546,7 +3551,7 @@ msgstr "Configurer ce scanner"
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:118
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:158
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:159
 msgid "Configured"
 msgstr "Configurée"
 
@@ -3698,15 +3703,15 @@ msgstr "Connectée {0}"
 msgid "Connected at"
 msgstr "Heure de connexion"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:133
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:134
 msgid "Connected to PICHA SMS, but no phone is registered. Install the PICHA SMS app on your Android phone."
 msgstr "Connecté à PICHA SMS, mais aucun téléphone n'est enregistré. Installez l'application PICHA SMS sur votre téléphone Android."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:131
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:132
 msgid "Connected to PICHA SMS, but your sending number is not one of your phones: {phones}"
 msgstr "Connecté à PICHA SMS, mais votre numéro d'envoi ne fait pas partie de vos téléphones : {phones}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:129
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:130
 msgid "Connected to PICHA SMS. Your sending number is registered."
 msgstr "Connecté à PICHA SMS. Votre numéro d'envoi est bien enregistré."
 
@@ -4019,7 +4024,7 @@ msgstr "Copier dans le presse-papiers"
 msgid "Copy URL"
 msgstr "Copier le lien"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:202
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:203
 msgid "Copy your API key from the PICHA SMS settings page and paste it below, with the phone number of the SIM used to send."
 msgstr "Copiez votre clé API depuis la page des paramètres PICHA SMS et collez-la ci-dessous, avec le numéro de la carte SIM utilisée pour envoyer."
 
@@ -5404,11 +5409,11 @@ msgstr "Adresse e-mail confirmée"
 msgid "Email address copied to clipboard"
 msgstr "Adresse e-mail copiée dans le presse-papiers"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
 msgid "Email alerts disabled"
 msgstr "Alertes e-mail désactivées"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:109
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
 msgid "Email alerts enabled"
 msgstr "Alertes e-mail activées"
 
@@ -5452,7 +5457,7 @@ msgstr "L'e-mail est obligatoire"
 msgid "Email logo for this event (light background)"
 msgstr "Logo des e-mails pour cet événement (fond clair)"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:250
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:251
 msgid "Email me when a new SMS arrives"
 msgstr "M'avertir par e-mail quand un nouveau SMS arrive"
 
@@ -6805,7 +6810,7 @@ msgstr "Les frais fixes doivent être égaux ou supérieurs à 0"
 msgid "Fixed Fee:"
 msgstr "Frais fixes :"
 
-#: src/components/common/AttendeeCheckInTable/QrScanner.tsx:138
+#: src/components/common/AttendeeCheckInTable/QrScanner.tsx:210
 msgid "Flash is not available on this device"
 msgstr "Flash n'est pas disponible sur cet appareil"
 
@@ -7055,11 +7060,11 @@ msgstr "Générer"
 msgid "Generate a new relay token"
 msgstr "Générer un nouveau jeton de relais"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:289
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:290
 msgid "Generate a new signing key"
 msgstr "Générer une nouvelle clé de signature"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:96
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:97
 msgid "Generate a new signing key? You will need to paste it into your PICHA SMS webhook, otherwise incoming SMS will be rejected."
 msgstr "Générer une nouvelle clé de signature ? Vous devrez la coller dans votre webhook PICHA SMS, sinon les SMS reçus seront refusés."
 
@@ -7472,7 +7477,7 @@ msgstr "De combien de minutes le client dispose pour finaliser sa commande. Nous
 msgid "How many participants?"
 msgstr "Combien de participants ?"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:195
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:196
 msgid "How to connect"
 msgstr "Comment connecter"
 
@@ -7664,11 +7669,11 @@ msgstr "Import annulé"
 msgid "Import contacts"
 msgstr "Importer des contacts"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:318
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:319
 msgid "Import in progress: {0} messages retrieved"
 msgstr "Import en cours : {0} messages récupérés"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:142
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:143
 msgid "Import started. Messages will appear in SMS messages within a few minutes."
 msgstr "Import lancé. Les messages apparaîtront dans Messages SMS d'ici quelques minutes."
 
@@ -7712,7 +7717,7 @@ msgstr "En copie"
 msgid "In Meta Events Manager: your pixel, then Settings, then Conversions API, then Generate access token. <0>Open Events Manager</0>"
 msgstr "Dans le Gestionnaire d'événements Meta : votre pixel, puis Paramètres, puis API Conversions, puis Générer un jeton d'accès. <0>Ouvrir le Gestionnaire d'événements</0>"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:203
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:204
 msgid "In PICHA SMS, create a webhook with the URL and signing key below, and tick the message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline and phone.heartbeat.online events."
 msgstr "Dans PICHA SMS, créez un webhook avec l'URL et la clé de signature ci-dessous, et cochez les événements message.phone.received, message.phone.sent, message.phone.delivered, message.send.failed, message.send.expired, phone.heartbeat.offline et phone.heartbeat.online."
 
@@ -7745,6 +7750,10 @@ msgstr "Inactif"
 #: src/components/modals/EditUserModal/index.tsx:107
 msgid "Inactive users cannot log in."
 msgstr "Les utilisateurs inactifs ne peuvent pas se connecter."
+
+#: src/components/common/CheckIn/LiveCounters/index.tsx:23
+msgid "incl. {0} on-site tickets"
+msgstr "dont {0} billets sur place"
 
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:103
 msgid "Include connection details for your online event. These details will be shown on the order summary page and attendee ticket page."
@@ -7843,7 +7852,7 @@ msgstr "Instagram efface les stories au bout de 24 heures, PICHA en garde une co
 msgid "Instagram stories"
 msgstr "Stories Instagram"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:198
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:199
 msgid "Install the PICHA SMS app on your Android phone and sign in on <0>sms.picha.fr</0>."
 msgstr "Installez l'application PICHA SMS sur votre téléphone Android et connectez-vous sur <0>sms.picha.fr</0>."
 
@@ -8265,7 +8274,7 @@ msgstr "7 derniers jours"
 msgid "Last 90 days"
 msgstr "90 derniers jours"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:324
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:325
 msgid "Last import {0}: {1} new messages"
 msgstr "Dernier import {0} : {1} nouveaux messages"
 
@@ -8334,7 +8343,7 @@ msgstr "Dernière vente : <0>{0} billets</0>"
 msgid "Last sale: <0>{0}</0>"
 msgstr "Dernière vente : <0>{0}</0>"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:171
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:172
 msgid "Last SMS event received {0}"
 msgstr "Dernier événement SMS reçu {0}"
 
@@ -9322,7 +9331,7 @@ msgstr "Nouvelle réponse toute faite"
 msgid "New section"
 msgstr "Nouvelle section"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:98
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:99
 msgid "New signing key generated"
 msgstr "Nouvelle clé de signature générée"
 
@@ -9952,7 +9961,7 @@ msgstr "Non choisi :"
 
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:82
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:119
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:159
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:160
 msgid "Not configured"
 msgstr "Non configurée"
 
@@ -11002,6 +11011,10 @@ msgstr "Nos valeurs"
 msgid "Our vision"
 msgstr "Notre vision"
 
+#: src/components/common/CheckIn/LiveCounters/index.tsx:32
+msgid "out of {0} expected"
+msgstr "sur {0} attendus"
+
 #: src/components/routes/admin/Messages/index.tsx:107
 msgid "Outgoing Messages"
 msgstr "Messages sortants"
@@ -11204,7 +11217,7 @@ msgstr "Événements passés"
 msgid "Past events."
 msgstr "Événements passés."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:276
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:277
 msgid "Paste it into the signing key field of your PICHA SMS webhook. Keep it private."
 msgstr "Collez-la dans le champ clé de signature de votre webhook PICHA SMS. Gardez-la privée."
 
@@ -11497,11 +11510,11 @@ msgstr "Numéro de téléphone"
 msgid "Phone Number"
 msgstr "Numéro de téléphone"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:167
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:168
 msgid "Phone offline"
 msgstr "Téléphone hors ligne"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:164
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:165
 msgid "Phone online"
 msgstr "Téléphone en ligne"
 
@@ -11527,11 +11540,11 @@ msgid "PICHA"
 msgstr "PICHA"
 
 #: src/components/routes/organizer/Settings/index.tsx:110
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:151
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:152
 msgid "PICHA SMS"
 msgstr "PICHA SMS"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:211
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:212
 msgid "PICHA SMS API key"
 msgstr "Clé API PICHA SMS"
 
@@ -12965,7 +12978,7 @@ msgstr "Supprimer la vidéo de couverture ? L'image de couverture sera affichée
 msgid "Remove the end time"
 msgstr "Retirer l'heure de fin"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:237
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:238
 msgid "Remove the key"
 msgstr "Supprimer la clé"
 
@@ -12974,7 +12987,7 @@ msgstr "Supprimer la clé"
 msgid "Remove the mobile video? Phones will play the main cover video instead."
 msgstr "Supprimer la vidéo mobile ? Les téléphones liront la vidéo de couverture principale à la place."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:84
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:85
 msgid "Remove the PICHA SMS API key? You will no longer be able to send SMS from PICHA."
 msgstr "Supprimer la clé API PICHA SMS ? Vous ne pourrez plus envoyer de SMS depuis PICHA."
 
@@ -13252,11 +13265,11 @@ msgstr "Restaurez cet organisateur et rendez-le à nouveau actif."
 msgid "Resume"
 msgstr "Reprendre"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:312
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:313
 msgid "Retrieve PICHA SMS history"
 msgstr "Récupérer l'historique PICHA SMS"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:302
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:303
 msgid "Retrieve the SMS sent and received with your PICHA SMS number before the webhook was connected, for example a campaign sent by script. Messages already present are not duplicated and are not marked as unread."
 msgstr "Récupérez les SMS envoyés et reçus avec votre numéro PICHA SMS avant le branchement du webhook, par exemple une campagne envoyée par script. Les messages déjà présents ne sont pas dupliqués et ne sont pas marqués comme non lus."
 
@@ -13487,7 +13500,7 @@ msgstr "San Francisco"
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:168
 #: src/components/routes/organizer/Settings/Sections/SeoSettings/index.tsx:85
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:126
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:225
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:226
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/LiveChatSettings.tsx:123
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:163
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:261
@@ -13551,8 +13564,8 @@ msgstr "Enregistrer le Design du Billet"
 msgid "Save VAT Settings"
 msgstr "Enregistrer les paramètres TVA"
 
-#: src/components/layouts/CheckIn/index.tsx:443
-#: src/components/layouts/CheckIn/index.tsx:453
+#: src/components/layouts/CheckIn/index.tsx:476
+#: src/components/layouts/CheckIn/index.tsx:486
 msgid "Scan"
 msgstr "Scanner"
 
@@ -13706,7 +13719,7 @@ msgstr "Rechercher par nom ou e-mail..."
 msgid "Search by name, email, or account..."
 msgstr "Rechercher par nom, e-mail ou compte..."
 
-#: src/components/layouts/CheckIn/index.tsx:439
+#: src/components/layouts/CheckIn/index.tsx:472
 msgid "Search by name, order #, attendee # or email..."
 msgstr "Rechercher par nom, numéro de commande, numéro de participant ou e-mail..."
 
@@ -14060,6 +14073,10 @@ msgstr "Envoyer un message"
 msgid "Send a new code"
 msgstr "Renvoyer un code"
 
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:39
+msgid "Send a welcome SMS when a ticket is scanned"
+msgstr "Envoyer un SMS de bienvenue quand un billet est scanné"
+
 #: src/components/routes/organizer/Sms/ReminderList.tsx:44
 msgid "Send an SMS to the attendees of an event at the date and time of your choice. Unsubscribed numbers are left out and each number receives the reminder only once."
 msgstr "Envoyez un SMS aux participants d'un événement à la date et à l'heure de votre choix. Les numéros désinscrits sont exclus et chaque numéro ne reçoit le rappel qu'une seule fois."
@@ -14068,7 +14085,7 @@ msgstr "Envoyez un SMS aux participants d'un événement à la date et à l'heur
 msgid "Send an SMS when an attendee cancels their registration"
 msgstr "Envoyer un SMS quand un participant annule son inscription"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:152
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:153
 msgid "Send and receive SMS with your customers from your own Android phone, using the PICHA SMS app. Replies appear in SMS messages."
 msgstr "Envoyez et recevez des SMS avec vos clients depuis votre propre téléphone Android, grâce à l'application PICHA SMS. Les réponses apparaissent dans Messages SMS."
 
@@ -14173,7 +14190,7 @@ msgstr "Date et heure d'envoi"
 msgid "Sending in progress"
 msgstr "Envoi en cours"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:219
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:220
 msgid "Sending number"
 msgstr "Numéro d'envoi"
 
@@ -14231,11 +14248,15 @@ msgstr "Envoyé aux clients lorsqu'ils passent une commande"
 msgid "Sent to each attendee with their ticket details"
 msgstr "Envoyé à chaque participant avec les détails de son billet"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:259
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:43
+msgid "Sent to the attendee's phone, or to the order's phone. One SMS per phone number and per event, so a group with one buyer receives a single SMS. Paper tickets without a phone receive nothing."
+msgstr "Envoyé au téléphone du participant, sinon à celui de la commande. Un seul SMS par numéro et par événement : un groupe avec un seul acheteur reçoit un seul SMS. Les billets papier sans téléphone ne reçoivent rien."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:260
 msgid "Sent to the attendees one week before at 6 pm, the day before at 6 pm and 3 hours before the start, in the timezone of the event. Each reminder can be edited or cancelled in the Reminders tab of your SMS messages."
 msgstr "Envoyés aux participants une semaine avant à 18h, la veille à 18h et 3 heures avant le début, à l'heure de l'événement. Chaque rappel reste modifiable ou annulable dans l'onglet Rappels de vos messages SMS."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:251
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:252
 msgid "Sent to the organizer email address. At most one email per conversation every 15 minutes. You are always notified by email when the phone goes offline."
 msgstr "Envoyé à l'adresse e-mail de l'organisateur. Au plus un e-mail par conversation toutes les 15 minutes. Vous êtes toujours prévenu par e-mail quand le téléphone passe hors ligne."
 
@@ -14419,7 +14440,7 @@ msgstr "Partager l'événement"
 msgid "Shared Capacity Management"
 msgstr "Gestion de capacité partagée"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:161
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:162
 msgid "Shared line"
 msgstr "Ligne partagée"
 
@@ -14614,7 +14635,7 @@ msgstr "Assistant SMS"
 msgid "SMS campaign"
 msgstr "Campagne SMS"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:300
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:301
 msgid "SMS history"
 msgstr "Historique des SMS"
 
@@ -14636,7 +14657,7 @@ msgstr "Liste d'opposition SMS"
 msgid "SMS reply templates"
 msgstr "Réponses SMS toutes faites"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:77
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:78
 msgid "SMS settings saved"
 msgstr "Paramètres SMS enregistrés"
 
@@ -14969,11 +14990,15 @@ msgstr "Étape {currentStepNumber} sur {totalSteps}"
 msgid "Still handling refunds for your older transactions."
 msgstr "Gère toujours les remboursements pour vos anciennes transactions."
 
+#: src/components/common/CheckIn/LiveCounters/index.tsx:28
+msgid "Still outside"
+msgstr "Encore dehors"
+
 #: src/components/common/ImpersonationBanner/index.tsx:53
 msgid "Stop Impersonating"
 msgstr "Arrêter l'usurpation"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:213
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:214
 msgid "Stored encrypted. It is never displayed again."
 msgstr "Stockée chiffrée. Elle n'est plus jamais affichée."
 
@@ -15515,7 +15540,7 @@ msgid "Test event code (optional)"
 msgstr "Code d'événement de test (facultatif)"
 
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:176
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:233
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:234
 msgid "Test the connection"
 msgstr "Tester la connexion"
 
@@ -15607,7 +15632,7 @@ msgstr "La modification n'a pas pu être enregistrée. Veuillez réessayer."
 msgid "The chat could not start."
 msgstr "Le chat n'a pas pu démarrer."
 
-#: src/components/layouts/CheckIn/index.tsx:353
+#: src/components/layouts/CheckIn/index.tsx:385
 msgid "The check-in list you are looking for does not exist."
 msgstr "La liste de pointage que vous recherchez n'existe pas."
 
@@ -15737,7 +15762,7 @@ msgstr "L'image n'a pas pu être envoyée"
 msgid "The import could not be cancelled. Please try again."
 msgstr "L'import n'a pas pu être annulé. Veuillez réessayer."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:330
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:331
 msgid "The import failed: {importError}. You can start it again, messages already imported are kept."
 msgstr "L'import a échoué : {importError}. Vous pouvez le relancer, les messages déjà importés sont conservés."
 
@@ -15775,7 +15800,7 @@ msgstr "Le message ne peut pas être vide"
 msgid "The note could not be saved. Please try again."
 msgstr "La note n'a pas pu être enregistrée. Veuillez réessayer."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:220
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:221
 msgid "The number of the SIM card in the PICHA SMS phone, for example +262639123456."
 msgstr "Le numéro de la carte SIM du téléphone PICHA SMS, par exemple +262639123456."
 
@@ -16099,7 +16124,7 @@ msgstr "Cette catégorie est masquée de la vue publique"
 msgid "This check-in list has expired"
 msgstr "Cette liste de pointage a expiré"
 
-#: src/components/layouts/CheckIn/index.tsx:368
+#: src/components/layouts/CheckIn/index.tsx:400
 msgid "This check-in list has expired and is no longer available for check-ins."
 msgstr "Cette liste de pointage a expiré et n'est plus disponible pour les enregistrements."
 
@@ -16111,7 +16136,7 @@ msgstr "Cette liste de pointage est active"
 msgid "This check-in list is not active yet"
 msgstr "Cette liste de pointage n'est pas encore active"
 
-#: src/components/layouts/CheckIn/index.tsx:385
+#: src/components/layouts/CheckIn/index.tsx:417
 msgid "This check-in list is not yet active and is not available for check-ins."
 msgstr "Cette liste de pointage n'est pas encore active et n'est pas disponible pour les enregistrements."
 
@@ -16317,7 +16342,7 @@ msgstr "Ce billet ne peut pas être enregistré."
 msgid "This ticket is currently sold both online and at the box office. Choose one channel."
 msgstr "Ce billet est actuellement vendu en ligne et au guichet. Choisissez un seul canal."
 
-#: src/components/layouts/CheckIn/index.tsx:205
+#: src/components/layouts/CheckIn/index.tsx:235
 msgid "This ticket was just scanned. Please wait before scanning again."
 msgstr "Ce billet vient d'être scanné. Veuillez attendre avant de scanner à nouveau."
 
@@ -16829,11 +16854,11 @@ msgstr "Essayer un autre e-mail"
 msgid "Turkish"
 msgstr "Turc"
 
-#: src/components/layouts/CheckIn/index.tsx:446
+#: src/components/layouts/CheckIn/index.tsx:479
 msgid "Turn sound off"
 msgstr "Désactiver le son"
 
-#: src/components/layouts/CheckIn/index.tsx:446
+#: src/components/layouts/CheckIn/index.tsx:479
 msgid "Turn sound on"
 msgstr "Activer le son"
 
@@ -16892,12 +16917,12 @@ msgstr "Impossible d'approuver la publication"
 msgid "Unable to cancel the post"
 msgstr "Impossible d'annuler la publication"
 
-#: src/components/layouts/CheckIn/index.tsx:146
+#: src/components/layouts/CheckIn/index.tsx:169
 msgid "Unable to check in attendee"
 msgstr "Impossible d'enregistrer le participant"
 
-#: src/components/layouts/CheckIn/index.tsx:170
-#: src/components/layouts/CheckIn/index.tsx:172
+#: src/components/layouts/CheckIn/index.tsx:201
+#: src/components/layouts/CheckIn/index.tsx:203
 msgid "Unable to check out attendee"
 msgstr "Impossible de sortir le participant"
 
@@ -16949,11 +16974,11 @@ msgstr "Impossible de dupliquer le produit. Veuillez vérifier vos informations"
 msgid "Unable to export the subscribers"
 msgstr "Impossible d'exporter les abonnés"
 
-#: src/components/layouts/CheckIn/index.tsx:221
+#: src/components/layouts/CheckIn/index.tsx:259
 msgid "Unable to fetch attendee"
 msgstr "Impossible de récupérer le participant"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:99
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:100
 msgid "Unable to generate a new signing key"
 msgstr "Impossible de générer une nouvelle clé de signature"
 
@@ -16973,7 +16998,7 @@ msgstr "Impossible d'ouvrir la connexion Facebook. Veuillez réessayer."
 msgid "Unable to reach Meta. Please try again."
 msgstr "Impossible de joindre Meta. Veuillez réessayer."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:136
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:137
 msgid "Unable to reach PICHA SMS. Please try again."
 msgstr "Impossible de joindre PICHA SMS. Veuillez réessayer."
 
@@ -16981,7 +17006,7 @@ msgstr "Impossible de joindre PICHA SMS. Veuillez réessayer."
 msgid "Unable to remove the access token"
 msgstr "Impossible de supprimer le jeton d'accès"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:90
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:91
 msgid "Unable to remove the API key"
 msgstr "Impossible de supprimer la clé API"
 
@@ -16993,11 +17018,15 @@ msgstr "Impossible de retirer le numéro"
 msgid "Unable to save the setting"
 msgstr "Impossible d'enregistrer le réglage"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:143
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:25
+msgid "Unable to save the welcome SMS setting"
+msgstr "Impossible d'enregistrer le réglage du SMS de bienvenue"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
 msgid "Unable to start the import"
 msgstr "Impossible de lancer l'import"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:110
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:111
 msgid "Unable to update email alerts"
 msgstr "Impossible de modifier les alertes e-mail"
 
@@ -17005,7 +17034,7 @@ msgstr "Impossible de modifier les alertes e-mail"
 msgid "Unable to update question. Please check the your details"
 msgstr "Impossible de mettre à jour la question. Veuillez vérifier vos coordonnées"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:120
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:121
 msgid "Unable to update the automatic reminders"
 msgstr "Impossible de modifier les rappels automatiques"
 
@@ -17097,7 +17126,7 @@ msgstr "Bracelet inconnu"
 msgid "Unknown customer"
 msgstr "Client inconnu"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:39
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:40
 msgid "unknown error"
 msgstr "erreur inconnue"
 
@@ -17940,7 +17969,7 @@ msgstr "Webhook supprimé avec succès"
 msgid "Webhook Logs"
 msgstr "Journaux du Webhook"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:275
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:276
 msgid "Webhook signing key"
 msgstr "Clé de signature du webhook"
 
@@ -17950,7 +17979,7 @@ msgid "Webhook Signing Secret"
 msgstr "Secret de signature du Webhook"
 
 #: src/components/forms/WebhookForm/index.tsx:138
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:268
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:269
 msgid "Webhook URL"
 msgstr "URL du Webhook"
 
@@ -18018,6 +18047,18 @@ msgstr "Accueil · Entrée principale"
 #: src/components/routes/landing/index.tsx:180
 msgid "Welcome desk tablet showing “Access granted” for Camille Martin, with her badge printing."
 msgstr "Tablette d'accueil affichant « Accès validé » pour Camille Martin, avec son badge en cours d'impression."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:32
+msgid "Welcome SMS at the door"
+msgstr "SMS de bienvenue à l'entrée"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:24
+msgid "Welcome SMS turned off"
+msgstr "SMS de bienvenue désactivé"
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:24
+msgid "Welcome SMS turned on"
+msgstr "SMS de bienvenue activé"
 
 #: src/components/routes/welcome/index.tsx:477
 msgid "Welcome to {0}, {1} 👋"
@@ -18130,6 +18171,10 @@ msgstr "Lorsqu'un produit est épuisé, les clients peuvent rejoindre une liste 
 #: src/components/routes/event/Settings/Sections/HomepageAndCheckoutSettings/index.tsx:152
 msgid "When a rule is active, a date of birth is required for each attendee. Age is calculated on the event start date."
 msgstr "Quand une règle est active, une date de naissance est obligatoire pour chaque participant. L'âge est calculé à la date de début de l'événement."
+
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:33
+msgid "When a ticket is scanned for the first time, the attendee receives a short, friendly SMS that welcomes them by first name, different every time."
+msgstr "Au premier scan de son billet, le participant reçoit un SMS court et sympa qui l'accueille par son prénom, différent à chaque fois."
 
 #: src/components/forms/WebhookForm/index.tsx:117
 msgid "When an attendee is cancelled"
@@ -18403,7 +18448,7 @@ msgstr "vous"
 msgid "You"
 msgstr "Vous"
 
-#: src/components/common/AttendeeCheckInTable/QrScanner.tsx:92
+#: src/components/common/AttendeeCheckInTable/QrScanner.tsx:111
 msgid "You already scanned this ticket"
 msgstr "Vous avez déjà scanné ce billet"
 
@@ -18419,8 +18464,8 @@ msgstr "Vous usurpez l'identité de <0>{0}</0> ({1})"
 msgid "You are issuing a partial refund. The customer will be refunded {0} {1}."
 msgstr "Vous émettez un remboursement partiel. Le client sera remboursé de {0} {1}."
 
-#: src/components/layouts/CheckIn/index.tsx:141
-#: src/components/layouts/CheckIn/index.tsx:165
+#: src/components/layouts/CheckIn/index.tsx:130
+#: src/components/layouts/CheckIn/index.tsx:196
 msgid "You are offline"
 msgstr "Vous êtes hors ligne"
 
@@ -18460,8 +18505,8 @@ msgstr "Vous ne pouvez pas archiver le dernier organisateur actif de votre compt
 msgid "You cannot change the product type as there are attendees associated with this product."
 msgstr "Vous ne pouvez pas changer le type de produit car des invités y sont associés."
 
-#: src/components/layouts/CheckIn/index.tsx:188
-#: src/components/layouts/CheckIn/index.tsx:254
+#: src/components/layouts/CheckIn/index.tsx:219
+#: src/components/layouts/CheckIn/index.tsx:287
 msgid "You cannot check in attendees with unpaid orders. This setting can be changed in the event settings."
 msgstr "Vous ne pouvez pas enregistrer des participants avec des commandes impayées. Ce paramètre peut être modifié dans les paramètres de l'événement."
 
@@ -18826,11 +18871,11 @@ msgstr "Votre paiement a échoué. Veuillez réessayer."
 msgid "Your PICHA SMS phone is offline"
 msgstr "Votre téléphone PICHA SMS est hors ligne"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:180
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:181
 msgid "Your PICHA SMS phone is offline. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Votre téléphone PICHA SMS est hors ligne. Vérifiez qu'il est allumé, connecté à internet et que l'application PICHA SMS est ouverte."
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:179
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:180
 msgid "Your PICHA SMS phone went offline {0}. Check that it is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "Votre téléphone PICHA SMS est passé hors ligne {0}. Vérifiez qu'il est allumé, connecté à internet et que l'application PICHA SMS est ouverte."
 
@@ -18878,7 +18923,7 @@ msgstr "Votre inscription est annulée."
 msgid "Your registration: {0}"
 msgstr "Votre inscription : {0}"
 
-#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:187
+#: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:188
 msgid "Your SMS are sent with a line shared and managed by PICHA, from the number {sharedNumber}. Customer replies appear in SMS messages and only your team can see your conversations."
 msgstr "Vos SMS partent d'une ligne partagée et gérée par PICHA, depuis le numéro {sharedNumber}. Les réponses de vos clients arrivent dans vos messages SMS et seule votre équipe voit vos conversations."
 
