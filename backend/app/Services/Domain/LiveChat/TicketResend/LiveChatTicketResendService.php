@@ -30,6 +30,7 @@ use HiEvents\Services\Domain\SelfService\SelfServiceResendEmailService;
 use HiEvents\Services\Domain\Sms\DTO\SendSmsDTO;
 use HiEvents\Services\Domain\Sms\SmsSendService;
 use Illuminate\Config\Repository;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
@@ -65,7 +66,7 @@ class LiveChatTicketResendService
         private readonly OrganizerRepositoryInterface $organizerRepository,
         private readonly LiveChatVerificationCodeService $codes,
         private readonly SmsSendService $smsSendService,
-        private readonly SelfServiceResendEmailService $resendEmailService,
+        private readonly Container $container,
         private readonly CustomerLocaleResolver $localeResolver,
         private readonly Repository $config,
         private readonly LoggerInterface $logger,
@@ -192,13 +193,15 @@ class LiveChatTicketResendService
 
         $emails = [];
         try {
+            // Resolved here: its mailer is the concrete one, every chat message would otherwise build it.
+            $resendEmailService = $this->container->make(SelfServiceResendEmailService::class);
             foreach ($this->orderRepository->findWhereIn(OrderDomainObjectAbstract::ID, $orderIds) as $order) {
                 /** @var OrderDomainObject $order */
                 if (! self::isResendable($order->getStatus(), $order->getPaymentStatus(), $order->getEmail())) {
                     continue;
                 }
 
-                $this->resendEmailService->resendOrderConfirmation($order->getId(), $order->getEventId(), $ip, self::AUDIT_USER_AGENT);
+                $resendEmailService->resendOrderConfirmation($order->getId(), $order->getEventId(), $ip, self::AUDIT_USER_AGENT);
                 $emails[] = self::maskEmail((string) $order->getEmail());
             }
         } catch (Throwable $exception) {
