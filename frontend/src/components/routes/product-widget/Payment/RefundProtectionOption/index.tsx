@@ -36,8 +36,8 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
 
     if (!offer.is_locked && !isMixed) {
         const refundWindow = deadlineHours > 0
-            ? t`Refunded on request up to ${deadlineHours} h before the event starts.`
-            : t`Refunded on request until the event starts.`;
+            ? t`on request up to ${deadlineHours} h before the event starts.`
+            : t`on request until the event starts.`;
 
         return (
             <label className={classNames(classes.option, classes.highlight, {
@@ -52,10 +52,7 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
                     <IconShieldCheck size={30} className={classes.highlightIcon}/>
                     <div className={classes.body}>
                         <div className={classes.headline}>{t`Can't make it after all? Your ticket is refunded.`}</div>
-                        <ul className={classes.benefits}>
-                            <li>{refundWindow}</li>
-                            <li>{t`Without this option, your ticket is not refundable.`}</li>
-                        </ul>
+                        <div className={classes.refundWindow}>{refundWindow}</div>
                         <div className={classes.label}>{label}</div>
                         {offer.is_per_ticket && offer.quantity > 1 && (
                             <div className={classes.details}>{t`${unitPrice} per ticket`}</div>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Link, useLocation} from "react-router";
 import {Helmet} from "react-helmet-async";
 import {t} from "@lingui/macro";
@@ -26,6 +26,8 @@ import {ContactPage} from "./pages/ContactPage.tsx";
 import classes from "./Poster.module.scss";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {findOrganizerLogo} from "../../../utilites/organizerLogo.ts";
+import {useStickyCtaHeight} from "../../../hooks/useStickyCtaHeight.ts";
+import {LiveChatFooterLink} from "../../common/LiveChatWindow/LiveChatFooterLink.tsx";
 
 const DEFAULT_POSTER_ACCENT = '#E4173D';
 
@@ -59,6 +61,8 @@ export const PosterTemplate = ({
     const tiers = featured ? getTicketTiers(featured) : [];
     const fromPrice = featured ? formatFromPrice(tiers, featured.currency) : null;
     const allSoldOut = tiers.length > 0 && tiers.every(tier => tier.soldOut);
+    const stickyBarRef = useRef<HTMLDivElement>(null);
+    useStickyCtaHeight(stickyBarRef, !!featured && !allSoldOut);
 
     const basePath = siteBasePath ?? organizerHomepagePath(organizer);
     const sitePath = (page: OrganizerSitePage) => page === 'home' ? (basePath || '/') : `${basePath}/${page}`;
@@ -307,13 +311,14 @@ export const PosterTemplate = ({
                             <button className={classes.footerContact} onClick={openContact}>
                                 <IconMail size={16}/> {t`Contact the organizer`}
                             </button>
+                            <LiveChatFooterLink organizer={organizer} className={classes.footerChatLink}/>
                         </div>
                     </div>
                     <PoweredByFooter className={classes.poweredBy}/>
                 </footer>
 
                 {featured && !allSoldOut && (
-                    <div className={classes.stickyBar}>
+                    <div className={classes.stickyBar} ref={stickyBarRef}>
                         <div className={classes.stickyText}>
                             <strong>{featured.title}</strong>
                             {fromPrice && <span>{fromPrice}</span>}

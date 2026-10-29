@@ -144,7 +144,8 @@ class LiveChatApiTest extends TestCase
             ->assertJsonPath('data.enabled', true)
             ->assertJsonPath('data.organizer_name', 'Test Organizer')
             ->assertJsonPath('data.relay_line', "Réponse immédiate, un membre de l'association peut prendre le relais")
-            ->assertJsonPath('data.max_message_length', 800);
+            ->assertJsonPath('data.max_message_length', 800)
+            ->assertJsonPath('data.greeting', 'Bonjour ! Posez-moi votre question sur nos événements, je vous réponds tout de suite.');
     }
 
     public function test_session_creation_returns_an_opaque_id_in_the_body(): void

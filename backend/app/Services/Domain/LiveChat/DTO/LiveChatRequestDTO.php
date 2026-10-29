@@ -18,6 +18,7 @@ class LiveChatRequestDTO extends BaseDataObject
      * @param  array<int, array<string, array<int, array<string, string>>>>  $knowledge  per event id: confirmed facts, changes, announcements
      * @param  array<int, array<string, string>>  $publications  latest publications of the organizer
      * @param  string|null  $questionContactNote  what to say about the contact details of a question kept for them
+     * @param  array<int, array<string, mixed>>  $promoCodes  per event id: the highlighted public promo code still valid, with its conditions
      */
     public function __construct(
         public readonly int $organizerId,
@@ -41,5 +42,6 @@ class LiveChatRequestDTO extends BaseDataObject
         public readonly array $publications = [],
         public readonly ?string $questionContactNote = null,
         public readonly bool $ticketResendAvailable = false,
+        public readonly array $promoCodes = [],
     ) {}
 }

@@ -147,6 +147,7 @@ class LiveChatService
         private readonly EventAssistantKnowledgeService $knowledgeService,
         private readonly ImageRepositoryInterface $imageRepository,
         private readonly LiveChatTicketResendService $ticketResendService,
+        private readonly LiveChatPromoContextBuilder $promoContextBuilder,
     ) {}
 
     public function getConfig(int $organizerId): LiveChatConfigDTO
@@ -165,6 +166,7 @@ class LiveChatService
             maxMessageLength: self::MAX_MESSAGE_LENGTH,
             style: LiveChatStyle::tryFrom((string) $settings->getLiveChatStyle()) ?? LiveChatStyle::CLASSIC,
             avatarUrl: $this->avatarUrl($organizerId),
+            greeting: self::greeting($this->isTutoiement($organizerId)),
         );
     }
 
@@ -273,6 +275,16 @@ class LiveChatService
         return $visitorMessageCount >= self::CONTACT_FROM_MESSAGE || self::offersContact($lastVisitorMessage);
     }
 
+    /**
+     * The model may ask for contact details only for something the organizer has to answer, or when the visitor
+     * asks to be called back: never for a price or a schedule it answered itself.
+     */
+    public static function modelMayAskContact(LiveChatReplyDTO $reply, string $lastVisitorMessage): bool
+    {
+        return $reply->askContact
+            && ($reply->needsFollowUp || $reply->questionForOrganizer !== null || self::offersContact($lastVisitorMessage));
+    }
+
     public static function offersContact(string $message): bool
     {
         return preg_match('/(\+?\d[\d\s.\-]{7,}\d)|([^\s@]+@[^\s@]+\.[^\s@]+)|\b(rappel|rappeler|rappelle|recontact|appelle[rz]?|appel|joindre|mon num|mon numéro|mon tel|mon tél|mon mail|mon e-?mail)/iu', $message) === 1;
@@ -300,7 +312,7 @@ class LiveChatService
                 'pas encore (avant le %de message du visiteur), sauf s\'il propose lui-même son numéro, demande à être rappelé, ou si tu transmets sa demande ou une question à l\'organisateur',
                 self::CONTACT_FROM_MESSAGE,
             ),
-            default => 'permise si utile',
+            default => 'permise seulement si tu transmets une demande ou une question à l\'organisateur, ou si le visiteur demande à être recontacté ; jamais pour une question de prix, d\'horaire ou de billets à laquelle tu réponds',
         };
     }
 
@@ -358,7 +370,7 @@ class LiveChatService
             );
         }
 
-        $held =$contactKnown ? collect() : $this->questionService->heldForSession($session->getId());
+        $held = $contactKnown ? collect() : $this->questionService->heldForSession($session->getId());
         $typedContact = $held->isNotEmpty() ? self::extractContact($content) : null;
         if ($typedContact !== null) {
             return $this->forwardWithTypedContact($session, $settings, $visitorMessage, $typedContact['phone'], $typedContact['email']);
@@ -467,7 +479,7 @@ class LiveChatService
             && ! $declined
             && ($contactForQuestion || $contactAgain || $contactForFollowUp || $session->getContactAskedAt() !== null || (
                 self::contactAllowed($session->getVisitorMessageCount(), $content, $contactKnown, $declined)
-                && $reply->askContact
+                && self::modelMayAskContact($reply, $content)
             ));
 
         $agentMessages = collect();
@@ -867,6 +879,9 @@ class LiveChatService
                 publications: $this->knowledgeService->publications($session->getOrganizerId()),
                 questionContactNote: $questionContactNote,
                 ticketResendAvailable: $this->handoffService->canRelayBySms($settings),
+                promoCodes: $this->promoContextBuilder->forEvents(
+                    $events->map(fn (SmsAssistantEventInfoDTO $event) => $event->id)->filter()->values()->all(),
+                ),
             ));
         } catch (SmsAssistantUnavailableException|SmsAssistantFailedException|SmsAssistantLimitReachedException) {
             $replies = $tutoiement ? self::HOLDING_REPLIES_TU : self::HOLDING_REPLIES_VOUS;

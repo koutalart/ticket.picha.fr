@@ -1,6 +1,7 @@
 import {FormEvent, useState} from "react";
 import {Anchor, Button, Checkbox, Group, Stack, Text, TextInput} from "@mantine/core";
 import {t} from "@lingui/macro";
+import {useLingui} from "@lingui/react";
 import {LiveChatMessage, LiveChatRefundStep, LiveChatRefundTicket} from "../../../types.ts";
 import {
     useConfirmLiveChatRefund,
@@ -34,6 +35,7 @@ const errorMessage = (error: any, fallback: string): string => {
  * tickets to cancel, summary. The server checks everything and computes the amount; this card only shows its answers.
  */
 export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone, onLimit}: LiveChatRefundCardProps) => {
+    const {i18n} = useLingui();
     const [step, setStep] = useState<CardStep>('identify');
     const [reference, setReference] = useState('');
     const [email, setEmail] = useState('');
@@ -76,17 +78,17 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
             onLimit(requestError?.response?.data?.message ?? null);
             return;
         }
-        setError(errorMessage(requestError, t`Something went wrong. Please try again.`));
+        setError(errorMessage(requestError, t(i18n)`Something went wrong. Please try again.`));
     };
 
     const requestCode = (event?: FormEvent) => {
         event?.preventDefault();
         if (!reference.trim()) {
-            setError(t`Enter your order number.`);
+            setError(t(i18n)`Enter your order number.`);
             return;
         }
         if (!EMAIL_PATTERN.test(email.trim())) {
-            setError(t`This email does not look valid.`);
+            setError(t(i18n)`This email does not look valid.`);
             return;
         }
         setError(null);
@@ -101,7 +103,7 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
         event.preventDefault();
         const digits = code.replace(/\D/g, '');
         if (digits.length !== 6) {
-            setError(t`Enter the 6 digits of the code.`);
+            setError(t(i18n)`Enter the 6 digits of the code.`);
             return;
         }
         setError(null);
@@ -127,15 +129,15 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
     };
 
     return (
-        <div className={classes.contactForm} role="group" aria-label={t`Cancellation request`}>
-            <Text size="sm" fw={600}>{t`Cancellation request`}</Text>
+        <div className={classes.contactForm} role="group" aria-label={t(i18n)`Cancellation request`}>
+            <Text size="sm" fw={600}>{t(i18n)`Cancellation request`}</Text>
 
             {step === 'identify' && (
                 <form onSubmit={requestCode} noValidate>
                     <Stack gap={8}>
                         <TextInput
-                            label={t`Order number`}
-                            description={t`Shown in your confirmation email, for example O-AB12CD3`}
+                            label={t(i18n)`Order number`}
+                            description={t(i18n)`Shown in your confirmation email, for example O-AB12CD3`}
                             value={reference}
                             onChange={(event) => setReference(event.currentTarget.value)}
                             maxLength={40}
@@ -143,7 +145,7 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
                             autoCapitalize="characters"
                         />
                         <TextInput
-                            label={t`Email used for the order`}
+                            label={t(i18n)`Email used for the order`}
                             type="email"
                             autoComplete="email"
                             value={email}
@@ -152,7 +154,7 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
                         />
                         {error && <Text size="xs" c="red" role="alert">{error}</Text>}
                         <Group justify="flex-end">
-                            <Button type="submit" size="xs" loading={requestMutation.isPending}>{t`Receive a code`}</Button>
+                            <Button type="submit" size="xs" loading={requestMutation.isPending}>{t(i18n)`Receive a code`}</Button>
                         </Group>
                     </Stack>
                 </form>
@@ -162,7 +164,7 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
                 <form onSubmit={verify} noValidate>
                     <Stack gap={8}>
                         <TextInput
-                            label={t`6-digit code received by email`}
+                            label={t(i18n)`6-digit code received by email`}
                             value={code}
                             onChange={(event) => setCode(event.currentTarget.value)}
                             inputMode="numeric"
@@ -173,9 +175,9 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
                         {error && <Text size="xs" c="red" role="alert">{error}</Text>}
                         <Group justify="space-between">
                             <Anchor component="button" type="button" size="xs" onClick={() => requestCode()} disabled={requestMutation.isPending}>
-                                {t`Send a new code`}
+                                {t(i18n)`Send a new code`}
                             </Anchor>
-                            <Button type="submit" size="xs" loading={verifyMutation.isPending}>{t`Check the code`}</Button>
+                            <Button type="submit" size="xs" loading={verifyMutation.isPending}>{t(i18n)`Check the code`}</Button>
                         </Group>
                     </Stack>
                 </form>
@@ -185,8 +187,8 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
                 <Stack gap={8}>
                     <Text size="xs" c="dimmed">
                         {maxTickets < tickets.length
-                            ? t`Your protection covers ${maxTickets} ticket(s) of this order.`
-                            : t`Choose the tickets to cancel.`}
+                            ? t(i18n)`Your protection covers ${maxTickets} ticket(s) of this order.`
+                            : t(i18n)`Choose the tickets to cancel.`}
                     </Text>
                     {tickets.map((ticket) => {
                         const checked = selected.includes(ticket.attendee_id);
@@ -196,14 +198,14 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
                                 checked={checked}
                                 disabled={!checked && selected.length >= maxTickets}
                                 onChange={(event) => toggle(ticket.attendee_id, event.currentTarget.checked)}
-                                label={`${ticket.name || t`Ticket`}, ${ticket.category}`}
+                                label={`${ticket.name || t(i18n)`Ticket`}, ${ticket.category}`}
                                 description={formatCurrency(ticket.amount_minor / 100, currency)}
                             />
                         );
                     })}
                     {error && <Text size="xs" c="red" role="alert">{error}</Text>}
                     <Group justify="flex-end">
-                        <Button size="xs" disabled={chosen.length === 0} onClick={() => setStep('summary')}>{t`Continue`}</Button>
+                        <Button size="xs" disabled={chosen.length === 0} onClick={() => setStep('summary')}>{t(i18n)`Continue`}</Button>
                     </Group>
                 </Stack>
             )}
@@ -212,19 +214,19 @@ export const LiveChatRefundCard = ({sessionId, onMessages, onUnavailable, onDone
                 <Stack gap={8}>
                     {chosen.map((ticket) => (
                         <Text key={ticket.attendee_id} size="sm">
-                            {`${ticket.name || t`Ticket`}, ${ticket.category}, ${formatCurrency(ticket.amount_minor / 100, currency)}`}
+                            {`${ticket.name || t(i18n)`Ticket`}, ${ticket.category}, ${formatCurrency(ticket.amount_minor / 100, currency)}`}
                         </Text>
                     ))}
-                    <Text size="sm" fw={700}>{t`Amount to refund: ${total}`}</Text>
-                    <Text size="xs" c="dimmed">{t`The service fees and the option are not refunded.`}</Text>
-                    <Text size="xs" c="dimmed">{t`The organizer approves the request before the refund. The cancelled tickets will then no longer be valid.`}</Text>
+                    <Text size="sm" fw={700}>{t(i18n)`Amount to refund: ${total}`}</Text>
+                    <Text size="xs" c="dimmed">{t(i18n)`The service fees and the option are not refunded.`}</Text>
+                    <Text size="xs" c="dimmed">{t(i18n)`The organizer approves the request before the refund. The cancelled tickets will then no longer be valid.`}</Text>
                     {error && <Text size="xs" c="red" role="alert">{error}</Text>}
                     <Group justify="space-between">
                         <Anchor component="button" type="button" size="xs" onClick={() => setStep('tickets')} disabled={confirmMutation.isPending}>
-                            {t`Back`}
+                            {t(i18n)`Back`}
                         </Anchor>
                         <Button size="xs" color="red" loading={confirmMutation.isPending} onClick={confirm}>
-                            {t`Send my refund request`}
+                            {t(i18n)`Send my refund request`}
                         </Button>
                     </Group>
                 </Stack>

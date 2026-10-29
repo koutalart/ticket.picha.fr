@@ -72,6 +72,7 @@ import {
 } from "../../../../utilites/checkoutMemory.ts";
 import {getStoredSessionIdentifier, storeSessionIdentifier} from "../../../../utilites/checkoutSession.ts";
 import {useKeyboardAwareActionBar} from "../../../../hooks/useKeyboardAwareActionBar.ts";
+import {useStickyCtaHeight} from "../../../../hooks/useStickyCtaHeight.ts";
 import {getSessionIdentifier} from "../../../../utilites/sessionIdentifier.ts";
 import {getOrderTrackingContext, getQrLinkCode} from "../../../../utilites/qrAttribution.ts";
 import {addQueryStringToUrl, removeQueryStringFromUrl} from "../../../../utilites/helpers.ts";
@@ -1433,6 +1434,11 @@ export const EmbeddedRegistration = ({
     const rootClassName = classNames(classes.root, className);
 
     useKeyboardAwareActionBar(panelRef, `.${classes.nav}`, !forceClassic && !cannotEmbed && questionsQuery.isFetched);
+    useStickyCtaHeight(
+        () => Array.from(panelRef.current?.querySelectorAll<HTMLElement>(`.${classes.nav}`) ?? [])
+            .find(candidate => !candidate.closest('[inert]')),
+        !forceClassic && !cannotEmbed,
+    );
 
     const [isPanelOnScreen, setIsPanelOnScreen] = useState(false);
     useEffect(() => {
