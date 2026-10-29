@@ -16,7 +16,7 @@ import {Countdown} from "../Countdown.tsx";
 import {getCoverUrl, getCoverVideoUrl, getMobileCoverVideoUrl, getVenue} from "../eventData.ts";
 import {useCoverVideoSource} from "../../../../hooks/useCoverVideoSource.ts";
 import {getFaq} from "../faq.ts";
-import {longDate, PartnerLogos, PosterEventCard, PosterPageProps, SectionHead, StatsBand, stripHtml, time} from "../shared.tsx";
+import {longDate, PartnerLogos, PosterEventCard, PosterPageProps, SectionHead, siteLabel, StatsBand, stripHtml, time} from "../shared.tsx";
 import classes from "../Poster.module.scss";
 
 export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sitePath, openContact}: PosterPageProps) => {
@@ -29,7 +29,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
     const venue = featured ? getVenue(featured) : undefined;
     const bookingPath = featured ? eventHomepagePath(featured) : '';
     const allSoldOut = tiers.length > 0 && tiers.every(tier => tier.soldOut);
-    const bookingLabel = allSoldOut ? t`Sold out — join the waitlist` : t`Book my tickets`;
+    const bookingLabel = allSoldOut ? t`Sold out, join the waitlist` : t`Book my tickets`;
     const hasUniverse = Boolean(content.tagline || content.story || content.vision || content.stats?.length);
 
     return (
@@ -148,7 +148,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
                             <h3>{t`Time`}</h3>
                             <p>
                                 {featured.end_date
-                                    ? `${time(featured.start_date, featured)} – ${time(featured.end_date, featured)}`
+                                    ? `${time(featured.start_date, featured)} - ${time(featured.end_date, featured)}`
                                     : time(featured.start_date, featured)}
                             </p>
                         </div>
@@ -170,7 +170,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
                         <div className={classes.infoItem}>
                             <IconTicket size={26}/>
                             <h3>{t`Prices`}</h3>
-                            <p>{fromPrice || '—'}</p>
+                            {fromPrice && <p>{fromPrice}</p>}
                             <Link to={bookingPath} className={classes.textLink}>
                                 {t`Event details`} <IconArrowRight size={14}/>
                             </Link>
@@ -221,7 +221,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
                                 {content.tagline || stripHtml(content.story).slice(0, 260)}
                             </p>
                             <Link to={sitePath('a-propos')} className={classes.secondaryCta}>
-                                {t`Discover our story and vision`} <IconArrowRight size={18}/>
+                                {siteLabel(organizer, 'about_button_label')} <IconArrowRight size={18}/>
                             </Link>
                         </div>
                         {content.stats && content.stats.length > 0 && <StatsBand stats={content.stats}/>}
@@ -232,7 +232,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
             {content.partners && content.partners.length > 0 && (
                 <section className={classes.section} aria-labelledby="partners-teaser-title">
                     <div className={classes.sectionHeadRow}>
-                        <SectionHead id="partners-teaser-title" eyebrow={t`Partners`} title={t`They make it happen.`}/>
+                        <SectionHead id="partners-teaser-title" eyebrow={t`Partners`} title={siteLabel(organizer, 'partners_subtitle')}/>
                         <Link to={sitePath('partenaires')} className={classes.textLink}>
                             {t`Become a partner`} <IconArrowRight size={14}/>
                         </Link>
@@ -261,7 +261,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
                     <h2 className={classes.finalTitle}>{t`Don't miss ${featured.title}.`}</h2>
                     <p className={classes.finalMeta}>
                         <span className={classes.capitalize}>{longDate(featured)}</span>
-                        {venue?.city ? ` · ${venue.city}` : ''}
+                        {venue?.city ? `, ${venue.city}` : ''}
                     </p>
                     <Link to={bookingPath} className={classes.primaryCta}>
                         {bookingLabel}

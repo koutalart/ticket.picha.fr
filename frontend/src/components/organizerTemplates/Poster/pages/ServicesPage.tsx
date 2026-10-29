@@ -1,7 +1,7 @@
 import {Link} from "react-router";
 import {t} from "@lingui/macro";
 import {IconArrowRight} from "@tabler/icons-react";
-import {areaSuffix, PageIntro, PosterPageProps, SectionHead} from "../shared.tsx";
+import {areaSuffix, PageIntro, PosterPageProps, SectionHead, siteLabel} from "../shared.tsx";
 import classes from "../Poster.module.scss";
 
 export const ServicesPage = ({organizer, sitePath, openContact}: PosterPageProps) => {
@@ -32,8 +32,8 @@ export const ServicesPage = ({organizer, sitePath, openContact}: PosterPageProps
             )}
 
             <section className={classes.finalCta} aria-label={t`Request a quote`}>
-                <h2 className={classes.finalTitle}>{t`Let's build your next event.`}</h2>
-                <p className={classes.finalMeta}>{t`Tell us about your project: we will get back to you with a tailored proposal.`}</p>
+                <h2 className={classes.finalTitle}>{siteLabel(organizer, 'services_cta_title')}</h2>
+                <p className={classes.finalMeta}>{siteLabel(organizer, 'services_cta_text')}</p>
                 <div className={classes.heroActions}>
                     <button className={classes.primaryCta} onClick={openContact}>{t`Request a quote`}</button>
                     <Link to={sitePath('evenements')} className={classes.secondaryCta}>

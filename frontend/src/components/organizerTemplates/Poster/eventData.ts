@@ -28,7 +28,7 @@ export const getTicketTiers = (event: Event): TicketTier[] => {
             .filter(price => !('is_hidden' in price && price.is_hidden))
             .map((price, index) => ({
                 id: `${product.id}-${'id' in price && price.id ? price.id : index}`,
-                name: 'label' in price && price.label ? `${product.title} · ${price.label}` : product.title,
+                name: 'label' in price && price.label ? `${product.title} - ${price.label}` : product.title,
                 price: price.price || 0,
                 currency: event.currency || 'EUR',
                 soldOut: Boolean(product.is_sold_out || ('is_sold_out' in price && price.is_sold_out)),

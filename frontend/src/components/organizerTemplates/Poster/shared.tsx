@@ -112,9 +112,6 @@ export const PartnerLogos = ({partners}: { partners: NonNullable<Organizer['site
     </ul>
 );
 
-export const areaSuffix = (organizer: Organizer) => {
-    const area = organizer.site_content?.area;
-    return area ? ` ${t`in ${area}`}` : '';
-};
+export {areaSuffix, siteLabel} from "./siteLabels.ts";
 
 export const stripHtml = (html?: string | null) => (html || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
