@@ -497,7 +497,8 @@ export const EmbeddedRegistration = ({
                     questions: questionsQuery.isFetched ? alignOrderAnswers(draftAnswers) : draftAnswers,
                 },
                 products: draft.participants.length > 0
-                    ? draft.participants.map((participant, index) => ({
+                    ? draft.participants.filter(participant => !isPaidMode || !participant.line_key
+                        || getEmbeddedCheckoutLines(event).some(line => line.key === participant.line_key)).map((participant, index) => ({
                         key: index === 0 && !isPaidMode ? 'participant-buyer' : nextParticipantKey(),
                         line_key: participant.line_key || undefined,
                         first_name: String(participant.first_name ?? ''),
@@ -893,8 +894,9 @@ export const EmbeddedRegistration = ({
                 opted_into_marketing: order.opted_into_marketing,
             },
             products: [
-                ...products.map(participant => {
-                    const [product_id, product_price_id] = String(participant.line_key).split(':').map(Number);
+                ...selectedTicketItems.flatMap(item => Array.from({length: item.quantity}, () => item.key)).map((key, index) => {
+                    const participant = products[index] ?? products[0];
+                    const [product_id, product_price_id] = key.split(':').map(Number);
                     return {
                         product_id,
                         product_price_id,
