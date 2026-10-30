@@ -185,11 +185,12 @@ class LiveChatTicketResendTest extends TestCase
     {
         $this->order(firstName: 'Élodie', phone: '0639123456');
         $sessionId = $this->openChat();
-        Carbon::setTestNow(Carbon::parse('2026-10-29 10:00:00', 'UTC'));
+        $start = Carbon::now('UTC')->addSecond();
+        Carbon::setTestNow($start);
         $this->say($sessionId, self::VISITOR_MESSAGE);
         $this->resendService->shouldNotReceive('resendOrderConfirmation');
 
-        Carbon::setTestNow(Carbon::parse('2026-10-29 10:20:00', 'UTC'));
+        Carbon::setTestNow($start->copy()->addMinutes(20));
         $this->say($sessionId, $this->sentCode())
             ->assertJsonPath('data.messages.1.content', 'Ce code a expiré. Redonnez-moi votre prénom et votre numéro pour en recevoir un nouveau.');
 

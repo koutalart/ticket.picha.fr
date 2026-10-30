@@ -50,6 +50,7 @@ class SmsInboundService
         InboundSmsDTO $sms,
         bool $fromHistory = false,
         ?int $lineSettingsId = null,
+        ?string $createdAt = null,
     ): ?SmsMessageDomainObject {
         if ($this->findByProviderId($sms->providerMessageId) !== null) {
             return null;
@@ -58,7 +59,7 @@ class SmsInboundService
         $lineSettingsId ??= self::lineOf($settings);
         $phone = $this->normalize($sms->contact);
 
-        return $this->databaseManager->transaction(function () use ($settings, $sms, $phone, $fromHistory, $lineSettingsId) {
+        return $this->databaseManager->transaction(function () use ($settings, $sms, $phone, $fromHistory, $lineSettingsId, $createdAt) {
             $conversation = $this->conversationService->findOrCreate($settings, $phone);
 
             /** @var SmsMessageDomainObject $message */
@@ -72,6 +73,7 @@ class SmsInboundService
                 SmsMessageDomainObjectAbstract::PROVIDER_MESSAGE_ID => $sms->providerMessageId,
                 SmsMessageDomainObjectAbstract::PROVIDER_TIMESTAMP => $this->parseTimestamp($sms->timestamp),
                 SmsMessageDomainObjectAbstract::LINE_SETTINGS_ID => $lineSettingsId,
+                ...($createdAt !== null ? [SmsMessageDomainObjectAbstract::CREATED_AT => $createdAt] : []),
             ]);
 
             $this->conversationService->recordActivity(
@@ -79,7 +81,7 @@ class SmsInboundService
                 SmsMessageDirection::INBOUND,
                 $sms->content,
                 markUnread: ! $fromHistory,
-                occurredAt: $fromHistory ? $this->parseTimestamp($sms->timestamp) : null,
+                occurredAt: $fromHistory || $createdAt !== null ? ($this->parseTimestamp($sms->timestamp) ?? $createdAt) : null,
                 lineSettingsId: $lineSettingsId,
             );
             $this->applyKeyword($settings->getOrganizerId(), $phone, $sms->content);
@@ -134,6 +136,7 @@ class SmsInboundService
                 SmsMessageDomainObjectAbstract::STATUS => $event->status->name,
                 SmsMessageDomainObjectAbstract::PROVIDER_MESSAGE_ID => $event->providerMessageId,
                 SmsMessageDomainObjectAbstract::REQUEST_ID => $event->requestId,
+                SmsMessageDomainObjectAbstract::QUEUE_MESSAGE_ID => SmsFileStatusService::queueIdFromRequestId($event->requestId),
                 SmsMessageDomainObjectAbstract::ERROR_MESSAGE => $this->truncateError($event->errorMessage),
                 SmsMessageDomainObjectAbstract::PROVIDER_TIMESTAMP => $this->parseTimestamp($event->timestamp),
                 SmsMessageDomainObjectAbstract::LINE_SETTINGS_ID => $lineSettingsId,
@@ -150,6 +153,17 @@ class SmsInboundService
 
             return $message;
         });
+    }
+
+    /**
+     * Whether PICHA already stores this outbound SMS, by its sms.picha.fr id or its central queue id.
+     */
+    public function isKnownOutbound(string $providerMessageId, ?int $queueMessageId = null): bool
+    {
+        return $this->findByProviderId($providerMessageId) !== null
+            || ($queueMessageId !== null && $this->messageRepository->findFirstWhere([
+                SmsMessageDomainObjectAbstract::QUEUE_MESSAGE_ID => $queueMessageId,
+            ]) !== null);
     }
 
     private static function lineOf(OrganizerSmsSettingDomainObject $settings): int

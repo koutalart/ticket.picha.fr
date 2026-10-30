@@ -225,4 +225,40 @@ class SmsConversationRepository extends BaseRepository implements SmsConversatio
 
         return $organizerId === null ? null : (int) $organizerId;
     }
+
+    public function findWithFrenchOverseasPhones(): Collection
+    {
+        return $this->handleResults(SmsConversation::query()
+            ->whereRaw("phone ~ '^\\+33(639|692|693|262|263|269)[0-9]{6}$'")
+            ->orderBy(SmsConversationDomainObjectAbstract::ID)
+            ->get());
+    }
+
+    public function mergeInto(int $sourceId, int $targetId): int
+    {
+        return DB::transaction(function () use ($sourceId, $targetId) {
+            $source = SmsConversation::query()->findOrFail($sourceId);
+            $target = SmsConversation::query()->findOrFail($targetId);
+
+            $moved = DB::table('sms_messages')->where('sms_conversation_id', $sourceId)->update(['sms_conversation_id' => $targetId]);
+            DB::table('live_chat_sessions')->where('sms_conversation_id', $sourceId)->update(['sms_conversation_id' => $targetId]);
+            DB::table('sms_assistant_calls')->where('sms_conversation_id', $sourceId)->update(['sms_conversation_id' => $targetId]);
+
+            $attributes = [
+                SmsConversationDomainObjectAbstract::UNREAD_COUNT => (int) $target->unread_count + (int) $source->unread_count,
+                SmsConversationDomainObjectAbstract::LINE_SETTINGS_ID => $target->line_settings_id ?? $source->line_settings_id,
+                SmsConversationDomainObjectAbstract::CONTACT_NAME => $target->contact_name ?? $source->contact_name,
+            ];
+            if ($source->last_message_at !== null && ($target->last_message_at === null || $source->last_message_at > $target->last_message_at)) {
+                $attributes[SmsConversationDomainObjectAbstract::LAST_MESSAGE_AT] = $source->last_message_at;
+                $attributes[SmsConversationDomainObjectAbstract::LAST_MESSAGE_PREVIEW] = $source->last_message_preview;
+                $attributes[SmsConversationDomainObjectAbstract::LAST_MESSAGE_DIRECTION] = $source->last_message_direction;
+            }
+
+            SmsConversation::query()->whereKey($targetId)->update($attributes);
+            SmsConversation::query()->whereKey($sourceId)->delete();
+
+            return $moved;
+        });
+    }
 }

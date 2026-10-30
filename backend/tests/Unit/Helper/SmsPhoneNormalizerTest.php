@@ -21,6 +21,13 @@ class SmsPhoneNormalizerTest extends TestCase
             'france international' => ['+33 6 12 34 56 78', '+33612345678'],
             'mayotte without leading zero' => ['639123456', '+262639123456'],
             'france without leading zero' => ['612345678', '+33612345678'],
+            'reunion mobile written with +33' => ['+33693514915', '+262693514915'],
+            'reunion mobile written with +33 and spaces' => ['+33 6 92 12 34 56', '+262692123456'],
+            'mayotte mobile written with 0033' => ['0033639651126', '+262639651126'],
+            'mayotte landline written with +33' => ['+33269612345', '+262269612345'],
+            'reunion landline written with +33' => ['+33262123456', '+262262123456'],
+            'reunion landline local' => ['0262123456', '+262262123456'],
+            'other +33 69x number is not touched' => ['+33694123456', '+33694123456'],
         ];
     }
 

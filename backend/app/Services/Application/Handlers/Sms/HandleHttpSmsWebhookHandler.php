@@ -22,6 +22,8 @@ use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
 use HiEvents\Services\Domain\Sms\SmsAlertService;
 use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
+use HiEvents\Services\Domain\Sms\SmsFileStatusService;
+use HiEvents\Services\Domain\Sms\SmsFileSyncService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
@@ -67,6 +69,7 @@ class HandleHttpSmsWebhookHandler
         private readonly SmsTeamInboundService $teamInboundService,
         private readonly DecideLiveChatRefundHandler $refundDecisionHandler,
         private readonly LiveChatQuestionService $questionService,
+        private readonly SmsFileSyncService $fileSyncService,
     ) {}
 
     /**
@@ -301,7 +304,8 @@ class HandleHttpSmsWebhookHandler
     }
 
     /**
-     * The organizer a message unknown to PICHA is stored for: the organizer of the campaign that sent it, otherwise the line owner.
+     * The organizer a message unknown to PICHA is stored for: the organizer of the campaign that sent it, otherwise
+     * the organizer the central queue sent it for (request_id « file-{id} », e.g. sms-masse), otherwise the line owner.
      *
      * @param  Collection<int, OrganizerSmsSettingDomainObject>  $members
      */
@@ -311,11 +315,13 @@ class HandleHttpSmsWebhookHandler
             return $line;
         }
 
-        $organizerId = $this->campaignDeliveryService->findCampaignOrganizerId(
-            $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all(),
-            $providerMessageId,
-            $requestId,
-        );
+        $organizerIds = $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all();
+        $organizerId = $this->campaignDeliveryService->findCampaignOrganizerId($organizerIds, $providerMessageId, $requestId);
+
+        $queueId = SmsFileStatusService::queueIdFromRequestId($requestId);
+        if ($organizerId === null && $queueId !== null && ! $this->inboundService->isKnownOutbound($providerMessageId, $queueId)) {
+            $organizerId = $this->fileSyncService->findQueueOrganizerId($queueId);
+        }
 
         return $members->first(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId() === $organizerId) ?? $line;
     }

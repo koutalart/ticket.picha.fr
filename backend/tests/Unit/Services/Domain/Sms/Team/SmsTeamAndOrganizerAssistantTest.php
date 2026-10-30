@@ -137,7 +137,7 @@ class SmsTeamAndOrganizerAssistantTest extends TestCase
         Bus::assertDispatched(GenerateSmsDraftJob::class);
     }
 
-    public function test_team_reply_from_an_organizer_does_not_count_as_last_who_wrote(): void
+    public function test_number_with_a_team_conversation_stays_in_it_even_when_another_organizer_wrote(): void
     {
         $this->team($this->arrmId, self::COPY, OrganizerTeamContactRole::COPY);
         $this->outbound($this->kulturmId, self::CUSTOMER, 'Rappel Kulturm', minutesAgo: 60);
@@ -154,7 +154,9 @@ class SmsTeamAndOrganizerAssistantTest extends TestCase
 
         $this->receive(self::CUSTOMER, 'Bonjour', 'in-1');
 
-        $this->assertSame($this->kulturmId, SmsMessage::query()->where('provider_message_id', 'in-1')->sole()->organizer_id);
+        $reply = SmsMessage::query()->where('provider_message_id', 'in-1')->sole();
+        $this->assertSame($this->arrmId, $reply->organizer_id);
+        $this->assertSame($conversation->id, $reply->sms_conversation_id);
     }
 
     public function test_number_in_two_teams_goes_to_the_latest_team_conversation(): void

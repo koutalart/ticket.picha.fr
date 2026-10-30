@@ -17,6 +17,8 @@ class PhoneNumberNormalizerTest extends TestCase
             'mayotte landline' => ['02 69 61 00 00', 'FR', '+262269610000'],
             'reunion mobile' => ['0692 12 34 56', 'FR', '+262692123456'],
             'france mobile' => ['06 12 34 56 78', 'FR', '+33612345678'],
+            'reunion mobile written with +33' => ['+33 6 93 51 49 15', 'FR', '+262693514915'],
+            'mayotte mobile written with 0033' => ['0033639651126', 'FR', '+262639651126'],
             'already e164' => ['+262 639 12 34 56', 'FR', '+262639123456'],
             'double zero' => ['00261 34 12 345 67', 'FR', '+261341234567'],
             'madagascar local' => ['034 12 345 67', 'MG', '+261341234567'],

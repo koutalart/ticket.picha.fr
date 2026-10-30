@@ -8,13 +8,17 @@ use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\Enums\SmsMessageDirection;
 use HiEvents\DomainObjects\Generated\SmsMessageDomainObjectAbstract;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
+use HiEvents\DomainObjects\Status\SmsCampaignRecipientStatus;
 use HiEvents\DomainObjects\Status\SmsConversationStatus;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\Models\SmsMessage;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
+use HiEvents\Services\Domain\Sms\DTO\SmsLastSenderDTO;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @extends BaseRepository<SmsMessageDomainObject>
@@ -54,31 +58,70 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
         return $this->handleResults($messages)->reverse()->values();
     }
 
-    public function findLastOutboundOrganizerId(array $organizerIds, string $phone, string $since, ?int $lineSettingsId = null): ?int
-    {
+    public function findLastSender(
+        array $organizerIds,
+        string $phone,
+        string $since,
+        ?int $lineSettingsId = null,
+        ?string $until = null,
+    ): ?SmsLastSenderDTO {
         if ($organizerIds === []) {
             return null;
         }
 
         $sentAt = 'COALESCE(sms_messages.provider_timestamp, sms_messages.created_at)';
 
-        $organizerId = SmsMessage::query()
+        $message = SmsMessage::query()
             ->when($lineSettingsId !== null, fn (EloquentBuilder $query) => $query->where('sms_messages.line_settings_id', $lineSettingsId))
             ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
             ->whereIn('sms_messages.organizer_id', $organizerIds)
             ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
             ->where('sms_conversations.phone', $phone)
-            ->where('sms_conversations.is_team', false)
             ->where('sms_messages.is_supervision', false)
             ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
             ->whereNull('sms_messages.channel')
             ->whereNotIn('sms_messages.status', [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name])
             ->whereRaw($sentAt.' >= ?', [$since])
+            ->when($until !== null, fn (EloquentBuilder $query) => $query->whereRaw($sentAt.' <= ?', [$until]))
+            ->orderByDesc('sms_conversations.is_team')
             ->orderByRaw($sentAt.' DESC')
             ->orderByDesc('sms_messages.id')
-            ->value('sms_messages.organizer_id');
+            ->selectRaw('sms_messages.organizer_id as organizer_id, sms_conversations.is_team as is_team, '.$sentAt.' as sent_at')
+            ->toBase()
+            ->first();
 
-        return $organizerId === null ? null : (int) $organizerId;
+        if ($message !== null && (bool) $message->is_team) {
+            return new SmsLastSenderDTO(
+                organizerId: (int) $message->organizer_id,
+                sentAt: Carbon::parse((string) $message->sent_at)->toDateTimeString(),
+                isTeam: true,
+            );
+        }
+
+        $recipientSentAt = 'COALESCE(sms_campaign_recipients.sent_at, sms_campaign_recipients.delivered_at)';
+
+        $recipient = DB::table('sms_campaign_recipients')
+            ->join('sms_campaigns', 'sms_campaigns.id', '=', 'sms_campaign_recipients.sms_campaign_id')
+            ->whereIn('sms_campaigns.organizer_id', $organizerIds)
+            ->whereNull('sms_campaigns.deleted_at')
+            ->where('sms_campaign_recipients.phone', $phone)
+            ->whereIn('sms_campaign_recipients.status', [SmsCampaignRecipientStatus::SENT->value, SmsCampaignRecipientStatus::DELIVERED->value])
+            ->whereRaw($recipientSentAt.' >= ?', [$since])
+            ->when($until !== null, fn (Builder $query) => $query->whereRaw($recipientSentAt.' <= ?', [$until]))
+            ->orderByRaw($recipientSentAt.' DESC')
+            ->orderByDesc('sms_campaign_recipients.id')
+            ->selectRaw('sms_campaigns.organizer_id as organizer_id, '.$recipientSentAt.' as sent_at')
+            ->first();
+
+        $last = collect([$message, $recipient])
+            ->filter()
+            ->sortByDesc(fn (object $row) => Carbon::parse((string) $row->sent_at)->getTimestamp())
+            ->first();
+
+        return $last === null ? null : new SmsLastSenderDTO(
+            organizerId: (int) $last->organizer_id,
+            sentAt: Carbon::parse((string) $last->sent_at)->toDateTimeString(),
+        );
     }
 
     public function hasOutboundToPhoneAfter(array $organizerIds, string $phone, int $afterMessageId, string $pendingSince): bool

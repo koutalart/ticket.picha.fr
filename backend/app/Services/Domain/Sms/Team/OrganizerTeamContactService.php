@@ -128,7 +128,7 @@ class OrganizerTeamContactService
     }
 
     /**
-     * The team contacts with this number among the given organizers.
+     * The team contacts with this number among the given organizers, also when the number was saved with +33.
      *
      * @param  array<int, int>  $organizerIds
      * @return Collection<int, OrganizerTeamContactDomainObject>
@@ -140,9 +140,9 @@ class OrganizerTeamContactService
         }
 
         return $this->contactRepository->findWhereIn(
-            OrganizerTeamContactDomainObjectAbstract::ORGANIZER_ID,
-            array_values($organizerIds),
-            [OrganizerTeamContactDomainObjectAbstract::PHONE => $phone],
+            OrganizerTeamContactDomainObjectAbstract::PHONE,
+            SmsPhoneNormalizer::equivalents($phone),
+            [[OrganizerTeamContactDomainObjectAbstract::ORGANIZER_ID, 'in', array_values($organizerIds)]],
         );
     }
 
