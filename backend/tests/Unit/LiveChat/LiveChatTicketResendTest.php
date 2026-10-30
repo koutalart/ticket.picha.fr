@@ -183,10 +183,10 @@ class LiveChatTicketResendTest extends TestCase
 
     public function test_code_expires_after_twenty_minutes(): void
     {
-        $start = Carbon::now('UTC')->startOfMinute();
-        Carbon::setTestNow($start);
         $this->order(firstName: 'Élodie', phone: '0639123456');
         $sessionId = $this->openChat();
+        $start = Carbon::now('UTC')->addSecond();
+        Carbon::setTestNow($start);
         $this->say($sessionId, self::VISITOR_MESSAGE);
         $this->resendService->shouldNotReceive('resendOrderConfirmation');
 
