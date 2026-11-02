@@ -39,6 +39,7 @@ class UpdateOrganizerSmsSettingsRequest extends BaseRequest
             'live_chat_style' => ['sometimes', Rule::in(LiveChatStyle::valuesArray())],
             'organizer_assistant_enabled' => ['sometimes', 'boolean'],
             'organizer_assistant_instructions' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_INSTRUCTIONS_LENGTH],
+            'organizer_assistant_replies_to_copy' => ['sometimes', 'boolean'],
             'live_chat_relay_label' => ['sometimes', 'nullable', 'string', 'max:'.self::MAX_RELAY_LABEL_LENGTH],
         ];
     }

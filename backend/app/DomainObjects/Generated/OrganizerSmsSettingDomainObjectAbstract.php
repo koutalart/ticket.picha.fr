@@ -45,6 +45,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     final public const CHECKIN_WELCOME_SMS_ENABLED = 'checkin_welcome_sms_enabled';
     final public const CHECKIN_WELCOME_SMS_PROMPT = 'checkin_welcome_sms_prompt';
     final public const CHECKIN_WELCOME_SMS_TEMPLATES = 'checkin_welcome_sms_templates';
+    final public const ORGANIZER_ASSISTANT_REPLIES_TO_COPY = 'organizer_assistant_replies_to_copy';
 
     protected int $id;
     protected int $account_id;
@@ -81,6 +82,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     protected bool $checkin_welcome_sms_enabled = false;
     protected ?string $checkin_welcome_sms_prompt = null;
     protected ?string $checkin_welcome_sms_templates = null;
+    protected bool $organizer_assistant_replies_to_copy = false;
 
     public function toArray(): array
     {
@@ -120,6 +122,7 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
                     'checkin_welcome_sms_enabled' => $this->checkin_welcome_sms_enabled ?? null,
                     'checkin_welcome_sms_prompt' => $this->checkin_welcome_sms_prompt ?? null,
                     'checkin_welcome_sms_templates' => $this->checkin_welcome_sms_templates ?? null,
+                    'organizer_assistant_replies_to_copy' => $this->organizer_assistant_replies_to_copy ?? null,
                 ];
     }
 
@@ -506,5 +509,16 @@ abstract class OrganizerSmsSettingDomainObjectAbstract extends \HiEvents\DomainO
     public function getCheckinWelcomeSmsTemplates(): ?string
     {
         return $this->checkin_welcome_sms_templates;
+    }
+
+    public function setOrganizerAssistantRepliesToCopy(bool $organizer_assistant_replies_to_copy): self
+    {
+        $this->organizer_assistant_replies_to_copy = $organizer_assistant_replies_to_copy;
+        return $this;
+    }
+
+    public function getOrganizerAssistantRepliesToCopy(): bool
+    {
+        return $this->organizer_assistant_replies_to_copy;
     }
 }
