@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Services\Domain\Sms\OrganizerAssistant\DTO;
 
 use HiEvents\DataTransferObjects\BaseDataObject;
+use HiEvents\DomainObjects\Enums\OrganizerTeamContactRole;
 use HiEvents\Services\Domain\Sms\DTO\SmsAssistantEventInfoDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsAssistantThreadMessageDTO;
 use Illuminate\Support\Collection;
@@ -23,6 +24,7 @@ class OrganizerAssistantRequestDTO extends BaseDataObject
         public readonly string $timezone,
         public readonly ?string $instructions,
         public readonly ?string $contactName,
+        public readonly OrganizerTeamContactRole $contactRole,
         public readonly Collection $thread,
         public readonly Collection $events,
         public readonly array $registrations = [],

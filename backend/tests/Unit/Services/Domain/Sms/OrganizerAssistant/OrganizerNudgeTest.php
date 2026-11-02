@@ -193,6 +193,22 @@ class OrganizerNudgeTest extends TestCase
         $this->assertArrayNotHasKey(self::COPY, $states);
     }
 
+    public function test_copy_contacts_answered_by_anicka_are_never_nudged(): void
+    {
+        $service = $this->enabledService();
+        DB::table('organizer_sms_settings')->where('organizer_id', $this->organizerId)->update([
+            'organizer_assistant_enabled' => true,
+            'organizer_assistant_replies_to_copy' => true,
+        ]);
+        app(SmsDirectSendService::class)->sendToMany($this->organizerId, [self::COPY], 'Une question ?', awaitsReply: true);
+
+        $this->travelToLocal($this->local()->addDays(4));
+
+        $this->assertSame([], $service->sendDue());
+        $this->assertSame([self::COPY], array_column($this->sent, 'to'));
+        $this->assertArrayNotHasKey(self::COPY, collect($service->plan($this->organizerId))->pluck('state', 'phone')->all());
+    }
+
     public function test_a_message_already_claimed_by_another_worker_is_not_nudged_twice(): void
     {
         $service = $this->enabledService();

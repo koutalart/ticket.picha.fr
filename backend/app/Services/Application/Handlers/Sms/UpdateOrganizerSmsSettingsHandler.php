@@ -108,6 +108,10 @@ class UpdateOrganizerSmsSettingsHandler
             $attributes[OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ASSISTANT_INSTRUCTIONS] = $this->cleanInstructions($dto->organizerAssistantInstructions);
         }
 
+        if ($dto->wasProvided('organizerAssistantRepliesToCopy')) {
+            $attributes[OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ASSISTANT_REPLIES_TO_COPY] = $dto->organizerAssistantRepliesToCopy;
+        }
+
         if ($dto->wasProvided('defaultRemindersEnabled')) {
             $this->settingsService->setDefaultRemindersEnabled($dto->organizerId, $dto->defaultRemindersEnabled);
         }
