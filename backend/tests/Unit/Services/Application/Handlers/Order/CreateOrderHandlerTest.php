@@ -150,6 +150,25 @@ class CreateOrderHandlerTest extends TestCase
         $this->assertInstanceOf(OrderDomainObject::class, $result);
     }
 
+    public function testThrowsWhenEventHasEnded(): void
+    {
+        $eventId = 7;
+
+        $this->databaseManager->shouldReceive('statement')->andReturn(true);
+        $this->setupEventMock($eventId, ended: true);
+        $this->orderManagementService->shouldNotReceive('createNewOrder');
+
+        try {
+            $this->handler->handle($eventId, $this->createOrderDTO());
+            $this->fail('An order was created for an event that has ended');
+        } catch (ValidationException $exception) {
+            $this->assertSame(
+                ['products' => ['This event has ended. Tickets are no longer on sale.']],
+                $exception->errors(),
+            );
+        }
+    }
+
     private function createOrderDTO(int $productId = 10, int $priceId = 100, int $quantity = 1): CreateOrderPublicDTO
     {
         return CreateOrderPublicDTO::fromArray([
@@ -170,7 +189,7 @@ class CreateOrderHandlerTest extends TestCase
         ]);
     }
 
-    private function setupEventMock(int $eventId): void
+    private function setupEventMock(int $eventId, bool $ended = false): void
     {
         $eventSettings = Mockery::mock(EventSettingDomainObject::class);
         $eventSettings->shouldReceive('getOrderTimeoutInMinutes')->andReturn(15);
@@ -178,6 +197,7 @@ class CreateOrderHandlerTest extends TestCase
         $event = Mockery::mock(EventDomainObject::class);
         $event->shouldReceive('getId')->andReturn($eventId);
         $event->shouldReceive('getStatus')->andReturn(EventStatus::LIVE->name);
+        $event->shouldReceive('isEventInPast')->andReturn($ended);
         $event->shouldReceive('getEventSettings')->andReturn($eventSettings);
 
         $this->eventRepository->shouldReceive('loadRelation')->andReturnSelf();
