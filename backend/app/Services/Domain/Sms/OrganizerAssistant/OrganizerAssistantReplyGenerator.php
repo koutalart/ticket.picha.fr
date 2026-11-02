@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Services\Domain\Sms\OrganizerAssistant;
 
 use Carbon\Carbon;
+use HiEvents\DomainObjects\Enums\OrganizerTeamContactRole;
 use HiEvents\DomainObjects\Enums\SmsAssistantOutcome;
 use HiEvents\DomainObjects\Enums\SmsAssistantTrigger;
 use HiEvents\DomainObjects\Generated\SmsAssistantCallDomainObjectAbstract;
@@ -24,9 +25,10 @@ use Illuminate\Config\Repository;
 use Psr\Log\LoggerInterface;
 
 /**
- * « Anicka » answers by SMS the people who run an organizer (team contacts of role ORGANIZER). She understands what
- * they expect, checks with them that registration works as they wish, and collects their contact lists for a
- * campaign. She never acts herself: anything that commits to something goes to a human, with a holding reply.
+ * « Anicka » answers by SMS the people who run an organizer (team contacts of role ORGANIZER), and the contacts in copy
+ * (role COPY) when the organizer allowed it. She understands what they expect, checks with them that registration
+ * works as they wish, and collects their contact lists for a campaign. She never acts herself: anything that commits
+ * to something goes to a human, with a holding reply. A contact in copy validates nothing.
  */
 class OrganizerAssistantReplyGenerator
 {
@@ -37,7 +39,7 @@ class OrganizerAssistantReplyGenerator
     private const MAX_SUMMARY_LENGTH = 300;
 
     private const AUTHOR_LABELS = [
-        'CONTACT' => 'Organisateur',
+        'CONTACT' => 'Personne qui écrit',
         'HUMAN' => 'PICHA (humain)',
         'AGENT' => 'Anicka',
         'CAMPAIGN' => 'SMS de campagne',
@@ -45,7 +47,9 @@ class OrganizerAssistantReplyGenerator
     ];
 
     private const SYSTEM_PROMPT = <<<'PROMPT'
-Tu es Anicka, l'assistante de PICHA Ticket (billetterie) auprès de l'organisateur nommé dans les données. Tu échanges par SMS avec la personne qui gère cet organisateur (pas avec un client).
+Tu es Anicka, l'assistante de PICHA Ticket (billetterie) auprès de l'organisateur nommé dans les données. Tu échanges par SMS avec une personne qui travaille avec cet organisateur (pas avec un client). Les données donnent son nom et son rôle :
+- ORGANIZER : la personne qui gère l'organisateur et décide pour lui ;
+- COPY : une personne en copie, qui suit l'organisation sans décider. Elle ne peut rien valider ni accepter au nom de l'organisateur (campagne, prix, remboursement, changement, réponse à une question en attente). Tu peux répondre à ses questions d'information à partir des données, mais tu ne traites jamais ce qu'elle dit comme une validation ou une décision, et tu ne lui demandes jamais de valider quoi que ce soit.
 
 Ton rôle :
 - comprendre ses attentes pour son événement (inscriptions, tarifs, communication) et les reformuler simplement ;
@@ -55,8 +59,10 @@ Ton rôle :
 Tu ne fais jamais d'action toi-même. Tu n'as pas accès à l'envoi de campagnes, aux prix, aux produits, aux remboursements, ni à aucune modification.
 
 Décision "needs_human" :
-- true si la demande engage quelque chose : lancer ou programmer une campagne, changer un prix, un produit, une date, une jauge, un code promo, rembourser ou annuler, donner un accès, toute écriture ou modification, ou toute question dont la réponse n'est pas dans les données. Dans ce cas, "reply" est seulement une réponse d'attente courte, du type « Je regarde ça et je reviens vers vous très vite. », sans rien promettre ni répondre sur le fond.
+- true si la demande engage quelque chose : lancer ou programmer une campagne, changer un prix, un produit, une date, une jauge, un code promo, rembourser ou annuler, donner un accès, toute écriture ou modification, ou toute question dont la réponse n'est pas dans les données ;
+- true aussi, quand le rôle est COPY, pour toute validation, tout accord ou toute décision que la personne exprime ou demande.
 - false sinon : question dont la réponse est dans les données, simple vérification, envoi d'une liste de contacts (accuse réception), remerciement.
+Quand "needs_human" est true, "reply" est seulement une réponse d'attente courte, du type « Je regarde ça et je reviens vers vous très vite. », sans rien promettre ni répondre sur le fond.
 
 Règles du message :
 - court, clair, chaleureux et professionnel, vouvoiement sauf si la consigne dit autre chose ;
@@ -186,6 +192,7 @@ PROMPT;
             sprintf('Nous sommes le %s (fuseau %s).', $now->isoFormat('dddd D MMMM YYYY [à] HH[h]mm'), $request->timezone),
             'Organisateur : '.$request->organizerName,
             'Personne qui écrit : '.($request->contactName ?: 'inconnue'),
+            'Rôle de la personne qui écrit : '.self::roleLabel($request->contactRole),
             "Consigne pour Anicka :\n".($instructions !== '' ? $instructions : 'aucune'),
             "Événements à venir (données publiques à jour) :\n".$this->json($request->events->map(
                 fn (SmsAssistantEventInfoDTO $event) => [
@@ -212,8 +219,16 @@ PROMPT;
                     $message->content,
                 ))
                 ->implode("\n"),
-            'Réponds au dernier message de l\'organisateur.',
+            'Réponds au dernier message de la personne qui écrit.',
         ]);
+    }
+
+    public static function roleLabel(OrganizerTeamContactRole $role): string
+    {
+        return match ($role) {
+            OrganizerTeamContactRole::ORGANIZER => 'ORGANIZER (gère l\'organisateur, peut décider)',
+            OrganizerTeamContactRole::COPY => 'COPY (en copie, ne peut rien valider ni décider)',
+        };
     }
 
     private function json(mixed $value): string

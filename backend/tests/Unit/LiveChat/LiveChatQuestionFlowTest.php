@@ -407,6 +407,21 @@ class LiveChatQuestionFlowTest extends TestCase
         $this->assertSame(0, DB::table('event_assistant_facts')->count());
     }
 
+    public function test_a_copy_contact_answered_by_anicka_still_cannot_answer_a_question(): void
+    {
+        $this->line->update(['organizer_assistant_enabled' => true, 'organizer_assistant_replies_to_copy' => true]);
+        $sessionId = $this->openChatWithContact();
+        $this->chatAnswer(['Je vérifie et je reviens vers vous ici.'], question: 'Jah D One sera-t-il présent ?');
+        $this->chat('post', '/public/live-chat/messages', $sessionId, ['message' => self::QUESTION])->assertOk();
+        $questionId = (int) DB::table('live_chat_questions')->value('id');
+
+        $this->receive(self::COPY, "Q{$questionId} oui il sera là", 'in-1');
+
+        $this->assertSame('AWAITING', DB::table('live_chat_questions')->where('id', $questionId)->value('status'));
+        $this->assertSame(0, DB::table('event_assistant_facts')->count());
+        Bus::assertDispatched(GenerateOrganizerAssistantReplyJob::class);
+    }
+
     public function test_one_reminder_after_two_hours_and_the_supervision_is_alerted(): void
     {
         $sessionId = $this->openChatWithContact();

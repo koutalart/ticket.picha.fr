@@ -67,7 +67,8 @@ class SmsTeamInboundService
     }
 
     /**
-     * Marks the conversation « Équipe » and lets the organizer assistant answer when the sender runs the organizer.
+     * Marks the conversation « Équipe » and lets the organizer assistant answer when the sender runs the organizer, or is
+     * in copy and the organizer allowed the assistant to answer contacts in copy.
      */
     public function afterInbound(SmsTeamRouteDTO $route, SmsMessageDomainObject $message): void
     {

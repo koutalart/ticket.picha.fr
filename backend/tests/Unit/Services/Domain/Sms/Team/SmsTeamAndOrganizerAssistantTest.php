@@ -274,7 +274,68 @@ class SmsTeamAndOrganizerAssistantTest extends TestCase
 
         $this->receive(self::COPY, 'Bien reçu', 'in-1');
 
+        $this->assertFalse((bool) $this->arrmSettings->fresh()->organizer_assistant_replies_to_copy);
         $this->assertSame([], $this->sent);
+    }
+
+    public function test_copy_contact_gets_an_answer_when_the_organizer_allows_it(): void
+    {
+        $this->arrmSettings->update(['organizer_assistant_enabled' => true, 'organizer_assistant_replies_to_copy' => true]);
+        $this->team($this->arrmId, self::COPY, OrganizerTeamContactRole::COPY, 'Innocent');
+        $context = $this->answerCapturingContext('Il y a 12 billets payés. Vous voulez le détail par tarif ?', needsHuman: false, summary: 'Question sur les inscrits');
+
+        $this->receive(self::COPY, 'Il y a combien d inscrits ?', 'in-1');
+
+        $this->assertCount(1, $this->sent);
+        $this->assertSame(self::COPY, $this->sent[0]['to']);
+        $this->assertSame("Il y a 12 billets payés. Vous voulez le détail par tarif ?\nAnicka", $this->sent[0]['content']);
+
+        $inbound = SmsMessage::query()->where('provider_message_id', 'in-1')->sole();
+        $reply = SmsMessage::query()->where('auto_reply_to_message_id', $inbound->id)->sole();
+        $this->assertSame($inbound->sms_conversation_id, $reply->sms_conversation_id);
+        $this->assertTrue((bool) SmsConversation::find($inbound->sms_conversation_id)->is_team);
+        $this->assertSame('ANSWER', $reply->auto_reply_type);
+        $this->assertFalse((bool) $reply->awaits_reply);
+
+        $this->assertStringContainsString('Personne qui écrit : Innocent', $context->text);
+        $this->assertStringContainsString('Rôle de la personne qui écrit : COPY', $context->text);
+        $this->assertStringContainsString('COPY : une personne en copie', $context->system);
+    }
+
+    public function test_organizer_role_and_name_reach_the_generator(): void
+    {
+        $this->arrmSettings->update(['organizer_assistant_enabled' => true, 'organizer_assistant_replies_to_copy' => true]);
+        $this->team($this->arrmId, self::RESPONSABLE, OrganizerTeamContactRole::ORGANIZER, 'Patricia');
+        $context = $this->answerCapturingContext('Pour quelle date ?', needsHuman: false, summary: 'Question');
+
+        $this->receive(self::RESPONSABLE, 'Je veux une campagne', 'in-1');
+
+        $this->assertStringContainsString('Personne qui écrit : Patricia', $context->text);
+        $this->assertStringContainsString('Rôle de la personne qui écrit : ORGANIZER', $context->text);
+        $inbound = SmsMessage::query()->where('provider_message_id', 'in-1')->sole();
+        $this->assertTrue((bool) SmsMessage::query()->where('auto_reply_to_message_id', $inbound->id)->sole()->awaits_reply);
+    }
+
+    public function test_a_copy_contact_cannot_validate_anything(): void
+    {
+        $this->arrmSettings->update(['organizer_assistant_enabled' => true, 'organizer_assistant_replies_to_copy' => true]);
+        $this->team($this->arrmId, self::COPY, OrganizerTeamContactRole::COPY, 'Innocent');
+        $context = $this->answerCapturingContext('C\'est validé, je lance la campagne.', needsHuman: true, summary: 'Une personne en copie veut valider la campagne');
+
+        $this->receive(self::COPY, 'Je valide, lance la campagne', 'in-1');
+
+        $this->assertSame(self::COPY, $this->sent[0]['to']);
+        $this->assertSame(OrganizerAssistantReplyGenerator::holdingReply(), $this->sent[0]['content']);
+        $this->assertSame(self::SUPERVISOR, $this->sent[1]['to']);
+
+        $conversation = SmsConversation::query()->where('organizer_id', $this->arrmId)->where('phone', self::COPY)->sole();
+        $this->assertSame('NEEDS_HUMAN', $conversation->status);
+        $reply = SmsMessage::query()->where('content', $this->sent[0]['content'])->sole();
+        $this->assertSame('HOLDING', $reply->auto_reply_type);
+        $this->assertFalse((bool) $reply->awaits_reply);
+
+        $this->assertStringContainsString('Rôle de la personne qui écrit : COPY (en copie, ne peut rien valider ni décider)', $context->text);
+        $this->assertStringContainsString('quand le rôle est COPY, pour toute validation', $context->system);
     }
 
     public function test_assistant_off_by_default_answers_nobody(): void
@@ -323,9 +384,27 @@ class SmsTeamAndOrganizerAssistantTest extends TestCase
         ));
     }
 
-    private function team(int $organizerId, string $phone, OrganizerTeamContactRole $role): void
+    private function answerCapturingContext(string $reply, bool $needsHuman, string $summary): object
     {
-        app(OrganizerTeamContactService::class)->save($organizerId, $phone, null, $role);
+        $context = (object) ['system' => '', 'text' => ''];
+        $this->claude->shouldReceive('askWithUsage')->once()->andReturnUsing(function (string $system, array $content) use ($context, $reply, $needsHuman, $summary) {
+            $context->system = $system;
+            $context->text = $content[0]['text'];
+
+            return new ClaudeStructuredAnswerDTO(
+                data: ['reply' => $reply, 'needs_human' => $needsHuman, 'summary' => $summary],
+                model: 'claude-haiku-5-5',
+                inputTokens: 100,
+                outputTokens: 20,
+            );
+        });
+
+        return $context;
+    }
+
+    private function team(int $organizerId, string $phone, OrganizerTeamContactRole $role, ?string $name = null): void
+    {
+        app(OrganizerTeamContactService::class)->save($organizerId, $phone, $name, $role);
     }
 
     private function receive(string $contact, string $content, string $messageId): void

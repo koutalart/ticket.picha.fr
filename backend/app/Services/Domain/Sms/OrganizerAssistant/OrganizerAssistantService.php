@@ -46,9 +46,11 @@ use Illuminate\Support\Collection;
 use Psr\Log\LoggerInterface;
 
 /**
- * Answers right away, in its conversation, the SMS of a team contact who runs the organizer (role ORGANIZER).
- * Contacts in copy never get an automatic answer. When a human must act, only a holding reply leaves, the conversation
- * waits for a human, and the platform supervision is alerted at once.
+ * Answers right away, in its conversation, the SMS of a team contact who runs the organizer (role ORGANIZER), and of
+ * the contacts in copy (role COPY) only when the organizer turned organizer_assistant_replies_to_copy on. A contact in
+ * copy decides nothing: when a human must act it only gets the standard holding reply, whatever the model wrote, and
+ * its answers never wait for a reply, so it is never nudged. When a human must act, only a
+ * holding reply leaves, the conversation waits for a human, and the platform supervision is alerted at once.
  */
 class OrganizerAssistantService
 {
@@ -80,7 +82,7 @@ class OrganizerAssistantService
         OrganizerTeamContactDomainObject $contact,
         SmsMessageDomainObject $message,
     ): bool {
-        if ($contact->getRole() !== OrganizerTeamContactRole::ORGANIZER->name
+        if (! self::answersContact($settings, $contact)
             || ! $this->isActiveFor($settings)
             || ! SmsAssistantService::needsReply($message)) {
             return false;
@@ -115,7 +117,7 @@ class OrganizerAssistantService
             OrganizerTeamContactDomainObjectAbstract::ORGANIZER_ID => $organizerId,
             OrganizerTeamContactDomainObjectAbstract::PHONE => $conversation->getPhone(),
         ]);
-        if ($contact === null || $contact->getRole() !== OrganizerTeamContactRole::ORGANIZER->name) {
+        if ($contact === null || ! self::answersContact($settings, $contact)) {
             return null;
         }
 
@@ -141,7 +143,15 @@ class OrganizerAssistantService
             );
         }
 
-        $this->send($organizerId, $conversation, $messageId, $result);
+        if ($result->needsHuman && $contact->getRole() === OrganizerTeamContactRole::COPY->name) {
+            $result = new OrganizerAssistantResultDTO(
+                reply: OrganizerAssistantReplyGenerator::holdingReply(),
+                needsHuman: true,
+                summary: $result->summary,
+            );
+        }
+
+        $this->send($organizerId, $conversation, $messageId, $result, $contact);
 
         if ($result->needsHuman) {
             $this->conversationRepository->updateFromArray($conversation->getId(), [
@@ -154,8 +164,22 @@ class OrganizerAssistantService
         return $result;
     }
 
-    private function send(int $organizerId, SmsConversationDomainObject $conversation, int $messageId, OrganizerAssistantResultDTO $result): void
+    public static function answersContact(OrganizerSmsSettingDomainObject $settings, OrganizerTeamContactDomainObject $contact): bool
     {
+        return match ($contact->getRole()) {
+            OrganizerTeamContactRole::ORGANIZER->name => true,
+            OrganizerTeamContactRole::COPY->name => $settings->getOrganizerAssistantRepliesToCopy(),
+            default => false,
+        };
+    }
+
+    private function send(
+        int $organizerId,
+        SmsConversationDomainObject $conversation,
+        int $messageId,
+        OrganizerAssistantResultDTO $result,
+        OrganizerTeamContactDomainObject $contact,
+    ): void {
         try {
             $this->sendService->send(new SendSmsDTO(
                 organizerId: $organizerId,
@@ -166,7 +190,7 @@ class OrganizerAssistantService
                 autoReplyType: $result->needsHuman ? SmsAutoReplyType::HOLDING : SmsAutoReplyType::ANSWER,
                 keepDraft: true,
                 replyInConversation: true,
-                awaitsReply: self::asksQuestion($result),
+                awaitsReply: $contact->getRole() === OrganizerTeamContactRole::ORGANIZER->name && self::asksQuestion($result),
             ));
         } catch (SmsRecipientOptedOutException|SmsGatewayNotConfiguredException|InvalidSmsPhoneNumberException|SmsGatewayException $exception) {
             $this->logger->warning('Organizer assistant: reply not sent', [
@@ -210,6 +234,7 @@ class OrganizerAssistantService
                 __('Organizer') => $organizer->getName().' (#'.$organizer->getId().')',
                 __('Conversation') => (string) $conversation->getId(),
                 __('From') => $who.' ('.$contact->getPhone().')',
+                __('Role') => $contact->getRole(),
                 __('Summary') => $summary,
                 __('Message') => $message->getContent(),
             ],
@@ -236,6 +261,7 @@ class OrganizerAssistantService
             timezone: $organizer->getTimezone() ?: EventDailyReportService::DEFAULT_TIMEZONE,
             instructions: $settings->getOrganizerAssistantInstructions(),
             contactName: $contact->getName(),
+            contactRole: OrganizerTeamContactRole::from($contact->getRole()),
             thread: $messages->map(fn (SmsMessageDomainObject $message) => new SmsAssistantThreadMessageDTO(
                 author: SmsMessageAuthorType::fromName($message->getAuthorType()),
                 content: $message->getContent(),
