@@ -165,6 +165,12 @@ class CreateOrderHandler
                 __('This event is not live.')
             );
         }
+
+        if (!$createOrderPublicDTO->is_user_authenticated && $event->isEventInPast()) {
+            throw ValidationException::withMessages([
+                'products' => __('This event has ended. Tickets are no longer on sale.'),
+            ]);
+        }
     }
 
     /**

@@ -61,6 +61,7 @@ class CreateOrderHandlerQrAttributionTest extends TestCase
         $event->shouldReceive('getId')->andReturn(self::EVENT_ID);
         $event->shouldReceive('getOrganizerId')->andReturn(self::ORGANIZER_ID);
         $event->shouldReceive('getStatus')->andReturn(EventStatus::LIVE->name);
+        $event->shouldReceive('isEventInPast')->andReturn(false);
         $event->shouldReceive('getEventSettings')->andReturn($eventSettings);
 
         $eventRepository = Mockery::mock(EventRepositoryInterface::class);
