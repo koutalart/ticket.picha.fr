@@ -2,7 +2,8 @@
 # Sauvegarde quotidienne de PICHA Ticket (production). Cron sur le VPS :
 #   0 3 * * * /opt/picha-ticket/docker/production/backup.sh >> /var/log/picha-backup.log 2>&1
 #
-# 1. Dump de la base + archive des fichiers téléversés dans $BACKUP_DIR (14 jours),
+# 1. Dump de la base (RETENTION_DAYS) + archive des fichiers téléversés (FILES_RETENTION_DAYS,
+#    3 derniers jours par défaut : ~2 Go chacune) dans $BACKUP_DIR,
 #    une seule sauvegarde par jour : un nouveau dump remplace ceux du même jour.
 # 2. Si OFFSITE_REMOTE est défini : copie chiffrée hors du serveur avec rclone
 #    (remote « crypt » : le stockage ne voit jamais les données en clair),
@@ -21,6 +22,7 @@ fi
 
 BACKUP_DIR="${BACKUP_DIR:-/var/backups/picha-ticket}"
 RETENTION_DAYS="${RETENTION_DAYS:-14}"
+FILES_RETENTION_DAYS="${FILES_RETENTION_DAYS:-3}"
 OFFSITE_REMOTE="${OFFSITE_REMOTE:-}"
 OFFSITE_RETENTION_DAYS="${OFFSITE_RETENTION_DAYS:-30}"
 RCLONE_CONFIG_DIR="${RCLONE_CONFIG_DIR:-/etc/picha-ticket/rclone}"
@@ -75,7 +77,8 @@ else
     FILES_PATH="$FILES_FILE"
 fi
 
-find "$BACKUP_DIR" -name 'picha-ticket-*.gz' -mtime +"$RETENTION_DAYS" -delete
+find "$BACKUP_DIR" -name 'picha-ticket-*.sql.gz' -mtime +"$RETENTION_DAYS" -delete
+find "$BACKUP_DIR" -name 'picha-ticket-files-*.tar.gz' -mtime +"$((FILES_RETENTION_DAYS - 1))" -delete
 find "$BACKUP_DIR" -name 'picha-ticket-*.part' -delete
 
 if [ -n "$OFFSITE_REMOTE" ]; then
