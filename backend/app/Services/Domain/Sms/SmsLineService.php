@@ -230,7 +230,37 @@ class SmsLineService
     }
 
     /**
-     * The line a reply in the conversation leaves from: the line the conversation lives on when the organizer left it
+     * The settings of the organizer the central queue sent an SMS of the line for. An organizer outside the line with
+     * no line of its own (or no SMS settings yet) is attached to the line, so its conversation and the replies to it
+     * never land in the inbox of the line owner. Null when the organizer does not exist or cannot be attached.
+     *
+     * @param  Collection<int, OrganizerSmsSettingDomainObject>  $candidates
+     */
+    public function queueSender(OrganizerSmsSettingDomainObject $line, Collection $candidates, int $organizerId): ?OrganizerSmsSettingDomainObject
+    {
+        $candidate = $candidates->first(fn (OrganizerSmsSettingDomainObject $candidate) => $candidate->getOrganizerId() === $organizerId);
+        if ($candidate !== null) {
+            return $candidate;
+        }
+
+        /** @var OrganizerSmsSettingDomainObject|null $settings */
+        $settings = $this->settingsRepository->findFirstWhere([
+            OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+        ]);
+
+        if ($settings !== null && ($settings->getSharedLineSettingsId() !== null || ($settings->getApiKey() && $settings->getFromNumber()))) {
+            return $settings;
+        }
+
+        try {
+            return $this->attach($organizerId, $line->getOrganizerId());
+        } catch (SmsSharedLineException) {
+            return null;
+        }
+    }
+
+    /**
+     * The line a reply in the conversation leaves from:the line the conversation lives on when the organizer left it
      * less than the transition window ago, so the person stays in the same thread; otherwise its usual line.
      */
     public function replyLine(

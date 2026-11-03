@@ -138,6 +138,63 @@ class SmsSharedLineReplyAttributionTest extends TestCase
         $this->assertSame(0, SmsUnattributedMessage::query()->count());
     }
 
+    public function test_queue_sms_for_an_organizer_without_sms_settings_creates_its_conversation_never_the_line_owner(): void
+    {
+        $jungleId = $this->organizer(Organizer::find($this->innocentId)->account_id, 'Jungle');
+        Http::fake([self::FILE_URL.'/v1/sms/901' => Http::response([
+            'id' => 901, 'organisateur' => $jungleId, 'etat' => 'soumis', 'id_sms_picha' => 'picha-901',
+        ], 200)]);
+
+        $this->providerStatus('message.phone.sent', 'picha-901', 'file-901');
+        $this->providerStatus('message.phone.delivered', 'picha-901', 'file-901');
+
+        $settings = OrganizerSmsSetting::query()->where('organizer_id', $jungleId)->sole();
+        $this->assertSame($this->line->id, $settings->shared_line_settings_id);
+
+        $conversation = SmsConversation::query()->where('phone', self::CONTACT)->sole();
+        $this->assertSame($jungleId, $conversation->organizer_id);
+        $this->assertSame($this->line->id, $conversation->line_settings_id);
+        $outbound = SmsMessage::query()->where('provider_message_id', 'picha-901')->sole();
+        $this->assertSame($jungleId, $outbound->organizer_id);
+        $this->assertSame('DELIVERED', $outbound->status);
+
+        $this->receive('in-901', 'Merci, voici mon mot de passe');
+
+        $this->assertSame(1, $this->inbound($jungleId)->count());
+        $this->assertSame(0, SmsMessage::query()->where('organizer_id', $this->innocentId)->count());
+        $this->assertSame(0, SmsConversation::query()->where('organizer_id', $this->innocentId)->count());
+        $this->assertSame(0, SmsUnattributedMessage::query()->count());
+    }
+
+    public function test_queue_sms_for_an_organizer_with_unconfigured_sms_settings_attaches_it_to_the_line(): void
+    {
+        $decoId = $this->organizer(Organizer::find($this->innocentId)->account_id, 'Deco');
+        $settings = $this->settings($decoId, null, null);
+        Http::fake([self::FILE_URL.'/v1/sms/902' => Http::response([
+            'id' => 902, 'organisateur' => $decoId, 'etat' => 'soumis', 'id_sms_picha' => 'picha-902',
+        ], 200)]);
+
+        $this->providerStatus('message.phone.sent', 'picha-902', 'file-902');
+
+        $this->assertSame($this->line->id, $settings->fresh()->shared_line_settings_id);
+        $this->assertSame($decoId, SmsConversation::query()->where('phone', self::CONTACT)->sole()->organizer_id);
+
+        $this->receive('in-902', 'Bonjour');
+
+        $this->assertSame(1, $this->inbound($decoId)->count());
+        $this->assertSame(0, $this->inbound($this->innocentId)->count());
+    }
+
+    public function test_queue_sms_whose_organizer_the_queue_cannot_tell_never_lands_with_the_line_owner(): void
+    {
+        Http::fake([self::FILE_URL.'/v1/sms/903' => Http::response([], 503)]);
+
+        $this->providerStatus('message.phone.sent', 'picha-903', 'file-903');
+
+        $this->assertSame(0, SmsMessage::query()->where('provider_message_id', 'picha-903')->count());
+        $this->assertSame(0, SmsConversation::query()->where('organizer_id', $this->innocentId)->count());
+    }
+
     public function test_reply_goes_to_the_organizer_who_wrote_last_when_two_did(): void
     {
         $this->outbound($this->kulturmId, daysAgo: 5);
