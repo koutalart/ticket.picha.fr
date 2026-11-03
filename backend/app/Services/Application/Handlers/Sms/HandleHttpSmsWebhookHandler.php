@@ -228,7 +228,12 @@ class HandleHttpSmsWebhookHandler
             requestId: $requestId,
         );
 
-        $this->inboundService->recordOutboundEvent($this->outboundOwner($settings, $members, $messageId, $requestId), new OutboundSmsEventDTO(
+        $owner = $this->outboundOwner($settings, $members, $messageId, $requestId);
+        if (! in_array($owner->getOrganizerId(), $organizerIds, true)) {
+            $organizerIds[] = $owner->getOrganizerId();
+        }
+
+        $this->inboundService->recordOutboundEvent($owner, new OutboundSmsEventDTO(
             status: $status,
             providerMessageId: $messageId,
             contact: $data['contact'],
@@ -305,25 +310,51 @@ class HandleHttpSmsWebhookHandler
 
     /**
      * The organizer a message unknown to PICHA is stored for: the organizer of the campaign that sent it, otherwise
-     * the organizer the central queue sent it for (request_id « file-{id} », e.g. sms-masse), otherwise the line owner.
+     * the organizer the central queue sent it for (request_id « file-{id} », e.g. sms-masse), attached to the line when
+     * it was not on it yet, otherwise the line owner.
      *
      * @param  Collection<int, OrganizerSmsSettingDomainObject>  $members
      */
     private function outboundOwner(OrganizerSmsSettingDomainObject $line, Collection $members, string $providerMessageId, ?string $requestId = null): OrganizerSmsSettingDomainObject
     {
-        if ($members->count() <= 1) {
-            return $line;
+        $organizerId = null;
+        if ($members->count() > 1) {
+            $organizerIds = $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all();
+            $organizerId = $this->campaignDeliveryService->findCampaignOrganizerId($organizerIds, $providerMessageId, $requestId);
         }
-
-        $organizerIds = $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all();
-        $organizerId = $this->campaignDeliveryService->findCampaignOrganizerId($organizerIds, $providerMessageId, $requestId);
 
         $queueId = SmsFileStatusService::queueIdFromRequestId($requestId);
         if ($organizerId === null && $queueId !== null && ! $this->inboundService->isKnownOutbound($providerMessageId, $queueId)) {
             $organizerId = $this->fileSyncService->findQueueOrganizerId($queueId);
         }
 
-        return $members->first(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId() === $organizerId) ?? $line;
+        if ($organizerId === null) {
+            return $line;
+        }
+
+        $member = $members->first(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId() === $organizerId);
+        if ($member !== null) {
+            return $member;
+        }
+
+        $attached = $this->lineService->attachForQueue($line, $organizerId);
+        if ($attached === null) {
+            $this->logger->warning('httpSMS queue SMS kept for the line owner: its organizer cannot be attached to the line', [
+                'line_settings_id' => $line->getId(),
+                'organizer_id' => $organizerId,
+                'queue_message_id' => $queueId,
+            ]);
+
+            return $line;
+        }
+
+        $this->logger->info('httpSMS organizer attached to the shared line by a queue SMS', [
+            'line_settings_id' => $line->getId(),
+            'organizer_id' => $organizerId,
+            'queue_message_id' => $queueId,
+        ]);
+
+        return $attached;
     }
 
     private function ownerMatches(OrganizerSmsSettingDomainObject $settings, mixed $owner): bool

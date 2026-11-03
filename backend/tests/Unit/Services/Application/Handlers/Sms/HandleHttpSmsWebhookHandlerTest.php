@@ -401,24 +401,73 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         ]));
     }
 
-    public function test_queue_organizer_outside_the_line_never_gets_the_sms(): void
+    public function test_queue_organizer_not_on_the_line_is_attached_and_gets_the_sms(): void
     {
         $this->expectVerified();
         $this->expectSharedLine();
+        $attached = (new OrganizerSmsSettingDomainObject)->setId(7)->setOrganizerId(15)->setSharedLineSettingsId(1);
 
         $this->campaignDeliveryService->shouldReceive('applyProviderStatus')->andReturnFalse();
         $this->campaignDeliveryService->shouldReceive('findCampaignOrganizerId')->andReturnNull();
-        $this->fileSyncService->shouldReceive('findQueueOrganizerId')->with(323)->andReturn(99);
+        $this->fileSyncService->shouldReceive('findQueueOrganizerId')->with(323)->andReturn(15);
+        $this->lineService->shouldReceive('attachForQueue')->once()->with($this->settings, 15)->andReturn($attached);
 
         $this->inboundService->shouldReceive('recordOutboundEvent')
             ->once()
-            ->withArgs(fn ($owner) => $owner === $this->settings);
+            ->withArgs(fn ($owner, OutboundSmsEventDTO $event, bool $fromHistory, ?array $organizerIds) => $owner === $attached
+                && $organizerIds === [4, 8, 15]);
 
         $this->handler->handle($this->dto('message.phone.sent', [
             'id' => 'prov-5',
             'contact' => '+262639123456',
             'owner' => '+262639000000',
             'request_id' => 'file-323',
+        ]));
+    }
+
+    public function test_queue_organizer_is_attached_to_a_line_used_by_its_owner_only(): void
+    {
+        $this->expectVerified();
+        $attached = (new OrganizerSmsSettingDomainObject)->setId(7)->setOrganizerId(15)->setSharedLineSettingsId(1);
+
+        $this->campaignDeliveryService->shouldReceive('applyProviderStatus')->andReturnFalse();
+        $this->campaignDeliveryService->shouldNotReceive('findCampaignOrganizerId');
+        $this->fileSyncService->shouldReceive('findQueueOrganizerId')->with(324)->andReturn(15);
+        $this->lineService->shouldReceive('attachForQueue')->once()->with($this->settings, 15)->andReturn($attached);
+
+        $this->inboundService->shouldReceive('recordOutboundEvent')
+            ->once()
+            ->withArgs(fn ($owner, OutboundSmsEventDTO $event, bool $fromHistory, ?array $organizerIds) => $owner === $attached
+                && $organizerIds === [4, 15]);
+
+        $this->handler->handle($this->dto('message.phone.sent', [
+            'id' => 'prov-6',
+            'contact' => '+262639123456',
+            'owner' => '+262639000000',
+            'request_id' => 'file-324',
+        ]));
+    }
+
+    public function test_queue_organizer_that_cannot_join_the_line_leaves_the_sms_to_the_line_owner(): void
+    {
+        $this->expectVerified();
+        $this->expectSharedLine();
+
+        $this->campaignDeliveryService->shouldReceive('applyProviderStatus')->andReturnFalse();
+        $this->campaignDeliveryService->shouldReceive('findCampaignOrganizerId')->andReturnNull();
+        $this->fileSyncService->shouldReceive('findQueueOrganizerId')->with(325)->andReturn(99);
+        $this->lineService->shouldReceive('attachForQueue')->once()->with($this->settings, 99)->andReturnNull();
+
+        $this->inboundService->shouldReceive('recordOutboundEvent')
+            ->once()
+            ->withArgs(fn ($owner, OutboundSmsEventDTO $event, bool $fromHistory, ?array $organizerIds) => $owner === $this->settings
+                && $organizerIds === [4, 8]);
+
+        $this->handler->handle($this->dto('message.phone.sent', [
+            'id' => 'prov-7',
+            'contact' => '+262639123456',
+            'owner' => '+262639000000',
+            'request_id' => 'file-325',
         ]));
     }
 

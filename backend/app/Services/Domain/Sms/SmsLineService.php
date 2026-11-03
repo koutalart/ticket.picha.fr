@@ -314,6 +314,56 @@ class SmsLineService
     }
 
     /**
+     * Attaches to the line an organizer the central queue sent an SMS for from it, so the conversation and the answers
+     * reach that organizer. An organizer with its own line, on another line, or whose line others share is left alone.
+     * New settings start with the automatic replies of the assistant off.
+     */
+    public function attachForQueue(OrganizerSmsSettingDomainObject $line, int $organizerId): ?OrganizerSmsSettingDomainObject
+    {
+        if ($line->getSharedLineSettingsId() !== null || $organizerId === $line->getOrganizerId()) {
+            return null;
+        }
+
+        /** @var OrganizerDomainObject|null $organizer */
+        $organizer = $this->organizerRepository->findFirstWhere([OrganizerDomainObjectAbstract::ID => $organizerId]);
+        if ($organizer === null) {
+            return null;
+        }
+
+        /** @var OrganizerSmsSettingDomainObject|null $settings */
+        $settings = $this->settingsRepository->findFirstWhere([
+            OrganizerSmsSettingDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+        ]);
+
+        if ($settings === null) {
+            $settings = $this->settingsService->getOrCreate($organizer->getAccountId(), $organizerId);
+
+            return $this->settingsRepository->updateFromArray($settings->getId(), [
+                OrganizerSmsSettingDomainObjectAbstract::SHARED_LINE_SETTINGS_ID => $line->getId(),
+                OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_AUTO_SEND => false,
+                OrganizerSmsSettingDomainObjectAbstract::ASSISTANT_HOLDING_REPLY_ENABLED => false,
+            ]);
+        }
+
+        if ($settings->getSharedLineSettingsId() === $line->getId()) {
+            return $settings;
+        }
+
+        if ($settings->getSharedLineSettingsId() !== null
+            || $settings->getApiKey()
+            || $settings->getFromNumber()
+            || $this->settingsRepository->countWhere([
+                OrganizerSmsSettingDomainObjectAbstract::SHARED_LINE_SETTINGS_ID => $settings->getId(),
+            ]) > 0) {
+            return null;
+        }
+
+        return $this->settingsRepository->updateFromArray($settings->getId(), [
+            OrganizerSmsSettingDomainObjectAbstract::SHARED_LINE_SETTINGS_ID => $line->getId(),
+        ]);
+    }
+
+    /**
      * Detaches the organizer from the shared line and keeps it as a former member of that line for the transition window.
      * With an API key and a number, the organizer gets its own line in the same step, so it never stays without a line.
      *
