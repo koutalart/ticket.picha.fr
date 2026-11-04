@@ -620,7 +620,10 @@ export interface Organizer {
     location_details?: VenueAddress;
     status?: OrganizerStatus;
     custom_font?: OrganizerCustomFont | null;
+    enabled_sections?: OrganizerSection[] | null;
 }
+
+export type OrganizerSection = 'dashboard' | 'events' | 'contacts' | 'reports' | 'qr-codes' | 'sms' | 'publications';
 
 export type OrganizerFontFormat = 'woff2' | 'woff' | 'truetype' | 'opentype';
 
