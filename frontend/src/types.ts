@@ -455,6 +455,7 @@ export interface EventStatistics {
     unique_views: number;
     total_views: number;
     sales_total_gross: number;
+    sales_total_organizer?: number;
     total_tax: number;
     sales_total_before_additions: number;
     total_fee: number;
@@ -468,6 +469,7 @@ export interface EventDailyStats {
     total_fees: number;
     total_tax: number;
     total_sales_gross: number;
+    total_sales_organizer?: number;
     products_sold: number;
     attendees_registered: number;
     total_refunded: number;
@@ -514,6 +516,7 @@ export interface EventStats {
     orders_awaiting_payment?: number;
     total_attendance_confirmed?: number;
     total_cancelled_by_attendee?: number;
+    total_organizer_sales?: number;
 }
 
 export interface OrganizerStats {
@@ -528,6 +531,8 @@ export interface OrganizerStats {
     all_organizers_currencies: string[];
     total_awaiting_payment?: number;
     orders_awaiting_payment?: number;
+    total_organizer_sales?: number;
+    platform_balance_due?: number;
 }
 
 export interface OrganizerSiteContent {
@@ -615,7 +620,10 @@ export interface Organizer {
     location_details?: VenueAddress;
     status?: OrganizerStatus;
     custom_font?: OrganizerCustomFont | null;
+    enabled_sections?: OrganizerSection[] | null;
 }
+
+export type OrganizerSection = 'dashboard' | 'events' | 'contacts' | 'reports' | 'qr-codes' | 'sms' | 'publications';
 
 export type OrganizerFontFormat = 'woff2' | 'woff' | 'truetype' | 'opentype';
 
@@ -1055,6 +1063,7 @@ export interface Order {
     total_gross: number;
     total_gross_after_refund: number;
     total_refunded: number;
+    refundable_amount?: number;
     is_expired: boolean;
     order_items?: OrderItem[];
     attendees?: Attendee[];
@@ -1095,6 +1104,8 @@ export interface OrderItem {
     price: number;
     quantity: number;
     total_gross?: number;
+    total_tax?: number;
+    total_service_fee?: number;
 }
 
 export interface RefundProtectionOffer {

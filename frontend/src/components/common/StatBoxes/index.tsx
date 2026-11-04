@@ -86,7 +86,7 @@ export const StatBoxes = () => {
         {number: formatNumber(eventStats?.total_attendees_registered as number), description: t`Attendees`, icon: <IconUsers size={18}/>, backgroundColor: "#E6677E"},
         {number: formatNumber(eventStats?.total_products_sold as number), description: t`Products sold`, icon: <IconShoppingCart size={18}/>, backgroundColor: "#4B7BE5"},
         {number: formatCurrency(eventStats?.total_refunded as number || 0, event?.currency), description: t`Refunded`, icon: <IconCreditCardRefund size={18}/>, backgroundColor: "#49A6B7"},
-        {number: formatCurrency(eventStats?.total_gross_sales || 0, event?.currency), description: t`Gross sales`, icon: <IconCash size={18}/>, backgroundColor: "#7C63E6"},
+        {number: formatCurrency(eventStats?.total_organizer_sales ?? eventStats?.total_gross_sales ?? 0, event?.currency), description: t`Your sales`, icon: <IconCash size={18}/>, backgroundColor: "#7C63E6"},
         ...(Number(eventStats?.total_awaiting_payment) > 0 ? [{
             number: formatCurrency(Number(eventStats?.total_awaiting_payment), event?.currency),
             description: t`Awaiting payment collection`,

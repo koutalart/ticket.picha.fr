@@ -17,5 +17,7 @@ class RefundOrderDTO extends BaseDTO
         public readonly array $attendee_ids = [],
         /** Stripe refund metadata picha_source: dashboard, or live_chat for the automatic refunds of the web chat */
         public readonly string $refund_source = StripePaymentIntentRefundService::REFUND_SOURCE_DASHBOARD,
+        /** RefundReason name: EVENT_CANCELLED_BY_ORGANIZER refunds everything the buyer paid, at the organizer's expense */
+        public readonly ?string $reason = null,
     ) {}
 }

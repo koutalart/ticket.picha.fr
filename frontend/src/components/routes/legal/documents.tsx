@@ -169,6 +169,16 @@ const cgv: LegalDocument = {
                 Les prix sont indiqués en euros, toutes taxes comprises. Les éventuels frais de service sont
                 affichés distinctement avant la validation de la commande.
             </p>
+            <p>
+                Les frais de service et l'option sérénité ne sont jamais remboursables, quelle que soit la
+                raison : lors d'un remboursement, seul le prix du billet est remboursé. Seule exception,
+                l'annulation de l'événement par l'organisateur (article 7).
+            </p>
+            <p>
+                L'option sérénité, proposée lors de la commande, donne le droit d'obtenir sur simple demande le
+                remboursement du prix de ses billets jusqu'au début de l'événement. Ce service est rendu dès
+                l'achat, que l'acheteur assiste ou non à l'événement : l'option n'est donc pas remboursable.
+            </p>
 
             <h2>4. Paiement</h2>
             <p>
@@ -195,7 +205,8 @@ const cgv: LegalDocument = {
 
             <h2>7. Annulation, report ou modification de l'événement</h2>
             <p>
-                En cas d'annulation de l'événement, le prix du billet est remboursé par l'organisateur. En cas
+                En cas d'annulation de l'événement par l'organisateur, l'acheteur est remboursé intégralement
+                (prix du billet, frais de service et option sérénité), à la charge de l'organisateur. En cas
                 de report ou de modification substantielle, l'organisateur informe les acheteurs et précise
                 les modalités applicables, dans le respect de la réglementation en vigueur. Les demandes sont
                 à adresser à l'organisateur ou à <Mail address={e.email}/>, qui les transmettra.

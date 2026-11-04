@@ -18,6 +18,13 @@ interface RefundOrderModalProps extends GenericModalProps {
     orderId: IdParam;
 }
 
+const EVENT_CANCELLED_BY_ORGANIZER = 'EVENT_CANCELLED_BY_ORGANIZER';
+
+const refundableAmount = (order: Order, eventCancelled = false): number => {
+    const fullAmount = order.total_gross - order.total_refunded;
+    return Number((eventCancelled ? fullAmount : (order.refundable_amount ?? fullAmount)).toFixed(2));
+};
+
 export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
     const {eventId} = useParams();
     const {data: order} = useGetOrder(eventId, orderId);
@@ -29,6 +36,7 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
             notify_buyer: false,
             cancel_order: false,
             attendee_ids: [],
+            reason: null,
         },
     });
     const isRefundPending = order?.refund_status === 'REFUND_PENDING';
@@ -38,7 +46,7 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
         if (!order) {
             return;
         }
-        form.setFieldValue('amount', order.total_gross - order.total_refunded)
+        form.setFieldValue('amount', refundableAmount(order))
     }, [order]);
 
     if (!order) {
@@ -53,6 +61,7 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
                 notify_buyer: values.notify_buyer,
                 cancel_order: values.cancel_order,
                 attendee_ids: values.cancel_order ? [] : values.attendee_ids,
+                reason: values.reason ?? null,
             },
         },
         {
@@ -72,11 +81,18 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
         if (!item || !item.quantity) {
             return 0;
         }
-        return (item.total_gross ?? item.price * item.quantity) / item.quantity;
+        const itemTotal = item.total_gross ?? item.price * item.quantity;
+        return (itemTotal - (item.total_service_fee ?? 0)) / item.quantity;
     };
 
     const modalForm = ({order, form}: { order: Order, form: UseFormReturnType<RefundOrderPayload> }) => {
-        const remainingAmount = order.total_gross - order.total_refunded;
+        const isEventCancelled = form.values.reason === EVENT_CANCELLED_BY_ORGANIZER;
+        const remainingAmount = refundableAmount(order, isEventCancelled);
+        const toggleEventCancelled = (checked: boolean) => {
+            form.setFieldValue('reason', checked ? EVENT_CANCELLED_BY_ORGANIZER : null);
+            form.setFieldValue('attendee_ids', []);
+            form.setFieldValue('amount', refundableAmount(order, checked));
+        };
         const isPartialRefund = form.values.amount < remainingAmount;
         const activeTickets = (order.attendees || []).filter((attendee) => attendee.status === 'ACTIVE');
         const selectedIds = form.values.attendee_ids || [];
@@ -121,8 +137,22 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
                             </Group>
                         </Stack>
                     </Paper>
+                    {!isEventCancelled && (
+                        <Text size="xs" c="dimmed">{t`Only the ticket price is refunded: the service fees and the cancellation protection are never refunded.`}</Text>
+                    )}
+                    <Checkbox
+                        checked={isEventCancelled}
+                        onChange={(event) => toggleEventCancelled(event.currentTarget.checked)}
+                        label={t`Event cancelled by the organizer`}
+                        description={t`The buyer gets back everything they paid.`}
+                    />
+                    {isEventCancelled && (
+                        <Alert icon={<IconInfoCircle/>} color="orange" variant="light">
+                            {t`You pay the service fees and the cancellation protection: the buyer is refunded in full, and the platform keeps its commission. The difference is taken from your Stripe balance.`}
+                        </Alert>
+                    )}
 
-                    {activeTickets.length > 0 && !form.values.cancel_order && (
+                    {activeTickets.length > 0 && !form.values.cancel_order && !isEventCancelled && (
                         <Stack gap={6}>
                             <Text size="sm" fw={500}>{t`Tickets to refund`}</Text>
                             <Text size="xs" c="dimmed">{t`Refunded tickets are cancelled and can no longer be used at the entrance.`}</Text>

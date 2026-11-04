@@ -12,6 +12,7 @@ use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\StripePaymentDomainObject;
 use HiEvents\Exceptions\Stripe\StripeClientConfigurationException;
 use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
+use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use HiEvents\Mail\Order\PaymentSuccessButOrderExpiredMail;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -31,6 +32,7 @@ readonly class StripeRefundExpiredOrderService
         private EventRepositoryInterface $eventRepository,
         private StripeClientFactory $stripeClientFactory,
         private CustomerLocaleResolver $customerLocaleResolver,
+        private OrderOrganizerShareService $organizerShareService,
     ) {}
 
     /**
@@ -58,12 +60,23 @@ readonly class StripeRefundExpiredOrderService
         // Create Stripe client for the original payment's platform
         $stripeClient = $this->stripeClientFactory->createForPlatform($paymentPlatform);
 
-        $this->refundService->refundPayment(
-            MoneyValue::fromMinorUnit($paymentIntent->amount, strtoupper($paymentIntent->currency)),
-            $stripePayment,
-            $stripeClient,
-            [StripePaymentIntentRefundService::REFUND_SOURCE_KEY => StripePaymentIntentRefundService::REFUND_SOURCE_EXPIRED_ORDER],
+        // PICHA: even here, only the ticket price is refunded; the service fees and the cancellation protection stay with the platform.
+        $refundAmount = MoneyValue::fromFloat(
+            min(
+                $this->organizerShareService->getShare($order)->refundableToBuyer,
+                MoneyValue::fromMinorUnit($paymentIntent->amount, strtoupper($paymentIntent->currency))->toFloat(),
+            ),
+            strtoupper($paymentIntent->currency),
         );
+
+        if ($refundAmount->toMinorUnit() > 0) {
+            $this->refundService->refundPayment(
+                amount: $refundAmount,
+                payment: $stripePayment,
+                stripeClient: $stripeClient,
+                metadata: [StripePaymentIntentRefundService::REFUND_SOURCE_KEY => StripePaymentIntentRefundService::REFUND_SOURCE_EXPIRED_ORDER],
+            );
+        }
 
         $this->mailer
             ->to($order->getEmail())

@@ -48,7 +48,7 @@ export const OrganizerEventRow = ({event}: { event: Event }) => {
         : event.settings?.location_details?.venue_name || event.settings?.location_details?.city;
 
     const attendees = event.statistics?.attendees_registered ?? 0;
-    const revenue = event.statistics?.sales_total_gross ?? 0;
+    const revenue = event.statistics?.sales_total_organizer ?? event.statistics?.sales_total_gross ?? 0;
     const showFigures = !isDraft && (attendees > 0 || revenue > 0);
 
     const toggleArchive = () => {

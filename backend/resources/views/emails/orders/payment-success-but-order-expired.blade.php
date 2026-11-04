@@ -9,7 +9,7 @@
 {{ __('Hello') }},
 
 <p>
-{{ __('Your recent order for :eventTitle was not successful. The order expired while you were completing the payment. We have issued a refund for the order.', ['eventTitle' => $event->getTitle()]) }}
+{{ __('Your recent order for :eventTitle was not successful. The order expired while you were completing the payment. We have refunded the price of your tickets. The service fees and the peace of mind option are non-refundable.', ['eventTitle' => $event->getTitle()]) }}
 </p>
 
 <p>

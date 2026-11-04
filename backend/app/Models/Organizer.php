@@ -16,6 +16,7 @@ class Organizer extends BaseModel
     {
         return [
             'site_content' => 'array',
+            'enabled_sections' => 'array',
         ];
     }
 

@@ -10,6 +10,7 @@ use HiEvents\Services\Application\Handlers\Order\DTO\CancelOrderDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\RefundOrderDTO;
 use HiEvents\Services\Application\Handlers\Order\Payment\Stripe\RefundOrderHandler;
 use HiEvents\Services\Domain\Order\OrderCancelService;
+use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use Illuminate\Database\DatabaseManager;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Throwable;
@@ -21,6 +22,7 @@ class CancelOrderHandler
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly DatabaseManager          $databaseManager,
         private readonly RefundOrderHandler       $refundOrderHandler,
+        private readonly OrderOrganizerShareService $organizerShareService,
     )
     {
     }
@@ -48,11 +50,13 @@ class CancelOrderHandler
 
             $this->orderCancelService->cancelOrder($order);
 
-            if ($cancelOrderDTO->refund && $order->isRefundable()) {
+            $refundableAmount = $this->organizerShareService->getShare($order)->refundableToBuyer;
+
+            if ($cancelOrderDTO->refund && $order->isRefundable() && $refundableAmount > 0) {
                 $refundDTO = new RefundOrderDTO(
                     event_id: $cancelOrderDTO->eventId,
                     order_id: $cancelOrderDTO->orderId,
-                    amount: $order->getTotalGross() - $order->getTotalRefunded(),
+                    amount: $refundableAmount,
                     notify_buyer: true,
                     cancel_order: false,
                 );

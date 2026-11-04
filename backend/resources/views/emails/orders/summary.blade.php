@@ -64,6 +64,9 @@
 # {{ __('Order Summary') }}
 **{{ __('Order Number:') }}** {{ $order->getPublicId() }}<br>
 **{{ __('Total Amount:') }}** {{ EmailFormatHelper::money($order->getTotalGross(), $event->getCurrency()) }}
+@if($order->getTotalGross() > 0)
+<br>{{ __('Service fees and the peace of mind option are non-refundable.') }}
+@endif
 
 <x-mail::button :url="$orderUrl">
     {{ __('View Order Summary & Tickets') }}

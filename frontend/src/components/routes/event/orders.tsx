@@ -85,7 +85,7 @@ export const Orders: React.FC = () => {
         {key: 'completed', label: t`Orders`, value: completedCount !== undefined ? String(formatNumber(completedCount)) : undefined},
         {key: 'registered', label: t`Registered people`, value: stats ? String(formatNumber(stats.total_attendees_registered)) : undefined},
     ] : [
-        {key: 'gross', label: t`Collected`, value: stats ? formatCurrency(stats.total_gross_sales - stats.total_refunded, event?.currency) : undefined},
+        {key: 'gross', label: t`Your sales`, value: stats ? formatCurrency(stats.total_organizer_sales ?? (stats.total_gross_sales - stats.total_refunded), event?.currency) : undefined},
         {key: 'completed', label: t({message: 'Completed', context: 'orders figure'}), value: completedCount !== undefined ? String(formatNumber(completedCount)) : undefined},
         {
             key: 'awaiting',
