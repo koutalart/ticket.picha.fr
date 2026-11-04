@@ -14,6 +14,8 @@ use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Services\Domain\EventStatistics\EventStatisticsIncrementService;
+use HiEvents\Services\Domain\Order\DTO\OrderOrganizerShareDTO;
+use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use HiEvents\Services\Infrastructure\Utlitiy\Retry\Retrier;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
@@ -33,6 +35,7 @@ class EventStatisticsIncrementServiceTest extends TestCase
     private MockInterface|OrderRepositoryInterface $orderRepository;
     private MockInterface|LoggerInterface $logger;
     private MockInterface|Retrier $retrier;
+    private MockInterface|OrderOrganizerShareService $organizerShareService;
 
     protected function setUp(): void
     {
@@ -46,6 +49,7 @@ class EventStatisticsIncrementServiceTest extends TestCase
         $this->orderRepository = Mockery::mock(OrderRepositoryInterface::class);
         $this->logger = Mockery::mock(LoggerInterface::class);
         $this->retrier = Mockery::mock(Retrier::class);
+        $this->organizerShareService = Mockery::mock(OrderOrganizerShareService::class);
 
         $this->service = new EventStatisticsIncrementService(
             $this->promoCodeRepository,
@@ -55,7 +59,8 @@ class EventStatisticsIncrementServiceTest extends TestCase
             $this->databaseManager,
             $this->orderRepository,
             $this->logger,
-            $this->retrier
+            $this->retrier,
+            $this->organizerShareService,
         );
     }
 
@@ -93,6 +98,14 @@ class EventStatisticsIncrementServiceTest extends TestCase
         $order->shouldReceive('getTotalTax')->andReturn(8.00);
         $order->shouldReceive('getTotalFee')->andReturn(2.00);
 
+        $this->organizerShareService->shouldReceive('getShare')->with($order)->andReturn(new OrderOrganizerShareDTO(
+            totalGross: 150.00,
+            serviceFees: 2.00,
+            refundProtection: 0.0,
+            organizerSales: 148.00,
+            refundableToBuyer: 148.00,
+        ));
+
         // Mock order repository to return order with relations
         $this->orderRepository
             ->shouldReceive('loadRelation')
@@ -113,6 +126,7 @@ class EventStatisticsIncrementServiceTest extends TestCase
         $eventStatistics->shouldReceive('getSalesTotalBeforeAdditions')->andReturn(480.00);
         $eventStatistics->shouldReceive('getTotalTax')->andReturn(15.00);
         $eventStatistics->shouldReceive('getTotalFee')->andReturn(5.00);
+        $eventStatistics->shouldReceive('getSalesTotalOrganizer')->andReturn(450.00);
         $eventStatistics->shouldReceive('getVersion')->andReturn(5);
 
         // Mock existing daily event statistics
@@ -124,6 +138,7 @@ class EventStatisticsIncrementServiceTest extends TestCase
         $eventDailyStatistic->shouldReceive('getSalesTotalBeforeAdditions')->andReturn(380.00);
         $eventDailyStatistic->shouldReceive('getTotalTax')->andReturn(12.00);
         $eventDailyStatistic->shouldReceive('getTotalFee')->andReturn(3.00);
+        $eventDailyStatistic->shouldReceive('getSalesTotalOrganizer')->andReturn(360.00);
         $eventDailyStatistic->shouldReceive('getVersion')->andReturn(3);
 
         // Set up retrier to execute the action immediately
@@ -157,6 +172,7 @@ class EventStatisticsIncrementServiceTest extends TestCase
                     'sales_total_before_additions' => 620.00, // 480 + 140
                     'total_tax' => 23.00,               // 15 + 8
                     'total_fee' => 7.00,                // 5 + 2
+                    'sales_total_organizer' => 598.00,  // 450 + (150 - 2 fees)
                     'orders_created' => 6,              // 5 + 1
                     'version' => 6,                     // 5 + 1
                 ],
@@ -187,6 +203,7 @@ class EventStatisticsIncrementServiceTest extends TestCase
                     'sales_total_before_additions' => 520.00, // 380 + 140
                     'total_tax' => 20.00,               // 12 + 8
                     'total_fee' => 5.00,                // 3 + 2
+                    'sales_total_organizer' => 508.00,  // 360 + (150 - 2 fees)
                     'orders_created' => 5,              // 4 + 1
                     'version' => 4,                     // 3 + 1
                 ],
@@ -258,6 +275,14 @@ class EventStatisticsIncrementServiceTest extends TestCase
         $order->shouldReceive('getTotalTax')->andReturn(4.00);
         $order->shouldReceive('getTotalFee')->andReturn(1.00);
 
+        $this->organizerShareService->shouldReceive('getShare')->with($order)->andReturn(new OrderOrganizerShareDTO(
+            totalGross: 100.00,
+            serviceFees: 1.00,
+            refundProtection: 0.0,
+            organizerSales: 99.00,
+            refundableToBuyer: 99.00,
+        ));
+
         // Mock order repository
         $this->orderRepository
             ->shouldReceive('loadRelation')
@@ -299,6 +324,7 @@ class EventStatisticsIncrementServiceTest extends TestCase
                 'sales_total_before_additions' => 95.00,
                 'total_tax' => 4.00,
                 'total_fee' => 1.00,
+                'sales_total_organizer' => 99.00,
                 'orders_created' => 1,
                 'orders_cancelled' => 0,
             ])
@@ -324,6 +350,7 @@ class EventStatisticsIncrementServiceTest extends TestCase
                 'sales_total_before_additions' => 95.00,
                 'total_tax' => 4.00,
                 'total_fee' => 1.00,
+                'sales_total_organizer' => 99.00,
                 'orders_created' => 1,
                 'orders_cancelled' => 0,
             ])

@@ -30,6 +30,7 @@ class EventStatsResponseDTO extends BaseDTO
         public ?EventCheckInStatsResponseDTO $check_in_stats = null,
         public int                          $total_attendance_confirmed = 0,
         public int                          $total_cancelled_by_attendee = 0,
+        public float                        $total_organizer_sales = 0,
     )
     {
     }

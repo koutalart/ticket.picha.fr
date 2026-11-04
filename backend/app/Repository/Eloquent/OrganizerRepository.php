@@ -64,6 +64,7 @@ class OrganizerRepository extends BaseRepository implements OrganizerRepositoryI
             SUM(es.products_sold) AS total_products_sold,
             SUM(es.orders_created) AS total_orders,
             SUM(es.sales_total_gross) AS total_gross_sales,
+            SUM(es.sales_total_organizer) AS total_organizer_sales,
             SUM(es.total_tax) AS total_tax,
             SUM(es.total_fee) AS total_fees,
             SUM(es.total_views) AS total_views,
@@ -128,6 +129,7 @@ SQL;
             ),
             total_awaiting_payment: (float) $awaitingPayment->total,
             orders_awaiting_payment: (int) $awaitingPayment->orders,
+            total_organizer_sales: (float)($totalsResult->total_organizer_sales ?? 0),
         );
     }
 }

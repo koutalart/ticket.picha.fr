@@ -92,8 +92,8 @@ export const EventDashboard = () => {
         {label: t`Page views`, value: stats ? formatNumber(stats.total_views) : null},
     ] : [
         {
-            label: t`Gross sales`,
-            value: stats ? formatCurrency(stats.total_gross_sales, event.currency) : null,
+            label: t`Your sales`,
+            value: stats ? formatCurrency(stats.total_organizer_sales ?? stats.total_gross_sales, event.currency) : null,
             note: stats && stats.total_refunded > 0 ? t`including ${formatCurrency(stats.total_refunded, event.currency)} refunded` : null,
             pending: Number(stats?.total_awaiting_payment ?? 0) > 0
                 ? t`+ ${formatCurrency(Number(stats?.total_awaiting_payment), event.currency)} awaiting payment collection`
@@ -113,7 +113,7 @@ export const EventDashboard = () => {
         date: formatDateWithLocale(day.date, 'chartDate', event.timezone),
         products_sold: day.products_sold,
         attendees_registered: day.attendees_registered,
-        total_sales_gross: day.total_sales_gross,
+        total_sales_organizer: day.total_sales_organizer ?? day.total_sales_gross,
         total_refunded: day.total_refunded,
     })) ?? [];
     const mode: ChartMode = isFree ? 'tickets' : chartMode;
@@ -250,7 +250,7 @@ export const EventDashboard = () => {
                     withDots={false}
                     valueFormatter={mode === 'revenue' ? (value) => formatCurrency(value, event.currency) : undefined}
                     series={mode === 'revenue' ? [
-                        {name: 'total_sales_gross', label: t`Gross sales`, color: 'violet.6'},
+                        {name: 'total_sales_organizer', label: t`Your sales`, color: 'violet.6'},
                         {name: 'total_refunded', label: t`Total Refunded`, color: 'red.5'},
                     ] : isFree ? [
                         {name: 'attendees_registered', label: t`Registrations`, color: 'violet.6'},

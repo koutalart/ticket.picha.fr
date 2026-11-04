@@ -18,6 +18,7 @@ class DailySalesReport extends AbstractReportService
             )
             SELECT
                 d.date,
+                COALESCE(eds.sales_total_organizer, 0.00) AS sales_total_organizer,
                 COALESCE(eds.sales_total_gross, 0.00) AS sales_total_gross,
                 COALESCE(eds.total_tax, 0.00) AS total_tax,
                 COALESCE(eds.sales_total_before_additions, 0.00) AS sales_total_before_additions,

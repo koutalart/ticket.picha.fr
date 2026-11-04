@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\Repository\Interfaces\EventDailyStatisticRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventStatisticRepositoryInterface;
 use HiEvents\Services\Domain\EventStatistics\EventStatisticsRefundService;
+use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use HiEvents\Values\MoneyValue;
 use Mockery;
 use Mockery\MockInterface;
@@ -21,6 +22,7 @@ class EventStatisticsRefundServiceTest extends TestCase
     private MockInterface|EventStatisticRepositoryInterface $eventStatisticsRepository;
     private MockInterface|EventDailyStatisticRepositoryInterface $eventDailyStatisticRepository;
     private MockInterface|LoggerInterface $logger;
+    private MockInterface|OrderOrganizerShareService $organizerShareService;
 
     protected function setUp(): void
     {
@@ -29,11 +31,17 @@ class EventStatisticsRefundServiceTest extends TestCase
         $this->eventStatisticsRepository = Mockery::mock(EventStatisticRepositoryInterface::class);
         $this->eventDailyStatisticRepository = Mockery::mock(EventDailyStatisticRepositoryInterface::class);
         $this->logger = Mockery::mock(LoggerInterface::class);
+        $this->organizerShareService = Mockery::mock(OrderOrganizerShareService::class);
+        // Order of 100 with 2 of fees: the organizer part of a refund is at most 98
+        $this->organizerShareService
+            ->shouldReceive('getOrganizerPartOfRefund')
+            ->andReturnUsing(fn($order, float $refundAmount, float $alreadyRefunded) => min($refundAmount, 98.00 - $alreadyRefunded));
 
         $this->service = new EventStatisticsRefundService(
             $this->eventStatisticsRepository,
             $this->eventDailyStatisticRepository,
-            $this->logger
+            $this->logger,
+            $this->organizerShareService,
         );
     }
 
@@ -46,6 +54,7 @@ class EventStatisticsRefundServiceTest extends TestCase
 
         // Create mock order
         $order = Mockery::mock(OrderDomainObject::class);
+        $order->shouldReceive('getTotalRefunded')->andReturn(0.0);
         $order->shouldReceive('getEventId')->andReturn($eventId);
         $order->shouldReceive('getId')->andReturn($orderId);
         $order->shouldReceive('getCreatedAt')->andReturn($orderDate);
@@ -60,6 +69,7 @@ class EventStatisticsRefundServiceTest extends TestCase
         // Mock aggregate event statistics
         $eventStatistics = Mockery::mock(EventStatisticDomainObject::class);
         $eventStatistics->shouldReceive('getSalesTotalGross')->andReturn(1000.00);
+        $eventStatistics->shouldReceive('getSalesTotalOrganizer')->andReturn(900.00);
         $eventStatistics->shouldReceive('getTotalRefunded')->andReturn(50.00);
         $eventStatistics->shouldReceive('getTotalTax')->andReturn(80.00);
         $eventStatistics->shouldReceive('getTotalFee')->andReturn(20.00);
@@ -67,6 +77,7 @@ class EventStatisticsRefundServiceTest extends TestCase
         // Mock daily event statistics
         $eventDailyStatistic = Mockery::mock(EventDailyStatisticDomainObject::class);
         $eventDailyStatistic->shouldReceive('getSalesTotalGross')->andReturn(500.00);
+        $eventDailyStatistic->shouldReceive('getSalesTotalOrganizer')->andReturn(450.00);
         $eventDailyStatistic->shouldReceive('getTotalRefunded')->andReturn(25.00);
         $eventDailyStatistic->shouldReceive('getTotalTax')->andReturn(40.00);
         $eventDailyStatistic->shouldReceive('getTotalFee')->andReturn(10.00);
@@ -83,6 +94,7 @@ class EventStatisticsRefundServiceTest extends TestCase
             ->with(
                 [
                     'sales_total_gross' => 900.00,     // 1000 - 100
+                    'sales_total_organizer' => 802.00, // 900 - 98 (fees are not organizer sales)
                     'total_refunded' => 150.00,        // 50 + 100
                     'total_tax' => 72.00,              // 80 - 8 (100% of order tax)
                     'total_fee' => 18.00,              // 20 - 2 (100% of order fee)
@@ -106,6 +118,7 @@ class EventStatisticsRefundServiceTest extends TestCase
             ->with(
                 [
                     'sales_total_gross' => 400.00,     // 500 - 100
+                    'sales_total_organizer' => 352.00, // 450 - 98
                     'total_refunded' => 125.00,        // 25 + 100
                     'total_tax' => 32.00,              // 40 - 8
                     'total_fee' => 8.00,               // 10 - 2
@@ -136,6 +149,7 @@ class EventStatisticsRefundServiceTest extends TestCase
 
         // Create mock order
         $order = Mockery::mock(OrderDomainObject::class);
+        $order->shouldReceive('getTotalRefunded')->andReturn(0.0);
         $order->shouldReceive('getEventId')->andReturn($eventId);
         $order->shouldReceive('getId')->andReturn($orderId);
         $order->shouldReceive('getCreatedAt')->andReturn($orderDate);
@@ -150,6 +164,7 @@ class EventStatisticsRefundServiceTest extends TestCase
         // Mock aggregate event statistics
         $eventStatistics = Mockery::mock(EventStatisticDomainObject::class);
         $eventStatistics->shouldReceive('getSalesTotalGross')->andReturn(1000.00);
+        $eventStatistics->shouldReceive('getSalesTotalOrganizer')->andReturn(900.00);
         $eventStatistics->shouldReceive('getTotalRefunded')->andReturn(50.00);
         $eventStatistics->shouldReceive('getTotalTax')->andReturn(80.00);
         $eventStatistics->shouldReceive('getTotalFee')->andReturn(20.00);
@@ -157,6 +172,7 @@ class EventStatisticsRefundServiceTest extends TestCase
         // Mock daily event statistics
         $eventDailyStatistic = Mockery::mock(EventDailyStatisticDomainObject::class);
         $eventDailyStatistic->shouldReceive('getSalesTotalGross')->andReturn(500.00);
+        $eventDailyStatistic->shouldReceive('getSalesTotalOrganizer')->andReturn(450.00);
         $eventDailyStatistic->shouldReceive('getTotalRefunded')->andReturn(25.00);
         $eventDailyStatistic->shouldReceive('getTotalTax')->andReturn(40.00);
         $eventDailyStatistic->shouldReceive('getTotalFee')->andReturn(10.00);
@@ -173,6 +189,7 @@ class EventStatisticsRefundServiceTest extends TestCase
             ->with(
                 [
                     'sales_total_gross' => 950.00,     // 1000 - 50
+                    'sales_total_organizer' => 850.00, // 900 - 50
                     'total_refunded' => 100.00,        // 50 + 50
                     'total_tax' => 76.00,              // 80 - 4 (50% of order tax)
                     'total_fee' => 19.00,              // 20 - 1 (50% of order fee)
@@ -196,6 +213,7 @@ class EventStatisticsRefundServiceTest extends TestCase
             ->with(
                 [
                     'sales_total_gross' => 450.00,     // 500 - 50
+                    'sales_total_organizer' => 400.00, // 450 - 50
                     'total_refunded' => 75.00,         // 25 + 50
                     'total_tax' => 36.00,              // 40 - 4
                     'total_fee' => 9.00,               // 10 - 1
@@ -225,6 +243,7 @@ class EventStatisticsRefundServiceTest extends TestCase
 
         // Create mock order
         $order = Mockery::mock(OrderDomainObject::class);
+        $order->shouldReceive('getTotalRefunded')->andReturn(0.0);
         $order->shouldReceive('getEventId')->andReturn($eventId);
         $order->shouldReceive('getId')->andReturn($orderId);
         $order->shouldReceive('getCurrency')->andReturn($currency);
@@ -258,6 +277,7 @@ class EventStatisticsRefundServiceTest extends TestCase
 
         // Create mock order
         $order = Mockery::mock(OrderDomainObject::class);
+        $order->shouldReceive('getTotalRefunded')->andReturn(0.0);
         $order->shouldReceive('getEventId')->andReturn($eventId);
         $order->shouldReceive('getId')->andReturn($orderId);
         $order->shouldReceive('getCreatedAt')->andReturn($orderDate);
@@ -272,6 +292,7 @@ class EventStatisticsRefundServiceTest extends TestCase
         // Mock aggregate event statistics
         $eventStatistics = Mockery::mock(EventStatisticDomainObject::class);
         $eventStatistics->shouldReceive('getSalesTotalGross')->andReturn(1000.00);
+        $eventStatistics->shouldReceive('getSalesTotalOrganizer')->andReturn(900.00);
         $eventStatistics->shouldReceive('getTotalRefunded')->andReturn(50.00);
         $eventStatistics->shouldReceive('getTotalTax')->andReturn(80.00);
         $eventStatistics->shouldReceive('getTotalFee')->andReturn(20.00);

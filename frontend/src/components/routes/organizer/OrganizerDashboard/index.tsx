@@ -102,8 +102,8 @@ export const OrganizerDashboard = () => {
         {label: t`Orders`, value: formatNumber(stats.total_orders)},
     ] : [
         {
-            label: t`Gross sales`,
-            value: stats ? formatCurrency(stats.total_gross_sales, currency) : null,
+            label: t`Your sales`,
+            value: stats ? formatCurrency(stats.total_organizer_sales ?? stats.total_gross_sales, currency) : null,
             hint: awaitingPayment > 0 ? t`+ ${formatCurrency(awaitingPayment, currency)} awaiting payment collection` : null,
         },
         {label: t`Tickets sold`, value: stats ? formatNumber(stats.total_products_sold) : null},

@@ -18,6 +18,10 @@ interface RefundOrderModalProps extends GenericModalProps {
     orderId: IdParam;
 }
 
+const refundableAmount = (order: Order): number => {
+    return Number((order.refundable_amount ?? (order.total_gross - order.total_refunded)).toFixed(2));
+};
+
 export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
     const {eventId} = useParams();
     const {data: order} = useGetOrder(eventId, orderId);
@@ -38,7 +42,7 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
         if (!order) {
             return;
         }
-        form.setFieldValue('amount', order.total_gross - order.total_refunded)
+        form.setFieldValue('amount', refundableAmount(order))
     }, [order]);
 
     if (!order) {
@@ -72,11 +76,12 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
         if (!item || !item.quantity) {
             return 0;
         }
-        return (item.total_gross ?? item.price * item.quantity) / item.quantity;
+        const itemTotal = item.total_gross ?? item.price * item.quantity;
+        return (itemTotal - (item.total_service_fee ?? 0)) / item.quantity;
     };
 
     const modalForm = ({order, form}: { order: Order, form: UseFormReturnType<RefundOrderPayload> }) => {
-        const remainingAmount = order.total_gross - order.total_refunded;
+        const remainingAmount = refundableAmount(order);
         const isPartialRefund = form.values.amount < remainingAmount;
         const activeTickets = (order.attendees || []).filter((attendee) => attendee.status === 'ACTIVE');
         const selectedIds = form.values.attendee_ids || [];
@@ -121,6 +126,7 @@ export const RefundOrderModal = ({onClose, orderId}: RefundOrderModalProps) => {
                             </Group>
                         </Stack>
                     </Paper>
+                    <Text size="xs" c="dimmed">{t`Only the ticket price is refunded: the service fees and the cancellation protection are never refunded.`}</Text>
 
                     {activeTickets.length > 0 && !form.values.cancel_order && (
                         <Stack gap={6}>

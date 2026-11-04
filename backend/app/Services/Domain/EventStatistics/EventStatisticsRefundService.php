@@ -7,6 +7,7 @@ namespace HiEvents\Services\Domain\EventStatistics;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\Repository\Interfaces\EventDailyStatisticRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventStatisticRepositoryInterface;
+use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use HiEvents\Values\MoneyValue;
 use Illuminate\Support\Carbon;
 use Psr\Log\LoggerInterface;
@@ -18,6 +19,7 @@ class EventStatisticsRefundService
         private readonly EventStatisticRepositoryInterface      $eventStatisticsRepository,
         private readonly EventDailyStatisticRepositoryInterface $eventDailyStatisticRepository,
         private readonly LoggerInterface                        $logger,
+        private readonly OrderOrganizerShareService             $organizerShareService,
     )
     {
     }
@@ -27,14 +29,20 @@ class EventStatisticsRefundService
      */
     public function updateForRefund(OrderDomainObject $order, MoneyValue $refundAmount): void
     {
-        $this->updateAggregateStatisticsForRefund($order, $refundAmount);
-        $this->updateDailyStatisticsForRefund($order, $refundAmount);
+        $organizerRefund = $this->organizerShareService->getOrganizerPartOfRefund(
+            order: $order,
+            refundAmount: $refundAmount->toFloat(),
+            alreadyRefunded: $order->getTotalRefunded(),
+        );
+
+        $this->updateAggregateStatisticsForRefund($order, $refundAmount, $organizerRefund);
+        $this->updateDailyStatisticsForRefund($order, $refundAmount, $organizerRefund);
     }
 
     /**
      * Update aggregate statistics for a refund
      */
-    private function updateAggregateStatisticsForRefund(OrderDomainObject $order, MoneyValue $refundAmount): void
+    private function updateAggregateStatisticsForRefund(OrderDomainObject $order, MoneyValue $refundAmount, float $organizerRefund): void
     {
         $eventStatistics = $this->eventStatisticsRepository->findFirstWhere([
             'event_id' => $order->getEventId(),
@@ -53,6 +61,7 @@ class EventStatisticsRefundService
 
         $updates = [
             'sales_total_gross' => $eventStatistics->getSalesTotalGross() - $refundAmount->toFloat(),
+            'sales_total_organizer' => max(0, $eventStatistics->getSalesTotalOrganizer() - $organizerRefund),
             'total_refunded' => $eventStatistics->getTotalRefunded() + $refundAmount->toFloat(),
             'total_tax' => max(0, $adjustedTotalTax),
             'total_fee' => max(0, $adjustedTotalFee),
@@ -83,7 +92,7 @@ class EventStatisticsRefundService
     /**
      * Update daily statistics for a refund
      */
-    private function updateDailyStatisticsForRefund(OrderDomainObject $order, MoneyValue $refundAmount): void
+    private function updateDailyStatisticsForRefund(OrderDomainObject $order, MoneyValue $refundAmount, float $organizerRefund): void
     {
         $orderDate = (new Carbon($order->getCreatedAt()))->format('Y-m-d');
 
@@ -113,6 +122,7 @@ class EventStatisticsRefundService
 
         $updates = [
             'sales_total_gross' => $eventDailyStatistic->getSalesTotalGross() - $refundAmount->toFloat(),
+            'sales_total_organizer' => max(0, $eventDailyStatistic->getSalesTotalOrganizer() - $organizerRefund),
             'total_refunded' => $eventDailyStatistic->getTotalRefunded() + $refundAmount->toFloat(),
             'total_tax' => max(0, $adjustedTotalTax),
             'total_fee' => max(0, $adjustedTotalFee),
