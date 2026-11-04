@@ -44,7 +44,7 @@ class SocialPostValidatorTest extends TestCase
     #[DataProvider('validPosts')]
     public function test_valid_posts_pass(SocialNetwork $network, SocialPostFormat $format, array $media, ?string $link = null): void
     {
-        (new SocialPostValidator(new SocialMediaRules))->validate($this->postIn($network, $format, $media, $link, 'Halloween'), $this->connection());
+        (new SocialPostValidator(new SocialMediaRules))->validate($this->postIn($network, $format, $media, $link, 'Halloween'));
 
         $this->addToAssertionCount(1);
     }
@@ -54,7 +54,7 @@ class SocialPostValidatorTest extends TestCase
     {
         $this->expectException(InvalidSocialPostException::class);
 
-        (new SocialPostValidator(new SocialMediaRules))->validate($this->postIn($network, $format, $media, $link, $caption), $this->connection());
+        (new SocialPostValidator(new SocialMediaRules))->validate($this->postIn($network, $format, $media, $link, $caption));
     }
 
     public function test_instagram_caption_length_is_limited(): void
@@ -63,7 +63,33 @@ class SocialPostValidatorTest extends TestCase
 
         (new SocialPostValidator(new SocialMediaRules))->validate(
             $this->postIn(SocialNetwork::INSTAGRAM, SocialPostFormat::IMAGE, [['https://cdn.test/a.jpg', 'IMAGE']], null, str_repeat('a', 2201)),
-            $this->connection(),
+        );
+    }
+
+    public function test_connected_page_with_instagram_account_can_publish_everywhere(): void
+    {
+        $validator = new SocialPostValidator(new SocialMediaRules);
+
+        $validator->validateConnection(SocialNetwork::FACEBOOK, $this->connection());
+        $validator->validateConnection(SocialNetwork::INSTAGRAM, $this->connection());
+
+        $this->addToAssertionCount(2);
+    }
+
+    public function test_publishing_needs_a_connected_page(): void
+    {
+        $this->expectException(InvalidSocialPostException::class);
+
+        (new SocialPostValidator(new SocialMediaRules))->validateConnection(SocialNetwork::FACEBOOK, null);
+    }
+
+    public function test_publishing_on_instagram_needs_a_linked_professional_account(): void
+    {
+        $this->expectException(InvalidSocialPostException::class);
+
+        (new SocialPostValidator(new SocialMediaRules))->validateConnection(
+            SocialNetwork::INSTAGRAM,
+            (new OrganizerSocialConnectionDomainObject)->setInstagramAccountId(null),
         );
     }
 

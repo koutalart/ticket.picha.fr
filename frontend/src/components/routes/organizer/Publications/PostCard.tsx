@@ -1,6 +1,6 @@
 import {t} from "@lingui/macro";
 import {Badge, Button, Text} from "@mantine/core";
-import {IconBrandFacebook, IconBrandInstagram, IconCheck, IconExternalLink, IconHeart, IconMessageCircle, IconTrash, IconX} from "@tabler/icons-react";
+import {IconBrandFacebook, IconBrandInstagram, IconCheck, IconExternalLink, IconHeart, IconMessageCircle, IconPencil, IconTrash, IconX} from "@tabler/icons-react";
 import {SocialConnection, SocialPost, SocialPostStatus} from "../../../../types.ts";
 import {formatNumber} from "../../../../utilites/helpers.ts";
 import {PostMedia} from "./PostMedia.tsx";
@@ -8,15 +8,16 @@ import {accountName, FeedView, timeLabel} from "./feedView.ts";
 import {postFormatLabel, postStatusColor, postStatusLabel} from "./labels.ts";
 import classes from "./Publications.module.scss";
 
-export const APPROVABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'FAILED', 'CANCELLED'];
-export const CANCELLABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'SCHEDULED'];
-export const DELETABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'FAILED', 'CANCELLED'];
+export const APPROVABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'CHANGES_REQUESTED', 'FAILED', 'CANCELLED'];
+export const CANCELLABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'CHANGES_REQUESTED', 'SCHEDULED'];
+export const DELETABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'CHANGES_REQUESTED', 'FAILED', 'CANCELLED'];
 
 export interface PostActions {
     canPublish: boolean;
     approve: (post: SocialPost) => void;
     cancel: (post: SocialPost) => void;
     remove: (post: SocialPost) => void;
+    requestChanges: (post: SocialPost) => void;
     pendingPostId?: number;
 }
 
@@ -49,34 +50,51 @@ export const PostActionButtons = ({view, actions}: { view: FeedView, actions: Po
     const post = view.post;
 
     return (
-        <div className={classes.actions}>
-            {post && APPROVABLE.includes(post.status) && (
-                <Button
-                    size="sm"
-                    leftSection={<IconCheck size={16}/>}
-                    disabled={!actions.canPublish}
-                    loading={actions.pendingPostId === post.id}
-                    onClick={() => actions.approve(post)}
-                >
-                    {post.status === 'FAILED' ? t`Retry` : t`Approve`}
-                </Button>
+        <>
+            {post?.status === 'SCHEDULED' && !actions.canPublish && !view.lastError && (
+                <Text size="xs" c="orange" mt={6}>{t`Approved: waiting for your Facebook page to be connected.`}</Text>
             )}
-            {post && CANCELLABLE.includes(post.status) && (
-                <Button size="sm" variant="default" leftSection={<IconX size={16}/>} onClick={() => actions.cancel(post)}>
-                    {t`Cancel`}
-                </Button>
+            {post?.status === 'CHANGES_REQUESTED' && post.change_request_comment && (
+                <Text size="xs" c="grape" mt={6}>
+                    <strong>{t`Your request:`}</strong> {post.change_request_comment}
+                </Text>
             )}
-            {view.permalink && (
-                <Button component="a" href={view.permalink} target="_blank" rel="noopener noreferrer" size="sm" variant="light" leftSection={<IconExternalLink size={16}/>}>
-                    {view.network === 'INSTAGRAM' ? t`View on Instagram` : t`View on Facebook`}
-                </Button>
+            {post?.status === 'CANCELLED' && post.replaced_by_post_id && (
+                <Text size="xs" c="dimmed" mt={6}>{t`Replaced by a new version to approve.`}</Text>
             )}
-            {post && DELETABLE.includes(post.status) && (
-                <Button size="sm" variant="subtle" color="red" leftSection={<IconTrash size={16}/>} onClick={() => actions.remove(post)}>
-                    {t`Delete`}
-                </Button>
-            )}
-        </div>
+            <div className={classes.actions}>
+                {post && APPROVABLE.includes(post.status) && (
+                    <Button
+                        size="sm"
+                        leftSection={<IconCheck size={16}/>}
+                        loading={actions.pendingPostId === post.id}
+                        onClick={() => actions.approve(post)}
+                    >
+                        {post.status === 'FAILED' ? t`Retry` : t`Approve`}
+                    </Button>
+                )}
+                {post && post.status === 'PENDING_APPROVAL' && (
+                    <Button size="sm" variant="light" color="grape" leftSection={<IconPencil size={16}/>} onClick={() => actions.requestChanges(post)}>
+                        {t`Request a change`}
+                    </Button>
+                )}
+                {post && CANCELLABLE.includes(post.status) && (
+                    <Button size="sm" variant="default" leftSection={<IconX size={16}/>} onClick={() => actions.cancel(post)}>
+                        {t`Cancel`}
+                    </Button>
+                )}
+                {view.permalink && (
+                    <Button component="a" href={view.permalink} target="_blank" rel="noopener noreferrer" size="sm" variant="light" leftSection={<IconExternalLink size={16}/>}>
+                        {view.network === 'INSTAGRAM' ? t`View on Instagram` : t`View on Facebook`}
+                    </Button>
+                )}
+                {post && DELETABLE.includes(post.status) && (
+                    <Button size="sm" variant="subtle" color="red" leftSection={<IconTrash size={16}/>} onClick={() => actions.remove(post)}>
+                        {t`Delete`}
+                    </Button>
+                )}
+            </div>
+        </>
     );
 };
 

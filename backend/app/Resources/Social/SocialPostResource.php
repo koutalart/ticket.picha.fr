@@ -40,6 +40,10 @@ class SocialPostResource extends BaseResource
             'created_by_user_id' => $this->getCreatedByUserId(),
             'approved_by_user_id' => $this->getApprovedByUserId(),
             'approved_at' => $this->getApprovedAt(),
+            'change_request_comment' => $this->getChangeRequestComment(),
+            'change_requested_at' => $this->getChangeRequestedAt(),
+            'change_requested_by_user_id' => $this->getChangeRequestedByUserId(),
+            'replaced_by_post_id' => $this->getReplacedByPostId(),
             'created_at' => $this->getCreatedAt(),
             'updated_at' => $this->getUpdatedAt(),
         ];

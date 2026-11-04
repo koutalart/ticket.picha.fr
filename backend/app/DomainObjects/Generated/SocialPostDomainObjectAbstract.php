@@ -15,6 +15,8 @@ abstract class SocialPostDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     final public const ACCOUNT_ID = 'account_id';
     final public const CREATED_BY_USER_ID = 'created_by_user_id';
     final public const APPROVED_BY_USER_ID = 'approved_by_user_id';
+    final public const CHANGE_REQUESTED_BY_USER_ID = 'change_requested_by_user_id';
+    final public const REPLACED_BY_POST_ID = 'replaced_by_post_id';
     final public const NETWORK = 'network';
     final public const FORMAT = 'format';
     final public const CAPTION = 'caption';
@@ -33,12 +35,16 @@ abstract class SocialPostDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     final public const APPROVED_AT = 'approved_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const CHANGE_REQUEST_COMMENT = 'change_request_comment';
+    final public const CHANGE_REQUESTED_AT = 'change_requested_at';
 
     protected int $id;
     protected int $organizer_id;
     protected int $account_id;
     protected ?int $created_by_user_id = null;
     protected ?int $approved_by_user_id = null;
+    protected ?int $change_requested_by_user_id = null;
+    protected ?int $replaced_by_post_id = null;
     protected string $network;
     protected string $format;
     protected ?string $caption = null;
@@ -57,6 +63,8 @@ abstract class SocialPostDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     protected ?string $approved_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?string $change_request_comment = null;
+    protected ?string $change_requested_at = null;
 
     public function toArray(): array
     {
@@ -66,6 +74,8 @@ abstract class SocialPostDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
                     'account_id' => $this->account_id ?? null,
                     'created_by_user_id' => $this->created_by_user_id ?? null,
                     'approved_by_user_id' => $this->approved_by_user_id ?? null,
+                    'change_requested_by_user_id' => $this->change_requested_by_user_id ?? null,
+                    'replaced_by_post_id' => $this->replaced_by_post_id ?? null,
                     'network' => $this->network ?? null,
                     'format' => $this->format ?? null,
                     'caption' => $this->caption ?? null,
@@ -84,6 +94,8 @@ abstract class SocialPostDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
                     'approved_at' => $this->approved_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'change_request_comment' => $this->change_request_comment ?? null,
+                    'change_requested_at' => $this->change_requested_at ?? null,
                 ];
     }
 
@@ -140,6 +152,28 @@ abstract class SocialPostDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     public function getApprovedByUserId(): ?int
     {
         return $this->approved_by_user_id;
+    }
+
+    public function setChangeRequestedByUserId(?int $change_requested_by_user_id): self
+    {
+        $this->change_requested_by_user_id = $change_requested_by_user_id;
+        return $this;
+    }
+
+    public function getChangeRequestedByUserId(): ?int
+    {
+        return $this->change_requested_by_user_id;
+    }
+
+    public function setReplacedByPostId(?int $replaced_by_post_id): self
+    {
+        $this->replaced_by_post_id = $replaced_by_post_id;
+        return $this;
+    }
+
+    public function getReplacedByPostId(): ?int
+    {
+        return $this->replaced_by_post_id;
     }
 
     public function setNetwork(string $network): self
@@ -338,5 +372,27 @@ abstract class SocialPostDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setChangeRequestComment(?string $change_request_comment): self
+    {
+        $this->change_request_comment = $change_request_comment;
+        return $this;
+    }
+
+    public function getChangeRequestComment(): ?string
+    {
+        return $this->change_request_comment;
+    }
+
+    public function setChangeRequestedAt(?string $change_requested_at): self
+    {
+        $this->change_requested_at = $change_requested_at;
+        return $this;
+    }
+
+    public function getChangeRequestedAt(): ?string
+    {
+        return $this->change_requested_at;
     }
 }

@@ -26,9 +26,15 @@ use Throwable;
 
 class SocialPostService
 {
+    private const REPLACEABLE_STATUSES = [
+        SocialPostStatus::PENDING_APPROVAL,
+        SocialPostStatus::CHANGES_REQUESTED,
+    ];
+
     private const EDITABLE_STATUSES = [
         SocialPostStatus::DRAFT,
         SocialPostStatus::PENDING_APPROVAL,
+        SocialPostStatus::CHANGES_REQUESTED,
         SocialPostStatus::SCHEDULED,
         SocialPostStatus::FAILED,
         SocialPostStatus::CANCELLED,
@@ -44,6 +50,7 @@ class SocialPostService
 
     /**
      * Creates one post per network. Posts prepared by the assistant always wait for a person's approval.
+     * A draft or a post to approve does not need a connected page: the page is only checked when the post is published.
      *
      * @return Collection<int, SocialPostDomainObject>
      *
@@ -56,9 +63,18 @@ class SocialPostService
             throw new InvalidSocialPostException(__('Choose at least one network.'));
         }
 
-        $connection = $this->connectionService->findForOrganizer($dto->accountId, $dto->organizerId);
         $caption = $this->cleanCaption($dto->caption);
         $media = $this->hydrateFiles($dto->organizerId, $dto->media);
+
+        $status = match (true) {
+            $dto->asDraft => SocialPostStatus::DRAFT,
+            $dto->source === SocialPostSource::ASSISTANT => SocialPostStatus::PENDING_APPROVAL,
+            default => SocialPostStatus::SCHEDULED,
+        };
+
+        $connection = $status === SocialPostStatus::SCHEDULED
+            ? $this->connectionService->findForOrganizer($dto->accountId, $dto->organizerId)
+            : null;
 
         foreach ($dto->networks as $network) {
             $this->validator->validate(new SocialPostDataDTO(
@@ -68,18 +84,49 @@ class SocialPostService
                 media: $media,
                 link: $dto->link,
                 scheduledAt: $dto->scheduledAt,
-            ), $connection);
+            ));
+
+            if ($status === SocialPostStatus::SCHEDULED) {
+                $this->validator->validateConnection($network, $connection);
+            }
         }
 
-        $status = match (true) {
-            $dto->asDraft => SocialPostStatus::DRAFT,
-            $dto->source === SocialPostSource::ASSISTANT => SocialPostStatus::PENDING_APPROVAL,
-            default => SocialPostStatus::SCHEDULED,
-        };
+        $replaced = array_map(fn (int $postId) => $this->findReplaceable($dto->organizerId, $postId), array_unique($dto->replacesPostIds));
 
         $this->mediaFileService->keep($this->fileIds($media));
 
-        return $this->databaseManager->transaction(fn () => collect(array_unique($dto->networks, SORT_REGULAR))
+        return $this->databaseManager->transaction(function () use ($dto, $caption, $media, $status, $replaced) {
+            $posts = $this->createPerNetwork($dto, $caption, $media, $status);
+
+            foreach ($replaced as $old) {
+                $this->postRepository->updateFromArray($old->getId(), [
+                    SocialPostDomainObjectAbstract::STATUS => SocialPostStatus::CANCELLED->name,
+                    SocialPostDomainObjectAbstract::NEXT_ATTEMPT_AT => null,
+                    SocialPostDomainObjectAbstract::REPLACED_BY_POST_ID => $this->replacementFor($old, $posts)?->getId(),
+                ]);
+            }
+
+            return $posts;
+        });
+    }
+
+    /**
+     * The new post of the same network when there is one, the first new post otherwise.
+     *
+     * @param  Collection<int, SocialPostDomainObject>  $posts
+     */
+    private function replacementFor(SocialPostDomainObject $old, Collection $posts): ?SocialPostDomainObject
+    {
+        return $posts->first(fn (SocialPostDomainObject $post) => $post->getNetwork() === $old->getNetwork()) ?? $posts->first();
+    }
+
+    /**
+     * @param  SocialMediaItemDTO[]  $media
+     * @return Collection<int, SocialPostDomainObject>
+     */
+    private function createPerNetwork(CreateSocialPostsDTO $dto, ?string $caption, array $media, SocialPostStatus $status): Collection
+    {
+        return collect(array_unique($dto->networks, SORT_REGULAR))
             ->map(fn (SocialNetwork $network) => $this->postRepository->create([
                 SocialPostDomainObjectAbstract::ORGANIZER_ID => $dto->organizerId,
                 SocialPostDomainObjectAbstract::ACCOUNT_ID => $dto->accountId,
@@ -96,7 +143,42 @@ class SocialPostService
                 SocialPostDomainObjectAbstract::APPROVED_BY_USER_ID => $status === SocialPostStatus::SCHEDULED ? $dto->userId : null,
                 SocialPostDomainObjectAbstract::APPROVED_AT => $status === SocialPostStatus::SCHEDULED ? Carbon::now() : null,
             ]))
-            ->values());
+            ->values();
+    }
+
+    /**
+     * The organizer asks for changes to a post waiting for approval. The assistant reads the request and proposes a new version.
+     *
+     * @throws SocialPostNotEditableException
+     */
+    public function requestChanges(int $organizerId, int $postId, ?int $userId, string $comment): SocialPostDomainObject
+    {
+        $post = $this->findInOrganizer($organizerId, $postId);
+
+        if ($post->getStatus() !== SocialPostStatus::PENDING_APPROVAL->name) {
+            throw new SocialPostNotEditableException(__('Changes can only be requested on a post waiting for approval.'));
+        }
+
+        return $this->postRepository->updateFromArray($post->getId(), [
+            SocialPostDomainObjectAbstract::STATUS => SocialPostStatus::CHANGES_REQUESTED->name,
+            SocialPostDomainObjectAbstract::CHANGE_REQUEST_COMMENT => $this->cleanCaption($comment),
+            SocialPostDomainObjectAbstract::CHANGE_REQUESTED_AT => Carbon::now(),
+            SocialPostDomainObjectAbstract::CHANGE_REQUESTED_BY_USER_ID => $userId,
+            SocialPostDomainObjectAbstract::NEXT_ATTEMPT_AT => null,
+        ]);
+    }
+
+    /**
+     * @return Collection<int, SocialPostDomainObject>
+     */
+    public function findChangeRequests(?int $organizerId): Collection
+    {
+        return $this->postRepository->findWhere(array_filter([
+            SocialPostDomainObjectAbstract::STATUS => SocialPostStatus::CHANGES_REQUESTED->name,
+            SocialPostDomainObjectAbstract::ORGANIZER_ID => $organizerId,
+        ], fn ($value) => $value !== null))
+            ->sortBy(fn (SocialPostDomainObject $post) => $post->getChangeRequestedAt())
+            ->values();
     }
 
     /**
@@ -106,7 +188,6 @@ class SocialPostService
      * @throws SocialPostNotEditableException
      */
     public function update(
-        int $accountId,
         int $organizerId,
         int $postId,
         ?string $caption,
@@ -125,7 +206,7 @@ class SocialPostService
             media: $media,
             link: $link,
             scheduledAt: $scheduledAt,
-        ), $this->connectionService->findForOrganizer($accountId, $organizerId));
+        ));
 
         $isScheduled = $post->getStatus() === SocialPostStatus::SCHEDULED->name;
         $this->mediaFileService->keep($this->fileIds($media));
@@ -142,6 +223,7 @@ class SocialPostService
 
     /**
      * Approves a draft, a pending or a failed post: it will be published at its scheduled time, or right away.
+     * Without a connected page it stays scheduled and leaves as soon as a page is connected.
      *
      * @throws SocialPostNotEditableException
      */
@@ -248,9 +330,27 @@ class SocialPostService
     }
 
     /**
+     * @throws InvalidSocialPostException
+     */
+    private function findReplaceable(int $organizerId, int $postId): SocialPostDomainObject
+    {
+        try {
+            $post = $this->findInOrganizer($organizerId, $postId);
+        } catch (SocialPostNotEditableException $exception) {
+            throw new InvalidSocialPostException($exception->getMessage());
+        }
+
+        if (! in_array(SocialPostStatus::fromName($post->getStatus()), self::REPLACEABLE_STATUSES, true)) {
+            throw new InvalidSocialPostException(__('Only a post waiting for approval or with requested changes can be replaced.'));
+        }
+
+        return $post;
+    }
+
+    /**
      * @throws SocialPostNotEditableException
      */
-    private function findEditable(int $organizerId, int $postId): SocialPostDomainObject
+    private function findInOrganizer(int $organizerId, int $postId): SocialPostDomainObject
     {
         /** @var SocialPostDomainObject|null $post */
         $post = $this->postRepository->findFirstWhere([
@@ -261,6 +361,16 @@ class SocialPostService
         if ($post === null) {
             throw new SocialPostNotEditableException(__('Post not found.'));
         }
+
+        return $post;
+    }
+
+    /**
+     * @throws SocialPostNotEditableException
+     */
+    private function findEditable(int $organizerId, int $postId): SocialPostDomainObject
+    {
+        $post = $this->findInOrganizer($organizerId, $postId);
 
         if (! in_array(SocialPostStatus::fromName($post->getStatus()), self::EDITABLE_STATUSES, true)) {
             throw new SocialPostNotEditableException(__('This post is being published or is already published and can no longer be changed.'));

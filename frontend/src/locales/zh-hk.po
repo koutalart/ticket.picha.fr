@@ -277,6 +277,10 @@ msgstr ""
 msgid "{availableCount} of {totalCount} available"
 msgstr "{totalCount} 中有 {availableCount} 可用"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:32
+msgid "{COMMENT_MAX_LENGTH} characters maximum."
+msgstr "最多 {COMMENT_MAX_LENGTH} 個字元。"
+
 #: src/components/common/Countdown/index.tsx:36
 msgid "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds"
 msgstr "{days} 天, {hours} 小時, {minutes} 分鐘, 和 {seconds} 秒"
@@ -1313,7 +1317,7 @@ msgstr "全部"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:233
-#: src/components/routes/organizer/Publications/index.tsx:135
+#: src/components/routes/organizer/Publications/index.tsx:141
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
@@ -1671,7 +1675,7 @@ msgstr "應用促銷代碼"
 msgid "Apply this {type} to all new products"
 msgstr "將此{type}應用於所有新產品"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:73
 #: src/components/routes/refund-approval/index.tsx:121
 msgid "Approve"
 msgstr "批准"
@@ -1680,7 +1684,7 @@ msgstr "批准"
 msgid "Approve Message"
 msgstr "批准訊息"
 
-#: src/components/routes/organizer/Publications/index.tsx:70
+#: src/components/routes/organizer/Publications/index.tsx:75
 msgid "Approve this post? {when}"
 msgstr "批准此帖子？{when}"
 
@@ -1695,6 +1699,10 @@ msgstr "已批准，由專人完成退款"
 #: src/components/routes/refund-approval/index.tsx:21
 msgid "Approved, refund in progress"
 msgstr "已批准，退款處理中"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:55
+msgid "Approved: waiting for your Facebook page to be connected."
+msgstr "已批准：等待連接你的 Facebook 專頁。"
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:36
 msgctxt "past events section heading"
@@ -2669,7 +2677,8 @@ msgstr "最後去不了？門票可退款。"
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:65
-#: src/components/routes/organizer/Publications/PostCard.tsx:66
+#: src/components/routes/organizer/Publications/PostCard.tsx:83
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:69
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
@@ -2777,12 +2786,12 @@ msgctxt "orders filter"
 msgid "Cancelled"
 msgstr "已取消"
 
-#: src/components/routes/organizer/Publications/labels.ts:19
+#: src/components/routes/organizer/Publications/labels.ts:21
 msgctxt "social post status"
 msgid "Cancelled"
 msgstr "已取消"
 
-#: src/components/routes/organizer/Publications/labels.ts:71
+#: src/components/routes/organizer/Publications/labels.ts:77
 msgctxt "social posts tab"
 msgid "Cancelled"
 msgstr "已取消"
@@ -2845,7 +2854,7 @@ msgstr "卡片「觸及活躍觀眾」"
 msgid "Card \"Tailored partnership\""
 msgstr "卡片「度身合作」"
 
-#: src/components/routes/organizer/Publications/labels.ts:46
+#: src/components/routes/organizer/Publications/labels.ts:50
 msgid "Carousel"
 msgstr "輪播"
 
@@ -2907,6 +2916,10 @@ msgstr "更改密碼"
 msgid "Change path"
 msgstr "更換路徑"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:40
+msgid "Change request sent"
+msgstr "修改要求已發送"
+
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:964
 msgid "Change to give back: {0}"
 msgstr ""
@@ -2914,6 +2927,16 @@ msgstr ""
 #: src/components/modals/OfferWaitlistModal/index.tsx:98
 msgid "Change waitlist settings"
 msgstr "更改等候名單設定"
+
+#: src/components/routes/organizer/Publications/labels.ts:11
+msgctxt "social post status"
+msgid "Changes requested"
+msgstr "已要求修改"
+
+#: src/components/routes/organizer/Publications/labels.ts:67
+msgctxt "social posts tab"
+msgid "Changes requested"
+msgstr "已要求修改"
 
 #: src/components/routes/event/Reports/SalesBySourceReport/index.tsx:60
 msgid "Channel"
@@ -3432,7 +3455,7 @@ msgstr "以逗號分隔的描述活動的關鍵字。搜索引擎將使用這些
 msgid "Command to run on the venue computer"
 msgstr "在場地電腦上運行的指令"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:108
+#: src/components/routes/organizer/Publications/PostCard.tsx:126
 #: src/components/routes/organizer/Publications/PostViewer.tsx:105
 msgid "Comments"
 msgstr "留言"
@@ -3660,10 +3683,6 @@ msgstr "連接並升級"
 msgid "Connect a Facebook page"
 msgstr "連接 Facebook 專頁"
 
-#: src/components/routes/organizer/Publications/index.tsx:115
-msgid "Connect a Facebook page to publish on Facebook and Instagram."
-msgstr "連接 Facebook 專頁即可在 Facebook 及 Instagram 上發佈。"
-
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:652
 msgid "Connect Documentation"
 msgstr "連接文檔"
@@ -3700,6 +3719,10 @@ msgstr "與 Stripe 連接"
 #: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:231
 msgid "Connect your Facebook page and the Instagram professional account linked to it to schedule your posts from PICHA. Every post is checked by a person before it goes out."
 msgstr "連接您的 Facebook 專頁及其連結的 Instagram 專業帳戶，即可在 PICHA 中排程發佈帖子。每則帖子發佈前都會由專人審核。"
+
+#: src/components/routes/organizer/Publications/index.tsx:121
+msgid "Connect your Facebook page so that your approved posts can go out."
+msgstr "連接你的 Facebook 專頁，已批准的帖子才能發佈。"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:144
 msgid "Connect your Stripe account to accept payments for tickets and products."
@@ -4713,7 +4736,7 @@ msgstr "刪除"
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/event/EventPages/index.tsx:101
 #: src/components/routes/event/EventPages/index.tsx:102
-#: src/components/routes/organizer/Publications/PostCard.tsx:76
+#: src/components/routes/organizer/Publications/PostCard.tsx:93
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
@@ -4782,7 +4805,7 @@ msgstr "刪除快速回覆「{0}」？"
 msgid "Delete the subscriber"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:84
+#: src/components/routes/organizer/Publications/index.tsx:90
 msgid "Delete this post from the log?"
 msgstr "從記錄中刪除此帖子？"
 
@@ -4818,6 +4841,10 @@ msgstr "按您的活動度身訂造的示範"
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:225
 msgid "Denmark"
 msgstr "丹麥"
+
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:29
+msgid "Describe the change in a few words."
+msgstr "用幾句話描述需要的修改。"
 
 #: src/components/forms/ProductCategoryForm/index.tsx:39
 #: src/components/forms/ProductForm/index.tsx:324
@@ -5061,7 +5088,7 @@ msgid "Draft saved"
 msgstr "草稿已儲存"
 
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:77
-#: src/components/routes/organizer/Publications/labels.ts:59
+#: src/components/routes/organizer/Publications/labels.ts:63
 msgid "Drafts"
 msgstr "草稿"
 
@@ -6359,12 +6386,12 @@ msgstr "Facebook 專頁已中斷連接"
 msgid "Failed"
 msgstr "失敗"
 
-#: src/components/routes/organizer/Publications/labels.ts:17
+#: src/components/routes/organizer/Publications/labels.ts:19
 msgctxt "social post status"
 msgid "Failed"
 msgstr "失敗"
 
-#: src/components/routes/organizer/Publications/labels.ts:69
+#: src/components/routes/organizer/Publications/labels.ts:75
 msgctxt "social posts tab"
 msgid "Failed"
 msgstr "失敗"
@@ -7650,7 +7677,7 @@ msgstr "如果您在我們這裡有帳戶，您將收到一封電子郵件，其
 msgid "Ignore"
 msgstr "忽略"
 
-#: src/components/routes/organizer/Publications/labels.ts:44
+#: src/components/routes/organizer/Publications/labels.ts:48
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:182
 msgid "Image"
 msgstr "圖片"
@@ -8117,11 +8144,19 @@ msgstr "此帳戶是否在歐盟註冊增值稅？"
 msgid "It stays a draft until you publish it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:67
+#: src/components/routes/organizer/Publications/index.tsx:73
+msgid "It will be published as soon as your Facebook page is connected."
+msgstr "你的 Facebook 專頁連接後將立即發佈。"
+
+#: src/components/routes/organizer/Publications/index.tsx:72
+msgid "It will be published on {0}, once your Facebook page is connected."
+msgstr "將於 {0} 發佈（需先連接你的 Facebook 專頁）。"
+
+#: src/components/routes/organizer/Publications/index.tsx:70
 msgid "It will be published on {0}."
 msgstr "將於 {0} 發佈。"
 
-#: src/components/routes/organizer/Publications/index.tsx:68
+#: src/components/routes/organizer/Publications/index.tsx:70
 msgid "It will be published within a minute."
 msgstr "將在一分鐘內發佈。"
 
@@ -8520,7 +8555,7 @@ msgstr ""
 msgid "Lighter version, for example 720p, used on phones."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:107
+#: src/components/routes/organizer/Publications/PostCard.tsx:125
 msgid "Likes"
 msgstr "讚好"
 
@@ -9388,7 +9423,7 @@ msgstr "新密碼"
 msgid "New permissions to grant"
 msgstr "需要授予新權限"
 
-#: src/components/routes/organizer/Publications/index.tsx:107
+#: src/components/routes/organizer/Publications/index.tsx:113
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:120
 msgid "New post"
 msgstr "新帖子"
@@ -9802,7 +9837,7 @@ msgstr "無需支付"
 msgid "No popular events in the last 14 days"
 msgstr "過去14天沒有熱門活動"
 
-#: src/components/routes/organizer/Publications/index.tsx:155
+#: src/components/routes/organizer/Publications/index.tsx:161
 msgid "No post yet."
 msgstr "暫無帖子。"
 
@@ -10542,8 +10577,8 @@ msgstr "開啟客戶檔案"
 msgid "Open the event flyer"
 msgstr "開啟活動海報"
 
-#: src/components/routes/organizer/Publications/index.tsx:118
-#: src/components/routes/organizer/Publications/index.tsx:128
+#: src/components/routes/organizer/Publications/index.tsx:124
+#: src/components/routes/organizer/Publications/index.tsx:134
 msgid "Open the settings"
 msgstr "開啟設定"
 
@@ -11640,7 +11675,7 @@ msgstr "相片（2 至 10 張）"
 msgid "Physical presales"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:42
+#: src/components/routes/organizer/Publications/PostCard.tsx:43
 msgid "PICHA"
 msgstr "PICHA"
 
@@ -11901,11 +11936,11 @@ msgstr "熱門活動（過去14天）"
 msgid "Portuguese"
 msgstr "葡萄牙語"
 
-#: src/components/routes/organizer/Publications/index.tsx:72
+#: src/components/routes/organizer/Publications/index.tsx:77
 msgid "Post approved"
 msgstr "帖子已批准"
 
-#: src/components/routes/organizer/Publications/index.tsx:79
+#: src/components/routes/organizer/Publications/index.tsx:85
 msgid "Post cancelled"
 msgstr "帖子已取消"
 
@@ -11918,7 +11953,7 @@ msgstr "結賬後信息"
 msgid "Post Checkout Message"
 msgstr "結帳後訊息"
 
-#: src/components/routes/organizer/Publications/index.tsx:87
+#: src/components/routes/organizer/Publications/index.tsx:93
 msgid "Post deleted"
 msgstr "帖子已刪除"
 
@@ -11984,7 +12019,7 @@ msgstr "想自行開始？"
 msgid "Prepare your event before publishing it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:44
+#: src/components/routes/organizer/Publications/PostCard.tsx:45
 msgid "Prepared by the assistant"
 msgstr "由助手準備"
 
@@ -12366,7 +12401,7 @@ msgid "Publication time"
 msgstr "發佈時間"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:86
-#: src/components/routes/organizer/Publications/index.tsx:105
+#: src/components/routes/organizer/Publications/index.tsx:111
 msgid "Publications"
 msgstr "發佈"
 
@@ -12387,20 +12422,20 @@ msgstr ""
 msgid "Publish the page"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/labels.ts:15
+#: src/components/routes/organizer/Publications/labels.ts:17
 msgid "Published"
 msgstr "已發佈"
 
-#: src/components/routes/organizer/Publications/labels.ts:67
+#: src/components/routes/organizer/Publications/labels.ts:73
 msgctxt "social posts tab"
 msgid "Published"
 msgstr "已發佈"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:43
+#: src/components/routes/organizer/Publications/PostCard.tsx:44
 msgid "Published directly on Facebook"
 msgstr "直接發佈於 Facebook"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:43
+#: src/components/routes/organizer/Publications/PostCard.tsx:44
 msgid "Published directly on Instagram"
 msgstr "直接發佈於 Instagram"
 
@@ -12408,8 +12443,8 @@ msgstr "直接發佈於 Instagram"
 msgid "Published on {0}"
 msgstr "發佈於 {0}"
 
-#: src/components/routes/organizer/Publications/labels.ts:13
-#: src/components/routes/organizer/Publications/labels.ts:65
+#: src/components/routes/organizer/Publications/labels.ts:15
+#: src/components/routes/organizer/Publications/labels.ts:71
 msgid "Publishing"
 msgstr "發佈中"
 
@@ -12700,7 +12735,7 @@ msgstr "推薦"
 msgid "Reconnect"
 msgstr "重新連接"
 
-#: src/components/routes/organizer/Publications/index.tsx:125
+#: src/components/routes/organizer/Publications/index.tsx:131
 msgid "Reconnect the Facebook page to read and answer the comments of your posts."
 msgstr "重新連接 Facebook 專頁，即可查看並回覆帖子留言。"
 
@@ -12721,7 +12756,7 @@ msgstr "Reddit"
 msgid "Redirecting to Stripe..."
 msgstr "正在重定向到 Stripe..."
 
-#: src/components/routes/organizer/Publications/labels.ts:48
+#: src/components/routes/organizer/Publications/labels.ts:52
 msgid "Reel"
 msgstr "Reel"
 
@@ -13161,6 +13196,10 @@ msgstr ""
 msgid "Replace the video"
 msgstr ""
 
+#: src/components/routes/organizer/Publications/PostCard.tsx:63
+msgid "Replaced by a new version to approve."
+msgstr "已被待批准的新版本取代。"
+
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:40
 msgid "Replaces the footer of the page when the full screen header and the embedded registration are used: newsletter, social networks, useful links and legal information."
 msgstr ""
@@ -13226,6 +13265,11 @@ msgstr ""
 #: src/components/routes/kiosk/Orders/index.tsx:345
 msgid "Reprint the whole order"
 msgstr "重印整張訂單"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:78
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:55
+msgid "Request a change"
+msgstr "要求修改"
 
 #: src/components/routes/my-tickets/index.tsx:169
 msgid "Request a new link"
@@ -13382,7 +13426,7 @@ msgid "Retrieve the SMS sent and received with your PICHA SMS number before the 
 msgstr "取得在連接 webhook 之前用你的 PICHA SMS 號碼傳送和接收的短訊，例如以程式碼傳送的推廣短訊。已存在的訊息不會重複，也不會被標記為未讀。"
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:73
 #: src/hooks/useKioskTicketPrinter.tsx:227
 msgid "Retry"
 msgstr "重試"
@@ -13673,6 +13717,10 @@ msgstr "儲存門票設計"
 msgid "Save VAT Settings"
 msgstr "儲存增值稅設定"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:58
+msgid "Say what should change (text, image, time). A new version will be proposed to you."
+msgstr "說明需要修改的內容（文字、圖片、時間），我們會為你提供新版本。"
+
 #: src/components/layouts/CheckIn/index.tsx:476
 #: src/components/layouts/CheckIn/index.tsx:486
 msgid "Scan"
@@ -13750,12 +13798,12 @@ msgstr "已排程"
 msgid "Scheduled"
 msgstr "已排程"
 
-#: src/components/routes/organizer/Publications/labels.ts:11
+#: src/components/routes/organizer/Publications/labels.ts:13
 msgctxt "social post status"
 msgid "Scheduled"
 msgstr "已排程"
 
-#: src/components/routes/organizer/Publications/labels.ts:63
+#: src/components/routes/organizer/Publications/labels.ts:69
 msgctxt "social posts tab"
 msgid "Scheduled"
 msgstr "已排程"
@@ -14268,6 +14316,10 @@ msgstr ""
 msgid "Send the daily report"
 msgstr "發送每日報告"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:70
+msgid "Send the request"
+msgstr "發送要求"
+
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:112
 msgid "Send ticket purchases to Meta directly from our servers. This is more reliable than the pixel alone (ad blockers, iOS restrictions) and improves your ad campaign measurement."
 msgstr ""
@@ -14596,7 +14648,7 @@ msgstr "顯示營銷訂閱複選框"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "預設顯示營銷訂閱複選框"
 
-#: src/components/routes/organizer/Publications/index.tsx:174
+#: src/components/routes/organizer/Publications/index.tsx:180
 #: src/components/routes/product-widget/SelectProducts/index.tsx:537
 #: src/components/routes/product-widget/SelectProducts/index.tsx:652
 msgid "Show more"
@@ -14861,7 +14913,7 @@ msgid "Some tickets could not be printed."
 msgstr "部分門票未能列印。"
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:79
-#: src/components/routes/organizer/Publications/PostCard.tsx:128
+#: src/components/routes/organizer/Publications/PostCard.tsx:146
 msgid "Someone"
 msgstr "某人"
 
@@ -15124,7 +15176,7 @@ msgstr "加密儲存，之後不會再顯示。"
 msgid "Stories"
 msgstr "限時動態"
 
-#: src/components/routes/organizer/Publications/labels.ts:50
+#: src/components/routes/organizer/Publications/labels.ts:54
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:162
 msgid "Story"
 msgstr "限時動態"
@@ -15662,7 +15714,7 @@ msgstr ""
 msgid "Test the connection"
 msgstr "測試連線"
 
-#: src/components/routes/organizer/Publications/labels.ts:42
+#: src/components/routes/organizer/Publications/labels.ts:46
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:154
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:116
 msgid "Text"
@@ -15831,7 +15883,7 @@ msgstr "您查找的活動目前不可用。它可能已被刪除、過期或 UR
 msgid "The Facebook connection link has expired. Please try again."
 msgstr "Facebook 連接連結已過期。請重試。"
 
-#: src/components/routes/organizer/Publications/index.tsx:114
+#: src/components/routes/organizer/Publications/index.tsx:120
 msgid "The Facebook connection must be renewed before anything can be published."
 msgstr "發佈前需要續期 Facebook 連接。"
 
@@ -16789,7 +16841,7 @@ msgid "To"
 msgstr "收件人"
 
 #: src/components/routes/organizer/Publications/labels.ts:9
-#: src/components/routes/organizer/Publications/labels.ts:61
+#: src/components/routes/organizer/Publications/labels.ts:65
 msgid "To approve"
 msgstr "待批准"
 
@@ -17069,11 +17121,11 @@ msgstr "門票類型"
 msgid "Typography"
 msgstr "排版"
 
-#: src/components/routes/organizer/Publications/index.tsx:73
+#: src/components/routes/organizer/Publications/index.tsx:78
 msgid "Unable to approve the post"
 msgstr "無法批准帖子"
 
-#: src/components/routes/organizer/Publications/index.tsx:80
+#: src/components/routes/organizer/Publications/index.tsx:86
 msgid "Unable to cancel the post"
 msgstr "無法取消帖子"
 
@@ -17106,7 +17158,7 @@ msgstr "無法創建問題。請檢查您的詳細信息"
 msgid "Unable to delete the campaign"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:90
+#: src/components/routes/organizer/Publications/index.tsx:96
 msgid "Unable to delete the post"
 msgstr "無法刪除帖子"
 
@@ -17181,6 +17233,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:51
 msgid "Unable to save the welcome SMS setting"
 msgstr "無法儲存歡迎短訊設定"
+
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:45
+msgid "Unable to send the change request"
+msgstr "無法發送修改要求"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
 msgid "Unable to start the import"
@@ -17755,7 +17811,7 @@ msgstr "驗證緊..."
 msgid "Vertical 9:16 video, 3 to 90 seconds, MP4 or MOV, up to 100 MB"
 msgstr "直向影片 9:16，3 至 90 秒，MP4 或 MOV，不超過 100 MB"
 
-#: src/components/routes/organizer/Publications/labels.ts:52
+#: src/components/routes/organizer/Publications/labels.ts:56
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:182
 #: src/components/routes/organizer/QrCodes/posterLogos.tsx:41
 msgid "Video"
@@ -17824,11 +17880,11 @@ msgstr "查看日誌"
 msgid "View Message"
 msgstr "查看訊息"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:88
 msgid "View on Facebook"
 msgstr "在 Facebook 上查看"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:88
 msgid "View on Instagram"
 msgstr "在 Instagram 上查看"
 
@@ -17853,7 +17909,7 @@ msgstr "查看訂單詳情"
 msgid "View registrations and resend tickets."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:121
+#: src/components/routes/organizer/Publications/PostCard.tsx:139
 msgid "View the {0} comments"
 msgstr "查看全部 {0} 則留言"
 
@@ -18863,6 +18919,10 @@ msgstr "訂單確認後，您的買家和參加者會顯示在這裡。您也可
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "您的簽到名單已成功建立。與您的簽到工作人員共享以下連結。"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:61
+msgid "Your comment"
+msgstr "你的意見"
+
 #: src/components/routes/organizer/Contacts/index.tsx:189
 msgid "Your contacts have been exported."
 msgstr "您的聯絡人已匯出。"
@@ -19099,6 +19159,10 @@ msgstr ""
 #: src/components/routes/product-widget/AttendeeAttendance/index.tsx:130
 msgid "Your registration: {0}"
 msgstr ""
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:59
+msgid "Your request:"
+msgstr "你的要求："
 
 #: src/components/common/StatBoxes/index.tsx:89
 #: src/components/routes/event/EventDashboard/index.tsx:95

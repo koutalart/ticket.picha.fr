@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace HiEvents\Repository\Eloquent;
 
 use Carbon\Carbon;
+use HiEvents\DomainObjects\Generated\OrganizerSocialConnectionDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SocialPostDomainObjectAbstract;
 use HiEvents\DomainObjects\SocialPostDomainObject;
+use HiEvents\DomainObjects\Status\SocialConnectionStatus;
 use HiEvents\DomainObjects\Status\SocialPostStatus;
 use HiEvents\Models\SocialPost;
 use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
@@ -33,6 +35,17 @@ class SocialPostRepository extends BaseRepository implements SocialPostRepositor
         $posts = SocialPost::query()
             ->where(SocialPostDomainObjectAbstract::STATUS, SocialPostStatus::SCHEDULED->name)
             ->where(SocialPostDomainObjectAbstract::NEXT_ATTEMPT_AT, '<=', now())
+            ->whereExists(fn ($query) => $query
+                ->selectRaw('1')
+                ->from(OrganizerSocialConnectionDomainObjectAbstract::PLURAL_NAME)
+                ->whereColumn(
+                    OrganizerSocialConnectionDomainObjectAbstract::PLURAL_NAME.'.'.OrganizerSocialConnectionDomainObjectAbstract::ORGANIZER_ID,
+                    SocialPostDomainObjectAbstract::PLURAL_NAME.'.'.SocialPostDomainObjectAbstract::ORGANIZER_ID,
+                )
+                ->where(
+                    OrganizerSocialConnectionDomainObjectAbstract::PLURAL_NAME.'.'.OrganizerSocialConnectionDomainObjectAbstract::STATUS,
+                    SocialConnectionStatus::ACTIVE->name,
+                ))
             ->orderBy(SocialPostDomainObjectAbstract::NEXT_ATTEMPT_AT)
             ->limit($limit)
             ->get();

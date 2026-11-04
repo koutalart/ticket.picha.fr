@@ -7,6 +7,7 @@ use HiEvents\DomainObjects\OrganizerSocialConnectionDomainObject;
 use HiEvents\DomainObjects\Status\SocialConnectionStatus;
 use HiEvents\Exceptions\MetaGraphApiException;
 use HiEvents\Exceptions\MetaOAuthException;
+use HiEvents\Jobs\Social\PublishDueSocialPostsJob;
 use HiEvents\Jobs\Social\SyncSocialFeedJob;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialFeedItemRepositoryInterface;
@@ -139,6 +140,7 @@ class MetaConnectionServiceTest extends TestCase
 
         $this->assertNull($this->cache->get('social:meta:selection:'.$result->selectionKey));
         Bus::assertDispatched(SyncSocialFeedJob::class, fn (SyncSocialFeedJob $job) => $job->organizerId === 4);
+        Bus::assertDispatched(PublishDueSocialPostsJob::class);
     }
 
     public function test_connect_replaces_the_existing_connection(): void
