@@ -23,7 +23,6 @@ class UpdateSocialPostHandler
     public function handle(UpdateSocialPostDTO $dto): SocialPostDomainObject
     {
         return $this->postService->update(
-            accountId: $dto->accountId,
             organizerId: $dto->organizerId,
             postId: $dto->postId,
             caption: $dto->caption,

@@ -16,6 +16,7 @@ class SocialPost extends BaseModel
             'published_at' => 'datetime',
             'next_attempt_at' => 'datetime',
             'approved_at' => 'datetime',
+            'change_requested_at' => 'datetime',
         ];
     }
 

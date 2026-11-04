@@ -7,6 +7,8 @@ export const postStatusLabel = (status: SocialPostStatus): string => {
             return t`Draft`;
         case 'PENDING_APPROVAL':
             return t`To approve`;
+        case 'CHANGES_REQUESTED':
+            return t({message: 'Changes requested', context: 'social post status'});
         case 'SCHEDULED':
             return t({message: 'Scheduled', context: 'social post status'});
         case 'PUBLISHING':
@@ -24,6 +26,8 @@ export const postStatusColor = (status: SocialPostStatus): string => {
     switch (status) {
         case 'PENDING_APPROVAL':
             return 'orange';
+        case 'CHANGES_REQUESTED':
+            return 'grape';
         case 'SCHEDULED':
         case 'PUBLISHING':
             return 'blue';
@@ -59,6 +63,8 @@ export const postTabLabel = (status: SocialPostStatus): string => {
             return t`Drafts`;
         case 'PENDING_APPROVAL':
             return t`To approve`;
+        case 'CHANGES_REQUESTED':
+            return t({message: 'Changes requested', context: 'social posts tab'});
         case 'SCHEDULED':
             return t({message: 'Scheduled', context: 'social posts tab'});
         case 'PUBLISHING':

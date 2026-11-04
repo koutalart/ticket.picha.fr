@@ -33,6 +33,8 @@ class SocialPublishingService
 
     public const PUBLISHING_LIMIT_DELAY_MINUTES = 60;
 
+    public const STALE_AFTER_HOURS = 48;
+
     private const RETRY_DELAYS_MINUTES = [2, 5, 15, 30];
 
     public function __construct(
@@ -61,7 +63,17 @@ class SocialPublishingService
         ]);
 
         if ($connection === null || $connection->getStatus() !== SocialConnectionStatus::ACTIVE->name) {
-            return $this->fail($post, __('The Facebook connection must be renewed in the organizer settings.'));
+            return $this->waitForConnection($post, $connection === null
+                ? __('Waiting for a Facebook page: the post will be published as soon as a page is connected.')
+                : __('The Facebook connection must be renewed in the organizer settings. The post will be published as soon as it is.'));
+        }
+
+        if ($this->isStale($post)) {
+            return $this->backToApproval($post);
+        }
+
+        if (SocialNetwork::fromName($post->getNetwork()) === SocialNetwork::INSTAGRAM && ! $connection->getInstagramAccountId()) {
+            return $this->fail($post, __('No Instagram professional account is linked to the connected Facebook page.'));
         }
 
         try {
@@ -232,7 +244,7 @@ class SocialPublishingService
         if ($exception->isTokenInvalid()) {
             $this->connectionService->markNeedsReconnect($connection->getId(), $exception->getMessage());
 
-            return $this->fail($post, __('Facebook refused access: the connection must be renewed in the organizer settings. (:message)', ['message' => $exception->getMessage()]));
+            return $this->waitForConnection($post, __('Facebook refused access: the connection must be renewed in the organizer settings. The post will be published as soon as it is. (:message)', ['message' => $exception->getMessage()]));
         }
 
         if ($exception->isRetryable() && $post->getAttempts() + 1 < self::MAX_ATTEMPTS) {
@@ -254,6 +266,55 @@ class SocialPublishingService
         ], fn ($value) => $value !== null));
 
         return new SocialPublishResultDTO(SocialPostStatus::SCHEDULED, $error);
+    }
+
+    /**
+     * A post that waited too long for a page (first connection or renewal) is not published out of the blue:
+     * its time is checked against the latest of its scheduled time and its approval.
+     */
+    private function isStale(SocialPostDomainObject $post): bool
+    {
+        if ($post->getExternalContainerId() !== null) {
+            return false;
+        }
+
+        $reference = collect([$post->getScheduledAt(), $post->getApprovedAt()])
+            ->filter()
+            ->map(fn (string $date) => Carbon::parse($date))
+            ->max();
+
+        return $reference !== null && $reference->lt(Carbon::now()->subHours(self::STALE_AFTER_HOURS));
+    }
+
+    private function backToApproval(SocialPostDomainObject $post): SocialPublishResultDTO
+    {
+        $note = __('The scheduled time passed more than :hours hours ago: approve the post again to publish it.', ['hours' => self::STALE_AFTER_HOURS]);
+
+        $this->postRepository->updateFromArray($post->getId(), [
+            SocialPostDomainObjectAbstract::STATUS => SocialPostStatus::PENDING_APPROVAL->name,
+            SocialPostDomainObjectAbstract::NEXT_ATTEMPT_AT => null,
+            SocialPostDomainObjectAbstract::APPROVED_AT => null,
+            SocialPostDomainObjectAbstract::APPROVED_BY_USER_ID => null,
+            SocialPostDomainObjectAbstract::LAST_ERROR => $note,
+        ]);
+
+        return new SocialPublishResultDTO(SocialPostStatus::PENDING_APPROVAL, $note);
+    }
+
+    /**
+     * Without a usable page the post is never lost nor failed: it stays scheduled, is left aside by the publishing queue
+     * until the page is connected again, then leaves right away since its time has already come.
+     */
+    private function waitForConnection(SocialPostDomainObject $post, string $reason): SocialPublishResultDTO
+    {
+        $this->postRepository->updateFromArray($post->getId(), [
+            SocialPostDomainObjectAbstract::STATUS => SocialPostStatus::SCHEDULED->name,
+            SocialPostDomainObjectAbstract::NEXT_ATTEMPT_AT => Carbon::now(),
+            SocialPostDomainObjectAbstract::EXTERNAL_CONTAINER_ID => null,
+            SocialPostDomainObjectAbstract::LAST_ERROR => $reason,
+        ]);
+
+        return new SocialPublishResultDTO(SocialPostStatus::SCHEDULED, $reason);
     }
 
     private function fail(SocialPostDomainObject $post, string $error): SocialPublishResultDTO

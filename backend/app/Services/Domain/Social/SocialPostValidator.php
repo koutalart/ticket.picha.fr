@@ -27,18 +27,12 @@ class SocialPostValidator
     ) {}
 
     /**
+     * Rules that only depend on the post itself: they apply as soon as it is prepared, even without a connected page.
+     *
      * @throws InvalidSocialPostException
      */
-    public function validate(SocialPostDataDTO $post, ?OrganizerSocialConnectionDomainObject $connection): void
+    public function validate(SocialPostDataDTO $post): void
     {
-        if ($connection === null) {
-            throw new InvalidSocialPostException(__('Connect a Facebook page before scheduling a post.'));
-        }
-
-        if ($post->network === SocialNetwork::INSTAGRAM && ! $connection->getInstagramAccountId()) {
-            throw new InvalidSocialPostException(__('No Instagram professional account is linked to the connected Facebook page.'));
-        }
-
         foreach ($post->media as $item) {
             if (! $item->isFile() && (! filter_var($item->url, FILTER_VALIDATE_URL) || ! str_starts_with(strtolower($item->url), 'https://'))) {
                 throw new InvalidSocialPostException(__('Each media must be a public https:// link.'));
@@ -80,6 +74,22 @@ class SocialPostValidator
             } catch (InvalidSocialMediaFileException $exception) {
                 throw new InvalidSocialPostException($exception->getMessage());
             }
+        }
+    }
+
+    /**
+     * Rules that depend on the connected page: they apply when a post is about to be published.
+     *
+     * @throws InvalidSocialPostException
+     */
+    public function validateConnection(SocialNetwork $network, ?OrganizerSocialConnectionDomainObject $connection): void
+    {
+        if ($connection === null) {
+            throw new InvalidSocialPostException(__('Connect a Facebook page before scheduling a post.'));
+        }
+
+        if ($network === SocialNetwork::INSTAGRAM && ! $connection->getInstagramAccountId()) {
+            throw new InvalidSocialPostException(__('No Instagram professional account is linked to the connected Facebook page.'));
         }
     }
 

@@ -15,7 +15,8 @@ use Illuminate\Support\Collection;
 interface SocialPostRepositoryInterface extends RepositoryInterface
 {
     /**
-     * Scheduled posts whose time has come, oldest first.
+     * Scheduled posts whose time has come, oldest first. Posts of an organizer without an active Facebook connection
+     * are left aside: they keep waiting and leave as soon as a page is connected.
      *
      * @return Collection<int, SocialPostDomainObject>
      */

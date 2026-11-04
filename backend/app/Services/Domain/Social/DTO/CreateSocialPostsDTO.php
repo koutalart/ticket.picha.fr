@@ -15,6 +15,7 @@ class CreateSocialPostsDTO extends BaseDataObject
     /**
      * @param  SocialNetwork[]  $networks
      * @param  SocialMediaItemDTO[]  $media
+     * @param  int[]  $replacesPostIds  posts waiting for approval that this new version replaces
      */
     public function __construct(
         public readonly int $accountId,
@@ -28,5 +29,6 @@ class CreateSocialPostsDTO extends BaseDataObject
         public readonly ?Carbon $scheduledAt,
         public readonly SocialPostSource $source,
         public readonly bool $asDraft = false,
+        public readonly array $replacesPostIds = [],
     ) {}
 }

@@ -277,6 +277,10 @@ msgstr ""
 msgid "{availableCount} of {totalCount} available"
 msgstr "{availableCount} trong số {totalCount} có sẵn"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:32
+msgid "{COMMENT_MAX_LENGTH} characters maximum."
+msgstr "Tối đa {COMMENT_MAX_LENGTH} ký tự."
+
 #: src/components/common/Countdown/index.tsx:36
 msgid "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds"
 msgstr "{ngày} ngày, {giờ} giờ, {phút} phút và {giây} giây"
@@ -1313,7 +1317,7 @@ msgstr "Tất cả"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:233
-#: src/components/routes/organizer/Publications/index.tsx:135
+#: src/components/routes/organizer/Publications/index.tsx:141
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
@@ -1671,7 +1675,7 @@ msgstr "Áp dụng mã khuyến mãi"
 msgid "Apply this {type} to all new products"
 msgstr "Áp dụng {type} này cho tất cả các sản phẩm mới"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:73
 #: src/components/routes/refund-approval/index.tsx:121
 msgid "Approve"
 msgstr "Duyệt"
@@ -1680,7 +1684,7 @@ msgstr "Duyệt"
 msgid "Approve Message"
 msgstr "Phê duyệt tin nhắn"
 
-#: src/components/routes/organizer/Publications/index.tsx:70
+#: src/components/routes/organizer/Publications/index.tsx:75
 msgid "Approve this post? {when}"
 msgstr "Duyệt bài đăng này? {when}"
 
@@ -1695,6 +1699,10 @@ msgstr "Đã duyệt, một người đang hoàn tất việc hoàn tiền"
 #: src/components/routes/refund-approval/index.tsx:21
 msgid "Approved, refund in progress"
 msgstr "Đã duyệt, đang hoàn tiền"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:55
+msgid "Approved: waiting for your Facebook page to be connected."
+msgstr "Đã duyệt: đang chờ kết nối trang Facebook của bạn."
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:36
 msgctxt "past events section heading"
@@ -2669,7 +2677,8 @@ msgstr "Không thể tham dự? Vé của bạn sẽ được hoàn tiền."
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:65
-#: src/components/routes/organizer/Publications/PostCard.tsx:66
+#: src/components/routes/organizer/Publications/PostCard.tsx:83
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:69
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
@@ -2777,12 +2786,12 @@ msgctxt "orders filter"
 msgid "Cancelled"
 msgstr "Hủy bỏ"
 
-#: src/components/routes/organizer/Publications/labels.ts:19
+#: src/components/routes/organizer/Publications/labels.ts:21
 msgctxt "social post status"
 msgid "Cancelled"
 msgstr "Đã hủy"
 
-#: src/components/routes/organizer/Publications/labels.ts:71
+#: src/components/routes/organizer/Publications/labels.ts:77
 msgctxt "social posts tab"
 msgid "Cancelled"
 msgstr "Đã hủy"
@@ -2845,7 +2854,7 @@ msgstr "Thẻ \"Tiếp cận khán giả gắn kết\""
 msgid "Card \"Tailored partnership\""
 msgstr "Thẻ \"Hợp tác theo yêu cầu\""
 
-#: src/components/routes/organizer/Publications/labels.ts:46
+#: src/components/routes/organizer/Publications/labels.ts:50
 msgid "Carousel"
 msgstr "Băng chuyền"
 
@@ -2907,6 +2916,10 @@ msgstr "Thay đổi mật khẩu"
 msgid "Change path"
 msgstr "Đổi lộ trình"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:40
+msgid "Change request sent"
+msgstr "Đã gửi yêu cầu chỉnh sửa"
+
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:964
 msgid "Change to give back: {0}"
 msgstr ""
@@ -2914,6 +2927,16 @@ msgstr ""
 #: src/components/modals/OfferWaitlistModal/index.tsx:98
 msgid "Change waitlist settings"
 msgstr "Thay đổi cài đặt danh sách chờ"
+
+#: src/components/routes/organizer/Publications/labels.ts:11
+msgctxt "social post status"
+msgid "Changes requested"
+msgstr "Đã yêu cầu chỉnh sửa"
+
+#: src/components/routes/organizer/Publications/labels.ts:67
+msgctxt "social posts tab"
+msgid "Changes requested"
+msgstr "Đã yêu cầu chỉnh sửa"
 
 #: src/components/routes/event/Reports/SalesBySourceReport/index.tsx:60
 msgid "Channel"
@@ -3357,7 +3380,7 @@ msgstr "Mã không được quá 20 ký tự"
 msgid "Code received"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:108
+#: src/components/layouts/OrganizerLayout/index.tsx:130
 msgid "Collaborate with your team to create amazing events together."
 msgstr "Hợp tác với nhóm của bạn để tạo nên những sự kiện tuyệt vời."
 
@@ -3432,7 +3455,7 @@ msgstr "Các từ khóa mô tả sự kiện, được phân tách bằng dấu 
 msgid "Command to run on the venue computer"
 msgstr "Lệnh chạy trên máy tính tại địa điểm"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:108
+#: src/components/routes/organizer/Publications/PostCard.tsx:126
 #: src/components/routes/organizer/Publications/PostViewer.tsx:105
 msgid "Comments"
 msgstr "Bình luận"
@@ -3660,10 +3683,6 @@ msgstr "Kết nối và nâng cấp"
 msgid "Connect a Facebook page"
 msgstr "Kết nối trang Facebook"
 
-#: src/components/routes/organizer/Publications/index.tsx:115
-msgid "Connect a Facebook page to publish on Facebook and Instagram."
-msgstr "Kết nối một trang Facebook để đăng lên Facebook và Instagram."
-
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:652
 msgid "Connect Documentation"
 msgstr "Tài liệu kết nối"
@@ -3672,8 +3691,8 @@ msgstr "Tài liệu kết nối"
 msgid "Connect PICHA SMS in Settings"
 msgstr "Kết nối PICHA SMS trong Cài đặt"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:121
-#: src/components/layouts/OrganizerLayout/index.tsx:129
+#: src/components/layouts/OrganizerLayout/index.tsx:143
+#: src/components/layouts/OrganizerLayout/index.tsx:151
 #: src/components/routes/event/GettingStarted/index.tsx:120
 msgid "Connect Stripe"
 msgstr "Kết nối Stripe"
@@ -3701,7 +3720,11 @@ msgstr "Kết nối với Stripe"
 msgid "Connect your Facebook page and the Instagram professional account linked to it to schedule your posts from PICHA. Every post is checked by a person before it goes out."
 msgstr "Kết nối trang Facebook của bạn và tài khoản Instagram chuyên nghiệp liên kết với trang để lên lịch bài đăng từ PICHA. Mỗi bài đăng đều được một người kiểm tra trước khi đăng."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:122
+#: src/components/routes/organizer/Publications/index.tsx:121
+msgid "Connect your Facebook page so that your approved posts can go out."
+msgstr "Hãy kết nối trang Facebook để các bài đã duyệt được đăng."
+
+#: src/components/layouts/OrganizerLayout/index.tsx:144
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "Kết nối tài khoản Stripe để chấp nhận thanh toán cho vé và sản phẩm."
 
@@ -3845,7 +3868,7 @@ msgstr ""
 msgid "Contact us to become a partner"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:64
+#: src/components/layouts/OrganizerLayout/index.tsx:74
 #: src/components/routes/organizer/Contacts/index.tsx:197
 msgid "Contacts"
 msgstr "Liên hệ"
@@ -4228,7 +4251,7 @@ msgid "Create Custom Template"
 msgstr "Tạo mẫu tùy chỉnh"
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:147
+#: src/components/layouts/OrganizerLayout/index.tsx:169
 #: src/components/routes/organizer/Events/index.tsx:66
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:230
 msgid "Create Event"
@@ -4486,7 +4509,7 @@ msgstr ""
 msgid "Customize columns"
 msgstr "Tùy chỉnh cột"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:82
+#: src/components/layouts/OrganizerLayout/index.tsx:102
 msgid "Customize my page"
 msgstr ""
 
@@ -4713,7 +4736,7 @@ msgstr "xóa"
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/event/EventPages/index.tsx:101
 #: src/components/routes/event/EventPages/index.tsx:102
-#: src/components/routes/organizer/Publications/PostCard.tsx:76
+#: src/components/routes/organizer/Publications/PostCard.tsx:93
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
@@ -4782,7 +4805,7 @@ msgstr "Xóa câu trả lời mẫu \"{0}\"?"
 msgid "Delete the subscriber"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:84
+#: src/components/routes/organizer/Publications/index.tsx:90
 msgid "Delete this post from the log?"
 msgstr "Xóa bài đăng này khỏi nhật ký?"
 
@@ -4818,6 +4841,10 @@ msgstr "Buổi demo phù hợp với sự kiện của bạn"
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:225
 msgid "Denmark"
 msgstr "Đan Mạch"
+
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:29
+msgid "Describe the change in a few words."
+msgstr "Mô tả chỉnh sửa trong vài từ."
 
 #: src/components/forms/ProductCategoryForm/index.tsx:39
 #: src/components/forms/ProductForm/index.tsx:324
@@ -5061,7 +5088,7 @@ msgid "Draft saved"
 msgstr "Đã lưu bản nháp"
 
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:77
-#: src/components/routes/organizer/Publications/labels.ts:59
+#: src/components/routes/organizer/Publications/labels.ts:63
 msgid "Drafts"
 msgstr "Bản nháp"
 
@@ -6142,7 +6169,7 @@ msgstr "Sự kiện: {0}"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:61
+#: src/components/layouts/OrganizerLayout/index.tsx:71
 #: src/components/organizerTemplates/Poster/index.tsx:80
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:184
 #: src/components/routes/admin/Attribution/index.tsx:133
@@ -6355,12 +6382,12 @@ msgstr "Đã ngắt kết nối trang Facebook"
 msgid "Failed"
 msgstr "Thất bại"
 
-#: src/components/routes/organizer/Publications/labels.ts:17
+#: src/components/routes/organizer/Publications/labels.ts:19
 msgctxt "social post status"
 msgid "Failed"
 msgstr "Thất bại"
 
-#: src/components/routes/organizer/Publications/labels.ts:69
+#: src/components/routes/organizer/Publications/labels.ts:75
 msgctxt "social posts tab"
 msgid "Failed"
 msgstr "Thất bại"
@@ -7441,7 +7468,7 @@ msgstr ""
 msgid "Holding reply sent automatically"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:60
+#: src/components/layouts/OrganizerLayout/index.tsx:70
 #: src/components/organizerTemplates/Poster/index.tsx:79
 msgid "Home"
 msgstr ""
@@ -7646,7 +7673,7 @@ msgstr "Nếu bạn có tài khoản với chúng tôi, bạn sẽ nhận đư�
 msgid "Ignore"
 msgstr "Bỏ qua"
 
-#: src/components/routes/organizer/Publications/labels.ts:44
+#: src/components/routes/organizer/Publications/labels.ts:48
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:182
 msgid "Image"
 msgstr "Hình ảnh"
@@ -8042,7 +8069,7 @@ msgstr "Mời ai đó bán vé tại cửa. Họ sẽ nhận email để đặt 
 msgid "Invite Team Member"
 msgstr "Mời thành viên nhóm"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:110
+#: src/components/layouts/OrganizerLayout/index.tsx:132
 msgid "Invite Team Members"
 msgstr "Mời các thành viên nhóm"
 
@@ -8054,7 +8081,7 @@ msgstr "Mời không giới hạn thành viên nhóm với vai trò tùy chỉnh
 msgid "Invite User"
 msgstr "Mời người dùng"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:107
+#: src/components/layouts/OrganizerLayout/index.tsx:129
 msgid "Invite Your Team"
 msgstr "Mời nhóm của bạn"
 
@@ -8113,11 +8140,19 @@ msgstr "Tài khoản này có đăng ký VAT ở EU không?"
 msgid "It stays a draft until you publish it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:67
+#: src/components/routes/organizer/Publications/index.tsx:73
+msgid "It will be published as soon as your Facebook page is connected."
+msgstr "Bài sẽ được đăng ngay khi trang Facebook của bạn được kết nối."
+
+#: src/components/routes/organizer/Publications/index.tsx:72
+msgid "It will be published on {0}, once your Facebook page is connected."
+msgstr "Bài sẽ được đăng vào {0}, sau khi trang Facebook của bạn được kết nối."
+
+#: src/components/routes/organizer/Publications/index.tsx:70
 msgid "It will be published on {0}."
 msgstr "Bài sẽ được đăng vào {0}."
 
-#: src/components/routes/organizer/Publications/index.tsx:68
+#: src/components/routes/organizer/Publications/index.tsx:70
 msgid "It will be published within a minute."
 msgstr "Bài sẽ được đăng trong vòng một phút."
 
@@ -8516,7 +8551,7 @@ msgstr ""
 msgid "Lighter version, for example 720p, used on phones."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:107
+#: src/components/routes/organizer/Publications/PostCard.tsx:125
 msgid "Likes"
 msgstr "Lượt thích"
 
@@ -8990,7 +9025,7 @@ msgid "Message Sent"
 msgstr "Tin nhắn được gửi"
 
 #: src/components/layouts/Admin/index.tsx:18
-#: src/components/layouts/OrganizerLayout/index.tsx:92
+#: src/components/layouts/OrganizerLayout/index.tsx:113
 #: src/components/routes/event/messages.tsx:225
 msgid "Messages"
 msgstr "Tin nhắn"
@@ -9228,7 +9263,7 @@ msgstr ""
 msgid "My image"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:81
+#: src/components/layouts/OrganizerLayout/index.tsx:101
 msgid "My organizer page"
 msgstr ""
 
@@ -9384,7 +9419,7 @@ msgstr "Mật khẩu mới"
 msgid "New permissions to grant"
 msgstr "Quyền mới cần cấp"
 
-#: src/components/routes/organizer/Publications/index.tsx:107
+#: src/components/routes/organizer/Publications/index.tsx:113
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:120
 msgid "New post"
 msgstr "Bài đăng mới"
@@ -9798,7 +9833,7 @@ msgstr "Không cần thanh toán"
 msgid "No popular events in the last 14 days"
 msgstr "Không có sự kiện phổ biến trong 14 ngày qua"
 
-#: src/components/routes/organizer/Publications/index.tsx:155
+#: src/components/routes/organizer/Publications/index.tsx:161
 msgid "No post yet."
 msgstr "Chưa có bài đăng nào."
 
@@ -10538,8 +10573,8 @@ msgstr "Mở hồ sơ khách hàng"
 msgid "Open the event flyer"
 msgstr "Mở áp phích sự kiện"
 
-#: src/components/routes/organizer/Publications/index.tsx:118
-#: src/components/routes/organizer/Publications/index.tsx:128
+#: src/components/routes/organizer/Publications/index.tsx:124
+#: src/components/routes/organizer/Publications/index.tsx:134
 msgid "Open the settings"
 msgstr "Mở cài đặt"
 
@@ -11636,7 +11671,7 @@ msgstr "Ảnh (2 đến 10)"
 msgid "Physical presales"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:42
+#: src/components/routes/organizer/Publications/PostCard.tsx:43
 msgid "PICHA"
 msgstr "PICHA"
 
@@ -11897,11 +11932,11 @@ msgstr "Sự kiện phổ biến (14 ngày qua)"
 msgid "Portuguese"
 msgstr "Tiếng Bồ Đào Nha"
 
-#: src/components/routes/organizer/Publications/index.tsx:72
+#: src/components/routes/organizer/Publications/index.tsx:77
 msgid "Post approved"
 msgstr "Đã duyệt bài đăng"
 
-#: src/components/routes/organizer/Publications/index.tsx:79
+#: src/components/routes/organizer/Publications/index.tsx:85
 msgid "Post cancelled"
 msgstr "Đã hủy bài đăng"
 
@@ -11914,7 +11949,7 @@ msgstr "Tin nhắn sau phần thanh toán"
 msgid "Post Checkout Message"
 msgstr "Tin Nhắn Sau Thanh Toán"
 
-#: src/components/routes/organizer/Publications/index.tsx:87
+#: src/components/routes/organizer/Publications/index.tsx:93
 msgid "Post deleted"
 msgstr "Đã xóa bài đăng"
 
@@ -11980,7 +12015,7 @@ msgstr "Bạn muốn tự bắt đầu?"
 msgid "Prepare your event before publishing it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:44
+#: src/components/routes/organizer/Publications/PostCard.tsx:45
 msgid "Prepared by the assistant"
 msgstr "Do trợ lý chuẩn bị"
 
@@ -12352,7 +12387,7 @@ msgstr ""
 msgid "Public link of the media"
 msgstr "Liên kết công khai của phương tiện"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:95
+#: src/components/layouts/OrganizerLayout/index.tsx:116
 #: src/components/routes/event/GettingStarted/index.tsx:211
 msgid "Publication"
 msgstr ""
@@ -12361,8 +12396,8 @@ msgstr ""
 msgid "Publication time"
 msgstr "Giờ đăng"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:76
-#: src/components/routes/organizer/Publications/index.tsx:105
+#: src/components/layouts/OrganizerLayout/index.tsx:86
+#: src/components/routes/organizer/Publications/index.tsx:111
 msgid "Publications"
 msgstr "Bài đăng"
 
@@ -12383,20 +12418,20 @@ msgstr ""
 msgid "Publish the page"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/labels.ts:15
+#: src/components/routes/organizer/Publications/labels.ts:17
 msgid "Published"
 msgstr "Đã đăng"
 
-#: src/components/routes/organizer/Publications/labels.ts:67
+#: src/components/routes/organizer/Publications/labels.ts:73
 msgctxt "social posts tab"
 msgid "Published"
 msgstr "Đã đăng"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:43
+#: src/components/routes/organizer/Publications/PostCard.tsx:44
 msgid "Published directly on Facebook"
 msgstr "Đăng trực tiếp trên Facebook"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:43
+#: src/components/routes/organizer/Publications/PostCard.tsx:44
 msgid "Published directly on Instagram"
 msgstr "Đăng trực tiếp trên Instagram"
 
@@ -12404,8 +12439,8 @@ msgstr "Đăng trực tiếp trên Instagram"
 msgid "Published on {0}"
 msgstr "Đã đăng vào {0}"
 
-#: src/components/routes/organizer/Publications/labels.ts:13
-#: src/components/routes/organizer/Publications/labels.ts:65
+#: src/components/routes/organizer/Publications/labels.ts:15
+#: src/components/routes/organizer/Publications/labels.ts:71
 msgid "Publishing"
 msgstr "Đang đăng"
 
@@ -12479,7 +12514,7 @@ msgstr ""
 msgid "QR code updated"
 msgstr ""
 
-#: src/components/layouts/OrganizerLayout/index.tsx:74
+#: src/components/layouts/OrganizerLayout/index.tsx:84
 #: src/components/routes/organizer/QrCodes/index.tsx:176
 #: src/components/routes/organizer/QrCodes/index.tsx:264
 msgid "QR codes"
@@ -12696,7 +12731,7 @@ msgstr "Khuyên dùng"
 msgid "Reconnect"
 msgstr "Kết nối lại"
 
-#: src/components/routes/organizer/Publications/index.tsx:125
+#: src/components/routes/organizer/Publications/index.tsx:131
 msgid "Reconnect the Facebook page to read and answer the comments of your posts."
 msgstr "Kết nối lại trang Facebook để đọc và trả lời bình luận trên bài đăng của bạn."
 
@@ -12717,7 +12752,7 @@ msgstr "Reddit"
 msgid "Redirecting to Stripe..."
 msgstr "Đang chuyển hướng đến Stripe..."
 
-#: src/components/routes/organizer/Publications/labels.ts:48
+#: src/components/routes/organizer/Publications/labels.ts:52
 msgid "Reel"
 msgstr "Reel"
 
@@ -13157,6 +13192,10 @@ msgstr ""
 msgid "Replace the video"
 msgstr ""
 
+#: src/components/routes/organizer/Publications/PostCard.tsx:63
+msgid "Replaced by a new version to approve."
+msgstr "Đã được thay bằng phiên bản mới chờ duyệt."
+
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:40
 msgid "Replaces the footer of the page when the full screen header and the embedded registration are used: newsletter, social networks, useful links and legal information."
 msgstr ""
@@ -13207,7 +13246,7 @@ msgid "Report not found"
 msgstr "Không tìm thấy báo cáo"
 
 #: src/components/layouts/Event/index.tsx:95
-#: src/components/layouts/OrganizerLayout/index.tsx:70
+#: src/components/layouts/OrganizerLayout/index.tsx:80
 #: src/components/routes/event/Reports/index.tsx:70
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -13222,6 +13261,11 @@ msgstr ""
 #: src/components/routes/kiosk/Orders/index.tsx:345
 msgid "Reprint the whole order"
 msgstr "In lại toàn bộ đơn"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:78
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:55
+msgid "Request a change"
+msgstr "Yêu cầu chỉnh sửa"
 
 #: src/components/routes/my-tickets/index.tsx:169
 msgid "Request a new link"
@@ -13378,7 +13422,7 @@ msgid "Retrieve the SMS sent and received with your PICHA SMS number before the 
 msgstr "Lấy các SMS đã gửi và nhận bằng số PICHA SMS của bạn trước khi kết nối webhook, ví dụ một chiến dịch gửi bằng script. Tin nhắn đã có sẽ không bị trùng lặp và không bị đánh dấu là chưa đọc."
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:73
 #: src/hooks/useKioskTicketPrinter.tsx:227
 msgid "Retry"
 msgstr "Thử lại"
@@ -13669,6 +13713,10 @@ msgstr "Lưu thiết kế vé"
 msgid "Save VAT Settings"
 msgstr "Lưu cài đặt VAT"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:58
+msgid "Say what should change (text, image, time). A new version will be proposed to you."
+msgstr "Cho biết cần thay đổi gì (nội dung, hình ảnh, giờ). Bạn sẽ nhận được phiên bản mới."
+
 #: src/components/layouts/CheckIn/index.tsx:476
 #: src/components/layouts/CheckIn/index.tsx:486
 msgid "Scan"
@@ -13746,12 +13794,12 @@ msgstr "Đã lên lịch"
 msgid "Scheduled"
 msgstr "Đã lên lịch"
 
-#: src/components/routes/organizer/Publications/labels.ts:11
+#: src/components/routes/organizer/Publications/labels.ts:13
 msgctxt "social post status"
 msgid "Scheduled"
 msgstr "Đã lên lịch"
 
-#: src/components/routes/organizer/Publications/labels.ts:63
+#: src/components/routes/organizer/Publications/labels.ts:69
 msgctxt "social posts tab"
 msgid "Scheduled"
 msgstr "Đã lên lịch"
@@ -14260,6 +14308,10 @@ msgstr ""
 msgid "Send the daily report"
 msgstr "Gửi báo cáo hằng ngày"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:70
+msgid "Send the request"
+msgstr "Gửi yêu cầu"
+
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:112
 msgid "Send ticket purchases to Meta directly from our servers. This is more reliable than the pixel alone (ad blockers, iOS restrictions) and improves your ad campaign measurement."
 msgstr ""
@@ -14476,7 +14528,7 @@ msgstr "Đã cập nhật cài đặt"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:84
 #: src/components/layouts/Kiosk/index.tsx:65
-#: src/components/layouts/OrganizerLayout/index.tsx:83
+#: src/components/layouts/OrganizerLayout/index.tsx:104
 #: src/components/modals/DuplicateEventModal/index.tsx:27
 #: src/components/routes/event/Settings/index.tsx:105
 #: src/components/routes/kiosk/Settings/index.tsx:60
@@ -14588,7 +14640,7 @@ msgstr "Hiển thị hộp kiểm đăng ký tiếp thị"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "Hiển thị hộp kiểm đăng ký tiếp thị theo mặc định"
 
-#: src/components/routes/organizer/Publications/index.tsx:174
+#: src/components/routes/organizer/Publications/index.tsx:180
 #: src/components/routes/product-widget/SelectProducts/index.tsx:537
 #: src/components/routes/product-widget/SelectProducts/index.tsx:652
 msgid "Show more"
@@ -14725,7 +14777,7 @@ msgstr "Chuyển đến nội dung"
 msgid "Smith"
 msgstr "Smith"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:75
+#: src/components/layouts/OrganizerLayout/index.tsx:85
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:167
 #: src/components/routes/organizer/Contacts/index.tsx:118
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:82
@@ -14853,7 +14905,7 @@ msgid "Some tickets could not be printed."
 msgstr "Một số vé không in được."
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:79
-#: src/components/routes/organizer/Publications/PostCard.tsx:128
+#: src/components/routes/organizer/Publications/PostCard.tsx:146
 msgid "Someone"
 msgstr "Ai đó"
 
@@ -15116,7 +15168,7 @@ msgstr "Được lưu mã hóa và không bao giờ hiển thị lại."
 msgid "Stories"
 msgstr "Tin"
 
-#: src/components/routes/organizer/Publications/labels.ts:50
+#: src/components/routes/organizer/Publications/labels.ts:54
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:162
 msgid "Story"
 msgstr "Tin"
@@ -15654,7 +15706,7 @@ msgstr ""
 msgid "Test the connection"
 msgstr "Kiểm tra kết nối"
 
-#: src/components/routes/organizer/Publications/labels.ts:42
+#: src/components/routes/organizer/Publications/labels.ts:46
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:154
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:116
 msgid "Text"
@@ -15823,7 +15875,7 @@ msgstr "Sự kiện bạn đang tìm kiếm hiện không khả dụng. Nó có 
 msgid "The Facebook connection link has expired. Please try again."
 msgstr "Liên kết kết nối Facebook đã hết hạn. Vui lòng thử lại."
 
-#: src/components/routes/organizer/Publications/index.tsx:114
+#: src/components/routes/organizer/Publications/index.tsx:120
 msgid "The Facebook connection must be renewed before anything can be published."
 msgstr "Cần gia hạn kết nối Facebook trước khi đăng bất cứ nội dung nào."
 
@@ -16769,7 +16821,7 @@ msgid "To"
 msgstr "Đến"
 
 #: src/components/routes/organizer/Publications/labels.ts:9
-#: src/components/routes/organizer/Publications/labels.ts:61
+#: src/components/routes/organizer/Publications/labels.ts:65
 msgid "To approve"
 msgstr "Chờ duyệt"
 
@@ -17049,11 +17101,11 @@ msgstr "Loại vé"
 msgid "Typography"
 msgstr "Kiểu chữ"
 
-#: src/components/routes/organizer/Publications/index.tsx:73
+#: src/components/routes/organizer/Publications/index.tsx:78
 msgid "Unable to approve the post"
 msgstr "Không thể duyệt bài đăng"
 
-#: src/components/routes/organizer/Publications/index.tsx:80
+#: src/components/routes/organizer/Publications/index.tsx:86
 msgid "Unable to cancel the post"
 msgstr "Không thể hủy bài đăng"
 
@@ -17086,7 +17138,7 @@ msgstr "Không thể tạo câu hỏi. Vui lòng kiểm tra thông tin của b�
 msgid "Unable to delete the campaign"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:90
+#: src/components/routes/organizer/Publications/index.tsx:96
 msgid "Unable to delete the post"
 msgstr "Không thể xóa bài đăng"
 
@@ -17161,6 +17213,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:51
 msgid "Unable to save the welcome SMS setting"
 msgstr "Không thể lưu cài đặt SMS chào mừng"
+
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:45
+msgid "Unable to send the change request"
+msgstr "Không thể gửi yêu cầu chỉnh sửa"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
 msgid "Unable to start the import"
@@ -17735,7 +17791,7 @@ msgstr "Đang xác thực..."
 msgid "Vertical 9:16 video, 3 to 90 seconds, MP4 or MOV, up to 100 MB"
 msgstr "Video dọc 9:16, 3 đến 90 giây, MP4 hoặc MOV, tối đa 100 MB"
 
-#: src/components/routes/organizer/Publications/labels.ts:52
+#: src/components/routes/organizer/Publications/labels.ts:56
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:182
 #: src/components/routes/organizer/QrCodes/posterLogos.tsx:41
 msgid "Video"
@@ -17804,11 +17860,11 @@ msgstr "Xem nhật ký"
 msgid "View Message"
 msgstr "Xem tin nhắn"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:88
 msgid "View on Facebook"
 msgstr "Xem trên Facebook"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:88
 msgid "View on Instagram"
 msgstr "Xem trên Instagram"
 
@@ -17833,7 +17889,7 @@ msgstr "Xem chi tiết đơn hàng"
 msgid "View registrations and resend tickets."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:121
+#: src/components/routes/organizer/Publications/PostCard.tsx:139
 msgid "View the {0} comments"
 msgstr "Xem {0} bình luận"
 
@@ -18843,6 +18899,10 @@ msgstr "Người mua và người tham dự sẽ hiển thị ở đây ngay khi
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "Danh sách check-in của bạn đã được tạo thành công. Chia sẻ liên kết bên dưới với nhân viên check-in của bạn."
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:61
+msgid "Your comment"
+msgstr "Nhận xét của bạn"
+
 #: src/components/routes/organizer/Contacts/index.tsx:189
 msgid "Your contacts have been exported."
 msgstr "Đã xuất danh bạ của bạn."
@@ -19079,6 +19139,10 @@ msgstr ""
 #: src/components/routes/product-widget/AttendeeAttendance/index.tsx:130
 msgid "Your registration: {0}"
 msgstr ""
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:59
+msgid "Your request:"
+msgstr "Yêu cầu của bạn:"
 
 #: src/components/common/StatBoxes/index.tsx:89
 #: src/components/routes/event/EventDashboard/index.tsx:95
