@@ -333,7 +333,7 @@ class RequiredProductPlatformFeeTest extends TestCase
             ->setTotalGross(32.47)
             ->setOrderItems(new Collection([
                 (new OrderItemDomainObject())->setProductId(self::TICKET_ID)->setPrice(15.00)->setQuantity(2)->setTotalGross(31.98),
-                (new OrderItemDomainObject())->setProductId(self::OPTION_ID)->setPrice(0.49)->setQuantity(1)->setTotalGross(0.49),
+                (new OrderItemDomainObject())->setProductId(self::OPTION_ID)->setPrice(0.49)->setQuantity(1)->setTotalBeforeAdditions(0.49)->setTotalGross(0.49),
             ])));
 
         // No platform fee on the protection itself, but its price goes to PICHA (decision of 04/11): 1,98 + 0,49

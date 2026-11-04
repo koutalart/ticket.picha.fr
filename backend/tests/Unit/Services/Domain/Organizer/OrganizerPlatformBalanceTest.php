@@ -282,8 +282,8 @@ class OrganizerPlatformBalanceTest extends TestCase
             ->setTotalRefunded(0.0)
             ->setEvent((new EventDomainObject())->setId(15)->setOrganizerId(self::ORGANIZER_ID))
             ->setOrderItems(new Collection([
-                (new OrderItemDomainObject())->setProductId(1)->setQuantity(1)->setPrice(20.00)->setTotalServiceFee(0.99)->setTotalGross(20.99),
-                (new OrderItemDomainObject())->setProductId(2)->setQuantity(1)->setPrice(0.49)->setTotalServiceFee(0.0)->setTotalGross(0.49),
+                (new OrderItemDomainObject())->setProductId(1)->setQuantity(1)->setPrice(20.00)->setTotalBeforeAdditions(20.00)->setTotalServiceFee(0.99)->setTotalGross(20.99),
+                (new OrderItemDomainObject())->setProductId(2)->setQuantity(1)->setPrice(0.49)->setTotalBeforeAdditions(0.49)->setTotalServiceFee(0.0)->setTotalGross(0.49),
             ]));
     }
 

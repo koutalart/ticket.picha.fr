@@ -119,6 +119,33 @@ class RefundProtectionPlatformRevenueTest extends TestCase
         self::assertEqualsWithDelta(0.0, $refunded->refundableToBuyer, 0.001);
     }
 
+    public function test_fees_carried_by_an_old_protection_are_not_subtracted_twice(): void
+    {
+        $protection = (new OrderItemDomainObject())
+            ->setProductId(self::PROTECTION_ID)
+            ->setPrice(0.49)
+            ->setQuantity(1)
+            ->setTotalBeforeAdditions(0.49)
+            ->setTotalServiceFee(0.49)
+            ->setTotalGross(0.98);
+
+        $order = (new OrderDomainObject())
+            ->setId(self::ORDER_ID)
+            ->setEventId(self::EVENT_ID)
+            ->setCurrency('EUR')
+            ->setTotalFee(1.48)
+            ->setTotalGross(21.97)
+            ->setTotalRefunded(0.0)
+            ->setOrderItems(new Collection([$this->ticketItem(), $protection]));
+
+        $share = $this->shareService()->getShare($order);
+        self::assertEqualsWithDelta(0.49, $share->refundProtection, 0.001);
+        self::assertEqualsWithDelta(20.00, $share->organizerSales, 0.001);
+
+        $fee = $this->feeService()->calculateApplicationFee($this->accountConfiguration(), $order);
+        self::assertSame(49, $fee->refundProtectionAmount->toMinorUnit());
+    }
+
     public function test_organizer_share_of_an_order_without_protection(): void
     {
         $share = $this->shareService()->getShare($this->orderWithoutProtection());

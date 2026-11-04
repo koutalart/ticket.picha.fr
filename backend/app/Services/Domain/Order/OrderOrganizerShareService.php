@@ -99,7 +99,7 @@ class OrderOrganizerShareService
 
         return (int)$items
             ->filter(static fn(OrderItemDomainObject $item) => in_array($item->getProductId(), $protectionIds, true))
-            ->sum(fn(OrderItemDomainObject $item) => $this->toCents($item->getTotalGross()));
+            ->sum(fn(OrderItemDomainObject $item) => $this->toCents(OrderApplicationFeeCalculationService::refundProtectionItemPrice($item)));
     }
 
     private function toCents(?float $amount): int

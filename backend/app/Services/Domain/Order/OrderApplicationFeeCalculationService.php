@@ -149,9 +149,17 @@ class OrderApplicationFeeCalculationService
     {
         $cents = collect($order->getOrderItems() ?? [])
             ->filter(fn(OrderItemDomainObject $item) => $products->get($item->getProductId())?->getIsRefundProtection() === true)
-            ->sum(fn(OrderItemDomainObject $item) => (int)round((float)$item->getTotalGross() * 100));
+            ->sum(fn(OrderItemDomainObject $item) => (int)round(self::refundProtectionItemPrice($item) * 100));
 
         return $cents / 100;
+    }
+
+    /**
+     * Price of a protection line, taxes included, without the fees it may carry (those are already in total_fee).
+     */
+    public static function refundProtectionItemPrice(OrderItemDomainObject $item): float
+    {
+        return (float)$item->getTotalBeforeAdditions() + (float)$item->getTotalTax();
     }
 
     /**
