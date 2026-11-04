@@ -182,6 +182,65 @@ class SocialPostServiceTest extends TestCase
         $this->service->schedule(4, 9, 7);
     }
 
+    public function test_new_version_replaces_each_old_post_with_the_one_of_the_same_network(): void
+    {
+        $this->postRepository->shouldReceive('findFirstWhere')->andReturnUsing(fn (array $where) => (new SocialPostDomainObject)
+            ->setId($where[SocialPostDomainObjectAbstract::ID])
+            ->setOrganizerId(4)
+            ->setNetwork($where[SocialPostDomainObjectAbstract::ID] === 20 ? 'FACEBOOK' : 'INSTAGRAM')
+            ->setStatus(SocialPostStatus::CHANGES_REQUESTED->name));
+        $this->postRepository->shouldReceive('create')->twice()->andReturnUsing(fn (array $attributes) => (new SocialPostDomainObject)
+            ->setId($attributes[SocialPostDomainObjectAbstract::NETWORK] === 'FACEBOOK' ? 30 : 31)
+            ->setNetwork($attributes[SocialPostDomainObjectAbstract::NETWORK]));
+        $replaced = [];
+        $this->postRepository->shouldReceive('updateFromArray')->twice()->andReturnUsing(function (int $id, array $attributes) use (&$replaced) {
+            $this->assertSame(SocialPostStatus::CANCELLED->name, $attributes[SocialPostDomainObjectAbstract::STATUS]);
+            $replaced[$id] = $attributes[SocialPostDomainObjectAbstract::REPLACED_BY_POST_ID];
+
+            return new SocialPostDomainObject;
+        });
+
+        $this->service->create(new CreateSocialPostsDTO(
+            accountId: 3,
+            organizerId: 4,
+            userId: null,
+            networks: [SocialNetwork::FACEBOOK, SocialNetwork::INSTAGRAM],
+            format: SocialPostFormat::IMAGE,
+            caption: 'Halloween',
+            media: [new SocialMediaItemDTO('https://cdn.test/affiche.jpg', SocialMediaType::IMAGE)],
+            link: null,
+            scheduledAt: null,
+            source: SocialPostSource::ASSISTANT,
+            replacesPostIds: [20, 21],
+        ));
+
+        $this->assertSame([20 => 30, 21 => 31], $replaced);
+    }
+
+    public function test_changes_are_requested_with_a_clean_comment(): void
+    {
+        $this->postRepository->shouldReceive('findFirstWhere')->andReturn($this->postIn(SocialPostStatus::PENDING_APPROVAL));
+        $this->postRepository->shouldReceive('updateFromArray')->once()
+            ->withArgs(fn (int $id, array $attributes) => $id === 9
+                && $attributes[SocialPostDomainObjectAbstract::STATUS] === SocialPostStatus::CHANGES_REQUESTED->name
+                && $attributes[SocialPostDomainObjectAbstract::CHANGE_REQUEST_COMMENT] === 'Plus court'
+                && $attributes[SocialPostDomainObjectAbstract::CHANGE_REQUESTED_BY_USER_ID] === 7
+                && $attributes[SocialPostDomainObjectAbstract::CHANGE_REQUESTED_AT] instanceof Carbon)
+            ->andReturn(new SocialPostDomainObject);
+
+        $this->service->requestChanges(4, 9, 7, " <i>Plus court</i>\r\n");
+    }
+
+    public function test_changes_cannot_be_requested_on_a_scheduled_post(): void
+    {
+        $this->postRepository->shouldReceive('findFirstWhere')->andReturn($this->postIn(SocialPostStatus::SCHEDULED));
+        $this->postRepository->shouldNotReceive('updateFromArray');
+
+        $this->expectException(SocialPostNotEditableException::class);
+
+        $this->service->requestChanges(4, 9, 7, 'Plus court');
+    }
+
     public function test_instagram_is_refused_without_a_linked_professional_account(): void
     {
         $this->givenConnection(instagramId: null);

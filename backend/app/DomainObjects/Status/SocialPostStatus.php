@@ -12,6 +12,7 @@ enum SocialPostStatus: string
 
     case DRAFT = 'DRAFT';
     case PENDING_APPROVAL = 'PENDING_APPROVAL';
+    case CHANGES_REQUESTED = 'CHANGES_REQUESTED';
     case SCHEDULED = 'SCHEDULED';
     case PUBLISHING = 'PUBLISHING';
     case PUBLISHED = 'PUBLISHED';

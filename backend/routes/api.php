@@ -23,6 +23,7 @@ use HiEvents\Http\Actions\Social\GetPendingMetaPagesAction;
 use HiEvents\Http\Actions\Social\GetSocialConnectionAction;
 use HiEvents\Http\Actions\Social\GetSocialPostsAction;
 use HiEvents\Http\Actions\Social\HandleMetaOAuthCallbackActionPublic;
+use HiEvents\Http\Actions\Social\RequestSocialPostChangesAction;
 use HiEvents\Http\Actions\Social\ScheduleSocialPostAction;
 use HiEvents\Http\Actions\Social\UpdateSocialPostAction;
 use HiEvents\Http\Actions\Sms\GetOrganizerSmsSettingsAction;
@@ -588,6 +589,9 @@ $router->middleware(['auth:api'])->group(
             ->where('post_id', '[0-9]+');
         $router->post('/organizers/{organizer_id}/social/posts/{post_id}/cancel', CancelSocialPostAction::class)
             ->where('post_id', '[0-9]+');
+        $router->post('/organizers/{organizer_id}/social/posts/{post_id}/request-changes', RequestSocialPostChangesAction::class)
+            ->where('post_id', '[0-9]+')
+            ->middleware('throttle:30,1');
         $router->post('/organizers/{organizer_id}/social/media/uploads', StartSocialMediaUploadAction::class)
             ->middleware('throttle:60,1');
         $router->post('/organizers/{organizer_id}/social/media/uploads/{file_id}/chunks', AppendSocialMediaChunkAction::class)

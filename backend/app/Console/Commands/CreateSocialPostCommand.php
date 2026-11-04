@@ -31,7 +31,8 @@ class CreateSocialPostCommand extends Command
         {--image=* : Public https:// link of an image (repeat for a carousel)}
         {--video= : Public https:// link of a video (reel or story)}
         {--link= : Link of a Facebook text post}
-        {--at= : Publication time, for example "2026-10-31 19:00" (Mayotte time unless an offset is given)}';
+        {--at= : Publication time, for example "2026-10-31 19:00" (Mayotte time unless an offset is given)}
+        {--replaces=* : ID of a post with requested changes (or waiting for approval) that this new version replaces}';
 
     protected $description = 'Prepare a Facebook / Instagram post for an organizer. It waits for a person to approve it in PICHA or with social:approve-post.';
 
@@ -77,6 +78,7 @@ class CreateSocialPostCommand extends Command
                 link: $this->option('link') ? (string) $this->option('link') : null,
                 scheduledAt: $this->option('at') ? Carbon::parse((string) $this->option('at'), self::DEFAULT_TIMEZONE)->utc() : null,
                 source: SocialPostSource::ASSISTANT,
+                replacesPostIds: array_map('intval', (array) $this->option('replaces')),
             ));
         } catch (InvalidSocialPostException $exception) {
             $this->error($exception->getMessage());
@@ -98,6 +100,10 @@ class CreateSocialPostCommand extends Command
                 $post->getScheduledAt() ?? 'as soon as approved',
             ])->all(),
         );
+        if ($this->option('replaces')) {
+            $this->info('Replaced post(s) '.implode(', ', (array) $this->option('replaces')).' are now cancelled.');
+        }
+
         $this->info('Nothing is published until a person approves it (Publications page in PICHA, or social:approve-post).');
 
         return self::SUCCESS;

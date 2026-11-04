@@ -18,6 +18,7 @@ import {prettyDate} from "../../../../utilites/dates.ts";
 import {PageBody} from "../../../common/PageBody";
 import {PageTitle} from "../../../common/PageTitle";
 import {PostFormModal} from "./PostFormModal.tsx";
+import {RequestChangesModal} from "./RequestChangesModal.tsx";
 import {PostCard, PostActions} from "./PostCard.tsx";
 import {FeedView, fromEntry, fromPost} from "./feedView.ts";
 import {PostViewer} from "./PostViewer.tsx";
@@ -28,13 +29,14 @@ import classes from "./Publications.module.scss";
 
 const ALL = 'ALL';
 const FEED_PAGE = 20;
-const TABS: SocialPostStatus[] = ['PENDING_APPROVAL', 'SCHEDULED', 'PUBLISHED', 'FAILED', 'DRAFT', 'CANCELLED'];
+const TABS: SocialPostStatus[] = ['PENDING_APPROVAL', 'CHANGES_REQUESTED', 'SCHEDULED', 'PUBLISHED', 'FAILED', 'DRAFT', 'CANCELLED'];
 
 const Publications = () => {
     const {organizerId} = useParams();
     const [status, setStatus] = useState<string>(ALL);
     const [page, setPage] = useState(1);
     const [creating, setCreating] = useState(false);
+    const [changesPost, setChangesPost] = useState<SocialPost | null>(null);
     const [viewerIndex, setViewerIndex] = useState<number | null>(null);
     const [storyIndex, setStoryIndex] = useState<number | null>(null);
     const [feedLimit, setFeedLimit] = useState(FEED_PAGE);
@@ -77,6 +79,7 @@ const Publications = () => {
                 });
             });
         },
+        requestChanges: (post: SocialPost) => setChangesPost(post),
         cancel: (post: SocialPost) => {
             cancelMutation.mutate({organizerId: organizerId!, postId: post.id}, {
                 onSuccess: () => showSuccess(t`Post cancelled`),
@@ -206,6 +209,10 @@ const Publications = () => {
                     onChange={setStoryIndex}
                     onClose={() => setStoryIndex(null)}
                 />
+            )}
+
+            {changesPost && (
+                <RequestChangesModal organizerId={organizerId!} post={changesPost} onClose={() => setChangesPost(null)}/>
             )}
 
             {creating && connection && (

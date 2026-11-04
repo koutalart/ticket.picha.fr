@@ -1,6 +1,6 @@
 import {t} from "@lingui/macro";
 import {Badge, Button, Text} from "@mantine/core";
-import {IconBrandFacebook, IconBrandInstagram, IconCheck, IconExternalLink, IconHeart, IconMessageCircle, IconTrash, IconX} from "@tabler/icons-react";
+import {IconBrandFacebook, IconBrandInstagram, IconCheck, IconExternalLink, IconHeart, IconMessageCircle, IconPencil, IconTrash, IconX} from "@tabler/icons-react";
 import {SocialConnection, SocialPost, SocialPostStatus} from "../../../../types.ts";
 import {formatNumber} from "../../../../utilites/helpers.ts";
 import {PostMedia} from "./PostMedia.tsx";
@@ -8,15 +8,16 @@ import {accountName, FeedView, timeLabel} from "./feedView.ts";
 import {postFormatLabel, postStatusColor, postStatusLabel} from "./labels.ts";
 import classes from "./Publications.module.scss";
 
-export const APPROVABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'FAILED', 'CANCELLED'];
-export const CANCELLABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'SCHEDULED'];
-export const DELETABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'FAILED', 'CANCELLED'];
+export const APPROVABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'CHANGES_REQUESTED', 'FAILED', 'CANCELLED'];
+export const CANCELLABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'CHANGES_REQUESTED', 'SCHEDULED'];
+export const DELETABLE: SocialPostStatus[] = ['DRAFT', 'PENDING_APPROVAL', 'CHANGES_REQUESTED', 'FAILED', 'CANCELLED'];
 
 export interface PostActions {
     canPublish: boolean;
     approve: (post: SocialPost) => void;
     cancel: (post: SocialPost) => void;
     remove: (post: SocialPost) => void;
+    requestChanges: (post: SocialPost) => void;
     pendingPostId?: number;
 }
 
@@ -53,6 +54,14 @@ export const PostActionButtons = ({view, actions}: { view: FeedView, actions: Po
             {post?.status === 'SCHEDULED' && !actions.canPublish && !view.lastError && (
                 <Text size="xs" c="orange" mt={6}>{t`Approved: waiting for your Facebook page to be connected.`}</Text>
             )}
+            {post?.status === 'CHANGES_REQUESTED' && post.change_request_comment && (
+                <Text size="xs" c="grape" mt={6}>
+                    <strong>{t`Your request:`}</strong> {post.change_request_comment}
+                </Text>
+            )}
+            {post?.status === 'CANCELLED' && post.replaced_by_post_id && (
+                <Text size="xs" c="dimmed" mt={6}>{t`Replaced by a new version to approve.`}</Text>
+            )}
             <div className={classes.actions}>
                 {post && APPROVABLE.includes(post.status) && (
                     <Button
@@ -62,6 +71,11 @@ export const PostActionButtons = ({view, actions}: { view: FeedView, actions: Po
                         onClick={() => actions.approve(post)}
                     >
                         {post.status === 'FAILED' ? t`Retry` : t`Approve`}
+                    </Button>
+                )}
+                {post && post.status === 'PENDING_APPROVAL' && (
+                    <Button size="sm" variant="light" color="grape" leftSection={<IconPencil size={16}/>} onClick={() => actions.requestChanges(post)}>
+                        {t`Request a change`}
                     </Button>
                 )}
                 {post && CANCELLABLE.includes(post.status) && (

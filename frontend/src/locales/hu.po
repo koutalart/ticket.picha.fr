@@ -277,6 +277,10 @@ msgstr ""
 msgid "{availableCount} of {totalCount} available"
 msgstr "{availableCount} / {totalCount} elérhető"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:32
+msgid "{COMMENT_MAX_LENGTH} characters maximum."
+msgstr "Legfeljebb {COMMENT_MAX_LENGTH} karakter."
+
 #: src/components/common/Countdown/index.tsx:36
 msgid "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds"
 msgstr "{days} nap, {hours} óra, {minutes} perc, és {seconds} másodperc"
@@ -1313,7 +1317,7 @@ msgstr "Összes"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:233
-#: src/components/routes/organizer/Publications/index.tsx:138
+#: src/components/routes/organizer/Publications/index.tsx:141
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
@@ -1671,7 +1675,7 @@ msgstr "Promóciós kód alkalmazása"
 msgid "Apply this {type} to all new products"
 msgstr "Alkalmazza ezt a {type} típust minden új termékre"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:64
+#: src/components/routes/organizer/Publications/PostCard.tsx:73
 #: src/components/routes/refund-approval/index.tsx:121
 msgid "Approve"
 msgstr "Jóváhagyás"
@@ -1680,7 +1684,7 @@ msgstr "Jóváhagyás"
 msgid "Approve Message"
 msgstr "Üzenet jóváhagyása"
 
-#: src/components/routes/organizer/Publications/index.tsx:73
+#: src/components/routes/organizer/Publications/index.tsx:75
 msgid "Approve this post? {when}"
 msgstr ""
 
@@ -1696,7 +1700,7 @@ msgstr "Jóváhagyva, egy személy fejezi be a visszatérítést"
 msgid "Approved, refund in progress"
 msgstr "Jóváhagyva, visszatérítés folyamatban"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:54
+#: src/components/routes/organizer/Publications/PostCard.tsx:55
 msgid "Approved: waiting for your Facebook page to be connected."
 msgstr "Jóváhagyva: a Facebook-oldal csatlakoztatására vár."
 
@@ -2669,7 +2673,8 @@ msgstr ""
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:65
-#: src/components/routes/organizer/Publications/PostCard.tsx:69
+#: src/components/routes/organizer/Publications/PostCard.tsx:83
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:69
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
@@ -2777,12 +2782,12 @@ msgctxt "orders filter"
 msgid "Cancelled"
 msgstr "Törölve"
 
-#: src/components/routes/organizer/Publications/labels.ts:19
+#: src/components/routes/organizer/Publications/labels.ts:21
 msgctxt "social post status"
 msgid "Cancelled"
 msgstr "Törölve"
 
-#: src/components/routes/organizer/Publications/labels.ts:71
+#: src/components/routes/organizer/Publications/labels.ts:77
 msgctxt "social posts tab"
 msgid "Cancelled"
 msgstr "Törölve"
@@ -2845,7 +2850,7 @@ msgstr "„Elkötelezett közönség” kártya"
 msgid "Card \"Tailored partnership\""
 msgstr "„Személyre szabott partnerség” kártya"
 
-#: src/components/routes/organizer/Publications/labels.ts:46
+#: src/components/routes/organizer/Publications/labels.ts:50
 msgid "Carousel"
 msgstr ""
 
@@ -2907,6 +2912,10 @@ msgstr "Jelszó módosítása"
 msgid "Change path"
 msgstr "Útvonal módosítása"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:40
+msgid "Change request sent"
+msgstr "Módosítási kérés elküldve"
+
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:964
 msgid "Change to give back: {0}"
 msgstr ""
@@ -2914,6 +2923,16 @@ msgstr ""
 #: src/components/modals/OfferWaitlistModal/index.tsx:98
 msgid "Change waitlist settings"
 msgstr "Várólistás beállítások módosítása"
+
+#: src/components/routes/organizer/Publications/labels.ts:11
+msgctxt "social post status"
+msgid "Changes requested"
+msgstr "Módosítás kérve"
+
+#: src/components/routes/organizer/Publications/labels.ts:67
+msgctxt "social posts tab"
+msgid "Changes requested"
+msgstr "Módosítás kérve"
 
 #: src/components/routes/event/Reports/SalesBySourceReport/index.tsx:60
 msgid "Channel"
@@ -3436,7 +3455,7 @@ msgstr "Vesszővel elválasztott kulcsszavak, amelyek leírják az eseményt. Ez
 msgid "Command to run on the venue computer"
 msgstr "A helyszíni számítógépen futtatandó parancs"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:112
+#: src/components/routes/organizer/Publications/PostCard.tsx:126
 #: src/components/routes/organizer/Publications/PostViewer.tsx:105
 msgid "Comments"
 msgstr ""
@@ -3701,7 +3720,7 @@ msgstr "Csatlakozás a Stripe-hoz"
 msgid "Connect your Facebook page and the Instagram professional account linked to it to schedule your posts from PICHA. Every post is checked by a person before it goes out."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:118
+#: src/components/routes/organizer/Publications/index.tsx:121
 msgid "Connect your Facebook page so that your approved posts can go out."
 msgstr "Csatlakoztassa Facebook-oldalát, hogy a jóváhagyott bejegyzések megjelenjenek."
 
@@ -4717,7 +4736,7 @@ msgstr "törlés"
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/event/EventPages/index.tsx:101
 #: src/components/routes/event/EventPages/index.tsx:102
-#: src/components/routes/organizer/Publications/PostCard.tsx:79
+#: src/components/routes/organizer/Publications/PostCard.tsx:93
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
@@ -4786,7 +4805,7 @@ msgstr "Törli a(z) \"{0}\" válaszsablont?"
 msgid "Delete the subscriber"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:87
+#: src/components/routes/organizer/Publications/index.tsx:90
 msgid "Delete this post from the log?"
 msgstr ""
 
@@ -4822,6 +4841,10 @@ msgstr "Az eseményére szabott bemutató"
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:225
 msgid "Denmark"
 msgstr ""
+
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:29
+msgid "Describe the change in a few words."
+msgstr "Írja le néhány szóban a módosítást."
 
 #: src/components/forms/ProductCategoryForm/index.tsx:39
 #: src/components/forms/ProductForm/index.tsx:324
@@ -5065,7 +5088,7 @@ msgid "Draft saved"
 msgstr ""
 
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:77
-#: src/components/routes/organizer/Publications/labels.ts:59
+#: src/components/routes/organizer/Publications/labels.ts:63
 msgid "Drafts"
 msgstr ""
 
@@ -6355,12 +6378,12 @@ msgstr ""
 msgid "Failed"
 msgstr "Sikertelen"
 
-#: src/components/routes/organizer/Publications/labels.ts:17
+#: src/components/routes/organizer/Publications/labels.ts:19
 msgctxt "social post status"
 msgid "Failed"
 msgstr "Sikertelen"
 
-#: src/components/routes/organizer/Publications/labels.ts:69
+#: src/components/routes/organizer/Publications/labels.ts:75
 msgctxt "social posts tab"
 msgid "Failed"
 msgstr "Sikertelen"
@@ -7650,7 +7673,7 @@ msgstr "Ha van nálunk fiókja, e-mailt fog kapni a jelszó visszaállításáho
 msgid "Ignore"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/labels.ts:44
+#: src/components/routes/organizer/Publications/labels.ts:48
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:182
 msgid "Image"
 msgstr ""
@@ -8117,19 +8140,19 @@ msgstr "Ez a fiók ÁFA-s az EU-ban?"
 msgid "It stays a draft until you publish it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:71
+#: src/components/routes/organizer/Publications/index.tsx:73
 msgid "It will be published as soon as your Facebook page is connected."
 msgstr "Amint a Facebook-oldal csatlakozik, megjelenik."
 
-#: src/components/routes/organizer/Publications/index.tsx:70
+#: src/components/routes/organizer/Publications/index.tsx:72
 msgid "It will be published on {0}, once your Facebook page is connected."
 msgstr "{0} időpontban jelenik meg, miután a Facebook-oldal csatlakozott."
 
-#: src/components/routes/organizer/Publications/index.tsx:68
+#: src/components/routes/organizer/Publications/index.tsx:70
 msgid "It will be published on {0}."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:68
+#: src/components/routes/organizer/Publications/index.tsx:70
 msgid "It will be published within a minute."
 msgstr ""
 
@@ -8528,7 +8551,7 @@ msgstr ""
 msgid "Lighter version, for example 720p, used on phones."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:111
+#: src/components/routes/organizer/Publications/PostCard.tsx:125
 msgid "Likes"
 msgstr ""
 
@@ -9396,7 +9419,7 @@ msgstr "Új jelszó"
 msgid "New permissions to grant"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:110
+#: src/components/routes/organizer/Publications/index.tsx:113
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:120
 msgid "New post"
 msgstr ""
@@ -9810,7 +9833,7 @@ msgstr "Fizetés nem szükséges"
 msgid "No popular events in the last 14 days"
 msgstr "Nincs népszerű esemény az elmúlt 14 napban"
 
-#: src/components/routes/organizer/Publications/index.tsx:158
+#: src/components/routes/organizer/Publications/index.tsx:161
 msgid "No post yet."
 msgstr ""
 
@@ -10541,8 +10564,8 @@ msgstr "Ügyféladatlap megnyitása"
 msgid "Open the event flyer"
 msgstr "Az esemény plakátjának megnyitása"
 
-#: src/components/routes/organizer/Publications/index.tsx:121
-#: src/components/routes/organizer/Publications/index.tsx:131
+#: src/components/routes/organizer/Publications/index.tsx:124
+#: src/components/routes/organizer/Publications/index.tsx:134
 msgid "Open the settings"
 msgstr ""
 
@@ -11639,7 +11662,7 @@ msgstr ""
 msgid "Physical presales"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:42
+#: src/components/routes/organizer/Publications/PostCard.tsx:43
 msgid "PICHA"
 msgstr ""
 
@@ -11900,11 +11923,11 @@ msgstr "Népszerű események (Elmúlt 14 nap)"
 msgid "Portuguese"
 msgstr "Portugál"
 
-#: src/components/routes/organizer/Publications/index.tsx:75
+#: src/components/routes/organizer/Publications/index.tsx:77
 msgid "Post approved"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:82
+#: src/components/routes/organizer/Publications/index.tsx:85
 msgid "Post cancelled"
 msgstr ""
 
@@ -11917,7 +11940,7 @@ msgstr "Fizetés utáni üzenet"
 msgid "Post Checkout Message"
 msgstr "Pénztár utáni üzenet"
 
-#: src/components/routes/organizer/Publications/index.tsx:90
+#: src/components/routes/organizer/Publications/index.tsx:93
 msgid "Post deleted"
 msgstr ""
 
@@ -11983,7 +12006,7 @@ msgstr "Inkább önállóan kezdené?"
 msgid "Prepare your event before publishing it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:44
+#: src/components/routes/organizer/Publications/PostCard.tsx:45
 msgid "Prepared by the assistant"
 msgstr ""
 
@@ -12365,7 +12388,7 @@ msgid "Publication time"
 msgstr ""
 
 #: src/components/layouts/OrganizerLayout/index.tsx:76
-#: src/components/routes/organizer/Publications/index.tsx:108
+#: src/components/routes/organizer/Publications/index.tsx:111
 msgid "Publications"
 msgstr ""
 
@@ -12386,20 +12409,20 @@ msgstr ""
 msgid "Publish the page"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/labels.ts:15
+#: src/components/routes/organizer/Publications/labels.ts:17
 msgid "Published"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/labels.ts:67
+#: src/components/routes/organizer/Publications/labels.ts:73
 msgctxt "social posts tab"
 msgid "Published"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:43
+#: src/components/routes/organizer/Publications/PostCard.tsx:44
 msgid "Published directly on Facebook"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:43
+#: src/components/routes/organizer/Publications/PostCard.tsx:44
 msgid "Published directly on Instagram"
 msgstr ""
 
@@ -12407,8 +12430,8 @@ msgstr ""
 msgid "Published on {0}"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/labels.ts:13
-#: src/components/routes/organizer/Publications/labels.ts:65
+#: src/components/routes/organizer/Publications/labels.ts:15
+#: src/components/routes/organizer/Publications/labels.ts:71
 msgid "Publishing"
 msgstr ""
 
@@ -12699,7 +12722,7 @@ msgstr ""
 msgid "Reconnect"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:128
+#: src/components/routes/organizer/Publications/index.tsx:131
 msgid "Reconnect the Facebook page to read and answer the comments of your posts."
 msgstr ""
 
@@ -12720,7 +12743,7 @@ msgstr "Reddit"
 msgid "Redirecting to Stripe..."
 msgstr "Átirányítás a Stripe-ra..."
 
-#: src/components/routes/organizer/Publications/labels.ts:48
+#: src/components/routes/organizer/Publications/labels.ts:52
 msgid "Reel"
 msgstr ""
 
@@ -13160,6 +13183,10 @@ msgstr ""
 msgid "Replace the video"
 msgstr ""
 
+#: src/components/routes/organizer/Publications/PostCard.tsx:63
+msgid "Replaced by a new version to approve."
+msgstr "Új, jóváhagyandó verzió váltotta fel."
+
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:40
 msgid "Replaces the footer of the page when the full screen header and the embedded registration are used: newsletter, social networks, useful links and legal information."
 msgstr ""
@@ -13225,6 +13252,11 @@ msgstr ""
 #: src/components/routes/kiosk/Orders/index.tsx:345
 msgid "Reprint the whole order"
 msgstr "Teljes rendelés újranyomtatása"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:78
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:55
+msgid "Request a change"
+msgstr "Módosítás kérése"
 
 #: src/components/routes/my-tickets/index.tsx:169
 msgid "Request a new link"
@@ -13381,7 +13413,7 @@ msgid "Retrieve the SMS sent and received with your PICHA SMS number before the 
 msgstr "Kérje le a PICHA SMS-számával küldött és fogadott SMS-eket a webhook bekötése előttről, például egy szkripttel küldött kampányt. A már meglévő üzenetek nem duplikálódnak, és nem lesznek olvasatlanként jelölve."
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
-#: src/components/routes/organizer/Publications/PostCard.tsx:64
+#: src/components/routes/organizer/Publications/PostCard.tsx:73
 #: src/hooks/useKioskTicketPrinter.tsx:227
 msgid "Retry"
 msgstr "Újrapróbálás"
@@ -13672,6 +13704,10 @@ msgstr "Jegytervezés mentése"
 msgid "Save VAT Settings"
 msgstr "ÁFA beállítások mentése"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:58
+msgid "Say what should change (text, image, time). A new version will be proposed to you."
+msgstr "Írja le, mi változzon (szöveg, kép, időpont). Új verziót javasolunk Önnek."
+
 #: src/components/layouts/CheckIn/index.tsx:476
 #: src/components/layouts/CheckIn/index.tsx:486
 msgid "Scan"
@@ -13749,12 +13785,12 @@ msgstr "Ütemezett"
 msgid "Scheduled"
 msgstr "Ütemezett"
 
-#: src/components/routes/organizer/Publications/labels.ts:11
+#: src/components/routes/organizer/Publications/labels.ts:13
 msgctxt "social post status"
 msgid "Scheduled"
 msgstr "Ütemezett"
 
-#: src/components/routes/organizer/Publications/labels.ts:63
+#: src/components/routes/organizer/Publications/labels.ts:69
 msgctxt "social posts tab"
 msgid "Scheduled"
 msgstr "Ütemezett"
@@ -14263,6 +14299,10 @@ msgstr ""
 msgid "Send the daily report"
 msgstr "Napi jelentés küldése"
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:70
+msgid "Send the request"
+msgstr "Kérés elküldése"
+
 #: src/components/routes/organizer/Settings/Sections/MetaConversionsApiSettings/index.tsx:112
 msgid "Send ticket purchases to Meta directly from our servers. This is more reliable than the pixel alone (ad blockers, iOS restrictions) and improves your ad campaign measurement."
 msgstr ""
@@ -14587,7 +14627,7 @@ msgstr "Marketing opt-in jelölőnégyzet megjelenítése"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "Marketing opt-in jelölőnégyzet alapértelmezés szerinti megjelenítése"
 
-#: src/components/routes/organizer/Publications/index.tsx:177
+#: src/components/routes/organizer/Publications/index.tsx:180
 #: src/components/routes/product-widget/SelectProducts/index.tsx:537
 #: src/components/routes/product-widget/SelectProducts/index.tsx:652
 msgid "Show more"
@@ -14852,7 +14892,7 @@ msgid "Some tickets could not be printed."
 msgstr "Néhány jegyet nem sikerült kinyomtatni."
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:79
-#: src/components/routes/organizer/Publications/PostCard.tsx:132
+#: src/components/routes/organizer/Publications/PostCard.tsx:146
 msgid "Someone"
 msgstr ""
 
@@ -15115,7 +15155,7 @@ msgstr "Titkosítva tároljuk. Többé nem jelenik meg."
 msgid "Stories"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/labels.ts:50
+#: src/components/routes/organizer/Publications/labels.ts:54
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:162
 msgid "Story"
 msgstr ""
@@ -15653,7 +15693,7 @@ msgstr ""
 msgid "Test the connection"
 msgstr "Kapcsolat tesztelése"
 
-#: src/components/routes/organizer/Publications/labels.ts:42
+#: src/components/routes/organizer/Publications/labels.ts:46
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:154
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:116
 msgid "Text"
@@ -15818,7 +15858,7 @@ msgstr "A keresett esemény jelenleg nem elérhető. Lehet, hogy eltávolított�
 msgid "The Facebook connection link has expired. Please try again."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:117
+#: src/components/routes/organizer/Publications/index.tsx:120
 msgid "The Facebook connection must be renewed before anything can be published."
 msgstr ""
 
@@ -16764,7 +16804,7 @@ msgid "To"
 msgstr "Címzett"
 
 #: src/components/routes/organizer/Publications/labels.ts:9
-#: src/components/routes/organizer/Publications/labels.ts:61
+#: src/components/routes/organizer/Publications/labels.ts:65
 msgid "To approve"
 msgstr ""
 
@@ -17044,11 +17084,11 @@ msgstr "Jegy típusa"
 msgid "Typography"
 msgstr "Tipográfia"
 
-#: src/components/routes/organizer/Publications/index.tsx:76
+#: src/components/routes/organizer/Publications/index.tsx:78
 msgid "Unable to approve the post"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:83
+#: src/components/routes/organizer/Publications/index.tsx:86
 msgid "Unable to cancel the post"
 msgstr ""
 
@@ -17081,7 +17121,7 @@ msgstr "Nem sikerült kérdést létrehozni. Kérjük, ellenőrizze adatait."
 msgid "Unable to delete the campaign"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:93
+#: src/components/routes/organizer/Publications/index.tsx:96
 msgid "Unable to delete the post"
 msgstr ""
 
@@ -17156,6 +17196,10 @@ msgstr ""
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/CheckInWelcomeSmsSettings.tsx:51
 msgid "Unable to save the welcome SMS setting"
 msgstr ""
+
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:45
+msgid "Unable to send the change request"
+msgstr "A módosítási kérést nem sikerült elküldeni"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:144
 msgid "Unable to start the import"
@@ -17730,7 +17774,7 @@ msgstr "Ellenőrzés..."
 msgid "Vertical 9:16 video, 3 to 90 seconds, MP4 or MOV, up to 100 MB"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/labels.ts:52
+#: src/components/routes/organizer/Publications/labels.ts:56
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:182
 #: src/components/routes/organizer/QrCodes/posterLogos.tsx:41
 msgid "Video"
@@ -17799,11 +17843,11 @@ msgstr "Naplók megtekintése"
 msgid "View Message"
 msgstr "Üzenet megtekintése"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:74
+#: src/components/routes/organizer/Publications/PostCard.tsx:88
 msgid "View on Facebook"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:74
+#: src/components/routes/organizer/Publications/PostCard.tsx:88
 msgid "View on Instagram"
 msgstr ""
 
@@ -17828,7 +17872,7 @@ msgstr "Rendelés részleteinek megtekintése"
 msgid "View registrations and resend tickets."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:125
+#: src/components/routes/organizer/Publications/PostCard.tsx:139
 msgid "View the {0} comments"
 msgstr ""
 
@@ -18830,6 +18874,10 @@ msgstr ""
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "A bejelentkezési lista sikeresen létrehozva. Ossza meg az alábbi linket a bejelentkezési személyzettel."
 
+#: src/components/routes/organizer/Publications/RequestChangesModal.tsx:61
+msgid "Your comment"
+msgstr "Az Ön megjegyzése"
+
 #: src/components/routes/organizer/Contacts/index.tsx:189
 msgid "Your contacts have been exported."
 msgstr ""
@@ -19066,6 +19114,10 @@ msgstr ""
 #: src/components/routes/product-widget/AttendeeAttendance/index.tsx:130
 msgid "Your registration: {0}"
 msgstr ""
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:59
+msgid "Your request:"
+msgstr "Az Ön kérése:"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:188
 msgid "Your SMS are sent with a line shared and managed by PICHA, from the number {sharedNumber}. Customer replies appear in SMS messages and only your team can see your conversations."

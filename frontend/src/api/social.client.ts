@@ -86,6 +86,10 @@ export const socialClient = {
         const response = await api.post<GenericDataResponse<SocialPost>>(`organizers/${organizerId}/social/posts/${postId}/cancel`);
         return response.data;
     },
+    requestPostChanges: async (organizerId: IdParam, postId: IdParam, comment: string) => {
+        const response = await api.post<GenericDataResponse<SocialPost>>(`organizers/${organizerId}/social/posts/${postId}/request-changes`, {comment});
+        return response.data;
+    },
     deletePost: async (organizerId: IdParam, postId: IdParam) => {
         await api.delete(`organizers/${organizerId}/social/posts/${postId}`);
     },

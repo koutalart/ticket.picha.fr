@@ -1887,7 +1887,7 @@ export type SocialPostFormat = 'TEXT' | 'IMAGE' | 'CAROUSEL' | 'REEL' | 'STORY';
 
 export type SocialMediaType = 'IMAGE' | 'VIDEO';
 
-export type SocialPostStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'SCHEDULED' | 'PUBLISHING' | 'PUBLISHED' | 'FAILED' | 'CANCELLED';
+export type SocialPostStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'CHANGES_REQUESTED' | 'SCHEDULED' | 'PUBLISHING' | 'PUBLISHED' | 'FAILED' | 'CANCELLED';
 
 export type SocialPostSource = 'PICHA' | 'ASSISTANT';
 
@@ -1943,6 +1943,10 @@ export interface SocialPost {
     created_by_user_id: number | null;
     approved_by_user_id: number | null;
     approved_at: string | null;
+    change_request_comment: string | null;
+    change_requested_at: string | null;
+    change_requested_by_user_id: number | null;
+    replaced_by_post_id: number | null;
     created_at: string;
     updated_at: string;
 }
