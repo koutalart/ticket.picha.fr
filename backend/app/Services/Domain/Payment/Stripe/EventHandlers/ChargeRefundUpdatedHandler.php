@@ -12,7 +12,6 @@ use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\StripePaymentsRepositoryInterface;
 use HiEvents\Services\Domain\EventStatistics\EventStatisticsRefundService;
 use HiEvents\Services\Domain\Order\OrderCancelService;
-use HiEvents\Services\Domain\Organizer\PlatformBalance\OrganizerPlatformBalanceService;
 use HiEvents\Services\Domain\Payment\Stripe\StripePaymentIntentRefundService;
 use HiEvents\Services\Infrastructure\DomainEvents\DomainEventDispatcherService;
 use HiEvents\Services\Infrastructure\DomainEvents\Enums\DomainEventType;
@@ -34,7 +33,6 @@ class ChargeRefundUpdatedHandler
         private readonly OrderRefundRepositoryInterface $orderRefundRepository,
         private readonly DomainEventDispatcherService $domainEventDispatcherService,
         private readonly OrderCancelService $orderCancelService,
-        private readonly OrganizerPlatformBalanceService $platformBalanceService,
     ) {}
 
     /**
@@ -79,7 +77,6 @@ class ChargeRefundUpdatedHandler
             $this->updateOrderStatus($order, $refundedAmount);
             $this->updateEventStatistics($order, MoneyValue::fromMinorUnit($refund->amount, $order->getCurrency()), $this->refundReason($refund));
             $this->createOrderRefund($refund, $order, $refundedAmount);
-            $this->platformBalanceService->restoreForRefundedOrder($order);
             $this->cancelOrderRefundedOutsidePicha($refund, $order);
 
             $this->logger->info(__('Stripe refund successful'), [

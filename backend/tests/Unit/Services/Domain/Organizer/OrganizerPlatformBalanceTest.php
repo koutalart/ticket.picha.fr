@@ -24,6 +24,7 @@ use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\Order\OrderApplicationFeeService;
 use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use HiEvents\Services\Domain\Organizer\PlatformBalance\OrganizerPlatformBalanceService;
+use HiEvents\Services\Domain\Payment\Stripe\EventHandlers\ChargeRefundUpdatedHandler;
 use HiEvents\Services\Domain\Payment\Stripe\EventHandlers\PaymentIntentFailedHandler;
 use HiEvents\Services\Domain\Payment\Stripe\EventHandlers\PaymentIntentSucceededHandler;
 use HiEvents\Services\Domain\Payment\Stripe\StripeRefundExpiredOrderService;
@@ -40,6 +41,7 @@ use Illuminate\Support\Facades\Event;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
 use Stripe\PaymentIntent;
+use Stripe\Refund;
 use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
 
@@ -104,22 +106,33 @@ class OrganizerPlatformBalanceTest extends TestCase
         self::assertNotNull($row->settled_at);
     }
 
-    public function test_refunded_order_puts_the_withholding_back_once_and_reopens_the_balance(): void
+    /**
+     * The organizer paid the withheld amount out of their own pocket when the buyer was refunded:
+     * a withholding is never put back in the balance.
+     */
+    public function test_refunding_the_order_never_puts_the_withholding_back(): void
     {
         [$order, $organizerId] = $this->paidOrder();
         $service = app(OrganizerPlatformBalanceService::class);
-        $balance = $service->addBalance($organizerId, 15.68, 'USD', 'Options sérénité versées avant le 04/11');
+        $balance = $service->addBalance($organizerId, 57.88, 'USD', 'Options sérénité versées avant le 04/11');
         $service->recordWithholding($this->stripePayment($order, withheldMinor: 2000), $order);
 
-        self::assertNotNull(DB::table('organizer_platform_balances')->where('id', $balance->getId())->value('settled_at'));
+        DB::table('event_statistics')->updateOrInsert(['event_id' => $order->getEventId()], [
+            'sales_total_gross' => 20.99, 'sales_total_organizer' => 20.00, 'products_sold' => 1, 'orders_created' => 1,
+            'attendees_registered' => 1, 'created_at' => now(), 'updated_at' => now(),
+        ]);
 
-        self::assertEqualsWithDelta(15.68, $service->restoreForRefundedOrder($order), 0.001);
-        self::assertEqualsWithDelta(0.0, $service->restoreForRefundedOrder($order), 0.001);
+        app(ChargeRefundUpdatedHandler::class)->handleEvent(Refund::constructFrom([
+            'id' => 're_balance_'.$order->getId(),
+            'payment_intent' => 'pi_balance_'.$order->getId(),
+            'amount' => 2000,
+            'status' => 'succeeded',
+            'metadata' => ['picha_source' => 'dashboard'],
+        ]));
 
-        $row = DB::table('organizer_platform_balances')->where('id', $balance->getId())->first();
-        self::assertEqualsWithDelta(15.68, (float) $row->remaining_amount, 0.001);
-        self::assertNull($row->settled_at);
-        self::assertNotNull(DB::table('organizer_platform_balance_deductions')->where('order_id', $order->getId())->value('restored_at'));
+        self::assertSame(1, DB::table('order_refunds')->where('order_id', $order->getId())->count());
+        self::assertEqualsWithDelta(37.88, (float) DB::table('organizer_platform_balances')->where('id', $balance->getId())->value('remaining_amount'), 0.001);
+        self::assertSame(1, DB::table('organizer_platform_balance_deductions')->where('order_id', $order->getId())->count());
     }
 
     public function test_payment_without_withholding_records_nothing(): void

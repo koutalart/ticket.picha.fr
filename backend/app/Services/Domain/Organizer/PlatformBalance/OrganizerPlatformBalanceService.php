@@ -5,7 +5,6 @@ namespace HiEvents\Services\Domain\Organizer\PlatformBalance;
 use HiEvents\DomainObjects\Generated\OrganizerPlatformBalanceDeductionDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\OrganizerPlatformBalanceDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
-use HiEvents\DomainObjects\OrganizerPlatformBalanceDeductionDomainObject;
 use HiEvents\DomainObjects\OrganizerPlatformBalanceDomainObject;
 use HiEvents\DomainObjects\StripePaymentDomainObject;
 use HiEvents\Exceptions\InvalidPlatformBalanceException;
@@ -120,53 +119,6 @@ class OrganizerPlatformBalanceService
         }
 
         return $this->fromCents($withheld - $left);
-    }
-
-    /**
-     * The order on which a part of the balance was withheld is refunded: the withheld amount goes back to the
-     * balance (a settled balance opens again). Done once per deduction, traced with restored_at.
-     *
-     * @return float the amount put back
-     */
-    public function restoreForRefundedOrder(OrderDomainObject $order): float
-    {
-        $restored = 0;
-
-        /** @var OrganizerPlatformBalanceDeductionDomainObject $deduction */
-        foreach ($this->deductionRepository->findWhere([
-            OrganizerPlatformBalanceDeductionDomainObjectAbstract::ORDER_ID => $order->getId(),
-            [OrganizerPlatformBalanceDeductionDomainObjectAbstract::RESTORED_AT, 'null', null],
-        ]) as $deduction) {
-            $balance = $this->balanceRepository->findFirstWhere([
-                OrganizerPlatformBalanceDomainObjectAbstract::ID => $deduction->getOrganizerPlatformBalanceId(),
-            ]);
-
-            if ($balance === null) {
-                continue;
-            }
-
-            $amount = $this->toCents($deduction->getAmount());
-
-            $this->balanceRepository->updateFromArray($balance->getId(), [
-                OrganizerPlatformBalanceDomainObjectAbstract::REMAINING_AMOUNT => $this->fromCents($this->toCents($balance->getRemainingAmount()) + $amount),
-                OrganizerPlatformBalanceDomainObjectAbstract::SETTLED_AT => null,
-            ]);
-
-            $this->deductionRepository->updateFromArray($deduction->getId(), [
-                OrganizerPlatformBalanceDeductionDomainObjectAbstract::RESTORED_AT => Carbon::now()->toDateTimeString(),
-            ]);
-
-            $restored += $amount;
-        }
-
-        if ($restored > 0) {
-            $this->logger->info('Platform balance: withholding put back after a refund', [
-                'order_id' => $order->getId(),
-                'restored' => $this->fromCents($restored),
-            ]);
-        }
-
-        return $this->fromCents($restored);
     }
 
     /**
