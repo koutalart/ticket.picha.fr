@@ -7,6 +7,7 @@ use HiEvents\Exceptions\Stripe\CreatePaymentIntentFailedException;
 use HiEvents\Repository\Interfaces\StripeCustomerRepositoryInterface;
 use HiEvents\Services\Domain\Order\DTO\ApplicationFeeValuesDTO;
 use HiEvents\Services\Domain\Order\OrderApplicationFeeCalculationService;
+use HiEvents\Services\Domain\Organizer\PlatformBalance\OrganizerPlatformBalanceService;
 use HiEvents\Services\Domain\Payment\Stripe\DTOs\CreatePaymentIntentRequestDTO;
 use HiEvents\Services\Domain\Payment\Stripe\DTOs\CreatePaymentIntentResponseDTO;
 use Illuminate\Config\Repository;
@@ -25,6 +26,7 @@ class StripePaymentIntentCreationService
         private readonly StripeCustomerRepositoryInterface     $stripeCustomerRepository,
         private readonly DatabaseManager                       $databaseManager,
         private readonly OrderApplicationFeeCalculationService $orderApplicationFeeCalculationService,
+        private readonly OrganizerPlatformBalanceService       $platformBalanceService,
     )
     {
     }
@@ -102,16 +104,21 @@ class StripePaymentIntentCreationService
                 vatSettings: $paymentIntentDTO->vatSettings,
             );
 
+            $chargesApplicationFee = $applicationFee && !$bypassApplicationFees;
+            $platformBalanceWithheld = $chargesApplicationFee && $paymentIntentDTO->stripeAccountId !== null
+                ? $this->platformBalanceService->calculateWithholding($paymentIntentDTO->order)->toMinorUnit()
+                : 0;
+
             $paymentIntent = $stripeClient->paymentIntents->create([
                 'amount' => $paymentIntentDTO->amount->toMinorUnit(),
                 'currency' => $paymentIntentDTO->currencyCode,
                 'customer' => $this->upsertStripeCustomerWithClient($stripeClient, $paymentIntentDTO)->getStripeCustomerId(),
-                'metadata' => $this->getPaymentIntentMetadata($paymentIntentDTO, $applicationFee),
+                'metadata' => $this->getPaymentIntentMetadata($paymentIntentDTO, $applicationFee, $platformBalanceWithheld),
                 'automatic_payment_methods' => [
                     'enabled' => true,
                 ],
                 ...($paymentIntentDTO->description ? ['description' => $paymentIntentDTO->description] : []),
-                ...($applicationFee && !$bypassApplicationFees ? ['application_fee_amount' => $applicationFee->grossApplicationFee->toMinorUnit()] : []),
+                ...($chargesApplicationFee ? ['application_fee_amount' => $applicationFee->grossApplicationFee->toMinorUnit() + $platformBalanceWithheld] : []),
             ], $this->getStripeAccountData($paymentIntentDTO));
 
             $this->logger->debug('Stripe payment intent created', [
@@ -126,6 +133,7 @@ class StripePaymentIntentCreationService
                 clientSecret: $paymentIntent->client_secret,
                 accountId: $paymentIntentDTO->stripeAccountId,
                 applicationFeeData: $applicationFee,
+                platformBalanceWithheldMinor: $platformBalanceWithheld,
             );
         } catch (ApiErrorException $exception) {
             $this->logger->error("Stripe payment intent creation failed: {$exception->getMessage()}", [
@@ -235,7 +243,8 @@ class StripePaymentIntentCreationService
 
     private function getPaymentIntentMetadata(
         CreatePaymentIntentRequestDTO $paymentIntentDTO,
-        ?ApplicationFeeValuesDTO      $applicationFee
+        ?ApplicationFeeValuesDTO      $applicationFee,
+        int                           $platformBalanceWithheld = 0,
     ): array
     {
         $metaData = [
@@ -252,6 +261,10 @@ class StripePaymentIntentCreationService
             $metaData['application_fee_net_amount'] = $applicationFee->netApplicationFee?->toFloat();
             $metaData['application_fee_vat_rate'] = $applicationFee->applicationFeeVatRate;
             $metaData['application_fee_refund_protection_amount'] = $applicationFee->refundProtectionAmount?->toFloat();
+        }
+
+        if ($platformBalanceWithheld > 0) {
+            $metaData['platform_balance_withheld_amount'] = $platformBalanceWithheld / 100;
         }
 
         return $metaData;

@@ -15,6 +15,7 @@ readonly class CreatePaymentIntentResponseDTO
         public ?ApplicationFeeValuesDTO $applicationFeeData = null,
         public ?StripePlatform          $stripePlatform = null,
         public ?string                  $publicKey = null,
+        public int                      $platformBalanceWithheldMinor = 0,
     )
     {
     }

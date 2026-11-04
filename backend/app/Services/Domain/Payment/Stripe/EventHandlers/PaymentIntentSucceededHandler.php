@@ -28,6 +28,7 @@ use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Services\Domain\Order\OrderApplicationFeeService;
+use HiEvents\Services\Domain\Organizer\PlatformBalance\OrganizerPlatformBalanceService;
 use HiEvents\Services\Domain\Payment\Stripe\StripeRefundExpiredOrderService;
 use HiEvents\Services\Domain\Product\ProductQuantityUpdateService;
 use HiEvents\Services\Infrastructure\DomainEvents\DomainEventDispatcherService;
@@ -55,6 +56,7 @@ class PaymentIntentSucceededHandler
         private readonly DomainEventDispatcherService     $domainEventDispatcherService,
         private readonly OrderApplicationFeeService       $orderApplicationFeeService,
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
+        private readonly OrganizerPlatformBalanceService  $platformBalanceService,
     )
     {
     }
@@ -93,6 +95,8 @@ class PaymentIntentSucceededHandler
             $this->updateStripePaymentInfo($paymentIntent, $stripePayment);
 
             $updatedOrder = $this->updateOrderStatuses($stripePayment);
+
+            $this->platformBalanceService->recordWithholding($stripePayment, $updatedOrder);
 
             $this->updateAttendeeStatuses($updatedOrder);
 
