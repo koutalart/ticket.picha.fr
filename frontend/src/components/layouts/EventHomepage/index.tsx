@@ -46,7 +46,8 @@ import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {ShareComponent} from "../../common/ShareIcon";
 import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
-import {isDateInPast} from "../../../utilites/dates.ts";
+import {isEventEnded} from "../../../utilites/eventEnded.ts";
+import {EventEndedNotice} from "./EventEndedNotice";
 import {hasVisibleHtmlContent} from "../../../utilites/helpers.ts";
 import {RichDescription} from "../../common/RichDescription";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
@@ -102,11 +103,15 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const toastSectionRefs = useMemo(() => [ticketsSectionRef], []);
     const [startCountdown, setStartCountdown] = useState<string | null>(null);
     useEffect(() => {
+        if (isEventEnded(event)) {
+            setStartCountdown(null);
+            return;
+        }
         const update = () => setStartCountdown(formatEventCountdown(event?.start_date, event?.timezone, new Date()));
         update();
         const timer = window.setInterval(update, 60 * 1000);
         return () => window.clearInterval(timer);
-    }, [event?.start_date, event?.timezone]);
+    }, [event?.start_date, event?.timezone, event?.lifecycle_status]);
 
     useEffect(() => alignTicketsOnArrival(), []);
 
@@ -317,7 +322,13 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
             config: socialMediaConfig[platform as keyof typeof socialMediaConfig]
         })) : [];
 
+    const isEnded = isEventEnded(event);
+
     const getStatusBadge = () => {
+        if (isEnded) {
+            return {text: t`Event ended`, variant: 'ended'};
+        }
+
         const products = event.products || event.product_categories?.flatMap(c => c.products || []) || [];
 
         if (products.length === 0) {
@@ -342,8 +353,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
     const lowestPrice = getLowestAvailablePrice(event);
     const lowestPriceLabel = lowestPrice !== null ? formatCompactCurrency(lowestPrice, event.currency) : '';
-    const canShowRecentPurchases = statusBadge?.variant === 'success'
-        && !(event.end_date && isDateInPast(event.end_date));
+    const canShowRecentPurchases = statusBadge?.variant === 'success';
 
     const isFullscreenHero = themeSettings.hero_layout === 'FULLSCREEN' && !!(coverVideo || coverImage);
     const isFreeEvent = (event.products || event.product_categories?.flatMap(c => c.products || []) || [])
@@ -351,6 +361,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
     const isEmbeddedRegistration = isFullscreenHero && isEmbeddedRegistrationEnabled(event);
     const isEmbeddedCardRegistration = !isFullscreenHero && isEmbeddedRegistrationEnabled(event);
+    const otherEventsUrl = organizer?.status === OrganizerStatus.LIVE ? organizerHomepageUrl(organizer) : undefined;
     const isWaitingForSaleStart = getEventProducts(event).some(product => product.is_before_sale_start_date)
         && !getEventProducts(event).some(product => product.is_available && !product.is_before_sale_start_date);
 
@@ -503,7 +514,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     )}
                                 </div>
                             </div>
-                            <div className={classes.fullscreenFooter}>
+                            {!isEnded && <div className={classes.fullscreenFooter}>
                                 {attendanceEnabled && !registeredOnDevice && (
                                     <AlreadyRegisteredLink className={classes.fullscreenAlreadyLink} onClick={openAttendanceAccess}/>
                                 )}
@@ -518,17 +529,20 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                         {isFreeEvent ? t`Register for free` : t`Get Tickets`}
                                     </button>
                                 )}
-                            </div>
+                            </div>}
                         </section>
                     )}
-                    {isEmbeddedRegistration && registeredOnDevice && !registerAnotherPerson && (
+                    {isEmbeddedRegistration && isEnded && (
+                        <EventEndedNotice variant="immersive" sectionRef={ticketsSectionRef} otherEventsUrl={otherEventsUrl}/>
+                    )}
+                    {isEmbeddedRegistration && !isEnded && registeredOnDevice && !registerAnotherPerson && (
                         <RegisteredNotice
                             sectionRef={ticketsSectionRef}
                             onManageAttendance={openAttendanceAccess}
                             onRegisterAnother={() => setRegisterAnotherPerson(true)}
                         />
                     )}
-                    {isEmbeddedRegistration && (!registeredOnDevice || registerAnotherPerson) && (
+                    {isEmbeddedRegistration && !isEnded && (!registeredOnDevice || registerAnotherPerson) && (
                         <EmbeddedRegistration
                             onAlreadyRegistered={attendanceEnabled ? openAttendanceAccess : undefined}
                             event={event}
@@ -551,7 +565,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             organizerLogo={footerOrganizerLogo}
                             socialLinks={socialLinks}
                             websiteUrl={websiteUrl}
-                            onRegister={scrollToTickets}
+                            onRegister={isEnded ? undefined : scrollToTickets}
                             onContact={openContactModal}
                             onManageCookies={openConsentPreferences}
                         />
@@ -723,7 +737,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                             </div>
 
                                             {/* Event Ended */}
-                                            {event.end_date && isDateInPast(event.end_date) && (
+                                            {isEnded && (
                                                 <div className={classes.metaItem}>
                                                     <div className={classes.metaIconBox}>
                                                         <IconCalendarOff/>
@@ -793,7 +807,14 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     </div>
                                 )}
 
-                                {isEmbeddedCardRegistration ? (
+                                {isEnded ? (
+                                    <EventEndedNotice
+                                        variant="card"
+                                        className={classes.section}
+                                        sectionRef={ticketsSectionRef}
+                                        otherEventsUrl={otherEventsUrl}
+                                    />
+                                ) : isEmbeddedCardRegistration ? (
                                     <EmbeddedRegistration
                                         variant="card"
                                         className={`${classes.section} ${classes.embeddedSection}`}
@@ -922,7 +943,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         </div>
                     )}
 
-                    {showScrollButton && !isEmbeddedRegistration && (
+                    {showScrollButton && !isEmbeddedRegistration && !isEnded && (
                         <button
                             ref={buyBarRef}
                             type="button"
@@ -949,7 +970,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                         enabled={canShowRecentPurchases}
                         sectionRefs={toastSectionRefs}
                         heroRef={fullscreenHeroRef}
-                        aboveBuyBar={showScrollButton && !isEmbeddedRegistration}
+                        aboveBuyBar={showScrollButton && !isEmbeddedRegistration && !isEnded}
                     />
 
                     <LiveChatLauncher

@@ -3,6 +3,7 @@ import {t} from "@lingui/macro";
 import {Event} from "../../../types.ts";
 import {eventCoverImage} from "../../../utilites/urlHelper.ts";
 import {getLowestAvailablePrice} from "../../../utilites/eventConversion.ts";
+import {isEventEnded} from "../../../utilites/eventEnded.ts";
 import classes from "./LiveChatWindow.module.scss";
 
 interface LiveChatEventBarProps {
@@ -60,9 +61,11 @@ export const LiveChatEventBar = ({event, i18n, onBook}: LiveChatEventBarProps) =
                 <span className={classes.eventBarTitle}>{event.title}</span>
                 {details && <span className={classes.eventBarDetails}>{details}</span>}
             </div>
-            <button type="button" className={classes.eventBarCta} onClick={onBook}>
-                {priceLabel ? t(i18n)`Book, from ${priceLabel}` : t(i18n)`Book`}
-            </button>
+            {!isEventEnded(event) && (
+                <button type="button" className={classes.eventBarCta} onClick={onBook}>
+                    {priceLabel ? t(i18n)`Book, from ${priceLabel}` : t(i18n)`Book`}
+                </button>
+            )}
         </div>
     );
 };

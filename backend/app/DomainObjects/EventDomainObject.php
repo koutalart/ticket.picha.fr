@@ -178,15 +178,26 @@ class EventDomainObject extends Generated\EventDomainObjectAbstract implements I
         return StringHelper::previewFromHtml($this->getDescription());
     }
 
+    public const ENDED_WITHOUT_END_DATE_AFTER_HOURS = 12;
+
+    public function getEffectiveEndDate(): ?Carbon
+    {
+        if ($this->getEndDate() !== null) {
+            return Carbon::parse($this->getEndDate())->setTimezone($this->getTimezone() ?: 'UTC');
+        }
+
+        if ($this->getStartDate() === null) {
+            return null;
+        }
+
+        return Carbon::parse($this->getStartDate())
+            ->setTimezone($this->getTimezone() ?: 'UTC')
+            ->addHours(self::ENDED_WITHOUT_END_DATE_AFTER_HOURS);
+    }
+
     public function isEventInPast(): bool
     {
-        if ($this->getEndDate() === null) {
-            return false;
-        }
-        $endDate = Carbon::parse($this->getEndDate());
-        $endDate->setTimezone($this->getTimezone());
-
-        return $endDate->isPast();
+        return $this->getEffectiveEndDate()?->isPast() ?? false;
     }
 
     public function isEventInFuture(): bool
@@ -202,17 +213,14 @@ class EventDomainObject extends Generated\EventDomainObjectAbstract implements I
 
     public function isEventOngoing(): bool
     {
+        if ($this->getStartDate() === null) {
+            return ! $this->isEventInPast();
+        }
+
         $startDate = Carbon::parse($this->getStartDate());
         $startDate->setTimezone($this->getTimezone());
 
-        if ($this->getEndDate() === null) {
-            return $startDate->isPast();
-        }
-
-        $endDate = Carbon::parse($this->getEndDate());
-        $endDate->setTimezone($this->getTimezone());
-
-        return $startDate->isPast() && $endDate->isFuture();
+        return $startDate->isPast() && ! $this->isEventInPast();
     }
 
     public function getLifecycleStatus(): string

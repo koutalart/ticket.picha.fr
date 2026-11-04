@@ -24,7 +24,7 @@ interface RichFooterProps {
     organizerLogo?: string;
     socialLinks: SocialLink[];
     websiteUrl?: string;
-    onRegister: () => void;
+    onRegister?: () => void;
     onContact: () => void;
     onManageCookies: () => void;
 }
@@ -212,18 +212,20 @@ export const RichFooter = ({
                 <nav className={classes.column} aria-label={t`The event`}>
                     <h2 className={classes.columnTitle}>{t`The event`}</h2>
                     <ul className={classes.linkList}>
-                        <li>
-                            <a
-                                href="#tickets"
-                                className={classes.link}
-                                onClick={(clickEvent) => {
-                                    clickEvent.preventDefault();
-                                    onRegister();
-                                }}
-                            >
-                                {t`Register`}
-                            </a>
-                        </li>
+                        {onRegister && (
+                            <li>
+                                <a
+                                    href="#tickets"
+                                    className={classes.link}
+                                    onClick={(clickEvent) => {
+                                        clickEvent.preventDefault();
+                                        onRegister();
+                                    }}
+                                >
+                                    {t`Register`}
+                                </a>
+                            </li>
+                        )}
                         {eventLinks.map((link, index) => (
                             <li key={`${link.url}-${index}`}>
                                 <a href={link.url} className={classes.link} {...linkTargetProps(link.url)}>
