@@ -21,6 +21,7 @@ import { Navigate, useLocation, useNavigate, useParams } from "react-router";
 import { Button } from "@mantine/core";
 import { useGetOrganizer } from "../../../queries/useGetOrganizer.ts";
 import { useState } from "react";
+import { OrganizerSection } from "../../../types.ts";
 import classes from "./OrganizerLayout.module.scss";
 import { CalloutConfig, SidebarCalloutQueue } from "../../common/SidebarCallout/SidebarCalloutQueue";
 import { InviteUserModal } from "../../modals/InviteUserModal";
@@ -33,6 +34,7 @@ import { StripeConnectButton } from "../../common/StripeConnectButton";
 import { useGetMe } from "../../../queries/useGetMe.ts";
 import { isBoxOfficeOperator } from "../../../utilites/kioskAuth.ts";
 import { useGetSmsUnreadCount } from "../../../queries/useGetSmsUnreadCount.ts";
+import { hiddenSectionRedirect, isSectionEnabled } from "../../../utilites/organizerSections.ts";
 
 const OrganizerLayout = () => {
     const { organizerId } = useParams();
@@ -51,6 +53,14 @@ const OrganizerLayout = () => {
     if (isMeSuccess && isBoxOfficeOperator(me)) {
         return <Navigate to="/kiosk" replace />;
     }
+
+    const sectionRedirect = hiddenSectionRedirect(organizer, location.pathname);
+    if (sectionRedirect) {
+        return <Navigate to={sectionRedirect} replace />;
+    }
+
+    const allows = (section: OrganizerSection) => isSectionEnabled(organizer, section);
+    const eventsAllowed = allows('events');
 
 
     const isQrCodesPage = /\/(qr-codes|sms)\/?$/.test(location.pathname);
@@ -75,33 +85,45 @@ const OrganizerLayout = () => {
     const smsItem: NavItem = {link: 'sms', label: t`SMS`, icon: IconMessage, badge: smsUnreadCount ? smsUnreadCount : undefined};
     const publicationsItem: NavItem = {link: 'publications', label: t`Publications`, icon: IconSpeakerphone};
 
-    const navItems: NavItem[] = [homeItem, eventsItem, contactsItem, reportsItem, qrCodesItem, smsItem, publicationsItem];
+    const sectionItems: [OrganizerSection, NavItem][] = [
+        ['dashboard', homeItem],
+        ['events', eventsItem],
+        ['contacts', contactsItem],
+        ['reports', reportsItem],
+        ['qr-codes', qrCodesItem],
+        ['sms', smsItem],
+        ['publications', publicationsItem],
+    ];
+    const navItems: NavItem[] = sectionItems.filter(([section]) => allows(section)).map(([, item]) => item);
 
     const bottomItems: NavItem[] = organizer ? [
-        {link: `/events/${organizerId}/${organizer.slug || ''}`, label: t`My organizer page`, icon: IconExternalLink},
-        {link: 'organizer-homepage-designer', label: t`Customize my page`, icon: IconPaint},
+        ...(eventsAllowed ? [
+            {link: `/events/${organizerId}/${organizer.slug || ''}`, label: t`My organizer page`, icon: IconExternalLink},
+            {link: 'organizer-homepage-designer', label: t`Customize my page`, icon: IconPaint},
+        ] : []),
         {link: 'settings', label: t`Settings`, icon: IconSettings},
     ] : [];
 
-    const mobileTabs: NavItem[] = [
-        homeItem,
-        eventsItem,
-        reportsItem,
-        {
+    const allMobileTabs: [OrganizerSection, NavItem][] = [
+        ['dashboard', homeItem],
+        ['events', eventsItem],
+        ['reports', reportsItem],
+        ['sms', {
             ...smsItem,
             label: t`Messages`,
             isActive: (isActive) => isActive || isMessagesSection,
-        },
-        {...publicationsItem, label: t`Publication`},
+        }],
+        ['publications', {...publicationsItem, label: t`Publication`}],
     ];
+    const mobileTabs: NavItem[] = allMobileTabs.filter(([section]) => allows(section)).map(([, item]) => item);
 
     const mobileMoreItems: NavItem[] = [
-        contactsItem,
-        qrCodesItem,
+        ...(allows('contacts') ? [contactsItem] : []),
+        ...(allows('qr-codes') ? [qrCodesItem] : []),
         ...bottomItems,
     ];
 
-    const callouts: CalloutConfig[] = [
+    const callouts: CalloutConfig[] = eventsAllowed ? [
         {
             icon: <IconUsersGroup size={20} />,
             heading: t`Invite Your Team`,
@@ -113,9 +135,9 @@ const OrganizerLayout = () => {
             },
             storageKey: `organizer-${organizerId}-team-callout-dismissed`
         },
-    ];
+    ] : [];
 
-    if (account && !account?.stripe_connect_setup_complete) {
+    if (eventsAllowed && account && !account?.stripe_connect_setup_complete) {
         callouts.unshift({
             icon: <IconBrandStripe size={20} />,
             heading: t`Connect Stripe`,
@@ -141,7 +163,7 @@ const OrganizerLayout = () => {
                 bottomItems={bottomItems}
                 mobileTabs={mobileTabs}
                 mobileMoreItems={mobileMoreItems}
-                headerActions={isQrCodesPage ? undefined : (
+                headerActions={isQrCodesPage || !eventsAllowed ? undefined : (
                     <Button radius="md" size="md" leftSection={<IconPlus size={18}/>}
                             onClick={() => navigate(`/manage/new-event?organizer=${organizerId}`)}>
                         {t`Create Event`}

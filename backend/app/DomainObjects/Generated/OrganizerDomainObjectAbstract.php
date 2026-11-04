@@ -26,6 +26,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     final public const CUSTOM_DOMAIN = 'custom_domain';
     final public const HOMEPAGE_TEMPLATE = 'homepage_template';
     final public const SITE_CONTENT = 'site_content';
+    final public const ENABLED_SECTIONS = 'enabled_sections';
 
     protected int $id;
     protected int $account_id;
@@ -43,6 +44,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     protected ?string $custom_domain = null;
     protected string $homepage_template = 'DEFAULT';
     protected array|string|null $site_content = null;
+    protected array|string|null $enabled_sections = null;
 
     public function toArray(): array
     {
@@ -63,6 +65,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
                     'custom_domain' => $this->custom_domain ?? null,
                     'homepage_template' => $this->homepage_template ?? null,
                     'site_content' => $this->site_content ?? null,
+                    'enabled_sections' => $this->enabled_sections ?? null,
                 ];
     }
 
@@ -240,5 +243,16 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     public function getSiteContent(): array|string|null
     {
         return $this->site_content;
+    }
+
+    public function setEnabledSections(array|string|null $enabled_sections): self
+    {
+        $this->enabled_sections = $enabled_sections;
+        return $this;
+    }
+
+    public function getEnabledSections(): array|string|null
+    {
+        return $this->enabled_sections;
     }
 }
