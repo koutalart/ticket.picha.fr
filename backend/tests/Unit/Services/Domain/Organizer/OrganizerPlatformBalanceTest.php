@@ -104,6 +104,24 @@ class OrganizerPlatformBalanceTest extends TestCase
         self::assertNotNull($row->settled_at);
     }
 
+    public function test_refunded_order_puts_the_withholding_back_once_and_reopens_the_balance(): void
+    {
+        [$order, $organizerId] = $this->paidOrder();
+        $service = app(OrganizerPlatformBalanceService::class);
+        $balance = $service->addBalance($organizerId, 15.68, 'USD', 'Options sérénité versées avant le 04/11');
+        $service->recordWithholding($this->stripePayment($order, withheldMinor: 2000), $order);
+
+        self::assertNotNull(DB::table('organizer_platform_balances')->where('id', $balance->getId())->value('settled_at'));
+
+        self::assertEqualsWithDelta(15.68, $service->restoreForRefundedOrder($order), 0.001);
+        self::assertEqualsWithDelta(0.0, $service->restoreForRefundedOrder($order), 0.001);
+
+        $row = DB::table('organizer_platform_balances')->where('id', $balance->getId())->first();
+        self::assertEqualsWithDelta(15.68, (float) $row->remaining_amount, 0.001);
+        self::assertNull($row->settled_at);
+        self::assertNotNull(DB::table('organizer_platform_balance_deductions')->where('order_id', $order->getId())->value('restored_at'));
+    }
+
     public function test_payment_without_withholding_records_nothing(): void
     {
         [$order, $organizerId] = $this->paidOrder();

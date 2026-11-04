@@ -17,6 +17,7 @@ abstract class OrganizerPlatformBalanceDeductionDomainObjectAbstract extends \Hi
     final public const AMOUNT = 'amount';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const RESTORED_AT = 'restored_at';
 
     protected int $id;
     protected int $organizer_platform_balance_id;
@@ -25,6 +26,7 @@ abstract class OrganizerPlatformBalanceDeductionDomainObjectAbstract extends \Hi
     protected float $amount;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?string $restored_at = null;
 
     public function toArray(): array
     {
@@ -36,6 +38,7 @@ abstract class OrganizerPlatformBalanceDeductionDomainObjectAbstract extends \Hi
                     'amount' => $this->amount ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'restored_at' => $this->restored_at ?? null,
                 ];
     }
 
@@ -114,5 +117,16 @@ abstract class OrganizerPlatformBalanceDeductionDomainObjectAbstract extends \Hi
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setRestoredAt(?string $restored_at): self
+    {
+        $this->restored_at = $restored_at;
+        return $this;
+    }
+
+    public function getRestoredAt(): ?string
+    {
+        return $this->restored_at;
     }
 }
