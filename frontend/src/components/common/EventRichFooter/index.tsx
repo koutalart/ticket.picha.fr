@@ -9,6 +9,7 @@ import {imageUrl} from "../../../utilites/urlHelper.ts";
 import {eventRegistrationPath} from "../../../utilites/eventPages.ts";
 import {openConsentPreferences} from "../../../utilites/trackingPixels/consent.ts";
 import classes from "./EventRichFooter.module.scss";
+import {isEventEnded} from "../../../utilites/eventEnded.ts";
 
 export const hasEventRichFooter = (event?: Event): boolean =>
     !!event?.organizer
@@ -51,7 +52,7 @@ export const EventRichFooter = ({event}: { event: Event }) => {
                 organizerLogo={imageUrl('ORGANIZER_LOGO', organizer.images)}
                 socialLinks={getOrganizerSocialLinks(event)}
                 websiteUrl={organizer.website}
-                onRegister={() => {
+                onRegister={isEventEnded(event) ? undefined : () => {
                     window.location.href = eventRegistrationPath(event);
                 }}
                 onContact={() => setContactOpen(true)}

@@ -3,7 +3,8 @@ import {Event, Product} from "../../../types.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {getProductsFromEvent} from "../../../utilites/helpers.ts";
 import {formatAddress} from "../../../utilites/addressUtilities.ts";
-import {getEventSeoName, isEventFree, isEventFullyPaid} from "../../../utilites/eventStructuredData.ts";
+import {ENDED_EVENT_AVAILABILITY, getEventSeoName, isEventFree, isEventFullyPaid} from "../../../utilites/eventStructuredData.ts";
+import {isEventEnded} from "../../../utilites/eventEnded.ts";
 
 export interface TicketTier {
     id: string;
@@ -113,7 +114,9 @@ export const buildEventJsonLd = (event: Event, url: string, organizerName: strin
             priceCurrency: event.currency,
             lowPrice: lowest,
             highPrice: Math.max(...tiers.map(tier => tier.price)),
-            availability: tiers.every(tier => tier.soldOut)
+            availability: isEventEnded(event)
+                ? ENDED_EVENT_AVAILABILITY
+                : tiers.every(tier => tier.soldOut)
                 ? 'https://schema.org/SoldOut'
                 : 'https://schema.org/InStock',
         },

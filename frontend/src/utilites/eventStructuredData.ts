@@ -5,6 +5,7 @@ import timezone from "dayjs/plugin/timezone";
 import {Event, Product, ProductPrice, SCHEMA_EVENT_TYPES, SchemaEventType} from "../types.ts";
 import {withIncludedRefundProtection} from "./refundProtection.ts";
 import {getOrganizerSocialProfiles} from "./organizerSocialLinks.ts";
+import {isEventEnded} from "./eventEnded.ts";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -116,6 +117,10 @@ export const getEventSeoName = (event: Event, organizerName = event.organizer?.n
 export const resolveSchemaEventType = (value?: string | null): SchemaEventType =>
     SCHEMA_EVENT_TYPES.includes(value as SchemaEventType) ? value as SchemaEventType : "Event";
 
+// Once the event is over nothing can be bought any more: "Discontinued" (no longer sold) rather than "SoldOut",
+// which would claim the event filled up.
+export const ENDED_EVENT_AVAILABILITY = `${SCHEMA}/Discontinued`;
+
 const availability = (product: Product, price?: ProductPrice): string => {
     const soldOut = !!(price?.is_sold_out || product.is_sold_out);
     const beforeStart = price?.is_before_sale_start_date ?? product.is_before_sale_start_date;
@@ -156,7 +161,7 @@ const buildOffers = (event: Event, eventUrl: string): JsonLd[] =>
                 price: Number.isFinite(amount) && amount > 0 ? amount : 0,
                 priceCurrency: event.currency,
                 validFrom: toIsoInTimezone(price?.sale_start_date ?? product.sale_start_date, event.timezone),
-                availability: availability(product, price),
+                availability: isEventEnded(event) ? ENDED_EVENT_AVAILABILITY : availability(product, price),
             });
         });
     });

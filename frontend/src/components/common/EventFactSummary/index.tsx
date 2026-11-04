@@ -5,6 +5,7 @@ import {formatEventDateRange} from "../../../utilites/dates.ts";
 import {formatAddress, isAddressSet} from "../../../utilites/addressUtilities.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {getLowestOfferPrice, isEventFree} from "../../../utilites/eventStructuredData.ts";
+import {isEventEnded} from "../../../utilites/eventEnded.ts";
 
 interface EventFactSummaryProps {
     event: Event;
@@ -20,6 +21,7 @@ export const EventFactSummary = ({event, eventUrl}: EventFactSummaryProps) => {
     const dateRange = formatEventDateRange(event.start_date, event.end_date, event.timezone);
     const organizerName = event.organizer?.name;
     const registrationUrl = `${eventUrl}#tickets`;
+    const isEnded = isEventEnded(event);
 
     const formattedMinPrice = minPrice !== null ? formatCurrency(minPrice, event.currency) : null;
     const price = isEventFree(event)
@@ -38,11 +40,17 @@ export const EventFactSummary = ({event, eventUrl}: EventFactSummaryProps) => {
                 {event.settings?.is_online_event
                     ? <li>{t`Location: online event`}</li>
                     : venue && <li>{t`Location: ${venue}`}</li>}
-                {price && <li>{t`Price: ${price}`}</li>}
-                <li>
-                    {t`How to register: fill in the form in the tickets section of this page`}{" "}
-                    <a href={registrationUrl}>{registrationUrl}</a>
-                </li>
+                {isEnded ? (
+                    <li>{t`Tickets: event ended, ticket sales are closed`}</li>
+                ) : (
+                    <>
+                        {price && <li>{t`Price: ${price}`}</li>}
+                        <li>
+                            {t`How to register: fill in the form in the tickets section of this page`}{" "}
+                            <a href={registrationUrl}>{registrationUrl}</a>
+                        </li>
+                    </>
+                )}
             </ul>
         </section>
     );

@@ -1,0 +1,80 @@
+@use "../../../../styles/mixins.scss";
+
+.card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px 20px;
+  border: 1px solid var(--event-border-color, rgba(0, 0, 0, 0.12));
+  border-radius: 12px;
+  background: var(--event-accent-soft, transparent);
+  color: var(--event-primary-text-color, inherit);
+
+  .icon {
+    flex: none;
+    margin-top: 2px;
+    color: var(--event-secondary-color, currentColor);
+  }
+
+  .link {
+    color: var(--event-primary-color, inherit);
+  }
+}
+
+.immersive {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-family: var(--theme-font-family, inherit);
+  @include mixins.immersive-scrim;
+
+  .panel {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(48px, 12vh, 120px) 20px clamp(40px, 8vh, 80px);
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .icon {
+    flex: none;
+    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .title {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+  }
+
+  .text {
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .link {
+    color: #fff;
+  }
+}
+
+.title {
+  margin: 0 0 4px;
+  font-family: var(--theme-font-family, inherit);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.link {
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
