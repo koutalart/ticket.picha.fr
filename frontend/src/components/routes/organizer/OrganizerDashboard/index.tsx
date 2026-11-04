@@ -117,7 +117,14 @@ export const OrganizerDashboard = () => {
         onClick: openFirstUnreadSms,
     }] : [];
 
-    const allStatItems = [...statItems, ...smsStat];
+    const platformBalanceDue = Number(stats?.platform_balance_due ?? 0);
+    const balanceStat = platformBalanceDue > 0 ? [{
+        label: t`Balance due to PICHA`,
+        value: formatCurrency(platformBalanceDue, currency),
+        hint: t`Withheld on your next sales`,
+    }] : [];
+
+    const allStatItems = [...statItems, ...balanceStat, ...smsStat];
 
     const searchInput = (className: string) => (
         <TextInput

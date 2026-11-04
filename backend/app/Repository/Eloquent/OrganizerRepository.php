@@ -101,6 +101,17 @@ class OrganizerRepository extends BaseRepository implements OrganizerRepositoryI
             'currencyCode' => $currencyCode,
         ]);
 
+        $platformBalanceDue = $this->db->selectOne(<<<SQL
+            SELECT COALESCE(SUM(b.remaining_amount), 0) AS total
+            FROM organizer_platform_balances b
+            WHERE b.organizer_id = :organizerId
+              AND b.currency = :currencyCode
+              AND b.remaining_amount > 0;
+        SQL, [
+            'organizerId' => $organizerId,
+            'currencyCode' => $currencyCode,
+        ]);
+
         $allOrganizersCurrenciesQuery = <<<SQL
         SELECT DISTINCT e.currency FROM events e
         WHERE e.organizer_id = :organizerId
@@ -130,6 +141,7 @@ SQL;
             total_awaiting_payment: (float) $awaitingPayment->total,
             orders_awaiting_payment: (int) $awaitingPayment->orders,
             total_organizer_sales: (float)($totalsResult->total_organizer_sales ?? 0),
+            platform_balance_due: (float) $platformBalanceDue->total,
         );
     }
 }

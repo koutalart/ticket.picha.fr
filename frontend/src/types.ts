@@ -532,6 +532,7 @@ export interface OrganizerStats {
     total_awaiting_payment?: number;
     orders_awaiting_payment?: number;
     total_organizer_sales?: number;
+    platform_balance_due?: number;
 }
 
 export interface OrganizerSiteContent {

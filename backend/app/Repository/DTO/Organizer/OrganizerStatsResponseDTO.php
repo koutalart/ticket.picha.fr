@@ -22,6 +22,7 @@ class OrganizerStatsResponseDTO
         public float $total_awaiting_payment = 0,
         public int $orders_awaiting_payment = 0,
         public float $total_organizer_sales = 0,
+        public float $platform_balance_due = 0,
     )
     {
     }
