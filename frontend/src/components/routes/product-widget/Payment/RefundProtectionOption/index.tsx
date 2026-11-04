@@ -60,6 +60,7 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
                         {extraFees > 0 && (
                             <div className={classes.details}>{t`+ ${formattedFees} in fees`}</div>
                         )}
+                        <div className={classes.details}>{t`Non-refundable option: it is what guarantees your ticket refund.`}</div>
                     </div>
                     <Checkbox
                         className={classes.checkbox}
@@ -106,6 +107,7 @@ export const RefundProtectionOption = ({offer, checked, disabled = false, onChan
                             : t`Included in every order for this event.`}
                     </div>
                 )}
+                <div className={classes.details}>{t`Non-refundable option: it is what guarantees your ticket refund.`}</div>
             </div>
             <Checkbox
                 className={classes.checkbox}

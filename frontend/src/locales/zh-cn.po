@@ -356,7 +356,7 @@ msgid "{totalUses} uses"
 msgstr ""
 
 #: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:58
-#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:94
+#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:95
 msgid "{unitPrice} per ticket"
 msgstr "每张票 {unitPrice}"
 
@@ -382,7 +382,7 @@ msgid "+ {0} awaiting payment collection"
 msgstr ""
 
 #: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:61
-#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:100
+#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:101
 msgid "+ {formattedFees} in fees"
 msgstr "+ {formattedFees} 费用"
 
@@ -1448,7 +1448,7 @@ msgstr "已有账户？<0>{0}</0>"
 msgid "already known, completed without being overwritten"
 msgstr "已存在，补充信息但不覆盖"
 
-#: src/components/modals/RefundOrderModal/index.tsx:115
+#: src/components/modals/RefundOrderModal/index.tsx:126
 msgid "Already Refunded"
 msgstr "已退款"
 
@@ -1458,7 +1458,7 @@ msgstr "已退款"
 msgid "Already registered? Manage my attendance"
 msgstr ""
 
-#: src/components/modals/RefundOrderModal/index.tsx:178
+#: src/components/modals/RefundOrderModal/index.tsx:202
 msgid "Also cancel this order"
 msgstr "同时取消此订单"
 
@@ -2209,7 +2209,7 @@ msgstr "可用"
 msgid "Available once a cover video has been added."
 msgstr "添加封面视频后即可使用。"
 
-#: src/components/modals/RefundOrderModal/index.tsx:122
+#: src/components/modals/RefundOrderModal/index.tsx:133
 msgid "Available to Refund"
 msgstr "可退款"
 
@@ -2527,7 +2527,7 @@ msgid "By card. The final price is shown before payment."
 msgstr "刷卡支付。付款前显示最终价格。"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:828
-#: src/components/routes/product-widget/Payment/index.tsx:198
+#: src/components/routes/product-widget/Payment/index.tsx:201
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "继续操作即表示您同意<0>{0}服务条款</0>"
 
@@ -2676,7 +2676,7 @@ msgstr "最后去不了？门票可退款。"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/components/modals/RefundOrderModal/index.tsx:179
+#: src/components/modals/RefundOrderModal/index.tsx:203
 msgid "Cancel all products and release them back to the pool"
 msgstr "取消所有产品并释放回可用池"
 
@@ -3271,7 +3271,7 @@ msgstr "关闭"
 #: src/components/layouts/EventHomepage/AttendanceAccess/AttendanceAccessModal.tsx:118
 #: src/components/modals/JoinWaitlistModal/index.tsx:103
 #: src/components/modals/JoinWaitlistModal/index.tsx:130
-#: src/components/modals/RefundOrderModal/index.tsx:216
+#: src/components/modals/RefundOrderModal/index.tsx:240
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:308
 #: src/components/routes/organizer/Publications/PostViewer.tsx:60
 #: src/components/routes/organizer/Publications/StoryViewer.tsx:239
@@ -4451,7 +4451,7 @@ msgstr "{0} 的客户，尚未购买即将举行活动的门票"
 msgid "customer since"
 msgstr "客户始于"
 
-#: src/components/modals/RefundOrderModal/index.tsx:172
+#: src/components/modals/RefundOrderModal/index.tsx:196
 msgid "Customer will receive an email confirming the refund"
 msgstr "客户将收到确认退款的电子邮件"
 
@@ -5891,6 +5891,10 @@ msgstr ""
 msgid "Event archived successfully"
 msgstr "活动已成功归档"
 
+#: src/components/modals/RefundOrderModal/index.tsx:146
+msgid "Event cancelled by the organizer"
+msgstr "活动已被主办方取消"
+
 #: src/components/modals/CreateEventModal/index.tsx:186
 msgid "Event Category"
 msgstr "活动类别"
@@ -7024,7 +7028,7 @@ msgstr "完整使用平台"
 msgid "Full name"
 msgstr "全名"
 
-#: src/components/modals/RefundOrderModal/index.tsx:156
+#: src/components/modals/RefundOrderModal/index.tsx:180
 msgid "Full refund"
 msgstr "全额退款"
 
@@ -7793,7 +7797,7 @@ msgstr "价格中包含税费"
 msgid "Included by default"
 msgstr "默认包含"
 
-#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:106
+#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:107
 msgid "Included in every order for this event."
 msgstr "此活动的每个订单均包含。"
 
@@ -9964,6 +9968,11 @@ msgstr "否，保留在此"
 msgid "No. The platform works in the browser, on a computer, tablet or smartphone. For the welcome desk, we provide the equipment if needed."
 msgstr "不需要。平台在浏览器中运行，支持电脑、平板和手机。如有需要，我们可为接待台提供设备。"
 
+#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:63
+#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:110
+msgid "Non-refundable option: it is what guarantees your ticket refund."
+msgstr "此选项不可退款：正是它保证了您的门票可以退款。"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/index.tsx:69
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsModal.tsx:31
 msgid "Non-VAT registered businesses or individuals: Irish VAT at 23% applies"
@@ -10403,7 +10412,7 @@ msgstr "仅显示开始日期和时间"
 msgid "Only the name and email are asked. Add a question above if you need more."
 msgstr ""
 
-#: src/components/modals/RefundOrderModal/index.tsx:129
+#: src/components/modals/RefundOrderModal/index.tsx:141
 msgid "Only the ticket price is refunded: the service fees and the cancellation protection are never refunded."
 msgstr "仅退还门票价格：服务费和取消保障永不退还。"
 
@@ -10806,7 +10815,7 @@ msgid "Order timeout"
 msgstr "订单超时"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:22
-#: src/components/modals/RefundOrderModal/index.tsx:108
+#: src/components/modals/RefundOrderModal/index.tsx:119
 msgid "Order Total"
 msgstr "订单总额"
 
@@ -11145,7 +11154,7 @@ msgstr "付费产品"
 msgid "Paid, free, tiered pricing, and donation-based tickets"
 msgstr "付费、免费、分级定价和捐赠型门票"
 
-#: src/components/modals/RefundOrderModal/index.tsx:156
+#: src/components/modals/RefundOrderModal/index.tsx:180
 msgid "Partial refund"
 msgstr "部分退款"
 
@@ -11410,11 +11419,11 @@ msgstr "付款将继续无中断流转"
 msgid "Peace of mind option included"
 msgstr ""
 
-#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:88
+#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:89
 msgid "Peace of mind option included for tickets above {threshold}: {mandatoryAmount}"
 msgstr ""
 
-#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:89
+#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:90
 msgid "Peace of mind option included: {mandatoryAmount}"
 msgstr ""
 
@@ -12129,7 +12138,7 @@ msgstr "隐私政策"
 msgid "Private LAN address of the Zebra (port 9100)."
 msgstr "Zebra 的内网地址（端口 9100）。"
 
-#: src/components/modals/RefundOrderModal/index.tsx:197
+#: src/components/modals/RefundOrderModal/index.tsx:221
 msgid "Process Refund"
 msgstr "处理退款"
 
@@ -12677,7 +12686,7 @@ msgstr ""
 msgid "Refresh Preview"
 msgstr "刷新预览"
 
-#: src/components/modals/RefundOrderModal/index.tsx:154
+#: src/components/modals/RefundOrderModal/index.tsx:178
 msgid "Refund amount"
 msgstr "退款金额"
 
@@ -12695,7 +12704,7 @@ msgstr "退款失败"
 msgid "Refund order"
 msgstr "退款订单"
 
-#: src/components/modals/RefundOrderModal/index.tsx:245
+#: src/components/modals/RefundOrderModal/index.tsx:269
 msgid "Refund Order {0}"
 msgstr "退款订单 {0}"
 
@@ -12741,7 +12750,7 @@ msgctxt "web chat"
 msgid "Refunded"
 msgstr "已退款"
 
-#: src/components/modals/RefundOrderModal/index.tsx:134
+#: src/components/modals/RefundOrderModal/index.tsx:158
 msgid "Refunded tickets are cancelled and can no longer be used at the entrance."
 msgstr "已退款的门票将被取消，无法再在入口使用。"
 
@@ -13180,7 +13189,7 @@ msgstr "要求账单地址"
 msgid "Required"
 msgstr "必填"
 
-#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:105
+#: src/components/routes/product-widget/Payment/RefundProtectionOption/index.tsx:106
 msgid "Required for tickets above {threshold}."
 msgstr ""
 
@@ -14175,7 +14184,7 @@ msgstr "发送订单确认和票务电子邮件"
 msgid "Send real-time order and attendee data to your external systems."
 msgstr "将实时订单和参与者数据发送到您的外部系统。"
 
-#: src/components/modals/RefundOrderModal/index.tsx:171
+#: src/components/modals/RefundOrderModal/index.tsx:195
 msgid "Send refund notification email"
 msgstr "发送退款通知邮件"
 
@@ -14336,6 +14345,10 @@ msgstr "服务费"
 #: src/components/routes/event/Reports/ProductSalesReport/index.tsx:45
 msgid "Service fees"
 msgstr ""
+
+#: src/components/routes/product-widget/Payment/index.tsx:197
+msgid "Service fees and the peace of mind option are non-refundable."
+msgstr "服务费和取消保障不予退还。"
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:287
 #: src/components/organizerTemplates/Poster/index.tsx:81
@@ -15660,6 +15673,10 @@ msgstr "页面的背景颜色。使用封面图片时,此颜色将作为叠加�
 msgid "The basket is empty."
 msgstr "购物车是空的。"
 
+#: src/components/modals/RefundOrderModal/index.tsx:147
+msgid "The buyer gets back everything they paid."
+msgstr "买家将取回其支付的全部款项。"
+
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:298
 #: src/components/common/QuestionsTable/index.tsx:215
 msgid "The change could not be saved. Please try again."
@@ -16093,7 +16110,7 @@ msgstr "此活动没有可用产品"
 msgid "There are no products available in this category"
 msgstr "此类别中没有可用产品"
 
-#: src/components/modals/RefundOrderModal/index.tsx:228
+#: src/components/modals/RefundOrderModal/index.tsx:252
 msgid "There is a refund pending. Please wait for it to complete before requesting another refund."
 msgstr "退款正在处理中。请等待退款完成后再申请退款。"
 
@@ -16297,7 +16314,7 @@ msgstr "该号码已回复 STOP：无法再接收您的短信。如果对方回�
 msgid "This order has already been paid."
 msgstr "此订单已付款。"
 
-#: src/components/modals/RefundOrderModal/index.tsx:232
+#: src/components/modals/RefundOrderModal/index.tsx:256
 msgid "This order has already been refunded."
 msgstr "此订单已退款。"
 
@@ -16591,7 +16608,7 @@ msgstr ""
 msgid "Tickets Sold"
 msgstr "已售票数"
 
-#: src/components/modals/RefundOrderModal/index.tsx:133
+#: src/components/modals/RefundOrderModal/index.tsx:157
 msgid "Tickets to refund"
 msgstr "要退款的门票"
 
@@ -18523,7 +18540,7 @@ msgstr "您正在将电子邮件更改为 <0>{0}</0>。"
 msgid "You are impersonating <0>{0}</0> ({1})"
 msgstr "您正在模拟 <0>{0}</0> ({1})"
 
-#: src/components/modals/RefundOrderModal/index.tsx:186
+#: src/components/modals/RefundOrderModal/index.tsx:210
 msgid "You are issuing a partial refund. The customer will be refunded {0} {1}."
 msgstr "您正在发出部分退款。客户将获得 {0} {1} 的退款。"
 
@@ -18585,7 +18602,7 @@ msgstr "您无法删除此价格层，因为此层已有售出的产品。您可
 msgid "You cannot edit the role or status of the account owner."
 msgstr "不能编辑账户所有者的角色或状态。"
 
-#: src/components/modals/RefundOrderModal/index.tsx:223
+#: src/components/modals/RefundOrderModal/index.tsx:247
 msgid "You cannot refund a manually created order."
 msgstr "您不能退还手动创建的订单。"
 
@@ -18652,6 +18669,10 @@ msgstr "您需要验证您的帐户电子邮件才能发送消息。"
 #: src/components/layouts/AuthLayout/index.tsx:61
 msgid "You own 100% of your attendee data, always"
 msgstr "您始终拥有100%的参会者数据"
+
+#: src/components/modals/RefundOrderModal/index.tsx:151
+msgid "You pay the service fees and the cancellation protection: the buyer is refunded in full, and the platform keeps its commission. The difference is taken from your Stripe balance."
+msgstr "服务费和取消保障由您承担：买家获得全额退款，平台保留其佣金。差额将从您的 Stripe 余额中扣除。"
 
 #: src/components/common/PlatformFeesSettings/index.tsx:67
 msgid "You receive"
@@ -18967,7 +18988,7 @@ msgstr "您的保障覆盖此订单中的 {maxTickets} 张门票。"
 msgid "Your questions"
 msgstr ""
 
-#: src/components/modals/RefundOrderModal/index.tsx:64
+#: src/components/modals/RefundOrderModal/index.tsx:69
 msgid "Your refund is processing."
 msgstr "您的退款正在处理中。"
 
