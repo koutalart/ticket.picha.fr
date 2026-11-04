@@ -78,7 +78,11 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->whereColumn('sms_conversations.organizer_id', 'sms_messages.organizer_id')
             ->where('sms_conversations.phone', $phone)
             ->where('sms_messages.is_supervision', false)
-            ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+            ->where(fn (EloquentBuilder $query) => $query
+                ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+                ->orWhere(fn (EloquentBuilder $keyword) => $keyword
+                    ->where('sms_messages.direction', SmsMessageDirection::INBOUND->name)
+                    ->whereNotNull('sms_messages.line_keyword')))
             ->whereNull('sms_messages.channel')
             ->whereNotIn('sms_messages.status', [SmsMessageStatus::FAILED->name, SmsMessageStatus::EXPIRED->name])
             ->whereRaw($sentAt.' >= ?', [$since])
@@ -134,7 +138,11 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
             ->whereIn('sms_messages.organizer_id', $organizerIds)
             ->where('sms_conversations.phone', $phone)
-            ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+            ->where(fn (EloquentBuilder $query) => $query
+                ->where('sms_messages.direction', SmsMessageDirection::OUTBOUND->name)
+                ->orWhere(fn (EloquentBuilder $keyword) => $keyword
+                    ->where('sms_messages.direction', SmsMessageDirection::INBOUND->name)
+                    ->whereNotNull('sms_messages.line_keyword')))
             ->whereNull('sms_messages.channel')
             ->where(fn ($query) => $query
                 ->where('sms_messages.id', '>', $afterMessageId)

@@ -51,6 +51,7 @@ class SmsInboundService
         bool $fromHistory = false,
         ?int $lineSettingsId = null,
         ?string $createdAt = null,
+        ?string $lineKeyword = null,
     ): ?SmsMessageDomainObject {
         if ($this->findByProviderId($sms->providerMessageId) !== null) {
             return null;
@@ -59,7 +60,7 @@ class SmsInboundService
         $lineSettingsId ??= self::lineOf($settings);
         $phone = $this->normalize($sms->contact);
 
-        return $this->databaseManager->transaction(function () use ($settings, $sms, $phone, $fromHistory, $lineSettingsId, $createdAt) {
+        return $this->databaseManager->transaction(function () use ($settings, $sms, $phone, $fromHistory, $lineSettingsId, $createdAt, $lineKeyword) {
             $conversation = $this->conversationService->findOrCreate($settings, $phone);
 
             /** @var SmsMessageDomainObject $message */
@@ -73,6 +74,7 @@ class SmsInboundService
                 SmsMessageDomainObjectAbstract::PROVIDER_MESSAGE_ID => $sms->providerMessageId,
                 SmsMessageDomainObjectAbstract::PROVIDER_TIMESTAMP => $this->parseTimestamp($sms->timestamp),
                 SmsMessageDomainObjectAbstract::LINE_SETTINGS_ID => $lineSettingsId,
+                SmsMessageDomainObjectAbstract::LINE_KEYWORD => $lineKeyword,
                 ...($createdAt !== null ? [SmsMessageDomainObjectAbstract::CREATED_AT => $createdAt] : []),
             ]);
 

@@ -19,14 +19,15 @@ import {CampaignList} from "./CampaignList.tsx";
 import {ReminderList} from "./ReminderList.tsx";
 import {LiveChatList} from "./LiveChatList.tsx";
 import {TeamView} from "./TeamView.tsx";
+import {KeywordsView} from "./KeywordsView.tsx";
 import classes from "./Sms.module.scss";
 
 const CONVERSATION_PARAM = 'conversation';
 const VIEW_PARAM = 'view';
 
-type SmsView = 'conversations' | 'campaigns' | 'reminders' | 'chats' | 'team';
+type SmsView = 'conversations' | 'campaigns' | 'reminders' | 'chats' | 'keywords' | 'team';
 
-const VIEWS: SmsView[] = ['conversations', 'reminders', 'campaigns', 'chats', 'team'];
+const VIEWS: SmsView[] = ['conversations', 'reminders', 'campaigns', 'chats', 'keywords', 'team'];
 
 const Sms = () => {
     const {organizerId} = useParams();
@@ -114,6 +115,7 @@ const Sms = () => {
                     {value: 'reminders', label: t`Reminders`},
                     {value: 'campaigns', label: t`Campaigns`},
                     ...(settings?.live_chat_enabled || view === 'chats' ? [{value: 'chats', label: t`Web chats`}] : []),
+                    {value: 'keywords', label: t`Keywords`},
                     {value: 'team', label: t`Team`},
                 ]}
             />
@@ -129,6 +131,8 @@ const Sms = () => {
                     }}
                 />
             )}
+
+            {view === 'keywords' && <KeywordsView organizerId={organizerId!}/>}
 
             {view === 'team' && <TeamView organizerId={organizerId!} settings={settings}/>}
 

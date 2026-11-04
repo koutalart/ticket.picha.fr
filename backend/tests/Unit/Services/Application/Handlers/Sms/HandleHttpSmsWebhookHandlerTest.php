@@ -22,6 +22,7 @@ use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
 use HiEvents\Services\Domain\Sms\SmsFileSyncService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
+use HiEvents\Services\Domain\Sms\SmsLineKeywordService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
@@ -87,6 +88,9 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->fileSyncService->shouldReceive('findQueueOrganizerId')->andReturnNull()->byDefault();
         $this->inboundService->shouldReceive('isKnownOutbound')->andReturnFalse()->byDefault();
 
+        $keywordService = Mockery::mock(SmsLineKeywordService::class);
+        $keywordService->shouldReceive('match')->andReturnNull()->byDefault();
+
         $this->handler = new HandleHttpSmsWebhookHandler(
             $this->settingsService,
             $this->settingsRepository,
@@ -102,6 +106,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             Mockery::mock(DecideLiveChatRefundHandler::class),
             Mockery::mock(LiveChatQuestionService::class),
             $this->fileSyncService,
+            $keywordService,
         );
 
         $this->settings = (new OrganizerSmsSettingDomainObject)

@@ -16,6 +16,8 @@ import {
     SmsOptOut,
     SmsReminderPreview,
     SmsReplyTemplate,
+    SmsLineKeyword,
+    SmsLineKeywords,
     OrganizerTeamContact,
     LiveChatStyle,
     OrganizerTeamContactRole,
@@ -51,6 +53,16 @@ export interface SmsConversationsParams {
     query?: string;
     filter?: SmsConversationFilter;
     page?: number;
+}
+
+export interface CreateSmsLineKeywordRequest {
+    keyword: string;
+    welcome_message?: string | null;
+}
+
+export interface UpdateSmsLineKeywordRequest {
+    is_active: boolean;
+    welcome_message?: string | null;
 }
 
 export interface SmsReplyTemplateRequest {
@@ -183,6 +195,21 @@ export const smsClient = {
     },
     deleteReplyTemplate: async (organizerId: IdParam, templateId: IdParam) => {
         await api.delete(`organizers/${organizerId}/sms/reply-templates/${templateId}`);
+    },
+    lineKeywords: async (organizerId: IdParam) => {
+        const response = await api.get<GenericDataResponse<SmsLineKeywords>>(`organizers/${organizerId}/sms/keywords`);
+        return response.data;
+    },
+    createLineKeyword: async (organizerId: IdParam, keyword: CreateSmsLineKeywordRequest) => {
+        const response = await api.post<GenericDataResponse<SmsLineKeyword>>(`organizers/${organizerId}/sms/keywords`, keyword);
+        return response.data;
+    },
+    updateLineKeyword: async (organizerId: IdParam, keywordId: IdParam, keyword: UpdateSmsLineKeywordRequest) => {
+        const response = await api.put<GenericDataResponse<SmsLineKeyword>>(`organizers/${organizerId}/sms/keywords/${keywordId}`, keyword);
+        return response.data;
+    },
+    deleteLineKeyword: async (organizerId: IdParam, keywordId: IdParam) => {
+        await api.delete(`organizers/${organizerId}/sms/keywords/${keywordId}`);
     },
     optOuts: async (organizerId: IdParam, params: SmsOptOutsParams) => {
         const response = await api.get<GenericPaginatedResponse<SmsOptOut>>(`organizers/${organizerId}/sms/opt-outs`, {params});

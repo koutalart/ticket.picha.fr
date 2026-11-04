@@ -1609,6 +1609,21 @@ export interface SmsReplyTemplate {
     updated_at: string;
 }
 
+export interface SmsLineKeyword {
+    id: number;
+    keyword: string;
+    is_active: boolean;
+    welcome_message: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface SmsLineKeywords {
+    available: boolean;
+    line_number: string | null;
+    keywords: SmsLineKeyword[];
+}
+
 export type SmsOptOutSource = 'KEYWORD' | 'MANUAL';
 
 export interface SmsOptOut {

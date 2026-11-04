@@ -9,4 +9,5 @@ enum ContactConsentSource
     case CHECKOUT;
     case IMPORT;
     case MANUAL;
+    case SMS_KEYWORD;
 }
