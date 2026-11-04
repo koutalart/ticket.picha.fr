@@ -16,6 +16,8 @@ use HiEvents\Repository\Interfaces\SocialPostRepositoryInterface;
 use HiEvents\Services\Domain\Social\DTO\CreateSocialPostsDTO;
 use HiEvents\Services\Domain\Social\DTO\SocialMediaItemDTO;
 use HiEvents\Services\Domain\Social\SocialPostService;
+use HiEvents\Services\Domain\Social\SocialPublishingService;
+use HiEvents\Services\Infrastructure\Meta\MetaGraphClient;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
@@ -72,6 +74,30 @@ class SocialPostsWaitingForConnectionTest extends TestCase
         $post = $this->approvedPost($organizer, scheduledAt: null);
         $this->connect($organizer, SocialConnectionStatus::NEEDS_RECONNECT);
 
+        $this->assertNotContains($post->getId(), $this->dueIds());
+    }
+
+    public function test_post_that_waited_more_than_48_hours_for_a_first_page_goes_back_to_approval(): void
+    {
+        Carbon::setTestNow('2026-11-04 08:00:00');
+        $organizer = $this->organizer();
+        $post = $this->approvedPost($organizer, scheduledAt: Carbon::parse('2026-11-04 18:00:00'));
+
+        Carbon::setTestNow('2026-11-07 09:00:00');
+        $this->connect($organizer);
+        $this->mock(MetaGraphClient::class)->shouldNotReceive('publishPageFeedPost', 'createInstagramContainer', 'publishInstagramContainer');
+
+        $repository = $this->app->make(SocialPostRepositoryInterface::class);
+        $this->assertContains($post->getId(), $this->dueIds());
+        $this->assertTrue($repository->claimForPublishing($post->getId()));
+
+        $result = $this->app->make(SocialPublishingService::class)->publish($post->getId());
+
+        $this->assertSame(SocialPostStatus::PENDING_APPROVAL, $result->status);
+        $stored = $repository->findFirstWhere(['id' => $post->getId()]);
+        $this->assertSame(SocialPostStatus::PENDING_APPROVAL->name, $stored->getStatus());
+        $this->assertNull($stored->getApprovedAt());
+        $this->assertNotNull($stored->getLastError());
         $this->assertNotContains($post->getId(), $this->dueIds());
     }
 

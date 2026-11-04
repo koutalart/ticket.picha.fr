@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services\Domain\Social;
 
+use Carbon\Carbon;
 use HiEvents\DomainObjects\Enums\SocialNetwork;
 use HiEvents\DomainObjects\Enums\SocialPostFormat;
 use HiEvents\DomainObjects\Generated\SocialPostDomainObjectAbstract;
@@ -346,6 +347,66 @@ class SocialPublishingServiceTest extends TestCase
         $this->assertLastUpdate(SocialPostStatus::FAILED);
     }
 
+    public function test_post_whose_time_passed_more_than_48_hours_ago_goes_back_to_approval(): void
+    {
+        $this->givenPost(
+            SocialNetwork::FACEBOOK,
+            SocialPostFormat::TEXT,
+            [],
+            link: 'https://ticket.picha.fr',
+            scheduledAt: Carbon::now()->subHours(49)->toDateTimeString(),
+            approvedAt: Carbon::now()->subDays(4)->toDateTimeString(),
+        );
+        $this->client->shouldNotReceive('publishPageFeedPost');
+
+        $this->assertSame(SocialPostStatus::PENDING_APPROVAL, $this->service->publish(1)->status);
+        $this->assertLastUpdate(SocialPostStatus::PENDING_APPROVAL, [
+            SocialPostDomainObjectAbstract::NEXT_ATTEMPT_AT => null,
+            SocialPostDomainObjectAbstract::APPROVED_AT => null,
+        ]);
+        $this->assertNotNull(end($this->updates)[SocialPostDomainObjectAbstract::LAST_ERROR]);
+    }
+
+    public function test_post_approved_without_a_time_that_waited_more_than_48_hours_for_a_page_goes_back_to_approval(): void
+    {
+        $this->givenPost(SocialNetwork::FACEBOOK, SocialPostFormat::TEXT, [], link: 'https://ticket.picha.fr', approvedAt: Carbon::now()->subHours(50)->toDateTimeString());
+        $this->client->shouldNotReceive('publishPageFeedPost');
+
+        $this->assertSame(SocialPostStatus::PENDING_APPROVAL, $this->service->publish(1)->status);
+    }
+
+    public function test_post_late_by_less_than_48_hours_is_still_published(): void
+    {
+        $this->givenPost(
+            SocialNetwork::FACEBOOK,
+            SocialPostFormat::TEXT,
+            [],
+            link: 'https://ticket.picha.fr',
+            scheduledAt: Carbon::now()->subHours(47)->toDateTimeString(),
+            approvedAt: Carbon::now()->subDays(4)->toDateTimeString(),
+        );
+        $this->client->shouldReceive('publishPageFeedPost')->once()->andReturn('page_1');
+        $this->client->shouldReceive('getPermalink')->andReturn(null);
+
+        $this->assertSame(SocialPostStatus::PUBLISHED, $this->service->publish(1)->status);
+    }
+
+    public function test_post_re_approved_after_its_time_is_published(): void
+    {
+        $this->givenPost(
+            SocialNetwork::FACEBOOK,
+            SocialPostFormat::TEXT,
+            [],
+            link: 'https://ticket.picha.fr',
+            scheduledAt: Carbon::now()->subDays(5)->toDateTimeString(),
+            approvedAt: Carbon::now()->subMinute()->toDateTimeString(),
+        );
+        $this->client->shouldReceive('publishPageFeedPost')->once()->andReturn('page_1');
+        $this->client->shouldReceive('getPermalink')->andReturn(null);
+
+        $this->assertSame(SocialPostStatus::PUBLISHED, $this->service->publish(1)->status);
+    }
+
     public function test_post_no_longer_publishing_is_ignored(): void
     {
         $this->postRepository->shouldReceive('findFirstWhere')->with([SocialPostDomainObjectAbstract::ID => 1])->andReturn(
@@ -367,6 +428,8 @@ class SocialPublishingServiceTest extends TestCase
         SocialConnectionStatus $connectionStatus = SocialConnectionStatus::ACTIVE,
         bool $connected = true,
         ?string $instagramId = self::IG_ID,
+        ?string $scheduledAt = null,
+        ?string $approvedAt = null,
     ): void {
         $post = (new SocialPostDomainObject)
             ->setId($postId)
@@ -379,6 +442,8 @@ class SocialPublishingServiceTest extends TestCase
             ->setLink($link)
             ->setStatus(SocialPostStatus::PUBLISHING->name)
             ->setExternalContainerId($containerId)
+            ->setScheduledAt($scheduledAt)
+            ->setApprovedAt($approvedAt ?? Carbon::now()->toDateTimeString())
             ->setAttempts($attempts);
 
         $this->postRepository->shouldReceive('findFirstWhere')->with([SocialPostDomainObjectAbstract::ID => $postId])->andReturn($post);
