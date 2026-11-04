@@ -36,7 +36,7 @@ class SmsContactResolver
         return $contact;
     }
 
-    public function create(int $organizerId, string $phone, ?string $name): ContactDomainObject
+    public function create(int $organizerId, string $phone, ?string $name, ContactSource $source = ContactSource::SMS_CAMPAIGN): ContactDomainObject
     {
         $parts = preg_split('/\s+/', trim((string) $name), 2, PREG_SPLIT_NO_EMPTY) ?: [];
 
@@ -46,7 +46,7 @@ class SmsContactResolver
             ContactDomainObjectAbstract::PHONE => PhoneNumberNormalizer::normalize($phone) ?? $phone,
             ContactDomainObjectAbstract::FIRST_NAME => isset($parts[0]) ? mb_substr($parts[0], 0, 255) : null,
             ContactDomainObjectAbstract::LAST_NAME => isset($parts[1]) ? mb_substr($parts[1], 0, 255) : null,
-            ContactDomainObjectAbstract::SOURCE => ContactSource::SMS_CAMPAIGN->name,
+            ContactDomainObjectAbstract::SOURCE => $source->name,
         ]);
 
         /** @var ContactDomainObject $withCode */

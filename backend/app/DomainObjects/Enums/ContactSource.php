@@ -11,4 +11,5 @@ enum ContactSource
     case IMPORT;
     case MANUAL;
     case SMS_CAMPAIGN;
+    case SMS_KEYWORD;
 }
