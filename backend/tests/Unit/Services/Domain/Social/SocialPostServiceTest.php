@@ -126,6 +126,62 @@ class SocialPostServiceTest extends TestCase
         $this->service->create($this->dto(SocialPostSource::PICHA, [SocialNetwork::FACEBOOK]));
     }
 
+    public function test_post_prepared_by_the_assistant_is_created_without_a_connected_page(): void
+    {
+        $this->connectionService->shouldNotReceive('findForOrganizer');
+        $this->postRepository->shouldReceive('create')->twice()
+            ->withArgs(fn (array $attributes) => $attributes[SocialPostDomainObjectAbstract::STATUS] === SocialPostStatus::PENDING_APPROVAL->name
+                && $attributes[SocialPostDomainObjectAbstract::NEXT_ATTEMPT_AT] === null)
+            ->andReturn(new SocialPostDomainObject);
+
+        $posts = $this->service->create($this->dto(SocialPostSource::ASSISTANT, [SocialNetwork::FACEBOOK, SocialNetwork::INSTAGRAM]));
+
+        $this->assertCount(2, $posts);
+    }
+
+    public function test_draft_is_created_without_a_connected_page(): void
+    {
+        $this->connectionService->shouldNotReceive('findForOrganizer');
+        $this->postRepository->shouldReceive('create')->once()
+            ->withArgs(fn (array $attributes) => $attributes[SocialPostDomainObjectAbstract::STATUS] === SocialPostStatus::DRAFT->name)
+            ->andReturn(new SocialPostDomainObject);
+
+        $this->service->create($this->dto(SocialPostSource::PICHA, [SocialNetwork::INSTAGRAM], userId: 7, asDraft: true));
+    }
+
+    public function test_format_rules_still_apply_to_a_post_to_approve_without_a_connected_page(): void
+    {
+        $this->connectionService->shouldNotReceive('findForOrganizer');
+        $this->mediaFileService->shouldReceive('findReady')->with(4, 42)->andReturn(
+            (new SocialMediaFileDomainObject)->setId(42)->setMediaType('IMAGE')->setMimeType('image/png')->setWidth(1080)->setHeight(1080),
+        );
+        $this->postRepository->shouldNotReceive('create');
+
+        $this->expectException(InvalidSocialPostException::class);
+        $this->expectExceptionMessage('Instagram only accepts JPEG images (.jpg).');
+
+        $this->service->create($this->fileDto([SocialNetwork::INSTAGRAM], SocialPostSource::ASSISTANT));
+    }
+
+    public function test_instagram_account_is_only_checked_when_the_post_is_published(): void
+    {
+        $this->connectionService->shouldNotReceive('findForOrganizer');
+        $this->postRepository->shouldReceive('create')->once()->andReturn(new SocialPostDomainObject);
+
+        $this->service->create($this->dto(SocialPostSource::ASSISTANT, [SocialNetwork::INSTAGRAM]));
+    }
+
+    public function test_approval_without_a_connected_page_schedules_the_post(): void
+    {
+        $this->connectionService->shouldNotReceive('findForOrganizer');
+        $this->postRepository->shouldReceive('findFirstWhere')->andReturn($this->postIn(SocialPostStatus::PENDING_APPROVAL));
+        $this->postRepository->shouldReceive('updateFromArray')->once()
+            ->withArgs(fn (int $id, array $attributes) => $attributes[SocialPostDomainObjectAbstract::STATUS] === SocialPostStatus::SCHEDULED->name)
+            ->andReturn(new SocialPostDomainObject);
+
+        $this->service->schedule(4, 9, 7);
+    }
+
     public function test_instagram_is_refused_without_a_linked_professional_account(): void
     {
         $this->givenConnection(instagramId: null);
@@ -172,7 +228,7 @@ class SocialPostServiceTest extends TestCase
         $this->service->cancel(4, 9);
     }
 
-    private function dto(SocialPostSource $source, array $networks, ?int $userId = null): CreateSocialPostsDTO
+    private function dto(SocialPostSource $source, array $networks, ?int $userId = null, bool $asDraft = false): CreateSocialPostsDTO
     {
         return new CreateSocialPostsDTO(
             accountId: 3,
@@ -185,10 +241,11 @@ class SocialPostServiceTest extends TestCase
             link: null,
             scheduledAt: null,
             source: $source,
+            asDraft: $asDraft,
         );
     }
 
-    private function fileDto(array $networks): CreateSocialPostsDTO
+    private function fileDto(array $networks, SocialPostSource $source = SocialPostSource::PICHA): CreateSocialPostsDTO
     {
         return new CreateSocialPostsDTO(
             accountId: 3,
@@ -200,7 +257,7 @@ class SocialPostServiceTest extends TestCase
             media: [new SocialMediaItemDTO('', SocialMediaType::IMAGE, fileId: 42)],
             link: null,
             scheduledAt: null,
-            source: SocialPostSource::PICHA,
+            source: $source,
         );
     }
 

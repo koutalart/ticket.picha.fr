@@ -14,6 +14,7 @@ use HiEvents\Exceptions\MetaGraphApiException;
 use HiEvents\Exceptions\MetaOAuthException;
 use HiEvents\Exceptions\SocialConnectionNotFoundException;
 use HiEvents\Helper\Url;
+use HiEvents\Jobs\Social\PublishDueSocialPostsJob;
 use HiEvents\Jobs\Social\SyncSocialFeedJob;
 use HiEvents\Repository\Interfaces\OrganizerSocialConnectionRepositoryInterface;
 use HiEvents\Repository\Interfaces\SocialFeedItemRepositoryInterface;
@@ -209,6 +210,7 @@ class MetaConnectionService
         }
 
         SyncSocialFeedJob::dispatch($organizerId);
+        PublishDueSocialPostsJob::dispatch();
 
         return $connection;
     }

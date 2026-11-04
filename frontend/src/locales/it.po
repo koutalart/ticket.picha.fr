@@ -1313,7 +1313,7 @@ msgstr "Tutti"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:233
-#: src/components/routes/organizer/Publications/index.tsx:135
+#: src/components/routes/organizer/Publications/index.tsx:138
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
@@ -1671,7 +1671,7 @@ msgstr "Applica Codice Promozionale"
 msgid "Apply this {type} to all new products"
 msgstr "Applica questo {type} a tutti i nuovi prodotti"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:64
 #: src/components/routes/refund-approval/index.tsx:121
 msgid "Approve"
 msgstr "Approva"
@@ -1680,7 +1680,7 @@ msgstr "Approva"
 msgid "Approve Message"
 msgstr "Approva messaggio"
 
-#: src/components/routes/organizer/Publications/index.tsx:70
+#: src/components/routes/organizer/Publications/index.tsx:73
 msgid "Approve this post? {when}"
 msgstr "Approvare questo post? {when}"
 
@@ -1695,6 +1695,10 @@ msgstr "Approvata, una persona completa il rimborso"
 #: src/components/routes/refund-approval/index.tsx:21
 msgid "Approved, refund in progress"
 msgstr "Approvata, rimborso in corso"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:54
+msgid "Approved: waiting for your Facebook page to be connected."
+msgstr "Approvato: in attesa del collegamento della tua pagina Facebook."
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:36
 msgctxt "past events section heading"
@@ -2665,7 +2669,7 @@ msgstr "Alla fine non puoi venire? Il tuo biglietto viene rimborsato."
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:65
-#: src/components/routes/organizer/Publications/PostCard.tsx:66
+#: src/components/routes/organizer/Publications/PostCard.tsx:69
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
@@ -3432,7 +3436,7 @@ msgstr "Parole chiave separate da virgole che descrivono l'evento. Queste sarann
 msgid "Command to run on the venue computer"
 msgstr "Comando da eseguire sul computer della sede"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:108
+#: src/components/routes/organizer/Publications/PostCard.tsx:112
 #: src/components/routes/organizer/Publications/PostViewer.tsx:105
 msgid "Comments"
 msgstr "Commenti"
@@ -3660,10 +3664,6 @@ msgstr "Connetti e aggiorna"
 msgid "Connect a Facebook page"
 msgstr "Collega una pagina Facebook"
 
-#: src/components/routes/organizer/Publications/index.tsx:115
-msgid "Connect a Facebook page to publish on Facebook and Instagram."
-msgstr "Collega una pagina Facebook per pubblicare su Facebook e Instagram."
-
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:652
 msgid "Connect Documentation"
 msgstr "Documentazione di Connessione"
@@ -3700,6 +3700,10 @@ msgstr "Connetti con Stripe"
 #: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:231
 msgid "Connect your Facebook page and the Instagram professional account linked to it to schedule your posts from PICHA. Every post is checked by a person before it goes out."
 msgstr "Collega la tua pagina Facebook e l'account Instagram professionale associato per programmare i tuoi post da PICHA. Ogni post viene controllato da una persona prima di essere pubblicato."
+
+#: src/components/routes/organizer/Publications/index.tsx:118
+msgid "Connect your Facebook page so that your approved posts can go out."
+msgstr "Collega la tua pagina Facebook perché i post approvati vengano pubblicati."
 
 #: src/components/layouts/OrganizerLayout/index.tsx:122
 msgid "Connect your Stripe account to accept payments for tickets and products."
@@ -4713,7 +4717,7 @@ msgstr "elimina"
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/event/EventPages/index.tsx:101
 #: src/components/routes/event/EventPages/index.tsx:102
-#: src/components/routes/organizer/Publications/PostCard.tsx:76
+#: src/components/routes/organizer/Publications/PostCard.tsx:79
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
@@ -4782,7 +4786,7 @@ msgstr "Eliminare la risposta predefinita \"{0}\"?"
 msgid "Delete the subscriber"
 msgstr "Elimina l'iscritto"
 
-#: src/components/routes/organizer/Publications/index.tsx:84
+#: src/components/routes/organizer/Publications/index.tsx:87
 msgid "Delete this post from the log?"
 msgstr "Eliminare questo post dal registro?"
 
@@ -8115,7 +8119,15 @@ msgstr "Questo account è registrato ai fini IVA nell'UE?"
 msgid "It stays a draft until you publish it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:67
+#: src/components/routes/organizer/Publications/index.tsx:71
+msgid "It will be published as soon as your Facebook page is connected."
+msgstr "Sarà pubblicato non appena la tua pagina Facebook sarà collegata."
+
+#: src/components/routes/organizer/Publications/index.tsx:70
+msgid "It will be published on {0}, once your Facebook page is connected."
+msgstr "Sarà pubblicato il {0}, una volta collegata la tua pagina Facebook."
+
+#: src/components/routes/organizer/Publications/index.tsx:68
 msgid "It will be published on {0}."
 msgstr "Verrà pubblicato il {0}."
 
@@ -8518,7 +8530,7 @@ msgstr "Light (300)"
 msgid "Lighter version, for example 720p, used on phones."
 msgstr "Versione più leggera, ad esempio 720p, usata sugli smartphone."
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:107
+#: src/components/routes/organizer/Publications/PostCard.tsx:111
 msgid "Likes"
 msgstr "Mi piace"
 
@@ -9386,7 +9398,7 @@ msgstr "Nuova Password"
 msgid "New permissions to grant"
 msgstr "Nuove autorizzazioni da concedere"
 
-#: src/components/routes/organizer/Publications/index.tsx:107
+#: src/components/routes/organizer/Publications/index.tsx:110
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:120
 msgid "New post"
 msgstr "Nuovo post"
@@ -9800,7 +9812,7 @@ msgstr "Nessun Pagamento Richiesto"
 msgid "No popular events in the last 14 days"
 msgstr "Nessun evento popolare negli ultimi 14 giorni"
 
-#: src/components/routes/organizer/Publications/index.tsx:155
+#: src/components/routes/organizer/Publications/index.tsx:158
 msgid "No post yet."
 msgstr "Ancora nessun post."
 
@@ -10531,8 +10543,8 @@ msgstr "Apri la scheda cliente"
 msgid "Open the event flyer"
 msgstr "Apri la locandina dell'evento"
 
-#: src/components/routes/organizer/Publications/index.tsx:118
-#: src/components/routes/organizer/Publications/index.tsx:128
+#: src/components/routes/organizer/Publications/index.tsx:121
+#: src/components/routes/organizer/Publications/index.tsx:131
 msgid "Open the settings"
 msgstr "Apri le impostazioni"
 
@@ -11890,11 +11902,11 @@ msgstr "Eventi popolari (Ultimi 14 giorni)"
 msgid "Portuguese"
 msgstr "Portoghese"
 
-#: src/components/routes/organizer/Publications/index.tsx:72
+#: src/components/routes/organizer/Publications/index.tsx:75
 msgid "Post approved"
 msgstr "Post approvato"
 
-#: src/components/routes/organizer/Publications/index.tsx:79
+#: src/components/routes/organizer/Publications/index.tsx:82
 msgid "Post cancelled"
 msgstr "Post annullato"
 
@@ -11907,7 +11919,7 @@ msgstr "Messaggio post checkout"
 msgid "Post Checkout Message"
 msgstr "Messaggio Post-Checkout"
 
-#: src/components/routes/organizer/Publications/index.tsx:87
+#: src/components/routes/organizer/Publications/index.tsx:90
 msgid "Post deleted"
 msgstr "Post eliminato"
 
@@ -12357,7 +12369,7 @@ msgid "Publication time"
 msgstr "Ora di pubblicazione"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:76
-#: src/components/routes/organizer/Publications/index.tsx:105
+#: src/components/routes/organizer/Publications/index.tsx:108
 msgid "Publications"
 msgstr "Pubblicazioni"
 
@@ -12691,7 +12703,7 @@ msgstr "Consigliato"
 msgid "Reconnect"
 msgstr "Ricollega"
 
-#: src/components/routes/organizer/Publications/index.tsx:125
+#: src/components/routes/organizer/Publications/index.tsx:128
 msgid "Reconnect the Facebook page to read and answer the comments of your posts."
 msgstr "Ricollega la pagina Facebook per leggere e rispondere ai commenti dei tuoi post."
 
@@ -13373,7 +13385,7 @@ msgid "Retrieve the SMS sent and received with your PICHA SMS number before the 
 msgstr "Recupera gli SMS inviati e ricevuti con il tuo numero PICHA SMS prima del collegamento del webhook, ad esempio una campagna inviata tramite script. I messaggi già presenti non vengono duplicati né segnati come non letti."
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:64
 #: src/hooks/useKioskTicketPrinter.tsx:227
 msgid "Retry"
 msgstr "Riprova"
@@ -14579,7 +14591,7 @@ msgstr "Mostra casella di opt-in marketing"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "Mostra casella di opt-in marketing per impostazione predefinita"
 
-#: src/components/routes/organizer/Publications/index.tsx:174
+#: src/components/routes/organizer/Publications/index.tsx:177
 #: src/components/routes/product-widget/SelectProducts/index.tsx:537
 #: src/components/routes/product-widget/SelectProducts/index.tsx:652
 msgid "Show more"
@@ -14844,7 +14856,7 @@ msgid "Some tickets could not be printed."
 msgstr "Alcuni biglietti non sono stati stampati."
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:79
-#: src/components/routes/organizer/Publications/PostCard.tsx:128
+#: src/components/routes/organizer/Publications/PostCard.tsx:132
 msgid "Someone"
 msgstr "Qualcuno"
 
@@ -15810,7 +15822,7 @@ msgstr "L'evento che stai cercando non è disponibile al momento. Potrebbe esser
 msgid "The Facebook connection link has expired. Please try again."
 msgstr "Il link di collegamento a Facebook è scaduto. Riprova."
 
-#: src/components/routes/organizer/Publications/index.tsx:114
+#: src/components/routes/organizer/Publications/index.tsx:117
 msgid "The Facebook connection must be renewed before anything can be published."
 msgstr "Il collegamento a Facebook deve essere rinnovato prima di poter pubblicare."
 
@@ -17036,11 +17048,11 @@ msgstr "Tipo di biglietto"
 msgid "Typography"
 msgstr "Tipografia"
 
-#: src/components/routes/organizer/Publications/index.tsx:73
+#: src/components/routes/organizer/Publications/index.tsx:76
 msgid "Unable to approve the post"
 msgstr "Impossibile approvare il post"
 
-#: src/components/routes/organizer/Publications/index.tsx:80
+#: src/components/routes/organizer/Publications/index.tsx:83
 msgid "Unable to cancel the post"
 msgstr "Impossibile annullare il post"
 
@@ -17073,7 +17085,7 @@ msgstr "Impossibile creare la domanda. Controlla i tuoi dati"
 msgid "Unable to delete the campaign"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:90
+#: src/components/routes/organizer/Publications/index.tsx:93
 msgid "Unable to delete the post"
 msgstr "Impossibile eliminare il post"
 
@@ -17791,11 +17803,11 @@ msgstr "Visualizza log"
 msgid "View Message"
 msgstr "Visualizza messaggio"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:74
 msgid "View on Facebook"
 msgstr "Vedi su Facebook"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:74
 msgid "View on Instagram"
 msgstr "Vedi su Instagram"
 
@@ -17820,7 +17832,7 @@ msgstr "Visualizza dettagli ordine"
 msgid "View registrations and resend tickets."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:121
+#: src/components/routes/organizer/Publications/PostCard.tsx:125
 msgid "View the {0} comments"
 msgstr "Vedi i {0} commenti"
 

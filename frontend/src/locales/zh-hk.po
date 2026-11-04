@@ -1313,7 +1313,7 @@ msgstr "全部"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:233
-#: src/components/routes/organizer/Publications/index.tsx:135
+#: src/components/routes/organizer/Publications/index.tsx:138
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
@@ -1671,7 +1671,7 @@ msgstr "應用促銷代碼"
 msgid "Apply this {type} to all new products"
 msgstr "將此{type}應用於所有新產品"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:64
 #: src/components/routes/refund-approval/index.tsx:121
 msgid "Approve"
 msgstr "批准"
@@ -1680,7 +1680,7 @@ msgstr "批准"
 msgid "Approve Message"
 msgstr "批准訊息"
 
-#: src/components/routes/organizer/Publications/index.tsx:70
+#: src/components/routes/organizer/Publications/index.tsx:73
 msgid "Approve this post? {when}"
 msgstr "批准此帖子？{when}"
 
@@ -1695,6 +1695,10 @@ msgstr "已批准，由專人完成退款"
 #: src/components/routes/refund-approval/index.tsx:21
 msgid "Approved, refund in progress"
 msgstr "已批准，退款處理中"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:54
+msgid "Approved: waiting for your Facebook page to be connected."
+msgstr "已批准：等待連接你的 Facebook 專頁。"
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:36
 msgctxt "past events section heading"
@@ -2665,7 +2669,7 @@ msgstr "最後去不了？門票可退款。"
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:65
-#: src/components/routes/organizer/Publications/PostCard.tsx:66
+#: src/components/routes/organizer/Publications/PostCard.tsx:69
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
@@ -3432,7 +3436,7 @@ msgstr "以逗號分隔的描述活動的關鍵字。搜索引擎將使用這些
 msgid "Command to run on the venue computer"
 msgstr "在場地電腦上運行的指令"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:108
+#: src/components/routes/organizer/Publications/PostCard.tsx:112
 #: src/components/routes/organizer/Publications/PostViewer.tsx:105
 msgid "Comments"
 msgstr "留言"
@@ -3660,10 +3664,6 @@ msgstr "連接並升級"
 msgid "Connect a Facebook page"
 msgstr "連接 Facebook 專頁"
 
-#: src/components/routes/organizer/Publications/index.tsx:115
-msgid "Connect a Facebook page to publish on Facebook and Instagram."
-msgstr "連接 Facebook 專頁即可在 Facebook 及 Instagram 上發佈。"
-
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:652
 msgid "Connect Documentation"
 msgstr "連接文檔"
@@ -3700,6 +3700,10 @@ msgstr "與 Stripe 連接"
 #: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:231
 msgid "Connect your Facebook page and the Instagram professional account linked to it to schedule your posts from PICHA. Every post is checked by a person before it goes out."
 msgstr "連接您的 Facebook 專頁及其連結的 Instagram 專業帳戶，即可在 PICHA 中排程發佈帖子。每則帖子發佈前都會由專人審核。"
+
+#: src/components/routes/organizer/Publications/index.tsx:118
+msgid "Connect your Facebook page so that your approved posts can go out."
+msgstr "連接你的 Facebook 專頁，已批准的帖子才能發佈。"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:122
 msgid "Connect your Stripe account to accept payments for tickets and products."
@@ -4713,7 +4717,7 @@ msgstr "刪除"
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/event/EventPages/index.tsx:101
 #: src/components/routes/event/EventPages/index.tsx:102
-#: src/components/routes/organizer/Publications/PostCard.tsx:76
+#: src/components/routes/organizer/Publications/PostCard.tsx:79
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
@@ -4782,7 +4786,7 @@ msgstr "刪除快速回覆「{0}」？"
 msgid "Delete the subscriber"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:84
+#: src/components/routes/organizer/Publications/index.tsx:87
 msgid "Delete this post from the log?"
 msgstr "從記錄中刪除此帖子？"
 
@@ -8113,7 +8117,15 @@ msgstr "此帳戶是否在歐盟註冊增值稅？"
 msgid "It stays a draft until you publish it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:67
+#: src/components/routes/organizer/Publications/index.tsx:71
+msgid "It will be published as soon as your Facebook page is connected."
+msgstr "你的 Facebook 專頁連接後將立即發佈。"
+
+#: src/components/routes/organizer/Publications/index.tsx:70
+msgid "It will be published on {0}, once your Facebook page is connected."
+msgstr "將於 {0} 發佈（需先連接你的 Facebook 專頁）。"
+
+#: src/components/routes/organizer/Publications/index.tsx:68
 msgid "It will be published on {0}."
 msgstr "將於 {0} 發佈。"
 
@@ -8516,7 +8528,7 @@ msgstr ""
 msgid "Lighter version, for example 720p, used on phones."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:107
+#: src/components/routes/organizer/Publications/PostCard.tsx:111
 msgid "Likes"
 msgstr "讚好"
 
@@ -9384,7 +9396,7 @@ msgstr "新密碼"
 msgid "New permissions to grant"
 msgstr "需要授予新權限"
 
-#: src/components/routes/organizer/Publications/index.tsx:107
+#: src/components/routes/organizer/Publications/index.tsx:110
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:120
 msgid "New post"
 msgstr "新帖子"
@@ -9798,7 +9810,7 @@ msgstr "無需支付"
 msgid "No popular events in the last 14 days"
 msgstr "過去14天沒有熱門活動"
 
-#: src/components/routes/organizer/Publications/index.tsx:155
+#: src/components/routes/organizer/Publications/index.tsx:158
 msgid "No post yet."
 msgstr "暫無帖子。"
 
@@ -10529,8 +10541,8 @@ msgstr "開啟客戶檔案"
 msgid "Open the event flyer"
 msgstr "開啟活動海報"
 
-#: src/components/routes/organizer/Publications/index.tsx:118
-#: src/components/routes/organizer/Publications/index.tsx:128
+#: src/components/routes/organizer/Publications/index.tsx:121
+#: src/components/routes/organizer/Publications/index.tsx:131
 msgid "Open the settings"
 msgstr "開啟設定"
 
@@ -11888,11 +11900,11 @@ msgstr "熱門活動（過去14天）"
 msgid "Portuguese"
 msgstr "葡萄牙語"
 
-#: src/components/routes/organizer/Publications/index.tsx:72
+#: src/components/routes/organizer/Publications/index.tsx:75
 msgid "Post approved"
 msgstr "帖子已批准"
 
-#: src/components/routes/organizer/Publications/index.tsx:79
+#: src/components/routes/organizer/Publications/index.tsx:82
 msgid "Post cancelled"
 msgstr "帖子已取消"
 
@@ -11905,7 +11917,7 @@ msgstr "結賬後信息"
 msgid "Post Checkout Message"
 msgstr "結帳後訊息"
 
-#: src/components/routes/organizer/Publications/index.tsx:87
+#: src/components/routes/organizer/Publications/index.tsx:90
 msgid "Post deleted"
 msgstr "帖子已刪除"
 
@@ -12353,7 +12365,7 @@ msgid "Publication time"
 msgstr "發佈時間"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:76
-#: src/components/routes/organizer/Publications/index.tsx:105
+#: src/components/routes/organizer/Publications/index.tsx:108
 msgid "Publications"
 msgstr "發佈"
 
@@ -12687,7 +12699,7 @@ msgstr "推薦"
 msgid "Reconnect"
 msgstr "重新連接"
 
-#: src/components/routes/organizer/Publications/index.tsx:125
+#: src/components/routes/organizer/Publications/index.tsx:128
 msgid "Reconnect the Facebook page to read and answer the comments of your posts."
 msgstr "重新連接 Facebook 專頁，即可查看並回覆帖子留言。"
 
@@ -13369,7 +13381,7 @@ msgid "Retrieve the SMS sent and received with your PICHA SMS number before the 
 msgstr "取得在連接 webhook 之前用你的 PICHA SMS 號碼傳送和接收的短訊，例如以程式碼傳送的推廣短訊。已存在的訊息不會重複，也不會被標記為未讀。"
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:64
 #: src/hooks/useKioskTicketPrinter.tsx:227
 msgid "Retry"
 msgstr "重試"
@@ -14575,7 +14587,7 @@ msgstr "顯示營銷訂閱複選框"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "預設顯示營銷訂閱複選框"
 
-#: src/components/routes/organizer/Publications/index.tsx:174
+#: src/components/routes/organizer/Publications/index.tsx:177
 #: src/components/routes/product-widget/SelectProducts/index.tsx:537
 #: src/components/routes/product-widget/SelectProducts/index.tsx:652
 msgid "Show more"
@@ -14840,7 +14852,7 @@ msgid "Some tickets could not be printed."
 msgstr "部分門票未能列印。"
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:79
-#: src/components/routes/organizer/Publications/PostCard.tsx:128
+#: src/components/routes/organizer/Publications/PostCard.tsx:132
 msgid "Someone"
 msgstr "某人"
 
@@ -15806,7 +15818,7 @@ msgstr "您查找的活動目前不可用。它可能已被刪除、過期或 UR
 msgid "The Facebook connection link has expired. Please try again."
 msgstr "Facebook 連接連結已過期。請重試。"
 
-#: src/components/routes/organizer/Publications/index.tsx:114
+#: src/components/routes/organizer/Publications/index.tsx:117
 msgid "The Facebook connection must be renewed before anything can be published."
 msgstr "發佈前需要續期 Facebook 連接。"
 
@@ -17032,11 +17044,11 @@ msgstr "門票類型"
 msgid "Typography"
 msgstr "排版"
 
-#: src/components/routes/organizer/Publications/index.tsx:73
+#: src/components/routes/organizer/Publications/index.tsx:76
 msgid "Unable to approve the post"
 msgstr "無法批准帖子"
 
-#: src/components/routes/organizer/Publications/index.tsx:80
+#: src/components/routes/organizer/Publications/index.tsx:83
 msgid "Unable to cancel the post"
 msgstr "無法取消帖子"
 
@@ -17069,7 +17081,7 @@ msgstr "無法創建問題。請檢查您的詳細信息"
 msgid "Unable to delete the campaign"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:90
+#: src/components/routes/organizer/Publications/index.tsx:93
 msgid "Unable to delete the post"
 msgstr "無法刪除帖子"
 
@@ -17787,11 +17799,11 @@ msgstr "查看日誌"
 msgid "View Message"
 msgstr "查看訊息"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:74
 msgid "View on Facebook"
 msgstr "在 Facebook 上查看"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:74
 msgid "View on Instagram"
 msgstr "在 Instagram 上查看"
 
@@ -17816,7 +17828,7 @@ msgstr "查看訂單詳情"
 msgid "View registrations and resend tickets."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:121
+#: src/components/routes/organizer/Publications/PostCard.tsx:125
 msgid "View the {0} comments"
 msgstr "查看全部 {0} 則留言"
 

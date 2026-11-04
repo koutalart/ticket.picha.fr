@@ -49,34 +49,38 @@ export const PostActionButtons = ({view, actions}: { view: FeedView, actions: Po
     const post = view.post;
 
     return (
-        <div className={classes.actions}>
-            {post && APPROVABLE.includes(post.status) && (
-                <Button
-                    size="sm"
-                    leftSection={<IconCheck size={16}/>}
-                    disabled={!actions.canPublish}
-                    loading={actions.pendingPostId === post.id}
-                    onClick={() => actions.approve(post)}
-                >
-                    {post.status === 'FAILED' ? t`Retry` : t`Approve`}
-                </Button>
+        <>
+            {post?.status === 'SCHEDULED' && !actions.canPublish && !view.lastError && (
+                <Text size="xs" c="orange" mt={6}>{t`Approved: waiting for your Facebook page to be connected.`}</Text>
             )}
-            {post && CANCELLABLE.includes(post.status) && (
-                <Button size="sm" variant="default" leftSection={<IconX size={16}/>} onClick={() => actions.cancel(post)}>
-                    {t`Cancel`}
-                </Button>
-            )}
-            {view.permalink && (
-                <Button component="a" href={view.permalink} target="_blank" rel="noopener noreferrer" size="sm" variant="light" leftSection={<IconExternalLink size={16}/>}>
-                    {view.network === 'INSTAGRAM' ? t`View on Instagram` : t`View on Facebook`}
-                </Button>
-            )}
-            {post && DELETABLE.includes(post.status) && (
-                <Button size="sm" variant="subtle" color="red" leftSection={<IconTrash size={16}/>} onClick={() => actions.remove(post)}>
-                    {t`Delete`}
-                </Button>
-            )}
-        </div>
+            <div className={classes.actions}>
+                {post && APPROVABLE.includes(post.status) && (
+                    <Button
+                        size="sm"
+                        leftSection={<IconCheck size={16}/>}
+                        loading={actions.pendingPostId === post.id}
+                        onClick={() => actions.approve(post)}
+                    >
+                        {post.status === 'FAILED' ? t`Retry` : t`Approve`}
+                    </Button>
+                )}
+                {post && CANCELLABLE.includes(post.status) && (
+                    <Button size="sm" variant="default" leftSection={<IconX size={16}/>} onClick={() => actions.cancel(post)}>
+                        {t`Cancel`}
+                    </Button>
+                )}
+                {view.permalink && (
+                    <Button component="a" href={view.permalink} target="_blank" rel="noopener noreferrer" size="sm" variant="light" leftSection={<IconExternalLink size={16}/>}>
+                        {view.network === 'INSTAGRAM' ? t`View on Instagram` : t`View on Facebook`}
+                    </Button>
+                )}
+                {post && DELETABLE.includes(post.status) && (
+                    <Button size="sm" variant="subtle" color="red" leftSection={<IconTrash size={16}/>} onClick={() => actions.remove(post)}>
+                        {t`Delete`}
+                    </Button>
+                )}
+            </div>
+        </>
     );
 };
 

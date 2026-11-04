@@ -287,14 +287,15 @@ class SocialPublishingServiceTest extends TestCase
         $this->assertSame(SocialPostStatus::PUBLISHED, $this->service->publish(1)->status);
     }
 
-    public function test_invalid_token_marks_the_connection_and_fails_the_post(): void
+    public function test_invalid_token_marks_the_connection_and_the_post_waits_for_it(): void
     {
         $this->givenPost(SocialNetwork::FACEBOOK, SocialPostFormat::TEXT, []);
         $this->client->shouldReceive('publishPageFeedPost')->andThrow(new MetaGraphApiException('Session has expired', code: 400, graphErrorCode: 190));
         $this->connectionService->shouldReceive('markNeedsReconnect')->once()->with(5, 'Session has expired');
 
-        $this->assertSame(SocialPostStatus::FAILED, $this->service->publish(1)->status);
-        $this->assertLastUpdate(SocialPostStatus::FAILED);
+        $this->assertSame(SocialPostStatus::SCHEDULED, $this->service->publish(1)->status);
+        $this->assertLastUpdate(SocialPostStatus::SCHEDULED);
+        $this->assertArrayNotHasKey(SocialPostDomainObjectAbstract::ATTEMPTS, end($this->updates));
     }
 
     public function test_temporary_error_is_retried_and_counted(): void
@@ -314,12 +315,35 @@ class SocialPublishingServiceTest extends TestCase
         $this->assertSame(SocialPostStatus::FAILED, $this->service->publish(1)->status);
     }
 
-    public function test_connection_to_renew_fails_without_calling_meta(): void
+    public function test_connection_to_renew_keeps_the_post_waiting_without_calling_meta(): void
     {
         $this->givenPost(SocialNetwork::FACEBOOK, SocialPostFormat::TEXT, [], connectionStatus: SocialConnectionStatus::NEEDS_RECONNECT);
         $this->client->shouldNotReceive('publishPageFeedPost');
 
+        $this->assertSame(SocialPostStatus::SCHEDULED, $this->service->publish(1)->status);
+        $this->assertLastUpdate(SocialPostStatus::SCHEDULED);
+    }
+
+    public function test_post_is_never_published_without_a_connected_page(): void
+    {
+        $this->givenPost(SocialNetwork::INSTAGRAM, SocialPostFormat::IMAGE, [['url' => 'https://cdn.test/a.jpg', 'type' => 'IMAGE']], containerId: 'old-container', connected: false);
+        $this->client->shouldNotReceive('createInstagramContainer', 'publishInstagramContainer', 'publishPageFeedPost', 'publishPagePhoto');
+
+        $result = $this->service->publish(1);
+
+        $this->assertSame(SocialPostStatus::SCHEDULED, $result->status);
+        $this->assertLastUpdate(SocialPostStatus::SCHEDULED, [SocialPostDomainObjectAbstract::EXTERNAL_CONTAINER_ID => null]);
+        $this->assertNotNull(end($this->updates)[SocialPostDomainObjectAbstract::LAST_ERROR]);
+        $this->assertArrayNotHasKey(SocialPostDomainObjectAbstract::ATTEMPTS, end($this->updates));
+    }
+
+    public function test_instagram_without_a_linked_professional_account_fails_at_publication(): void
+    {
+        $this->givenPost(SocialNetwork::INSTAGRAM, SocialPostFormat::IMAGE, [['url' => 'https://cdn.test/a.jpg', 'type' => 'IMAGE']], instagramId: null);
+        $this->client->shouldNotReceive('createInstagramContainer');
+
         $this->assertSame(SocialPostStatus::FAILED, $this->service->publish(1)->status);
+        $this->assertLastUpdate(SocialPostStatus::FAILED);
     }
 
     public function test_post_no_longer_publishing_is_ignored(): void
@@ -341,6 +365,8 @@ class SocialPublishingServiceTest extends TestCase
         int $attempts = 0,
         int $postId = 1,
         SocialConnectionStatus $connectionStatus = SocialConnectionStatus::ACTIVE,
+        bool $connected = true,
+        ?string $instagramId = self::IG_ID,
     ): void {
         $post = (new SocialPostDomainObject)
             ->setId($postId)
@@ -356,14 +382,14 @@ class SocialPublishingServiceTest extends TestCase
             ->setAttempts($attempts);
 
         $this->postRepository->shouldReceive('findFirstWhere')->with([SocialPostDomainObjectAbstract::ID => $postId])->andReturn($post);
-        $this->connectionRepository->shouldReceive('findFirstWhere')->andReturn(
-            (new OrganizerSocialConnectionDomainObject)
+        $this->connectionRepository->shouldReceive('findFirstWhere')->andReturn($connected
+            ? (new OrganizerSocialConnectionDomainObject)
                 ->setId(5)
                 ->setStatus($connectionStatus->name)
                 ->setFacebookPageId(self::PAGE_ID)
                 ->setPageAccessToken(self::TOKEN)
-                ->setInstagramAccountId(self::IG_ID),
-        );
+                ->setInstagramAccountId($instagramId)
+            : null);
     }
 
     private function assertLastUpdate(SocialPostStatus $status, array $expected = []): void

@@ -63,9 +63,12 @@ const Publications = () => {
         canPublish,
         pendingPostId: scheduleMutation.isPending ? Number(scheduleMutation.variables?.postId) : undefined,
         approve: (post: SocialPost) => {
-            const when = post.scheduled_at && new Date(post.scheduled_at) > new Date()
-                ? t`It will be published on ${prettyDate(post.scheduled_at, timezone)}.`
-                : t`It will be published within a minute.`;
+            const scheduledAt = post.scheduled_at && new Date(post.scheduled_at) > new Date() ? post.scheduled_at : null;
+            const when = canPublish
+                ? (scheduledAt ? t`It will be published on ${prettyDate(scheduledAt, timezone)}.` : t`It will be published within a minute.`)
+                : (scheduledAt
+                    ? t`It will be published on ${prettyDate(scheduledAt, timezone)}, once your Facebook page is connected.`
+                    : t`It will be published as soon as your Facebook page is connected.`);
 
             confirmationDialog(t`Approve this post? ${when}`, () => {
                 scheduleMutation.mutate({organizerId: organizerId!, postId: post.id}, {
@@ -112,7 +115,7 @@ const Publications = () => {
                     <Alert color="orange" icon={<IconAlertTriangle size={16}/>} mb="md">
                         {connection?.connected
                             ? t`The Facebook connection must be renewed before anything can be published.`
-                            : t`Connect a Facebook page to publish on Facebook and Instagram.`}
+                            : t`Connect your Facebook page so that your approved posts can go out.`}
                         {' '}
                         <Anchor component={NavLink} to={`/manage/organizer/${organizerId}/settings#social`} size="sm">
                             {t`Open the settings`}

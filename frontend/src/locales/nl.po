@@ -1313,7 +1313,7 @@ msgstr "Alle"
 
 #: src/components/routes/kiosk/Orders/index.tsx:251
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:233
-#: src/components/routes/organizer/Publications/index.tsx:135
+#: src/components/routes/organizer/Publications/index.tsx:138
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:57
 #: src/components/routes/organizer/Sms/ConversationList.tsx:70
 msgid "All"
@@ -1671,7 +1671,7 @@ msgstr "Kortingscode toepassen"
 msgid "Apply this {type} to all new products"
 msgstr "Pas dit {type} toe op alle nieuwe producten"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:64
 #: src/components/routes/refund-approval/index.tsx:121
 msgid "Approve"
 msgstr "Goedkeuren"
@@ -1680,7 +1680,7 @@ msgstr "Goedkeuren"
 msgid "Approve Message"
 msgstr "Bericht goedkeuren"
 
-#: src/components/routes/organizer/Publications/index.tsx:70
+#: src/components/routes/organizer/Publications/index.tsx:73
 msgid "Approve this post? {when}"
 msgstr "Dit bericht goedkeuren? {when}"
 
@@ -1695,6 +1695,10 @@ msgstr "Goedgekeurd, een persoon rondt de terugbetaling af"
 #: src/components/routes/refund-approval/index.tsx:21
 msgid "Approved, refund in progress"
 msgstr "Goedgekeurd, terugbetaling bezig"
+
+#: src/components/routes/organizer/Publications/PostCard.tsx:54
+msgid "Approved: waiting for your Facebook page to be connected."
+msgstr "Goedgekeurd: wacht tot je Facebook-pagina is gekoppeld."
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:36
 msgctxt "past events section heading"
@@ -2665,7 +2669,7 @@ msgstr "Kun je toch niet komen? Je ticket wordt terugbetaald."
 #: src/components/routes/event/messages.tsx:80
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:62
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:65
-#: src/components/routes/organizer/Publications/PostCard.tsx:66
+#: src/components/routes/organizer/Publications/PostCard.tsx:69
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
 #: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
@@ -3432,7 +3436,7 @@ msgstr "Door komma's gescheiden trefwoorden die het evenement beschrijven. Deze 
 msgid "Command to run on the venue computer"
 msgstr "Opdracht om uit te voeren op de computer van de locatie"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:108
+#: src/components/routes/organizer/Publications/PostCard.tsx:112
 #: src/components/routes/organizer/Publications/PostViewer.tsx:105
 msgid "Comments"
 msgstr "Reacties"
@@ -3660,10 +3664,6 @@ msgstr "Verbinden en upgraden"
 msgid "Connect a Facebook page"
 msgstr "Facebookpagina koppelen"
 
-#: src/components/routes/organizer/Publications/index.tsx:115
-msgid "Connect a Facebook page to publish on Facebook and Instagram."
-msgstr "Koppel een Facebookpagina om op Facebook en Instagram te publiceren."
-
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/index.tsx:652
 msgid "Connect Documentation"
 msgstr "Documentatie aansluiten"
@@ -3700,6 +3700,10 @@ msgstr "Maak verbinding met Stripe"
 #: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:231
 msgid "Connect your Facebook page and the Instagram professional account linked to it to schedule your posts from PICHA. Every post is checked by a person before it goes out."
 msgstr "Koppel je Facebookpagina en het daaraan gekoppelde professionele Instagramaccount om je berichten vanuit PICHA in te plannen. Elk bericht wordt door een persoon gecontroleerd voordat het online gaat."
+
+#: src/components/routes/organizer/Publications/index.tsx:118
+msgid "Connect your Facebook page so that your approved posts can go out."
+msgstr "Koppel je Facebook-pagina zodat je goedgekeurde berichten worden geplaatst."
 
 #: src/components/layouts/OrganizerLayout/index.tsx:122
 msgid "Connect your Stripe account to accept payments for tickets and products."
@@ -4713,7 +4717,7 @@ msgstr "verwijderen"
 #: src/components/routes/admin/FailedJobs/index.tsx:209
 #: src/components/routes/event/EventPages/index.tsx:101
 #: src/components/routes/event/EventPages/index.tsx:102
-#: src/components/routes/organizer/Publications/PostCard.tsx:76
+#: src/components/routes/organizer/Publications/PostCard.tsx:79
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
@@ -4782,7 +4786,7 @@ msgstr "Standaardantwoord \"{0}\" verwijderen?"
 msgid "Delete the subscriber"
 msgstr "Abonnee verwijderen"
 
-#: src/components/routes/organizer/Publications/index.tsx:84
+#: src/components/routes/organizer/Publications/index.tsx:87
 msgid "Delete this post from the log?"
 msgstr "Dit bericht uit het logboek verwijderen?"
 
@@ -8113,7 +8117,15 @@ msgstr "Is dit account BTW-geregistreerd in de EU?"
 msgid "It stays a draft until you publish it."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:67
+#: src/components/routes/organizer/Publications/index.tsx:71
+msgid "It will be published as soon as your Facebook page is connected."
+msgstr "Het wordt geplaatst zodra je Facebook-pagina is gekoppeld."
+
+#: src/components/routes/organizer/Publications/index.tsx:70
+msgid "It will be published on {0}, once your Facebook page is connected."
+msgstr "Het wordt op {0} geplaatst, zodra je Facebook-pagina is gekoppeld."
+
+#: src/components/routes/organizer/Publications/index.tsx:68
 msgid "It will be published on {0}."
 msgstr "Het wordt gepubliceerd op {0}."
 
@@ -8516,7 +8528,7 @@ msgstr "Light (300)"
 msgid "Lighter version, for example 720p, used on phones."
 msgstr "Lichtere versie, bijvoorbeeld 720p, gebruikt op telefoons."
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:107
+#: src/components/routes/organizer/Publications/PostCard.tsx:111
 msgid "Likes"
 msgstr "Likes"
 
@@ -9384,7 +9396,7 @@ msgstr "Nieuw wachtwoord"
 msgid "New permissions to grant"
 msgstr "Nieuwe toestemmingen te geven"
 
-#: src/components/routes/organizer/Publications/index.tsx:107
+#: src/components/routes/organizer/Publications/index.tsx:110
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:120
 msgid "New post"
 msgstr "Nieuw bericht"
@@ -9798,7 +9810,7 @@ msgstr "Geen betaling vereist"
 msgid "No popular events in the last 14 days"
 msgstr "Geen populaire evenementen in de laatste 14 dagen"
 
-#: src/components/routes/organizer/Publications/index.tsx:155
+#: src/components/routes/organizer/Publications/index.tsx:158
 msgid "No post yet."
 msgstr "Nog geen berichten."
 
@@ -10529,8 +10541,8 @@ msgstr "Klantkaart openen"
 msgid "Open the event flyer"
 msgstr "Evenementposter openen"
 
-#: src/components/routes/organizer/Publications/index.tsx:118
-#: src/components/routes/organizer/Publications/index.tsx:128
+#: src/components/routes/organizer/Publications/index.tsx:121
+#: src/components/routes/organizer/Publications/index.tsx:131
 msgid "Open the settings"
 msgstr "Instellingen openen"
 
@@ -11888,11 +11900,11 @@ msgstr "Populaire evenementen (Laatste 14 dagen)"
 msgid "Portuguese"
 msgstr "Portugees"
 
-#: src/components/routes/organizer/Publications/index.tsx:72
+#: src/components/routes/organizer/Publications/index.tsx:75
 msgid "Post approved"
 msgstr "Bericht goedgekeurd"
 
-#: src/components/routes/organizer/Publications/index.tsx:79
+#: src/components/routes/organizer/Publications/index.tsx:82
 msgid "Post cancelled"
 msgstr "Bericht geannuleerd"
 
@@ -11905,7 +11917,7 @@ msgstr "Post Checkout-bericht"
 msgid "Post Checkout Message"
 msgstr "Post-Checkout Bericht"
 
-#: src/components/routes/organizer/Publications/index.tsx:87
+#: src/components/routes/organizer/Publications/index.tsx:90
 msgid "Post deleted"
 msgstr "Bericht verwijderd"
 
@@ -12353,7 +12365,7 @@ msgid "Publication time"
 msgstr "Publicatietijd"
 
 #: src/components/layouts/OrganizerLayout/index.tsx:76
-#: src/components/routes/organizer/Publications/index.tsx:105
+#: src/components/routes/organizer/Publications/index.tsx:108
 msgid "Publications"
 msgstr "Publicaties"
 
@@ -12687,7 +12699,7 @@ msgstr "Aanbevolen"
 msgid "Reconnect"
 msgstr "Opnieuw koppelen"
 
-#: src/components/routes/organizer/Publications/index.tsx:125
+#: src/components/routes/organizer/Publications/index.tsx:128
 msgid "Reconnect the Facebook page to read and answer the comments of your posts."
 msgstr "Koppel de Facebookpagina opnieuw om de reacties op je berichten te lezen en te beantwoorden."
 
@@ -13369,7 +13381,7 @@ msgid "Retrieve the SMS sent and received with your PICHA SMS number before the 
 msgstr "Haal de sms'jes op die met je PICHA SMS-nummer zijn verzonden en ontvangen voordat de webhook was gekoppeld, bijvoorbeeld een campagne die via een script is verstuurd. Berichten die er al zijn, worden niet dubbel opgeslagen en niet als ongelezen gemarkeerd."
 
 #: src/components/routes/admin/FailedJobs/index.tsx:199
-#: src/components/routes/organizer/Publications/PostCard.tsx:61
+#: src/components/routes/organizer/Publications/PostCard.tsx:64
 #: src/hooks/useKioskTicketPrinter.tsx:227
 msgid "Retry"
 msgstr "Opnieuw proberen"
@@ -14575,7 +14587,7 @@ msgstr "Toon marketing opt-in selectievakje"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "Toon marketing opt-in selectievakje standaard"
 
-#: src/components/routes/organizer/Publications/index.tsx:174
+#: src/components/routes/organizer/Publications/index.tsx:177
 #: src/components/routes/product-widget/SelectProducts/index.tsx:537
 #: src/components/routes/product-widget/SelectProducts/index.tsx:652
 msgid "Show more"
@@ -14840,7 +14852,7 @@ msgid "Some tickets could not be printed."
 msgstr "Sommige tickets konden niet worden afgedrukt."
 
 #: src/components/routes/organizer/Publications/CommentsPanel.tsx:79
-#: src/components/routes/organizer/Publications/PostCard.tsx:128
+#: src/components/routes/organizer/Publications/PostCard.tsx:132
 msgid "Someone"
 msgstr "Iemand"
 
@@ -15806,7 +15818,7 @@ msgstr "Het evenement dat je zoekt is momenteel niet beschikbaar. Mogelijk is he
 msgid "The Facebook connection link has expired. Please try again."
 msgstr "De Facebook-koppelingslink is verlopen. Probeer het opnieuw."
 
-#: src/components/routes/organizer/Publications/index.tsx:114
+#: src/components/routes/organizer/Publications/index.tsx:117
 msgid "The Facebook connection must be renewed before anything can be published."
 msgstr "De Facebook-koppeling moet worden vernieuwd voordat er iets gepubliceerd kan worden."
 
@@ -17032,11 +17044,11 @@ msgstr "Type ticket"
 msgid "Typography"
 msgstr "Typografie"
 
-#: src/components/routes/organizer/Publications/index.tsx:73
+#: src/components/routes/organizer/Publications/index.tsx:76
 msgid "Unable to approve the post"
 msgstr "Bericht kon niet worden goedgekeurd"
 
-#: src/components/routes/organizer/Publications/index.tsx:80
+#: src/components/routes/organizer/Publications/index.tsx:83
 msgid "Unable to cancel the post"
 msgstr "Bericht kon niet worden geannuleerd"
 
@@ -17069,7 +17081,7 @@ msgstr "Kan geen vraag maken. Controleer uw gegevens"
 msgid "Unable to delete the campaign"
 msgstr ""
 
-#: src/components/routes/organizer/Publications/index.tsx:90
+#: src/components/routes/organizer/Publications/index.tsx:93
 msgid "Unable to delete the post"
 msgstr "Bericht kon niet worden verwijderd"
 
@@ -17787,11 +17799,11 @@ msgstr "Logboeken bekijken"
 msgid "View Message"
 msgstr "Bericht bekijken"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:74
 msgid "View on Facebook"
 msgstr "Bekijken op Facebook"
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:71
+#: src/components/routes/organizer/Publications/PostCard.tsx:74
 msgid "View on Instagram"
 msgstr "Bekijken op Instagram"
 
@@ -17816,7 +17828,7 @@ msgstr "Bekijk bestelgegevens"
 msgid "View registrations and resend tickets."
 msgstr ""
 
-#: src/components/routes/organizer/Publications/PostCard.tsx:121
+#: src/components/routes/organizer/Publications/PostCard.tsx:125
 msgid "View the {0} comments"
 msgstr "Bekijk de {0} reacties"
 

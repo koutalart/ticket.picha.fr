@@ -44,6 +44,7 @@ class SocialPostService
 
     /**
      * Creates one post per network. Posts prepared by the assistant always wait for a person's approval.
+     * A draft or a post to approve does not need a connected page: the page is only checked when the post is published.
      *
      * @return Collection<int, SocialPostDomainObject>
      *
@@ -56,9 +57,18 @@ class SocialPostService
             throw new InvalidSocialPostException(__('Choose at least one network.'));
         }
 
-        $connection = $this->connectionService->findForOrganizer($dto->accountId, $dto->organizerId);
         $caption = $this->cleanCaption($dto->caption);
         $media = $this->hydrateFiles($dto->organizerId, $dto->media);
+
+        $status = match (true) {
+            $dto->asDraft => SocialPostStatus::DRAFT,
+            $dto->source === SocialPostSource::ASSISTANT => SocialPostStatus::PENDING_APPROVAL,
+            default => SocialPostStatus::SCHEDULED,
+        };
+
+        $connection = $status === SocialPostStatus::SCHEDULED
+            ? $this->connectionService->findForOrganizer($dto->accountId, $dto->organizerId)
+            : null;
 
         foreach ($dto->networks as $network) {
             $this->validator->validate(new SocialPostDataDTO(
@@ -68,14 +78,12 @@ class SocialPostService
                 media: $media,
                 link: $dto->link,
                 scheduledAt: $dto->scheduledAt,
-            ), $connection);
-        }
+            ));
 
-        $status = match (true) {
-            $dto->asDraft => SocialPostStatus::DRAFT,
-            $dto->source === SocialPostSource::ASSISTANT => SocialPostStatus::PENDING_APPROVAL,
-            default => SocialPostStatus::SCHEDULED,
-        };
+            if ($status === SocialPostStatus::SCHEDULED) {
+                $this->validator->validateConnection($network, $connection);
+            }
+        }
 
         $this->mediaFileService->keep($this->fileIds($media));
 
@@ -106,7 +114,6 @@ class SocialPostService
      * @throws SocialPostNotEditableException
      */
     public function update(
-        int $accountId,
         int $organizerId,
         int $postId,
         ?string $caption,
@@ -125,7 +132,7 @@ class SocialPostService
             media: $media,
             link: $link,
             scheduledAt: $scheduledAt,
-        ), $this->connectionService->findForOrganizer($accountId, $organizerId));
+        ));
 
         $isScheduled = $post->getStatus() === SocialPostStatus::SCHEDULED->name;
         $this->mediaFileService->keep($this->fileIds($media));
@@ -142,6 +149,7 @@ class SocialPostService
 
     /**
      * Approves a draft, a pending or a failed post: it will be published at its scheduled time, or right away.
+     * Without a connected page it stays scheduled and leaves as soon as a page is connected.
      *
      * @throws SocialPostNotEditableException
      */
