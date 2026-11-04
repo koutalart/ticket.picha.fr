@@ -6,6 +6,9 @@ namespace Tests\Unit\Services\Domain\Order;
 
 use HiEvents\DomainObjects\AccountConfigurationDomainObject;
 use HiEvents\DomainObjects\AccountVatSettingDomainObject;
+use HiEvents\DomainObjects\Enums\RefundReason;
+use HiEvents\DomainObjects\EventSettingDomainObject;
+use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
@@ -32,6 +35,7 @@ use HiEvents\Services\Domain\Order\OrderCancelService;
 use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use HiEvents\Services\Domain\Order\Vat\VatRateDeterminationService;
 use HiEvents\Services\Domain\Payment\Stripe\StripePaymentIntentRefundService;
+use HiEvents\Services\Domain\Payment\Stripe\StripeRefundExpiredOrderService;
 use HiEvents\Services\Infrastructure\CurrencyConversion\CurrencyConversionClientInterface;
 use HiEvents\Services\Infrastructure\Stripe\StripeClientFactory;
 use HiEvents\Services\Infrastructure\Utlitiy\Retry\Retrier;
@@ -42,6 +46,7 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
+use Stripe\PaymentIntent;
 use Stripe\Refund;
 use Stripe\Service\RefundService;
 use Stripe\StripeClient;
@@ -187,32 +192,122 @@ class RefundProtectionPlatformRevenueTest extends TestCase
         $handler->handle(new CancelOrderDTO(eventId: self::EVENT_ID, orderId: self::ORDER_ID, refund: true));
     }
 
-    public function test_expired_order_refund_gives_back_the_application_fee(): void
+    public function test_expired_paid_order_refunds_the_ticket_price_only(): void
     {
-        $refunds = m::mock(RefundService::class);
-        $refunds->shouldReceive('create')
+        $refundService = m::mock(StripePaymentIntentRefundService::class);
+        $refundService->shouldReceive('refundPayment')
             ->once()
-            ->withArgs(fn(array $params, array $opts) => ($params['refund_application_fee'] ?? null) === true
-                && $params['amount'] === 2148
-                && $opts === ['stripe_account' => 'acct_456'])
+            ->withArgs(function (...$args) {
+                return ($args['amount'] ?? $args[0])->toMinorUnit() === 2000 && !array_key_exists('refundApplicationFee', $args);
+            })
             ->andReturn(Refund::constructFrom(['id' => 're_2']));
 
-        $client = new class('sk_test_dummy') extends StripeClient {
-            public ?RefundService $refundsMock = null;
-
-            public function __get($name)
-            {
-                return $name === 'refunds' ? $this->refundsMock : parent::__get($name);
-            }
-        };
-        $client->refundsMock = $refunds;
-
-        (new StripePaymentIntentRefundService(new Repository(['app' => ['saas_mode_enabled' => true]])))->refundPayment(
-            amount: MoneyValue::fromFloat(21.48, 'EUR'),
-            payment: (new StripePaymentDomainObject())->setPaymentIntentId('pi_123')->setConnectedAccountId('acct_456'),
-            stripeClient: $client,
-            refundApplicationFee: true,
+        $eventRepository = m::mock(EventRepositoryInterface::class);
+        $eventRepository->shouldReceive('loadRelation')->andReturnSelf();
+        $eventRepository->shouldReceive('findById')->andReturn(
+            (new EventDomainObject())->setId(self::EVENT_ID)->setOrganizerId(1)
+                ->setEventSettings(new EventSettingDomainObject())
+                ->setOrganizer((new OrganizerDomainObject())->setId(1)->setName('Orga')->setEmail('orga@example.test'))
         );
+
+        $clientFactory = m::mock(StripeClientFactory::class);
+        $clientFactory->shouldReceive('createForPlatform')->andReturn(m::mock(StripeClient::class));
+
+        $mailer = m::mock(Mailer::class);
+        $mailer->shouldReceive('to->locale->send')->once();
+
+        $locale = m::mock(CustomerLocaleResolver::class);
+        $locale->shouldReceive('forEvent')->andReturn('fr');
+
+        $logger = m::mock(LoggerInterface::class);
+        $logger->shouldIgnoreMissing();
+
+        (new StripeRefundExpiredOrderService(
+            $refundService,
+            $mailer,
+            $logger,
+            $eventRepository,
+            $clientFactory,
+            $locale,
+            $this->shareService(),
+        ))->refundExpiredOrder(
+            PaymentIntent::constructFrom(['id' => 'pi_1', 'amount' => 2148, 'currency' => 'eur']),
+            (new StripePaymentDomainObject())->setPaymentIntentId('pi_1')->setConnectedAccountId('acct_1'),
+            $this->orderWithProtection()->setEmail('acheteur@example.test'),
+        );
+    }
+
+    public function test_event_cancelled_by_the_organizer_refunds_everything_without_the_commission(): void
+    {
+        $refundService = m::mock(StripePaymentIntentRefundService::class);
+        $refundService->shouldReceive('refundPayment')
+            ->once()
+            ->withArgs(function (...$args) {
+                $metadata = $args['metadata'] ?? $args[3] ?? [];
+
+                return ($args['amount'] ?? $args[0])->toMinorUnit() === 2148
+                    && !array_key_exists('refundApplicationFee', $args)
+                    && ($metadata[StripePaymentIntentRefundService::REFUND_REASON_KEY] ?? null) === RefundReason::EVENT_CANCELLED_BY_ORGANIZER->name;
+            })
+            ->andReturn(Refund::constructFrom(['id' => 're_3']));
+
+        $orderRepository = $this->orderRepositoryFor($this->orderWithProtection());
+        $orderRepository->shouldReceive('updateFromArray')->once()->andReturn($this->orderWithProtection());
+
+        $this->refundHandler($refundService, $orderRepository)->handle(new RefundOrderDTO(
+            event_id: self::EVENT_ID,
+            order_id: self::ORDER_ID,
+            amount: 21.48,
+            notify_buyer: false,
+            cancel_order: false,
+            reason: RefundReason::EVENT_CANCELLED_BY_ORGANIZER->name,
+        ));
+    }
+
+    public function test_event_cancelled_refund_cannot_exceed_what_the_buyer_paid(): void
+    {
+        $refundService = m::mock(StripePaymentIntentRefundService::class);
+        $refundService->shouldNotReceive('refundPayment');
+
+        $this->expectException(RefundNotPossibleException::class);
+
+        $this->refundHandler($refundService, $this->orderRepositoryFor($this->orderWithProtection()))->handle(new RefundOrderDTO(
+            event_id: self::EVENT_ID,
+            order_id: self::ORDER_ID,
+            amount: 21.49,
+            notify_buyer: false,
+            cancel_order: false,
+            reason: RefundReason::EVENT_CANCELLED_BY_ORGANIZER->name,
+        ));
+    }
+
+    public function test_event_cancelled_refund_takes_the_fees_off_the_organizer_sales(): void
+    {
+        $updates = [];
+        $aggregate = (new \HiEvents\DomainObjects\EventStatisticDomainObject())
+            ->setSalesTotalGross(21.48)
+            ->setSalesTotalOrganizer(20.00);
+        $statistics = m::mock(EventStatisticRepositoryInterface::class);
+        $statistics->shouldReceive('findFirstWhere')->andReturn($aggregate);
+        $statistics->shouldReceive('updateWhere')->andReturnUsing(function (array $attributes) use (&$updates) {
+            $updates[] = $attributes;
+            return 1;
+        });
+
+        $logger = m::mock(LoggerInterface::class);
+        $logger->shouldIgnoreMissing();
+
+        $daily = m::mock(EventDailyStatisticRepositoryInterface::class);
+        $daily->shouldReceive('findFirstWhere')->andReturnNull();
+
+        (new EventStatisticsRefundService($statistics, $daily, $logger, $this->shareService()))->updateForRefund(
+            $this->orderWithProtection()->setCreatedAt('2026-11-04 10:00:00'),
+            MoneyValue::fromFloat(21.48, 'EUR'),
+            RefundReason::EVENT_CANCELLED_BY_ORGANIZER->name,
+        );
+
+        self::assertEqualsWithDelta(0.0, $updates[0]['sales_total_gross'], 0.001);
+        self::assertEqualsWithDelta(-1.48, $updates[0]['sales_total_organizer'], 0.001);
     }
 
     public function test_statistics_count_the_organizer_sales_without_fees_nor_protection(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\EventStatistics;
 
+use HiEvents\DomainObjects\Enums\RefundReason;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\Repository\Interfaces\EventDailyStatisticRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventStatisticRepositoryInterface;
@@ -27,13 +28,16 @@ class EventStatisticsRefundService
     /**
      * Update statistics when an order is refunded
      */
-    public function updateForRefund(OrderDomainObject $order, MoneyValue $refundAmount): void
+    public function updateForRefund(OrderDomainObject $order, MoneyValue $refundAmount, ?string $reason = null): void
     {
-        $organizerRefund = $this->organizerShareService->getOrganizerPartOfRefund(
-            order: $order,
-            refundAmount: $refundAmount->toFloat(),
-            alreadyRefunded: $order->getTotalRefunded(),
-        );
+        // Event cancelled by the organizer: the whole refund, fees and protection included, comes off the organizer sales
+        $organizerRefund = $reason === RefundReason::EVENT_CANCELLED_BY_ORGANIZER->name
+            ? $refundAmount->toFloat()
+            : $this->organizerShareService->getOrganizerPartOfRefund(
+                order: $order,
+                refundAmount: $refundAmount->toFloat(),
+                alreadyRefunded: $order->getTotalRefunded(),
+            );
 
         $this->updateAggregateStatisticsForRefund($order, $refundAmount, $organizerRefund);
         $this->updateDailyStatisticsForRefund($order, $refundAmount, $organizerRefund);
@@ -61,7 +65,7 @@ class EventStatisticsRefundService
 
         $updates = [
             'sales_total_gross' => $eventStatistics->getSalesTotalGross() - $refundAmount->toFloat(),
-            'sales_total_organizer' => max(0, $eventStatistics->getSalesTotalOrganizer() - $organizerRefund),
+            'sales_total_organizer' => $eventStatistics->getSalesTotalOrganizer() - $organizerRefund,
             'total_refunded' => $eventStatistics->getTotalRefunded() + $refundAmount->toFloat(),
             'total_tax' => max(0, $adjustedTotalTax),
             'total_fee' => max(0, $adjustedTotalFee),
@@ -122,7 +126,7 @@ class EventStatisticsRefundService
 
         $updates = [
             'sales_total_gross' => $eventDailyStatistic->getSalesTotalGross() - $refundAmount->toFloat(),
-            'sales_total_organizer' => max(0, $eventDailyStatistic->getSalesTotalOrganizer() - $organizerRefund),
+            'sales_total_organizer' => $eventDailyStatistic->getSalesTotalOrganizer() - $organizerRefund,
             'total_refunded' => $eventDailyStatistic->getTotalRefunded() + $refundAmount->toFloat(),
             'total_tax' => max(0, $adjustedTotalTax),
             'total_fee' => max(0, $adjustedTotalFee),

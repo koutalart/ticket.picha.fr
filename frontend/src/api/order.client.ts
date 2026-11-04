@@ -64,6 +64,7 @@ export interface RefundOrderPayload {
     notify_buyer: boolean;
     cancel_order: boolean;
     attendee_ids?: IdParam[];
+    reason?: 'EVENT_CANCELLED_BY_ORGANIZER' | null;
 }
 
 const withSessionIdentifier = (path: string): string => {

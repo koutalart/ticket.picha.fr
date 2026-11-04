@@ -2,7 +2,9 @@
 
 namespace HiEvents\Http\Request\Order;
 
+use HiEvents\DomainObjects\Enums\RefundReason;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RefundOrderRequest extends FormRequest
 {
@@ -14,6 +16,7 @@ class RefundOrderRequest extends FormRequest
             'cancel_order' => 'required|boolean',
             'attendee_ids' => 'sometimes|array',
             'attendee_ids.*' => 'integer',
+            'reason' => ['sometimes', 'nullable', Rule::in(RefundReason::valuesArray())],
         ];
     }
 }

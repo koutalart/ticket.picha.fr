@@ -8,6 +8,7 @@ use Brick\Math\Exception\RoundingNecessaryException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\Enums\RefundReason;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
@@ -123,12 +124,23 @@ class RefundOrderHandler
     /**
      * PICHA: only the price of the tickets and products is refunded, never the service fees (platform fee)
      * nor the cancellation protection. Stripe keeps the application fee on a refund (refund_application_fee
-     * is never sent), so a larger refund would be paid by the organizer.
+     * is never sent). Only exception: the event is cancelled by the organizer, the buyer gets back everything
+     * they paid and the organizer pays the fees and the protection from their Stripe balance.
      *
      * @throws RefundNotPossibleException
      */
-    private function validateRefundAmount(OrderDomainObject $order, MoneyValue $amount): void
+    private function validateRefundAmount(OrderDomainObject $order, MoneyValue $amount, ?string $reason): void
     {
+        if ($reason === RefundReason::EVENT_CANCELLED_BY_ORGANIZER->name) {
+            $paidLeft = MoneyValue::fromFloat(max(0, $order->getTotalGross() - $order->getTotalRefunded()), $order->getCurrency());
+
+            if ($amount->toMinorUnit() > $paidLeft->toMinorUnit()) {
+                throw new RefundNotPossibleException(__('The refund cannot exceed what the buyer paid.'));
+            }
+
+            return;
+        }
+
         $refundable = MoneyValue::fromFloat(
             $this->organizerShareService->getShare($order)->refundableToBuyer,
             $order->getCurrency(),
@@ -190,7 +202,7 @@ class RefundOrderHandler
         $amount = MoneyValue::fromFloat($refundOrderDTO->amount, $order->getCurrency());
 
         $this->validateRefundability($order);
-        $this->validateRefundAmount($order, $amount);
+        $this->validateRefundAmount($order, $amount, $refundOrderDTO->reason);
         $refundedAttendees = $this->refundedAttendees($order, $refundOrderDTO->attendee_ids);
 
         if ($refundOrderDTO->cancel_order) {
@@ -222,6 +234,7 @@ class RefundOrderHandler
             metadata: array_filter([
                 StripePaymentIntentRefundService::REFUND_SOURCE_KEY => $refundOrderDTO->refund_source,
                 'picha_attendee_ids' => implode(',', $refundOrderDTO->attendee_ids),
+                StripePaymentIntentRefundService::REFUND_REASON_KEY => $refundOrderDTO->reason,
             ]),
         );
 
