@@ -15,6 +15,7 @@ use HiEvents\Services\Domain\Order\Vat\VatRateDeterminationService;
 use HiEvents\Services\Infrastructure\CurrencyConversion\CurrencyConversionClientInterface;
 use HiEvents\Values\MoneyValue;
 use Illuminate\Config\Repository;
+use Illuminate\Support\Collection;
 
 class OrderApplicationFeeCalculationService
 {
@@ -39,7 +40,8 @@ class OrderApplicationFeeCalculationService
             return null;
         }
 
-        $chargeableItems = $this->getChargeableItems($order);
+        $products = $this->getOrderProducts($order);
+        $chargeableItems = $this->getChargeableItems($order, $products);
         $quantityPurchased = $this->getChargeableQuantityPurchased($chargeableItems);
         $chargeableTotal = $this->getChargeableTotal($order, $chargeableItems);
 
@@ -51,17 +53,36 @@ class OrderApplicationFeeCalculationService
             currency: $currency
         );
 
-        if (!$vatSettings) {
-            return new ApplicationFeeValuesDTO(
+        $platformFee = $vatSettings
+            ? $this->calculateFeeWithVat(
+                vatSettings: $vatSettings,
+                netApplicationFee: $netApplicationFee,
+                currency: $currency,
+            )
+            : new ApplicationFeeValuesDTO(
                 grossApplicationFee: $netApplicationFee,
                 netApplicationFee: $netApplicationFee,
             );
-        }
 
-        return $this->calculateFeeWithVat(
-            vatSettings: $vatSettings,
-            netApplicationFee: $netApplicationFee,
-            currency: $currency,
+        return $this->addRefundProtection(
+            platformFee: $platformFee,
+            refundProtectionAmount: MoneyValue::fromFloat($this->getRefundProtectionTotal($order, $products), $currency),
+        );
+    }
+
+    /**
+     * PICHA: the cancellation protection (is_refund_protection) is a platform revenue, like the platform fee.
+     * Its price, taxes included, is added to the commission after the VAT of the platform fee: the fee VAT is
+     * computed on the platform fee only, and gross = net + VAT stays true.
+     */
+    private function addRefundProtection(ApplicationFeeValuesDTO $platformFee, MoneyValue $refundProtectionAmount): ApplicationFeeValuesDTO
+    {
+        return new ApplicationFeeValuesDTO(
+            grossApplicationFee: $platformFee->grossApplicationFee->add($refundProtectionAmount),
+            netApplicationFee: $platformFee->netApplicationFee->add($refundProtectionAmount),
+            applicationFeeVatRate: $platformFee->applicationFeeVatRate,
+            applicationFeeVatAmount: $platformFee->applicationFeeVatAmount,
+            refundProtectionAmount: $refundProtectionAmount,
         );
     }
 
@@ -84,41 +105,53 @@ class OrderApplicationFeeCalculationService
     }
 
     /**
+     * @return Collection<int, ProductDomainObject> keyed by product id
+     */
+    private function getOrderProducts(OrderDomainObject $order): Collection
+    {
+        $productIds = collect($order->getOrderItems() ?? [])
+            ->map(static fn(OrderItemDomainObject $item) => $item->getProductId())
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        if ($productIds === []) {
+            return collect();
+        }
+
+        return collect($this->productRepository->findWhereIn(ProductDomainObjectAbstract::ID, $productIds) ?? [])
+            ->keyBy(fn(ProductDomainObject $product) => $product->getId());
+    }
+
+    /**
      * Required products (is_required) and the cancellation protection (is_refund_protection) never carry a platform fee.
      *
+     * @param Collection<int, ProductDomainObject> $products
      * @return OrderItemDomainObject[]
      */
-    private function getChargeableItems(OrderDomainObject $order): array
+    private function getChargeableItems(OrderDomainObject $order, Collection $products): array
     {
-        $items = collect($order->getOrderItems() ?? []);
-        $requiredProductIds = $this->getExemptProductIds($items->all());
+        return collect($order->getOrderItems() ?? [])
+            ->reject(function (OrderItemDomainObject $item) use ($products) {
+                $product = $products->get($item->getProductId());
 
-        return $items
-            ->reject(fn(OrderItemDomainObject $item) => in_array($item->getProductId(), $requiredProductIds, true))
+                return $product !== null && OrderPlatformFeePassThroughService::isExemptProduct($product);
+            })
             ->values()
             ->all();
     }
 
     /**
-     * @param OrderItemDomainObject[] $items
-     * @return int[]
+     * @param Collection<int, ProductDomainObject> $products
      */
-    private function getExemptProductIds(array $items): array
+    private function getRefundProtectionTotal(OrderDomainObject $order, Collection $products): float
     {
-        $productIds = array_values(array_unique(array_filter(
-            array_map(static fn(OrderItemDomainObject $item) => $item->getProductId(), $items)
-        )));
+        $cents = collect($order->getOrderItems() ?? [])
+            ->filter(fn(OrderItemDomainObject $item) => $products->get($item->getProductId())?->getIsRefundProtection() === true)
+            ->sum(fn(OrderItemDomainObject $item) => (int)round((float)$item->getTotalGross() * 100));
 
-        if ($productIds === []) {
-            return [];
-        }
-
-        return $this->productRepository
-            ->findWhereIn(ProductDomainObjectAbstract::ID, $productIds)
-            ->filter(fn(ProductDomainObject $product) => OrderPlatformFeePassThroughService::isExemptProduct($product))
-            ->map(fn(ProductDomainObject $product) => $product->getId())
-            ->values()
-            ->all();
+        return $cents / 100;
     }
 
     /**

@@ -27,6 +27,7 @@ use HiEvents\Services\Application\Handlers\Attendee\DTO\PartialEditAttendeeDTO;
 use HiEvents\Services\Application\Handlers\Attendee\PartialEditAttendeeHandler;
 use HiEvents\Services\Application\Handlers\Order\DTO\RefundOrderDTO;
 use HiEvents\Services\Domain\Order\OrderCancelService;
+use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use HiEvents\Services\Domain\Payment\Stripe\StripePaymentIntentRefundService;
 use HiEvents\Services\Infrastructure\Stripe\StripeClientFactory;
 use HiEvents\Values\MoneyValue;
@@ -49,6 +50,7 @@ class RefundOrderHandler
         private readonly AttendeeRepositoryInterface $attendeeRepository,
         private readonly PartialEditAttendeeHandler $partialEditAttendeeHandler,
         private readonly CustomerLocaleResolver $customerLocaleResolver,
+        private readonly OrderOrganizerShareService $organizerShareService,
     ) {}
 
     /**
@@ -118,6 +120,28 @@ class RefundOrderHandler
         }
     }
 
+    /**
+     * PICHA: only the price of the tickets and products is refunded, never the service fees (platform fee)
+     * nor the cancellation protection. Stripe keeps the application fee on a refund (refund_application_fee
+     * is never sent), so a larger refund would be paid by the organizer.
+     *
+     * @throws RefundNotPossibleException
+     */
+    private function validateRefundAmount(OrderDomainObject $order, MoneyValue $amount): void
+    {
+        $refundable = MoneyValue::fromFloat(
+            $this->organizerShareService->getShare($order)->refundableToBuyer,
+            $order->getCurrency(),
+        );
+
+        if ($amount->toMinorUnit() > $refundable->toMinorUnit()) {
+            throw new RefundNotPossibleException(__(
+                'The refund cannot exceed :amount: only the price of the tickets is refunded, never the service fees nor the cancellation protection.',
+                ['amount' => number_format($refundable->toFloat(), 2, ',', ' ').' '.$order->getCurrency()],
+            ));
+        }
+    }
+
     private function notifyBuyer(OrderDomainObject $order, EventDomainObject $event, MoneyValue $amount): void
     {
         if (KioskSentinelEmail::isKioskSentinelEmail($order->getEmail())) {
@@ -166,6 +190,7 @@ class RefundOrderHandler
         $amount = MoneyValue::fromFloat($refundOrderDTO->amount, $order->getCurrency());
 
         $this->validateRefundability($order);
+        $this->validateRefundAmount($order, $amount);
         $refundedAttendees = $this->refundedAttendees($order, $refundOrderDTO->attendee_ids);
 
         if ($refundOrderDTO->cancel_order) {

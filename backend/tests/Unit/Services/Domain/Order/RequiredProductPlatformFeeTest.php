@@ -336,7 +336,9 @@ class RequiredProductPlatformFeeTest extends TestCase
                 (new OrderItemDomainObject())->setProductId(self::OPTION_ID)->setPrice(0.49)->setQuantity(1)->setTotalGross(0.49),
             ])));
 
-        self::assertEqualsWithDelta(1.98, $fee->grossApplicationFee->toFloat(), 0.001);
+        // No platform fee on the protection itself, but its price goes to PICHA (decision of 04/11): 1,98 + 0,49
+        self::assertEqualsWithDelta(2.47, $fee->grossApplicationFee->toFloat(), 0.001);
+        self::assertEqualsWithDelta(0.49, $fee->refundProtectionAmount->toFloat(), 0.001);
     }
 
     private function makeProduct(int $id, string $productType, float $price, bool $required): ProductDomainObject

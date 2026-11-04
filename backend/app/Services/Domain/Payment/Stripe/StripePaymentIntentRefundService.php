@@ -37,11 +37,15 @@ class StripePaymentIntentRefundService
         StripePaymentDomainObject $payment,
         StripeClient $stripeClient,
         array $metadata = [],
+        bool $refundApplicationFee = false,
     ): Refund {
         $params = [
             'payment_intent' => $payment->getPaymentIntentId(),
             'amount' => $amount->toMinorUnit(),
         ];
+        if ($refundApplicationFee) {
+            $params['refund_application_fee'] = true;
+        }
         if ($metadata !== []) {
             $params['metadata'] = $metadata;
         }

@@ -251,6 +251,7 @@ class StripePaymentIntentCreationService
             $metaData['application_fee_vat_amount'] = $applicationFee->applicationFeeVatAmount?->toFloat();
             $metaData['application_fee_net_amount'] = $applicationFee->netApplicationFee?->toFloat();
             $metaData['application_fee_vat_rate'] = $applicationFee->applicationFeeVatRate;
+            $metaData['application_fee_refund_protection_amount'] = $applicationFee->refundProtectionAmount?->toFloat();
         }
 
         return $metaData;

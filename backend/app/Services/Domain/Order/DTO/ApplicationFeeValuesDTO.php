@@ -12,6 +12,7 @@ class ApplicationFeeValuesDTO extends BaseDataObject
         public MoneyValue  $netApplicationFee,
         public ?float      $applicationFeeVatRate = null,
         public ?MoneyValue $applicationFeeVatAmount = null,
+        public ?MoneyValue $refundProtectionAmount = null,
     )
     {
     }

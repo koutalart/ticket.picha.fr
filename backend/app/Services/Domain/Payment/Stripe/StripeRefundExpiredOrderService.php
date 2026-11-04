@@ -58,11 +58,14 @@ readonly class StripeRefundExpiredOrderService
         // Create Stripe client for the original payment's platform
         $stripeClient = $this->stripeClientFactory->createForPlatform($paymentPlatform);
 
+        // The buyer got nothing: everything is given back, the platform part (fees and cancellation protection)
+        // included, so that the organizer never pays for an order that does not exist.
         $this->refundService->refundPayment(
-            MoneyValue::fromMinorUnit($paymentIntent->amount, strtoupper($paymentIntent->currency)),
-            $stripePayment,
-            $stripeClient,
-            [StripePaymentIntentRefundService::REFUND_SOURCE_KEY => StripePaymentIntentRefundService::REFUND_SOURCE_EXPIRED_ORDER],
+            amount: MoneyValue::fromMinorUnit($paymentIntent->amount, strtoupper($paymentIntent->currency)),
+            payment: $stripePayment,
+            stripeClient: $stripeClient,
+            metadata: [StripePaymentIntentRefundService::REFUND_SOURCE_KEY => StripePaymentIntentRefundService::REFUND_SOURCE_EXPIRED_ORDER],
+            refundApplicationFee: true,
         );
 
         $this->mailer
