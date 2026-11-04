@@ -193,6 +193,9 @@ const Payment = () => {
                             </Group>
                         ) : t`Complete Payment`}
                     </Button>
+                    {order?.is_payment_required && (
+                        <p className={classes.tosNotice}>{t`Service fees and the peace of mind option are non-refundable.`}</p>
+                    )}
                     {getConfig('VITE_TOS_URL') && (
                         <p className={classes.tosNotice}>
                             <Trans>

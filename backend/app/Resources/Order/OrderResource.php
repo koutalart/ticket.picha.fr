@@ -24,6 +24,10 @@ class OrderResource extends BaseResource
             'total_tax' => $this->getTotalTax(),
             'total_fee' => $this->getTotalFee(),
             'total_refunded' => $this->getTotalRefunded(),
+            'refundable_amount' => $this->when(
+                !is_null($this->getRefundableAmount()),
+                fn() => $this->getRefundableAmount(),
+            ),
             'status' => $this->getStatus(),
             'refund_status' => $this->getRefundStatus(),
             'payment_status' => $this->getPaymentStatus(),

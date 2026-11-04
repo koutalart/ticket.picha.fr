@@ -32,6 +32,9 @@ class StripePaymentIntentRefundService
 
     public const REFUND_SOURCE_LIVE_CHAT = 'live_chat';
 
+    /** Stripe refund metadata key for the reason of a refund (see RefundReason). */
+    public const REFUND_REASON_KEY = 'picha_refund_reason';
+
     public function refundPayment(
         MoneyValue $amount,
         StripePaymentDomainObject $payment,

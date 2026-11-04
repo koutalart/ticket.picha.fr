@@ -14,6 +14,7 @@ use HiEvents\Repository\Interfaces\EventStatisticRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
+use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use HiEvents\Services\Infrastructure\Utlitiy\Retry\Retrier;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Carbon;
@@ -31,6 +32,7 @@ class EventStatisticsIncrementService
         private readonly OrderRepositoryInterface               $orderRepository,
         private readonly LoggerInterface                        $logger,
         private readonly Retrier                                $retrier,
+        private readonly OrderOrganizerShareService             $organizerShareService,
     )
     {
     }
@@ -49,9 +51,11 @@ class EventStatisticsIncrementService
 
         $this->retrier->retry(
             callableAction: function () use ($order): void {
-                $this->databaseManager->transaction(function () use ($order): void {
-                    $this->incrementAggregateStatistics($order);
-                    $this->incrementDailyStatistics($order);
+                $organizerSales = $this->organizerShareService->getShare($order)->organizerSales;
+
+                $this->databaseManager->transaction(function () use ($order, $organizerSales): void {
+                    $this->incrementAggregateStatistics($order, $organizerSales);
+                    $this->incrementDailyStatistics($order, $organizerSales);
                     $this->incrementPromoCodeUsage($order);
                     $this->incrementProductStatistics($order);
                 });
@@ -77,7 +81,7 @@ class EventStatisticsIncrementService
      *
      * @throws EventStatisticsVersionMismatchException
      */
-    private function incrementAggregateStatistics(OrderDomainObject $order): void
+    private function incrementAggregateStatistics(OrderDomainObject $order, float $organizerSales): void
     {
         $eventStatistics = $this->eventStatisticsRepository->findFirstWhere([
             'event_id' => $order->getEventId(),
@@ -98,6 +102,7 @@ class EventStatisticsIncrementService
                 'sales_total_before_additions' => $order->getTotalBeforeAdditions(),
                 'total_tax' => $order->getTotalTax(),
                 'total_fee' => $order->getTotalFee(),
+                'sales_total_organizer' => $organizerSales,
                 'orders_created' => 1,
                 'orders_cancelled' => 0,
             ]);
@@ -122,6 +127,7 @@ class EventStatisticsIncrementService
             'sales_total_before_additions' => $eventStatistics->getSalesTotalBeforeAdditions() + $order->getTotalBeforeAdditions(),
             'total_tax' => $eventStatistics->getTotalTax() + $order->getTotalTax(),
             'total_fee' => $eventStatistics->getTotalFee() + $order->getTotalFee(),
+            'sales_total_organizer' => $eventStatistics->getSalesTotalOrganizer() + $organizerSales,
             'orders_created' => $eventStatistics->getOrdersCreated() + 1,
             'version' => $eventStatistics->getVersion() + 1,
         ];
@@ -158,7 +164,7 @@ class EventStatisticsIncrementService
      *
      * @throws EventStatisticsVersionMismatchException
      */
-    private function incrementDailyStatistics(OrderDomainObject $order): void
+    private function incrementDailyStatistics(OrderDomainObject $order, float $organizerSales): void
     {
         $orderDate = (new Carbon($order->getCreatedAt()))->format('Y-m-d');
 
@@ -183,6 +189,7 @@ class EventStatisticsIncrementService
                 'sales_total_before_additions' => $order->getTotalBeforeAdditions(),
                 'total_tax' => $order->getTotalTax(),
                 'total_fee' => $order->getTotalFee(),
+                'sales_total_organizer' => $organizerSales,
                 'orders_created' => 1,
                 'orders_cancelled' => 0,
             ]);
@@ -208,6 +215,7 @@ class EventStatisticsIncrementService
             'sales_total_before_additions' => $eventDailyStatistic->getSalesTotalBeforeAdditions() + $order->getTotalBeforeAdditions(),
             'total_tax' => $eventDailyStatistic->getTotalTax() + $order->getTotalTax(),
             'total_fee' => $eventDailyStatistic->getTotalFee() + $order->getTotalFee(),
+            'sales_total_organizer' => $eventDailyStatistic->getSalesTotalOrganizer() + $organizerSales,
             'orders_created' => $eventDailyStatistic->getOrdersCreated() + 1,
             'version' => $eventDailyStatistic->getVersion() + 1,
         ];

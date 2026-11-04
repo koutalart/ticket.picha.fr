@@ -39,6 +39,7 @@ readonly class EventStatsFetchService
             SUM(es.products_sold) AS total_products_sold,
             SUM(es.orders_created) AS total_orders,
             SUM(es.sales_total_gross) AS total_gross_sales,
+            SUM(es.sales_total_organizer) AS total_organizer_sales,
             SUM(es.total_tax) AS total_tax,
             SUM(es.total_fee) AS total_fees,
             SUM(es.total_views) AS total_views,
@@ -82,6 +83,7 @@ readonly class EventStatsFetchService
             check_in_stats: $this->getCheckedInStats($eventId),
             total_attendance_confirmed: (int) $attendanceResponses->confirmed_count,
             total_cancelled_by_attendee: (int) $attendanceResponses->cancelled_count,
+            total_organizer_sales: (float) ($totalsResult->total_organizer_sales ?? 0),
         );
     }
 
@@ -106,6 +108,7 @@ readonly class EventStatsFetchService
               COALESCE(SUM(eds.total_fee), 0) AS total_fees,
               COALESCE(SUM(eds.total_tax), 0) AS total_tax,
               COALESCE(SUM(eds.sales_total_gross), 0) AS total_sales_gross,
+              COALESCE(SUM(eds.sales_total_organizer), 0) AS total_sales_organizer,
               COALESCE(SUM(eds.orders_created), 0) AS orders_created,
               COALESCE(SUM(eds.products_sold), 0) AS products_sold,
               COALESCE(SUM(eds.attendees_registered), 0) AS attendees_registered,
@@ -136,6 +139,7 @@ readonly class EventStatsFetchService
                 orders_created: $result->orders_created,
                 attendees_registered: $result->attendees_registered,
                 total_refunded: $result->total_refunded,
+                total_sales_organizer: (float) $result->total_sales_organizer,
             );
         });
     }

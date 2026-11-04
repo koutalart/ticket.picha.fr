@@ -153,6 +153,7 @@ readonly class CreatePaymentIntentHandler
             StripePaymentDomainObjectAbstract::APPLICATION_FEE_NET => $applicationFeeData?->netApplicationFee?->toMinorUnit() ?? 0,
             StripePaymentDomainObjectAbstract::APPLICATION_FEE_VAT => $applicationFeeData?->applicationFeeVatAmount?->toMinorUnit() ?? 0,
             StripePaymentDomainObjectAbstract::APPLICATION_FEE_VAT_RATE => $applicationFeeData?->applicationFeeVatRate,
+            StripePaymentDomainObjectAbstract::PLATFORM_BALANCE_WITHHELD => $paymentIntent->platformBalanceWithheldMinor,
             StripePaymentDomainObjectAbstract::CURRENCY => strtoupper($order->getCurrency()),
             StripePaymentDomainObjectAbstract::STRIPE_PLATFORM => $stripePlatform?->value,
         ]);

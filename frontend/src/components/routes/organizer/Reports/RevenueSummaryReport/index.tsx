@@ -26,6 +26,12 @@ const RevenueSummaryReport = () => {
             render: (value: string) => formatDateWithLocale(value, 'shortDate', organizer?.timezone || 'UTC')
         },
         {
+            key: 'organizer_sales' as const,
+            label: t`Your sales`,
+            sortable: true,
+            render: (value: string, _row: any, context: { currency: string }) => formatCurrency(value, context.currency)
+        },
+        {
             key: 'gross_sales' as const,
             label: t`Gross Sales`,
             sortable: true,

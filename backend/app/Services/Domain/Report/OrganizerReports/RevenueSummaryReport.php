@@ -21,6 +21,7 @@ class RevenueSummaryReport extends AbstractOrganizerReportService
                 SELECT
                     eds.date,
                     SUM(eds.sales_total_gross) AS gross_sales,
+                    SUM(eds.sales_total_organizer) AS organizer_sales,
                     SUM(eds.total_refunded) AS total_refunded,
                     SUM(eds.sales_total_gross - eds.total_refunded) AS net_revenue,
                     SUM(eds.total_tax) AS total_tax,
@@ -37,6 +38,7 @@ class RevenueSummaryReport extends AbstractOrganizerReportService
             )
             SELECT
                 d.date,
+                COALESCE(ds.organizer_sales, 0.00) AS organizer_sales,
                 COALESCE(ds.gross_sales, 0.00) AS gross_sales,
                 COALESCE(ds.net_revenue, 0.00) AS net_revenue,
                 COALESCE(ds.total_refunded, 0.00) AS total_refunded,

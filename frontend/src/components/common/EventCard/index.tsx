@@ -157,7 +157,7 @@ export function EventCard({event}: EventCardProps) {
     const relativeDateStr = relativeDate(event.start_date);
     const locationText = getLocationText();
 
-    const revenue = event?.statistics?.sales_total_gross || 0;
+    const revenue = event?.statistics?.sales_total_organizer ?? event?.statistics?.sales_total_gross ?? 0;
     const attendees = event?.statistics?.attendees_registered || 0;
 
     const statusConfig = getStatusConfig();

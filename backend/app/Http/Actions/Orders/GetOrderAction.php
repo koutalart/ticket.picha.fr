@@ -13,15 +13,16 @@ use HiEvents\Repository\Eloquent\Value\OrderAndDirection;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Resources\Order\OrderResource;
+use HiEvents\Services\Domain\Order\OrderOrganizerShareService;
 use Illuminate\Http\JsonResponse;
 
 class GetOrderAction extends BaseAction
 {
-    private OrderRepositoryInterface $orderRepository;
-
-    public function __construct(OrderRepositoryInterface $orderRepository)
+    public function __construct(
+        private readonly OrderRepositoryInterface   $orderRepository,
+        private readonly OrderOrganizerShareService $organizerShareService,
+    )
     {
-        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -45,6 +46,8 @@ class GetOrderAction extends BaseAction
         if ($order === null) {
             throw new ResourceNotFoundException(__('Order not found'));
         }
+
+        $order->setRefundableAmount($this->organizerShareService->getShare($order)->refundableToBuyer);
 
         return $this->resourceResponse(OrderResource::class, $order);
     }

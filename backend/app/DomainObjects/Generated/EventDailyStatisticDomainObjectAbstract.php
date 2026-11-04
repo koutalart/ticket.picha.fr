@@ -27,6 +27,7 @@ abstract class EventDailyStatisticDomainObjectAbstract extends \HiEvents\DomainO
     final public const TOTAL_VIEWS = 'total_views';
     final public const ATTENDEES_REGISTERED = 'attendees_registered';
     final public const ORDERS_CANCELLED = 'orders_cancelled';
+    final public const SALES_TOTAL_ORGANIZER = 'sales_total_organizer';
 
     protected int $id;
     protected int $event_id;
@@ -45,6 +46,7 @@ abstract class EventDailyStatisticDomainObjectAbstract extends \HiEvents\DomainO
     protected int $total_views = 0;
     protected int $attendees_registered = 0;
     protected int $orders_cancelled = 0;
+    protected float $sales_total_organizer = 0.0;
 
     public function toArray(): array
     {
@@ -66,6 +68,7 @@ abstract class EventDailyStatisticDomainObjectAbstract extends \HiEvents\DomainO
                     'total_views' => $this->total_views ?? null,
                     'attendees_registered' => $this->attendees_registered ?? null,
                     'orders_cancelled' => $this->orders_cancelled ?? null,
+                    'sales_total_organizer' => $this->sales_total_organizer ?? null,
                 ];
     }
 
@@ -254,5 +257,16 @@ abstract class EventDailyStatisticDomainObjectAbstract extends \HiEvents\DomainO
     public function getOrdersCancelled(): int
     {
         return $this->orders_cancelled;
+    }
+
+    public function setSalesTotalOrganizer(float $sales_total_organizer): self
+    {
+        $this->sales_total_organizer = $sales_total_organizer;
+        return $this;
+    }
+
+    public function getSalesTotalOrganizer(): float
+    {
+        return $this->sales_total_organizer;
     }
 }

@@ -33,6 +33,7 @@ abstract class StripePaymentDomainObjectAbstract extends \HiEvents\DomainObjects
     final public const PAYOUT_EXCHANGE_RATE = 'payout_exchange_rate';
     final public const BALANCE_TRANSACTION_ID = 'balance_transaction_id';
     final public const APPLICATION_FEE_VAT_RATE = 'application_fee_vat_rate';
+    final public const PLATFORM_BALANCE_WITHHELD = 'platform_balance_withheld';
 
     protected int $id;
     protected int $order_id;
@@ -57,6 +58,7 @@ abstract class StripePaymentDomainObjectAbstract extends \HiEvents\DomainObjects
     protected ?float $payout_exchange_rate = null;
     protected ?string $balance_transaction_id = null;
     protected ?float $application_fee_vat_rate = null;
+    protected int $platform_balance_withheld = 0;
 
     public function toArray(): array
     {
@@ -84,6 +86,7 @@ abstract class StripePaymentDomainObjectAbstract extends \HiEvents\DomainObjects
                     'payout_exchange_rate' => $this->payout_exchange_rate ?? null,
                     'balance_transaction_id' => $this->balance_transaction_id ?? null,
                     'application_fee_vat_rate' => $this->application_fee_vat_rate ?? null,
+                    'platform_balance_withheld' => $this->platform_balance_withheld ?? null,
                 ];
     }
 
@@ -338,5 +341,16 @@ abstract class StripePaymentDomainObjectAbstract extends \HiEvents\DomainObjects
     public function getApplicationFeeVatRate(): ?float
     {
         return $this->application_fee_vat_rate;
+    }
+
+    public function setPlatformBalanceWithheld(int $platform_balance_withheld): self
+    {
+        $this->platform_balance_withheld = $platform_balance_withheld;
+        return $this;
+    }
+
+    public function getPlatformBalanceWithheld(): int
+    {
+        return $this->platform_balance_withheld;
     }
 }

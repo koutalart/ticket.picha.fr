@@ -75,7 +75,7 @@ class ChargeRefundUpdatedHandler
 
             $this->updateOrderRefundedAmount($order->getId(), $refundedAmount);
             $this->updateOrderStatus($order, $refundedAmount);
-            $this->updateEventStatistics($order, MoneyValue::fromMinorUnit($refund->amount, $order->getCurrency()));
+            $this->updateEventStatistics($order, MoneyValue::fromMinorUnit($refund->amount, $order->getCurrency()), $this->refundReason($refund));
             $this->createOrderRefund($refund, $order, $refundedAmount);
             $this->cancelOrderRefundedOutsidePicha($refund, $order);
 
@@ -116,9 +116,16 @@ class ChargeRefundUpdatedHandler
         return Money::ofMinor($amount, $currency)->getAmount()->toFloat();
     }
 
-    private function updateEventStatistics(OrderDomainObject $order, MoneyValue $amount): void
+    private function updateEventStatistics(OrderDomainObject $order, MoneyValue $amount, ?string $reason): void
     {
-        $this->eventStatisticsRefundService->updateForRefund($order, $amount);
+        $this->eventStatisticsRefundService->updateForRefund($order, $amount, $reason);
+    }
+
+    private function refundReason(Refund $refund): ?string
+    {
+        $reason = $refund->metadata[StripePaymentIntentRefundService::REFUND_REASON_KEY] ?? null;
+
+        return is_string($reason) && $reason !== '' ? $reason : null;
     }
 
     private function updateOrderRefundedAmount(int $orderId, float $refundedAmount): void
@@ -159,6 +166,7 @@ class ChargeRefundUpdatedHandler
             'amount' => $refundedAmount,
             'currency' => $order->getCurrency(),
             'status' => $refund->status,
+            'reason' => $this->refundReason($refund),
             'metadata' => array_merge($refund->metadata?->toArray() ?? [], [
                 'payment_intent' => $refund->payment_intent,
             ]),

@@ -31,6 +31,8 @@ use HiEvents\Repository\Eloquent\OrderAuditLogRepository;
 use HiEvents\Repository\Eloquent\OrderItemRepository;
 use HiEvents\Repository\Eloquent\OrderPaymentPlatformFeeRepository;
 use HiEvents\Repository\Eloquent\OrderRefundRepository;
+use HiEvents\Repository\Eloquent\OrganizerPlatformBalanceDeductionRepository;
+use HiEvents\Repository\Eloquent\OrganizerPlatformBalanceRepository;
 use HiEvents\Repository\Eloquent\OrderRepository;
 use HiEvents\Repository\Eloquent\OrganizerRepository;
 use HiEvents\Repository\Eloquent\OrganizerSettingsRepository;
@@ -135,6 +137,8 @@ use HiEvents\Repository\Interfaces\OrderAuditLogRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderItemRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderPaymentPlatformFeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRefundRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerPlatformBalanceDeductionRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerPlatformBalanceRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSettingsRepositoryInterface;
@@ -292,6 +296,8 @@ class RepositoryServiceProvider extends ServiceProvider
         ProductCategoryRepositoryInterface::class => ProductCategoryRepository::class,
         InvoiceRepositoryInterface::class => InvoiceRepository::class,
         OrderRefundRepositoryInterface::class => OrderRefundRepository::class,
+        OrganizerPlatformBalanceRepositoryInterface::class => OrganizerPlatformBalanceRepository::class,
+        OrganizerPlatformBalanceDeductionRepositoryInterface::class => OrganizerPlatformBalanceDeductionRepository::class,
         WebhookRepositoryInterface::class => WebhookRepository::class,
         WebhookLogRepositoryInterface::class => WebhookLogRepository::class,
         OrderApplicationFeeRepositoryInterface::class => OrderApplicationFeeRepository::class,

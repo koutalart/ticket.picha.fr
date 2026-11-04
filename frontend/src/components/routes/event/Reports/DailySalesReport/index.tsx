@@ -31,6 +31,7 @@ export const DailySalesReport = () => {
             render: (value: string) => formatDateWithLocale(value, 'shortDate', event?.timezone)
         },
         ...(isFree ? [] : [
+            money('sales_total_organizer', t`Your sales`),
             money('sales_total_gross', t`Gross sales`),
             money('total_tax', t`Tax`),
             money('sales_total_before_additions', t`Net sales`),

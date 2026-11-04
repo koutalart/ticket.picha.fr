@@ -36,6 +36,8 @@ class OrderDomainObject extends Generated\OrderDomainObjectAbstract implements I
 
     public ?string $sessionIdentifier = null;
 
+    public ?float $refundableAmount = null;
+
     public static function getAllowedFilterFields(): array
     {
         return [
@@ -280,6 +282,17 @@ class OrderDomainObject extends Generated\OrderDomainObjectAbstract implements I
     public function getSessionIdentifier(): ?string
     {
         return $this->sessionIdentifier;
+    }
+
+    public function setRefundableAmount(?float $refundableAmount): OrderDomainObject
+    {
+        $this->refundableAmount = $refundableAmount;
+        return $this;
+    }
+
+    public function getRefundableAmount(): ?float
+    {
+        return $this->refundableAmount;
     }
 
     public function isRefundable(): bool

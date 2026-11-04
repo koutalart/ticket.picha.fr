@@ -16,6 +16,7 @@ class EventDailyStatistic extends BaseModel
             'sales_total_gross' => 'float',
             'sales_total_before_additions' => 'float',
             'total_refunded' => 'float',
+            'sales_total_organizer' => 'float',
         ];
     }
 }

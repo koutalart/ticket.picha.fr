@@ -17,6 +17,7 @@ class EventStatisticsResource extends JsonResource
             'unique_views' => $this->getUniqueViews(),
             'total_views' => $this->getTotalViews(),
             'sales_total_gross' => $this->getSalesTotalGross(),
+            'sales_total_organizer' => $this->getSalesTotalOrganizer(),
             'total_tax' => $this->getTotalTax(),
             'sales_total_before_additions' => $this->getSalesTotalBeforeAdditions(),
             'total_fee' => $this->getTotalFee(),
