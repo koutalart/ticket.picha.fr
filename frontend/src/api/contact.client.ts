@@ -15,14 +15,14 @@ export interface Contact {
     email?: string | null;
     phone?: string | null;
     public_code: string;
-    source: 'ORDER' | 'ATTENDEE' | 'IMPORT' | 'MANUAL' | 'SMS_CAMPAIGN';
+    source: 'ORDER' | 'ATTENDEE' | 'IMPORT' | 'MANUAL' | 'SMS_CAMPAIGN' | 'SMS_KEYWORD';
     email_consent: boolean;
     email_consent_at?: string | null;
     email_consent_source?: 'CHECKOUT' | 'IMPORT' | 'MANUAL' | null;
     email_unsubscribed_at?: string | null;
     sms_consent: boolean;
     sms_consent_at?: string | null;
-    sms_consent_source?: 'CHECKOUT' | 'IMPORT' | 'MANUAL' | null;
+    sms_consent_source?: 'CHECKOUT' | 'IMPORT' | 'MANUAL' | 'SMS_KEYWORD' | null;
     sms_unsubscribed_at?: string | null;
     orders_count: number;
     events_count: number;

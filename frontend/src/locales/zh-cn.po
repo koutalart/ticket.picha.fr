@@ -90,7 +90,7 @@ msgstr "{0} <0>签退</0>成功"
 msgid "{0} | Events and concerts{where}, official ticketing"
 msgstr "{0} | 活动与演出{where}，官方售票"
 
-#: src/components/routes/organizer/Contacts/index.tsx:284
+#: src/components/routes/organizer/Contacts/index.tsx:285
 msgid "{0} accept emails"
 msgstr "{0} 人接受邮件"
 
@@ -111,7 +111,7 @@ msgstr ""
 msgid "{0} available"
 msgstr "{0}可用"
 
-#: src/components/routes/organizer/Contacts/index.tsx:285
+#: src/components/routes/organizer/Contacts/index.tsx:286
 msgid "{0} came to 2 events or more"
 msgstr "{0} 人参加了 2 场或以上活动"
 
@@ -144,7 +144,7 @@ msgstr "{0} 已签到"
 msgid "{0} codes"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:281
+#: src/components/routes/organizer/Contacts/index.tsx:282
 msgid "{0} contacts"
 msgstr "{0} 个联系人"
 
@@ -200,7 +200,7 @@ msgstr ""
 msgid "{0} presents"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:329
+#: src/components/routes/organizer/Contacts/index.tsx:330
 msgid "{0} selected contacts"
 msgstr "已选择 {0} 个联系人"
 
@@ -539,7 +539,7 @@ msgstr "取消通知已发送至"
 msgid "A computer on the venue network runs the PICHA print relay. It picks up the tickets printed from this station and sends them to the Zebra."
 msgstr "场地网络中的一台电脑运行 PICHA 打印中继。它会获取从本工作站打印的门票并发送到 Zebra 打印机。"
 
-#: src/components/routes/organizer/Sms/index.tsx:87
+#: src/components/routes/organizer/Sms/index.tsx:88
 msgid "A customer who replies STOP is automatically unsubscribed from your SMS."
 msgstr "回复 STOP 的客户将自动退订您的短信。"
 
@@ -598,6 +598,10 @@ msgstr "新的验证码已发送到您的邮箱"
 #: src/components/forms/TaxAndFeeForm/index.tsx:29
 msgid "A percentage of the product price. E.g., 3.5% of the product price"
 msgstr "产品价格的百分比。例如，3.5%的产品价格"
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:69
+msgid "A person who sends one of your keywords to {lineNumber} reaches your inbox directly, even if another organizer of the line wrote to them, and joins your contacts with their consent to receive your SMS. Nothing is sent back automatically."
+msgstr "向 {lineNumber} 发送您任一关键词的人会直接进入您的收件箱（即使该线路的其他主办方曾给他发过短信），并以同意接收您短信的身份加入您的联系人。系统不会自动回复。"
 
 #: src/components/forms/QuestionForm/index.tsx:140
 msgid "A phone number input with basic format validation"
@@ -735,7 +739,7 @@ msgstr "接受银行转账、支票或其他线下支付方式"
 msgid "Accept credit card payments with Stripe"
 msgstr "通过 Stripe 接受信用卡支付"
 
-#: src/components/routes/organizer/Contacts/index.tsx:216
+#: src/components/routes/organizer/Contacts/index.tsx:217
 msgid "Accept emails"
 msgstr "接受邮件"
 
@@ -747,7 +751,7 @@ msgstr "接受邀请"
 msgid "Accept Invitation"
 msgstr "接受邀请"
 
-#: src/components/routes/organizer/Contacts/index.tsx:217
+#: src/components/routes/organizer/Contacts/index.tsx:218
 msgid "Accept SMS"
 msgstr "接受短信"
 
@@ -888,6 +892,8 @@ msgstr "激活日期"
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:105
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:116
 #: src/components/routes/organizer/QrCodes/index.tsx:283
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:87
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:93
 msgid "Active"
 msgstr "活跃"
 
@@ -901,6 +907,7 @@ msgid "Active Events"
 msgstr "活跃活动"
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:197
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:120
 #: src/components/routes/organizer/Sms/TeamView.tsx:133
 msgid "Add"
 msgstr "添加"
@@ -963,7 +970,7 @@ msgstr ""
 msgid "Add a service"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:341
+#: src/components/routes/organizer/Contacts/index.tsx:342
 msgid "Add a tag"
 msgstr "添加标签"
 
@@ -1023,7 +1030,7 @@ msgstr "添加关于订单的备注..."
 msgid "Add description"
 msgstr "添加描述"
 
-#: src/components/routes/organizer/Contacts/index.tsx:255
+#: src/components/routes/organizer/Contacts/index.tsx:256
 msgid "Add filter"
 msgstr "添加筛选"
 
@@ -1335,7 +1342,7 @@ msgstr "所有参与者"
 msgid "All attendees of this event"
 msgstr "本次活动的所有与会者"
 
-#: src/components/routes/organizer/Contacts/index.tsx:215
+#: src/components/routes/organizer/Contacts/index.tsx:216
 msgid "All contacts"
 msgstr "所有联系人"
 
@@ -2574,11 +2581,11 @@ msgid "Came"
 msgstr "出席"
 
 #: src/components/routes/organizer/Contacts/index.tsx:106
-#: src/components/routes/organizer/Contacts/index.tsx:260
+#: src/components/routes/organizer/Contacts/index.tsx:261
 msgid "Came (scanned)"
 msgstr "已出席（已扫码）"
 
-#: src/components/routes/organizer/Contacts/index.tsx:231
+#: src/components/routes/organizer/Contacts/index.tsx:232
 msgid "Came to an event"
 msgstr "参加过某场活动"
 
@@ -2629,7 +2636,7 @@ msgstr "推广来源（utm 参数）、来源网站和着陆页，在本网站�
 
 #: src/components/routes/organizer/QrCodes/index.tsx:201
 #: src/components/routes/organizer/QrCodes/index.tsx:209
-#: src/components/routes/organizer/Sms/index.tsx:115
+#: src/components/routes/organizer/Sms/index.tsx:116
 msgid "Campaigns"
 msgstr "营销活动"
 
@@ -3661,7 +3668,7 @@ msgstr "连接 Facebook 主页即可在 Facebook 和 Instagram 上发布。"
 msgid "Connect Documentation"
 msgstr "连接文档"
 
-#: src/components/routes/organizer/Sms/index.tsx:95
+#: src/components/routes/organizer/Sms/index.tsx:96
 msgid "Connect PICHA SMS in Settings"
 msgstr "在设置中连接 PICHA SMS"
 
@@ -3771,7 +3778,7 @@ msgstr ""
 #: src/components/organizerTemplates/Poster/index.tsx:256
 #: src/components/organizerTemplates/Tour/index.tsx:429
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:67
-#: src/components/routes/organizer/Contacts/index.tsx:372
+#: src/components/routes/organizer/Contacts/index.tsx:373
 msgid "Contact"
 msgstr "联系"
 
@@ -3839,7 +3846,7 @@ msgid "Contact us to become a partner"
 msgstr ""
 
 #: src/components/layouts/OrganizerLayout/index.tsx:64
-#: src/components/routes/organizer/Contacts/index.tsx:196
+#: src/components/routes/organizer/Contacts/index.tsx:197
 msgid "Contacts"
 msgstr "联系人"
 
@@ -3847,7 +3854,7 @@ msgstr "联系人"
 msgid "contacts completed"
 msgstr "个联系人已补充"
 
-#: src/components/routes/organizer/Contacts/index.tsx:188
+#: src/components/routes/organizer/Contacts/index.tsx:189
 msgid "Contacts exported"
 msgstr "联系人已导出"
 
@@ -3914,7 +3921,7 @@ msgstr "控制此活动的平台费用如何处理"
 msgid "Conversation"
 msgstr "对话"
 
-#: src/components/routes/organizer/Sms/index.tsx:113
+#: src/components/routes/organizer/Sms/index.tsx:114
 msgid "Conversations"
 msgstr "对话"
 
@@ -4135,7 +4142,7 @@ msgid "Create a code"
 msgstr ""
 
 #: src/components/routes/organizer/Contacts/CreateContactModal.tsx:37
-#: src/components/routes/organizer/Contacts/index.tsx:200
+#: src/components/routes/organizer/Contacts/index.tsx:201
 msgid "Create a contact"
 msgstr "创建联系人"
 
@@ -4434,7 +4441,7 @@ msgstr "自定义模板"
 msgid "Customer"
 msgstr "客户"
 
-#: src/components/routes/organizer/Sms/index.tsx:181
+#: src/components/routes/organizer/Sms/index.tsx:185
 msgid "Customer file"
 msgstr "客户档案"
 
@@ -4475,7 +4482,7 @@ msgstr "客户"
 msgid "Customize"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:293
+#: src/components/routes/organizer/Contacts/index.tsx:294
 msgid "Customize columns"
 msgstr "自定义列"
 
@@ -4870,6 +4877,10 @@ msgstr ""
 #: src/components/routes/event/Reports/SalesBySourceReport/index.tsx:70
 msgid "Direct or unknown"
 msgstr "直接访问或未知"
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:87
+msgid "Disabled"
+msgstr "已停用"
 
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:27
 msgid "Disabling this capacity will track sales but not stop them when the limit is reached"
@@ -5652,6 +5663,10 @@ msgstr "{days} 天 {clock} 后结束"
 msgid "English"
 msgstr "英语"
 
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:34
+msgid "Enter a keyword"
+msgstr "请输入关键词"
+
 #: src/components/routes/organizer/Sms/TeamView.tsx:36
 msgid "Enter a phone number"
 msgstr "请输入电话号码"
@@ -6249,7 +6264,7 @@ msgstr ""
 msgid "Export"
 msgstr "出口"
 
-#: src/components/routes/organizer/Contacts/index.tsx:310
+#: src/components/routes/organizer/Contacts/index.tsx:311
 msgid "Export (CSV)"
 msgstr "导出 (CSV)"
 
@@ -6269,7 +6284,7 @@ msgstr "导出答案"
 msgid "Export CSV"
 msgstr "导出CSV"
 
-#: src/components/routes/organizer/Contacts/index.tsx:189
+#: src/components/routes/organizer/Contacts/index.tsx:190
 msgid "Export failed"
 msgstr "导出失败"
 
@@ -6297,7 +6312,7 @@ msgstr "正在导出与会者"
 msgid "Exporting complete. Downloading file..."
 msgstr "导出完成。正在下载文件..."
 
-#: src/components/routes/organizer/Contacts/index.tsx:187
+#: src/components/routes/organizer/Contacts/index.tsx:188
 msgid "Exporting contacts"
 msgstr "正在导出联系人"
 
@@ -7694,7 +7709,7 @@ msgid "Import cancelled"
 msgstr "导入已撤销"
 
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:135
-#: src/components/routes/organizer/Contacts/index.tsx:201
+#: src/components/routes/organizer/Contacts/index.tsx:202
 msgid "Import contacts"
 msgstr "导入联系人"
 
@@ -8230,6 +8245,30 @@ msgstr ""
 msgid "Key information about the event"
 msgstr ""
 
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:41
+msgid "Keyword added"
+msgstr "关键词已添加"
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:53
+msgid "Keyword disabled"
+msgstr "关键词已停用"
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:53
+msgid "Keyword enabled"
+msgstr "关键词已启用"
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:60
+msgid "Keyword removed"
+msgstr "关键词已删除"
+
+#: src/components/routes/organizer/Sms/index.tsx:118
+msgid "Keywords"
+msgstr "关键词"
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:74
+msgid "Keywords are available when your SMS go through the shared PICHA line."
+msgstr "当您的短信通过共享的 PICHA 线路发送时，可使用关键词。"
+
 #: src/components/layouts/Kiosk/index.tsx:45
 msgid "Kiosk"
 msgstr "售票处"
@@ -8597,7 +8636,7 @@ msgstr "直播活动"
 msgid "Live the experience."
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:227
+#: src/components/routes/organizer/Contacts/index.tsx:228
 msgid "Load an event or a tag"
 msgstr "加载活动或标签"
 
@@ -9332,6 +9371,10 @@ msgstr ""
 msgid "New dates will be announced soon."
 msgstr "新日期即将公布。"
 
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:115
+msgid "New keyword"
+msgstr "新关键词"
+
 #: src/components/routes/auth/ResetPassword/index.tsx:64
 #: src/components/routes/profile/ManageProfile/index.tsx:232
 msgid "New Password"
@@ -9372,7 +9415,7 @@ msgstr "已生成新的签名密钥"
 msgid "New Signups"
 msgstr "新注册"
 
-#: src/components/routes/organizer/Sms/index.tsx:104
+#: src/components/routes/organizer/Sms/index.tsx:105
 msgid "New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "新短信不会出现在这里，您的回复也不会发出。请检查手机是否开机、已联网，并且 PICHA SMS 应用正在运行。"
 
@@ -9384,7 +9427,7 @@ msgstr "新标签"
 msgid "Newsletter block"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:218
+#: src/components/routes/organizer/Contacts/index.tsx:219
 msgid "Newsletter subscribers"
 msgstr "新闻通讯订阅者"
 
@@ -9408,7 +9451,7 @@ msgstr "下一条"
 msgid "Next steps"
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:133
+#: src/components/routes/organizer/Contacts/index.tsx:134
 msgid "no"
 msgstr "否"
 
@@ -9535,7 +9578,7 @@ msgstr "无联系方式"
 msgid "No contact is created before you click Import."
 msgstr "点击导入之前不会创建任何联系人。"
 
-#: src/components/routes/organizer/Contacts/index.tsx:351
+#: src/components/routes/organizer/Contacts/index.tsx:352
 msgid "No contacts yet"
 msgstr "暂无联系人"
 
@@ -9593,7 +9636,7 @@ msgstr ""
 msgid "No event matches your search."
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:232
+#: src/components/routes/organizer/Contacts/index.tsx:233
 msgid "No events"
 msgstr "暂无活动"
 
@@ -9645,6 +9688,10 @@ msgstr "此主页未关联 Instagram 专业账户"
 #: src/components/common/OrdersTable/index.tsx:311
 msgid "No invoice"
 msgstr "无发票"
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:80
+msgid "No keyword yet."
+msgstr "暂无关键词。"
 
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:85
 msgid "No kiosk operators yet"
@@ -9894,7 +9941,7 @@ msgstr ""
 msgid "No subscriber yet."
 msgstr ""
 
-#: src/components/routes/organizer/Contacts/index.tsx:241
+#: src/components/routes/organizer/Contacts/index.tsx:242
 msgid "No tags yet"
 msgstr "暂无标签"
 
@@ -10312,6 +10359,10 @@ msgstr "每位号码有效的参与者一条短信，绝不重复发送。回复
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:152
 msgid "One SMS per attendee with a valid number. Box office sales, attendees added manually and numbers that replied STOP receive nothing."
 msgstr ""
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:116
+msgid "One word. Capitals, accents and punctuation do not matter."
+msgstr "只能是一个词。大小写、重音和标点不影响。"
 
 #: src/components/common/EventStatusBadge/index.tsx:18
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:31
@@ -11784,7 +11835,7 @@ msgstr "请选择至少一个产品"
 #: src/components/routes/event/attendees.tsx:66
 #: src/components/routes/event/attendees.tsx:76
 #: src/components/routes/event/orders.tsx:79
-#: src/components/routes/organizer/Contacts/index.tsx:189
+#: src/components/routes/organizer/Contacts/index.tsx:190
 msgid "Please try again."
 msgstr "请再试一次。"
 
@@ -11812,7 +11863,7 @@ msgstr "请稍候，我们正在准备导出您的推广员..."
 msgid "Please wait while we prepare your attendees for export..."
 msgstr "请稍候，我们正在准备导出您的与会者..."
 
-#: src/components/routes/organizer/Contacts/index.tsx:187
+#: src/components/routes/organizer/Contacts/index.tsx:188
 msgid "Please wait while we prepare your contacts."
 msgstr "请稍候，正在准备您的联系人。"
 
@@ -12957,7 +13008,7 @@ msgstr "已提醒"
 msgid "Reminder updated"
 msgstr "提醒已更新"
 
-#: src/components/routes/organizer/Sms/index.tsx:114
+#: src/components/routes/organizer/Sms/index.tsx:115
 msgid "Reminders"
 msgstr "提醒"
 
@@ -12980,6 +13031,7 @@ msgstr "去除"
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:149
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:176
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:118
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:100
 #: src/components/routes/organizer/Sms/TeamView.tsx:110
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1728
 #: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2124
@@ -13000,7 +13052,7 @@ msgstr "移除域名"
 msgid "Remove file"
 msgstr "移除文件"
 
-#: src/components/routes/organizer/Contacts/index.tsx:271
+#: src/components/routes/organizer/Contacts/index.tsx:272
 msgid "Remove filter"
 msgstr "移除筛选"
 
@@ -13708,7 +13760,7 @@ msgstr "已安排"
 msgid "Scheduled time"
 msgstr "定时时间"
 
-#: src/components/routes/organizer/Contacts/index.tsx:315
+#: src/components/routes/organizer/Contacts/index.tsx:316
 msgid "Search"
 msgstr "搜索"
 
@@ -13716,7 +13768,7 @@ msgstr "搜索"
 msgid "Search a name or a number…"
 msgstr "搜索姓名或号码…"
 
-#: src/components/routes/organizer/Contacts/index.tsx:316
+#: src/components/routes/organizer/Contacts/index.tsx:317
 msgid "Search a name, an email or a phone number"
 msgstr "搜索姓名、邮箱或电话"
 
@@ -13953,7 +14005,7 @@ msgstr "选择级别"
 msgid "Select Account"
 msgstr "选择账户"
 
-#: src/components/routes/organizer/Contacts/index.tsx:366
+#: src/components/routes/organizer/Contacts/index.tsx:367
 msgid "Select all"
 msgstr "全选"
 
@@ -13977,7 +14029,7 @@ msgstr "选择相机"
 msgid "Select category..."
 msgstr "选择类别..."
 
-#: src/components/routes/organizer/Contacts/index.tsx:383
+#: src/components/routes/organizer/Contacts/index.tsx:384
 msgid "Select contact"
 msgstr "选择联系人"
 
@@ -14693,11 +14745,19 @@ msgstr "短信活动"
 msgid "SMS history"
 msgstr "短信历史记录"
 
-#: src/components/routes/organizer/Sms/index.tsx:93
+#: src/components/routes/organizer/Sms/index.tsx:94
 msgid "SMS is not connected yet."
 msgstr "短信尚未连接。"
 
-#: src/components/routes/organizer/Sms/index.tsx:85
+#: src/components/routes/organizer/Contacts/index.tsx:129
+msgid "SMS keyword"
+msgstr "短信关键词"
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:68
+msgid "SMS keywords"
+msgstr "短信关键词"
+
+#: src/components/routes/organizer/Sms/index.tsx:86
 msgid "SMS messages"
 msgstr "短信消息"
 
@@ -15395,7 +15455,7 @@ msgstr "提供平板电脑、扫描器和胸卡打印机"
 msgid "Tag"
 msgstr "标签"
 
-#: src/components/routes/organizer/Contacts/index.tsx:175
+#: src/components/routes/organizer/Contacts/index.tsx:176
 msgid "Tag added"
 msgstr "标签已添加"
 
@@ -15403,7 +15463,7 @@ msgstr "标签已添加"
 msgid "Tag added to every imported contact"
 msgstr "为每个导入的联系人添加的标签"
 
-#: src/components/routes/organizer/Contacts/index.tsx:334
+#: src/components/routes/organizer/Contacts/index.tsx:335
 msgid "Tag name"
 msgstr "标签名称"
 
@@ -15417,7 +15477,7 @@ msgstr ""
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:177
 #: src/components/routes/organizer/Contacts/index.tsx:119
-#: src/components/routes/organizer/Contacts/index.tsx:240
+#: src/components/routes/organizer/Contacts/index.tsx:241
 msgid "Tags"
 msgstr "标签"
 
@@ -15504,7 +15564,7 @@ msgstr "税费、费用、可见性、销售期、产品亮点和订单限制"
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:288
 #: src/components/routes/organizer/Sms/ConversationList.tsx:121
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:140
-#: src/components/routes/organizer/Sms/index.tsx:117
+#: src/components/routes/organizer/Sms/index.tsx:119
 msgid "Team"
 msgstr ""
 
@@ -15824,6 +15884,14 @@ msgstr "导入失败：{importError}。您可以重新开始，已导入的消�
 msgid "The import failed. Please try again."
 msgstr "导入失败。请重试。"
 
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:61
+msgid "The keyword could not be removed. Please try again."
+msgstr "无法删除关键词，请重试。"
+
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:54
+msgid "The keyword could not be updated. Please try again."
+msgstr "无法更新关键词，请重试。"
+
 #: src/components/modals/CreateAttendeeModal/index.tsx:127
 msgid "The language the attendee will receive emails in."
 msgstr "与会者接收电子邮件的语言。"
@@ -15925,7 +15993,7 @@ msgstr ""
 msgid "The personal link lets the attendee find their registration again. When there is none for an attendee, the link and its label are left out of the message."
 msgstr "个人链接可让参与者重新找到自己的报名。参与者没有个人链接时，链接及其说明文字会从消息中移除。"
 
-#: src/components/routes/organizer/Sms/index.tsx:103
+#: src/components/routes/organizer/Sms/index.tsx:104
 msgid "The phone went offline {0}. New SMS will not arrive here and your replies will not be sent. Check that the phone is switched on, connected to the internet and that the PICHA SMS app is running."
 msgstr "手机已于{0}离线。新短信不会出现在这里，您的回复也不会发出。请检查手机是否开机、已联网，并且 PICHA SMS 应用正在运行。"
 
@@ -15998,6 +16066,10 @@ msgstr ""
 msgid "The service fees and the option are not refunded."
 msgstr "服务费和该选项不予退还。"
 
+#: src/components/routes/organizer/Sms/KeywordsView.tsx:30
+msgid "the shared line"
+msgstr "共享线路"
+
 #: src/components/organizerTemplates/Tour/index.tsx:109
 #: src/components/organizerTemplates/Tour/index.tsx:270
 msgid "The show"
@@ -16018,7 +16090,7 @@ msgid "The SMS messaging of this organizer is not configured yet. Set up the sen
 msgstr ""
 
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:122
-#: src/components/routes/organizer/Contacts/index.tsx:179
+#: src/components/routes/organizer/Contacts/index.tsx:180
 msgid "The tag could not be added. Please try again."
 msgstr "无法添加标签，请重试。"
 
@@ -18018,7 +18090,7 @@ msgstr "我们已向以下邮箱发送了5位数验证码："
 msgid "Web chat"
 msgstr "网页聊天"
 
-#: src/components/routes/organizer/Sms/index.tsx:116
+#: src/components/routes/organizer/Sms/index.tsx:117
 msgid "Web chats"
 msgstr "网页聊天"
 
@@ -18389,7 +18461,7 @@ msgid "With a direct link, visitors leave immediately: your Meta pixel cannot re
 msgstr ""
 
 #: src/components/routes/organizer/Contacts/index.tsx:107
-#: src/components/routes/organizer/Contacts/index.tsx:263
+#: src/components/routes/organizer/Contacts/index.tsx:264
 msgid "With a phone number"
 msgstr "有电话号码"
 
@@ -18480,7 +18552,7 @@ msgstr "X（推特）"
 msgid "Year to date"
 msgstr "年度至今"
 
-#: src/components/routes/organizer/Contacts/index.tsx:133
+#: src/components/routes/organizer/Contacts/index.tsx:134
 msgid "yes"
 msgstr "是"
 
@@ -18763,7 +18835,7 @@ msgstr "与会者注册参加活动后，就会出现在这里。您也可以手
 msgid "Your awesome website 🎉"
 msgstr "您的精彩网站 🎉"
 
-#: src/components/routes/organizer/Contacts/index.tsx:353
+#: src/components/routes/organizer/Contacts/index.tsx:354
 msgid "Your buyers and attendees appear here as soon as an order is confirmed. You can also import a file."
 msgstr "订单确认后，您的买家和参与者会显示在这里。您也可以导入文件。"
 
@@ -18771,7 +18843,7 @@ msgstr "订单确认后，您的买家和参与者会显示在这里。您也可
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "您的签到列表已成功创建。与您的签到工作人员共享以下链接。"
 
-#: src/components/routes/organizer/Contacts/index.tsx:188
+#: src/components/routes/organizer/Contacts/index.tsx:189
 msgid "Your contacts have been exported."
 msgstr "您的联系人已导出。"
 
@@ -18952,7 +19024,7 @@ msgstr "您的付款未成功，请重试。"
 msgid "Your payment was unsuccessful. Please try again."
 msgstr "您的付款未成功。请重试。"
 
-#: src/components/routes/organizer/Sms/index.tsx:101
+#: src/components/routes/organizer/Sms/index.tsx:102
 msgid "Your PICHA SMS phone is offline"
 msgstr "您的 PICHA SMS 手机已离线"
 

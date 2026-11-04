@@ -78,6 +78,7 @@ use HiEvents\Repository\Eloquent\SmsRegistrationConfirmationRepository;
 use HiEvents\Repository\Eloquent\SmsCheckinWelcomeRepository;
 use HiEvents\Repository\Eloquent\OrganizerNewsletterSubscriberRepository;
 use HiEvents\Repository\Eloquent\SmsReplyTemplateRepository;
+use HiEvents\Repository\Eloquent\SmsLineKeywordRepository;
 use HiEvents\Repository\Eloquent\SmsLineFormerMemberRepository;
 use HiEvents\Repository\Eloquent\SmsUnattributedMessageRepository;
 use HiEvents\Repository\Eloquent\SmsWatchdogAlertRepository;
@@ -183,6 +184,7 @@ use HiEvents\Repository\Interfaces\SmsRegistrationConfirmationRepositoryInterfac
 use HiEvents\Repository\Interfaces\SmsCheckinWelcomeRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerNewsletterSubscriberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsReplyTemplateRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsLineKeywordRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsLineFormerMemberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsWatchdogAlertRepositoryInterface;
@@ -260,6 +262,7 @@ class RepositoryServiceProvider extends ServiceProvider
         EventAssistantFactRepositoryInterface::class => EventAssistantFactRepository::class,
         EventAssistantSnapshotRepositoryInterface::class => EventAssistantSnapshotRepository::class,
         SmsReplyTemplateRepositoryInterface::class => SmsReplyTemplateRepository::class,
+        SmsLineKeywordRepositoryInterface::class => SmsLineKeywordRepository::class,
         SmsLineFormerMemberRepositoryInterface::class => SmsLineFormerMemberRepository::class,
         SmsUnattributedMessageRepositoryInterface::class => SmsUnattributedMessageRepository::class,
         SmsWatchdogAlertRepositoryInterface::class => SmsWatchdogAlertRepository::class,

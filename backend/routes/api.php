@@ -44,6 +44,10 @@ use HiEvents\Http\Actions\Sms\GetSmsReplyTemplatesAction;
 use HiEvents\Http\Actions\Sms\CreateSmsReplyTemplateAction;
 use HiEvents\Http\Actions\Sms\UpdateSmsReplyTemplateAction;
 use HiEvents\Http\Actions\Sms\DeleteSmsReplyTemplateAction;
+use HiEvents\Http\Actions\Sms\GetSmsLineKeywordsAction;
+use HiEvents\Http\Actions\Sms\CreateSmsLineKeywordAction;
+use HiEvents\Http\Actions\Sms\UpdateSmsLineKeywordAction;
+use HiEvents\Http\Actions\Sms\DeleteSmsLineKeywordAction;
 use HiEvents\Http\Actions\Sms\GetSmsOptOutsAction;
 use HiEvents\Http\Actions\Sms\Team\DeleteOrganizerTeamContactAction;
 use HiEvents\Http\Actions\Sms\Team\GetOrganizerTeamContactsAction;
@@ -499,6 +503,12 @@ $router->middleware(['auth:api'])->group(
             ->where('template_id', '[0-9]+');
         $router->delete('/organizers/{organizer_id}/sms/reply-templates/{template_id}', DeleteSmsReplyTemplateAction::class)
             ->where('template_id', '[0-9]+');
+        $router->get('/organizers/{organizer_id}/sms/keywords', GetSmsLineKeywordsAction::class);
+        $router->post('/organizers/{organizer_id}/sms/keywords', CreateSmsLineKeywordAction::class);
+        $router->put('/organizers/{organizer_id}/sms/keywords/{keyword_id}', UpdateSmsLineKeywordAction::class)
+            ->where('keyword_id', '[0-9]+');
+        $router->delete('/organizers/{organizer_id}/sms/keywords/{keyword_id}', DeleteSmsLineKeywordAction::class)
+            ->where('keyword_id', '[0-9]+');
         $router->get('/organizers/{organizer_id}/sms/opt-outs', GetSmsOptOutsAction::class);
         $router->post('/organizers/{organizer_id}/sms/opt-outs', AddSmsOptOutAction::class);
         $router->delete('/organizers/{organizer_id}/sms/opt-outs/{opt_out_id}', RemoveSmsOptOutAction::class)

@@ -25,6 +25,7 @@ use HiEvents\Services\Domain\Sms\SmsCampaignDeliveryService;
 use HiEvents\Services\Domain\Sms\SmsFileStatusService;
 use HiEvents\Services\Domain\Sms\SmsFileSyncService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
+use HiEvents\Services\Domain\Sms\SmsLineKeywordService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
@@ -70,6 +71,7 @@ class HandleHttpSmsWebhookHandler
         private readonly DecideLiveChatRefundHandler $refundDecisionHandler,
         private readonly LiveChatQuestionService $questionService,
         private readonly SmsFileSyncService $fileSyncService,
+        private readonly SmsLineKeywordService $keywordService,
     ) {}
 
     /**
@@ -188,6 +190,10 @@ class HandleHttpSmsWebhookHandler
                 return;
             }
 
+            if ($this->handleKeyword($settings, $candidates, $sms)) {
+                return;
+            }
+
             $target = $candidates->count() > 1 ? $this->attributeInbound($settings, $candidates, $sms) : $settings;
             if ($target === null) {
                 return;
@@ -274,6 +280,41 @@ class HandleHttpSmsWebhookHandler
         $message = $this->inboundService->recordInbound($owner, $sms, lineSettingsId: $line->getId());
         if ($message !== null) {
             $this->questionService->answerFromSupervisor($question, $sms->content, $sms->contact);
+        }
+
+        return true;
+    }
+
+    /**
+     * « JUNGLE », « Jungle 2 »: an SMS whose first word is an active keyword of the line goes, whole, to the organizer
+     * of the keyword, even when another organizer of the line wrote to the number more recently. The number is added to
+     * its contacts and nothing is sent back: neither an automatic reply nor an assistant draft.
+     *
+     * @param  Collection<int, OrganizerSmsSettingDomainObject>  $candidates
+     *
+     * @throws InvalidSmsPhoneNumberException
+     * @throws Throwable
+     */
+    private function handleKeyword(OrganizerSmsSettingDomainObject $line, Collection $candidates, InboundSmsDTO $sms): bool
+    {
+        $match = $this->keywordService->match($line, $candidates, $sms->content);
+        if ($match === null) {
+            return false;
+        }
+
+        if ($this->unattributedService->isKnown($sms->providerMessageId)) {
+            return true;
+        }
+
+        $message = $this->keywordService->recordInbound($line, $match, $sms);
+        if ($message !== null) {
+            $this->logger->info('httpSMS inbound SMS attributed by its SMS keyword', [
+                'line_settings_id' => $line->getId(),
+                'organizer_id' => $match->settings->getOrganizerId(),
+                'keyword' => $match->keyword,
+                'sms_message_id' => $message->getId(),
+            ]);
+            $this->alertService->notifyInbound($match->settings, $message);
         }
 
         return true;

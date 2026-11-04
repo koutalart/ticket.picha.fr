@@ -30,6 +30,8 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
      * Looks at the SMS of its conversations (from the given line when one is given; supervision copies and web chat
      * copies do not count) and at the campaign recipients the SMS reached. A team conversation of an organizer with
      * this number, with an SMS sent in the window, always wins: the person is in that team, never a customer.
+     * An SMS the number sent with an SMS keyword of the line counts as an SMS of the organizer of the keyword: the person
+     * asked to be in touch with it.
      *
      * @param  array<int, int>  $organizerIds
      */
