@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
+use HiEvents\DomainObjects\OrganizerPlatformBalanceDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\StripePaymentDomainObject;
 use HiEvents\Helper\IdHelper;
@@ -82,7 +83,7 @@ class OrganizerPlatformBalanceTest extends TestCase
     {
         [$order, $organizerId] = $this->paidOrder();
         $service = app(OrganizerPlatformBalanceService::class);
-        $balance = $service->addBalance($organizerId, 57.88, 'USD', 'Options sérénité versées avant le 04/11', 'F-TEST-1');
+        $balance = $this->validated($service->addBalance($organizerId, 57.88, 'USD', 'Options sérénité versées avant le 04/11', 'F-TEST-1'));
         $stripePayment = $this->stripePayment($order, withheldMinor: 2000);
 
         self::assertEqualsWithDelta(20.00, $service->recordWithholding($stripePayment, $order), 0.001);
@@ -97,7 +98,7 @@ class OrganizerPlatformBalanceTest extends TestCase
     {
         [$order, $organizerId] = $this->paidOrder();
         $service = app(OrganizerPlatformBalanceService::class);
-        $balance = $service->addBalance($organizerId, 15.68, 'USD', 'Options sérénité versées avant le 04/11');
+        $balance = $this->validated($service->addBalance($organizerId, 15.68, 'USD', 'Options sérénité versées avant le 04/11'));
 
         self::assertEqualsWithDelta(15.68, $service->recordWithholding($this->stripePayment($order, withheldMinor: 2000), $order), 0.001);
 
@@ -114,7 +115,7 @@ class OrganizerPlatformBalanceTest extends TestCase
     {
         [$order, $organizerId] = $this->paidOrder();
         $service = app(OrganizerPlatformBalanceService::class);
-        $balance = $service->addBalance($organizerId, 57.88, 'USD', 'Options sérénité versées avant le 04/11');
+        $balance = $this->validated($service->addBalance($organizerId, 57.88, 'USD', 'Options sérénité versées avant le 04/11'));
         $service->recordWithholding($this->stripePayment($order, withheldMinor: 2000), $order);
 
         DB::table('event_statistics')->updateOrInsert(['event_id' => $order->getEventId()], [
@@ -139,7 +140,7 @@ class OrganizerPlatformBalanceTest extends TestCase
     {
         [$order, $organizerId] = $this->paidOrder();
         $service = app(OrganizerPlatformBalanceService::class);
-        $balance = $service->addBalance($organizerId, 57.88, 'USD', 'Test');
+        $balance = $this->validated($service->addBalance($organizerId, 57.88, 'USD', 'Test'));
 
         self::assertEqualsWithDelta(0.0, $service->recordWithholding($this->stripePayment($order, withheldMinor: 0), $order), 0.001);
         self::assertEqualsWithDelta(57.88, (float) DB::table('organizer_platform_balances')->where('id', $balance->getId())->value('remaining_amount'), 0.001);
@@ -148,7 +149,7 @@ class OrganizerPlatformBalanceTest extends TestCase
     public function test_failed_payment_withholds_nothing(): void
     {
         [$order, $organizerId] = $this->paidOrder(paymentStatus: 'AWAITING_PAYMENT', status: 'RESERVED');
-        $balance = app(OrganizerPlatformBalanceService::class)->addBalance($organizerId, 57.88, 'USD', 'Test');
+        $balance = $this->validated(app(OrganizerPlatformBalanceService::class)->addBalance($organizerId, 57.88, 'USD', 'Test'));
         $this->stripePayment($order, withheldMinor: 2000);
         Event::fake();
 
@@ -217,6 +218,38 @@ class OrganizerPlatformBalanceTest extends TestCase
         ))->handleEvent(PaymentIntent::constructFrom(['id' => 'pi_ok', 'amount_received' => 2148, 'application_fee_amount' => 198]));
     }
 
+    public function test_balance_not_validated_by_the_organizer_is_not_withheld(): void
+    {
+        [$order, $organizerId] = $this->paidOrder();
+        $service = app(OrganizerPlatformBalanceService::class);
+        $balance = $service->addBalance($organizerId, 57.88, 'USD', 'Options sérénité versées avant le 04/11');
+
+        self::assertEqualsWithDelta(0.0, $service->getRemainingTotal($organizerId, 'USD'), 0.001);
+        self::assertEqualsWithDelta(0.0, $service->recordWithholding($this->stripePayment($order, withheldMinor: 2000), $order), 0.001);
+        self::assertEqualsWithDelta(57.88, (float) DB::table('organizer_platform_balances')->where('id', $balance->getId())->value('remaining_amount'), 0.001);
+        self::assertSame(0, DB::table('organizer_platform_balance_deductions')->where('order_id', $order->getId())->count());
+    }
+
+    public function test_command_validates_then_suspends_a_balance(): void
+    {
+        [, $organizerId] = $this->paidOrder();
+        $service = app(OrganizerPlatformBalanceService::class);
+        $balance = $service->addBalance($organizerId, 15.68, 'USD', 'Test');
+
+        self::assertSame(1, Artisan::call('platform:balance-validate', ['balance' => $balance->getId()]));
+        self::assertSame(0, Artisan::call('platform:balance-validate', ['balance' => $balance->getId(), '--by' => 'Organisateur, SMS du 05/11', '--dry-run' => true]));
+        self::assertEqualsWithDelta(0.0, $service->getRemainingTotal($organizerId, 'USD'), 0.001);
+
+        self::assertSame(0, Artisan::call('platform:balance-validate', ['balance' => $balance->getId(), '--by' => 'Organisateur, SMS du 05/11']));
+        $row = DB::table('organizer_platform_balances')->where('id', $balance->getId())->first();
+        self::assertSame('Organisateur, SMS du 05/11', $row->organizer_validated_by);
+        self::assertNotNull($row->organizer_validated_at);
+        self::assertEqualsWithDelta(15.68, $service->getRemainingTotal($organizerId, 'USD'), 0.001);
+
+        self::assertSame(0, Artisan::call('platform:balance-validate', ['balance' => $balance->getId(), '--suspend' => true]));
+        self::assertEqualsWithDelta(0.0, $service->getRemainingTotal($organizerId, 'USD'), 0.001);
+    }
+
     public function test_command_dry_run_records_nothing(): void
     {
         [, $organizerId] = $this->paidOrder();
@@ -246,6 +279,11 @@ class OrganizerPlatformBalanceTest extends TestCase
 
         self::assertSame(1, $exitCode);
         self::assertSame(0, DB::table('organizer_platform_balances')->where('organizer_id', $organizerId)->count());
+    }
+
+    private function validated(OrganizerPlatformBalanceDomainObject $balance): OrganizerPlatformBalanceDomainObject
+    {
+        return app(OrganizerPlatformBalanceService::class)->validateBalance($balance, 'Test');
     }
 
     private function calculationService(float $remaining): OrganizerPlatformBalanceService
