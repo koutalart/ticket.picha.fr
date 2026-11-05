@@ -28,13 +28,7 @@ class InviteAccountUserCommand extends Command
 
     protected $description = 'Invite a user to the account of an organizer, exactly like Settings > Users > Invite';
 
-    public function __construct(
-        private readonly InviteOrganizerAccountUserHandler $handler,
-    ) {
-        parent::__construct();
-    }
-
-    public function handle(): int
+    public function handle(InviteOrganizerAccountUserHandler $handler): int
     {
         $email = strtolower(trim((string) $this->argument('email')));
         $allowAdmin = (bool) $this->option('allow-admin');
@@ -55,7 +49,7 @@ class InviteAccountUserCommand extends Command
         }
 
         try {
-            $result = $this->handler->handle(new InviteOrganizerAccountUserDTO(
+            $result = $handler->handle(new InviteOrganizerAccountUserDTO(
                 organizer_id: (int) $this->argument('organizer'),
                 email: $email,
                 role: $role,
