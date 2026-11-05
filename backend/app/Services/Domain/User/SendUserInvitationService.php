@@ -3,6 +3,7 @@
 namespace HiEvents\Services\Domain\User;
 
 use HiEvents\DomainObjects\UserDomainObject;
+use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\Url;
 use HiEvents\Mail\User\UserInvited;
 use HiEvents\Services\Infrastructure\Encryption\EncryptedPayloadService;
@@ -40,7 +41,7 @@ class SendUserInvitationService
 
         $this->mailer
             ->to($invitedUser->getEmail())
-            ->locale($invitedUser->getLocale())
+            ->locale(CustomerLocale::get())
             ->send(new UserInvited(
                 invitedUser: $invitedUser,
                 appName: $this->config->get('app.name'),
