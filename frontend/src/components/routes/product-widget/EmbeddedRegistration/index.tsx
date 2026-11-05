@@ -547,10 +547,10 @@ export const EmbeddedRegistration = ({
         setMemoryReady(true);
     }, []);
 
-    const needsParticipantsStep = !isPaidMode
-        || isPerTicket
-        || isAgeCheckEnabled
-        || selectedTicketItems.some(item => questionsForProduct(item.product.id).length > 0);
+    const isSinglePersonRegistration = !isPaidMode && (ticket?.maxParticipants ?? 1) <= 1;
+    const needsParticipantsStep = isPaidMode
+        ? isPerTicket || isAgeCheckEnabled || selectedTicketItems.some(item => questionsForProduct(item.product.id).length > 0)
+        : !isSinglePersonRegistration || isAgeCheckEnabled || participantQuestions.length > 0;
 
     const phoneQuestionIndex = orderQuestions.findIndex(question => question.type === QuestionType.PHONE);
     const phoneQuestion = phoneQuestionIndex >= 0 ? orderQuestions[phoneQuestionIndex] : null;
@@ -1639,7 +1639,9 @@ export const EmbeddedRegistration = ({
                 return (
                     <>
                         {renderBuyerIdentity()}
-                        <h2 className={classes.stepTitle} id={titleId}>{t`Where should we send your tickets?`}</h2>
+                        <h2 className={classes.stepTitle} id={titleId}>
+                            {isPaidMode ? t`Where should we send your tickets?` : t`Where should we send your confirmation?`}
+                        </h2>
                         {isPaidMode && (
                             <div className={classes.summaryCode}>{renderCodeRow()}</div>
                         )}
@@ -2001,7 +2003,9 @@ export const EmbeddedRegistration = ({
         }
         return (
             <p className={classes.identity}>
-                <span className={classes.identityName}>{t`Tickets in the name of ${name}`}</span>
+                <span className={classes.identityName}>
+                    {isPaidMode ? t`Tickets in the name of ${name}` : t`Registration in the name of ${name}`}
+                </span>
             </p>
         );
     };
@@ -2330,7 +2334,7 @@ export const EmbeddedRegistration = ({
                             </div>
                         </form>
 
-                        {!isPaidMode && <div className={classes.codeRow}>{renderCodeRow()}</div>}
+                        {!isPaidMode && !isSinglePersonRegistration && <div className={classes.codeRow}>{renderCodeRow()}</div>}
                         {onAlreadyRegistered && (
                             <div className={classes.alreadyRegisteredRow}>
                                 <button type="button" className={classes.linkButton} onClick={onAlreadyRegistered}>
