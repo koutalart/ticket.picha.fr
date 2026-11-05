@@ -12,7 +12,8 @@ use Illuminate\Console\Command;
 
 /**
  * Records an amount an organizer owes to PICHA. It is withheld on the organizer part of their next
- * Stripe Connect payments, never more than what they would have received.
+ * Stripe Connect payments, never more than what they would have received, and only once the organizer
+ * validated it with platform:balance-validate.
  * Example: php artisan platform:balance-add 4 57.88 --name-contains="Innocent" --reason="Options sérénité versées avant le 04/11" --invoice=F-2026-012 --dry-run
  */
 class AddOrganizerPlatformBalanceCommand extends Command
@@ -53,7 +54,7 @@ class AddOrganizerPlatformBalanceCommand extends Command
         $alreadyOwed = $balanceService->getRemainingTotal($organizer->getId(), $currency);
 
         $this->line(sprintf('Organizer %d "%s"', $organizer->getId(), $organizer->getName()));
-        $this->line(sprintf('Amount owed: %.2f %s (already owed: %.2f %s)', $amount, $currency, $alreadyOwed, $currency));
+        $this->line(sprintf('Amount owed: %.2f %s (already owed and validated: %.2f %s)', $amount, $currency, $alreadyOwed, $currency));
         $this->line(sprintf('Reason: %s', $reason === '' ? '(missing)' : $reason));
         $this->line(sprintf('Invoice: %s', $invoice ?: '(none)'));
 
@@ -71,7 +72,8 @@ class AddOrganizerPlatformBalanceCommand extends Command
             return self::FAILURE;
         }
 
-        $this->info(sprintf('Recorded: balance %d, %.2f %s to withhold on the next payments.', $balance->getId(), $amount, $currency));
+        $this->info(sprintf('Recorded: balance %d, %.2f %s, suspended until the organizer validates it.', $balance->getId(), $amount, $currency));
+        $this->line(sprintf('Once validated: php artisan platform:balance-validate %d --by="..."', $balance->getId()));
 
         return self::SUCCESS;
     }

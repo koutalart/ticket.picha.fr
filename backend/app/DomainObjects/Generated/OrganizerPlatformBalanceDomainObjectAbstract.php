@@ -17,6 +17,8 @@ abstract class OrganizerPlatformBalanceDomainObjectAbstract extends \HiEvents\Do
     final public const REMAINING_AMOUNT = 'remaining_amount';
     final public const REASON = 'reason';
     final public const INVOICE_REFERENCE = 'invoice_reference';
+    final public const ORGANIZER_VALIDATED_AT = 'organizer_validated_at';
+    final public const ORGANIZER_VALIDATED_BY = 'organizer_validated_by';
     final public const SETTLED_AT = 'settled_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
@@ -28,6 +30,8 @@ abstract class OrganizerPlatformBalanceDomainObjectAbstract extends \HiEvents\Do
     protected float $remaining_amount;
     protected string $reason;
     protected ?string $invoice_reference = null;
+    protected ?string $organizer_validated_at = null;
+    protected ?string $organizer_validated_by = null;
     protected ?string $settled_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
@@ -42,6 +46,8 @@ abstract class OrganizerPlatformBalanceDomainObjectAbstract extends \HiEvents\Do
                     'remaining_amount' => $this->remaining_amount ?? null,
                     'reason' => $this->reason ?? null,
                     'invoice_reference' => $this->invoice_reference ?? null,
+                    'organizer_validated_at' => $this->organizer_validated_at ?? null,
+                    'organizer_validated_by' => $this->organizer_validated_by ?? null,
                     'settled_at' => $this->settled_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
@@ -123,6 +129,28 @@ abstract class OrganizerPlatformBalanceDomainObjectAbstract extends \HiEvents\Do
     public function getInvoiceReference(): ?string
     {
         return $this->invoice_reference;
+    }
+
+    public function setOrganizerValidatedAt(?string $organizer_validated_at): self
+    {
+        $this->organizer_validated_at = $organizer_validated_at;
+        return $this;
+    }
+
+    public function getOrganizerValidatedAt(): ?string
+    {
+        return $this->organizer_validated_at;
+    }
+
+    public function setOrganizerValidatedBy(?string $organizer_validated_by): self
+    {
+        $this->organizer_validated_by = $organizer_validated_by;
+        return $this;
+    }
+
+    public function getOrganizerValidatedBy(): ?string
+    {
+        return $this->organizer_validated_by;
     }
 
     public function setSettledAt(?string $settled_at): self

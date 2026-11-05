@@ -29,6 +29,7 @@ class OrganizerPlatformBalanceRepository extends BaseRepository implements Organ
             ->where(OrganizerPlatformBalanceDomainObjectAbstract::ORGANIZER_ID, $organizerId)
             ->where(OrganizerPlatformBalanceDomainObjectAbstract::CURRENCY, strtoupper($currency))
             ->where(OrganizerPlatformBalanceDomainObjectAbstract::REMAINING_AMOUNT, '>', 0)
+            ->whereNotNull(OrganizerPlatformBalanceDomainObjectAbstract::ORGANIZER_VALIDATED_AT)
             ->sum(OrganizerPlatformBalanceDomainObjectAbstract::REMAINING_AMOUNT);
     }
 
@@ -38,6 +39,7 @@ class OrganizerPlatformBalanceRepository extends BaseRepository implements Organ
             ->where(OrganizerPlatformBalanceDomainObjectAbstract::ORGANIZER_ID, $organizerId)
             ->where(OrganizerPlatformBalanceDomainObjectAbstract::CURRENCY, strtoupper($currency))
             ->where(OrganizerPlatformBalanceDomainObjectAbstract::REMAINING_AMOUNT, '>', 0)
+            ->whereNotNull(OrganizerPlatformBalanceDomainObjectAbstract::ORGANIZER_VALIDATED_AT)
             ->orderBy(OrganizerPlatformBalanceDomainObjectAbstract::ID)
             ->lockForUpdate()
             ->get();

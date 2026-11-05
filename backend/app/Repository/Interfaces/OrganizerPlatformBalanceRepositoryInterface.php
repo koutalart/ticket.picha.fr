@@ -10,10 +10,13 @@ use Illuminate\Support\Collection;
  */
 interface OrganizerPlatformBalanceRepositoryInterface extends RepositoryInterface
 {
+    /**
+     * Total still owed and validated by the organizer: only this part is withheld.
+     */
     public function getRemainingTotal(int $organizerId, string $currency): float;
 
     /**
-     * Balances still owed, oldest first, locked until the end of the transaction.
+     * Balances still owed and validated by the organizer, oldest first, locked until the end of the transaction.
      *
      * @return Collection<int, OrganizerPlatformBalanceDomainObject>
      */

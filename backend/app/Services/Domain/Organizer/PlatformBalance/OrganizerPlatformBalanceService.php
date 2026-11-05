@@ -20,7 +20,8 @@ use Psr\Log\LoggerInterface;
  * PICHA: an amount an organizer owes to the platform is withheld on their next Stripe Connect payments,
  * added to the application fee. The withholding never exceeds the organizer part of the order
  * (tickets and products), so the organizer always keeps at least 0 €. The balance only goes down
- * when the payment succeeded, once per order.
+ * when the payment succeeded, once per order. Nothing is withheld before the organizer validated the
+ * amount (who and when are recorded).
  */
 class OrganizerPlatformBalanceService
 {
@@ -151,6 +152,29 @@ class OrganizerPlatformBalanceService
             OrganizerPlatformBalanceDomainObjectAbstract::INVOICE_REFERENCE => $invoiceReference !== null && trim($invoiceReference) !== ''
                 ? trim($invoiceReference)
                 : null,
+        ]);
+    }
+
+    /**
+     * @throws InvalidPlatformBalanceException
+     */
+    public function validateBalance(OrganizerPlatformBalanceDomainObject $balance, string $validatedBy): OrganizerPlatformBalanceDomainObject
+    {
+        if (trim($validatedBy) === '') {
+            throw new InvalidPlatformBalanceException(__('Say who validated the amount owed and how.'));
+        }
+
+        return $this->balanceRepository->updateFromArray($balance->getId(), [
+            OrganizerPlatformBalanceDomainObjectAbstract::ORGANIZER_VALIDATED_AT => Carbon::now()->toDateTimeString(),
+            OrganizerPlatformBalanceDomainObjectAbstract::ORGANIZER_VALIDATED_BY => trim($validatedBy),
+        ]);
+    }
+
+    public function suspendBalance(OrganizerPlatformBalanceDomainObject $balance): OrganizerPlatformBalanceDomainObject
+    {
+        return $this->balanceRepository->updateFromArray($balance->getId(), [
+            OrganizerPlatformBalanceDomainObjectAbstract::ORGANIZER_VALIDATED_AT => null,
+            OrganizerPlatformBalanceDomainObjectAbstract::ORGANIZER_VALIDATED_BY => null,
         ]);
     }
 
