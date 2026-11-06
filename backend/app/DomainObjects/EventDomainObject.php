@@ -180,6 +180,38 @@ class EventDomainObject extends Generated\EventDomainObjectAbstract implements I
 
     public const ENDED_WITHOUT_END_DATE_AFTER_HOURS = 12;
 
+    /**
+     * A hand-written SEO text is outdated once the event or one of its tickets changed after it: the page then
+     * describes itself from its own title and description.
+     */
+    public function isManualSeoOutdated(): bool
+    {
+        $settings = $this->getEventSettings();
+        if ($settings === null || ($settings->getSeoTitle() === null && $settings->getSeoDescription() === null && $settings->getSeoKeywords() === null)) {
+            return false;
+        }
+
+        if ($settings->getSeoUpdatedAt() === null) {
+            return true;
+        }
+
+        $seoUpdatedAt = Carbon::parse($settings->getSeoUpdatedAt());
+        $changes = collect([$this->getUpdatedAt()]);
+
+        foreach ($this->getProductCategories() ?? [] as $category) {
+            foreach ($category->getProducts() ?? [] as $product) {
+                $changes->push($product->getUpdatedAt());
+                foreach ($product->getProductPrices() ?? [] as $price) {
+                    $changes->push($price->getUpdatedAt());
+                }
+            }
+        }
+
+        return $changes
+            ->filter()
+            ->contains(fn (string $changedAt) => Carbon::parse($changedAt)->gt($seoUpdatedAt));
+    }
+
     public function getEffectiveEndDate(): ?Carbon
     {
         if ($this->getEndDate() !== null) {

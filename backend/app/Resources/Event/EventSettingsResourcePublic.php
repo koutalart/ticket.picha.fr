@@ -13,6 +13,7 @@ class EventSettingsResourcePublic extends JsonResource
     public function __construct(
         mixed                 $resource,
         private readonly bool $includePostCheckoutData = false,
+        private readonly bool $ignoreManualSeo = false,
     )
     {
         parent::__construct($resource);
@@ -58,9 +59,9 @@ class EventSettingsResourcePublic extends JsonResource
             'ticket_design_settings' => $this->getTicketDesignSettings(),
 
             // SEO settings
-            'seo_title' => $this->getSeoTitle(),
-            'seo_description' => $this->getSeoDescription(),
-            'seo_keywords' => $this->getSeoKeywords(),
+            'seo_title' => $this->ignoreManualSeo ? null : $this->getSeoTitle(),
+            'seo_description' => $this->ignoreManualSeo ? null : $this->getSeoDescription(),
+            'seo_keywords' => $this->ignoreManualSeo ? null : $this->getSeoKeywords(),
             'allow_search_engine_indexing' => $this->getAllowSearchEngineIndexing(),
 
             'price_display_mode' => $this->getPriceDisplayMode(),
