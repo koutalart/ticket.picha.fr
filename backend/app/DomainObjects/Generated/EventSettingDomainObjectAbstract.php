@@ -39,6 +39,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const SOCIAL_MEDIA_HANDLES = 'social_media_handles';
     final public const SHOW_SOCIAL_MEDIA_HANDLES = 'show_social_media_handles';
     final public const SEO_KEYWORDS = 'seo_keywords';
+    final public const SEO_UPDATED_AT = 'seo_updated_at';
     final public const NOTIFY_ORGANIZER_OF_NEW_ORDERS = 'notify_organizer_of_new_orders';
     final public const PRICE_DISPLAY_MODE = 'price_display_mode';
     final public const HIDE_GETTING_STARTED_PAGE = 'hide_getting_started_page';
@@ -116,6 +117,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected array|string|null $social_media_handles = null;
     protected ?bool $show_social_media_handles = null;
     protected ?string $seo_keywords = null;
+    protected ?string $seo_updated_at = null;
     protected bool $notify_organizer_of_new_orders = true;
     protected string $price_display_mode = 'INCLUSIVE';
     protected bool $hide_getting_started_page = false;
@@ -196,6 +198,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'social_media_handles' => $this->social_media_handles ?? null,
                     'show_social_media_handles' => $this->show_social_media_handles ?? null,
                     'seo_keywords' => $this->seo_keywords ?? null,
+                    'seo_updated_at' => $this->seo_updated_at ?? null,
                     'notify_organizer_of_new_orders' => $this->notify_organizer_of_new_orders ?? null,
                     'price_display_mode' => $this->price_display_mode ?? null,
                     'hide_getting_started_page' => $this->hide_getting_started_page ?? null,
@@ -563,6 +566,17 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getSeoKeywords(): ?string
     {
         return $this->seo_keywords;
+    }
+
+    public function setSeoUpdatedAt(?string $seo_updated_at): self
+    {
+        $this->seo_updated_at = $seo_updated_at;
+        return $this;
+    }
+
+    public function getSeoUpdatedAt(): ?string
+    {
+        return $this->seo_updated_at;
     }
 
     public function setNotifyOrganizerOfNewOrders(bool $notify_organizer_of_new_orders): self

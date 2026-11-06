@@ -35,7 +35,12 @@ class UpdateEventSettingsHandler
 
         $wasAutoProcessEnabled = $existingSettings?->getWaitlistAutoProcess();
 
-        $result = $this->databaseManager->transaction(function () use ($settings) {
+        $seoChanged = $existingSettings === null
+            || $existingSettings->getSeoTitle() !== $settings->seo_title
+            || $existingSettings->getSeoDescription() !== $settings->seo_description
+            || $existingSettings->getSeoKeywords() !== $settings->seo_keywords;
+
+        $result = $this->databaseManager->transaction(function () use ($settings, $seoChanged) {
             $this->eventSettingsRepository->updateWhere(
                 attributes: [
                     'post_checkout_message' => $this->purifier->purify($settings->post_checkout_message),
@@ -64,6 +69,7 @@ class UpdateEventSettingsHandler
                     'seo_title' => $settings->seo_title,
                     'seo_description' => $settings->seo_description,
                     'seo_keywords' => $settings->seo_keywords,
+                    ...($seoChanged ? ['seo_updated_at' => now()] : []),
                     'allow_search_engine_indexing' => $settings->allow_search_engine_indexing,
                     'notify_organizer_of_new_orders' => $settings->notify_organizer_of_new_orders,
                     'price_display_mode' => $settings->price_display_mode->name,

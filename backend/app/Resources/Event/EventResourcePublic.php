@@ -60,7 +60,8 @@ class EventResourcePublic extends BaseResource
                 condition: !is_null($this->getEventSettings()),
                 value: fn() => new EventSettingsResourcePublic(
                     $this->getEventSettings(),
-                    $this->includePostCheckoutData
+                    $this->includePostCheckoutData,
+                    $this->resource->isManualSeoOutdated(),
                 ),
             ),
             // @TODO - public question resource
