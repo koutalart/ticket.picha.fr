@@ -19,8 +19,10 @@ use Illuminate\Support\Collection;
  * Routes an SMS received on a line from a member of an organizer team. It goes to the organizer of that team, never to
  * the customer assistant, and never moves the « last who wrote » attribution of a shared line.
  *
- * When the number is in the team of several organizers of the line, the SMS goes to the organizer whose team
- * conversation with the number had the latest message: the person most likely answers the last SMS it got there.
+ * When the number is in the team of several organizers of the line, the SMS goes to the organizer the person runs
+ * (role ORGANIZER): someone in copy of another organizer still writes about their own one. Between several organizers
+ * of the same role, it goes to the one whose team conversation with the number had the latest message: the person
+ * most likely answers the last SMS it got there.
  * Without any team conversation yet, it goes to the organizer the number wrote to last, then to the team the number
  * joined last. Platform supervisors belong to no team and are never routed here.
  */
@@ -110,6 +112,14 @@ class SmsTeamInboundService
      */
     private function pick(Collection $contacts, string $phone): OrganizerTeamContactDomainObject
     {
+        $runs = $contacts->filter(fn (OrganizerTeamContactDomainObject $contact) => $contact->getRole() === OrganizerTeamContactRole::ORGANIZER->name);
+        if ($runs->count() === 1) {
+            return $runs->first();
+        }
+        if ($runs->isNotEmpty()) {
+            $contacts = $runs->values();
+        }
+
         $organizerIds = $contacts->map(fn (OrganizerTeamContactDomainObject $contact) => $contact->getOrganizerId())->values()->all();
 
         $organizerId = $this->conversationRepository->findLatestTeamConversationOrganizerId($organizerIds, $phone)

@@ -12,5 +12,6 @@ class OrganizerAssistantResultDTO extends BaseDataObject
         public readonly string $reply,
         public readonly bool $needsHuman,
         public readonly ?string $summary,
+        public readonly bool $offTopic = false,
     ) {}
 }

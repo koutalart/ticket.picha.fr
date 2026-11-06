@@ -143,6 +143,17 @@ class OrganizerAssistantService
             );
         }
 
+        if ($result->offTopic) {
+            if ($contact->getRole() === OrganizerTeamContactRole::COPY->name) {
+                return null;
+            }
+            $result = new OrganizerAssistantResultDTO(
+                reply: OrganizerAssistantReplyGenerator::holdingReply(),
+                needsHuman: true,
+                summary: $result->summary,
+            );
+        }
+
         if ($result->needsHuman && $contact->getRole() === OrganizerTeamContactRole::COPY->name) {
             $result = new OrganizerAssistantResultDTO(
                 reply: OrganizerAssistantReplyGenerator::holdingReply(),

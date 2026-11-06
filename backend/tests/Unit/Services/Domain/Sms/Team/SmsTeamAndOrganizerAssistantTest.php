@@ -159,10 +159,26 @@ class SmsTeamAndOrganizerAssistantTest extends TestCase
         $this->assertSame($conversation->id, $reply->sms_conversation_id);
     }
 
-    public function test_number_in_two_teams_goes_to_the_latest_team_conversation(): void
+    public function test_number_running_an_organizer_goes_to_it_even_when_in_copy_elsewhere_more_recently(): void
     {
         $this->team($this->arrmId, self::COPY, OrganizerTeamContactRole::COPY);
         $this->team($this->kulturmId, self::COPY, OrganizerTeamContactRole::ORGANIZER);
+
+        $arrm = SmsConversation::query()->where('organizer_id', $this->arrmId)->where('phone', self::COPY)->first()
+            ?? $this->teamConversation($this->arrmId, self::COPY);
+        $kulturm = $this->teamConversation($this->kulturmId, self::COPY);
+        $arrm->update(['last_message_at' => Carbon::now()->subMinutes(2)]);
+        $kulturm->update(['last_message_at' => Carbon::now()->subMinutes(20)]);
+
+        $this->receive(self::COPY, 'C est quoi les prochains posts ?', 'in-1');
+
+        $this->assertSame($this->kulturmId, SmsMessage::query()->where('provider_message_id', 'in-1')->sole()->organizer_id);
+    }
+
+    public function test_number_in_two_teams_with_the_same_role_goes_to_the_latest_team_conversation(): void
+    {
+        $this->team($this->arrmId, self::COPY, OrganizerTeamContactRole::COPY);
+        $this->team($this->kulturmId, self::COPY, OrganizerTeamContactRole::COPY);
 
         $arrm = SmsConversation::query()->where('organizer_id', $this->arrmId)->where('phone', self::COPY)->first()
             ?? $this->teamConversation($this->arrmId, self::COPY);
@@ -300,6 +316,24 @@ class SmsTeamAndOrganizerAssistantTest extends TestCase
         $this->assertStringContainsString('Personne qui écrit : Innocent', $context->text);
         $this->assertStringContainsString('Rôle de la personne qui écrit : COPY', $context->text);
         $this->assertStringContainsString('COPY : une personne en copie', $context->system);
+    }
+
+    public function test_copy_contact_writing_about_something_else_gets_no_answer(): void
+    {
+        $this->arrmSettings->update(['organizer_assistant_enabled' => true, 'organizer_assistant_replies_to_copy' => true]);
+        $this->team($this->arrmId, self::COPY, OrganizerTeamContactRole::COPY, 'Innocent');
+        $this->claude->shouldReceive('askWithUsage')->once()->andReturn(new ClaudeStructuredAnswerDTO(
+            data: ['reply' => 'Non, je ne m en occupe pas ici', 'needs_human' => false, 'off_topic' => true, 'summary' => 'Parle de ses propres réseaux'],
+            model: 'claude-haiku-5-5',
+            inputTokens: 100,
+            outputTokens: 20,
+        ));
+
+        $this->receive(self::COPY, 'Tu peux répondre au commentaire sur mon Instagram ?', 'in-1');
+
+        $this->assertSame([], $this->sent);
+        $inbound = SmsMessage::query()->where('provider_message_id', 'in-1')->sole();
+        $this->assertSame(0, SmsMessage::query()->where('auto_reply_to_message_id', $inbound->id)->count());
     }
 
     public function test_organizer_role_and_name_reach_the_generator(): void
