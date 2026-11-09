@@ -27,6 +27,8 @@ class AttendeeAttendanceResourcePublic extends JsonResource
             'can_respond' => $this->resource->blockingReason === null
                 && $attendee->getStatus() === AttendeeStatus::ACTIVE->name,
             'blocking_reason' => $this->resource->blockingReason,
+            'can_add_guest' => $this->resource->guestAvailability?->canAddGuest ?? false,
+            'guest_places_remaining' => $this->resource->guestAvailability?->placesRemaining ?? 0,
         ];
     }
 }

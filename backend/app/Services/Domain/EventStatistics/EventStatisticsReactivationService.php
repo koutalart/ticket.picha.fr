@@ -30,13 +30,18 @@ class EventStatisticsReactivationService
      * @throws EventStatisticsVersionMismatchException
      * @throws Throwable
      */
-    public function incrementForReactivatedAttendee(int $eventId, string $orderDate, int $attendeeCount = 1): void
+    public function incrementForReactivatedAttendee(
+        int    $eventId,
+        string $orderDate,
+        int    $attendeeCount = 1,
+        int    $productsSoldCount = 0,
+    ): void
     {
         $this->retrier->retry(
-            callableAction: function () use ($eventId, $orderDate, $attendeeCount): void {
-                $this->databaseManager->transaction(function () use ($eventId, $orderDate, $attendeeCount): void {
-                    $this->incrementAggregateAttendeeStatistics($eventId, $attendeeCount);
-                    $this->incrementDailyAttendeeStatistics($eventId, $orderDate, $attendeeCount);
+            callableAction: function () use ($eventId, $orderDate, $attendeeCount, $productsSoldCount): void {
+                $this->databaseManager->transaction(function () use ($eventId, $orderDate, $attendeeCount, $productsSoldCount): void {
+                    $this->incrementAggregateAttendeeStatistics($eventId, $attendeeCount, $productsSoldCount);
+                    $this->incrementDailyAttendeeStatistics($eventId, $orderDate, $attendeeCount, $productsSoldCount);
                 });
             },
             onFailure: function (int $attempt, Throwable $e) use ($eventId, $orderDate, $attendeeCount): void {
@@ -59,7 +64,7 @@ class EventStatisticsReactivationService
     /**
      * @throws EventStatisticsVersionMismatchException
      */
-    private function incrementAggregateAttendeeStatistics(int $eventId, int $attendeeCount): void
+    private function incrementAggregateAttendeeStatistics(int $eventId, int $attendeeCount, int $productsSoldCount): void
     {
         $eventStatistics = $this->eventStatisticsRepository->findFirstWhere([
             'event_id' => $eventId,
@@ -73,6 +78,10 @@ class EventStatisticsReactivationService
             'attendees_registered' => $eventStatistics->getAttendeesRegistered() + $attendeeCount,
             'version' => $eventStatistics->getVersion() + 1,
         ];
+
+        if ($productsSoldCount > 0) {
+            $updates['products_sold'] = $eventStatistics->getProductsSold() + $productsSoldCount;
+        }
 
         $updated = $this->eventStatisticsRepository->updateWhere(
             attributes: $updates,
@@ -102,7 +111,7 @@ class EventStatisticsReactivationService
     /**
      * @throws EventStatisticsVersionMismatchException
      */
-    private function incrementDailyAttendeeStatistics(int $eventId, string $orderDate, int $attendeeCount): void
+    private function incrementDailyAttendeeStatistics(int $eventId, string $orderDate, int $attendeeCount, int $productsSoldCount): void
     {
         $formattedDate = (new Carbon($orderDate))->format('Y-m-d');
 
@@ -126,6 +135,10 @@ class EventStatisticsReactivationService
             'attendees_registered' => $eventDailyStatistic->getAttendeesRegistered() + $attendeeCount,
             'version' => $eventDailyStatistic->getVersion() + 1,
         ];
+
+        if ($productsSoldCount > 0) {
+            $updates['products_sold'] = $eventDailyStatistic->getProductsSold() + $productsSoldCount;
+        }
 
         $updated = $this->eventDailyStatisticRepository->updateWhere(
             attributes: $updates,

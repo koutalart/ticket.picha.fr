@@ -75,6 +75,7 @@ use HiEvents\Http\Actions\Affiliates\ExportAffiliatesAction;
 use HiEvents\Http\Actions\Affiliates\GetAffiliateAction;
 use HiEvents\Http\Actions\Affiliates\GetAffiliatesAction;
 use HiEvents\Http\Actions\Affiliates\UpdateAffiliateAction;
+use HiEvents\Http\Actions\Attendees\Attendance\AddAttendeeGuestActionPublic;
 use HiEvents\Http\Actions\Attendees\Attendance\CancelAttendeeAttendanceActionPublic;
 use HiEvents\Http\Actions\Attendees\Attendance\ConfirmAttendeeAttendanceActionPublic;
 use HiEvents\Http\Actions\Attendees\Attendance\GetAttendeeAttendanceActionPublic;
@@ -990,6 +991,8 @@ $router->prefix('/public')->group(
         $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/confirm', ConfirmAttendeeAttendanceActionPublic::class)
             ->middleware('throttle:10,1');
         $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/cancel', CancelAttendeeAttendanceActionPublic::class)
+            ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/attendees/{attendee_short_id}/attendance/guest', AddAttendeeGuestActionPublic::class)
             ->middleware('throttle:10,1');
         $router->post('/events/{event_id}/attendance-access', RequestAttendanceAccessCodeActionPublic::class)
             ->middleware('throttle:10,1');

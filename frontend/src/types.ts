@@ -999,6 +999,14 @@ export interface AttendeeAttendance {
     cancelled_by_attendee_at: string | null;
     can_respond: boolean;
     blocking_reason: string | null;
+    can_add_guest: boolean;
+    guest_places_remaining: number;
+}
+
+export interface AddAttendeeGuestRequest {
+    first_name: string;
+    last_name: string;
+    phone?: string | null;
 }
 
 export type PublicCheckIn = Pick<AttendeeCheckIn, 'id' | 'order_id' | 'attendee_id' | 'check_in_list_id' | 'product_id' | 'event_id'> & {
