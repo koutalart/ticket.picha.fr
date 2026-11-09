@@ -39,7 +39,7 @@ export const EventImmersiveShell = ({event, children, panel = true, width = 'nar
     const {hero} = immersive;
 
     return (
-        <CheckoutThemeProvider accentColor={immersive.accent} mode="dark" fontFamily={immersive.fontStack}>
+        <CheckoutThemeProvider accentColor={immersive.accent} mode="dark" fontFamily={immersive.fontStack} backgroundColor={immersive.background}>
             <EventImmersiveContext.Provider value={true}>
                 <div
                     className={classes.shell}

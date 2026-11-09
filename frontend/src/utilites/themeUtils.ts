@@ -92,6 +92,10 @@ export function isLightColor(hex: string): boolean {
     return calculateLuminance(hex) > 128;
 }
 
+export function getDarkSurfaceColor(background: string): string {
+    return isLightColor(background) ? '#000000' : background;
+}
+
 export function getContrastColor(backgroundColor: string): string {
     return isLightColor(backgroundColor) ? '#1a1a1a' : '#ffffff';
 }

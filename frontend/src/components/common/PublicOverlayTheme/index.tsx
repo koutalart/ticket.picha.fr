@@ -20,6 +20,7 @@ interface PublicOverlayThemeProps {
     accentColor: string;
     mode: PublicThemeMode;
     fontFamily?: string;
+    backgroundColor?: string;
 }
 
 const buildOverlayVariables = (
@@ -27,8 +28,9 @@ const buildOverlayVariables = (
     accentColor: string,
     mode: PublicThemeMode,
     fontFamily?: string,
+    backgroundColor?: string,
 ): Record<string, string> => {
-    const palette = getPublicPalette(mode);
+    const palette = getPublicPalette(mode, backgroundColor);
     const theme = mergeMantineTheme(parentTheme, {
         colors: {primary: createAccentPalette(accentColor)},
         primaryColor: 'primary',
@@ -75,16 +77,16 @@ const buildOverlayVariables = (
  * in a dedicated container that follows the page palette: dark surface and light text on dark pages,
  * white surface and dark text on light pages, accent colors adjusted to stay readable.
  */
-export const PublicOverlayTheme = ({accentColor, mode, fontFamily, children}: PropsWithChildren<PublicOverlayThemeProps>) => {
+export const PublicOverlayTheme = ({accentColor, mode, fontFamily, backgroundColor, children}: PropsWithChildren<PublicOverlayThemeProps>) => {
     const parentTheme = useMantineTheme();
-    useConsentBannerTheme(accentColor, mode, fontFamily);
+    useConsentBannerTheme(accentColor, mode, fontFamily, backgroundColor);
     const [root] = useState<HTMLDivElement | null>(() => (
         typeof document === 'undefined' ? null : document.createElement('div')
     ));
 
     const variables = useMemo(
-        () => buildOverlayVariables(parentTheme, accentColor, mode, fontFamily),
-        [parentTheme, accentColor, mode, fontFamily]
+        () => buildOverlayVariables(parentTheme, accentColor, mode, fontFamily, backgroundColor),
+        [parentTheme, accentColor, mode, fontFamily, backgroundColor]
     );
 
     useIsomorphicEffect(() => {

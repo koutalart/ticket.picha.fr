@@ -16,7 +16,7 @@ $error: var(--er-error);
   --er-alert-bg: rgba(255, 90, 70, 0.16);
   --er-alert-border: rgba(255, 140, 120, 0.5);
   --er-alert-text: #ffe2dc;
-  --er-dropdown-bg: #141a2b;
+  --er-dropdown-bg: color-mix(in srgb, var(--event-dark-surface, #000) 90%, #fff);
   --er-title-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
   --er-color-scheme: dark;
   --er-veil-06: rgba(255, 255, 255, 0.06);
@@ -31,7 +31,7 @@ $error: var(--er-error);
   --er-veil-40: rgba(255, 255, 255, 0.4);
   --er-veil-55: rgba(255, 255, 255, 0.55);
   --er-veil-60: rgba(255, 255, 255, 0.6);
-  --er-bar-bg: linear-gradient(to top, rgba(0, 0, 0, 0.82) 0, rgba(0, 0, 0, 0.7) 72%, rgba(0, 0, 0, 0) 100%);
+  --er-bar-bg: linear-gradient(to top, color-mix(in srgb, var(--event-dark-surface, #000) 82%, transparent) 0, color-mix(in srgb, var(--event-dark-surface, #000) 70%, transparent) 72%, transparent 100%);
   position: relative;
   z-index: 1;
   color: $text;
@@ -363,7 +363,7 @@ textarea.fieldInput {
 }
 
 .selectDropdown {
-  background: var(--er-dropdown-bg, #141a2b);
+  background: var(--er-dropdown-bg, color-mix(in srgb, var(--event-dark-surface, #000) 90%, #fff));
   border: 1px solid var(--er-veil-16, rgba(255, 255, 255, 0.16));
   color: var(--er-text, #fff);
   font-family: var(--theme-font-family, inherit);

@@ -18,7 +18,7 @@ import {withLoadingNotification} from "../../../utilites/withLoadingNotification
 import {useAbandonOrderPublic} from "../../../mutations/useAbandonOrderPublic.ts";
 import {showError, showInfo} from "../../../utilites/notifications.tsx";
 import {isDateInFuture, parseUtcTimestamp} from "../../../utilites/dates.ts";
-import {detectMode} from "../../../utilites/themeUtils.ts";
+import {detectMode, getDarkSurfaceColor} from "../../../utilites/themeUtils.ts";
 import {CheckoutThemeProvider} from "./CheckoutThemeProvider.tsx";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
@@ -218,9 +218,13 @@ const Checkout = () => {
         : homepageSettings?.mode || detectMode(homepageSettings?.background || '#ffffff');
 
     return (
-        <CheckoutThemeProvider accentColor={accentColor} mode={checkoutMode} fontFamily={organizerFontStack}>
+        <CheckoutThemeProvider accentColor={accentColor} mode={checkoutMode} fontFamily={organizerFontStack}
+                               backgroundColor={fullscreenHero.enabled ? fullscreenHero.settings.background : undefined}>
             <div className={classes.container} data-mode={checkoutMode} data-immersive={fullscreenHero.enabled || undefined}
-                 style={organizerFontStack ? {fontFamily: organizerFontStack} : undefined}
+                 style={{
+                     ...(organizerFontStack ? {fontFamily: organizerFontStack} : {}),
+                     ...(fullscreenHero.enabled ? {'--event-dark-surface': getDarkSurfaceColor(fullscreenHero.settings.background)} : {}),
+                 } as React.CSSProperties}
                  {...(organizerFontActive ? {[ORGANIZER_FONT_ATTRIBUTE]: ''} : {})}>
                 {fullscreenHero.enabled && (
                     <EventImmersiveBackdrop

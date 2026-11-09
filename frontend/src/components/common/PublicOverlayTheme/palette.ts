@@ -1,5 +1,5 @@
 import {MantineColorsTuple} from "@mantine/core";
-import {getContrastRatio, hexToRgb} from "../../../utilites/themeUtils.ts";
+import {getContrastRatio, hexToRgb, isLightColor, mixWithWhite} from "../../../utilites/themeUtils.ts";
 
 export type PublicThemeMode = 'light' | 'dark';
 
@@ -34,7 +34,15 @@ export const DARK_PALETTE: PublicPalette = {
     border: '#333333',
 };
 
-export const getPublicPalette = (mode: PublicThemeMode): PublicPalette => mode === 'dark' ? DARK_PALETTE : LIGHT_PALETTE;
+export const getPublicPalette = (mode: PublicThemeMode, backgroundColor?: string): PublicPalette => {
+    if (mode !== 'dark') {
+        return LIGHT_PALETTE;
+    }
+    if (!backgroundColor || isLightColor(backgroundColor)) {
+        return DARK_PALETTE;
+    }
+    return {...DARK_PALETTE, surface: mixWithWhite(backgroundColor, 0.07) || DARK_PALETTE.surface, background: backgroundColor};
+};
 
 /**
  * Creates a Mantine color tuple that preserves the organizer's exact accent color.

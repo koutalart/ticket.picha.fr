@@ -4,7 +4,7 @@ import {IconCookie, IconX} from '@tabler/icons-react';
 import {getConfig} from '../../../utilites/config';
 import {ConsentBannerTheme} from '../../../utilites/consentBannerTheme.ts';
 import {getPublicPalette, readableAccent} from '../PublicOverlayTheme/palette.ts';
-import {getContrastColor} from '../../../utilites/themeUtils.ts';
+import {getContrastColor, isLightColor} from '../../../utilites/themeUtils.ts';
 import classes from './CookieConsentBanner.module.scss';
 
 export type CookieConsentView = 'main' | 'preferences';
@@ -31,7 +31,7 @@ const cookiePolicyUrl = (): string => {
 
 const themeStyle = (theme: ConsentBannerTheme | null): CSSProperties => {
     const mode = theme?.mode ?? 'light';
-    const palette = getPublicPalette(mode);
+    const palette = getPublicPalette(mode, theme?.backgroundColor);
     const accent = theme?.accentColor || (getConfig('VITE_APP_PRIMARY_COLOR', DEFAULT_ACCENT) as string);
 
     return {
@@ -43,6 +43,7 @@ const themeStyle = (theme: ConsentBannerTheme | null): CSSProperties => {
         '--cb-accent-text': readableAccent(accent, palette.surface),
         '--cb-accent-contrast': getContrastColor(accent),
         '--cb-soft': mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
+        ...(theme?.backgroundColor && !isLightColor(theme.backgroundColor) ? {'--cb-bar-bg': `color-mix(in srgb, ${theme.backgroundColor} 94%, transparent)`} : {}),
         ...(theme?.fontFamily ? {fontFamily: theme.fontFamily} : {}),
     } as CSSProperties;
 };
