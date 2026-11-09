@@ -4,12 +4,14 @@ namespace Tests\Unit\Services\Application\Handlers\TicketLookup;
 
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
+use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\OrganizerSettingDomainObject;
 use HiEvents\Helper\CustomerLocale;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Mail\TicketLookup\TicketLookupEmail;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\TicketLookupTokenRepositoryInterface;
 use HiEvents\Services\Application\Handlers\TicketLookup\DTO\SendTicketLookupEmailDTO;
@@ -61,7 +63,35 @@ class SendTicketLookupEmailHandlerTest extends TestCase
             $this->databaseManager,
             $resolver,
             $this->customerLocaleResolver($organizerIdByEventId, [4 => 'tu', 5 => 'tu', 8 => 'vous']),
+            $this->eventRepository($organizerIdByEventId),
+            $this->organizerRepository([8 => "Kultur'm", 2 => 'Innocent Event']),
         );
+    }
+
+    /**
+     * @param  array<int, int>  $organizerIdByEventId
+     */
+    private function eventRepository(array $organizerIdByEventId): EventRepositoryInterface
+    {
+        $eventRepository = m::mock(EventRepositoryInterface::class);
+        $eventRepository->shouldReceive('findFirst')->andReturnUsing(
+            fn (int $id) => (new EventDomainObject)->setId($id)->setOrganizerId($organizerIdByEventId[$id] ?? $id)
+        );
+
+        return $eventRepository;
+    }
+
+    /**
+     * @param  array<int, string>  $nameByOrganizerId
+     */
+    private function organizerRepository(array $nameByOrganizerId): OrganizerRepositoryInterface
+    {
+        $organizerRepository = m::mock(OrganizerRepositoryInterface::class);
+        $organizerRepository->shouldReceive('findFirst')->andReturnUsing(
+            fn (int $id) => (new OrganizerDomainObject)->setId($id)->setName($nameByOrganizerId[$id] ?? 'Organisateur '.$id)
+        );
+
+        return $organizerRepository;
     }
 
     /**
@@ -218,7 +248,36 @@ class SendTicketLookupEmailHandlerTest extends TestCase
         );
     }
 
+    public function testMailIsInTheNameOfTheOnlyOrganizerAndGreetsTheBuyer(): void
+    {
+        $mail = $this->sentMail(new Collection([
+            (new OrderDomainObject())->setEventId(14)->setFirstName('Awa'),
+            (new OrderDomainObject())->setEventId(15)->setFirstName('Élodie'),
+        ]));
+
+        $this->assertSame("Kultur'm", $mail->content()->with['organizerName']);
+        $this->assertSame('Élodie', $mail->content()->with['firstName']);
+    }
+
+    public function testMailIsInThePlatformNameWhenOrdersBelongToSeveralOrganizers(): void
+    {
+        config(['app.name' => 'PICHA Ticket']);
+
+        $mail = $this->sentMail(new Collection([
+            (new OrderDomainObject())->setEventId(14),
+            (new OrderDomainObject())->setEventId(3),
+        ]));
+
+        $this->assertSame('PICHA Ticket', $mail->content()->with['organizerName']);
+        $this->assertNull($mail->content()->with['firstName']);
+    }
+
     private function sentLookupUrl(Collection $orders): string
+    {
+        return $this->sentMail($orders)->content()->with['ticketLookupUrl'];
+    }
+
+    private function sentMail(Collection $orders): TicketLookupEmail
     {
         $this->orderRepository->shouldReceive('findWhere')->andReturn($orders);
         $this->databaseManager->shouldReceive('transaction')->andReturnUsing(fn ($callback) => $callback());
@@ -237,7 +296,7 @@ class SendTicketLookupEmailHandlerTest extends TestCase
 
         $this->handler->handle(new SendTicketLookupEmailDTO(email: 'test@example.com'));
 
-        return $sent->content()->with['ticketLookupUrl'];
+        return $sent;
     }
 
     public function testHandleDoesNotSendEmailWhenNoOrdersExist(): void

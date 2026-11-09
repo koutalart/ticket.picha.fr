@@ -66,7 +66,7 @@ class RequestAttendanceAccessCodeHandler
         }
 
         $code = $this->codeService->issue($data->eventId, $contact, $attendeeIds);
-        $this->notifier->send($event, $contact, $code);
+        $this->notifier->send($event, $contact, $code, $attendeeIds);
 
         $this->logger->info('Attendance access code requested', $context + [
             'result' => 'sent',

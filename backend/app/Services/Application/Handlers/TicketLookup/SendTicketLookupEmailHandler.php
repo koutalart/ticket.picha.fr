@@ -4,10 +4,14 @@ namespace HiEvents\Services\Application\Handlers\TicketLookup;
 
 use Carbon\Carbon;
 use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
+use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
+use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\Status\OrderStatus;
 use HiEvents\Mail\TicketLookup\TicketLookupEmail;
+use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
+use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\TicketLookupTokenRepositoryInterface;
 use HiEvents\Services\Application\Handlers\TicketLookup\DTO\SendTicketLookupEmailDTO;
 use HiEvents\Services\Domain\Customer\CustomerLocaleResolver;
@@ -32,6 +36,8 @@ class SendTicketLookupEmailHandler
         private readonly DatabaseManager $databaseManager,
         private readonly PublicBaseUrlResolver $publicBaseUrlResolver,
         private readonly CustomerLocaleResolver $customerLocaleResolver,
+        private readonly EventRepositoryInterface $eventRepository,
+        private readonly OrganizerRepositoryInterface $organizerRepository,
     ) {
     }
 
@@ -57,9 +63,12 @@ class SendTicketLookupEmailHandler
             $orders->map(fn (OrderDomainObject $order) => $order->getEventId())
         );
 
-        $this->databaseManager->transaction(function () use ($email, $orderCount, $publicBaseUrl, $locale) {
+        $organizer = $this->singleOrganizer($orders);
+        $firstName = $this->firstName($orders);
+
+        $this->databaseManager->transaction(function () use ($email, $orderCount, $publicBaseUrl, $locale, $organizer, $firstName) {
             $token = $this->generateAndSaveToken($email);
-            $this->sendTicketLookupEmail($email, $token, $orderCount, $publicBaseUrl, $locale);
+            $this->sendTicketLookupEmail($email, $token, $orderCount, $publicBaseUrl, $locale, $organizer, $firstName);
         });
     }
 
@@ -89,6 +98,43 @@ class SendTicketLookupEmailHandler
         return $baseUrl !== $this->publicBaseUrlResolver->platformUrl() ? $baseUrl : null;
     }
 
+    /**
+     * The organizer of every order, null when the orders belong to several organizers.
+     */
+    private function singleOrganizer(Collection $orders): ?OrganizerDomainObject
+    {
+        $organizerIds = $orders
+            ->map(fn (OrderDomainObject $order) => $order->getEventId())
+            ->unique()
+            ->map(function (int $eventId) {
+                /** @var EventDomainObject|null $event */
+                $event = $this->eventRepository->findFirst($eventId);
+
+                return $event?->getOrganizerId();
+            })
+            ->unique();
+
+        if ($organizerIds->count() !== 1 || $organizerIds->first() === null) {
+            return null;
+        }
+
+        /** @var OrganizerDomainObject|null $organizer */
+        $organizer = $this->organizerRepository->findFirst($organizerIds->first());
+
+        return $organizer;
+    }
+
+    /**
+     * The first name given on the latest order that has one.
+     */
+    private function firstName(Collection $orders): ?string
+    {
+        return $orders
+            ->reverse()
+            ->map(fn (OrderDomainObject $order) => trim((string) $order->getFirstName()))
+            ->first(fn (string $firstName) => $firstName !== '');
+    }
+
     private function generateAndSaveToken(string $email): string
     {
         $token = $this->tokenGeneratorService->generateToken(prefix: 'tl');
@@ -103,7 +149,15 @@ class SendTicketLookupEmailHandler
         return $token;
     }
 
-    private function sendTicketLookupEmail(string $email, string $token, int $orderCount, ?string $publicBaseUrl, string $locale): void
+    private function sendTicketLookupEmail(
+        string $email,
+        string $token,
+        int $orderCount,
+        ?string $publicBaseUrl,
+        string $locale,
+        ?OrganizerDomainObject $organizer,
+        ?string $firstName,
+    ): void
     {
         $this->logger->info('Sending ticket lookup email', [
             'email' => $email,
@@ -118,6 +172,8 @@ class SendTicketLookupEmailHandler
                 token: $token,
                 orderCount: $orderCount,
                 publicBaseUrl: $publicBaseUrl,
+                organizer: $organizer,
+                firstName: $firstName,
             ));
     }
 }
