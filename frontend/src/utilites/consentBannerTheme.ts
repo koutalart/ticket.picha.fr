@@ -4,6 +4,7 @@ export interface ConsentBannerTheme {
     accentColor: string;
     mode: 'light' | 'dark';
     fontFamily?: string;
+    backgroundColor?: string;
 }
 
 /**
@@ -34,9 +35,9 @@ export const registerConsentBannerTheme = (theme: ConsentBannerTheme): (() => vo
     };
 };
 
-export const useConsentBannerTheme = (accentColor: string | undefined, mode: 'light' | 'dark' | undefined, fontFamily?: string): void => {
+export const useConsentBannerTheme = (accentColor: string | undefined, mode: 'light' | 'dark' | undefined, fontFamily?: string, backgroundColor?: string): void => {
     useEffect(() => {
         if (!accentColor || !mode) return;
-        return registerConsentBannerTheme({accentColor, mode, fontFamily});
-    }, [accentColor, mode, fontFamily]);
+        return registerConsentBannerTheme({accentColor, mode, fontFamily, backgroundColor});
+    }, [accentColor, mode, fontFamily, backgroundColor]);
 };

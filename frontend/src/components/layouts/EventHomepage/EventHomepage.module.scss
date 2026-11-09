@@ -71,7 +71,7 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   --background-overlay: #{rgba(white, 0.5)};
 
   &[data-mode="dark"] {
-    --background-overlay: #{rgba(black, 0.6)};
+    --background-overlay: color-mix(in srgb, var(--event-dark-surface, #000) 60%, transparent);
     --powered-by-link-color: var(--event-primary-text-color);
   }
 }
@@ -189,8 +189,8 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(0, 0, 0, 0.3) 40%,
+    color-mix(in srgb, var(--event-dark-surface, #000) 70%, transparent) 0%,
+    color-mix(in srgb, var(--event-dark-surface, #000) 30%, transparent) 40%,
     transparent 100%
   );
   pointer-events: none;
@@ -215,7 +215,7 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.5);
+  background: color-mix(in srgb, var(--event-dark-surface, #000) 50%, transparent);
   backdrop-filter: blur(20px);
   border-radius: $radius-sm;
   padding: 8px 14px;
@@ -1315,7 +1315,7 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   height: 100svh;
   min-height: 520px;
   overflow: hidden;
-  background-color: #000;
+  background-color: var(--event-dark-surface, #000);
   color: #fff;
   margin-bottom: 8px;
 }
@@ -1336,10 +1336,10 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   inset: 0;
   background: linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--veil-color, #000) 28%, transparent) 0%,
-      color-mix(in srgb, var(--veil-color, #000) 12%, transparent) 35%,
-      color-mix(in srgb, var(--veil-color, #000) 18%, transparent) 60%,
-      color-mix(in srgb, var(--veil-color, #000) 78%, transparent) 100%
+      color-mix(in srgb, var(--event-dark-surface, #000) 28%, transparent) 0%,
+      color-mix(in srgb, var(--event-dark-surface, #000) 12%, transparent) 35%,
+      color-mix(in srgb, var(--event-dark-surface, #000) 18%, transparent) 60%,
+      color-mix(in srgb, var(--event-dark-surface, #000) 78%, transparent) 100%
   );
 }
 
@@ -1556,7 +1556,7 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
   color: #fff;
   font-family: $font-body;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 100%);
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--event-dark-surface, #000) 42%, transparent) 0%, color-mix(in srgb, var(--event-dark-surface, #000) 72%, transparent) 100%);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
 }

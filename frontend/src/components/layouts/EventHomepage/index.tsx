@@ -31,7 +31,7 @@ import {
     isAddressSet
 } from "../../../utilites/addressUtilities.ts";
 import {StatusToggle} from "../../common/StatusToggle";
-import {computeThemeVariables, isLightColor, validateThemeSettings} from "../../../utilites/themeUtils.ts";
+import {computeThemeVariables, getDarkSurfaceColor, validateThemeSettings} from "../../../utilites/themeUtils.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
 import {openConsentPreferences} from "../../../utilites/trackingPixels/consent.ts";
@@ -259,6 +259,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
 
     const themeStyles = {
         '--event-bg-color': themeSettings.background,
+        '--event-dark-surface': getDarkSurfaceColor(themeSettings.background),
         '--event-content-bg-color': cssVars['--theme-surface'],
         '--event-primary-color': themeSettings.accent,
         '--event-primary-text-color': cssVars['--theme-text-primary'],
@@ -276,6 +277,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
         accentColor: themeSettings.accent,
         mode: themeSettings.mode,
         fontFamily: cssVars['--theme-font-family'],
+        backgroundColor: themeSettings.background,
     };
 
     const coverImageData = eventCoverImage(event);
@@ -480,10 +482,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                 <img src={coverImage} alt="" aria-hidden="true" className={classes.fullscreenMedia}
                                      {...HIGH_FETCH_PRIORITY}/>
                             ) : null}
-                            <div
-                                className={classes.fullscreenVeil}
-                                style={{'--veil-color': isLightColor(themeSettings.background) ? '#000000' : themeSettings.background} as React.CSSProperties}
-                            />
+                            <div className={classes.fullscreenVeil}/>
                             <div className={classes.fullscreenTopBar}>
                                 {heroPartnerLogo ? (
                                     <img src={heroPartnerLogo} alt="" className={classes.fullscreenPartnerLogo}/>

@@ -120,11 +120,11 @@ $font-body:  'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sa
   overflow-x: clip;
   isolation: isolate;
   background-color: transparent;
-  --checkout-surface: rgba(12, 12, 12, 0.55);
+  --checkout-surface: color-mix(in srgb, var(--event-dark-surface, #0c0c0c) 55%, transparent);
   --checkout-border: rgba(255, 255, 255, 0.1);
 
   .mainContent .header {
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: color-mix(in srgb, var(--event-dark-surface, #000) 35%, transparent);
     border-bottom-color: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(10px);
   }

@@ -11,7 +11,7 @@
   min-height: clamp(300px, 46vh, 420px);
   display: flex;
   overflow: hidden;
-  background: #111;
+  background: var(--event-dark-surface, #111);
   color: #fff;
 }
 
@@ -28,9 +28,9 @@
   inset: 0;
   background: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0.55) 0%,
-      rgba(0, 0, 0, 0.3) 45%,
-      rgba(0, 0, 0, 0.82) 100%
+      color-mix(in srgb, var(--event-dark-surface, #000) 55%, transparent) 0%,
+      color-mix(in srgb, var(--event-dark-surface, #000) 30%, transparent) 45%,
+      color-mix(in srgb, var(--event-dark-surface, #000) 82%, transparent) 100%
   );
 }
 
@@ -361,7 +361,7 @@
 
   .body {
     --event-index-bleed: 12px;
-    --event-sticky-bg: rgba(10, 10, 10, 0.72);
+    --event-sticky-bg: color-mix(in srgb, var(--event-dark-surface, #0a0a0a) 72%, transparent);
     padding: 28px 0 0;
   }
 

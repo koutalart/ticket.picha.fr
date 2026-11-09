@@ -3,7 +3,7 @@ import {Event} from "../../../types.ts";
 import {getFullscreenHero} from "../../../utilites/fullscreenHero.ts";
 import {buildHomepageFontStack, isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
-import {getContrastColor, hexToRgb} from "../../../utilites/themeUtils.ts";
+import {getContrastColor, getDarkSurfaceColor, hexToRgb} from "../../../utilites/themeUtils.ts";
 import {useConsentBannerTheme} from "../../../utilites/consentBannerTheme.ts";
 
 const DEFAULT_ACCENT = '#8b5cf6';
@@ -26,13 +26,16 @@ export const useEventImmersive = (event?: Event) => {
     const accentTint = rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.16)` : 'rgba(255, 255, 255, 0.1)';
     const fontStack = buildHomepageFontStack(fontFamily, organizerFont);
 
-    useConsentBannerTheme(enabled ? accent : undefined, 'dark', fontStack);
+    const background = hero.settings.background;
+
+    useConsentBannerTheme(enabled ? accent : undefined, 'dark', fontStack, background);
 
     const style = {
         '--immersive-accent': accent,
         '--immersive-accent-contrast': accentContrast,
         '--immersive-accent-tint': accentTint,
         '--immersive-font-family': fontStack,
+        '--event-dark-surface': getDarkSurfaceColor(background),
         '--theme-accent': accent,
         '--theme-accent-contrast': accentContrast,
         '--theme-accent-tint-10': accentTint,
@@ -50,6 +53,7 @@ export const useEventImmersive = (event?: Event) => {
         enabled,
         hero,
         accent,
+        background,
         fontStack,
         organizerFontActive: isOrganizerFontActive(fontFamily, organizerFont),
         style,

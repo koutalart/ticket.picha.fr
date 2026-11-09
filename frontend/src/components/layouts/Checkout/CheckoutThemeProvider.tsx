@@ -8,6 +8,7 @@ interface CheckoutThemeProviderProps {
     accentColor: string;
     mode: 'light' | 'dark';
     fontFamily?: string;
+    backgroundColor?: string;
 }
 
 /**
@@ -126,6 +127,7 @@ export const CheckoutThemeProvider = ({
     accentColor,
     mode,
     fontFamily,
+    backgroundColor,
     children,
 }: PropsWithChildren<CheckoutThemeProviderProps>) => {
     const theme = useMemo(
@@ -149,7 +151,7 @@ export const CheckoutThemeProvider = ({
             cssVariablesResolver={cssVariablesResolver}
             forceColorScheme={mode}
         >
-            <PublicOverlayTheme accentColor={accentColor} mode={mode} fontFamily={fontFamily}>
+            <PublicOverlayTheme accentColor={accentColor} mode={mode} fontFamily={fontFamily} backgroundColor={backgroundColor}>
                 {children}
             </PublicOverlayTheme>
         </MantineProvider>

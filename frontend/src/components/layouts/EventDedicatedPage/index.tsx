@@ -3,7 +3,7 @@ import {Link, useLoaderData} from "react-router";
 import {t} from "@lingui/macro";
 import {IconArrowRight, IconCalendar, IconChevronRight, IconMapPin} from "@tabler/icons-react";
 import {Event, EventPages, EventPageSlug, OrganizerStatus} from "../../../types.ts";
-import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
+import {computeThemeVariables, getDarkSurfaceColor, validateThemeSettings} from "../../../utilites/themeUtils.ts";
 import {ensureHomepageFontLoaded, ORGANIZER_FONT_ATTRIBUTE} from "../../../utilites/fontLoader.ts";
 import {isOrganizerFontActive} from "../../../constants/homepageFonts.ts";
 import {eventCoverImageUrl, eventHomepagePath, organizerHomepageUrl} from "../../../utilites/urlHelper.ts";
@@ -59,7 +59,7 @@ export const EventDedicatedPage = () => {
     const cssVars = computeThemeVariables(themeSettings, organizerFont);
     const organizerFontActive = isOrganizerFontActive(themeSettings.font_family, organizerFont);
     const immersive = useEventImmersive(event);
-    useConsentBannerTheme(immersive.enabled ? undefined : themeSettings.accent, themeSettings.mode, cssVars['--theme-font-family']);
+    useConsentBannerTheme(immersive.enabled ? undefined : themeSettings.accent, themeSettings.mode, cssVars['--theme-font-family'], themeSettings.background);
 
     const tabsRef = useRef<HTMLElement>(null);
     const [tabsHeight, setTabsHeight] = useState(0);
@@ -80,6 +80,7 @@ export const EventDedicatedPage = () => {
 
     const themeStyles = {
         '--event-bg-color': themeSettings.background,
+        '--event-dark-surface': getDarkSurfaceColor(themeSettings.background),
         '--event-content-bg-color': cssVars['--theme-surface'],
         '--event-primary-color': themeSettings.accent,
         '--event-primary-text-color': cssVars['--theme-text-primary'],
