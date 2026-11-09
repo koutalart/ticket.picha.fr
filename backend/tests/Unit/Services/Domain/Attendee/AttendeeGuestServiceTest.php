@@ -105,6 +105,7 @@ class AttendeeGuestServiceTest extends TestCase
 
         $this->assertTrue($availability->canAddGuest);
         $this->assertSame(1, $availability->placesRemaining);
+        $this->assertSame(2, $availability->maxPerOrder);
         $this->assertNull($availability->reason);
     }
 

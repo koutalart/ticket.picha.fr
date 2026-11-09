@@ -29,6 +29,7 @@ class AttendeeAttendanceResourcePublic extends JsonResource
             'blocking_reason' => $this->resource->blockingReason,
             'can_add_guest' => $this->resource->guestAvailability?->canAddGuest ?? false,
             'guest_places_remaining' => $this->resource->guestAvailability?->placesRemaining ?? 0,
+            'guest_max_per_order' => $this->resource->guestAvailability?->maxPerOrder,
         ];
     }
 }

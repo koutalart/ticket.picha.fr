@@ -175,22 +175,41 @@
   gap: 8px;
 }
 
-.guest {
+.guestBox {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--theme-accent-tint-10);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, currentColor) 35%, transparent);
+  color: var(--theme-text-primary);
+
+  label {
+    color: var(--theme-text-primary);
+  }
 }
 
-.guestForm {
-  display: flex;
-  flex-direction: column;
+.guestTitle {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.guestFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 
-  .modalText {
-    margin: 4px 0 8px;
-    font-size: 0.9rem;
-    color: var(--mantine-color-dimmed);
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
   }
+}
+
+.guestHint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--theme-text-secondary);
 }
 
 .guestError {
