@@ -230,11 +230,13 @@
 }
 
 .body {
+  --event-index-bleed: 24px;
   max-width: 1080px;
   margin: 0 auto;
   padding: 36px 24px 56px;
 
   @media (max-width: 640px) {
+    --event-index-bleed: 16px;
     padding: 24px 16px 40px;
   }
 }
@@ -358,6 +360,8 @@
   }
 
   .body {
+    --event-index-bleed: 12px;
+    --event-sticky-bg: rgba(10, 10, 10, 0.72);
     padding: 28px 0 0;
   }
 

@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Link, useLoaderData} from "react-router";
 import {t} from "@lingui/macro";
 import {IconArrowRight, IconCalendar, IconChevronRight, IconMapPin} from "@tabler/icons-react";
@@ -61,6 +61,19 @@ export const EventDedicatedPage = () => {
     const immersive = useEventImmersive(event);
     useConsentBannerTheme(immersive.enabled ? undefined : themeSettings.accent, themeSettings.mode, cssVars['--theme-font-family']);
 
+    const tabsRef = useRef<HTMLElement>(null);
+    const [tabsHeight, setTabsHeight] = useState(0);
+
+    useEffect(() => {
+        const tabs = tabsRef.current;
+        if (immersive.enabled || !tabs || typeof window === 'undefined' || !('ResizeObserver' in window)) {
+            return;
+        }
+        const observer = new ResizeObserver(() => setTabsHeight(tabs.offsetHeight));
+        observer.observe(tabs);
+        return () => observer.disconnect();
+    }, [immersive.enabled]);
+
     useEffect(() => {
         ensureHomepageFontLoaded(themeSettings.font_family, organizerFont);
     }, [themeSettings.font_family, organizerFont]);
@@ -77,6 +90,7 @@ export const EventDedicatedPage = () => {
         '--event-accent-muted': cssVars['--theme-accent-muted'],
         '--event-border-color': cssVars['--theme-border'],
         '--theme-font-family': cssVars['--theme-font-family'],
+        '--event-sticky-top': `${tabsHeight}px`,
         fontFamily: cssVars['--theme-font-family'],
     } as React.CSSProperties;
 
@@ -108,7 +122,7 @@ export const EventDedicatedPage = () => {
 
     const tabsAndBody = (
         <>
-            <nav className={classes.tabs} aria-label={t`Event pages`}>
+            <nav ref={tabsRef} className={classes.tabs} aria-label={t`Event pages`}>
                 <div className={classes.tabsInner}>
                     <a href={eventHomepagePath(event)} className={classes.tab}>{t`Event`}</a>
                     {availablePages.map((available) => (
@@ -127,7 +141,7 @@ export const EventDedicatedPage = () => {
             <div className={classes.body}>
                 <p className={classes.intro}>{pageIntro(page, event.title)}</p>
 
-                {page === 'artistes' && <ArtistsList artists={pages.artists}/>}
+                {page === 'artistes' && <ArtistsList artists={pages.artists} stickyIndex/>}
                 {page === 'infos-pratiques' && <PracticalInfoList sections={pages.practical_info}/>}
                 {page === 'faq' && <FaqList items={pages.faq}/>}
 
