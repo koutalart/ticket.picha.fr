@@ -1,11 +1,19 @@
 @php /** @var string $email */ @endphp
 @php /** @var int $orderCount */ @endphp
 @php /** @var string $ticketLookupUrl */ @endphp
+@php /** @var string|null $firstName */ @endphp
+@php /** @var string $organizerName */ @endphp
+
+@php /** @see \HiEvents\Mail\TicketLookup\TicketLookupEmail */ @endphp
 
 <x-mail::message>
 # {{ __('Your Tickets') }}
 
+@if($firstName)
+{{ __('Hello :name,', ['name' => $firstName]) }}
+@else
 {{ __('Hello') }},
+@endif
 
 {{ __('We found :count order(s) associated with :email.', ['count' => $orderCount, 'email' => $email]) }}
 
@@ -19,5 +27,6 @@
 
 {{ __('If you did not request this, please ignore this email.') }}
 
-{{ __('Thank you') }}
+{{ __('Best regards,') }}<br>
+{{ $organizerName }}
 </x-mail::message>

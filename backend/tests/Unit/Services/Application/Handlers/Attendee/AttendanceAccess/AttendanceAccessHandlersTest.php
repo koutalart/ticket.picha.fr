@@ -84,7 +84,7 @@ class AttendanceAccessHandlersTest extends TestCase
         $this->matcher->shouldReceive('findAttendeeIds')->once()->andReturn([12]);
         $this->notifier->shouldReceive('send')
             ->once()
-            ->with($this->event, m::on(fn ($contact) => $contact->value === 'jo@example.com'), m::pattern('/^\d{6}$/'));
+            ->with($this->event, m::on(fn ($contact) => $contact->value === 'jo@example.com'), m::pattern('/^\d{6}$/'), [12]);
 
         $result = $this->requestHandler()->handle($this->requestDto('Jo@Example.com'));
 
