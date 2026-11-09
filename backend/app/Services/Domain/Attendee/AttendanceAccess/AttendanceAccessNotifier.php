@@ -60,7 +60,7 @@ class AttendanceAccessNotifier
         $this->dispatcher->dispatch(new SendAttendanceAccessCodeSmsJob(
             organizerId: $event->getOrganizerId(),
             phone: $contact->value,
-            content: __(':code is your code to manage your attendance at :event. Valid for :minutes minutes. Do not share it.', [
+            content: __('Here is your code for :event: :code. Valid for :minutes minutes. Do not share it.', [
                 'code' => $code,
                 'event' => $event->getTitle(),
                 'minutes' => (int) (AttendanceAccessCodeService::TTL_SECONDS / 60),

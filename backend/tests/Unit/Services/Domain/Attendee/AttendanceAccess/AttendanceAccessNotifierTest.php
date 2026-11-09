@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\Enums\AttendanceAccessChannel;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\Jobs\Sms\SendAttendanceAccessCodeSmsJob;
 use HiEvents\Mail\Attendee\AttendanceAccessCodeMail;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
@@ -30,6 +31,10 @@ class AttendanceAccessNotifierTest extends TestCase
 
     private ?AttendanceAccessCodeMail $sent = null;
 
+    private ?SendAttendanceAccessCodeSmsJob $sms = null;
+
+    private string $locale = 'fr';
+
     private function notifier(): AttendanceAccessNotifier
     {
         $pendingMail = m::mock('PendingMail');
@@ -41,14 +46,19 @@ class AttendanceAccessNotifierTest extends TestCase
         $mailer->shouldReceive('to')->andReturn($pendingMail);
 
         $locale = m::mock(CustomerLocaleResolver::class);
-        $locale->shouldReceive('forEvent')->andReturn('fr');
+        $locale->shouldReceive('forEvent')->andReturnUsing(fn () => $this->locale);
+
+        $dispatcher = m::mock(Dispatcher::class);
+        $dispatcher->shouldReceive('dispatch')->andReturnUsing(function (SendAttendanceAccessCodeSmsJob $job) {
+            $this->sms = $job;
+        });
 
         $organizerRepository = m::mock(OrganizerRepositoryInterface::class);
         $organizerRepository->shouldReceive('findFirst')->with(8)->andReturn((new OrganizerDomainObject)->setId(8)->setName("Kultur'm"));
 
         return new AttendanceAccessNotifier(
             $mailer,
-            m::mock(Dispatcher::class),
+            $dispatcher,
             $locale,
             $this->attendeeRepository,
             $this->orderRepository,
@@ -113,6 +123,29 @@ class AttendanceAccessNotifierTest extends TestCase
         $this->notifier()->send($this->event(), $this->contact(), '482913');
 
         self::assertNull($this->sent->content()->with['firstName']);
+    }
+
+    public function test_sms_names_the_event_without_a_la_before_its_title(): void
+    {
+        $this->notifier()->send($this->event(), new AttendanceAccessContactDTO(AttendanceAccessChannel::PHONE, '+262639123456'), '482913');
+
+        self::assertSame(
+            'Voici votre code pour Le Concert des Générations : 482913. Valable 10 minutes. Ne le partagez pas.',
+            $this->sms->content,
+        );
+        self::assertSame(8, $this->sms->organizerId);
+    }
+
+    public function test_sms_says_tu_for_organizers_in_tu(): void
+    {
+        $this->locale = 'fr_TU';
+
+        $this->notifier()->send($this->event(), new AttendanceAccessContactDTO(AttendanceAccessChannel::PHONE, '+262639123456'), '482913');
+
+        self::assertSame(
+            'Voici ton code pour Le Concert des Générations : 482913. Valable 10 minutes. Ne le partage pas.',
+            $this->sms->content,
+        );
     }
 
     protected function tearDown(): void
