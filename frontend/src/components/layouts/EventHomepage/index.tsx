@@ -31,7 +31,7 @@ import {
     isAddressSet
 } from "../../../utilites/addressUtilities.ts";
 import {StatusToggle} from "../../common/StatusToggle";
-import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
+import {computeThemeVariables, isLightColor, validateThemeSettings} from "../../../utilites/themeUtils.ts";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
 import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
 import {openConsentPreferences} from "../../../utilites/trackingPixels/consent.ts";
@@ -480,7 +480,10 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                 <img src={coverImage} alt="" aria-hidden="true" className={classes.fullscreenMedia}
                                      {...HIGH_FETCH_PRIORITY}/>
                             ) : null}
-                            <div className={classes.fullscreenVeil}/>
+                            <div
+                                className={classes.fullscreenVeil}
+                                style={{'--veil-color': isLightColor(themeSettings.background) ? '#000000' : themeSettings.background} as React.CSSProperties}
+                            />
                             <div className={classes.fullscreenTopBar}>
                                 {heroPartnerLogo ? (
                                     <img src={heroPartnerLogo} alt="" className={classes.fullscreenPartnerLogo}/>

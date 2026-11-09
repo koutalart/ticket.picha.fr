@@ -1336,10 +1336,10 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   inset: 0;
   background: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0.28) 0%,
-      rgba(0, 0, 0, 0.12) 35%,
-      rgba(0, 0, 0, 0.18) 60%,
-      rgba(0, 0, 0, 0.78) 100%
+      color-mix(in srgb, var(--veil-color, #000) 28%, transparent) 0%,
+      color-mix(in srgb, var(--veil-color, #000) 12%, transparent) 35%,
+      color-mix(in srgb, var(--veil-color, #000) 18%, transparent) 60%,
+      color-mix(in srgb, var(--veil-color, #000) 78%, transparent) 100%
   );
 }
 
