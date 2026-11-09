@@ -57,6 +57,51 @@
     border-color: var(--event-primary-color, #8b5cf6);
     background: var(--event-accent-soft, rgba(139, 92, 246, 0.1));
   }
+
+  &[aria-current='location'] {
+    border-color: var(--event-primary-color, #8b5cf6);
+    background: var(--event-primary-color, #8b5cf6);
+    color: var(--event-accent-contrast, #fff);
+  }
+}
+
+.indexSticky {
+  position: sticky;
+  top: var(--event-sticky-top, 0px);
+  z-index: 4;
+  margin-inline: calc(-1 * var(--event-index-bleed, 0px));
+  padding: 12px var(--event-index-bleed, 0px);
+  background: var(--event-sticky-bg, color-mix(in srgb, var(--event-bg-color, #fff) 92%, transparent));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  .indexChip {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  @media (max-width: 767px) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .indexChip {
+      flex-shrink: 0;
+      white-space: nowrap;
+      scroll-snap-align: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .indexChip {
+      transition: none;
+    }
+  }
 }
 
 .artists {
@@ -88,7 +133,7 @@
   border: 1px solid var(--event-border-color, #e5e7eb);
   border-radius: 18px;
   background: var(--event-content-bg-color, #fff);
-  scroll-margin-top: 96px;
+  scroll-margin-top: calc(var(--event-sticky-top, 0px) + var(--artists-index-height, 80px) + 16px);
 
   &:target {
     border-color: var(--event-primary-color, #8b5cf6);
