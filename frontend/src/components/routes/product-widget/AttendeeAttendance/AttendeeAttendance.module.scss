@@ -175,6 +175,30 @@
   gap: 8px;
 }
 
+.guest {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guestForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .modalText {
+    margin: 4px 0 8px;
+    font-size: 0.9rem;
+    color: var(--mantine-color-dimmed);
+  }
+}
+
+.guestError {
+  margin: 0;
+  color: var(--mantine-color-red-6);
+  font-size: 0.9rem;
+}
+
 .card[data-immersive] {
   max-width: none;
   background: transparent;

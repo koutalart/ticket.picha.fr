@@ -7,11 +7,13 @@ use HiEvents\Exceptions\InvalidAttendanceCodeException;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\AttendeeAttendancePublicDTO;
 use HiEvents\Services\Application\Handlers\Attendee\DTO\AttendeeAttendanceStatusDTO;
 use HiEvents\Services\Domain\Attendee\AttendeeAttendanceService;
+use HiEvents\Services\Domain\Attendee\AttendeeGuestService;
 
 class GetAttendeeAttendancePublicHandler
 {
     public function __construct(
         private readonly AttendeeAttendanceService $attendeeAttendanceService,
+        private readonly AttendeeGuestService      $attendeeGuestService,
     )
     {
     }
@@ -31,6 +33,7 @@ class GetAttendeeAttendancePublicHandler
         return new AttendeeAttendanceStatusDTO(
             attendee: $context->attendee,
             blockingReason: $this->attendeeAttendanceService->getBlockingReason($context),
+            guestAvailability: $this->attendeeGuestService->getAvailability($context),
         );
     }
 }

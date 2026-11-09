@@ -1,7 +1,8 @@
 import {CSSProperties, useEffect, useState} from "react";
 import {useParams, useSearchParams} from "react-router";
-import {Button, Loader, Modal} from "@mantine/core";
-import {IconCalendarEvent, IconCircleCheck, IconCircleX, IconMapPin} from "@tabler/icons-react";
+import {Button, Loader, Modal, TextInput} from "@mantine/core";
+import {useForm} from "@mantine/form";
+import {IconCalendarEvent, IconCircleCheck, IconCircleX, IconMapPin, IconUserPlus} from "@tabler/icons-react";
 import {t} from "@lingui/macro";
 import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
 import {useGetAttendeeAttendancePublic} from "../../../../queries/useGetAttendeeAttendancePublic.ts";
@@ -14,6 +15,8 @@ import {formatEventDateRange} from "../../../../utilites/dates.ts";
 import {getFullscreenHero} from "../../../../utilites/fullscreenHero.ts";
 import {EventImmersiveShell} from "../../../common/EventImmersiveShell";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
+import {useAddAttendeeGuestPublic} from "../../../../mutations/useAddAttendeeGuestPublic.ts";
+import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx";
 import {markRegisteredOnDevice} from "../../../../utilites/rememberedVenue.ts";
 import classes from "./AttendeeAttendance.module.scss";
 
@@ -24,12 +27,26 @@ export const AttendeeAttendance = () => {
     const [searchParams] = useSearchParams();
     const code = searchParams.get('code') || '';
     const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
+    const [guestModalOpen, setGuestModalOpen] = useState(false);
 
     const {data: event, isError: eventError} = useGetEventPublic(eventId);
     const attendanceQuery = useGetAttendeeAttendancePublic(eventId, String(attendeeShortId), code);
     const attendance = attendanceQuery.data;
     const confirmMutation = useConfirmAttendancePublic();
     const cancelMutation = useCancelAttendancePublic();
+    const addGuestMutation = useAddAttendeeGuestPublic();
+    const formErrorHandle = useFormErrorResponseHandler();
+    const guestForm = useForm({
+        initialValues: {
+            first_name: '',
+            last_name: '',
+            phone: '',
+        },
+        validate: {
+            first_name: (value) => value.trim() ? null : t`Please enter the first name of your guest.`,
+            last_name: (value) => value.trim() ? null : t`Please enter the last name of your guest.`,
+        },
+    });
 
     useEffect(() => {
         if (event?.settings?.allow_attendee_attendance_response && attendance && attendance.status !== 'CANCELLED') {
@@ -97,6 +114,37 @@ export const AttendeeAttendance = () => {
             onError: (error) => {
                 setConfirmCancelOpen(false);
                 showError(errorMessage(error, t`We could not cancel your registration. Please try again.`));
+            },
+        });
+    };
+
+    const closeGuestModal = () => {
+        setGuestModalOpen(false);
+        guestForm.reset();
+    };
+
+    const handleAddGuest = (values: typeof guestForm.values) => {
+        addGuestMutation.mutate({
+            ...requestParams,
+            guest: {
+                first_name: values.first_name.trim(),
+                last_name: values.last_name.trim(),
+                phone: values.phone.trim() || null,
+            },
+        }, {
+            onSuccess: () => {
+                const guestName = values.first_name.trim();
+                closeGuestModal();
+                showSuccess(t`${guestName} has been added. The ticket has been sent by email.`);
+            },
+            onError: (error: any) => {
+                const guestError = error?.response?.data?.errors?.guest;
+                formErrorHandle(
+                    guestForm,
+                    error,
+                    (Array.isArray(guestError) ? guestError[0] : guestError)
+                    || errorMessage(error, t`We could not add your guest. Please try again.`),
+                );
             },
         });
     };
@@ -193,6 +241,21 @@ export const AttendeeAttendance = () => {
                     </>
                 )}
 
+                {!isCancelled && attendance.can_add_guest && (
+                    <div className={classes.guest}>
+                        <p className={classes.question}>{t`You can add the person coming with you. They will get their own ticket.`}</p>
+                        <Button
+                            size="md"
+                            radius="md"
+                            variant="light"
+                            leftSection={<IconUserPlus size={20}/>}
+                            onClick={() => setGuestModalOpen(true)}
+                        >
+                            {t`Add my guest`}
+                        </Button>
+                    </div>
+                )}
+
                 <a className={classes.eventLink} href={eventHomepagePath(event)}>
                     {t`View the event page`}
                 </a>
@@ -222,11 +285,60 @@ export const AttendeeAttendance = () => {
         </Modal>
     );
 
+    const guestModal = (
+        <Modal
+            opened={guestModalOpen}
+            onClose={closeGuestModal}
+            title={t`Add my guest`}
+            centered
+            radius="md"
+        >
+            <form onSubmit={guestForm.onSubmit(handleAddGuest)} className={classes.guestForm}>
+                <TextInput
+                    {...guestForm.getInputProps('first_name')}
+                    label={t`First name`}
+                    required
+                    maxLength={100}
+                    autoComplete="off"
+                />
+                <TextInput
+                    {...guestForm.getInputProps('last_name')}
+                    label={t`Last name`}
+                    required
+                    maxLength={100}
+                    autoComplete="off"
+                />
+                <TextInput
+                    {...guestForm.getInputProps('phone')}
+                    label={t`Phone (optional)`}
+                    type="tel"
+                    maxLength={30}
+                    autoComplete="off"
+                />
+                {guestForm.errors.guest && (
+                    <p className={classes.guestError}>{guestForm.errors.guest}</p>
+                )}
+                <p className={classes.modalText}>
+                    {t`The ticket will be sent to the email address of the registration.`}
+                </p>
+                <div className={classes.modalActions}>
+                    <Button variant="default" onClick={closeGuestModal} disabled={addGuestMutation.isPending}>
+                        {t`Cancel`}
+                    </Button>
+                    <Button type="submit" loading={addGuestMutation.isPending}>
+                        {t`Add my guest`}
+                    </Button>
+                </div>
+            </form>
+        </Modal>
+    );
+
     if (immersive) {
         return (
             <EventImmersiveShell event={event}>
                 {card}
                 {cancelModal}
+                {guestModal}
             </EventImmersiveShell>
         );
     }
@@ -236,6 +348,7 @@ export const AttendeeAttendance = () => {
             {card}
             <PoweredByFooter/>
             {cancelModal}
+            {guestModal}
         </div>
     );
 };

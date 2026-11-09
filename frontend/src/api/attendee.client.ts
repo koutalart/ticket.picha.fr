@@ -1,5 +1,5 @@
 import {api} from "./client";
-import {Attendee, AttendanceAccessLink, AttendeeAttendance, GenericDataResponse, GenericPaginatedResponse, IdParam, QueryFilters} from "../types";
+import {AddAttendeeGuestRequest, Attendee, AttendanceAccessLink, AttendeeAttendance, GenericDataResponse, GenericPaginatedResponse, IdParam, QueryFilters} from "../types";
 import {queryParamsHelper} from "../utilites/queryParamsHelper.ts";
 import {publicApi} from "./public-client.ts";
 import {SupportedLocales} from "../locales.ts";
@@ -97,6 +97,13 @@ export const attendeeClientPublic = {
         const response = await publicApi.post<GenericDataResponse<AttendeeAttendance>>(
             `events/${eventId}/attendees/${attendeeShortId}/attendance/cancel`,
             {code},
+        );
+        return response.data;
+    },
+    addGuest: async (eventId: IdParam, attendeeShortId: string, code: string, guest: AddAttendeeGuestRequest) => {
+        const response = await publicApi.post<GenericDataResponse<AttendeeAttendance>>(
+            `events/${eventId}/attendees/${attendeeShortId}/attendance/guest`,
+            {...guest, code},
         );
         return response.data;
     },
