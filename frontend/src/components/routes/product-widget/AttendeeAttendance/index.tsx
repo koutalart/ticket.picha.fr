@@ -2,7 +2,7 @@ import {CSSProperties, useEffect, useState} from "react";
 import {useParams, useSearchParams} from "react-router";
 import {Button, Loader, Modal, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
-import {IconCalendarEvent, IconCircleCheck, IconCircleX, IconMapPin, IconUserPlus} from "@tabler/icons-react";
+import {IconCalendarEvent, IconCircleCheck, IconCircleX, IconMapPin} from "@tabler/icons-react";
 import {t} from "@lingui/macro";
 import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
 import {useGetAttendeeAttendancePublic} from "../../../../queries/useGetAttendeeAttendancePublic.ts";
@@ -27,7 +27,6 @@ export const AttendeeAttendance = () => {
     const [searchParams] = useSearchParams();
     const code = searchParams.get('code') || '';
     const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
-    const [guestModalOpen, setGuestModalOpen] = useState(false);
 
     const {data: event, isError: eventError} = useGetEventPublic(eventId);
     const attendanceQuery = useGetAttendeeAttendancePublic(eventId, String(attendeeShortId), code);
@@ -96,6 +95,7 @@ export const AttendeeAttendance = () => {
         : [location?.venue_name, location?.city].filter(Boolean).join(', ');
     const isCancelled = attendance.status === 'CANCELLED';
     const isConfirmed = !!attendance.attendance_confirmed_at && !isCancelled;
+    const guestMaxPerOrder = attendance.guest_max_per_order;
     const requestParams = {eventId: event.id, attendeeShortId: String(attendeeShortId), code};
 
     const handleConfirm = () => {
@@ -118,11 +118,6 @@ export const AttendeeAttendance = () => {
         });
     };
 
-    const closeGuestModal = () => {
-        setGuestModalOpen(false);
-        guestForm.reset();
-    };
-
     const handleAddGuest = (values: typeof guestForm.values) => {
         addGuestMutation.mutate({
             ...requestParams,
@@ -134,7 +129,7 @@ export const AttendeeAttendance = () => {
         }, {
             onSuccess: () => {
                 const guestName = values.first_name.trim();
-                closeGuestModal();
+                guestForm.reset();
                 showSuccess(t`${guestName} has been added. The ticket has been sent by email.`);
             },
             onError: (error: any) => {
@@ -199,6 +194,54 @@ export const AttendeeAttendance = () => {
                     </div>
                 )}
 
+                {isConfirmed && attendance.can_add_guest && (
+                    <form className={classes.guestBox} onSubmit={guestForm.onSubmit(handleAddGuest)}>
+                        <p className={classes.guestTitle}>
+                            {attendance.guest_max_per_order
+                                ? t`Your invitation is valid for ${guestMaxPerOrder} people: add your guest`
+                                : t`Add your guest`}
+                        </p>
+                        <div className={classes.guestFields}>
+                            <TextInput
+                                {...guestForm.getInputProps('first_name')}
+                                label={t`First name`}
+                                required
+                                maxLength={100}
+                                autoComplete="off"
+                            />
+                            <TextInput
+                                {...guestForm.getInputProps('last_name')}
+                                label={t`Last name`}
+                                required
+                                maxLength={100}
+                                autoComplete="off"
+                            />
+                        </div>
+                        <TextInput
+                            {...guestForm.getInputProps('phone')}
+                            label={t`Phone (optional)`}
+                            type="tel"
+                            maxLength={30}
+                            autoComplete="off"
+                        />
+                        {guestForm.errors.guest && (
+                            <p className={classes.guestError}>{guestForm.errors.guest}</p>
+                        )}
+                        <p className={classes.guestHint}>
+                            {t`The ticket will be sent to the email address of the registration.`}
+                        </p>
+                        <Button
+                            type="submit"
+                            size="md"
+                            radius="md"
+                            className={classes.primaryButton}
+                            loading={addGuestMutation.isPending}
+                        >
+                            {t`Add my guest`}
+                        </Button>
+                    </form>
+                )}
+
                 {!isCancelled && !attendance.can_respond && attendance.blocking_reason && (
                     <div className={classes.notice}>
                         <div>
@@ -241,21 +284,6 @@ export const AttendeeAttendance = () => {
                     </>
                 )}
 
-                {!isCancelled && attendance.can_add_guest && (
-                    <div className={classes.guest}>
-                        <p className={classes.question}>{t`You can add the person coming with you. They will get their own ticket.`}</p>
-                        <Button
-                            size="md"
-                            radius="md"
-                            variant="light"
-                            leftSection={<IconUserPlus size={20}/>}
-                            onClick={() => setGuestModalOpen(true)}
-                        >
-                            {t`Add my guest`}
-                        </Button>
-                    </div>
-                )}
-
                 <a className={classes.eventLink} href={eventHomepagePath(event)}>
                     {t`View the event page`}
                 </a>
@@ -285,60 +313,11 @@ export const AttendeeAttendance = () => {
         </Modal>
     );
 
-    const guestModal = (
-        <Modal
-            opened={guestModalOpen}
-            onClose={closeGuestModal}
-            title={t`Add my guest`}
-            centered
-            radius="md"
-        >
-            <form onSubmit={guestForm.onSubmit(handleAddGuest)} className={classes.guestForm}>
-                <TextInput
-                    {...guestForm.getInputProps('first_name')}
-                    label={t`First name`}
-                    required
-                    maxLength={100}
-                    autoComplete="off"
-                />
-                <TextInput
-                    {...guestForm.getInputProps('last_name')}
-                    label={t`Last name`}
-                    required
-                    maxLength={100}
-                    autoComplete="off"
-                />
-                <TextInput
-                    {...guestForm.getInputProps('phone')}
-                    label={t`Phone (optional)`}
-                    type="tel"
-                    maxLength={30}
-                    autoComplete="off"
-                />
-                {guestForm.errors.guest && (
-                    <p className={classes.guestError}>{guestForm.errors.guest}</p>
-                )}
-                <p className={classes.modalText}>
-                    {t`The ticket will be sent to the email address of the registration.`}
-                </p>
-                <div className={classes.modalActions}>
-                    <Button variant="default" onClick={closeGuestModal} disabled={addGuestMutation.isPending}>
-                        {t`Cancel`}
-                    </Button>
-                    <Button type="submit" loading={addGuestMutation.isPending}>
-                        {t`Add my guest`}
-                    </Button>
-                </div>
-            </form>
-        </Modal>
-    );
-
     if (immersive) {
         return (
             <EventImmersiveShell event={event}>
                 {card}
                 {cancelModal}
-                {guestModal}
             </EventImmersiveShell>
         );
     }
@@ -348,7 +327,6 @@ export const AttendeeAttendance = () => {
             {card}
             <PoweredByFooter/>
             {cancelModal}
-            {guestModal}
         </div>
     );
 };

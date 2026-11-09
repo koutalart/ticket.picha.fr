@@ -1001,6 +1001,7 @@ export interface AttendeeAttendance {
     blocking_reason: string | null;
     can_add_guest: boolean;
     guest_places_remaining: number;
+    guest_max_per_order: number | null;
 }
 
 export interface AddAttendeeGuestRequest {

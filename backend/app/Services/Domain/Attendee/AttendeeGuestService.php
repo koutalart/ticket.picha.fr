@@ -171,6 +171,7 @@ class AttendeeGuestService
             canAddGuest: true,
             placesRemaining: min($maxPerOrder - $activeAttendees, $stock),
             reason: null,
+            maxPerOrder: $maxPerOrder,
         );
     }
 
