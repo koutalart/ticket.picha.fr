@@ -1826,6 +1826,7 @@ export interface SmsReminderPreview {
     recipients_count: number;
     sms_count: number;
     sample_message: string | null;
+    sample_link_message?: string | null;
     active_attendees_count: number;
     without_valid_phone_count: number;
     opted_out_count: number;

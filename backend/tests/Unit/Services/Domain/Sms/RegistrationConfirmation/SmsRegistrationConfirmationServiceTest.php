@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services\Domain\Sms\RegistrationConfirmation;
 
 use HiEvents\DomainObjects\AttendeeDomainObject;
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
@@ -27,6 +28,8 @@ use HiEvents\Services\Domain\Sms\RegistrationConfirmation\SmsRegistrationConfirm
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderMessageRenderer;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderPersonalLinkProviderInterface;
 use HiEvents\Services\Domain\Sms\SmsSendService;
+use HiEvents\Services\Domain\Sms\SmsShortLinkService;
+use HiEvents\Services\Domain\Sms\SmsWithLinkSender;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -34,7 +37,6 @@ use Mockery\MockInterface;
 use Psr\Log\NullLogger;
 use Tests\TestCase;
 use Tests\Unit\Support\StaticCustomerLocaleResolver;
-use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 
 class SmsRegistrationConfirmationServiceTest extends TestCase
 {
@@ -66,8 +68,16 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
 
     private SmsRegistrationConfirmationService $service;
 
-    /** @var SendSmsDTO[] */
+    /** @var SendSmsDTO[] text SMS */
     private array $sent = [];
+
+    /** @var SendSmsDTO[] link SMS */
+    private array $links = [];
+
+    /** @var string[] every SMS content, in sending order */
+    private array $outbox = [];
+
+    private SmsShortLinkService|MockInterface $shortLinkService;
 
     /** @var array<int, array> */
     private array $claims = [];
@@ -135,10 +145,21 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
         })->byDefault();
 
         $this->sendService->shouldReceive('send')->andReturnUsing(function (SendSmsDTO $sms) {
+            $this->outbox[] = $sms->content;
+            if (str_starts_with($sms->content, 'https://ticket.picha.fr/q/')) {
+                $this->links[] = $sms;
+
+                return (new SmsMessageDomainObject)->setId(900 + count($this->links));
+            }
             $this->sent[] = $sms;
 
             return (new SmsMessageDomainObject)->setId(500 + count($this->sent));
         })->byDefault();
+
+        $this->shortLinkService = Mockery::mock(SmsShortLinkService::class);
+        $this->shortLinkService->shouldReceive('shorten')->andReturnUsing(
+            fn (EventDomainObject $event, string $url) => 'https://ticket.picha.fr/q/'.(preg_match('~/(a\d+)\?~', $url, $m) ? $m[1] : 'x')
+        )->byDefault();
 
         $this->service = new SmsRegistrationConfirmationService(
             $this->orderRepository,
@@ -149,28 +170,34 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
             $this->confirmationRepository,
             new SmsReminderMessageRenderer,
             $this->linkProvider,
-            $this->sendService,
+            new SmsWithLinkSender($this->sendService, new NullLogger),
             new NullLogger,
             $this->customerLocaleResolver = new StaticCustomerLocaleResolver,
             $this->attendeeRepository,
+            $this->shortLinkService,
         );
     }
 
-    public function test_sends_the_message_with_the_variables_and_the_personal_link(): void
+    public function test_sends_the_text_then_the_short_link_alone_in_a_second_sms(): void
     {
+        $this->shortLinkService->shouldReceive('shorten')
+            ->once()
+            ->withArgs(fn (EventDomainObject $event, string $url) => $event->getId() === self::EVENT_ID && $url === 'https://ticket.picha.fr/venue/8/a1?code=x')
+            ->andReturn('https://ticket.picha.fr/q/a1');
         $this->attendees([$this->attendee(1, '0639 25 02 06', 'Awa')]);
 
         $result = $this->service->sendForOrder(self::ORDER_ID);
 
         $this->assertSame(1, $result->sent);
-        $this->assertCount(1, $this->sent);
+        $this->assertSame([
+            'Bonjour Awa, votre place pour Konka Wawa le samedi 24 octobre à 20h00 est réservée. Gérer ma venue : lien ci-dessous',
+            'https://ticket.picha.fr/q/a1',
+        ], $this->outbox);
         $this->assertSame(self::ORGANIZER_ID, $this->sent[0]->organizerId);
         $this->assertSame('+262639250206', $this->sent[0]->phone);
         $this->assertSame(SmsMessageAuthorType::AUTOMATIC, $this->sent[0]->authorType);
-        $this->assertSame(
-            'Bonjour Awa, votre place pour Konka Wawa le samedi 24 octobre à 20h00 est réservée. Gérer ma venue : https://ticket.picha.fr/venue/8/a1?code=x',
-            $this->sent[0]->content,
-        );
+        $this->assertSame('+262639250206', $this->links[0]->phone);
+        $this->assertSame(SmsMessageAuthorType::AUTOMATIC, $this->links[0]->authorType);
         $this->assertSame([
             'organizer_id' => self::ORGANIZER_ID,
             'event_id' => self::EVENT_ID,
@@ -194,6 +221,7 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
             $this->sent[0]->content,
         );
         $this->assertStringNotContainsString('http', $this->sent[0]->content);
+        $this->assertSame([], $this->links);
     }
 
     public function test_uses_the_default_message_when_the_text_is_empty(): void
@@ -204,9 +232,10 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
         $this->service->sendForOrder(self::ORDER_ID);
 
         $this->assertSame(
-            "C'est validé, votre place pour Konka Wawa est réservée. Rendez-vous le samedi 24 octobre, accueil dès 20h00. Gérer ma venue : https://ticket.picha.fr/venue/8/a1?code=x",
+            "C'est validé, votre place pour Konka Wawa est réservée. Rendez-vous le samedi 24 octobre, accueil dès 20h00. Gérer ma venue : lien ci-dessous",
             $this->sent[0]->content,
         );
+        $this->assertSame('https://ticket.picha.fr/q/a1', $this->links[0]->content);
     }
 
     public function test_the_default_message_says_tu_when_the_organizer_chose_it(): void
@@ -218,9 +247,10 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
         $this->service->sendForOrder(self::ORDER_ID);
 
         $this->assertSame(
-            "C'est validé, ta place pour Konka Wawa est réservée. Rendez-vous le samedi 24 octobre, accueil dès 20h00. Gérer ma venue : https://ticket.picha.fr/venue/8/a1?code=x",
+            "C'est validé, ta place pour Konka Wawa est réservée. Rendez-vous le samedi 24 octobre, accueil dès 20h00. Gérer ma venue : lien ci-dessous",
             $this->sent[0]->content,
         );
+        $this->assertSame('https://ticket.picha.fr/q/a1', $this->links[0]->content);
     }
 
     public function test_nothing_is_sent_when_the_option_is_disabled(): void
@@ -317,18 +347,25 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
         $result = $this->service->sendForOrder(self::ORDER_ID);
 
         $this->assertSame(3, $result->sent);
-        $this->assertStringContainsString('Bonjour Awa,', $this->sent[0]->content);
-        $this->assertStringContainsString('/a1?code=x', $this->sent[0]->content);
-        $this->assertStringContainsString('Bonjour Ali,', $this->sent[1]->content);
-        $this->assertStringContainsString('/a2?code=x', $this->sent[1]->content);
-        $this->assertStringStartsWith('Bonjour, votre place', $this->sent[2]->content);
-        $this->assertStringContainsString('/a3?code=x', $this->sent[2]->content);
+        $this->assertStringContainsString('Bonjour Awa,', $this->outbox[0]);
+        $this->assertSame('https://ticket.picha.fr/q/a1', $this->outbox[1]);
+        $this->assertStringContainsString('Bonjour Ali,', $this->outbox[2]);
+        $this->assertSame('https://ticket.picha.fr/q/a2', $this->outbox[3]);
+        $this->assertStringStartsWith('Bonjour, votre place', $this->outbox[4]);
+        $this->assertSame('https://ticket.picha.fr/q/a3', $this->outbox[5]);
     }
 
     public function test_a_gateway_error_is_recorded_and_the_other_attendees_are_still_sent(): void
     {
-        $this->sendService->shouldReceive('send')->once()->ordered()->andThrow(new SmsGatewayException('Téléphone hors ligne'));
-        $this->sendService->shouldReceive('send')->once()->ordered()->andReturn((new SmsMessageDomainObject)->setId(777));
+        $calls = [];
+        $this->sendService->shouldReceive('send')->andReturnUsing(function (SendSmsDTO $sms) use (&$calls) {
+            $calls[] = $sms->content;
+            if (count($calls) === 1) {
+                throw new SmsGatewayException('Téléphone hors ligne');
+            }
+
+            return (new SmsMessageDomainObject)->setId(count($calls) === 2 ? 777 : 778);
+        });
         $this->attendees([
             $this->attendee(1, '+262639250206', 'Awa'),
             $this->attendee(2, '+262639250207', 'Ali'),
@@ -340,6 +377,42 @@ class SmsRegistrationConfirmationServiceTest extends TestCase
         $this->assertSame(1, $result->sent);
         $this->assertSame(['status' => 'FAILED', 'failure_reason' => 'Téléphone hors ligne'], $this->updates[1]);
         $this->assertSame(['status' => 'SENT', 'sms_message_id' => 777], $this->updates[2]);
+        $this->assertCount(3, $calls);
+        $this->assertStringStartsWith('Bonjour Awa,', $calls[0]);
+        $this->assertStringStartsWith('Bonjour Ali,', $calls[1]);
+        $this->assertSame('https://ticket.picha.fr/q/a2', $calls[2]);
+    }
+
+    public function test_a_failed_link_sms_does_not_fail_the_confirmation(): void
+    {
+        $calls = [];
+        $this->sendService->shouldReceive('send')->andReturnUsing(function (SendSmsDTO $sms) use (&$calls) {
+            $calls[] = $sms->content;
+            if (count($calls) === 2) {
+                throw new SmsGatewayException('Téléphone hors ligne');
+            }
+
+            return (new SmsMessageDomainObject)->setId(700 + count($calls));
+        });
+        $this->attendees([$this->attendee(1, '+262639250206', 'Awa')]);
+
+        $result = $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame(1, $result->sent);
+        $this->assertSame(['status' => 'SENT', 'sms_message_id' => 701], $this->updates[1]);
+        $this->assertSame('https://ticket.picha.fr/q/a1', $calls[1]);
+    }
+
+    public function test_a_template_without_the_link_variable_sends_a_single_sms(): void
+    {
+        $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings(true, 'Bonjour {prenom}, à bientôt.'));
+        $this->linkProvider->shouldNotReceive('findForAttendee');
+        $this->shortLinkService->shouldNotReceive('shorten');
+        $this->attendees([$this->attendee(1, '+262639250206', 'Awa')]);
+
+        $this->service->sendForOrder(self::ORDER_ID);
+
+        $this->assertSame(['Bonjour Awa, à bientôt.'], $this->outbox);
     }
 
     public function test_stops_when_the_sms_line_is_not_configured(): void

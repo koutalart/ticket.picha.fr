@@ -143,7 +143,7 @@ class SmsDefaultRemindersServiceTest extends TestCase
         $message = SmsDefaultRemindersService::message('J-1', CustomerAddressForm::TU, 'Konka Wawa');
 
         $this->assertSame(
-            "Awa, c'est demain ! Konka Wawa le samedi 7 novembre à 20h00. Gère ta venue : https://ticket.picha.fr/c/abc\n\nKonka Wawa via PICHA Ticket",
+            "Awa, c'est demain ! Konka Wawa le samedi 7 novembre à 20h00. Gère ta venue : lien ci-dessous\n\nKonka Wawa via PICHA Ticket",
             (new SmsReminderMessageRenderer)->render($message, $this->event('2026-11-07 17:00:00'), 'Awa', 'https://ticket.picha.fr/c/abc'),
         );
     }

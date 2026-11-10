@@ -6,12 +6,15 @@ use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\Exceptions\SmsRecipientOptedOutException;
 use HiEvents\Mail\Sms\PlatformSupervisionAlertMail;
 use HiEvents\Models\OrganizerSmsSetting;
+use HiEvents\Models\Product;
+use HiEvents\Models\ProductPrice;
 use HiEvents\Models\SmsMessage;
 use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
 use HiEvents\Services\Application\Handlers\Sms\HandleHttpSmsWebhookHandler;
 use HiEvents\Services\Domain\Sms\DTO\SendSmsDTO;
 use HiEvents\Services\Domain\Sms\HttpSmsWebhookSignatureVerifier;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderDispatchService;
+use HiEvents\Services\Domain\Sms\Reminder\SmsReminderPersonalLinkProviderInterface;
 use HiEvents\Services\Domain\Sms\SmsFileSyncService;
 use HiEvents\Services\Domain\Sms\SmsSendService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -52,6 +55,10 @@ class SmsFileFlowTest extends TestCase
 
     private OrganizerSmsSetting $line;
 
+    private Product $product;
+
+    private ProductPrice $productPrice;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -67,7 +74,7 @@ class SmsFileFlowTest extends TestCase
             'services.sms_watchdog.alert_email' => 'veille@picha.test',
         ]);
 
-        [$event] = $this->createEventWithProduct();
+        [$event, $this->product, $this->productPrice] = $this->createEventWithProduct();
         $this->organizerId = $event->organizer_id;
         $this->accountId = $event->account_id;
         $this->eventId = $event->id;
@@ -241,6 +248,48 @@ class SmsFileFlowTest extends TestCase
         $this->assertSame('DELIVERED', DB::table('sms_campaign_recipients')->find($first)->status);
     }
 
+    public function test_reminder_link_is_queued_alone_right_after_its_text_and_both_are_recorded(): void
+    {
+        $campaignId = $this->reminder('Rappel : on vous attend demain ! Gérer ma venue : {lien}');
+        $attendee = $this->createAttendeeViaHandler($this->eventId, $this->product->id, $this->productPrice->id);
+        $recipientId = $this->recipient($campaignId, self::CUSTOMER, attendeeId: $attendee->id);
+        $longUrl = 'https://ticket.picha.fr/venue/'.$this->eventId.'/a_'.$attendee->id.'?code=abc';
+        $this->mock(SmsReminderPersonalLinkProviderInterface::class)->shouldReceive('findForAttendee')->andReturn($longUrl);
+
+        Http::fake([
+            self::FILE_URL.'/v1/sms' => fn (Request $request) => Http::response(array_map(fn (array $sms, int $i) => [
+                'id' => 950 + $i,
+                'etat' => 'en_file',
+                'id_sms_picha' => null,
+                'ref' => $sms['ref'],
+            ], $request->data(), array_keys($request->data())), 200),
+        ]);
+
+        $result = app(SmsReminderDispatchService::class)->dispatchDue();
+
+        $this->assertSame(1, $result->sent);
+        $shortId = DB::table('qr_links')->where('destination_url', $longUrl)->where('is_automatic_sms_link', true)->value('short_id');
+        $this->assertNotNull($shortId);
+        Http::assertSent(function (Request $request) use ($campaignId, $recipientId, $shortId) {
+            $items = $request->data();
+
+            return count($items) === 2
+                && $items[0]['ref'] === $campaignId.':'.$recipientId
+                && $items[0]['texte'] === 'Rappel : on vous attend demain ! Gérer ma venue : lien ci-dessous'
+                && $items[1]['ref'] === $campaignId.':'.$recipientId.':lien'
+                && $items[1]['texte'] === config('app.frontend_url').'/q/'.$shortId
+                && $items[1]['campagne'] === 'rappel-'.$campaignId
+                && $items[1]['to'] === self::CUSTOMER;
+        });
+
+        $messages = SmsMessage::query()->orderBy('id')->where('organizer_id', $this->organizerId)->get();
+        $this->assertCount(2, $messages);
+        $this->assertSame([950, 951], $messages->pluck('queue_message_id')->map(fn ($id) => (int) $id)->all());
+        $this->assertSame($messages[0]->sms_conversation_id, $messages[1]->sms_conversation_id);
+        $this->assertSame(config('app.frontend_url').'/q/'.$shortId, $messages[1]->content);
+        $this->assertSame(950, (int) DB::table('sms_campaign_recipients')->find($recipientId)->queue_message_id);
+    }
+
     public function test_reminder_is_not_sent_directly_when_the_queue_is_down_and_waits_for_the_next_run(): void
     {
         $campaignId = $this->reminder();
@@ -319,14 +368,14 @@ class SmsFileFlowTest extends TestCase
         $this->assertSame('picha-950', $recipient->provider_message_id);
     }
 
-    private function reminder(): int
+    private function reminder(string $message = 'Rappel : on vous attend demain !'): int
     {
         return DB::table('sms_campaigns')->insertGetId([
             'account_id' => $this->accountId,
             'organizer_id' => $this->organizerId,
             'event_id' => $this->eventId,
             'name' => 'Rappel J-1',
-            'message' => 'Rappel : on vous attend demain !',
+            'message' => $message,
             'type' => 'REMINDER',
             'status' => 'PROCESSING',
             'scheduled_at' => Carbon::now('UTC')->subMinutes(5),
@@ -336,13 +385,14 @@ class SmsFileFlowTest extends TestCase
         ]);
     }
 
-    private function recipient(int $campaignId, string $phone, string $status = 'PENDING', ?int $queueId = null): int
+    private function recipient(int $campaignId, string $phone, string $status = 'PENDING', ?int $queueId = null, ?int $attendeeId = null): int
     {
         return DB::table('sms_campaign_recipients')->insertGetId([
             'sms_campaign_id' => $campaignId,
             'phone' => $phone,
             'status' => $status,
             'queue_message_id' => $queueId,
+            'attendee_id' => $attendeeId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

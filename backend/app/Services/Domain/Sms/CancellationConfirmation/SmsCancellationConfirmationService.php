@@ -35,7 +35,8 @@ use HiEvents\Services\Domain\Sms\DTO\SendSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsCancellationConfirmationResultDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderMessageRenderer;
-use HiEvents\Services\Domain\Sms\SmsSendService;
+use HiEvents\Services\Domain\Sms\SmsShortLinkService;
+use HiEvents\Services\Domain\Sms\SmsWithLinkSender;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
 use Psr\Log\LoggerInterface;
@@ -65,9 +66,10 @@ class SmsCancellationConfirmationService
         private readonly SmsCancellationConfirmationRepositoryInterface $confirmationRepository,
         private readonly SmsReminderMessageRenderer $renderer,
         private readonly SmsCancellationLinkProviderInterface $linkProvider,
-        private readonly SmsSendService $sendService,
+        private readonly SmsWithLinkSender $sender,
         private readonly LoggerInterface $logger,
         private readonly CustomerLocaleResolver $customerLocaleResolver,
+        private readonly SmsShortLinkService $shortLinkService,
     ) {}
 
     public static function defaultMessage(CustomerAddressForm $addressForm = CustomerAddressForm::VOUS): string
@@ -192,19 +194,13 @@ class SmsCancellationConfirmationService
             }
 
             try {
-                $message = $this->sendService->send(new SendSmsDTO(
+                $link = $this->link($template, $event, $attendee->attendeeId);
+                $message = $this->sender->send(new SendSmsDTO(
                     organizerId: $event->getOrganizerId(),
                     phone: $phone,
-                    content: $this->renderer->render(
-                        $template,
-                        $event,
-                        $attendee->firstName,
-                        $this->renderer->usesPersonalLink($template)
-                            ? $this->linkProvider->findForAttendee($attendee->attendeeId, $event)
-                            : null,
-                    ),
+                    content: $this->renderer->render($template, $event, $attendee->firstName, $link),
                     authorType: SmsMessageAuthorType::AUTOMATIC,
-                ));
+                ), $link);
 
                 $this->confirmationRepository->updateFromArray($confirmation->getId(), [
                     SmsCancellationConfirmationDomainObjectAbstract::STATUS => SmsCancellationConfirmationStatus::SENT->name,
@@ -230,6 +226,17 @@ class SmsCancellationConfirmationService
             alreadySent: $alreadySent,
             alreadyConfirmedForPhone: $alreadyConfirmedForPhone,
         );
+    }
+
+    private function link(string $template, EventDomainObject $event, int $attendeeId): ?string
+    {
+        if (! $this->renderer->usesPersonalLink($template)) {
+            return null;
+        }
+
+        $link = $this->linkProvider->findForAttendee($attendeeId, $event);
+
+        return $link !== null ? $this->shortLinkService->shorten($event, $link) : null;
     }
 
     private function isOptedOut(int $organizerId, string $phone): bool

@@ -36,6 +36,8 @@ use HiEvents\Services\Domain\Sms\DTO\SmsReminderRecipientDTO;
 use HiEvents\Services\Domain\Sms\SmsFileAlertService;
 use HiEvents\Services\Domain\Sms\SmsFileStatusService;
 use HiEvents\Services\Domain\Sms\SmsSendService;
+use HiEvents\Services\Domain\Sms\SmsShortLinkService;
+use HiEvents\Services\Domain\Sms\SmsWithLinkSender;
 use HiEvents\Services\Infrastructure\SmsFile\DTO\SmsFileMessageDTO;
 use HiEvents\Services\Infrastructure\SmsFile\SmsFileClient;
 use Illuminate\Config\Repository as ConfigRepository;
@@ -49,6 +51,7 @@ use Throwable;
  * Each recipient is claimed (PENDING to SCHEDULED) before the call to PICHA SMS, so a number is never sent the same reminder twice.
  * When the central SMS queue is enabled, the due SMS are handed to it in one request (stable ref per recipient) and the
  * queue paces them: no pause here.
+ * The personal link of a recipient goes alone in a second SMS (tracked short link), right after their text.
  */
 class SmsReminderDispatchService
 {
@@ -67,6 +70,8 @@ class SmsReminderDispatchService
         private readonly SmsFileClient $fileClient,
         private readonly SmsFileStatusService $fileStatusService,
         private readonly SmsFileAlertService $fileAlertService,
+        private readonly SmsWithLinkSender $sender,
+        private readonly SmsShortLinkService $shortLinkService,
     ) {}
 
     public function dispatchDue(): SmsReminderDispatchResultDTO
@@ -81,7 +86,7 @@ class SmsReminderDispatchService
 
         $throughFile = $this->fileClient->isEnabled();
         $budget = $throughFile
-            ? SmsFileClient::MAX_PER_REQUEST
+            ? intdiv(SmsFileClient::MAX_PER_REQUEST, 2)
             : max(1, (int) $this->config->get('services.httpsms.reminder_batch_size', 200));
         $sent = 0;
         $failed = 0;
@@ -224,21 +229,21 @@ class SmsReminderDispatchService
             }
 
             $attendeeId = $recipient->getAttendeeId();
-            $content = $this->renderer->render(
-                (string) $campaign->getMessage(),
-                $event,
-                $attendeeId !== null ? ($firstNames[$attendeeId] ?? null) : null,
-                $attendeeId !== null ? $this->linkProvider->findForAttendee($attendeeId) : null,
-            );
 
             try {
-                $message = $this->sendService->send(new SendSmsDTO(
+                $link = $this->link($campaign, $event, $attendeeId);
+                $message = $this->sender->send(new SendSmsDTO(
                     organizerId: $campaign->getOrganizerId(),
                     phone: $recipient->getPhone(),
-                    content: $content,
+                    content: $this->renderer->render(
+                        (string) $campaign->getMessage(),
+                        $event,
+                        $attendeeId !== null ? ($firstNames[$attendeeId] ?? null) : null,
+                        $link,
+                    ),
                     authorType: SmsMessageAuthorType::CAMPAIGN,
                     sentByUserId: $campaign->getCreatedByUserId(),
-                ));
+                ), $link);
 
                 if ($message->getProviderMessageId() !== null) {
                     $this->recipientRepository->updateFromArray($recipient->getId(), [
@@ -290,7 +295,7 @@ class SmsReminderDispatchService
 
         $firstNames = $this->firstNames($recipients->map(fn (SmsCampaignRecipientDomainObject $recipient) => $recipient->getAttendeeId())->filter()->all());
         $failed = 0;
-        /** @var array<int, array{0: SmsCampaignRecipientDomainObject, 1: PreparedSmsDTO}> $batch */
+        /** @var array<int, array{0: SmsCampaignRecipientDomainObject, 1: PreparedSmsDTO, 2: PreparedSmsDTO|null, 3: int}> $batch */
         $batch = [];
         $items = [];
 
@@ -300,6 +305,7 @@ class SmsReminderDispatchService
             }
 
             $attendeeId = $recipient->getAttendeeId();
+            $link = $this->link($campaign, $event, $attendeeId);
 
             try {
                 $prepared = $this->sendService->prepare(new SendSmsDTO(
@@ -309,7 +315,7 @@ class SmsReminderDispatchService
                         (string) $campaign->getMessage(),
                         $event,
                         $attendeeId !== null ? ($firstNames[$attendeeId] ?? null) : null,
-                        $attendeeId !== null ? $this->linkProvider->findForAttendee($attendeeId) : null,
+                        $link,
                     ),
                     authorType: SmsMessageAuthorType::CAMPAIGN,
                     sentByUserId: $campaign->getCreatedByUserId(),
@@ -328,16 +334,20 @@ class SmsReminderDispatchService
                 continue;
             }
 
-            $batch[] = [$recipient, $prepared];
-            $items[] = new SmsFileMessageDTO(
-                organizerId: $campaign->getOrganizerId(),
-                from: (string) $prepared->line->getFromNumber(),
-                to: $prepared->phone,
-                text: $prepared->sms->content,
-                priority: SmsFilePriority::CAMPAIGN,
-                ref: self::queueRef($campaign, $recipient),
-                campaign: self::queueCampaign($campaign),
-            );
+            $linkPrepared = $link !== null
+                ? new PreparedSmsDTO(
+                    sms: SmsWithLinkSender::linkSms($prepared->sms, $link),
+                    phone: $prepared->phone,
+                    line: $prepared->line,
+                    conversation: $prepared->conversation,
+                )
+                : null;
+
+            $batch[] = [$recipient, $prepared, $linkPrepared, count($items)];
+            $items[] = $this->queueItem($campaign, $prepared, self::queueRef($campaign, $recipient));
+            if ($linkPrepared !== null) {
+                $items[] = $this->queueItem($campaign, $linkPrepared, self::queueLinkRef($campaign, $recipient));
+            }
         }
 
         if ($items === []) {
@@ -363,13 +373,17 @@ class SmsReminderDispatchService
         }
 
         $queued = 0;
-        foreach ($batch as $index => [$recipient, $prepared]) {
-            $result = $results[$index];
+        foreach ($batch as [$recipient, $prepared, $linkPrepared, $itemIndex]) {
+            $result = $results[$itemIndex];
 
             try {
                 $message = $this->sendService->record($prepared, SmsMessageStatus::QUEUED);
                 $this->fileStatusService->applyToMessage($message, $result);
                 $this->fileStatusService->applyToRecipient($recipient, $result);
+                if ($linkPrepared !== null) {
+                    $linkMessage = $this->sendService->record($linkPrepared, SmsMessageStatus::QUEUED);
+                    $this->fileStatusService->applyToMessage($linkMessage, $results[$itemIndex + 1]);
+                }
                 $queued++;
             } catch (Throwable $exception) {
                 $this->logger->error('SMS reminder queued but not recorded', [
@@ -385,6 +399,33 @@ class SmsReminderDispatchService
         return [$queued, $failed, false];
     }
 
+    private function queueItem(SmsCampaignDomainObject $campaign, PreparedSmsDTO $prepared, string $ref): SmsFileMessageDTO
+    {
+        return new SmsFileMessageDTO(
+            organizerId: $campaign->getOrganizerId(),
+            from: (string) $prepared->line->getFromNumber(),
+            to: $prepared->phone,
+            text: $prepared->sms->content,
+            priority: SmsFilePriority::CAMPAIGN,
+            ref: $ref,
+            campaign: self::queueCampaign($campaign),
+        );
+    }
+
+    /**
+     * The tracked short link of the recipient, null when the reminder has no {lien} or the attendee no personal link.
+     */
+    private function link(SmsCampaignDomainObject $campaign, EventDomainObject $event, ?int $attendeeId): ?string
+    {
+        if ($attendeeId === null || ! $this->renderer->usesPersonalLink((string) $campaign->getMessage())) {
+            return null;
+        }
+
+        $link = $this->linkProvider->findForAttendee($attendeeId);
+
+        return $link !== null ? $this->shortLinkService->shorten($event, $link) : null;
+    }
+
     public static function queueCampaign(SmsCampaignDomainObject $campaign): string
     {
         return 'rappel-'.$campaign->getId();
@@ -393,6 +434,11 @@ class SmsReminderDispatchService
     public static function queueRef(SmsCampaignDomainObject $campaign, SmsCampaignRecipientDomainObject $recipient): string
     {
         return $campaign->getId().':'.$recipient->getId();
+    }
+
+    public static function queueLinkRef(SmsCampaignDomainObject $campaign, SmsCampaignRecipientDomainObject $recipient): string
+    {
+        return self::queueRef($campaign, $recipient).':lien';
     }
 
     private function findEvent(SmsCampaignDomainObject $campaign): ?EventDomainObject

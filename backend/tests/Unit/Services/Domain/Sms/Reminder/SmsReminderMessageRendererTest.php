@@ -28,7 +28,7 @@ class SmsReminderMessageRendererTest extends TestCase
         );
 
         $this->assertSame(
-            'Bonjour Awa, rappel : Konka Wawa 25 ans le samedi 24 octobre à 20h00. Votre lien : https://ticket.picha.fr/r/abc',
+            'Bonjour Awa, rappel : Konka Wawa 25 ans le samedi 24 octobre à 20h00. Votre lien : lien ci-dessous',
             $message,
         );
     }
@@ -61,13 +61,42 @@ class SmsReminderMessageRendererTest extends TestCase
             $this->renderer->render($template, $this->event(), null, null),
         );
         $this->assertSame(
-            "C'est validé pour Konka Wawa 25 ans. samedi 24 octobre, accueil dès 20h00. Gérer ma venue : https://ticket.picha.fr/venue/8/a1",
-            $this->renderer->render($template, $this->event(), null, 'https://ticket.picha.fr/venue/8/a1'),
+            "C'est validé pour Konka Wawa 25 ans. samedi 24 octobre, accueil dès 20h00. Gérer ma venue : lien ci-dessous",
+            $this->renderer->render($template, $this->event(), null, 'https://ticket.picha.fr/q/abc1234'),
         );
         $this->assertSame(
             "A ce soir !\nMerci",
             $this->renderer->render("A ce soir ! Votre venue : { lien }\nMerci", $this->event(), null, null),
         );
+    }
+
+    public function test_the_text_never_contains_the_link_of_a_saved_template(): void
+    {
+        $link = 'https://mayottela1ere.fr/q/abc1234';
+
+        $this->assertSame(
+            "Awa, c'est demain ! Gère ta venue : lien ci-dessous",
+            $this->renderer->render("{prenom}, c'est demain ! Gère ta venue : {lien}", $this->event(), 'Awa', $link),
+        );
+        $this->assertSame(
+            "Infos et billets\nA ce soir",
+            $this->renderer->render("Infos et billets {lien}\nA ce soir", $this->event(), null, $link),
+        );
+        $this->assertSame(
+            'Votre venue : lien ci-dessous. Merci',
+            $this->renderer->render('Votre venue : { Lien }. Merci', $this->event(), null, $link),
+        );
+        $this->assertStringNotContainsString('{', $this->renderer->render('Lien : {lien} {lien}', $this->event(), null, $link));
+    }
+
+    public function test_the_link_message_is_the_link_alone_when_the_template_asks_for_it(): void
+    {
+        $link = 'https://mayottela1ere.fr/q/abc1234';
+
+        $this->assertSame($link, $this->renderer->linkMessage('Gérer ma venue : {lien}', ' '.$link.' '));
+        $this->assertNull($this->renderer->linkMessage('Bonjour {prenom}', $link));
+        $this->assertNull($this->renderer->linkMessage('Gérer ma venue : {lien}', null));
+        $this->assertNull($this->renderer->linkMessage('Gérer ma venue : {lien}', ''));
     }
 
     public function test_unknown_variables_are_kept(): void

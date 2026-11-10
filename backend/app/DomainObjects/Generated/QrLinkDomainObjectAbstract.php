@@ -34,6 +34,7 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
     final public const DELETED_AT = 'deleted_at';
     final public const APP_STORE_URL = 'app_store_url';
     final public const PLAY_STORE_URL = 'play_store_url';
+    final public const IS_AUTOMATIC_SMS_LINK = 'is_automatic_sms_link';
 
     protected int $id;
     protected int $account_id;
@@ -59,6 +60,7 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
     protected ?string $deleted_at = null;
     protected ?string $app_store_url = null;
     protected ?string $play_store_url = null;
+    protected bool $is_automatic_sms_link = false;
 
     public function toArray(): array
     {
@@ -87,6 +89,7 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
                     'deleted_at' => $this->deleted_at ?? null,
                     'app_store_url' => $this->app_store_url ?? null,
                     'play_store_url' => $this->play_store_url ?? null,
+                    'is_automatic_sms_link' => $this->is_automatic_sms_link ?? null,
                 ];
     }
 
@@ -352,5 +355,16 @@ abstract class QrLinkDomainObjectAbstract extends \HiEvents\DomainObjects\Abstra
     public function getPlayStoreUrl(): ?string
     {
         return $this->play_store_url;
+    }
+
+    public function setIsAutomaticSmsLink(bool $is_automatic_sms_link): self
+    {
+        $this->is_automatic_sms_link = $is_automatic_sms_link;
+        return $this;
+    }
+
+    public function getIsAutomaticSmsLink(): bool
+    {
+        return $this->is_automatic_sms_link;
     }
 }

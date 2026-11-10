@@ -45,6 +45,7 @@ class PreviewSmsReminderAction extends BaseAction
             'recipients_count' => $preview->recipients,
             'sms_count' => $preview->smsCount,
             'sample_message' => $preview->sampleMessage,
+            'sample_link_message' => $preview->sampleLinkMessage,
             'active_attendees_count' => $preview->activeAttendees,
             'without_valid_phone_count' => $preview->withoutValidPhone,
             'opted_out_count' => $preview->optedOut,

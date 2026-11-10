@@ -37,14 +37,16 @@ use HiEvents\Services\Domain\Sms\DTO\SmsRegistrationConfirmationResultDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderMessageRenderer;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderPersonalLinkProviderInterface;
-use HiEvents\Services\Domain\Sms\SmsSendService;
+use HiEvents\Services\Domain\Sms\SmsShortLinkService;
+use HiEvents\Services\Domain\Sms\SmsWithLinkSender;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
- * Sends one confirmation SMS to each active attendee of a completed online order, with their personal attendance link.
+ * Sends one confirmation SMS to each active attendee of a completed online order, then their personal attendance link
+ * as a tracked short link alone in a second SMS.
  * Each attendee is claimed in sms_registration_confirmations before the call to PICHA SMS, so nobody receives it twice.
  *
  * A phone number receives at most one confirmation per event: other attendees sharing it are recorded as SKIPPED.
@@ -64,10 +66,11 @@ class SmsRegistrationConfirmationService
         private readonly SmsRegistrationConfirmationRepositoryInterface $confirmationRepository,
         private readonly SmsReminderMessageRenderer $renderer,
         private readonly SmsReminderPersonalLinkProviderInterface $linkProvider,
-        private readonly SmsSendService $sendService,
+        private readonly SmsWithLinkSender $sender,
         private readonly LoggerInterface $logger,
         private readonly CustomerLocaleResolver $customerLocaleResolver,
         private readonly AttendeeRepositoryInterface $attendeeRepository,
+        private readonly SmsShortLinkService $shortLinkService,
     ) {}
 
     /**
@@ -156,17 +159,13 @@ class SmsRegistrationConfirmationService
             }
 
             try {
-                $message = $this->sendService->send(new SendSmsDTO(
+                $link = $this->link($template, $event, $attendee->attendeeId);
+                $message = $this->sender->send(new SendSmsDTO(
                     organizerId: $event->getOrganizerId(),
                     phone: $phone,
-                    content: $this->renderer->render(
-                        $template,
-                        $event,
-                        $attendee->firstName,
-                        $this->linkProvider->findForAttendee($attendee->attendeeId),
-                    ),
+                    content: $this->renderer->render($template, $event, $attendee->firstName, $link),
                     authorType: SmsMessageAuthorType::AUTOMATIC,
-                ));
+                ), $link);
 
                 $this->confirmationRepository->updateFromArray($confirmation->getId(), [
                     SmsRegistrationConfirmationDomainObjectAbstract::STATUS => SmsRegistrationConfirmationStatus::SENT->name,
@@ -192,6 +191,17 @@ class SmsRegistrationConfirmationService
             alreadySent: $alreadySent,
             alreadyConfirmedForPhone: $alreadyConfirmedForPhone,
         );
+    }
+
+    private function link(string $template, EventDomainObject $event, int $attendeeId): ?string
+    {
+        if (! $this->renderer->usesPersonalLink($template)) {
+            return null;
+        }
+
+        $link = $this->linkProvider->findForAttendee($attendeeId);
+
+        return $link !== null ? $this->shortLinkService->shorten($event, $link) : null;
     }
 
     private function isOptedOut(int $organizerId, string $phone): bool
