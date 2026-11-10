@@ -18,13 +18,13 @@ class GetAttendeeTicketImageActionPublic extends BaseAction
     public function __invoke(int $eventId, string $attendeeShortId): Response
     {
         try {
-            $png = $this->handler->handle($eventId, $attendeeShortId);
+            $image = $this->handler->handle($eventId, $attendeeShortId);
         } catch (ResourceNotFoundException) {
             return $this->notFoundResponse();
         }
 
-        return response($png)
-            ->header('Content-Type', 'image/png')
+        return response($image->content)
+            ->header('Content-Type', $image->mimeType)
             ->header('Cache-Control', 'private, max-age=300');
     }
 }

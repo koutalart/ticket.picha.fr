@@ -19,8 +19,10 @@ class GetEventTicketPreviewImageAction extends BaseAction
     {
         $this->isActionAuthorized($eventId, EventDomainObject::class);
 
-        return response($this->handler->preview($eventId))
-            ->header('Content-Type', 'image/png')
+        $image = $this->handler->preview($eventId);
+
+        return response($image->content)
+            ->header('Content-Type', $image->mimeType)
             ->header('Cache-Control', 'no-store');
     }
 }

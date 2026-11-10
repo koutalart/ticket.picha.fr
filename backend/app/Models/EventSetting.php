@@ -14,6 +14,7 @@ class EventSetting extends BaseModel
             'location_details' => 'array',
             'payment_providers' => 'array',
             'ticket_design_settings' => 'array',
+            'ticket_card_design' => 'array',
             'homepage_theme_settings' => 'array',
             'homepage_footer_settings' => 'array',
             'event_pages' => 'array',

@@ -87,6 +87,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const TICKET_FOOTER_USE_ORGANIZER_DOMAIN = 'ticket_footer_use_organizer_domain';
     final public const REFUND_PROTECTION_DEADLINE_HOURS = 'refund_protection_deadline_hours';
     final public const HIGHLIGHTED_PROMO_CODE = 'highlighted_promo_code';
+    final public const TICKET_CARD_DESIGN = 'ticket_card_design';
 
     protected int $id;
     protected int $event_id;
@@ -165,6 +166,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected bool $ticket_footer_use_organizer_domain = false;
     protected int $refund_protection_deadline_hours = 0;
     protected ?string $highlighted_promo_code = null;
+    protected array|string|null $ticket_card_design = null;
 
     public function toArray(): array
     {
@@ -246,6 +248,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'ticket_footer_use_organizer_domain' => $this->ticket_footer_use_organizer_domain ?? null,
                     'refund_protection_deadline_hours' => $this->refund_protection_deadline_hours ?? null,
                     'highlighted_promo_code' => $this->highlighted_promo_code ?? null,
+                    'ticket_card_design' => $this->ticket_card_design ?? null,
                 ];
     }
 
@@ -1095,5 +1098,16 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getHighlightedPromoCode(): ?string
     {
         return $this->highlighted_promo_code;
+    }
+
+    public function setTicketCardDesign(array|string|null $ticket_card_design): self
+    {
+        $this->ticket_card_design = $ticket_card_design;
+        return $this;
+    }
+
+    public function getTicketCardDesign(): array|string|null
+    {
+        return $this->ticket_card_design;
     }
 }

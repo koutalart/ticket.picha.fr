@@ -16,6 +16,8 @@ use HiEvents\Models\Order;
 use HiEvents\Models\Organizer as OrganizerModel;
 use HiEvents\Services\Domain\Ticket\AttendeeTicketPdfService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Smalot\PdfParser\Parser as PdfParser;
 use Tests\Support\BoxOfficeTestFixtures;
 use Tests\TestCase;
@@ -179,5 +181,37 @@ class AttendeeTicketPdfServiceTest extends TestCase
         self::assertCount(1, $serviceImages);
         self::assertSame($mailImages[0]['Width'], $serviceImages[0]['Width']);
         self::assertSame($mailImages[0]['Height'], $serviceImages[0]['Height']);
+    }
+
+    public function test_pdf_uses_the_event_invitation_card_when_it_has_one(): void
+    {
+        [$attendee, $event, $eventSettings, $organizer] = $this->buildDomainObjects('Josué', 'Koutala');
+
+        Storage::fake('ticket-card-pdf');
+        $background = new \Imagick;
+        $background->newImage(1600, 2000, new \ImagickPixel('#0b2340'));
+        $box = new \ImagickDraw;
+        $box->setFillColor(new \ImagickPixel('white'));
+        $box->rectangle(353, 1572, 1247, 1808);
+        $background->drawImage($box);
+        $background->setImageFormat('png');
+        $path = 'ticket-cards/event-'.$event->getId().'/'.uniqid('', true).'.png';
+        Storage::disk('ticket-card-pdf')->put($path, $background->getImageBlob());
+
+        EventSetting::where('event_id', $event->getId())->update([
+            'ticket_card_design' => json_encode(['disk' => 'ticket-card-pdf', 'background_path' => $path, 'guests' => 2]),
+        ]);
+
+        try {
+            $pdf = app(AttendeeTicketPdfService::class)->generate($attendee, $event, $eventSettings, $organizer);
+        } finally {
+            File::deleteDirectory(storage_path('app/ticket-card-cache'));
+        }
+
+        $images = $this->extractImages($pdf);
+        self::assertCount(1, $images);
+        self::assertSame('1600', (string) $images[0]['Width']);
+        self::assertSame('2000', (string) $images[0]['Height']);
+        self::assertStringContainsString($attendee->getPublicId(), $this->extractText($pdf));
     }
 }

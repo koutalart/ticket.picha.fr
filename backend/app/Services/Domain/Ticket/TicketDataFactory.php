@@ -17,6 +17,7 @@ use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
+use HiEvents\Services\Domain\Ticket\DTO\TicketCardDesignDTO;
 use HiEvents\Services\Domain\Ticket\DTO\TicketDataDTO;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Collection;
@@ -126,6 +127,10 @@ class TicketDataFactory
                 ? $this->readImage($organizer?->getImages(), ImageType::ORGANIZER_EMAIL_LOGO)
                     ?? $this->readImage($organizer?->getImages(), ImageType::ORGANIZER_LOGO)
                 : null,
+            cardDesign: TicketCardDesignDTO::fromSettings(
+                $settings?->getTicketCardDesign(),
+                (string) config('filesystems.private'),
+            ),
         );
     }
 
