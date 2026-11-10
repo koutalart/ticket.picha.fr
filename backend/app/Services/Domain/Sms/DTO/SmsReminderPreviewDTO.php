@@ -19,5 +19,6 @@ class SmsReminderPreviewDTO extends BaseDataObject
         public readonly bool $personalLinkAvailable,
         public readonly string $eventTimezone,
         public readonly ?string $scheduledAt,
+        public readonly ?string $sampleLinkMessage = null,
     ) {}
 }

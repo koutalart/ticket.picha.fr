@@ -3,13 +3,13 @@
 namespace Tests\Unit\Services\Domain\Sms\Reminder;
 
 use HiEvents\DomainObjects\AttendeeDomainObject;
+use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Services\Domain\Attendee\AttendeeAttendanceLinkGenerator;
-use HiEvents\Services\Domain\Sms\Reminder\AttendanceSmsReminderPersonalLinkProvider;
-use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Services\Domain\Sms\RegistrationConfirmation\SmsRegistrationConfirmationService;
+use HiEvents\Services\Domain\Sms\Reminder\AttendanceSmsReminderPersonalLinkProvider;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderMessageRenderer;
 use Mockery as m;
 use Tests\Support\FakesPublicBaseUrl;
@@ -20,8 +20,11 @@ class AttendanceSmsReminderPersonalLinkProviderTest extends TestCase
     use FakesPublicBaseUrl;
 
     private AttendeeRepositoryInterface $attendeeRepository;
+
     private EventSettingsRepositoryInterface $eventSettingsRepository;
+
     private AttendeeAttendanceLinkGenerator $linkGenerator;
+
     private AttendanceSmsReminderPersonalLinkProvider $provider;
 
     protected function setUp(): void
@@ -39,10 +42,10 @@ class AttendanceSmsReminderPersonalLinkProviderTest extends TestCase
 
     public function test_returns_the_personal_link_when_attendance_responses_are_enabled(): void
     {
-        $attendee = (new AttendeeDomainObject())->setId(5)->setEventId(14);
+        $attendee = (new AttendeeDomainObject)->setId(5)->setEventId(14);
         $this->attendeeRepository->shouldReceive('findFirst')->with(5)->andReturn($attendee);
         $this->eventSettingsRepository->shouldReceive('findFirstWhere')->with(['event_id' => 14])
-            ->andReturn((new EventSettingDomainObject())->setAllowAttendeeAttendanceResponse(true));
+            ->andReturn((new EventSettingDomainObject)->setAllowAttendeeAttendanceResponse(true));
         $this->linkGenerator->shouldReceive('getAttendanceUrl')->with($attendee)->andReturn('https://ticket.picha.fr/venue/14/abc?code=x');
 
         $this->assertSame('https://ticket.picha.fr/venue/14/abc?code=x', $this->provider->findForAttendee(5));
@@ -50,9 +53,9 @@ class AttendanceSmsReminderPersonalLinkProviderTest extends TestCase
 
     public function test_returns_null_when_attendance_responses_are_disabled(): void
     {
-        $this->attendeeRepository->shouldReceive('findFirst')->with(5)->andReturn((new AttendeeDomainObject())->setId(5)->setEventId(14));
+        $this->attendeeRepository->shouldReceive('findFirst')->with(5)->andReturn((new AttendeeDomainObject)->setId(5)->setEventId(14));
         $this->eventSettingsRepository->shouldReceive('findFirstWhere')
-            ->andReturn((new EventSettingDomainObject())->setAllowAttendeeAttendanceResponse(false));
+            ->andReturn((new EventSettingDomainObject)->setAllowAttendeeAttendanceResponse(false));
         $this->linkGenerator->shouldNotReceive('getAttendanceUrl');
 
         $this->assertNull($this->provider->findForAttendee(5));
@@ -63,29 +66,29 @@ class AttendanceSmsReminderPersonalLinkProviderTest extends TestCase
         config(['app.frontend_url' => 'https://ticket.picha.fr']);
         $this->fakePublicBaseUrl([8 => 'mayottela1ere.fr'], [14 => 8]);
 
-        $attendee = (new AttendeeDomainObject())->setId(5)->setEventId(14)->setShortId('a_7Kp2Qx');
+        $attendee = (new AttendeeDomainObject)->setId(5)->setEventId(14)->setShortId('a_7Kp2Qx');
         $this->attendeeRepository->shouldReceive('findFirst')->with(5)->andReturn($attendee);
         $this->eventSettingsRepository->shouldReceive('findFirstWhere')->with(['event_id' => 14])
-            ->andReturn((new EventSettingDomainObject())->setAllowAttendeeAttendanceResponse(true));
+            ->andReturn((new EventSettingDomainObject)->setAllowAttendeeAttendanceResponse(true));
 
         $provider = new AttendanceSmsReminderPersonalLinkProvider(
             $this->attendeeRepository,
             $this->eventSettingsRepository,
-            new AttendeeAttendanceLinkGenerator(),
+            new AttendeeAttendanceLinkGenerator,
         );
         $link = $provider->findForAttendee(5);
 
-        $sms = (new SmsReminderMessageRenderer())->render(
+        $sms = (new SmsReminderMessageRenderer)->render(
             SmsRegistrationConfirmationService::defaultMessage(),
-            (new EventDomainObject())->setId(14)->setOrganizerId(8)->setTitle('Le concert des générations')
+            (new EventDomainObject)->setId(14)->setOrganizerId(8)->setTitle('Le concert des générations')
                 ->setStartDate('2026-11-07 15:00:00')->setTimezone('Indian/Mayotte'),
             'Anicka',
             $link,
         );
 
         $this->assertStringStartsWith('https://mayottela1ere.fr/venue/14/a_7Kp2Qx?code=', $link);
-        $this->assertStringContainsString($link, $sms);
-        $this->assertStringNotContainsString('ticket.picha.fr', $sms);
+        $this->assertStringEndsWith('Gérer ma venue : lien ci-dessous', $sms);
+        $this->assertSame($link, (new SmsReminderMessageRenderer)->linkMessage(SmsRegistrationConfirmationService::defaultMessage(), $link));
     }
 
     public function test_returns_null_for_an_unknown_attendee(): void

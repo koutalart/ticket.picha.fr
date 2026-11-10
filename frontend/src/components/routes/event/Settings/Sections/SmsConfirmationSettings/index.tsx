@@ -13,7 +13,7 @@ import {useGetEvent} from "../../../../../../queries/useGetEvent.ts";
 import {useGetSmsSettings} from "../../../../../../queries/useGetSmsSettings.ts";
 import {publicBaseUrl} from "../../../../../../utilites/urlHelper.ts";
 import {countSmsSegments} from "../../../../organizer/Sms/smsSegments.ts";
-import {renderSmsTemplate} from "./renderSmsTemplate.ts";
+import {renderSmsTemplate, SAMPLE_SHORT_LINK_PATH, smsLinkMessage} from "./renderSmsTemplate.ts";
 import {useOrganizerCustomerAddressForm} from "../../../../../../hooks/useOrganizerCustomerAddressForm.ts";
 import {defaultSmsConfirmationMessage} from "../../../../../../utilites/customerSmsDefaults.ts";
 import classes from "./SmsConfirmationSettings.module.scss";
@@ -82,7 +82,9 @@ export const SmsConfirmationSettings = () => {
         timezone: event?.timezone,
         personalLink: linkAvailable ? `${frontendUrl}/venue/${eventId}/a_7Kp2QxR9mWvLz?code=${SAMPLE_CODE}` : null,
     });
-    const sample = countSmsSegments(preview);
+    const previewLink = smsLinkMessage(message, linkAvailable ? `${frontendUrl}${SAMPLE_SHORT_LINK_PATH}` : null);
+    const textSample = countSmsSegments(preview);
+    const sample = {...textSample, segments: textSample.segments + (previewLink ? 1 : 0)};
 
     const insertVariable = (variable: string) => {
         const textarea = textareaRef.current;
@@ -196,6 +198,7 @@ export const SmsConfirmationSettings = () => {
                         <div className={classes.preview}>
                             <Text size="sm" fw={600}>{t`Preview`}</Text>
                             <div className={classes.bubble}>{preview}</div>
+                            {previewLink && <div className={classes.bubble}>{previewLink}</div>}
                             <Text size="xs" c="dimmed">
                                 {sample.segments > 1
                                     ? t`${sample.characters} characters, ${sample.segments} SMS per recipient`

@@ -13,7 +13,7 @@ import {useGetEvent} from "../../../../../../queries/useGetEvent.ts";
 import {useGetSmsSettings} from "../../../../../../queries/useGetSmsSettings.ts";
 import {getConfig} from "../../../../../../utilites/config.ts";
 import {countSmsSegments} from "../../../../organizer/Sms/smsSegments.ts";
-import {renderSmsTemplate} from "../SmsConfirmationSettings/renderSmsTemplate.ts";
+import {renderSmsTemplate, SAMPLE_SHORT_LINK_PATH, smsLinkMessage} from "../SmsConfirmationSettings/renderSmsTemplate.ts";
 import classes from "../SmsConfirmationSettings/SmsConfirmationSettings.module.scss";
 import {useOrganizerCustomerAddressForm} from "../../../../../../hooks/useOrganizerCustomerAddressForm.ts";
 import {defaultSmsCancellationMessage} from "../../../../../../utilites/customerSmsDefaults.ts";
@@ -85,7 +85,9 @@ export const SmsCancellationSettings = () => {
         timezone: event?.timezone,
         personalLink: attendanceResponseEnabled ? `${frontendUrl}/venue/${eventId}/a_7Kp2QxR9mWvLz?code=${SAMPLE_CODE}` : null,
     });
-    const sample = countSmsSegments(preview);
+    const previewLink = smsLinkMessage(message, attendanceResponseEnabled ? `${frontendUrl}${SAMPLE_SHORT_LINK_PATH}` : null);
+    const textSample = countSmsSegments(preview);
+    const sample = {...textSample, segments: textSample.segments + (previewLink ? 1 : 0)};
 
     const insertVariable = (variable: string) => {
         const textarea = textareaRef.current;
@@ -220,6 +222,7 @@ export const SmsCancellationSettings = () => {
                         <div className={classes.preview}>
                             <Text size="sm" fw={600}>{t`Preview`}</Text>
                             <div className={classes.bubble}>{preview}</div>
+                            {previewLink && <div className={classes.bubble}>{previewLink}</div>}
                             <Text size="xs" c="dimmed">
                                 {sample.segments > 1
                                     ? t`${sample.characters} characters, ${sample.segments} SMS per recipient`

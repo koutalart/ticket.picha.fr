@@ -23,6 +23,7 @@ use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderAudienceDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderPreviewDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderRecipientDTO;
@@ -35,6 +36,8 @@ class SmsReminderSchedulingService
 {
     public const SEND_AT_FORMAT = 'Y-m-d H:i';
 
+    private const SAMPLE_SHORT_ID = 'a1b2c3d';
+
     public function __construct(
         private readonly OrganizerRepositoryInterface $organizerRepository,
         private readonly EventRepositoryInterface $eventRepository,
@@ -44,6 +47,7 @@ class SmsReminderSchedulingService
         private readonly SmsReminderMessageRenderer $renderer,
         private readonly SmsReminderPersonalLinkProviderInterface $linkProvider,
         private readonly DatabaseManager $databaseManager,
+        private readonly PublicBaseUrlResolver $publicBaseUrlResolver,
     ) {}
 
     /**
@@ -233,9 +237,14 @@ class SmsReminderSchedulingService
         $first = $audience->recipients[0] ?? null;
         $sampleLink = $first !== null ? $this->linkProvider->findForAttendee($first->attendeeId) : null;
 
+        $sampleLinkMessage = $this->renderer->linkMessage($message, $sampleLink) !== null
+            ? $this->publicBaseUrlResolver->forOrganizerId($event->getOrganizerId()).'/q/'.self::SAMPLE_SHORT_ID
+            : null;
+
         $smsCount = 0;
         foreach ($audience->recipients as $recipient) {
-            $smsCount += SmsSegmentCounter::count($this->renderer->render($message, $event, $recipient->firstName, $sampleLink));
+            $smsCount += SmsSegmentCounter::count($this->renderer->render($message, $event, $recipient->firstName, $sampleLink))
+                + ($sampleLinkMessage !== null ? 1 : 0);
         }
 
         return new SmsReminderPreviewDTO(
@@ -249,6 +258,7 @@ class SmsReminderSchedulingService
             personalLinkAvailable: $sampleLink !== null,
             eventTimezone: $event->getTimezone() ?: 'UTC',
             scheduledAt: $scheduledAt,
+            sampleLinkMessage: $sampleLinkMessage,
         );
     }
 

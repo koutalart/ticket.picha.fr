@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services\Domain\Sms\CancellationConfirmation;
 
 use HiEvents\DomainObjects\AttendeeDomainObject;
+use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 use HiEvents\DomainObjects\Enums\SmsCancellationSource;
 use HiEvents\DomainObjects\Enums\SmsMessageAuthorType;
 use HiEvents\DomainObjects\EventDomainObject;
@@ -30,6 +31,8 @@ use HiEvents\Services\Domain\Sms\DTO\SmsReminderAttendeeDTO;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderMessageRenderer;
 use HiEvents\Services\Domain\Sms\Reminder\SmsReminderPersonalLinkProviderInterface;
 use HiEvents\Services\Domain\Sms\SmsSendService;
+use HiEvents\Services\Domain\Sms\SmsShortLinkService;
+use HiEvents\Services\Domain\Sms\SmsWithLinkSender;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -37,7 +40,6 @@ use Mockery\MockInterface;
 use Psr\Log\NullLogger;
 use Tests\TestCase;
 use Tests\Unit\Support\StaticCustomerLocaleResolver;
-use HiEvents\DomainObjects\Enums\CustomerAddressForm;
 
 class SmsCancellationConfirmationServiceTest extends TestCase
 {
@@ -73,6 +75,14 @@ class SmsCancellationConfirmationServiceTest extends TestCase
 
     /** @var SendSmsDTO[] */
     private array $sent = [];
+
+    /** @var SendSmsDTO[] link SMS */
+    private array $links = [];
+
+    /** @var string[] every SMS content, in sending order */
+    private array $outbox = [];
+
+    private SmsShortLinkService|MockInterface $shortLinkService;
 
     /** @var array<int, array> */
     private array $claims = [];
@@ -149,10 +159,21 @@ class SmsCancellationConfirmationServiceTest extends TestCase
         })->byDefault();
 
         $this->sendService->shouldReceive('send')->andReturnUsing(function (SendSmsDTO $sms) {
+            $this->outbox[] = $sms->content;
+            if (str_starts_with($sms->content, 'https://ticket.picha.fr/q/')) {
+                $this->links[] = $sms;
+
+                return (new SmsMessageDomainObject)->setId(800 + count($this->links));
+            }
             $this->sent[] = $sms;
 
             return (new SmsMessageDomainObject)->setId(900 + count($this->sent));
         })->byDefault();
+
+        $this->shortLinkService = Mockery::mock(SmsShortLinkService::class);
+        $this->shortLinkService->shouldReceive('shorten')->andReturnUsing(
+            fn (EventDomainObject $event, string $url) => 'https://ticket.picha.fr/q/'.(preg_match('~\?c=(\w+)~', $url, $m) ? $m[1] : 'x')
+        )->byDefault();
 
         $this->service = new SmsCancellationConfirmationService(
             $this->attendeeRepository,
@@ -164,9 +185,10 @@ class SmsCancellationConfirmationServiceTest extends TestCase
             $this->confirmationRepository,
             new SmsReminderMessageRenderer,
             $this->linkProvider,
-            $this->sendService,
+            new SmsWithLinkSender($this->sendService, new NullLogger),
             new NullLogger,
             $this->customerLocaleResolver = new StaticCustomerLocaleResolver,
+            $this->shortLinkService,
         );
     }
 
@@ -180,10 +202,11 @@ class SmsCancellationConfirmationServiceTest extends TestCase
         $this->assertSame(self::ORGANIZER_ID, $this->sent[0]->organizerId);
         $this->assertSame('+262639250206', $this->sent[0]->phone);
         $this->assertSame(SmsMessageAuthorType::AUTOMATIC, $this->sent[0]->authorType);
-        $this->assertSame(
-            "C'est noté Awa, votre inscription à Mayotte La 1ère en live est annulée. Pour revenir : https://ticket.picha.fr/event/13/live?c=code1\n\nKultur'm via PICHA Ticket",
-            $this->sent[0]->content,
-        );
+        $this->assertSame([
+            "C'est noté Awa, votre inscription à Mayotte La 1ère en live est annulée. Pour revenir : lien ci-dessous\n\nKultur'm via PICHA Ticket",
+            'https://ticket.picha.fr/q/code1',
+        ], $this->outbox);
+        $this->assertSame('+262639250206', $this->links[0]->phone);
         $this->assertSame([
             'organizer_id' => self::ORGANIZER_ID,
             'event_id' => self::EVENT_ID,
@@ -208,6 +231,7 @@ class SmsCancellationConfirmationServiceTest extends TestCase
             $this->sent[0]->content,
         );
         $this->assertStringNotContainsString('http', $this->sent[0]->content);
+        $this->assertSame([], $this->links);
     }
 
     public function test_uses_the_generic_default_message_when_the_text_is_empty(): void
@@ -312,8 +336,8 @@ class SmsCancellationConfirmationServiceTest extends TestCase
         $this->assertSame(2, $result->sent);
         $this->assertSame([2, 3], array_column($this->claims, 'attendee_id'));
         $this->assertSame(['ORGANIZER', 'ORGANIZER'], array_column($this->claims, 'cancelled_by'));
-        $this->assertStringContainsString('?c=code2', $this->sent[0]->content);
-        $this->assertStringContainsString('?c=code3', $this->sent[1]->content);
+        $this->assertSame('https://ticket.picha.fr/q/code2', $this->outbox[1]);
+        $this->assertSame('https://ticket.picha.fr/q/code3', $this->outbox[3]);
     }
 
     public function test_an_order_that_is_not_cancelled_receives_nothing(): void
@@ -376,6 +400,7 @@ class SmsCancellationConfirmationServiceTest extends TestCase
         $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings(true, self::TEMPLATE, true));
         $this->sendService->shouldReceive('send')->once()->ordered()->andThrow(new SmsGatewayException('Téléphone hors ligne'));
         $this->sendService->shouldReceive('send')->once()->ordered()->andReturn((new SmsMessageDomainObject)->setId(777));
+        $this->sendService->shouldReceive('send')->once()->ordered()->with(Mockery::on(fn (SendSmsDTO $sms) => $sms->content === 'https://ticket.picha.fr/q/code2'))->andReturn((new SmsMessageDomainObject)->setId(778));
         $this->cancelledOrder([$this->attendee(1, false), $this->attendee(2, false)]);
         $this->phones([1, 2], [
             $this->withPhone(1, '+262639250206', 'Awa'),
@@ -455,6 +480,7 @@ class SmsCancellationConfirmationServiceTest extends TestCase
         $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings(true, self::TEMPLATE, true));
         $this->sendService->shouldReceive('send')->once()->ordered()->andThrow(new SmsGatewayException('Téléphone hors ligne'));
         $this->sendService->shouldReceive('send')->once()->ordered()->andReturn((new SmsMessageDomainObject)->setId(777));
+        $this->sendService->shouldReceive('send')->once()->ordered()->with(Mockery::on(fn (SendSmsDTO $sms) => $sms->content === 'https://ticket.picha.fr/q/code2'))->andReturn((new SmsMessageDomainObject)->setId(778));
         $this->cancelledOrder([$this->attendee(1, false), $this->attendee(2, false)]);
         $this->phones([1, 2], [
             $this->withPhone(1, '+262639250206', 'Awa'),

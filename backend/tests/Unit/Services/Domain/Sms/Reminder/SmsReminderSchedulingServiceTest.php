@@ -13,6 +13,7 @@ use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRecipientRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsCampaignRepositoryInterface;
+use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderAudienceDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderRecipientDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsReminderRequestDTO;
@@ -72,6 +73,7 @@ class SmsReminderSchedulingServiceTest extends TestCase
             new SmsReminderMessageRenderer,
             $this->linkProvider,
             $databaseManager,
+            Mockery::mock(PublicBaseUrlResolver::class)->shouldReceive('forOrganizerId')->andReturn('https://mayottela1ere.fr')->getMock(),
         );
     }
 
@@ -112,6 +114,8 @@ class SmsReminderSchedulingServiceTest extends TestCase
 
         $this->assertSame(4, $preview->smsCount);
         $this->assertTrue($preview->personalLinkAvailable);
+        $this->assertStringNotContainsString('http', (string) $preview->sampleMessage);
+        $this->assertSame('https://mayottela1ere.fr/q/a1b2c3d', $preview->sampleLinkMessage);
     }
 
     public function test_schedules_a_reminder_with_its_recipients(): void

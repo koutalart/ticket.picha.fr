@@ -26,6 +26,8 @@ use HiEvents\Services\Domain\Sms\Reminder\SmsReminderSchedulingService;
 use HiEvents\Services\Domain\Sms\SmsFileAlertService;
 use HiEvents\Services\Domain\Sms\SmsFileStatusService;
 use HiEvents\Services\Domain\Sms\SmsSendService;
+use HiEvents\Services\Domain\Sms\SmsShortLinkService;
+use HiEvents\Services\Domain\Sms\SmsWithLinkSender;
 use HiEvents\Services\Infrastructure\SmsFile\SmsFileClient;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Support\Carbon;
@@ -51,6 +53,8 @@ class SmsReminderDispatchServiceTest extends TestCase
 
     private SmsSendService|MockInterface $sendService;
 
+    private SmsShortLinkService|MockInterface $shortLinkService;
+
     private SmsReminderDispatchService $service;
 
     /** @var array<int, array{0: array, 1: array}> */
@@ -75,6 +79,7 @@ class SmsReminderDispatchServiceTest extends TestCase
         $this->audienceService = Mockery::mock(SmsReminderAudienceService::class);
         $this->linkProvider = Mockery::mock(SmsReminderPersonalLinkProviderInterface::class);
         $this->sendService = Mockery::mock(SmsSendService::class);
+        $this->shortLinkService = Mockery::mock(SmsShortLinkService::class);
 
         $this->linkProvider->shouldReceive('findForAttendee')->andReturnNull()->byDefault();
         $this->eventRepository->shouldReceive('findFirstWhere')->with(['id' => 8])->andReturn(
@@ -152,6 +157,8 @@ class SmsReminderDispatchServiceTest extends TestCase
             $fileClient,
             Mockery::mock(SmsFileStatusService::class),
             Mockery::mock(SmsFileAlertService::class),
+            new SmsWithLinkSender($this->sendService, new NullLogger),
+            $this->shortLinkService,
         );
     }
 
@@ -202,6 +209,57 @@ class SmsReminderDispatchServiceTest extends TestCase
         [$done, $doneWhere] = end($this->campaignUpdates);
         $this->assertSame('SENT', $done['status']);
         $this->assertSame(['id' => 70, 'status' => 'PROCESSING'], $doneWhere);
+    }
+
+    public function test_the_personal_link_goes_alone_in_a_second_sms_right_after_the_text(): void
+    {
+        $campaign = $this->campaign()->setMessage("{prenom}, c'est demain ! {evenement} à {heure}. Gérer ma venue : {lien}");
+        $this->expectCampaigns(due: [], processing: [$campaign]);
+        $this->givenRecipients([
+            $this->recipient(101, '+262639123456', 11),
+            $this->recipient(102, '+262639000002', 12),
+        ]);
+        $this->linkProvider->shouldReceive('findForAttendee')->andReturnUsing(
+            fn (int $attendeeId) => 'https://mayottela1ere.fr/venue/8/a_'.$attendeeId.'?code=x'
+        );
+        $this->shortLinkService->shouldReceive('shorten')->twice()->andReturnUsing(
+            fn (EventDomainObject $event, string $url) => 'https://mayottela1ere.fr/q/'.md5($url)
+        );
+
+        $sent = [];
+        $this->sendService->shouldReceive('send')->times(4)->andReturnUsing(function (SendSmsDTO $sms) use (&$sent) {
+            $sent[] = $sms;
+
+            return (new SmsMessageDomainObject)->setId(count($sent))->setProviderMessageId('msg-'.count($sent));
+        });
+
+        $result = $this->service->dispatchDue();
+
+        $this->assertSame(2, $result->sent);
+        $this->assertSame([
+            "Awa, c'est demain ! Konka Wawa à 20h00. Gérer ma venue : lien ci-dessous",
+            'https://mayottela1ere.fr/q/'.md5('https://mayottela1ere.fr/venue/8/a_11?code=x'),
+            "Fatima, c'est demain ! Konka Wawa à 20h00. Gérer ma venue : lien ci-dessous",
+            'https://mayottela1ere.fr/q/'.md5('https://mayottela1ere.fr/venue/8/a_12?code=x'),
+        ], array_map(fn (SendSmsDTO $sms) => $sms->content, $sent));
+        $this->assertSame(['+262639123456', '+262639123456', '+262639000002', '+262639000002'], array_map(fn (SendSmsDTO $sms) => $sms->phone, $sent));
+        $this->assertSame(SmsMessageAuthorType::CAMPAIGN, $sent[1]->authorType);
+        $this->assertSame(['provider_message_id' => 'msg-1'], $this->recipientUpdates[101]);
+    }
+
+    public function test_the_link_sms_is_not_sent_when_the_text_fails(): void
+    {
+        $campaign = $this->campaign()->setMessage('Rappel {evenement}. Gérer ma venue : {lien}');
+        $this->expectCampaigns(due: [], processing: [$campaign]);
+        $this->givenRecipients([$this->recipient(101, '+262639123456', 11)]);
+        $this->linkProvider->shouldReceive('findForAttendee')->andReturn('https://ticket.picha.fr/venue/8/a_11?code=x');
+        $this->shortLinkService->shouldReceive('shorten')->andReturn('https://ticket.picha.fr/q/abcdefg');
+        $this->sendService->shouldReceive('send')->once()->andThrow(new SmsGatewayException('Phone offline'));
+
+        $result = $this->service->dispatchDue();
+
+        $this->assertSame(1, $result->failed);
+        $this->assertSame('FAILED', $this->recipientStatuses[101]);
     }
 
     public function test_never_sends_to_a_recipient_already_claimed(): void
@@ -338,6 +396,8 @@ class SmsReminderDispatchServiceTest extends TestCase
             Mockery::mock(SmsFileClient::class)->shouldReceive('isEnabled')->andReturnFalse()->getMock(),
             Mockery::mock(SmsFileStatusService::class),
             Mockery::mock(SmsFileAlertService::class),
+            new SmsWithLinkSender($this->sendService, new NullLogger),
+            $this->shortLinkService,
         );
     }
 

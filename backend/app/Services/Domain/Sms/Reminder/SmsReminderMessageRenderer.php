@@ -19,8 +19,16 @@ class SmsReminderMessageRenderer
      */
     private const LABELLED_LINK_PATTERN = '/[^.!?\n:]*:[ \t]*\{\s*lien\s*\}/iu';
 
+    private const LINK_AFTER_LABEL_PATTERN = '/:([ \t]*)\{\s*lien\s*\}/iu';
+
+    private const LINK_PATTERN = '/\{\s*lien\s*\}/iu';
+
     private const LOCALE = 'fr';
 
+    /**
+     * The text of the SMS, never the link itself: the link goes alone in the next SMS (see linkMessage).
+     * With a link, its label says it follows ("Gérer ma venue : lien ci-dessous"); without one, the label goes too.
+     */
     public function render(string $template, EventDomainObject $event, ?string $firstName, ?string $personalLink): string
     {
         $start = $this->eventStart($event);
@@ -29,18 +37,31 @@ class SmsReminderMessageRenderer
             'evenement' => trim($event->getTitle()),
             'date' => $start?->isoFormat('dddd D MMMM') ?? '',
             'heure' => $start?->format('H\hi') ?? '',
-            'lien' => trim((string) $personalLink),
         ];
 
-        if ($values['lien'] === '') {
+        if (trim((string) $personalLink) === '') {
             $template = preg_replace(self::LABELLED_LINK_PATTERN, '', $template) ?? $template;
+        } else {
+            $template = preg_replace(self::LINK_AFTER_LABEL_PATTERN, ':$1'.__('link below', [], self::LOCALE), $template) ?? $template;
         }
+
+        $template = preg_replace(self::LINK_PATTERN, '', $template) ?? $template;
 
         $rendered = preg_replace_callback(self::PATTERN, function (array $match) use ($values) {
             return $values[$this->key($match[1])] ?? $match[0];
         }, $template) ?? $template;
 
         return $this->tidy($rendered);
+    }
+
+    /**
+     * The second SMS: the link alone, when the template asks for it and there is one.
+     */
+    public function linkMessage(string $template, ?string $personalLink): ?string
+    {
+        $link = trim((string) $personalLink);
+
+        return $link !== '' && $this->usesPersonalLink($template) ? $link : null;
     }
 
     public function usesPersonalLink(string $template): bool

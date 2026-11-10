@@ -161,7 +161,10 @@ export const ReminderFormModal = ({organizerId, reminder, onClose}: ReminderForm
 
     const preview = previewMutation.data?.data;
     const usesLink = form.values.message.includes(PERSONAL_LINK);
-    const sample = preview?.sample_message ? countSmsSegments(preview.sample_message) : null;
+    const textSample = preview?.sample_message ? countSmsSegments(preview.sample_message) : null;
+    const sample = textSample
+        ? {...textSample, segments: textSample.segments + (preview?.sample_link_message ? 1 : 0)}
+        : null;
     const activeCount = formatNumber(preview?.active_attendees_count ?? 0);
     const withoutPhoneCount = formatNumber(preview?.without_valid_phone_count ?? 0);
     const optedOutCount = formatNumber(preview?.opted_out_count ?? 0);
@@ -261,6 +264,9 @@ export const ReminderFormModal = ({organizerId, reminder, onClose}: ReminderForm
                                 <>
                                     <Text size="sm" fw={600} mt="sm">{t`Example`}</Text>
                                     <div className={classes.reminderSample}>{preview.sample_message}</div>
+                                    {preview.sample_link_message && (
+                                        <div className={classes.reminderSample}>{preview.sample_link_message}</div>
+                                    )}
                                     {sample && (
                                         <Text size="xs" c="dimmed" mt={4}>
                                             {sample.segments > 1

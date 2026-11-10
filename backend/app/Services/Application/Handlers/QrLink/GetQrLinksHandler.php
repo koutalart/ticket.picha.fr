@@ -29,6 +29,7 @@ class GetQrLinksHandler
                 where: [
                     QrLinkDomainObjectAbstract::ORGANIZER_ID => $organizerId,
                     [QrLinkDomainObjectAbstract::SMS_CAMPAIGN_ID, 'null', null],
+                    QrLinkDomainObjectAbstract::IS_AUTOMATIC_SMS_LINK => false,
                 ],
                 orderAndDirections: [new OrderAndDirection(QrLinkDomainObjectAbstract::CREATED_AT, 'desc')],
             );
