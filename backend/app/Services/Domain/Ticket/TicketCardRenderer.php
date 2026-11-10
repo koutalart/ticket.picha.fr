@@ -52,6 +52,12 @@ class TicketCardRenderer
 
     private const MIN_SIZE = 16;
 
+    private const BLOCK_MARGIN = 44;
+
+    private const GAP_RATIO = 0.5;
+
+    private const BLOCK_OFFSET = 4;
+
     private const STATUS_COLOR = '#c0392b';
 
     private const JPEG_QUALITY = 90;
@@ -98,7 +104,7 @@ class TicketCardRenderer
         $canvas->drawImage($separator);
 
         $textX = $separatorX + self::TEXT_GAP;
-        $this->lines($canvas, $ticket, $design, $textX, $y0 + self::TEXT_MARGIN, $x1 - self::TEXT_MARGIN - $textX);
+        $this->lines($canvas, $ticket, $design, $textX, $y0, $y1 - $y0, $x1 - self::TEXT_MARGIN - $textX);
 
         $canvas->setImageFormat('jpeg');
         $canvas->setImageCompressionQuality(self::JPEG_QUALITY);
@@ -200,7 +206,7 @@ class TicketCardRenderer
         $canvas->drawImage($draw);
     }
 
-    private function lines(Imagick $canvas, TicketDataDTO $ticket, TicketCardDesignDTO $design, int $x, int $y, int $maxWidth): void
+    private function lines(Imagick $canvas, TicketDataDTO $ticket, TicketCardDesignDTO $design, int $x, int $frameY, int $frameHeight, int $maxWidth): void
     {
         $bold = $this->font($design->disk, $design->fontBoldPath, self::FALLBACK_BOLD_FONT);
         $regular = $this->font($design->disk, $design->fontRegularPath, self::FALLBACK_REGULAR_FONT);
@@ -231,11 +237,16 @@ class TicketCardRenderer
             $footer,
         ];
 
-        foreach ($lines as [$text, $font, $size, $color, $gap]) {
-            if ($text === '') {
-                continue;
-            }
+        $lines = array_values(array_filter($lines, static fn (array $line) => $line[0] !== ''));
+        $blockHeight = array_sum(array_map(static fn (array $line) => $line[2] + $line[4], $lines));
+        $scale = $blockHeight > 0 ? min(1, ($frameHeight - self::BLOCK_MARGIN) / $blockHeight) : 1;
+        $lines = array_map(static fn (array $line) => [
+            $line[0], $line[1], (int) round($line[2] * $scale), $line[3], (int) round($line[4] * $scale * self::GAP_RATIO),
+        ], $lines);
+        $blockHeight = array_sum(array_map(static fn (array $line) => $line[2] + $line[4], $lines));
+        $y = $frameY + intdiv($frameHeight - $blockHeight, 2) - self::BLOCK_OFFSET;
 
+        foreach ($lines as [$text, $font, $size, $color, $gap]) {
             $y += $gap;
             while ($size > self::MIN_SIZE && $this->textWidth($canvas, $text, $font, $size) > $maxWidth) {
                 $size--;
