@@ -2,7 +2,7 @@ import {t} from "@lingui/macro";
 import classes from "./EventFactSummary.module.scss";
 import {Event} from "../../../types.ts";
 import {formatEventDateRange} from "../../../utilites/dates.ts";
-import {formatAddress, isAddressSet} from "../../../utilites/addressUtilities.ts";
+import {formatAddress, isAddressSet, joinAddressParts} from "../../../utilites/addressUtilities.ts";
 import {formatCurrency} from "../../../utilites/currency.ts";
 import {getLowestOfferPrice, isEventFree} from "../../../utilites/eventStructuredData.ts";
 import {isEventEnded} from "../../../utilites/eventEnded.ts";
@@ -14,9 +14,7 @@ interface EventFactSummaryProps {
 
 export const EventFactSummary = ({event, eventUrl}: EventFactSummaryProps) => {
     const location = event.settings?.location_details;
-    const venue = [location?.venue_name, isAddressSet(location) ? formatAddress(location!) : null]
-        .filter(Boolean)
-        .join(", ");
+    const venue = joinAddressParts([location?.venue_name, isAddressSet(location) ? formatAddress(location!) : null]);
     const minPrice = getLowestOfferPrice(event);
     const dateRange = formatEventDateRange(event.start_date, event.end_date, event.timezone);
     const organizerName = event.organizer?.name;

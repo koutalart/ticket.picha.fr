@@ -6,6 +6,7 @@ import {Event, Product, ProductPrice, SCHEMA_EVENT_TYPES, SchemaEventType} from 
 import {withIncludedRefundProtection} from "./refundProtection.ts";
 import {getOrganizerSocialProfiles} from "./organizerSocialLinks.ts";
 import {isEventEnded} from "./eventEnded.ts";
+import {joinAddressParts} from "./addressUtilities.ts";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -178,7 +179,7 @@ const buildLocation = (event: Event, eventUrl: string): JsonLd | undefined => {
 
     const address = compact({
         "@type": "PostalAddress",
-        streetAddress: [details.address_line_1, details.address_line_2].filter(Boolean).join(", ") || undefined,
+        streetAddress: joinAddressParts([details.address_line_1, details.address_line_2]) || undefined,
         addressLocality: details.city,
         addressRegion: details.state_or_region,
         postalCode: details.zip_or_postal_code,

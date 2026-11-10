@@ -10,19 +10,27 @@ class AddressHelper
             return '';
         }
 
-        $addressParts = [
+        return self::joinParts([
             $address['venue_name'] ?? null,
             $address['address_line_1'] ?? null,
             $address['address_line_2'] ?? null,
             $address['city'] ?? null,
             $address['state_or_region'] ?? null,
             $address['zip_or_postal_code'] ?? null,
-            $address['country'] ?? null
-        ];
+            $address['country'] ?? null,
+        ]);
+    }
 
-        $filteredAddressParts = array_filter($addressParts, static fn($part) => !is_null($part) && $part !== '');
+    /**
+     * @param  array<int, mixed>  $parts
+     */
+    public static function joinParts(array $parts): string
+    {
+        $cleaned = array_map(
+            static fn ($part) => is_scalar($part) ? trim((string) $part, " \t\n\r\0\x0B,") : '',
+            $parts,
+        );
 
-        return implode(', ', $filteredAddressParts);
+        return implode(', ', array_filter($cleaned, static fn (string $part) => $part !== ''));
     }
 }
-

@@ -259,6 +259,24 @@ class SmsTeamAndOrganizerAssistantTest extends TestCase
         Mail::assertNotQueued(PlatformSupervisionAlertMail::class);
     }
 
+    public function test_a_tapback_reaction_from_the_organizer_gets_no_answer_and_is_only_recorded(): void
+    {
+        $this->arrmSettings->update(['organizer_assistant_enabled' => true, 'organizer_assistant_replies_to_copy' => true]);
+        $this->team($this->arrmId, self::RESPONSABLE, OrganizerTeamContactRole::ORGANIZER);
+        $this->team($this->arrmId, self::COPY, OrganizerTeamContactRole::COPY);
+        $this->claude->shouldNotReceive('askWithUsage');
+
+        $this->receive(self::RESPONSABLE, 'A ajouté un « J\'adore » à « Bonjour Roukia, c\'est Anicka… »', 'in-1');
+        $this->receive(self::RESPONSABLE, 'Liked “See you on Saturday”', 'in-2');
+        $this->receive(self::COPY, 'A aimé « Les inscriptions sont ouvertes »', 'in-3');
+
+        $this->assertSame([], $this->sent);
+        $this->assertSame(3, SmsMessage::query()->whereIn('provider_message_id', ['in-1', 'in-2', 'in-3'])->where('direction', 'INBOUND')->count());
+        $this->assertSame(0, SmsMessage::query()->whereNotNull('auto_reply_to_message_id')->count());
+        $this->assertSame(0, SmsConversation::query()->where('organizer_id', $this->arrmId)->where('status', 'NEEDS_HUMAN')->count());
+        Mail::assertNotQueued(PlatformSupervisionAlertMail::class);
+    }
+
     public function test_needs_human_sends_a_holding_reply_and_alerts_the_supervision_at_once(): void
     {
         $this->arrmSettings->update(['organizer_assistant_enabled' => true]);

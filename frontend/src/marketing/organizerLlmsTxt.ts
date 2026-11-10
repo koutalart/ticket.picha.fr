@@ -2,6 +2,7 @@
 import {Event, Organizer} from "../types.ts";
 import {getEventSeoName, getLowestOfferPrice, isEventFree, stripEmojis} from "../utilites/eventStructuredData.ts";
 import {getOrganizerSocialProfiles} from "../utilites/organizerSocialLinks.ts";
+import {joinAddressParts} from "../utilites/addressUtilities.ts";
 
 export interface OrganizerLlmsTxtInput {
     origin: string;
@@ -93,12 +94,12 @@ const eventLocation = (event: Event): string | null => {
     if (!details) {
         return null;
     }
-    const parts = [
+    const place = joinAddressParts([
         details.venue_name,
         details.address_line_1,
-        details.zip_or_postal_code && details.city ? `${details.zip_or_postal_code} ${details.city}` : details.city,
-    ].filter(Boolean);
-    return parts.length ? cleanPublicText(parts.join(", ")) : null;
+        details.city?.trim() ? [details.zip_or_postal_code, details.city].map(part => (part ?? '').trim()).filter(Boolean).join(' ') : null,
+    ]);
+    return place ? cleanPublicText(place) : null;
 };
 
 const isIndexable = (event: Event) =>

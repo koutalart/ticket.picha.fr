@@ -131,6 +131,7 @@ class EventAssistantKnowledgeTest extends TestCase
         $this->assertFalse(LiveChatQuestionService::isAnswer('ok'));
         $this->assertFalse(LiveChatQuestionService::isAnswer('Merci !'));
         $this->assertFalse(LiveChatQuestionService::isAnswer('👍'));
+        $this->assertFalse(LiveChatQuestionService::isAnswer('A aimé « Le D joue-t-il ce soir ? »'));
         $this->assertTrue(LiveChatQuestionService::isAnswer('non'));
         $this->assertTrue(LiveChatQuestionService::isAnswer('Il est remplacé par Terrell'));
     }
