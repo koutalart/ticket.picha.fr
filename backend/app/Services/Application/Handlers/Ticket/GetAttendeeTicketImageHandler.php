@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Helper\CustomerLocale;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
+use HiEvents\Services\Domain\Ticket\DTO\TicketImageDTO;
 use HiEvents\Services\Domain\Ticket\TicketDataFactory;
 use HiEvents\Services\Domain\Ticket\TicketImageService;
 
@@ -22,7 +23,7 @@ class GetAttendeeTicketImageHandler
     /**
      * @throws ResourceNotFoundException
      */
-    public function handle(int $eventId, string $attendeeShortId): string
+    public function handle(int $eventId, string $attendeeShortId): TicketImageDTO
     {
         $attendee = $this->attendeeRepository->findFirstWhere([
             AttendeeDomainObjectAbstract::SHORT_ID => $attendeeShortId,
@@ -37,19 +38,19 @@ class GetAttendeeTicketImageHandler
         app()->setLocale(CustomerLocale::get());
 
         try {
-            return $this->ticketImageService->png($this->ticketDataFactory->forAttendee($attendee));
+            return $this->ticketImageService->image($this->ticketDataFactory->forAttendee($attendee));
         } finally {
             app()->setLocale($previousLocale);
         }
     }
 
-    public function preview(int $eventId): string
+    public function preview(int $eventId): TicketImageDTO
     {
         $previousLocale = app()->getLocale();
         app()->setLocale(CustomerLocale::get());
 
         try {
-            return $this->ticketImageService->png($this->ticketDataFactory->forPreview($eventId));
+            return $this->ticketImageService->image($this->ticketDataFactory->forPreview($eventId));
         } finally {
             app()->setLocale($previousLocale);
         }

@@ -29,5 +29,6 @@ class TicketDataDTO extends BaseDataObject
         public readonly string $status = self::STATUS_VALID,
         public readonly ?string $footerDomain = null,
         public readonly ?string $footerLogo = null,
+        public readonly ?TicketCardDesignDTO $cardDesign = null,
     ) {}
 }
