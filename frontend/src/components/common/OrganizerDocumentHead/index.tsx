@@ -1,5 +1,6 @@
 /* eslint-disable lingui/no-unlocalized-strings */
 import {Helmet} from "react-helmet-async";
+import {t} from "@lingui/macro";
 import {Organizer} from "../../../types";
 import {organizerCanonicalUrl, organizerLlmsTxtUrl} from "../../../utilites/urlHelper.ts";
 import {getOrganizerSocialProfiles} from "../../../utilites/organizerSocialLinks.ts";
@@ -11,8 +12,9 @@ interface OrganizerDocumentHeadProps {
 
 export const OrganizerDocumentHead = ({organizer}: OrganizerDocumentHeadProps) => {
     const organizerSettings = organizer.settings;
-    const title = organizerSettings?.seo_title || `${organizer.name} - Events`;
-    const description = organizerSettings?.seo_description || `Discover upcoming events by ${organizer.name}.`;
+    const organizerName = organizer.name;
+    const title = organizerSettings?.seo_title || t`${organizerName} - Events`;
+    const description = organizerSettings?.seo_description || t`Discover upcoming events by ${organizerName}.`;
     const keywords = organizerSettings?.seo_keywords || `${organizer.name}, events, tickets, concerts, sell tickets online`;
     const logo = organizer.images?.find(img => img.type === 'ORGANIZER_LOGO');
     const logoImage = logo?.url;

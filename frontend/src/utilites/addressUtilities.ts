@@ -1,5 +1,12 @@
 import {VenueAddress} from "../types.ts";
 
+const cleanAddressPart = (part?: string | null) => (part ?? '').replace(/^[\s,]+|[\s,]+$/g, '');
+
+export const joinAddressParts = (parts: (string | null | undefined)[]) => parts
+    .map(cleanAddressPart)
+    .filter(part => part !== '')
+    .join(', ');
+
 export const isAddressSet = (address?: VenueAddress) => {
     if (!address) return false;
 
@@ -12,34 +19,24 @@ export const isAddressSet = (address?: VenueAddress) => {
         'country'
     ];
 
-    return addressFields.some(field => address[field])
+    return addressFields.some(field => cleanAddressPart(address[field]) !== '')
 }
 
 export const formatAddress = (address: VenueAddress) => {
-    const addressLines = [
+    return joinAddressParts([
         address.address_line_1,
         address.address_line_2,
         address.city,
         address.state_or_region,
         address.zip_or_postal_code,
         address.country
-    ];
-
-    return addressLines.filter((line) => line).join(', ');
+    ]);
 }
 
 export const getShortLocationDisplay = (locationDetails?: VenueAddress) => {
     if (!locationDetails) return null;
 
-    const parts = [];
-    if (locationDetails.venue_name) {
-        parts.push(locationDetails.venue_name);
-    }
-    if (locationDetails.city) {
-        parts.push(locationDetails.city);
-    }
-
-    return parts.length > 0 ? parts.join(', ') : null;
+    return joinAddressParts([locationDetails.venue_name, locationDetails.city]) || null;
 };
 
 export const getGoogleMapsUrl = (locationDetails: VenueAddress) => {

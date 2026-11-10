@@ -18,6 +18,7 @@ use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\DomainObjects\Status\LiveChatQuestionStatus;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
 use HiEvents\Helper\SmsPhoneNormalizer;
+use HiEvents\Helper\SmsReactionDetector;
 use HiEvents\Jobs\LiveChat\RelayLiveChatAnswerJob;
 use HiEvents\Repository\Eloquent\Value\OrderAndDirection;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -96,13 +97,14 @@ class LiveChatQuestionService
     }
 
     /**
-     * A plain « ok », « merci » or a thumb is an acknowledgement, not an answer.
+     * A plain « ok », « merci », a thumb or a phone reaction (« A aimé « … » ») is an acknowledgement, not an answer.
      */
     public static function isAnswer(string $content): bool
     {
         $content = trim($content);
 
         return mb_strlen($content) >= 2
+            && ! SmsReactionDetector::isReaction($content)
             && preg_match('/^(ok|okay|oki|d\'?accord|merci|vu|re[çc]u|top|parfait|super|👍|🙏|👌)[\s!.]*$/iu', $content) !== 1;
     }
 

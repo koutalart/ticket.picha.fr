@@ -17,6 +17,7 @@ import {hasEventRichFooter} from "../../common/EventRichFooter";
 import {EventDedicatedPageHead} from "./EventDedicatedPageHead.tsx";
 import classes from "./EventDedicatedPage.module.scss";
 import {organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
+import {joinAddressParts} from "../../../utilites/addressUtilities.ts";
 import {useConsentBannerTheme} from "../../../utilites/consentBannerTheme.ts";
 import {LiveChatLauncher} from "../../common/LiveChatWindow/LiveChatLauncher.tsx";
 
@@ -114,7 +115,7 @@ export const EventDedicatedPage = () => {
     const brandLogo = event.images?.find((image) => image.type === 'EVENT_HERO_BRAND_LOGO')?.url
         ?? organizerLogoUrl(organizer?.images, 'dark');
     const location = event.settings?.location_details;
-    const locationLabel = [location?.venue_name, location?.city].filter(Boolean).join(', ');
+    const locationLabel = joinAddressParts([location?.venue_name, location?.city]);
     const availablePages = pages.available_pages ?? [];
     const otherPages = hasEventRichFooter(event) ? [] : availablePages.filter((available) => available !== page);
     const ctaLabel = isFreeEvent(event)
