@@ -8,14 +8,14 @@ interface EventImmersiveBackdropProps {
 }
 
 export const EventImmersiveBackdrop = ({coverVideo, coverVideoMobile, coverImage}: EventImmersiveBackdropProps) => {
-    const videoSource = useCoverVideoSource(coverVideo, coverVideoMobile);
+    const videoSource = useCoverVideoSource(coverImage ? undefined : coverVideo, coverImage ? undefined : coverVideoMobile);
 
     return (
         <div className={classes.backdrop} aria-hidden="true">
-            {videoSource ? (
-                <video src={videoSource} poster={coverImage} autoPlay muted loop playsInline preload="metadata"/>
-            ) : coverImage ? (
-                <img src={coverImage} alt=""/>
+            {coverImage ? (
+                <img src={coverImage} alt="" decoding="async"/>
+            ) : videoSource ? (
+                <video src={videoSource} autoPlay muted loop playsInline preload="metadata"/>
             ) : null}
         </div>
     );
