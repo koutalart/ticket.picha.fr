@@ -33,6 +33,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     final public const QUEUE_MESSAGE_ID = 'queue_message_id';
     final public const QUEUE_CHECKED_AT = 'queue_checked_at';
     final public const LINE_KEYWORD = 'line_keyword';
+    final public const CHATWOOT_MESSAGE_ID = 'chatwoot_message_id';
 
     protected int $id;
     protected int $sms_conversation_id;
@@ -57,6 +58,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     protected ?int $queue_message_id = null;
     protected ?string $queue_checked_at = null;
     protected ?string $line_keyword = null;
+    protected ?int $chatwoot_message_id = null;
 
     public function toArray(): array
     {
@@ -84,6 +86,7 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
                     'queue_message_id' => $this->queue_message_id ?? null,
                     'queue_checked_at' => $this->queue_checked_at ?? null,
                     'line_keyword' => $this->line_keyword ?? null,
+                    'chatwoot_message_id' => $this->chatwoot_message_id ?? null,
                 ];
     }
 
@@ -338,5 +341,16 @@ abstract class SmsMessageDomainObjectAbstract extends \HiEvents\DomainObjects\Ab
     public function getLineKeyword(): ?string
     {
         return $this->line_keyword;
+    }
+
+    public function setChatwootMessageId(?int $chatwoot_message_id): self
+    {
+        $this->chatwoot_message_id = $chatwoot_message_id;
+        return $this;
+    }
+
+    public function getChatwootMessageId(): ?int
+    {
+        return $this->chatwoot_message_id;
     }
 }

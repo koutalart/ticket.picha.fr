@@ -29,6 +29,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     final public const NEEDS_HUMAN_REASON = 'needs_human_reason';
     final public const INBOUND_NOTIFIED_AT = 'inbound_notified_at';
     final public const IS_TEAM = 'is_team';
+    final public const CHATWOOT_CONVERSATION_ID = 'chatwoot_conversation_id';
 
     protected int $id;
     protected int $account_id;
@@ -49,6 +50,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     protected ?string $needs_human_reason = null;
     protected ?string $inbound_notified_at = null;
     protected bool $is_team = false;
+    protected ?int $chatwoot_conversation_id = null;
 
     public function toArray(): array
     {
@@ -72,6 +74,7 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
                     'needs_human_reason' => $this->needs_human_reason ?? null,
                     'inbound_notified_at' => $this->inbound_notified_at ?? null,
                     'is_team' => $this->is_team ?? null,
+                    'chatwoot_conversation_id' => $this->chatwoot_conversation_id ?? null,
                 ];
     }
 
@@ -282,5 +285,16 @@ abstract class SmsConversationDomainObjectAbstract extends \HiEvents\DomainObjec
     public function getIsTeam(): bool
     {
         return $this->is_team;
+    }
+
+    public function setChatwootConversationId(?int $chatwoot_conversation_id): self
+    {
+        $this->chatwoot_conversation_id = $chatwoot_conversation_id;
+        return $this;
+    }
+
+    public function getChatwootConversationId(): ?int
+    {
+        return $this->chatwoot_conversation_id;
     }
 }
