@@ -288,6 +288,7 @@ use HiEvents\Http\Actions\Organizers\Newsletter\ExportOrganizerNewsletterSubscri
 use HiEvents\Http\Actions\Organizers\Newsletter\GetOrganizerNewsletterSubscribersAction;
 use HiEvents\Http\Actions\DemoRequests\SendDemoRequestPublicAction;
 use HiEvents\Http\Actions\CaseStudies\GetCaseStudyStatsAction;
+use HiEvents\Http\Actions\Booth\GetBoothTicketContactsAction;
 use HiEvents\Http\Actions\Booth\VerifyBoothTicketAction;
 use HiEvents\Http\Actions\Organizers\Settings\GetOrganizerSettingsAction;
 use HiEvents\Http\Actions\Organizers\Settings\PartialUpdateOrganizerSettingsAction;
@@ -876,6 +877,9 @@ $router->prefix('/internal/booth')->middleware('throttle:600,1')->group(
     function (Router $router): void {
         $router->get('/events/{event_id}/tickets/{attendee_public_id}', VerifyBoothTicketAction::class)
             ->where('event_id', '[0-9]+');
+        $router->get('/events/{event_id}/tickets/{attendee_public_id}/contacts', GetBoothTicketContactsAction::class)
+            ->where('event_id', '[0-9]+')
+            ->middleware('throttle:60,1,booth-contacts');
     }
 );
 
