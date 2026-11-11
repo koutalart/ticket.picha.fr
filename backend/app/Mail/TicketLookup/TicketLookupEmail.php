@@ -24,6 +24,7 @@ class TicketLookupEmail extends BaseMail
         private readonly ?string $firstName = null,
     ) {
         parent::__construct();
+        $this->shortLinkOrganizer = $organizer;
     }
 
     public function envelope(): Envelope
