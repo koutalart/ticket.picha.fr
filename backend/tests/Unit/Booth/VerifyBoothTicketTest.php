@@ -30,7 +30,7 @@ class VerifyBoothTicketTest extends TestCase
     {
         parent::setUp();
 
-        config(['app.picha_booth_api_key' => self::KEY]);
+        config(['app.booth_api_key' => self::KEY]);
         [$this->event, $this->product, $productPrice] = $this->createEventWithProduct();
         $this->productPriceId = $productPrice->id;
     }
@@ -109,10 +109,10 @@ class VerifyBoothTicketTest extends TestCase
 
     public function test_unconfigured_key_rejects_every_request(): void
     {
-        config(['app.picha_booth_api_key' => null]);
+        config(['app.booth_api_key' => null]);
 
         $this->getJson($this->url($this->event->id, $this->attendee('ACTIVE')->public_id), ['X-Booth-Key' => ''])
-            ->assertStatus(503);
+            ->assertUnauthorized();
     }
 
     public function test_verification_never_checks_the_ticket_in(): void
