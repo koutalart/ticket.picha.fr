@@ -74,6 +74,26 @@ class SmsInboundServiceTest extends TestCase
         $this->assertNull($this->service->recordInbound($this->settings, $this->inbound('Salut')));
     }
 
+    public function test_same_text_from_the_same_number_on_the_line_two_minutes_ago_is_a_duplicate(): void
+    {
+        $this->messageRepository->shouldReceive('hasSameInboundOnLineSince')
+            ->once()
+            ->withArgs(fn (int $lineId, string $phone, string $content, string $since) => $lineId === 1
+                && $phone === '+262639123456'
+                && $content === 'Salut'
+                && abs(strtotime($since.' UTC') - (time() - 120)) <= 5)
+            ->andReturnTrue();
+
+        $this->assertTrue($this->service->isRecentDuplicate(1, $this->inbound('Salut')));
+    }
+
+    public function test_empty_text_is_never_taken_for_a_duplicate(): void
+    {
+        $this->messageRepository->shouldNotReceive('hasSameInboundOnLineSince');
+
+        $this->assertFalse($this->service->isRecentDuplicate(1, $this->inbound('  ')));
+    }
+
     public function test_inbound_message_is_stored_and_marks_conversation_unread(): void
     {
         $this->messageRepository->shouldReceive('findFirstWhere')->andReturnNull();

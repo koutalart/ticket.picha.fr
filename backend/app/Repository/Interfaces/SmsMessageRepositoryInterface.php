@@ -108,4 +108,9 @@ interface SmsMessageRepositoryInterface extends RepositoryInterface
      * Whether the number wrote to the organizer since the given moment, other than the given message.
      */
     public function hasInboundFromPhoneSince(int $organizerId, string $phone, string $since, int $exceptMessageId): bool;
+
+    /**
+     * Whether the number already sent this exact text on this line since the given moment.
+     */
+    public function hasSameInboundOnLineSince(int $lineSettingsId, string $phone, string $content, string $since): bool;
 }

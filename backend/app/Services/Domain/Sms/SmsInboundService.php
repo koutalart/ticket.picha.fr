@@ -25,6 +25,8 @@ use Throwable;
 
 class SmsInboundService
 {
+    private const DUPLICATE_WINDOW_SECONDS = 120;
+
     private const STATUS_RANK = [
         'QUEUED' => 0,
         'PENDING' => 1,
@@ -166,6 +168,24 @@ class SmsInboundService
             || ($queueMessageId !== null && $this->messageRepository->findFirstWhere([
                 SmsMessageDomainObjectAbstract::QUEUE_MESSAGE_ID => $queueMessageId,
             ]) !== null);
+    }
+
+    /**
+     * The same text from the same number on the same line within a short time: the phone handed the SMS over twice.
+     */
+    public function isRecentDuplicate(int $lineSettingsId, InboundSmsDTO $sms): bool
+    {
+        $phone = SmsPhoneNormalizer::normalize($sms->contact);
+        if ($phone === null || trim($sms->content) === '') {
+            return false;
+        }
+
+        return $this->messageRepository->hasSameInboundOnLineSince(
+            $lineSettingsId,
+            $phone,
+            $sms->content,
+            Carbon::now()->subSeconds(self::DUPLICATE_WINDOW_SECONDS)->toDateTimeString(),
+        );
     }
 
     private static function lineOf(OrganizerSmsSettingDomainObject $settings): int

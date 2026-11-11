@@ -296,4 +296,16 @@ class SmsMessageRepository extends BaseRepository implements SmsMessageRepositor
             ->where('sms_messages.id', '!=', $exceptMessageId)
             ->exists();
     }
+
+    public function hasSameInboundOnLineSince(int $lineSettingsId, string $phone, string $content, string $since): bool
+    {
+        return SmsMessage::query()
+            ->join('sms_conversations', 'sms_conversations.id', '=', 'sms_messages.sms_conversation_id')
+            ->where('sms_messages.line_settings_id', $lineSettingsId)
+            ->where('sms_conversations.phone', $phone)
+            ->where('sms_messages.direction', SmsMessageDirection::INBOUND->name)
+            ->where('sms_messages.content', $content)
+            ->where('sms_messages.created_at', '>=', $since)
+            ->exists();
+    }
 }

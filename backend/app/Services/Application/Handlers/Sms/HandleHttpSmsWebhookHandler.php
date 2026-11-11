@@ -161,6 +161,15 @@ class HandleHttpSmsWebhookHandler
                 timestamp: $data['timestamp'] ?? null,
             );
 
+            if ($this->inboundService->isRecentDuplicate($settings->getId(), $sms)) {
+                $this->logger->info('httpSMS inbound SMS ignored: same text from the same number a moment ago', [
+                    'line_settings_id' => $settings->getId(),
+                    'provider_message_id' => $sms->providerMessageId,
+                ]);
+
+                return;
+            }
+
             $candidates = $this->lineService->candidates($settings);
 
             $teamRoute = $this->teamInboundService->route($candidates, $sms->contact);
