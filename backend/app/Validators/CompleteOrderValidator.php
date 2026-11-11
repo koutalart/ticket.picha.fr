@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Validators;
 
 use HiEvents\DomainObjects\Enums\QuestionBelongsTo;
+use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\ProductDomainObjectAbstract;
@@ -88,7 +89,7 @@ class CompleteOrderValidator extends BaseValidator
             'order.email' => 'required|email',
             'order.email_confirmation' => 'nullable|email|same:order.email',
             'order.phone' => [
-                'nullable',
+                ...($this->hasPhoneQuestion($orderQuestions) ? ['nullable'] : ['sometimes', 'required']),
                 'string',
                 'max:30',
                 static function (string $attribute, mixed $value, \Closure $fail): void {
@@ -105,6 +106,13 @@ class CompleteOrderValidator extends BaseValidator
             'products.*.birth_date' => ['nullable', 'date_format:Y-m-d'],
             ...$addressRules
         ];
+    }
+
+    private function hasPhoneQuestion(Collection $orderQuestions): bool
+    {
+        return $orderQuestions->contains(
+            fn(QuestionDomainObject $question) => $question->getType() === QuestionTypeEnum::PHONE->name
+        );
     }
 
     private function getUploadedFiles(): Collection
@@ -128,6 +136,7 @@ class CompleteOrderValidator extends BaseValidator
             'order.last_name.max' => 'Last name must be under 40 characters',
             'order.first_name.required' => __('First name is required'),
             'order.email' => __('A valid email is required'),
+            'order.phone.required' => __('Mobile phone is required'),
             'order.email_confirmation.same' => __('Email addresses do not match'),
             'order.address.address_line_1.required' => __('Address line 1 is required'),
             'order.address.city.required' => __('City is required'),

@@ -124,6 +124,11 @@ export const CollectInformation = () => {
             }],
         },
         validate: {
+            order: {
+                phone: (value) => isBuyerPhoneShown() && !String(value ?? '').trim()
+                    ? t`Mobile phone is required`
+                    : null,
+            },
             products: {
                 birth_date: (value, _values, path) => {
                     const index = parseInt(path.split('.')[1]);
@@ -157,6 +162,9 @@ export const CollectInformation = () => {
     };
 
     const totalTicketAttendees = getTicketAttendeeIndices().length;
+
+    const isBuyerPhoneShown = () => !hasPhoneQuestion
+        && ((!isFreeEvent || isPerOrderCollection) || getFirstTicketAttendeeIndex() >= 0);
 
     const areOrderDetailsComplete = () => {
         const {first_name, last_name, email} = form.values.order;
@@ -398,6 +406,7 @@ export const CollectInformation = () => {
             name="tel"
             inputMode="tel"
             autoComplete="tel"
+            withAsterisk
             label={t`Mobile phone`}
             placeholder="0639 12 34 56"
             description={t`To receive practical information about the event by SMS`}
