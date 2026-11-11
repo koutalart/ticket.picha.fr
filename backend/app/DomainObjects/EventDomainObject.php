@@ -351,4 +351,21 @@ class EventDomainObject extends Generated\EventDomainObjectAbstract implements I
         $this->affiliates = $affiliates;
         return $this;
     }
+
+    public function getPublicPromoCodeKind(): ?string
+    {
+        if ($this->promoCodes === null) {
+            return null;
+        }
+
+        $activeCodes = $this->promoCodes->filter(fn(PromoCodeDomainObject $code) => $code->isValid());
+
+        if ($activeCodes->isEmpty()) {
+            return 'NONE';
+        }
+
+        return $activeCodes->every(fn(PromoCodeDomainObject $code) => $code->isNoDiscountCode())
+            ? 'INVITATION'
+            : 'DISCOUNT';
+    }
 }

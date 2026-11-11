@@ -88,5 +88,6 @@ class GetPublicEventHandlerTest extends TestCase
     {
         $this->eventRepository->shouldReceive('loadRelation')->andReturnSelf()->times(4);
         $this->eventRepository->shouldReceive('findById')->with($eventId)->andReturn($event);
+        $this->promoCodeRepository->shouldReceive('findWhere')->once()->andReturn(collect());
     }
 }

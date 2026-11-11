@@ -198,7 +198,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                 );
 
                 if (!validPromoCode.valid) {
-                    showError(t`That promo code is invalid`);
+                    showError(isInvitationCode ? t`That invitation code is invalid` : t`That promo code is invalid`);
                     return;
                 }
             }
@@ -381,6 +381,13 @@ const SelectProducts = (props: SelectProductsProps) => {
             showInfo(t`Please select at least one product`);
         }
     };
+
+    const promoCodeKind = event?.promo_code_kind;
+    const isInvitationCode = promoCodeKind === 'INVITATION';
+    const codeQuestionLabel = isInvitationCode ? t`Have an invitation code?` : t`Have a promo code?`;
+    const showFeaturedCodeEntry = !form.values.promo_code
+        && (isInvitationCode || (promoCodeKind === 'DISCOUNT' && selectableOptions.length === 0));
+    const showPromoCodeLink = promoCodeKind !== 'NONE' && !showFeaturedCodeEntry;
 
     const handleApplyPromoCode = () => {
         const promoCode = promoRef.current?.value;
@@ -667,6 +674,34 @@ const SelectProducts = (props: SelectProductsProps) => {
                         })}
                     </div>
 
+                    {showFeaturedCodeEntry && (
+                        <div className={'hi-code-entry-featured'}>
+                            <label className={'hi-code-entry-title'} htmlFor={'hi-code-entry-input'}>
+                                {codeQuestionLabel}
+                            </label>
+                            {isInvitationCode && (
+                                <p className={'hi-code-entry-help'}>
+                                    {t`Enter the code you received to access your invitation.`}
+                                </p>
+                            )}
+                            <div className={'hi-code-entry-row'}>
+                                <TextInput id={'hi-code-entry-input'} classNames={{input: 'hi-promo-code-input'}}
+                                           autoComplete={'off'} autoCapitalize={'off'} mb={0} ref={promoRef}
+                                           onKeyDown={(keyEvent) => {
+                                               if (keyEvent.key === 'Enter') {
+                                                   keyEvent.preventDefault();
+                                                   handleApplyPromoCode();
+                                               }
+                                           }}/>
+                                <Button type={'button'} className={'hi-apply-promo-code-button'}
+                                        loading={promoCodeEventRefetchMutation.isPending}
+                                        onClick={handleApplyPromoCode}>
+                                    {t`Validate`}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
                     <div className={classNames('hi-footer-row', {'hi-footer-sticky': props.widgetMode !== 'embedded'})}>
                         {event?.settings?.product_page_message && (
                             <div dangerouslySetInnerHTML={{
@@ -682,10 +717,10 @@ const SelectProducts = (props: SelectProductsProps) => {
                 </form>
             )}
             <div className={'hi-promo-code-row'}>
-                {(!showPromoCodeInput && !form.values.promo_code) && (
+                {(showPromoCodeLink && !showPromoCodeInput && !form.values.promo_code) && (
                     <Anchor className={'hi-have-a-promo-code-link'} underline={'always'}
                             onClick={() => setShowPromoCodeInput(true)}>
-                        {t`Have a promo code?`}
+                        {codeQuestionLabel}
                     </Anchor>
                 )}
                 {form.values.promo_code && (
@@ -705,7 +740,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                     </div>
                 )}
 
-                {(showPromoCodeInput && !form.values.promo_code) && (
+                {(showPromoCodeLink && showPromoCodeInput && !form.values.promo_code) && (
                     <Group className={'hi-promo-code-input-wrapper'} wrap={'nowrap'} gap={'20px'}>
                         {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                         {/*@ts-ignore*/}
