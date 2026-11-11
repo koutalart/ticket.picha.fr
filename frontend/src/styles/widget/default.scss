@@ -30,6 +30,12 @@
         background-color: color-mix(in srgb, var(--widget-secondary-color, var(--hi-primary)) 10%, var(--widget-background-color, var(--hi-color-white)));
       }
 
+      &.hi-product-unavailable {
+        border-width: 1px;
+        border-color: color-mix(in srgb, var(--widget-primary-text-color, currentColor) 18%, transparent);
+        background-color: transparent;
+      }
+
       .hi-product-highlight-message {
         background: var(--widget-secondary-color, var(--hi-primary));
         color: var(--widget-secondary-text-color, var(--hi-color-white));
