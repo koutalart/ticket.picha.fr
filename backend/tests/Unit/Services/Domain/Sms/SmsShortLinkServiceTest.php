@@ -38,7 +38,7 @@ class SmsShortLinkServiceTest extends TestCase
     {
         $shortUrl = app(SmsShortLinkService::class)->shorten($this->eventDomainObject(), self::LONG_URL);
 
-        $this->assertMatchesRegularExpression('~^https://mayottela1ere\.fr/q/[a-z0-9]{7}$~', $shortUrl);
+        $this->assertMatchesRegularExpression('~^https://mayottela1ere\.fr/[a-z0-9]{7}$~', $shortUrl);
 
         $qrLink = QrLink::query()->where('short_id', basename($shortUrl))->sole();
         $this->assertSame($this->event->organizer_id, $qrLink->organizer_id);

@@ -11,7 +11,7 @@ const LABELLED_LINK_PATTERN = /[^.!?\n:]*:[ \t]*\{\s*lien\s*\}/giu;
 const LINK_AFTER_LABEL_PATTERN = /:([ \t]*)\{\s*lien\s*\}/giu;
 const LINK_PATTERN = /\{\s*lien\s*\}/giu;
 const LINK_BELOW = 'lien ci-dessous';
-export const SAMPLE_SHORT_LINK_PATH = '/q/a1b2c3d';
+export const SAMPLE_SHORT_LINK_PATH = '/a1b2c3d';
 
 interface SmsTemplateValues {
     firstName: string;

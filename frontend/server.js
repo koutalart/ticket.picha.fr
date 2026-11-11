@@ -405,9 +405,9 @@ Sitemap: ${frontendUrl}/sitemap.xml
     };
     const clientIp = (req) => (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.socket?.remoteAddress || '';
 
-    app.get('/q/:shortId', async (req, res, next) => {
-        const {shortId} = req.params;
-        if (!QR_SHORT_ID.test(shortId)) {
+    const shortLinkHandler = (shortIdOf) => async (req, res, next) => {
+        const shortId = shortIdOf(req);
+        if (!shortId || !QR_SHORT_ID.test(shortId)) {
             return next();
         }
 
@@ -448,7 +448,11 @@ Sitemap: ${frontendUrl}/sitemap.xml
 
         res.setHeader('Cache-Control', 'no-store');
         return next();
-    });
+    };
+
+    // Short links: /code at the root of any of our domains (7 characters), and the former /q/code that stays valid.
+    app.get('/q/:shortId', shortLinkHandler((req) => req.params.shortId));
+    app.get(/^\/([a-z0-9]{7})\/?$/, shortLinkHandler((req) => req.params[0]));
 
     // Private organizer calendar: the page shell imported with calendar:import, relayed as is.
     // Served here so its relative /api calls stay on the same origin, custom domains included.

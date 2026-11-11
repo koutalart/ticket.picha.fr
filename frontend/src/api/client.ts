@@ -58,6 +58,7 @@ api.interceptors.response.use(
         const { status } = error.response;
         const currentPath = window?.location.pathname;
         const isAllowedUnauthenticatedPath = currentPath === '/'
+            || /^\/[a-z0-9]{7}\/?$/i.test(currentPath)
             || ALLOWED_UNAUTHENTICATED_PATHS.some(path => currentPath.includes(path));
         const isManageEventPath = currentPath.startsWith('/manage/event/');
         const isKioskPath = currentPath.startsWith('/kiosk');

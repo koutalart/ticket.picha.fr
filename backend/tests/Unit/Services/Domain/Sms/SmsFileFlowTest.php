@@ -277,7 +277,7 @@ class SmsFileFlowTest extends TestCase
                 && $items[0]['ref'] === $campaignId.':'.$recipientId
                 && $items[0]['texte'] === 'Rappel : on vous attend demain ! Gérer ma venue : lien ci-dessous'
                 && $items[1]['ref'] === $campaignId.':'.$recipientId.':lien'
-                && $items[1]['texte'] === config('app.frontend_url').'/q/'.$shortId
+                && $items[1]['texte'] === config('app.frontend_url').'/'.$shortId
                 && $items[1]['campagne'] === 'rappel-'.$campaignId
                 && $items[1]['to'] === self::CUSTOMER;
         });
@@ -286,7 +286,7 @@ class SmsFileFlowTest extends TestCase
         $this->assertCount(2, $messages);
         $this->assertSame([950, 951], $messages->pluck('queue_message_id')->map(fn ($id) => (int) $id)->all());
         $this->assertSame($messages[0]->sms_conversation_id, $messages[1]->sms_conversation_id);
-        $this->assertSame(config('app.frontend_url').'/q/'.$shortId, $messages[1]->content);
+        $this->assertSame(config('app.frontend_url').'/'.$shortId, $messages[1]->content);
         $this->assertSame(950, (int) DB::table('sms_campaign_recipients')->find($recipientId)->queue_message_id);
     }
 

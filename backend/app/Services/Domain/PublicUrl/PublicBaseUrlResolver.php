@@ -22,6 +22,9 @@ class PublicBaseUrlResolver
     /** @var array<int, int|null> */
     private array $organizerIdByEventId = [];
 
+    /** @var array<int, string|null> */
+    private array $shortLinkDomainByOrganizerId = [];
+
     public function __construct(
         private readonly OrganizerRepositoryInterface $organizerRepository,
         private readonly EventRepositoryInterface $eventRepository,
@@ -65,6 +68,29 @@ class PublicBaseUrlResolver
         }
 
         return $this->baseUrlForDomain($this->domainByOrganizerId[$organizerId]);
+    }
+
+    /**
+     * Base of the organizer's short links (https://domain/code): its short link domain, else its own domain, else the platform.
+     */
+    public function forShortLinks(?int $organizerId): string
+    {
+        if ($organizerId === null) {
+            return $this->platformUrl();
+        }
+
+        if (! array_key_exists($organizerId, $this->shortLinkDomainByOrganizerId)) {
+            /** @var OrganizerDomainObject|null $organizer */
+            $organizer = $this->organizerRepository->findFirst($organizerId);
+            $domain = $organizer !== null && $organizer->getStatus() !== OrganizerStatus::ARCHIVED->name
+                ? CustomDomainHelper::normalize($organizer->getShortLinkDomain())
+                : null;
+            $this->shortLinkDomainByOrganizerId[$organizerId] = $domain !== null && CustomDomainHelper::isValid($domain) ? $domain : null;
+        }
+
+        return $this->shortLinkDomainByOrganizerId[$organizerId] !== null
+            ? 'https://'.$this->shortLinkDomainByOrganizerId[$organizerId]
+            : $this->forOrganizerId($organizerId);
     }
 
     public function forEvent(?EventDomainObject $event): string

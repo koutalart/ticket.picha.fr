@@ -9,8 +9,13 @@ export interface QrLinkPageLoaderData {
     organizer: Organizer | null;
 }
 
-export const qrLinkPageLoader = async ({params}: LoaderFunctionArgs): Promise<QrLinkPageLoaderData> => {
+export const qrLinkPageLoader = async ({params, request}: LoaderFunctionArgs): Promise<QrLinkPageLoaderData> => {
     const shortId = params.shortId?.toLowerCase();
+    const isRootShortLink = !new URL(request.url).pathname.startsWith('/q/');
+
+    if (isRootShortLink && (!shortId || !/^[a-z0-9]{7}$/.test(shortId))) {
+        throw new Response('Not Found', {status: 404});
+    }
 
     if (!shortId || !/^[a-z0-9]{4,32}$/.test(shortId)) {
         return {qrLink: null, organizer: null};

@@ -116,8 +116,26 @@ class PublicBaseUrlResolverTest extends TestCase
 
         $service = new QrLinkUrlService;
 
-        $this->assertSame('https://mayottela1ere.fr/q/k4rm1ere', $service->getPublicUrl((new QrLinkDomainObject)->setOrganizerId(8)->setShortId('k4rm1ere')));
-        $this->assertSame('https://ticket.picha.fr/q/abcd1234', $service->getPublicUrl((new QrLinkDomainObject)->setOrganizerId(4)->setShortId('abcd1234')));
+        $this->assertSame('https://mayottela1ere.fr/k4rm1ere', $service->getPublicUrl((new QrLinkDomainObject)->setOrganizerId(8)->setShortId('k4rm1ere')));
+        $this->assertSame('https://ticket.picha.fr/abcd1234', $service->getPublicUrl((new QrLinkDomainObject)->setOrganizerId(4)->setShortId('abcd1234')));
+    }
+
+    public function test_qr_link_public_url_prefers_the_short_link_domain(): void
+    {
+        $this->fakePublicBaseUrl([17 => null, 8 => 'mayottela1ere.fr'], [], [17 => 'eldjine.com', 8 => 'Mayottela1ere.fr/']);
+
+        $service = new QrLinkUrlService;
+
+        $this->assertSame('https://eldjine.com/89k86eq', $service->getPublicUrl((new QrLinkDomainObject)->setOrganizerId(17)->setShortId('89k86eq')));
+        $this->assertSame('https://mayottela1ere.fr/k4rm1er', $service->getPublicUrl((new QrLinkDomainObject)->setOrganizerId(8)->setShortId('k4rm1er')));
+    }
+
+    public function test_short_link_paths(): void
+    {
+        $this->assertTrue(QrLinkUrlService::isShortLinkPath('/89k86eq'));
+        $this->assertTrue(QrLinkUrlService::isShortLinkPath('/q/iiekn0hg'));
+        $this->assertFalse(QrLinkUrlService::isShortLinkPath('/evenements'));
+        $this->assertFalse(QrLinkUrlService::isShortLinkPath('/event/14/le-concert'));
     }
 
     public function test_public_organizer_resource_hides_the_domain_of_an_archived_organizer(): void

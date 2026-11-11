@@ -238,7 +238,7 @@ class SmsReminderSchedulingService
         $sampleLink = $first !== null ? $this->linkProvider->findForAttendee($first->attendeeId) : null;
 
         $sampleLinkMessage = $this->renderer->linkMessage($message, $sampleLink) !== null
-            ? $this->publicBaseUrlResolver->forOrganizerId($event->getOrganizerId()).'/q/'.self::SAMPLE_SHORT_ID
+            ? $this->publicBaseUrlResolver->forShortLinks($event->getOrganizerId()).'/'.self::SAMPLE_SHORT_ID
             : null;
 
         $smsCount = 0;

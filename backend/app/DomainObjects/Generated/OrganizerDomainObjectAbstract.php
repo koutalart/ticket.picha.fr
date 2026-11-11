@@ -24,6 +24,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     final public const TIMEZONE = 'timezone';
     final public const STATUS = 'status';
     final public const CUSTOM_DOMAIN = 'custom_domain';
+    final public const SHORT_LINK_DOMAIN = 'short_link_domain';
     final public const HOMEPAGE_TEMPLATE = 'homepage_template';
     final public const SITE_CONTENT = 'site_content';
     final public const ENABLED_SECTIONS = 'enabled_sections';
@@ -42,6 +43,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     protected string $timezone;
     protected string $status = 'DRAFT';
     protected ?string $custom_domain = null;
+    protected ?string $short_link_domain = null;
     protected string $homepage_template = 'DEFAULT';
     protected array|string|null $site_content = null;
     protected array|string|null $enabled_sections = null;
@@ -63,6 +65,7 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
                     'timezone' => $this->timezone ?? null,
                     'status' => $this->status ?? null,
                     'custom_domain' => $this->custom_domain ?? null,
+                    'short_link_domain' => $this->short_link_domain ?? null,
                     'homepage_template' => $this->homepage_template ?? null,
                     'site_content' => $this->site_content ?? null,
                     'enabled_sections' => $this->enabled_sections ?? null,
@@ -254,5 +257,16 @@ abstract class OrganizerDomainObjectAbstract extends \HiEvents\DomainObjects\Abs
     public function getEnabledSections(): array|string|null
     {
         return $this->enabled_sections;
+    }
+
+    public function setShortLinkDomain(?string $short_link_domain): self
+    {
+        $this->short_link_domain = $short_link_domain;
+        return $this;
+    }
+
+    public function getShortLinkDomain(): ?string
+    {
+        return $this->short_link_domain;
     }
 }

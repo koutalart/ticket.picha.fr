@@ -15,9 +15,17 @@ class QrLinkUrlService
 
     public const QR_COUNTED_PARAM = 'qrc';
 
+    /**
+     * Path of a short link: /code at the root of the domain, or the former /q/code that stays valid.
+     */
+    public static function isShortLinkPath(string $path): bool
+    {
+        return preg_match('~^/([a-z0-9]{7}|q/[a-z0-9]{4,32})/?$~', $path) === 1;
+    }
+
     public function getPublicUrl(QrLinkDomainObject $qrLink): string
     {
-        return app(PublicBaseUrlResolver::class)->forOrganizerId($qrLink->getOrganizerId()).'/q/'.$qrLink->getShortId();
+        return app(PublicBaseUrlResolver::class)->forShortLinks($qrLink->getOrganizerId()).'/'.$qrLink->getShortId();
     }
 
     public function getEventUrl(EventDomainObject $event, QrLinkDomainObject $qrLink): string
