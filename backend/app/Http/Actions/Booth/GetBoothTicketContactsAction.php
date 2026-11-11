@@ -19,16 +19,9 @@ class GetBoothTicketContactsAction extends BaseAction
 
     public function __invoke(int $eventId, string $attendeePublicId, Request $request): JsonResponse|LaravelResponse
     {
-        $key = (string) $this->config->get('app.picha_booth_api_key');
+        $key = (string) $this->config->get('app.booth_api_key');
 
-        if ($key === '') {
-            return $this->errorResponse(
-                message: __('Booth verification is not configured'),
-                statusCode: Response::HTTP_SERVICE_UNAVAILABLE,
-            );
-        }
-
-        if (! hash_equals($key, (string) $request->header(VerifyBoothTicketAction::KEY_HEADER))) {
+        if ($key === '' || ! hash_equals($key, (string) $request->header(VerifyBoothTicketAction::KEY_HEADER))) {
             return $this->errorResponse(
                 message: __('Unauthorized'),
                 statusCode: Response::HTTP_UNAUTHORIZED,

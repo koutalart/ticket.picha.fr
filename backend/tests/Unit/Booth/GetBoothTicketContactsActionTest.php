@@ -21,7 +21,7 @@ class GetBoothTicketContactsActionTest extends TestCase
 
         $this->handler = m::mock(GetBoothTicketContactsHandler::class);
         $this->app->instance(GetBoothTicketContactsHandler::class, $this->handler);
-        config(['app.picha_booth_api_key' => self::KEY]);
+        config(['app.booth_api_key' => self::KEY]);
     }
 
     public function test_returns_unauthorized_without_key(): void
@@ -38,12 +38,13 @@ class GetBoothTicketContactsActionTest extends TestCase
         $this->getJson(self::URL, ['X-Booth-Key' => 'wrong'])->assertUnauthorized();
     }
 
-    public function test_returns_service_unavailable_when_key_is_not_configured(): void
+    public function test_returns_unauthorized_when_key_is_not_configured(): void
     {
-        config(['app.picha_booth_api_key' => null]);
+        config(['app.booth_api_key' => null]);
         $this->handler->shouldNotReceive('handle');
 
-        $this->getJson(self::URL, ['X-Booth-Key' => ''])->assertServiceUnavailable();
+        $this->getJson(self::URL, ['X-Booth-Key' => ''])->assertUnauthorized();
+        $this->getJson(self::URL, ['X-Booth-Key' => self::KEY])->assertUnauthorized();
     }
 
     public function test_returns_not_found_when_ticket_is_not_active_or_unknown(): void
