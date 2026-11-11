@@ -20,7 +20,7 @@ export const AttendeeTicket = ({
                                    hideButtons = false,
                                    imageSrc,
                                }: AttendeeTicketProps) => {
-    const src = imageSrc ?? attendeeTicketImageUrl(event.id, attendee.short_id, attendee.status);
+    const src = imageSrc ?? attendeeTicketImageUrl(event.id, attendee.short_id, [attendee.status, attendee.updated_at].filter(Boolean).join('-'));
     const label = `${event?.title} — ${attendee.first_name} ${attendee.last_name} — ${attendee.public_id}`;
 
     return (

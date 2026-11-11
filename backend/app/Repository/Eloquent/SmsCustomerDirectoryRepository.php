@@ -85,7 +85,7 @@ class SmsCustomerDirectoryRepository implements SmsCustomerDirectoryRepositoryIn
     }
 
     /**
-     * Phone given for each attendee: attendee answer, then order answer, then box office sale.
+     * Phone given for each attendee: set on the attendee, then attendee answer, then order answer, then box office sale.
      *
      * @return Collection<int, SmsReminderAttendeeDTO>
      */
@@ -116,13 +116,13 @@ class SmsCustomerDirectoryRepository implements SmsCustomerDirectoryRepositoryIn
 
         return $attendees
             ->orderBy('attendees.id')
-            ->select('attendees.id', 'attendees.first_name', 'attendees.last_name')
+            ->select('attendees.id', 'attendees.first_name', 'attendees.last_name', 'attendees.phone as own_phone')
             ->selectSub($attendeePhone, 'attendee_phone')
             ->selectSub($orderPhone, 'order_phone')
             ->selectSub($boxOfficePhone, 'box_office_phone')
             ->get()
             ->map(function (object $row) {
-                $phone = collect([$row->attendee_phone, $row->order_phone, $row->box_office_phone])
+                $phone = collect([$row->own_phone ?? null, $row->attendee_phone, $row->order_phone, $row->box_office_phone])
                     ->map(fn ($value) => trim((string) $value, " \t\n\r\"[]"))
                     ->first(fn (string $value) => $value !== '');
 

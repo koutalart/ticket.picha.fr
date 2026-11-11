@@ -968,6 +968,8 @@ export interface Attendee {
     last_name: string;
     email: string | null;
     notes?: string;
+    phone?: string | null;
+    updated_at?: string;
     birth_date?: string | null;
     order?: Order;
     public_id: string;

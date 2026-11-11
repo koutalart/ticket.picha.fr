@@ -16,6 +16,7 @@ class EditAttendeeRequest extends BaseRequest
             'product_id' => RulesHelper::REQUIRED_NUMERIC,
             'product_price_id' => RulesHelper::REQUIRED_NUMERIC,
             'notes' => RulesHelper::OPTIONAL_TEXT_MEDIUM_LENGTH,
+            'phone' => ['nullable', 'string', 'max:30', 'regex:/^[0-9+().\s-]{6,30}$/'],
         ];
     }
 
@@ -31,6 +32,8 @@ class EditAttendeeRequest extends BaseRequest
             'product_id.numeric' => '',
             'product_price_id.numeric' => '',
             'notes.max' => __('Notes must be less than 2000 characters'),
+            'phone.max' => __('This phone number is not valid.'),
+            'phone.regex' => __('This phone number is not valid.'),
         ];
     }
 }
