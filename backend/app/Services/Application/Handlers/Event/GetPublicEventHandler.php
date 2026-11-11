@@ -29,7 +29,7 @@ class GetPublicEventHandler
         private readonly PromoCodeRepositoryInterface  $promoCodeRepository,
         private readonly ProductFilterService          $productFilterService,
         private readonly EventPageViewIncrementService $eventPageViewIncrementService,
-        private readonly ?SmsAvailabilityService $smsAvailabilityService = null,
+        private readonly SmsAvailabilityService $smsAvailabilityService,
     )
     {
     }
@@ -72,7 +72,7 @@ class GetPublicEventHandler
             PromoCodeDomainObjectAbstract::EVENT_ID => $data->eventId,
         ]));
 
-        if ($this->smsAvailabilityService !== null && $event->getOrganizerId() !== null) {
+        if ($event->getOrganizerId() !== null) {
             $event->setSmsAvailable($this->smsAvailabilityService->canSend($event->getOrganizerId()));
         }
 
