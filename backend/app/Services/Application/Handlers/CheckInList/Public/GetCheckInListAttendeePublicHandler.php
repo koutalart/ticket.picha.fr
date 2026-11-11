@@ -41,10 +41,16 @@ class GetCheckInListAttendeePublicHandler
 
         $this->validateCheckInListIsActive($checkInList);
 
-        return $this->attendeeRepository->findFirstWhere([
+        $attendee = $this->attendeeRepository->findFirstWhere([
             'public_id' => $attendeePublicId,
             'event_id' => $checkInList->getEventId(),
         ]);
+
+        if (!$attendee) {
+            throw new ResourceNotFoundException(__('Attendee not found'));
+        }
+
+        return $attendee;
     }
 
     /**
