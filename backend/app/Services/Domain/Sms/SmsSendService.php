@@ -44,6 +44,7 @@ class SmsSendService
         private readonly SmsFileClient $fileClient,
         private readonly SmsFileStatusService $fileStatusService,
         private readonly LoggerInterface $logger,
+        private readonly ?SmsOutboundLinkShortener $linkShortener = null,
     ) {}
 
     /**
@@ -93,7 +94,29 @@ class SmsSendService
             $line = $this->lineService->replyLine($settings, $conversation, $line);
         }
 
-        return new PreparedSmsDTO(sms: $sms, phone: $phone, line: $line, conversation: $conversation);
+        return new PreparedSmsDTO(sms: $this->withShortLinks($settings, $sms), phone: $phone, line: $line, conversation: $conversation);
+    }
+
+    private function withShortLinks(OrganizerSmsSettingDomainObject $settings, SendSmsDTO $sms): SendSmsDTO
+    {
+        $content = $this->linkShortener?->shorten($settings->getAccountId(), $sms->organizerId, $sms->content) ?? $sms->content;
+        if ($content === $sms->content) {
+            return $sms;
+        }
+
+        return new SendSmsDTO(
+            organizerId: $sms->organizerId,
+            phone: $sms->phone,
+            content: $content,
+            authorType: $sms->authorType,
+            sentByUserId: $sms->sentByUserId,
+            autoReplyToMessageId: $sms->autoReplyToMessageId,
+            autoReplyType: $sms->autoReplyType,
+            keepDraft: $sms->keepDraft,
+            replyInConversation: $sms->replyInConversation,
+            isSupervision: $sms->isSupervision,
+            awaitsReply: $sms->awaitsReply,
+        );
     }
 
     /**
