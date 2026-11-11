@@ -405,6 +405,7 @@ export interface Event extends EventBase {
     status?: EventStatus;
     description_preview?: string;
     lifecycle_status?: EventLifecycleStatus;
+    promo_code_kind?: 'NONE' | 'INVITATION' | 'DISCOUNT';
     settings?: EventSettings;
     products?: Product[];
     product_categories?: ProductCategory[];
