@@ -33,6 +33,10 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(240)->by(sha1($request->bearerToken() ?: $request->ip()));
         });
 
+        RateLimiter::for('booth-api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
+        });
+
         RateLimiter::for('self-service-email', function (Request $request) {
             return Limit::perHour(20)->by($request->route('order_short_id') ?? $request->ip());
         });

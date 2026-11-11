@@ -82,6 +82,7 @@ use HiEvents\Http\Actions\Attendees\Attendance\ConfirmAttendeeAttendanceActionPu
 use HiEvents\Http\Actions\Attendees\Attendance\GetAttendeeAttendanceActionPublic;
 use HiEvents\Http\Actions\Attendees\Attendance\RequestAttendanceAccessCodeActionPublic;
 use HiEvents\Http\Actions\Attendees\Attendance\VerifyAttendanceAccessCodeActionPublic;
+use HiEvents\Http\Actions\Attendees\Booth\GetBoothAttendeeContactAction;
 use HiEvents\Http\Actions\Common\GetServerTimeActionPublic;
 use HiEvents\Http\Actions\Attendees\CheckInAttendeeAction;
 use HiEvents\Http\Actions\Attendees\CreateAttendeeAction;
@@ -865,6 +866,17 @@ $router->prefix('/print-relay')->middleware('throttle:kiosk-print-relay')->group
     function (Router $router): void {
         $router->get('/jobs', GetPendingKioskPrintJobsAction::class);
         $router->post('/jobs/{job_id}/ack', AcknowledgeKioskPrintJobAction::class)->where('job_id', '[0-9]+');
+    }
+);
+
+/**
+ * PICHA Booth service (authenticated by the X-Booth-Key header, see BOOTH_API_KEY)
+ */
+$router->prefix('/booth')->middleware('throttle:booth-api')->group(
+    function (Router $router): void {
+        $router->get('/attendees/{event_id}/{attendee_public_id}', GetBoothAttendeeContactAction::class)
+            ->where('event_id', '[0-9]+')
+            ->where('attendee_public_id', '[A-Za-z0-9\\-]{1,64}');
     }
 );
 
