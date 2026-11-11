@@ -46,6 +46,7 @@ export const ManageAttendeeModal = ({onClose, attendeeId}: ManageAttendeeModalPr
             first_name: "",
             last_name: "",
             email: "",
+            phone: "",
             notes: "",
             product_id: "",
             product_price_id: "",
@@ -60,6 +61,7 @@ export const ManageAttendeeModal = ({onClose, attendeeId}: ManageAttendeeModalPr
                 first_name: attendee.first_name,
                 last_name: attendee.last_name,
                 email: displayAttendeeEmail(attendee.email) ?? "",
+                phone: attendee.phone || "",
                 notes: attendee.notes || "",
                 product_id: String(attendee.product_id),
                 product_price_id: attendee.product_price_id ? String(attendee.product_price_id) : "",
@@ -127,6 +129,10 @@ export const ManageAttendeeModal = ({onClose, attendeeId}: ManageAttendeeModalPr
                     />
                 )}
             </InputGroup>
+            <TextInput {...form.getInputProps("phone")} type={"tel"} label={t`Phone number`}
+                       placeholder="+262 639 00 00 00"
+                       description={t`If you change the name, e-mail or phone, the ticket is sent again to the new contact by e-mail and SMS.`}
+                       mb={"md"}/>
             <Textarea
                 label={<InputLabelWithHelp label={t`Notes`}
                                            helpText={t`Add any notes about the attendee. These will not be visible to the attendee.`}/>}
