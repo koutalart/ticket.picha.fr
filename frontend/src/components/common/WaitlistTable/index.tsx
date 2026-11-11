@@ -158,6 +158,11 @@ export const WaitlistTable = ({eventId, entries}: WaitlistTableProps) => {
                             <Text className={classes.contactEmail}>
                                 {entry.email}
                             </Text>
+                            {entry.phone && (
+                                <Text className={classes.contactEmail}>
+                                    {entry.phone}
+                                </Text>
+                            )}
                         </div>
                     );
                 },

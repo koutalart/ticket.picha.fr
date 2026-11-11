@@ -9,6 +9,7 @@ use HiEvents\DomainObjects\WaitlistEntryDomainObject;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Helper\EmailHelper;
 use HiEvents\Jobs\Waitlist\SendWaitlistConfirmationEmailJob;
+use HiEvents\Jobs\Waitlist\SendWaitlistSmsJob;
 use HiEvents\Repository\Interfaces\WaitlistEntryRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Waitlist\DTO\CreateWaitlistEntryDTO;
 use Illuminate\Database\DatabaseManager;
@@ -50,10 +51,15 @@ class CreateWaitlistEntryService
                 'cancel_token' => Str::random(64),
                 'position' => $position,
                 'locale' => $dto->locale,
+                'phone' => $dto->phone !== null && trim($dto->phone) !== '' ? trim($dto->phone) : null,
             ]);
         });
 
         SendWaitlistConfirmationEmailJob::dispatch($entry);
+
+        if ($entry->getPhone() !== null) {
+            SendWaitlistSmsJob::dispatch($entry->getId(), SendWaitlistSmsJob::CONFIRMATION);
+        }
 
         return $entry;
     }

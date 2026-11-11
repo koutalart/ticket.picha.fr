@@ -20,6 +20,7 @@ use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Event\DTO\GetPublicEventDTO;
 use HiEvents\Services\Domain\Event\EventPageViewIncrementService;
 use HiEvents\Services\Domain\Product\ProductFilterService;
+use HiEvents\Services\Domain\Sms\SmsAvailabilityService;
 
 class GetPublicEventHandler
 {
@@ -28,6 +29,7 @@ class GetPublicEventHandler
         private readonly PromoCodeRepositoryInterface  $promoCodeRepository,
         private readonly ProductFilterService          $productFilterService,
         private readonly EventPageViewIncrementService $eventPageViewIncrementService,
+        private readonly ?SmsAvailabilityService $smsAvailabilityService = null,
     )
     {
     }
@@ -69,6 +71,10 @@ class GetPublicEventHandler
         $event->setPromoCodes($this->promoCodeRepository->findWhere([
             PromoCodeDomainObjectAbstract::EVENT_ID => $data->eventId,
         ]));
+
+        if ($this->smsAvailabilityService !== null && $event->getOrganizerId() !== null) {
+            $event->setSmsAvailable($this->smsAvailabilityService->canSend($event->getOrganizerId()));
+        }
 
         if (!$data->isAuthenticated) {
             $this->eventPageViewIncrementService->increment($data->eventId, $data->ipAddress);

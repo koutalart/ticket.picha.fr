@@ -29,6 +29,7 @@ abstract class WaitlistEntryDomainObjectAbstract extends \HiEvents\DomainObjects
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
     final public const DELETED_AT = 'deleted_at';
+    final public const PHONE = 'phone';
 
     protected int $id;
     protected int $event_id;
@@ -49,6 +50,7 @@ abstract class WaitlistEntryDomainObjectAbstract extends \HiEvents\DomainObjects
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
     protected ?string $deleted_at = null;
+    protected ?string $phone = null;
 
     public function toArray(): array
     {
@@ -72,6 +74,7 @@ abstract class WaitlistEntryDomainObjectAbstract extends \HiEvents\DomainObjects
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
                     'deleted_at' => $this->deleted_at ?? null,
+                    'phone' => $this->phone ?? null,
                 ];
     }
 
@@ -282,5 +285,16 @@ abstract class WaitlistEntryDomainObjectAbstract extends \HiEvents\DomainObjects
     public function getDeletedAt(): ?string
     {
         return $this->deleted_at;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
     }
 }

@@ -13,6 +13,15 @@ class CreateWaitlistEntryRequest extends BaseRequest
             'email' => ['required', 'email', 'max:255'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30', 'regex:/^[0-9+().\s-]{6,30}$/'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'phone.max' => __('This phone number is not valid.'),
+            'phone.regex' => __('This phone number is not valid.'),
         ];
     }
 }

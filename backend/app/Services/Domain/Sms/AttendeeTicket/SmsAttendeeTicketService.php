@@ -12,6 +12,7 @@ use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\Helper\CustomerLocale;
 use HiEvents\Helper\SmsPhoneNormalizer;
+use HiEvents\Helper\SmsSendingHours;
 use HiEvents\Helper\Url;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -28,10 +29,6 @@ use Illuminate\Support\Carbon;
  */
 class SmsAttendeeTicketService
 {
-    public const FIRST_HOUR = 8;
-
-    public const LAST_HOUR = 20;
-
     public function __construct(
         private readonly AttendeeRepositoryInterface $attendeeRepository,
         private readonly EventRepositoryInterface $eventRepository,
@@ -55,18 +52,7 @@ class SmsAttendeeTicketService
      */
     public static function nextAllowedTime(Carbon $now, string $timezone): ?Carbon
     {
-        $local = $now->copy()->setTimezone($timezone);
-
-        if ($local->hour >= self::FIRST_HOUR && $local->hour < self::LAST_HOUR) {
-            return null;
-        }
-
-        $next = $local->copy()->setTime(self::FIRST_HOUR, 0);
-        if ($local->hour >= self::LAST_HOUR) {
-            $next->addDay();
-        }
-
-        return $next->setTimezone('UTC');
+        return SmsSendingHours::nextAllowedTime($now, $timezone);
     }
 
     public function timezoneForEvent(int $eventId): string

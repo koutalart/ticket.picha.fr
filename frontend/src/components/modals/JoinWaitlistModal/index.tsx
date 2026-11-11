@@ -35,16 +35,20 @@ export const JoinWaitlistModal = ({onClose, product, event, productPriceId, pric
         [homepageSettings?.mode, homepageSettings?.background]
     );
 
+    const smsAvailable = !!event?.sms_available;
+
     const form = useForm<Omit<JoinWaitlistRequest, 'product_price_id'> & { consent: boolean }>({
         initialValues: {
             first_name: '',
             last_name: '',
             email: '',
+            phone: '',
             consent: false,
         },
         validate: {
             first_name: hasLength({min: 1}, t`First name is required`),
             email: isEmail(t`Please enter a valid email address`),
+            phone: (value) => (smsAvailable && !value?.trim() ? t`Phone number is required` : null),
             consent: (value) => (!value ? t`You must agree to receive messages` : null),
         },
         validateInputOnBlur: true,
@@ -97,7 +101,9 @@ export const JoinWaitlistModal = ({onClose, product, event, productPriceId, pric
                             {t`You're on the waitlist!`}
                         </Text>
                         <Text size="sm" c="dimmed" mb="xl">
-                            {t`We'll notify you by email if a spot becomes available for ${productDisplayName}.`}
+                            {smsAvailable
+                                ? t`We'll notify you by email and SMS if a spot becomes available for ${productDisplayName}.`
+                                : t`We'll notify you by email if a spot becomes available for ${productDisplayName}.`}
                         </Text>
                         <Button fullWidth onClick={handleClose}>
                             {t`Close`}
@@ -172,9 +178,18 @@ export const JoinWaitlistModal = ({onClose, product, event, productPriceId, pric
                         type="email"
                         required
                     />
+                    <TextInput
+                        {...form.getInputProps('phone')}
+                        label={t`Phone number`}
+                        type="tel"
+                        autoComplete="tel"
+                        required={smsAvailable}
+                    />
                     <Checkbox
                         {...form.getInputProps('consent', {type: 'checkbox'})}
-                        label={t`I agree to receive email notifications related to this event`}
+                        label={smsAvailable
+                            ? t`I agree to receive email and SMS notifications related to this event`
+                            : t`I agree to receive email notifications related to this event`}
                         mt="md"
                         error={form.errors.consent}
                     />

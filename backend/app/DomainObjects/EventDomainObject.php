@@ -24,6 +24,8 @@ class EventDomainObject extends Generated\EventDomainObjectAbstract implements I
 
     private ?Collection $promoCodes = null;
 
+    private ?bool $smsAvailable = null;
+
     private ?Collection $checkInLists = null;
 
     private ?Collection $webhooks = null;
@@ -367,5 +369,17 @@ class EventDomainObject extends Generated\EventDomainObjectAbstract implements I
         return $activeCodes->every(fn(PromoCodeDomainObject $code) => $code->isNoDiscountCode())
             ? 'INVITATION'
             : 'DISCOUNT';
+    }
+
+    public function getSmsAvailable(): ?bool
+    {
+        return $this->smsAvailable;
+    }
+
+    public function setSmsAvailable(?bool $smsAvailable): self
+    {
+        $this->smsAvailable = $smsAvailable;
+
+        return $this;
     }
 }

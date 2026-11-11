@@ -406,6 +406,7 @@ export interface Event extends EventBase {
     description_preview?: string;
     lifecycle_status?: EventLifecycleStatus;
     promo_code_kind?: 'NONE' | 'INVITATION' | 'DISCOUNT';
+    sms_available?: boolean;
     settings?: EventSettings;
     products?: Product[];
     product_categories?: ProductCategory[];
@@ -1523,6 +1524,7 @@ export interface WaitlistEntry {
     product?: Product;
     product_price?: ProductPrice;
     email?: string;
+    phone?: string | null;
     first_name?: string;
     last_name?: string;
     status?: WaitlistEntryStatus;
@@ -1544,6 +1546,7 @@ export interface JoinWaitlistRequest {
     email: string;
     first_name: string;
     last_name?: string;
+    phone?: string;
     locale?: string;
 }
 
