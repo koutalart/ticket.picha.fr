@@ -27,6 +27,7 @@ return [
     'demo_request_email' => env('APP_DEMO_REQUEST_EMAIL', 'ticket@picha.fr'),
 
     'case_study_stats_token' => env('CASE_STUDY_STATS_TOKEN'),
+    'picha_booth_api_key' => env('PICHA_BOOTH_API_KEY'),
     'enforce_email_confirmation_during_registration' => env('APP_ENFORCE_EMAIL_CONFIRMATION_DURING_REGISTRATION', false),
     'allowed_internal_webhook_hosts' => env('APP_ALLOWED_INTERNAL_WEBHOOK_HOSTS', ''),
 
