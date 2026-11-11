@@ -15,7 +15,16 @@ import {sitemapIndexHandler, sitemapEventsHandler, sitemapOrganizersHandler} fro
 import {createRouteAssets} from "./src/ssr/routeAssets.js";
 import {forwardTrackingParams} from "./src/ssr/trackingParams.js";
 
+// Node's own fetch, kept for the server's API calls: the fetch installed by installGlobals crashes the process
+// ("Cannot cancel a stream that already has a reader") when an AbortSignal timeout fires during a response.
+const nativeFetch = globalThis.fetch;
+
 installGlobals();
+
+// A stray rejection (e.g. an aborted request in a library) must never take every site down.
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled rejection', reason);
+});
 
 async function main() {
     const base = process.env.BASE || "/";
@@ -104,7 +113,7 @@ async function main() {
         }
 
         try {
-            const response = await fetch(
+            const response = await nativeFetch(
                 `${process.env.VITE_API_URL_SERVER}/public/custom-domains/${encodeURIComponent(host)}`,
                 {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(5000)}
             );
@@ -133,7 +142,7 @@ async function main() {
         }
 
         try {
-            const response = await fetch(
+            const response = await nativeFetch(
                 `${process.env.VITE_API_URL_SERVER}/public/events/${encodeURIComponent(eventId)}`,
                 {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(5000)}
             );
@@ -196,8 +205,8 @@ async function main() {
         const apiUrl = process.env.VITE_API_URL_SERVER;
         const origin = `https://${organizer.domain}`;
         const [organizerResponse, eventsResponse] = await Promise.all([
-            fetch(`${apiUrl}/public/organizers/${organizer.id}`, {headers: {Accept: 'application/json'}}),
-            fetch(`${apiUrl}/public/organizers/${organizer.id}/events?per_page=100&eventsStatus=upcoming`, {headers: {Accept: 'application/json'}}),
+            nativeFetch(`${apiUrl}/public/organizers/${organizer.id}`, {headers: {Accept: 'application/json'}}),
+            nativeFetch(`${apiUrl}/public/organizers/${organizer.id}/events?per_page=100&eventsStatus=upcoming`, {headers: {Accept: 'application/json'}}),
         ]);
         const organizerData = organizerResponse.ok ? (await organizerResponse.json()).data : null;
         const events = eventsResponse.ok ? (await eventsResponse.json()).data : [];
@@ -270,8 +279,8 @@ Sitemap: ${frontendUrl}/sitemap.xml
         const apiUrl = process.env.VITE_API_URL_SERVER;
         const options = {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(5000)};
         const [organizerResponse, eventsResponse] = await Promise.all([
-            fetch(`${apiUrl}/public/organizers/${encodeURIComponent(organizerId)}`, options),
-            fetch(`${apiUrl}/public/organizers/${encodeURIComponent(organizerId)}/events?per_page=50&eventsStatus=upcoming`, options),
+            nativeFetch(`${apiUrl}/public/organizers/${encodeURIComponent(organizerId)}`, options),
+            nativeFetch(`${apiUrl}/public/organizers/${encodeURIComponent(organizerId)}/events?per_page=50&eventsStatus=upcoming`, options),
         ]);
         if (!organizerResponse.ok) {
             return null;
@@ -354,7 +363,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
 
         let onSale = false;
         try {
-            const response = await fetch(
+            const response = await nativeFetch(
                 `${process.env.VITE_API_URL_SERVER}/public/events/${encodeURIComponent(eventId)}`,
                 {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(1500)}
             );
@@ -422,7 +431,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
                 headers['CF-IPCountry'] = req.get('cf-ipcountry');
             }
 
-            const response = await fetch(
+            const response = await nativeFetch(
                 `${process.env.VITE_API_URL_SERVER}/public/qr-links/${encodeURIComponent(shortId.toLowerCase())}/visits`,
                 {
                     method: 'POST',
@@ -464,7 +473,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
         }
 
         try {
-            const response = await fetch(
+            const response = await nativeFetch(
                 `${process.env.VITE_API_URL_SERVER}/public/calendriers/${encodeURIComponent(slug)}/page`,
                 {headers: {Accept: 'text/html'}, signal: AbortSignal.timeout(5000)}
             );
