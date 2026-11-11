@@ -139,7 +139,7 @@ interface EmbeddedRegistrationProps {
     promoCode?: string;
     promoCodeValid?: boolean;
     sectionRef?: RefObject<HTMLElement>;
-    renderFallback: () => ReactNode;
+    renderFallback: (onCodeApplied: (code: string, eventWithCode: Event) => boolean) => ReactNode;
     onAlreadyRegistered?: () => void;
     variant?: 'immersive' | 'card';
     className?: string;
@@ -1391,6 +1391,24 @@ export const EmbeddedRegistration = ({
         });
     };
 
+    const adoptCodeFromFallback = (code: string, eventWithCode: Event): boolean => {
+        if (isPaidMode) {
+            return false;
+        }
+        const unlocked = resolveEmbeddedRegistrationTicket(eventWithCode, publicProductIds ?? productIdsOf(event));
+        if (!unlocked?.unlockedByCode) {
+            return false;
+        }
+        setEvent(eventWithCode);
+        setPromoCode(code);
+        setCodeOpen(false);
+        setCodeValue('');
+        setCodeError(null);
+        setPendingOrder(null);
+        addQueryStringToUrl('promo_code', code);
+        return true;
+    };
+
     const removeCode = () => {
         promoMutation.mutate(null, {
             onSuccess: (result) => {
@@ -1514,7 +1532,7 @@ export const EmbeddedRegistration = ({
     }
 
     if (forceClassic || cannotEmbed) {
-        return <>{renderFallback()}</>;
+        return <>{renderFallback(adoptCodeFromFallback)}</>;
     }
 
     const isLoading = isPaidMode

@@ -86,6 +86,7 @@ interface SelectProductsProps {
     continueButtonText?: string;
     widgetMode?: 'preview' | 'normal' | 'embedded';
     showPoweredBy?: boolean;
+    onCodeApplied?: (code: string, eventWithCode: Event) => boolean;
 }
 
 const SelectProducts = (props: SelectProductsProps) => {
@@ -207,6 +208,10 @@ const SelectProducts = (props: SelectProductsProps) => {
                 eventId,
                 promoCode
             );
+
+            if (promoCode && props.onCodeApplied?.(promoCode, eventWithPromoCodeApplied.data)) {
+                return;
+            }
 
             setEvent(eventWithPromoCodeApplied.data);
 
@@ -571,7 +576,10 @@ const SelectProducts = (props: SelectProductsProps) => {
                                             };
 
                                             return (
-                                                <div key={product.id} className={`hi-product-row ${product.is_highlighted ? 'hi-product-highlighted' : ''}`}>
+                                                <div key={product.id} className={classNames('hi-product-row', {
+                                                    'hi-product-highlighted': product.is_highlighted,
+                                                    'hi-product-unavailable': !product.is_available || product.is_sold_out,
+                                                })}>
                                                     {product.is_highlighted && product.highlight_message && (
                                                         <div className={'hi-product-highlight-message'}>
                                                             {product.highlight_message}

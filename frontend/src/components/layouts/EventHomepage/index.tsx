@@ -369,7 +369,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const isWaitingForSaleStart = getEventProducts(event).some(product => product.is_before_sale_start_date)
         && !getEventProducts(event).some(product => product.is_available && !product.is_before_sale_start_date);
 
-    const renderTicketsSection = () => (
+    const renderTicketsSection = (onCodeApplied?: (code: string, eventWithCode: Event) => boolean) => (
         <div className={`${classes.section} ${classes.ticketsSection}`}
              ref={ticketsSectionRef as React.RefObject<HTMLDivElement>}
              id="tickets">
@@ -388,6 +388,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                 promoCodeValid={promoCodeValid}
                 promoCode={promoCode}
                 showPoweredBy={false}
+                onCodeApplied={onCodeApplied}
             />
         </div>
     );
@@ -557,10 +558,10 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             promoCode={promoCode}
                             promoCodeValid={promoCodeValid}
                             sectionRef={ticketsSectionRef}
-                            renderFallback={() => (
+                            renderFallback={(onCodeApplied) => (
                                 <div className={classes.wrapper}>
                                     <div className={classes.mainCard}>
-                                        {renderTicketsSection()}
+                                        {renderTicketsSection(onCodeApplied)}
                                     </div>
                                 </div>
                             )}
