@@ -879,7 +879,7 @@ msgstr "需要操作:需要提供增值税信息"
 #: src/components/common/AttendeeTable/index.tsx:363
 #: src/components/common/OrdersTable/index.tsx:450
 #: src/components/common/WaitlistTable/index.tsx:55
-#: src/components/common/WaitlistTable/index.tsx:210
+#: src/components/common/WaitlistTable/index.tsx:215
 #: src/components/routes/admin/FailedJobs/index.tsx:167
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:109
 msgid "Actions"
@@ -3315,8 +3315,8 @@ msgstr "关闭"
 #: src/components/common/AttendeeCheckInTable/PermissionDeniedMessage.tsx:27
 #: src/components/common/RecentPurchaseToast/index.tsx:181
 #: src/components/layouts/EventHomepage/AttendanceAccess/AttendanceAccessModal.tsx:118
-#: src/components/modals/JoinWaitlistModal/index.tsx:103
-#: src/components/modals/JoinWaitlistModal/index.tsx:130
+#: src/components/modals/JoinWaitlistModal/index.tsx:121
+#: src/components/modals/JoinWaitlistModal/index.tsx:148
 #: src/components/modals/RefundOrderModal/index.tsx:240
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:308
 #: src/components/routes/organizer/Publications/PostViewer.tsx:60
@@ -5434,7 +5434,7 @@ msgstr "符合条件的签到列表"
 #: src/components/modals/EditUserModal/index.tsx:80
 #: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:52
 #: src/components/modals/InviteUserModal/index.tsx:61
-#: src/components/modals/JoinWaitlistModal/index.tsx:171
+#: src/components/modals/JoinWaitlistModal/index.tsx:184
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:153
 #: src/components/routes/admin/Dashboard/index.tsx:401
 #: src/components/routes/auth/AcceptInvitation/index.tsx:112
@@ -5842,7 +5842,7 @@ msgstr ""
 msgid "Entries"
 msgstr "入场"
 
-#: src/components/common/WaitlistTable/index.tsx:240
+#: src/components/common/WaitlistTable/index.tsx:245
 msgid "Entries will appear here when customers join the waitlist for sold out products."
 msgstr "当客户加入已售罄产品的候补名单时，条目将显示在此处。"
 
@@ -6839,7 +6839,7 @@ msgstr "姓名"
 #: src/components/modals/EditUserModal/index.tsx:71
 #: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:48
 #: src/components/modals/InviteUserModal/index.tsx:57
-#: src/components/modals/JoinWaitlistModal/index.tsx:161
+#: src/components/modals/JoinWaitlistModal/index.tsx:178
 #: src/components/routes/auth/AcceptInvitation/index.tsx:97
 #: src/components/routes/auth/Register/index.tsx:90
 #: src/components/routes/product-widget/CollectInformation/index.tsx:533
@@ -6852,7 +6852,7 @@ msgstr "姓名"
 msgid "First Name"
 msgstr "姓名"
 
-#: src/components/modals/JoinWaitlistModal/index.tsx:46
+#: src/components/modals/JoinWaitlistModal/index.tsx:49
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:29
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:29
 msgid "First name is required"
@@ -7622,7 +7622,11 @@ msgstr "我接受<0>销售条款</0>和<1>隐私政策</1>"
 msgid "I acknowledge my responsibilities as a data controller"
 msgstr ""
 
-#: src/components/modals/JoinWaitlistModal/index.tsx:177
+#: src/components/modals/JoinWaitlistModal/index.tsx:205
+msgid "I agree to receive email and SMS notifications related to this event"
+msgstr "我同意接收与此活动相关的邮件和短信通知"
+
+#: src/components/modals/JoinWaitlistModal/index.tsx:206
 msgid "I agree to receive email notifications related to this event"
 msgstr "我同意接收与此活动相关的电子邮件通知"
 
@@ -8247,16 +8251,16 @@ msgid "Join from anywhere"
 msgstr "随时随地加入"
 
 #: src/components/common/JoinWaitlistButton/index.tsx:30
-#: src/components/modals/JoinWaitlistModal/index.tsx:189
+#: src/components/modals/JoinWaitlistModal/index.tsx:218
 msgid "Join Waitlist"
 msgstr "加入候补名单"
 
-#: src/components/modals/JoinWaitlistModal/index.tsx:143
+#: src/components/modals/JoinWaitlistModal/index.tsx:161
 msgid "Join Waitlist for {productDisplayName}"
 msgstr ""
 
 #: src/components/common/JoinWaitlistButton/index.tsx:30
-#: src/components/common/WaitlistTable/index.tsx:197
+#: src/components/common/WaitlistTable/index.tsx:202
 msgid "Joined"
 msgstr "已加入"
 
@@ -8445,7 +8449,6 @@ msgstr "姓氏"
 #: src/components/modals/EditUserModal/index.tsx:72
 #: src/components/modals/InviteBoxOfficeOperatorModal/index.tsx:49
 #: src/components/modals/InviteUserModal/index.tsx:58
-#: src/components/modals/JoinWaitlistModal/index.tsx:166
 #: src/components/routes/auth/AcceptInvitation/index.tsx:102
 #: src/components/routes/auth/Register/index.tsx:96
 #: src/components/routes/product-widget/CollectInformation/index.tsx:541
@@ -8457,6 +8460,10 @@ msgstr "姓氏"
 #: src/components/routes/profile/ManageProfile/index.tsx:154
 msgid "Last Name"
 msgstr "姓氏"
+
+#: src/components/modals/JoinWaitlistModal/index.tsx:199
+msgid "Last name (optional)"
+msgstr "姓氏（选填）"
 
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:30
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:30
@@ -10066,7 +10073,7 @@ msgstr "未配置增值税设置"
 msgid "No viewed events in the last 14 days"
 msgstr "过去14天没有浏览的活动"
 
-#: src/components/common/WaitlistTable/index.tsx:236
+#: src/components/common/WaitlistTable/index.tsx:241
 msgid "No waitlist entries"
 msgstr "没有候补名单条目"
 
@@ -11685,6 +11692,7 @@ msgid "Phone calling code"
 msgstr "国际区号"
 
 #: src/components/common/QuestionsTable/index.tsx:365
+#: src/components/modals/JoinWaitlistModal/index.tsx:191
 #: src/components/modals/ManageAttendeeModal/index.tsx:132
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:596
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:893
@@ -11696,6 +11704,10 @@ msgstr "电话号码"
 #: src/components/forms/QuestionForm/index.tsx:138
 msgid "Phone Number"
 msgstr ""
+
+#: src/components/modals/JoinWaitlistModal/index.tsx:51
+msgid "Phone number is required"
+msgstr "必须填写电话号码"
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/index.tsx:168
 msgid "Phone offline"
@@ -11839,7 +11851,7 @@ msgstr "请创建一张票"
 msgid "Please enter a valid e-mail address"
 msgstr ""
 
-#: src/components/modals/JoinWaitlistModal/index.tsx:47
+#: src/components/modals/JoinWaitlistModal/index.tsx:50
 msgid "Please enter a valid email address"
 msgstr "请输入有效的电子邮件地址"
 
@@ -12301,7 +12313,7 @@ msgstr ""
 
 #: src/components/common/AttendeeDetails/index.tsx:35
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:329
-#: src/components/common/WaitlistTable/index.tsx:170
+#: src/components/common/WaitlistTable/index.tsx:175
 #: src/components/modals/ManageAttendeeModal/index.tsx:122
 #: src/components/modals/OfferWaitlistModal/index.tsx:161
 #: src/components/routes/event/Reports/ProductSalesReport/index.tsx:22
@@ -15020,7 +15032,7 @@ msgstr "出错了！请重试"
 msgid "Something went wrong."
 msgstr "出问题了"
 
-#: src/components/modals/JoinWaitlistModal/index.tsx:127
+#: src/components/modals/JoinWaitlistModal/index.tsx:145
 msgid "Something went wrong. Please try again later."
 msgstr "出了点问题。请稍后再试。"
 
@@ -15186,7 +15198,7 @@ msgstr "统计数据基于账户创建日期"
 #: src/components/common/OrderDetails/index.tsx:54
 #: src/components/common/OrdersTable/index.tsx:408
 #: src/components/common/OrganizerWebhookTable/index.tsx:238
-#: src/components/common/WaitlistTable/index.tsx:181
+#: src/components/common/WaitlistTable/index.tsx:186
 #: src/components/common/WebhookTable/index.tsx:238
 #: src/components/forms/AffiliateForm/index.tsx:98
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:56
@@ -17269,7 +17281,7 @@ msgstr "无法生成新的签名密钥"
 msgid "Unable to generate the visual"
 msgstr ""
 
-#: src/components/modals/JoinWaitlistModal/index.tsx:124
+#: src/components/modals/JoinWaitlistModal/index.tsx:142
 msgid "Unable to join waitlist"
 msgstr "无法加入候补名单"
 
@@ -18213,7 +18225,11 @@ msgstr "我们将在 1 个工作日内回复至 {0}，为您安排演示。"
 msgid "We wrote this text from your poster and what we found online. Adjust it as you like."
 msgstr ""
 
-#: src/components/modals/JoinWaitlistModal/index.tsx:100
+#: src/components/modals/JoinWaitlistModal/index.tsx:117
+msgid "We'll notify you by email and SMS if a spot becomes available for {productDisplayName}."
+msgstr "如果 {productDisplayName} 有空位，我们会通过邮件和短信通知您。"
+
+#: src/components/modals/JoinWaitlistModal/index.tsx:118
 msgid "We'll notify you by email if a spot becomes available for {productDisplayName}."
 msgstr ""
 
@@ -18659,7 +18675,7 @@ msgstr "工作"
 #: src/components/modals/EditProductModal/index.tsx:124
 #: src/components/modals/EditPromoCodeModal/index.tsx:84
 #: src/components/modals/EditQuestionModal/index.tsx:101
-#: src/components/modals/JoinWaitlistModal/index.tsx:188
+#: src/components/modals/JoinWaitlistModal/index.tsx:217
 #: src/components/modals/ManageAttendeeModal/index.tsx:240
 #: src/components/modals/ManageOrderModal/index.tsx:175
 #: src/components/routes/auth/Register/index.tsx:137
@@ -18870,7 +18886,7 @@ msgstr "您必须确认此电子邮件并非促销邮件"
 msgid "You must acknowledge your responsibilities before saving"
 msgstr ""
 
-#: src/components/modals/JoinWaitlistModal/index.tsx:48
+#: src/components/modals/JoinWaitlistModal/index.tsx:52
 msgid "You must agree to receive messages"
 msgstr "您必须同意接收消息"
 
@@ -18954,7 +18970,7 @@ msgstr "一切就绪！您的付款正在顺利处理。"
 msgid "You're going to {0}!"
 msgstr "您将参加 {0}！"
 
-#: src/components/modals/JoinWaitlistModal/index.tsx:97
+#: src/components/modals/JoinWaitlistModal/index.tsx:113
 msgid "You're on the waitlist!"
 msgstr "您已加入候补名单！"
 

@@ -14,6 +14,7 @@ use HiEvents\Exceptions\NoCapacityAvailableException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Jobs\Waitlist\SendWaitlistOfferEmailJob;
+use HiEvents\Jobs\Waitlist\SendWaitlistSmsJob;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\WaitlistEntryRepositoryInterface;
@@ -169,6 +170,11 @@ class ProcessWaitlistService
         $updatedEntry = $this->waitlistEntryRepository->findById($entry->getId());
 
         SendWaitlistOfferEmailJob::dispatch($updatedEntry, $order->getShortId(), $sessionIdentifier);
+
+        if ($updatedEntry->getPhone() !== null) {
+            SendWaitlistSmsJob::dispatch($updatedEntry->getId(), SendWaitlistSmsJob::OFFER, $order->getShortId(), $sessionIdentifier)
+                ->afterCommit();
+        }
 
         return $updatedEntry;
     }
