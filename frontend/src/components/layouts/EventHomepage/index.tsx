@@ -54,6 +54,7 @@ import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
 import {organizerLogoUrl} from "../../../utilites/organizerLogo.ts";
 import {ssrLoaderBackground} from "../../../utilites/ssrLoader.ts";
 import {useCoverVideoSource} from "../../../hooks/useCoverVideoSource.ts";
+import {useCoverIntro} from "../../../hooks/useCoverIntro.ts";
 import {EmbeddedRegistration} from "../../routes/product-widget/EmbeddedRegistration";
 import {getEventProducts, isEmbeddedRegistrationEnabled} from "../../../utilites/embeddedRegistration.ts";
 import {RichFooter} from "./RichFooter";
@@ -285,6 +286,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const coverVideo = event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO')?.url;
     const coverVideoMobile = event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO_MOBILE')?.url;
     const coverVideoSource = useCoverVideoSource(coverVideo, coverVideoMobile);
+    const {phase: coverIntroPhase, onPlaying: onCoverPlaying} = useCoverIntro(coverVideoSource);
     const coverVideoData = event?.images?.find((image) => image.url === coverVideoSource)
         ?? event?.images?.find((image) => image.type === 'EVENT_COVER_VIDEO');
     const coverVideoAspectRatio = coverVideoData?.width && coverVideoData?.height
@@ -466,10 +468,10 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             data-pause-on-scroll={isEmbeddedRegistration ? 'true' : undefined}
                             data-sale-countdown={isEmbeddedRegistration && isWaitingForSaleStart ? 'true' : undefined}
                         >
-                            {coverVideoSource ? (
+                            {coverVideoSource && (
                                 <video
+                                    key="cover-video"
                                     src={coverVideoSource}
-                                    poster={coverImage}
                                     className={classes.fullscreenMedia}
                                     aria-hidden="true"
                                     autoPlay
@@ -477,11 +479,15 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     loop
                                     playsInline
                                     preload="metadata"
+                                    onPlaying={onCoverPlaying}
                                 />
-                            ) : coverImage ? (
-                                <img src={coverImage} alt="" aria-hidden="true" className={classes.fullscreenMedia}
+                            )}
+                            {coverImage && coverIntroPhase !== 'done' && (
+                                <img key="cover-image" src={coverImage} alt="" aria-hidden="true"
+                                     className={classes.fullscreenMedia}
+                                     data-intro-fading={coverIntroPhase === 'fading' || undefined}
                                      {...HIGH_FETCH_PRIORITY}/>
-                            ) : null}
+                            )}
                             <div className={classes.fullscreenVeil}/>
                             <div className={classes.fullscreenTopBar}>
                                 {heroPartnerLogo ? (
@@ -619,10 +625,10 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                     className={classes.coverLqip}
                                                 />
                                             )}
-                                            {coverVideoSource ? (
+                                            {coverVideoSource && (
                                                 <video
+                                                    key="cover-video"
                                                     src={coverVideoSource}
-                                                    poster={coverImage}
                                                     className={classes.coverImage}
                                                     aria-label={event.title}
                                                     autoPlay
@@ -630,15 +636,19 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                                     loop
                                                     playsInline
                                                     preload="metadata"
+                                                    onPlaying={onCoverPlaying}
                                                 />
-                                            ) : coverImage ? (
+                                            )}
+                                            {coverImage && coverIntroPhase !== 'done' && (
                                                 <img
+                                                    key="cover-image"
                                                     src={coverImage}
-                                                    alt={event.title}
-                                                    className={classes.coverImage}
+                                                    alt={coverVideoSource ? '' : event.title}
+                                                    className={coverVideoSource ? classes.coverIntroImage : classes.coverImage}
+                                                    data-intro-fading={coverIntroPhase === 'fading' || undefined}
                                                     {...HIGH_FETCH_PRIORITY}
                                                 />
-                                            ) : null}
+                                            )}
                                             <div className={classes.heroGradient}/>
                                             {statusBadge && !isCoverTooShort && (
                                                 <div className={classes.statusBadges}>

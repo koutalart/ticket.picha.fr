@@ -259,6 +259,7 @@ export const EmbeddedRegistration = ({
     const pendingFocus = useRef<'step' | 'error' | string | null>(null);
     const codeInputRef = useRef<HTMLInputElement>(null);
     const nextRef = useRef<() => void>(() => undefined);
+    const autofillSynced = useRef(false);
     const leaveTimer = useRef<number | undefined>(undefined);
     const [leaving, setLeaving] = useState<{ step: Step, direction: 'forward' | 'backward' } | null>(null);
     const [confirmingRemovalKey, setConfirmingRemovalKey] = useState<string | null>(null);
@@ -1008,11 +1009,37 @@ export const EmbeddedRegistration = ({
         });
     };
 
+    const syncAutofilledFields = (): boolean => {
+        const panel = panelRef.current;
+        if (!panel) {
+            return false;
+        }
+        let changed = false;
+        panel.querySelectorAll<HTMLInputElement>('input[data-sync-path]').forEach(input => {
+            const path = input.dataset.syncPath as string;
+            const current = path.split('.').reduce<unknown>(
+                (value, key) => (value as Record<string, unknown> | undefined)?.[key],
+                form.values,
+            );
+            if (input.value !== '' && input.value !== (current ?? '')) {
+                form.setFieldValue(path, input.value);
+                changed = true;
+            }
+        });
+        return changed;
+    };
+
     const handleNext = () => {
         if (completeMutation.isPending) {
             return;
         }
         hasInteracted.current = true;
+        if (!autofillSynced.current && syncAutofilledFields()) {
+            autofillSynced.current = true;
+            window.requestAnimationFrame(() => nextRef.current());
+            return;
+        }
+        autofillSynced.current = false;
         const {_step: stepMessage, ...errors} = validateStep(step);
         if (stepMessage || Object.keys(errors).length > 0) {
             form.setErrors(errors);
@@ -1617,6 +1644,7 @@ export const EmbeddedRegistration = ({
                         <div className={classes.fieldRow}>
                             <TextInput
                                 {...form.getInputProps('order.first_name')}
+                                data-sync-path="order.first_name"
                                 label={t`First Name`}
                                 withAsterisk
                                 name="given-name"
@@ -1626,6 +1654,7 @@ export const EmbeddedRegistration = ({
                             />
                             <TextInput
                                 {...form.getInputProps('order.last_name')}
+                                data-sync-path="order.last_name"
                                 label={t`Last name`}
                                 name="family-name"
                                 autoComplete="family-name"
@@ -1648,6 +1677,7 @@ export const EmbeddedRegistration = ({
                         <div className={phoneQuestion ? classes.fieldRow : classes.fieldStack}>
                             <TextInput
                                 {...form.getInputProps('order.email')}
+                                data-sync-path="order.email"
                                 type="email"
                                 label={t`Email Address`}
                                 withAsterisk
@@ -1662,6 +1692,7 @@ export const EmbeddedRegistration = ({
                             {phoneQuestion && (
                                 <TextInput
                                     {...form.getInputProps(`order.questions.${phoneQuestionIndex}.response.answer`)}
+                                    data-sync-path={`order.questions.${phoneQuestionIndex}.response.answer`}
                                     type="tel"
                                     inputMode="tel"
                                     autoComplete="tel"
