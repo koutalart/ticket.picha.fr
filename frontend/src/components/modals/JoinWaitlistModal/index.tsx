@@ -1,14 +1,14 @@
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Event, GenericModalProps, IdParam, JoinWaitlistRequest, Product} from "../../../types.ts";
 import {hasLength, isEmail, useForm} from "@mantine/form";
 import {useFormErrorResponseHandler} from "../../../hooks/useFormErrorResponseHandler.tsx";
 import {useJoinWaitlist} from "../../../mutations/useJoinWaitlist.ts";
 import {t} from "@lingui/macro";
 import {Button, Checkbox, Modal as MantineModal, Text, TextInput} from "@mantine/core";
-import {InputGroup} from "../../common/InputGroup";
 import {CheckoutThemeProvider} from "../../layouts/Checkout/CheckoutThemeProvider.tsx";
 import {detectMode} from "../../../utilites/themeUtils.ts";
 import {BouncingEmoji} from "../../common/BouncingEmoji";
+import {readBuyerProfile, readCheckoutDraft} from "../../../utilites/checkoutMemory.ts";
 
 const DEFAULT_ACCENT = '#8b5cf6';
 
@@ -53,6 +53,18 @@ export const JoinWaitlistModal = ({onClose, product, event, productPriceId, pric
         },
         validateInputOnBlur: true,
     });
+
+    useEffect(() => {
+        const draft = readCheckoutDraft(event.id)?.order;
+        const profile = readBuyerProfile();
+        const pick = (...values: (string | undefined)[]) => values.find(value => value?.trim()) || '';
+        form.setValues({
+            first_name: pick(form.values.first_name, draft?.first_name, profile?.first_name),
+            last_name: pick(form.values.last_name, draft?.last_name, profile?.last_name),
+            email: pick(form.values.email, draft?.email, profile?.email),
+            phone: pick(form.values.phone, profile?.phone),
+        });
+    }, [event.id]);
 
     const handleSubmit = ({consent: _, ...values}: Omit<JoinWaitlistRequest, 'product_price_id'> & { consent: boolean }) => {
         mutation.mutate({
@@ -161,29 +173,31 @@ export const JoinWaitlistModal = ({onClose, product, event, productPriceId, pric
                     }}
                     style={{padding: '0 15px 15px'}}
                 >
-                    <InputGroup>
-                        <TextInput
-                            {...form.getInputProps('first_name')}
-                            label={t`First Name`}
-                            required
-                        />
-                        <TextInput
-                            {...form.getInputProps('last_name')}
-                            label={t`Last Name`}
-                        />
-                    </InputGroup>
+                    <TextInput
+                        {...form.getInputProps('first_name')}
+                        label={t`First Name`}
+                        autoComplete="given-name"
+                        required
+                    />
                     <TextInput
                         {...form.getInputProps('email')}
                         label={t`Email`}
                         type="email"
+                        autoComplete="email"
                         required
                     />
                     <TextInput
                         {...form.getInputProps('phone')}
                         label={t`Phone number`}
+                        placeholder="0639 12 34 56"
                         type="tel"
                         autoComplete="tel"
                         required={smsAvailable}
+                    />
+                    <TextInput
+                        {...form.getInputProps('last_name')}
+                        label={t`Last name (optional)`}
+                        autoComplete="family-name"
                     />
                     <Checkbox
                         {...form.getInputProps('consent', {type: 'checkbox'})}
