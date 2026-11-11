@@ -5,6 +5,7 @@ import {useParams} from "react-router";
 import {useGetOrderPublic} from "../../../../queries/useGetOrderPublic.ts";
 import {t} from "@lingui/macro";
 import {useEffect} from "react";
+import {printWhenImagesReady} from "../../../../utilites/printWhenImagesReady.ts";
 import classes from './PrintOrder.module.scss';
 import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
 import {getFullscreenHero} from "../../../../utilites/fullscreenHero.ts";
@@ -19,7 +20,7 @@ export const PrintOrder = () => {
 
     useEffect(() => {
         if (order && event) {
-            setTimeout(() => window?.print(), 500);
+            return printWhenImagesReady();
         }
     }, [order, event]);
 

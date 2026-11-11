@@ -5,6 +5,7 @@ import {AttendeeTicket} from '../../../common/AttendeeTicket';
 import {Attendee, Product} from '../../../../types.ts';
 import {PoweredByFooter} from '../../../common/PoweredByFooter';
 import {useEffect} from "react";
+import {printWhenImagesReady} from "../../../../utilites/printWhenImagesReady.ts";
 import {OnlineEventDetails} from "../../../common/OnlineEventDetails";
 import {t} from '@lingui/macro';
 import classes from '../PrintOrder/PrintOrder.module.scss';
@@ -20,7 +21,7 @@ const PrintProduct = () => {
 
     useEffect(() => {
         if (attendee && event) {
-            setTimeout(() => window?.print(), 500);
+            return printWhenImagesReady();
         }
     }, [attendee, event]);
 
