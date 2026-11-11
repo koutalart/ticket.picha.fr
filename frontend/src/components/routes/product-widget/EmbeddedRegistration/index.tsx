@@ -1392,7 +1392,11 @@ export const EmbeddedRegistration = ({
     };
 
     const adoptCodeFromFallback = (code: string, eventWithCode: Event): boolean => {
-        if (isPaidMode) {
+        const blockedForOtherReasons = forceClassic
+            || questionsQuery.isError
+            || (questionsQuery.isFetched && (hasUnsupportedQuestions(relevantQuestions) || hasAutoFilledProductQuestions))
+            || !!eventWithCode.settings?.require_billing_address;
+        if (isPaidMode || blockedForOtherReasons) {
             return false;
         }
         const unlocked = resolveEmbeddedRegistrationTicket(eventWithCode, publicProductIds ?? productIdsOf(event));
