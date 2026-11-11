@@ -39,6 +39,7 @@ class CompleteOrderActionPublic extends BaseAction
                         ? $request->input('order.questions')
                         : null,
                     'opted_into_marketing' => $request->boolean('order.opted_into_marketing'),
+                    'phone' => $request->validated('order.phone'),
                 ]),
                 'products' => $request->input('products'),
                 'event_id' => $eventId,

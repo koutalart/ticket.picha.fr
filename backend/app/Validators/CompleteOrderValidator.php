@@ -12,6 +12,7 @@ use HiEvents\DomainObjects\Generated\QuestionDomainObjectAbstract;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\QuestionDomainObject;
+use HiEvents\Helper\OrderPhoneNormalizer;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
@@ -86,6 +87,16 @@ class CompleteOrderValidator extends BaseValidator
                 ->setUploadedFiles($uploadedFiles),
             'order.email' => 'required|email',
             'order.email_confirmation' => 'nullable|email|same:order.email',
+            'order.phone' => [
+                'nullable',
+                'string',
+                'max:30',
+                static function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (is_string($value) && trim($value) !== '' && OrderPhoneNormalizer::normalize($value) === null) {
+                        $fail(__('Please enter a valid mobile phone number'));
+                    }
+                },
+            ],
             'products' => (new ProductQuestionRule(
                 $productQuestions,
                 $products,

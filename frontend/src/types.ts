@@ -1066,6 +1066,7 @@ export interface Order {
     payment_provider: PaymentProvider;
     notes?: string;
     email: string;
+    phone?: string | null;
     reserved_until: string;
     total_before_additions: number;
     total_tax: number;

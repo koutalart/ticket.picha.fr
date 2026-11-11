@@ -88,6 +88,12 @@ order_stats AS (
     WHERE normalized_email IN (SELECT email FROM event_stats)
     GROUP BY normalized_email
 ),
+buyer_phones AS (
+    SELECT DISTINCT ON (normalized_email) normalized_email AS email, phone
+    FROM valid_orders
+    WHERE phone IS NOT NULL AND normalized_email IN (SELECT email FROM event_stats)
+    ORDER BY normalized_email, created_at DESC
+),
 attended_stats AS (
     SELECT lower(trim(a.email)) AS email, count(DISTINCT a.event_id) AS attended_events_count
     FROM attendees a
@@ -98,12 +104,12 @@ attended_stats AS (
     GROUP BY lower(trim(a.email))
 )
 INSERT INTO contacts (
-    organizer_id, email, first_name, last_name, source,
+    organizer_id, email, phone, first_name, last_name, source,
     orders_count, events_count, attended_events_count, total_spent,
     first_order_at, last_order_at, email_consent_at, email_consent_source,
     last_synced_at, created_at, updated_at
 )
-SELECT p.organizer_id, n.email, n.first_name, n.last_name,
+SELECT p.organizer_id, n.email, bp.phone, n.first_name, n.last_name,
        CASE WHEN os.email IS NULL THEN ? ELSE ? END,
        coalesce(os.orders_count, 0), es.events_count, coalesce(ats.attended_events_count, 0), coalesce(os.total_spent, 0),
        os.first_order_at, os.last_order_at, os.email_consent_at,
@@ -114,9 +120,11 @@ CROSS JOIN params p
 JOIN event_stats es ON es.email = n.email
 LEFT JOIN order_stats os ON os.email = n.email
 LEFT JOIN attended_stats ats ON ats.email = n.email
+LEFT JOIN buyer_phones bp ON bp.email = n.email
 ON CONFLICT (organizer_id, email) WHERE email IS NOT NULL DO UPDATE SET
     first_name = coalesce(contacts.first_name, EXCLUDED.first_name),
     last_name = coalesce(contacts.last_name, EXCLUDED.last_name),
+    phone = coalesce(contacts.phone, EXCLUDED.phone),
     source = CASE WHEN contacts.source = ? THEN EXCLUDED.source ELSE contacts.source END,
     orders_count = EXCLUDED.orders_count,
     events_count = EXCLUDED.events_count,
@@ -146,8 +154,80 @@ SQL;
         ]);
 
         $this->resetStaleStatistics($organizerId, $emails, $syncStartedAt);
+        $this->mergePhoneOnlyDuplicates($organizerId, $emails);
 
         return $synced;
+    }
+
+    /**
+     * A person first reached by SMS has a contact with a phone and no email. Once they order with that phone, their
+     * order contact holds both: the phone-only contact is merged into it, keeping its SMS consent.
+     */
+    public function mergePhoneOnlyDuplicates(int $organizerId, ?array $emails = null): int
+    {
+        if ($emails === []) {
+            return 0;
+        }
+
+        $sql = <<<'SQL'
+WITH params AS (
+    SELECT ?::bigint AS organizer_id, ?::jsonb AS emails
+),
+mains AS (
+    SELECT DISTINCT ON (c.phone) c.id, c.phone
+    FROM contacts c CROSS JOIN params p
+    WHERE c.organizer_id = p.organizer_id
+      AND c.merged_into_contact_id IS NULL
+      AND c.email IS NOT NULL
+      AND c.phone IS NOT NULL
+      AND (p.emails IS NULL OR c.email IN (SELECT jsonb_array_elements_text(p.emails)))
+    ORDER BY c.phone, c.last_order_at DESC NULLS LAST, c.id
+),
+pairs AS (
+    SELECT DISTINCT ON (d.id) d.id AS duplicate_id, m.id AS main_id
+    FROM contacts d
+    CROSS JOIN params p
+    JOIN mains m ON d.phone = m.phone
+        OR (m.phone ~ '^\+262(639|692|693|262|263|269)[0-9]{6}$' AND d.phone = '+33' || substr(m.phone, 5))
+    WHERE d.organizer_id = p.organizer_id
+      AND d.merged_into_contact_id IS NULL
+      AND d.email IS NULL
+      AND d.id <> m.id
+    ORDER BY d.id, m.id
+),
+consents AS (
+    SELECT pr.main_id,
+           max(d.sms_consent_at) AS sms_consent_at,
+           (array_agg(d.sms_consent_source ORDER BY d.sms_consent_at DESC NULLS LAST))[1] AS sms_consent_source,
+           max(d.sms_unsubscribed_at) AS sms_unsubscribed_at,
+           (array_agg(d.first_name ORDER BY d.id) FILTER (WHERE d.first_name IS NOT NULL))[1] AS first_name,
+           (array_agg(d.last_name ORDER BY d.id) FILTER (WHERE d.last_name IS NOT NULL))[1] AS last_name
+    FROM pairs pr JOIN contacts d ON d.id = pr.duplicate_id
+    GROUP BY pr.main_id
+),
+updated_mains AS (
+    UPDATE contacts c SET
+        sms_consent_source = CASE
+            WHEN cs.sms_consent_at > coalesce(c.sms_consent_at, '-infinity'::timestamp) THEN cs.sms_consent_source
+            ELSE c.sms_consent_source END,
+        sms_consent_at = greatest(c.sms_consent_at, cs.sms_consent_at),
+        sms_unsubscribed_at = greatest(c.sms_unsubscribed_at, cs.sms_unsubscribed_at),
+        first_name = coalesce(c.first_name, cs.first_name),
+        last_name = coalesce(c.last_name, cs.last_name),
+        updated_at = now()
+    FROM consents cs
+    WHERE c.id = cs.main_id
+    RETURNING c.id
+)
+UPDATE contacts d SET merged_into_contact_id = pr.main_id, updated_at = now()
+FROM pairs pr
+WHERE d.id = pr.duplicate_id
+SQL;
+
+        return DB::affectingStatement($sql, [
+            $organizerId,
+            $emails === null ? null : json_encode(array_values($emails)),
+        ]);
     }
 
     public function paginateForOrganizer(int $organizerId, ContactFilterDTO $filter, QueryParamsDTO $params): LengthAwarePaginator
