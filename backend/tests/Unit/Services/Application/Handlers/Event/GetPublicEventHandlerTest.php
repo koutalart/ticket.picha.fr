@@ -10,6 +10,7 @@ use HiEvents\Services\Application\Handlers\Event\DTO\GetPublicEventDTO;
 use HiEvents\Services\Application\Handlers\Event\GetPublicEventHandler;
 use HiEvents\Services\Domain\Event\EventPageViewIncrementService;
 use HiEvents\Services\Domain\Product\ProductFilterService;
+use HiEvents\Services\Domain\Sms\SmsAvailabilityService;
 use Mockery as m;
 use Tests\TestCase;
 
@@ -34,7 +35,8 @@ class GetPublicEventHandlerTest extends TestCase
             $this->eventRepository,
             $this->promoCodeRepository,
             $this->ticketFilterService,
-            $this->eventPageViewIncrementService
+            $this->eventPageViewIncrementService,
+            m::mock(SmsAvailabilityService::class, fn ($mock) => $mock->shouldReceive('canSend')->andReturn(true)),
         );
     }
 
