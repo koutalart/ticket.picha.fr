@@ -288,6 +288,7 @@ use HiEvents\Http\Actions\Organizers\Newsletter\ExportOrganizerNewsletterSubscri
 use HiEvents\Http\Actions\Organizers\Newsletter\GetOrganizerNewsletterSubscribersAction;
 use HiEvents\Http\Actions\DemoRequests\SendDemoRequestPublicAction;
 use HiEvents\Http\Actions\CaseStudies\GetCaseStudyStatsAction;
+use HiEvents\Http\Actions\Booth\VerifyBoothTicketAction;
 use HiEvents\Http\Actions\Organizers\Settings\GetOrganizerSettingsAction;
 use HiEvents\Http\Actions\Organizers\Settings\PartialUpdateOrganizerSettingsAction;
 use HiEvents\Http\Actions\Organizers\Stats\GetOrganizerStatsAction;
@@ -865,6 +866,16 @@ $router->prefix('/print-relay')->middleware('throttle:kiosk-print-relay')->group
     function (Router $router): void {
         $router->get('/jobs', GetPendingKioskPrintJobsAction::class);
         $router->post('/jobs/{job_id}/ack', AcknowledgeKioskPrintJobAction::class)->where('job_id', '[0-9]+');
+    }
+);
+
+/**
+ * PICHA Booth ticket verification (server to server, X-Booth-Key header)
+ */
+$router->prefix('/internal/booth')->middleware('throttle:600,1')->group(
+    function (Router $router): void {
+        $router->get('/events/{event_id}/tickets/{attendee_public_id}', VerifyBoothTicketAction::class)
+            ->where('event_id', '[0-9]+');
     }
 );
 
