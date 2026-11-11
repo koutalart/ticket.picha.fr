@@ -31,6 +31,15 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'chatwoot' => [
+        'base_url' => env('CHATWOOT_BASE_URL'),
+        'account_id' => (int) env('CHATWOOT_ACCOUNT_ID', 1),
+        'api_token' => env('CHATWOOT_API_TOKEN'),
+        'sms_inbox_id' => (int) env('CHATWOOT_SMS_INBOX_ID', 0),
+        'webhook_token' => env('CHATWOOT_WEBHOOK_TOKEN'),
+        'gateway_user_id' => (int) env('CHATWOOT_GATEWAY_USER_ID', 0),
+        'timeout_seconds' => (int) env('CHATWOOT_TIMEOUT_SECONDS', 10),
+    ],
     'httpsms' => [
         'base_url' => env('HTTPSMS_BASE_URL', 'https://api.httpsms.com/v1'),
         'timeout_seconds' => (int) env('HTTPSMS_TIMEOUT_SECONDS', 15),

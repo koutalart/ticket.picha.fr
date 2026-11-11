@@ -36,6 +36,7 @@ use HiEvents\Http\Actions\Sms\GetSmsConversationAction;
 use HiEvents\Http\Actions\Sms\UpdateSmsConversationAction;
 use HiEvents\Http\Actions\Sms\SendSmsReplyAction;
 use HiEvents\Http\Actions\Sms\HttpSmsIncomingWebhookAction;
+use HiEvents\Http\Actions\Chatwoot\ChatwootIncomingWebhookAction;
 use HiEvents\Http\Actions\Sms\GetSmsCampaignsAction;
 use HiEvents\Http\Actions\Sms\GetSmsCampaignRecipientsAction;
 use HiEvents\Http\Actions\Sms\RegenerateSmsDraftAction;
@@ -1023,6 +1024,9 @@ $router->prefix('/public')->group(
         $router->post('/webhooks/stripe', StripeIncomingWebhookAction::class);
         $router->post('/webhooks/httpsms/{webhook_token}', HttpSmsIncomingWebhookAction::class)
             ->where('webhook_token', '[A-Za-z0-9]{20,64}')
+            ->middleware('throttle:120,1');
+        $router->post('/webhooks/chatwoot/{webhook_token}', ChatwootIncomingWebhookAction::class)
+            ->where('webhook_token', '[A-Za-z0-9]{32,64}')
             ->middleware('throttle:120,1');
 
         // Check-In
