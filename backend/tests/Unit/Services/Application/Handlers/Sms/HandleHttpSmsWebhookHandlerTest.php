@@ -87,6 +87,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->fileSyncService = Mockery::mock(SmsFileSyncService::class);
         $this->fileSyncService->shouldReceive('findQueueOrganizerId')->andReturnNull()->byDefault();
         $this->inboundService->shouldReceive('isKnownOutbound')->andReturnFalse()->byDefault();
+        $this->inboundService->shouldReceive('isRecentDuplicate')->andReturnFalse()->byDefault();
 
         $keywordService = Mockery::mock(SmsLineKeywordService::class);
         $keywordService->shouldReceive('match')->andReturnNull()->byDefault();
@@ -220,6 +221,21 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
 
         $this->inboundService->shouldReceive('recordInbound')->once()->andReturnNull();
         $this->alertService->shouldNotReceive('notifyInbound');
+
+        $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
+    }
+
+    public function test_same_text_received_again_a_moment_later_is_ignored(): void
+    {
+        $this->expectVerified();
+
+        $this->inboundService->shouldReceive('isRecentDuplicate')
+            ->once()
+            ->withArgs(fn (int $lineId, InboundSmsDTO $sms) => $lineId === 1 && $sms->content === 'STOP')
+            ->andReturnTrue();
+        $this->inboundService->shouldNotReceive('recordInbound');
+        $this->alertService->shouldNotReceive('notifyInbound');
+        $this->assistantService->shouldNotReceive('queueDraftIfEligible');
 
         $this->handler->handle($this->dto('message.phone.received', $this->receivedData()));
     }
