@@ -48,6 +48,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     final public const OPTED_INTO_MARKETING_AT = 'opted_into_marketing_at';
     final public const TRACKING_CONTEXT = 'tracking_context';
     final public const META_CAPI_SENT_AT = 'meta_capi_sent_at';
+    final public const PHONE = 'phone';
 
     protected int $id;
     protected int $event_id;
@@ -87,6 +88,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     protected ?string $opted_into_marketing_at = null;
     protected array|string|null $tracking_context = null;
     protected ?string $meta_capi_sent_at = null;
+    protected ?string $phone = null;
 
     public function toArray(): array
     {
@@ -129,6 +131,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
                     'opted_into_marketing_at' => $this->opted_into_marketing_at ?? null,
                     'tracking_context' => $this->tracking_context ?? null,
                     'meta_capi_sent_at' => $this->meta_capi_sent_at ?? null,
+                    'phone' => $this->phone ?? null,
                 ];
     }
 
@@ -548,5 +551,16 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     public function getMetaCapiSentAt(): ?string
     {
         return $this->meta_capi_sent_at;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
     }
 }

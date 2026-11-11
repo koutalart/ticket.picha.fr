@@ -73,6 +73,7 @@ export const CollectInformation = () => {
     } = useGetEventQuestionsPublic(eventId);
     const productQuestions = questions?.filter(question => question.belongs_to === "PRODUCT");
     const orderQuestions = questions?.filter(question => question.belongs_to === "ORDER");
+    const hasPhoneQuestion = !!orderQuestions?.some(question => question.type === QuestionType.PHONE);
     const products = productCategories?.flatMap(category => category.products);
     const requireBillingAddress = event?.settings?.require_billing_address;
     const isPerOrderCollection = event?.settings?.attendee_details_collection_method === 'PER_ORDER';
@@ -108,6 +109,7 @@ export const CollectInformation = () => {
                 last_name: "",
                 email: "",
                 address: {},
+                phone: "",
                 questions: {},
                 opted_into_marketing: false,
             },
@@ -232,7 +234,9 @@ export const CollectInformation = () => {
         onSuccess: (data, variables) => {
             const nextPage = order?.is_payment_required ? 'payment' : 'summary';
             const phoneIndex = (orderQuestions ?? []).findIndex(question => question.type === QuestionType.PHONE);
-            const phoneAnswer = phoneIndex >= 0 ? (variables as any)?.order?.questions?.[phoneIndex]?.response?.answer : '';
+            const phoneAnswer = phoneIndex >= 0
+                ? (variables as any)?.order?.questions?.[phoneIndex]?.response?.answer
+                : (variables as any)?.order?.phone;
             rememberPendingContact(String(data.data.short_id), {
                 first_name: String(variables?.order?.first_name ?? '').trim(),
                 last_name: String(variables?.order?.last_name ?? '').trim(),
@@ -374,6 +378,7 @@ export const CollectInformation = () => {
                     first_name: pick(form.values.order.first_name, profile?.first_name),
                     last_name: pick(form.values.order.last_name, profile?.last_name),
                     email: pick(form.values.order.email, profile?.email),
+                    phone: pick(form.values.order.phone, profile?.phone),
                     questions: formOrderQuestions,
                 },
             });
@@ -386,6 +391,19 @@ export const CollectInformation = () => {
             navigate(`/event/${eventId}/${event.slug}`);
         }
     }, [order, event]);
+
+    const buyerPhoneInput = (
+        <TextInput
+            type="tel"
+            name="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            label={t`Mobile phone`}
+            placeholder="0639 12 34 56"
+            description={t`To receive practical information about the event by SMS`}
+            {...form.getInputProps("order.phone")}
+        />
+    );
 
     if (!isEventFetched || !isOrderFetched) {
         return <LoadingSkeleton/>
@@ -530,6 +548,8 @@ export const CollectInformation = () => {
                         rightSection={isEmailValid(form.values.order.email) ? <EmailCheckIcon/> : null}
                         {...form.getInputProps("order.email")}
                     />
+
+                    {!hasPhoneQuestion && buyerPhoneInput}
 
                     {orderRequiresAttendeeDetails && !isPerOrderCollection && totalTicketAttendees > 0 && (
                         <div className={classes.copyDetailsSection}>
@@ -745,6 +765,8 @@ export const CollectInformation = () => {
                                                         <EmailCheckIcon/> : null}
                                                     {...form.getInputProps(`products.${currentProductIndex}.email`)}
                                                 />
+
+                                                {isFirstFreeParticipant && !hasPhoneQuestion && buyerPhoneInput}
                                             </>
                                         )}
 

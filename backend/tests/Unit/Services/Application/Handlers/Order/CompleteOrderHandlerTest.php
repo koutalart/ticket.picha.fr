@@ -22,6 +22,8 @@ use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionAnswerRepositoryInterface;
+use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
+use HiEvents\DomainObjects\QuestionDomainObject;
 use HiEvents\Services\Application\Handlers\Order\CompleteOrderHandler;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderOrderDTO;
@@ -61,6 +63,7 @@ class CompleteOrderHandlerTest extends TestCase
     private CheckoutSessionManagementService|MockInterface $sessionManagementService;
     private QuestionAnswerFileService|MockInterface $questionAnswerFileService;
     private EventRepositoryInterface|MockInterface $eventRepository;
+    private QuestionRepositoryInterface|MockInterface $questionRepository;
 
     protected function setUp(): void
     {
@@ -83,6 +86,8 @@ class CompleteOrderHandlerTest extends TestCase
         $this->questionAnswerFileService = Mockery::mock(QuestionAnswerFileService::class);
         $this->questionAnswerFileService->shouldReceive('getUnattachedFilesForOrder')->andReturn(new Collection())->byDefault();
         $this->eventRepository = Mockery::mock(EventRepositoryInterface::class);
+        $this->questionRepository = Mockery::mock(QuestionRepositoryInterface::class);
+        $this->questionRepository->shouldReceive('findWhere')->andReturn(new Collection())->byDefault();
 
         $this->completeOrderHandler = new CompleteOrderHandler(
             $this->orderRepository,
@@ -97,6 +102,7 @@ class CompleteOrderHandlerTest extends TestCase
             $this->questionAnswerFileService,
             $this->eventRepository,
             new AttendeeAgeRestrictionService(),
+            $this->questionRepository,
         );
     }
 
@@ -443,6 +449,76 @@ class CompleteOrderHandlerTest extends TestCase
             ->once()
             ->withArgs(fn($id, array $attributes) => array_key_exists('opted_into_marketing_at', $attributes)
                 && $attributes['opted_into_marketing_at'] === null)
+            ->andReturn($this->createMockOrder());
+        $this->attendeeRepository->shouldReceive('insert')->andReturn(true);
+
+        $this->completeOrderHandler->handle('ABC123', $this->createMockCompleteOrderDTO());
+
+        $this->assertTrue(true);
+    }
+
+    public function testBuyerPhoneIsStoredInE164WithMayotteByDefault(): void
+    {
+        $this->prepareSimpleOrder();
+        $this->orderRepository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(fn($id, array $attributes) => $attributes['phone'] === '+262639123456')
+            ->andReturn($this->createMockOrder());
+        $this->attendeeRepository->shouldReceive('insert')->andReturn(true);
+        $this->questionRepository->shouldNotReceive('findWhere');
+
+        $this->completeOrderHandler->handle('ABC123', new CompleteOrderDTO(
+            order: new CompleteOrderOrderDTO(
+                first_name: 'Jo',
+                last_name: '',
+                email: 'jo@example.com',
+                questions: null,
+                phone: '0639 12 34 56',
+            ),
+            products: $this->createMockCompleteOrderDTO()->products,
+            event_id: 1,
+        ));
+
+        $this->assertTrue(true);
+    }
+
+    public function testBuyerPhoneFallsBackToThePhoneOrderQuestion(): void
+    {
+        $this->prepareSimpleOrder();
+        $this->questionRepository->shouldReceive('findWhere')
+            ->once()
+            ->with(Mockery::on(fn(array $where) => $where['type'] === 'PHONE' && $where['belongs_to'] === 'ORDER'))
+            ->andReturn(new Collection([(new QuestionDomainObject())->setId(5)]));
+        $this->questionAnswersRepository->shouldReceive('create')->andReturn((new QuestionAnswerDomainObject())->setId(1));
+        $this->orderRepository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(fn($id, array $attributes) => $attributes['phone'] === '+262693112233')
+            ->andReturn($this->createMockOrder());
+        $this->attendeeRepository->shouldReceive('insert')->andReturn(true);
+
+        $this->completeOrderHandler->handle('ABC123', new CompleteOrderDTO(
+            order: new CompleteOrderOrderDTO(
+                first_name: 'Jo',
+                last_name: '',
+                email: 'jo@example.com',
+                questions: new Collection([
+                    new OrderQuestionsDTO(question_id: 4, response: ['answer' => 'Plage']),
+                    new OrderQuestionsDTO(question_id: 5, response: ['answer' => '693 11 22 33']),
+                ]),
+            ),
+            products: $this->createMockCompleteOrderDTO()->products,
+            event_id: 1,
+        ));
+
+        $this->assertTrue(true);
+    }
+
+    public function testBuyerPhoneStaysEmptyWhenNotGiven(): void
+    {
+        $this->prepareSimpleOrder();
+        $this->orderRepository->shouldReceive('updateFromArray')
+            ->once()
+            ->withArgs(fn($id, array $attributes) => array_key_exists('phone', $attributes) && $attributes['phone'] === null)
             ->andReturn($this->createMockOrder());
         $this->attendeeRepository->shouldReceive('insert')->andReturn(true);
 
