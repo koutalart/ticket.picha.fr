@@ -143,7 +143,7 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
     });
 
     const type = form.values.destination_type;
-    const previewUrl = qrLink?.public_url || `${window.location.origin}/q/preview`;
+    const previewUrl = qrLink?.public_url || `${window.location.origin}/preview`;
     const previewTitle = form.values.title.trim()
         || eventOptions.find(option => option.value === form.values.event_id)?.label
         || organizerName;

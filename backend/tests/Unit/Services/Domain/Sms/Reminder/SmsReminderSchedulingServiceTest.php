@@ -73,7 +73,7 @@ class SmsReminderSchedulingServiceTest extends TestCase
             new SmsReminderMessageRenderer,
             $this->linkProvider,
             $databaseManager,
-            Mockery::mock(PublicBaseUrlResolver::class)->shouldReceive('forOrganizerId')->andReturn('https://mayottela1ere.fr')->getMock(),
+            Mockery::mock(PublicBaseUrlResolver::class)->shouldReceive('forShortLinks')->andReturn('https://mayottela1ere.fr')->getMock(),
         );
     }
 
@@ -115,7 +115,7 @@ class SmsReminderSchedulingServiceTest extends TestCase
         $this->assertSame(4, $preview->smsCount);
         $this->assertTrue($preview->personalLinkAvailable);
         $this->assertStringNotContainsString('http', (string) $preview->sampleMessage);
-        $this->assertSame('https://mayottela1ere.fr/q/a1b2c3d', $preview->sampleLinkMessage);
+        $this->assertSame('https://mayottela1ere.fr/a1b2c3d', $preview->sampleLinkMessage);
     }
 
     public function test_schedules_a_reminder_with_its_recipients(): void

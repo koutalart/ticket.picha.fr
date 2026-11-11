@@ -615,6 +615,15 @@ export const router: RouteObject[] = [
         errorElement: <ErrorPage/>,
     },
     {
+        path: "/:shortId",
+        loader: qrLinkPageLoader,
+        async lazy() {
+            const QrLinkPage = await import("./components/layouts/QrLinkPage");
+            return {Component: QrLinkPage.default};
+        },
+        errorElement: <ErrorPage/>,
+    },
+    {
         path: "/e/:eventId/:eventSlug",
         async lazy() {
             const EventHomepage = await import("./components/layouts/EventHomepage");

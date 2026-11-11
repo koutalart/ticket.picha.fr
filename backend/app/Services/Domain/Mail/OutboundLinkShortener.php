@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace HiEvents\Services\Domain\Mail;
 
+use HiEvents\Services\Domain\QrLink\QrLinkUrlService;
+
 /**
  * Replaces every long link to our public sites (platform or organizer domain) found in a message body with its short link.
  * Images, stylesheets, stored files and links that are already short are left untouched.
@@ -75,7 +77,7 @@ class OutboundLinkShortener
             return false;
         }
 
-        return ! str_starts_with($path, '/q/')
+        return ! QrLinkUrlService::isShortLinkPath($path)
             && ! str_starts_with($path, '/api/storage/')
             && ! str_starts_with($path, '/storage/')
             && ! str_starts_with($path, '/manifest-icons/')

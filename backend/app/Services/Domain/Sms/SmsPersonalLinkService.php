@@ -163,11 +163,11 @@ class SmsPersonalLinkService
     }
 
     /**
-     * A ?qr= or ?c= link to the organizer's site (not a /q/ redirect), whose address can carry the contact's code instead.
+     * A ?qr= or ?c= link to the organizer's site (not a short link redirect), whose address can carry the contact's code instead.
      */
     private static function isTrackedSiteLink(string $url): bool
     {
-        return self::hasTracking($url) && ! str_starts_with((string) parse_url($url, PHP_URL_PATH), '/q/');
+        return self::hasTracking($url) && ! QrLinkUrlService::isShortLinkPath((string) parse_url($url, PHP_URL_PATH));
     }
 
     private static function queryParam(string $url, string $name): ?string

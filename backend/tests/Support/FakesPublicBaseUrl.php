@@ -20,7 +20,7 @@ trait FakesPublicBaseUrl
      * @param  array<int, string|null>  $customDomainByOrganizerId
      * @param  array<int, int>  $organizerIdByEventId
      */
-    protected function fakePublicBaseUrl(array $customDomainByOrganizerId = [], array $organizerIdByEventId = []): PublicBaseUrlResolver
+    protected function fakePublicBaseUrl(array $customDomainByOrganizerId = [], array $organizerIdByEventId = [], array $shortLinkDomainByOrganizerId = []): PublicBaseUrlResolver
     {
         $organizerRepository = Mockery::mock(OrganizerRepositoryInterface::class);
         $organizerRepository->shouldReceive('findFirst')->andReturnUsing(
@@ -28,6 +28,7 @@ trait FakesPublicBaseUrl
                 ->setId($id)
                 ->setStatus('LIVE')
                 ->setCustomDomain($customDomainByOrganizerId[$id] ?? null)
+                ->setShortLinkDomain($shortLinkDomainByOrganizerId[$id] ?? null)
         );
 
         $eventRepository = Mockery::mock(EventRepositoryInterface::class);
