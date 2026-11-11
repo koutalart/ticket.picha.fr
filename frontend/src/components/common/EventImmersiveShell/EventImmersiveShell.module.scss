@@ -15,6 +15,17 @@
   @media print {
     min-height: 0;
     color: #000;
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
+@media print {
+  :global(html),
+  :global(body) {
+    background: #fff !important;
   }
 }
 
