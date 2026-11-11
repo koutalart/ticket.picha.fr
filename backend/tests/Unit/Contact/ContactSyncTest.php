@@ -143,6 +143,42 @@ class ContactSyncTest extends TestCase
         self::assertSame('IMPORT', $contact->email_consent_source);
     }
 
+    public function test_buyer_phone_is_saved_on_the_contact_without_overwriting_an_existing_one(): void
+    {
+        [$event] = $this->createEventWithProduct();
+        $first = $this->order($event, 'client@example.test', 25.00, phone: '+262639111111');
+        $this->service->syncForOrder($first->id);
+
+        self::assertSame('+262639111111', $this->contacts($event->organizer_id)->sole()->phone);
+
+        $second = $this->order($event, 'client@example.test', 25.00, phone: '+262639222222');
+        $this->service->syncForOrder($second->id);
+
+        self::assertSame('+262639111111', $this->contacts($event->organizer_id)->sole()->phone);
+    }
+
+    public function test_sms_contact_with_the_same_phone_is_merged_into_the_buyer_contact(): void
+    {
+        [$event] = $this->createEventWithProduct();
+        [$otherEvent] = $this->createEventWithProduct();
+        $consentAt = now()->subDays(3)->startOfSecond();
+
+        $smsContactId = $this->smsContact($event->organizer_id, '+33639123456', 'Fatima', $consentAt);
+        $otherOrganizerContactId = $this->smsContact($otherEvent->organizer_id, '+262639123456', 'Autre', $consentAt);
+
+        $order = $this->order($event, 'fatima@example.test', 25.00, phone: '+262639123456');
+        $this->service->syncForOrder($order->id);
+
+        $buyer = DB::table('contacts')->where('email', 'fatima@example.test')->sole();
+        self::assertSame('+262639123456', $buyer->phone);
+        self::assertSame('SMS_KEYWORD', $buyer->sms_consent_source);
+        self::assertEquals($consentAt, \Carbon\Carbon::parse($buyer->sms_consent_at));
+        self::assertNull($buyer->merged_into_contact_id);
+
+        self::assertSame($buyer->id, DB::table('contacts')->where('id', $smsContactId)->value('merged_into_contact_id'));
+        self::assertNull(DB::table('contacts')->where('id', $otherOrganizerContactId)->value('merged_into_contact_id'));
+    }
+
     public function test_normalize_email(): void
     {
         self::assertSame('a@b.fr', ContactSyncService::normalizeEmail('  A@B.fr '));
@@ -156,9 +192,24 @@ class ContactSyncTest extends TestCase
         return DB::table('contacts')->where('organizer_id', $organizerId)->orderBy('email')->get();
     }
 
-    private function order(Event $event, string $email, float $total, bool $optedIn = false, string $status = 'COMPLETED', float $refunded = 0): Order
+    private function smsContact(int $organizerId, string $phone, string $firstName, \DateTimeInterface $consentAt): int
+    {
+        return DB::table('contacts')->insertGetId([
+            'organizer_id' => $organizerId,
+            'phone' => $phone,
+            'first_name' => $firstName,
+            'source' => 'SMS_CAMPAIGN',
+            'sms_consent_at' => $consentAt,
+            'sms_consent_source' => 'SMS_KEYWORD',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    private function order(Event $event, string $email, float $total, bool $optedIn = false, string $status = 'COMPLETED', float $refunded = 0, ?string $phone = null): Order
     {
         return Order::create([
+            'phone' => $phone,
             'event_id' => $event->id,
             'total_gross' => $total,
             'total_refunded' => $refunded,

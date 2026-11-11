@@ -9,15 +9,19 @@ use Exception;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\Enums\AttendeeDetailsCollectionMethod;
 use HiEvents\DomainObjects\Enums\ProductType;
+use HiEvents\DomainObjects\Enums\QuestionBelongsTo;
+use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\OrderDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\ProductPriceDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\QuestionDomainObjectAbstract;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\QuestionAnswerFileDomainObject;
+use HiEvents\DomainObjects\QuestionDomainObject;
 use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\DomainObjects\Status\OrderPaymentStatus;
 use HiEvents\DomainObjects\Status\OrderStatus;
@@ -27,6 +31,7 @@ use HiEvents\Exceptions\InvalidQuestionAnswerFileException;
 use HiEvents\Exceptions\ResourceConflictException;
 use HiEvents\Exceptions\UnauthorizedException;
 use HiEvents\Helper\IdHelper;
+use HiEvents\Helper\OrderPhoneNormalizer;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AffiliateRepositoryInterface;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
@@ -35,6 +40,7 @@ use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionAnswerRepositoryInterface;
+use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderOrderDTO;
 use HiEvents\Services\Application\Handlers\Order\DTO\CompleteOrderProductDataDTO;
@@ -74,6 +80,7 @@ class CompleteOrderHandler
         private readonly QuestionAnswerFileService         $questionAnswerFileService,
         private readonly EventRepositoryInterface          $eventRepository,
         private readonly AttendeeAgeRestrictionService     $attendeeAgeRestrictionService,
+        private readonly QuestionRepositoryInterface       $questionRepository,
     )
     {
     }
@@ -371,6 +378,7 @@ class CompleteOrderHandler
                     OrderDomainObjectAbstract::FIRST_NAME => $orderDTO->first_name,
                     OrderDomainObjectAbstract::LAST_NAME => $orderDTO->last_name,
                     OrderDomainObjectAbstract::EMAIL => $orderDTO->email,
+                    OrderDomainObjectAbstract::PHONE => $this->resolveBuyerPhone($order, $orderDTO),
                     OrderDomainObjectAbstract::PAYMENT_STATUS => $order->isPaymentRequired()
                         ? OrderPaymentStatus::AWAITING_PAYMENT->name
                         : OrderPaymentStatus::NO_PAYMENT_REQUIRED->name,
@@ -392,6 +400,36 @@ class CompleteOrderHandler
         }
 
         return $updatedOrder;
+    }
+
+    private function resolveBuyerPhone(OrderDomainObject $order, CompleteOrderOrderDTO $orderDTO): ?string
+    {
+        $phone = OrderPhoneNormalizer::normalize($orderDTO->phone);
+        if ($phone !== null || $orderDTO->questions === null || $orderDTO->questions->isEmpty()) {
+            return $phone;
+        }
+
+        $phoneQuestionIds = $this->questionRepository
+            ->findWhere([
+                QuestionDomainObjectAbstract::EVENT_ID => $order->getEventId(),
+                QuestionDomainObjectAbstract::TYPE => QuestionTypeEnum::PHONE->name,
+                QuestionDomainObjectAbstract::BELONGS_TO => QuestionBelongsTo::ORDER->name,
+            ])
+            ->map(fn (QuestionDomainObject $question) => $question->getId())
+            ->all();
+
+        foreach ($orderDTO->questions as $question) {
+            /** @var OrderQuestionsDTO $question */
+            $answer = $question->response['answer'] ?? null;
+            if (in_array((int) $question->question_id, $phoneQuestionIds, true) && is_string($answer)) {
+                $phone = OrderPhoneNormalizer::normalize($answer);
+                if ($phone !== null) {
+                    return $phone;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

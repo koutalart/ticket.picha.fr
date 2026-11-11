@@ -76,6 +76,10 @@ class EventResourcePublic extends BaseResource
                 condition: !is_null($this->getImages()),
                 value: fn() => ImageResource::collection($this->getImages())
             ),
+            'promo_code_kind' => $this->when(
+                condition: !is_null($this->getPublicPromoCodeKind()),
+                value: fn() => $this->getPublicPromoCodeKind(),
+            ),
             'organizer' => $this->when(
                 condition: !is_null($this->getOrganizer()),
                 value: fn() => new OrganizerResourcePublic($this->getOrganizer()),

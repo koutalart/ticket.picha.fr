@@ -66,6 +66,10 @@ class GetPublicEventHandler
             $promoCodeDomainObject = null;
         }
 
+        $event->setPromoCodes($this->promoCodeRepository->findWhere([
+            PromoCodeDomainObjectAbstract::EVENT_ID => $data->eventId,
+        ]));
+
         if (!$data->isAuthenticated) {
             $this->eventPageViewIncrementService->increment($data->eventId, $data->ipAddress);
         }

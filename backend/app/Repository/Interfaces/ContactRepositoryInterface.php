@@ -24,6 +24,8 @@ interface ContactRepositoryInterface extends RepositoryInterface
      */
     public function syncFromOrders(int $organizerId, ?array $emails = null): int;
 
+    public function mergePhoneOnlyDuplicates(int $organizerId, ?array $emails = null): int;
+
     public function paginateForOrganizer(int $organizerId, ContactFilterDTO $filter, QueryParamsDTO $params): LengthAwarePaginator;
 
     public function getSummaryForOrganizer(int $organizerId, ContactFilterDTO $filter): ContactSummaryDTO;

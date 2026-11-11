@@ -405,6 +405,7 @@ export interface Event extends EventBase {
     status?: EventStatus;
     description_preview?: string;
     lifecycle_status?: EventLifecycleStatus;
+    promo_code_kind?: 'NONE' | 'INVITATION' | 'DISCOUNT';
     settings?: EventSettings;
     products?: Product[];
     product_categories?: ProductCategory[];
@@ -1067,6 +1068,7 @@ export interface Order {
     payment_provider: PaymentProvider;
     notes?: string;
     email: string;
+    phone?: string | null;
     reserved_until: string;
     total_before_additions: number;
     total_tax: number;
