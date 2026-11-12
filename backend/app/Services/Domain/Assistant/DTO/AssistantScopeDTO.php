@@ -11,7 +11,7 @@ use HiEvents\DomainObjects\OrganizerDomainObject;
 class AssistantScopeDTO extends BaseDataObject
 {
     public function __construct(
-        public readonly OrganizerDomainObject $organizer,
+        public readonly ?OrganizerDomainObject $organizer = null,
         public readonly ?EventDomainObject $event = null,
     ) {}
 

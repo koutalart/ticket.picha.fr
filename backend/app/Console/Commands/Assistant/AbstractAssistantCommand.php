@@ -40,9 +40,13 @@ abstract class AbstractAssistantCommand extends Command
     private const EXCLUDED_FROM_PARAMS = ['organisateur', 'evenement', 'par', 'confirme', 'help', 'quiet', 'verbose',
         'version', 'ansi', 'no-ansi', 'no-interaction', 'env', 'silent'];
 
+    private const BY_OPTION = '
+        {--par=Anicka : Who asked for the action, e.g. "Jo, SMS du 11/11"}';
+
     public function __construct()
     {
-        $this->signature .= self::COMMON_OPTIONS.($this->level() === 2 ? self::CONFIRM_OPTION : '');
+        $this->signature .= ($this->requiresOrganizer() ? self::COMMON_OPTIONS : self::BY_OPTION)
+            .($this->level() === 2 ? self::CONFIRM_OPTION : '');
 
         parent::__construct();
     }
@@ -67,6 +71,14 @@ abstract class AbstractAssistantCommand extends Command
     }
 
     /**
+     * False only for an action that creates the organizer itself: the scope then has no organizer.
+     */
+    protected function requiresOrganizer(): bool
+    {
+        return true;
+    }
+
+    /**
      * @throws AssistantActionRefusedException
      */
     protected function validateInput(): void {}
@@ -79,11 +91,17 @@ abstract class AbstractAssistantCommand extends Command
         $scope = null;
 
         try {
-            $organizerId = $this->requiredId('organisateur');
-            $eventId = $this->requiresEvent() ? $this->requiredId('evenement') : $this->optionalId('evenement');
-            $this->validateInput();
+            if ($this->requiresOrganizer()) {
+                $organizerId = $this->requiredId('organisateur');
+                $eventId = $this->requiresEvent() ? $this->requiredId('evenement') : $this->optionalId('evenement');
+                $this->validateInput();
 
-            $scope = $resolver->resolve($organizerId, $eventId);
+                $scope = $resolver->resolve($organizerId, $eventId);
+            } else {
+                $this->validateInput();
+                $scope = new AssistantScopeDTO;
+            }
+
             $token = $this->level() === 2 ? $this->optionalString('confirme') : null;
 
             if ($token === null) {
@@ -327,6 +345,26 @@ abstract class AbstractAssistantCommand extends Command
         return $owner->getUserId();
     }
 
+    /**
+     * A yes/no option: oui, non, true, false, 1 or 0.
+     *
+     * @throws AssistantActionRefusedException
+     */
+    protected function yesNo(string $option, bool $default): bool
+    {
+        $value = $this->optionalString($option);
+
+        if ($value === null) {
+            return $default;
+        }
+
+        return match (mb_strtolower($value)) {
+            'oui', 'true', '1', 'yes' => true,
+            'non', 'false', '0', 'no' => false,
+            default => throw new AssistantActionRefusedException(__('The option --:option must be oui or non.', ['option' => $option])),
+        };
+    }
+
     protected function money(float $amount, string $currency): string
     {
         return number_format($amount, 2, ',', ' ').' '.$currency;
@@ -359,11 +397,11 @@ abstract class AbstractAssistantCommand extends Command
             requestedBy: $this->optionalString('par') ?? 'Anicka',
             params: [
                 ...$params,
-                'organisateur' => $scope?->organizer->getId() ?? $this->option('organisateur'),
+                'organisateur' => $scope?->organizer?->getId() ?? ($this->hasOption('organisateur') ? $this->option('organisateur') : null),
                 'evenement' => $scope?->event?->getId() ?? ($this->hasOption('evenement') ? $this->option('evenement') : null),
             ],
-            accountId: $scope?->accountId(),
-            organizerId: $scope?->organizer->getId(),
+            accountId: $scope?->organizer?->getAccountId(),
+            organizerId: $scope?->organizer?->getId(),
             eventId: $scope?->event?->getId(),
         );
     }
