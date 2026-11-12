@@ -9,27 +9,35 @@ use HiEvents\DomainObjects\Enums\SmsMessageDirection;
 use HiEvents\DomainObjects\Generated\SmsConversationDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsMessageDomainObjectAbstract;
 use HiEvents\DomainObjects\Generated\SmsUnattributedMessageDomainObjectAbstract;
+use HiEvents\DomainObjects\Generated\SmsUnattributedOutboundMessageDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\SmsMessageDomainObject;
 use HiEvents\DomainObjects\SmsUnattributedMessageDomainObject;
+use HiEvents\DomainObjects\SmsUnattributedOutboundMessageDomainObject;
 use HiEvents\Exceptions\ChatwootUnavailableException;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Eloquent\Value\OrderAndDirection;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\RepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsUnattributedOutboundMessageRepositoryInterface;
 use HiEvents\Services\Infrastructure\Chatwoot\ChatwootClient;
 use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Support\Carbon;
 
 /**
  * Copies every SMS of PICHA into the « SMS PICHA » inbox of Chatwoot, one Chatwoot conversation per SMS conversation.
- * SMS of numbers without a conversation (kept for the platform) get their own Chatwoot conversation, one per number.
+ * SMS of numbers without a conversation and SMS that Anicka's scripts send for no organizer get their own Chatwoot
+ * conversation, one per number.
  * Replies typed in Chatwoot come back through the webhook and are sent as SMS by PICHA.
  */
 class ChatwootSmsMirrorService
 {
     private const PENDING_TTL_SECONDS = 300;
+
+    private const RECENT_COPY_WINDOW_SECONDS = 600;
 
     private static bool $suppressed = false;
 
@@ -40,6 +48,7 @@ class ChatwootSmsMirrorService
         private readonly OrganizerRepositoryInterface $organizerRepository,
         private readonly Cache $cache,
         private readonly SmsUnattributedMessageRepositoryInterface $unattributedRepository,
+        private readonly SmsUnattributedOutboundMessageRepositoryInterface $outboundRepository,
     ) {}
 
     public static function withoutMirroring(callable $callback): mixed
@@ -137,15 +146,68 @@ class ChatwootSmsMirrorService
             return;
         }
 
-        $chatwootConversationId = $this->unknownNumberConversationId($message->getPhone())
-            ?? $this->openUnknownNumberConversation($message);
-
-        $chatwootMessageId = $this->client->createMessage($chatwootConversationId, $message->getContent(), true);
+        $chatwootConversationId = $this->numberConversationId($message->getPhone());
+        $chatwootMessageId = $this->findRecentCopy($chatwootConversationId, $message->getContent())
+            ?? $this->client->createMessage($chatwootConversationId, $message->getContent(), true);
 
         $this->unattributedRepository->updateFromArray($message->getId(), [
             SmsUnattributedMessageDomainObjectAbstract::CHATWOOT_CONVERSATION_ID => $chatwootConversationId,
             SmsUnattributedMessageDomainObjectAbstract::CHATWOOT_MESSAGE_ID => $chatwootMessageId,
         ]);
+    }
+
+    /**
+     * @throws ChatwootUnavailableException
+     */
+    public function mirrorUnattributedOutbound(int $outboundId): void
+    {
+        if (! $this->isEnabled()) {
+            return;
+        }
+
+        /** @var SmsUnattributedOutboundMessageDomainObject|null $message */
+        $message = $this->outboundRepository->findFirstWhere([SmsUnattributedOutboundMessageDomainObjectAbstract::ID => $outboundId]);
+        if ($message === null || $message->getChatwootMessageId() !== null || trim($message->getContent()) === '') {
+            return;
+        }
+
+        $chatwootConversationId = $this->numberConversationId($message->getPhone());
+        $content = '[Anicka] '.$message->getContent();
+        $chatwootMessageId = $this->findRecentCopy($chatwootConversationId, $content);
+
+        if ($chatwootMessageId === null) {
+            $this->cache->put(self::pendingKey($chatwootConversationId, $content), true, self::PENDING_TTL_SECONDS);
+            $chatwootMessageId = $this->client->createMessage($chatwootConversationId, $content, false);
+        }
+
+        $this->outboundRepository->updateFromArray($message->getId(), [
+            SmsUnattributedOutboundMessageDomainObjectAbstract::CHATWOOT_CONVERSATION_ID => $chatwootConversationId,
+            SmsUnattributedOutboundMessageDomainObjectAbstract::CHATWOOT_MESSAGE_ID => $chatwootMessageId,
+        ]);
+    }
+
+    /**
+     * @throws ChatwootUnavailableException
+     */
+    public function noteUnattributedOutboundFailure(int $outboundId): void
+    {
+        if (! $this->isEnabled()) {
+            return;
+        }
+
+        /** @var SmsUnattributedOutboundMessageDomainObject|null $message */
+        $message = $this->outboundRepository->findFirstWhere([SmsUnattributedOutboundMessageDomainObjectAbstract::ID => $outboundId]);
+        if ($message?->getChatwootConversationId() === null) {
+            return;
+        }
+
+        $this->client->createMessage(
+            $message->getChatwootConversationId(),
+            __('SMS not delivered: :content', ['content' => mb_substr($message->getContent(), 0, 80)])
+                .($message->getErrorMessage() ? ' ('.$message->getErrorMessage().')' : ''),
+            incoming: false,
+            private: true,
+        );
     }
 
     /**
@@ -269,28 +331,34 @@ class ChatwootSmsMirrorService
         return true;
     }
 
-    private function unknownNumberConversationId(string $phone): ?int
-    {
-        /** @var SmsUnattributedMessageDomainObject|null $previous */
-        $previous = $this->unattributedRepository->findWhere(
-            where: [
-                SmsUnattributedMessageDomainObjectAbstract::PHONE => $phone,
-                [SmsUnattributedMessageDomainObjectAbstract::CHATWOOT_CONVERSATION_ID, 'not null', null],
-            ],
-            orderAndDirections: [new OrderAndDirection(SmsUnattributedMessageDomainObjectAbstract::ID, 'desc')],
-        )->first();
-
-        return $previous?->getChatwootConversationId();
-    }
-
     /**
+     * The Chatwoot conversation of a number that belongs to no organizer: the one already used for its SMS, else an
+     * open conversation of the contact in the SMS inbox that no organizer conversation uses (one an earlier script
+     * opened), else a new one.
+     *
      * @throws ChatwootUnavailableException
      */
-    private function openUnknownNumberConversation(SmsUnattributedMessageDomainObject $message): int
+    private function numberConversationId(string $phone): int
     {
-        $contactId = $this->client->findOrCreateContact($message->getPhone(), $message->getPhone());
+        $known = $this->lastConversationId($this->unattributedRepository, SmsUnattributedMessageDomainObjectAbstract::PHONE, $phone)
+            ?? $this->lastConversationId($this->outboundRepository, SmsUnattributedOutboundMessageDomainObjectAbstract::PHONE, $phone);
+        if ($known !== null) {
+            return $known;
+        }
 
-        $chatwootConversationId = $this->client->createConversation($contactId, 'picha-sms-inconnu-'.ltrim($message->getPhone(), '+'), [
+        $contactId = $this->client->findOrCreateContact($phone, $phone);
+
+        $existing = collect($this->client->contactConversations($contactId))
+            ->filter(fn (array $conversation) => $conversation['inbox_id'] === $this->client->smsInboxId())
+            ->sortByDesc('id')
+            ->first(fn (array $conversation) => $this->conversationRepository->findFirstWhere([
+                SmsConversationDomainObjectAbstract::CHATWOOT_CONVERSATION_ID => $conversation['id'],
+            ]) === null);
+        if ($existing !== null) {
+            return $existing['id'];
+        }
+
+        $chatwootConversationId = $this->client->createConversation($contactId, 'picha-sms-inconnu-'.ltrim($phone, '+'), [
             'organisateur' => __('no organizer'),
             'numero_sans_conversation' => true,
         ]);
@@ -303,6 +371,43 @@ class ChatwootSmsMirrorService
         );
 
         return $chatwootConversationId;
+    }
+
+    private function lastConversationId(RepositoryInterface $repository, string $phoneField, string $phone): ?int
+    {
+        $previous = $repository->findWhere(
+            where: [$phoneField => $phone, ['chatwoot_conversation_id', 'not null', null]],
+            orderAndDirections: [new OrderAndDirection('id', 'desc')],
+        )->first();
+
+        return $previous?->getChatwootConversationId();
+    }
+
+    /**
+     * The same text already posted in the conversation less than 10 minutes ago, by PICHA or by a script of Anicka
+     * during the switch-over, is not posted twice. Labels like « [Anicka] » are ignored in the comparison.
+     *
+     * @throws ChatwootUnavailableException
+     */
+    private function findRecentCopy(int $chatwootConversationId, string $content): ?int
+    {
+        $wanted = self::normalizeForComparison($content);
+        $since = Carbon::now()->subSeconds(self::RECENT_COPY_WINDOW_SECONDS)->getTimestamp();
+
+        foreach ($this->client->recentMessages($chatwootConversationId) as $message) {
+            if (! $message['private']
+                && $message['created_at'] >= $since
+                && self::normalizeForComparison($message['content']) === $wanted) {
+                return $message['id'];
+            }
+        }
+
+        return null;
+    }
+
+    private static function normalizeForComparison(string $content): string
+    {
+        return (string) preg_replace('/\s+/u', ' ', trim((string) preg_replace('/^\[[^\]]{1,40}\]\s*/u', '', trim($content))));
     }
 
     private function outgoingContent(SmsMessageDomainObject $message): string

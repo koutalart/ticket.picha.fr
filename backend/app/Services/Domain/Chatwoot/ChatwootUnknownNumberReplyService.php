@@ -5,22 +5,25 @@ declare(strict_types=1);
 namespace HiEvents\Services\Domain\Chatwoot;
 
 use HiEvents\DomainObjects\Generated\OrganizerSmsSettingDomainObjectAbstract;
-use HiEvents\DomainObjects\Generated\SmsUnattributedMessageDomainObjectAbstract;
+use HiEvents\DomainObjects\Interfaces\DomainObjectInterface;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
 use HiEvents\DomainObjects\SmsUnattributedMessageDomainObject;
+use HiEvents\DomainObjects\SmsUnattributedOutboundMessageDomainObject;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\Exceptions\SmsGatewayException;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
 use HiEvents\Exceptions\SmsRecipientOptedOutException;
 use HiEvents\Repository\Eloquent\Value\OrderAndDirection;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
+use HiEvents\Repository\Interfaces\RepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsUnattributedOutboundMessageRepositoryInterface;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
 use HiEvents\Services\Infrastructure\HttpSms\HttpSmsClient;
 use Illuminate\Contracts\Cache\Repository as Cache;
 
 /**
- * A reply typed in Chatwoot to a number without a PICHA conversation leaves by SMS from the line that received its SMS.
+ * A reply typed in Chatwoot to a number without a PICHA conversation leaves by SMS from the line its SMS went through.
  * It is not filed with any organizer: the number stays with the platform until an admin assigns its SMS.
  */
 class ChatwootUnknownNumberReplyService
@@ -31,6 +34,7 @@ class ChatwootUnknownNumberReplyService
 
     public function __construct(
         private readonly SmsUnattributedMessageRepositoryInterface $unattributedRepository,
+        private readonly SmsUnattributedOutboundMessageRepositoryInterface $outboundRepository,
         private readonly OrganizerSmsSettingRepositoryInterface $settingsRepository,
         private readonly SmsConversationService $conversationService,
         private readonly HttpSmsClient $httpSmsClient,
@@ -47,11 +51,9 @@ class ChatwootUnknownNumberReplyService
      */
     public function reply(int $chatwootConversationId, int $chatwootMessageId, string $content): bool
     {
-        /** @var SmsUnattributedMessageDomainObject|null $last */
-        $last = $this->unattributedRepository->findWhere(
-            where: [SmsUnattributedMessageDomainObjectAbstract::CHATWOOT_CONVERSATION_ID => $chatwootConversationId],
-            orderAndDirections: [new OrderAndDirection(SmsUnattributedMessageDomainObjectAbstract::ID, 'desc')],
-        )->first();
+        /** @var SmsUnattributedMessageDomainObject|SmsUnattributedOutboundMessageDomainObject|null $last */
+        $last = $this->lastOf($this->unattributedRepository, $chatwootConversationId)
+            ?? $this->lastOf($this->outboundRepository, $chatwootConversationId);
 
         if ($last === null) {
             return false;
@@ -90,6 +92,14 @@ class ChatwootUnknownNumberReplyService
         }
 
         return true;
+    }
+
+    private function lastOf(RepositoryInterface $repository, int $chatwootConversationId): ?DomainObjectInterface
+    {
+        return $repository->findWhere(
+            where: ['chatwoot_conversation_id' => $chatwootConversationId],
+            orderAndDirections: [new OrderAndDirection('id', 'desc')],
+        )->first();
     }
 
     /**

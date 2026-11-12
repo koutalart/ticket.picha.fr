@@ -26,6 +26,7 @@ use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsLineKeywordService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
+use HiEvents\Services\Domain\Sms\SmsUnattributedOutboundService;
 use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
 use HiEvents\Services\Domain\Sms\Team\SmsTeamInboundService;
 use Mockery;
@@ -56,6 +57,8 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
     private SmsFileSyncService|MockInterface $fileSyncService;
 
     private ChatwootUnknownNumberReplyService|MockInterface $chatwootReplyService;
+
+    private SmsUnattributedOutboundService|MockInterface $unattributedOutboundService;
 
     private SmsTeamInboundService|MockInterface $teamInboundService;
 
@@ -95,6 +98,8 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->chatwootReplyService = Mockery::mock(ChatwootUnknownNumberReplyService::class);
         $this->chatwootReplyService->shouldReceive('handleDeliveryEvent')->andReturnFalse()->byDefault();
 
+        $this->unattributedOutboundService = Mockery::mock(SmsUnattributedOutboundService::class);
+
         $keywordService = Mockery::mock(SmsLineKeywordService::class);
         $keywordService->shouldReceive('match')->andReturnNull()->byDefault();
 
@@ -115,6 +120,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
             $this->fileSyncService,
             $keywordService,
             $this->chatwootReplyService,
+            $this->unattributedOutboundService,
         );
 
         $this->settings = (new OrganizerSmsSettingDomainObject)
@@ -479,7 +485,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         ]));
     }
 
-    public function test_queue_sms_whose_organizer_cannot_be_told_is_not_given_to_the_line_owner(): void
+    public function test_queue_sms_whose_organizer_cannot_be_told_is_kept_for_the_platform_never_given_to_the_line_owner(): void
     {
         $this->expectVerified();
         $this->expectSharedLine();
@@ -490,6 +496,11 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->fileSyncService->shouldReceive('findQueueOrganizerId')->with(324)->andReturnNull();
         $this->lineService->shouldNotReceive('queueSender');
         $this->inboundService->shouldNotReceive('recordOutboundEvent');
+        $this->unattributedOutboundService->shouldReceive('record')->once()
+            ->withArgs(fn ($line, $providerId, $contact, $content, $requestId, $status) => $providerId === 'prov-6'
+                && $contact === '+262639123456'
+                && $requestId === 'file-324'
+                && $status === SmsMessageStatus::SENT);
 
         $this->handler->handle($this->dto('message.phone.sent', [
             'id' => 'prov-6',

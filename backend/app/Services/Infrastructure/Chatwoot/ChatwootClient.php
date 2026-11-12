@@ -75,6 +75,39 @@ class ChatwootClient
     }
 
     /**
+     * @return array<int, array{id: int, inbox_id: int}>
+     *
+     * @throws ChatwootUnavailableException
+     */
+    public function contactConversations(int $contactId): array
+    {
+        return array_values(array_map(
+            fn (array $conversation) => ['id' => (int) ($conversation['id'] ?? 0), 'inbox_id' => (int) ($conversation['inbox_id'] ?? 0)],
+            array_filter((array) ($this->call('GET', "contacts/{$contactId}/conversations", [])->json('payload') ?? []), 'is_array'),
+        ));
+    }
+
+    /**
+     * Latest messages of the conversation (Chatwoot gives the last 20).
+     *
+     * @return array<int, array{id: int, content: string, created_at: int, private: bool}>
+     *
+     * @throws ChatwootUnavailableException
+     */
+    public function recentMessages(int $conversationId): array
+    {
+        return array_values(array_map(
+            fn (array $message) => [
+                'id' => (int) ($message['id'] ?? 0),
+                'content' => (string) ($message['content'] ?? ''),
+                'created_at' => (int) ($message['created_at'] ?? 0),
+                'private' => (bool) ($message['private'] ?? false),
+            ],
+            array_filter((array) ($this->call('GET', "conversations/{$conversationId}/messages", [])->json('payload') ?? []), 'is_array'),
+        ));
+    }
+
+    /**
      * @throws ChatwootUnavailableException
      */
     private function call(string $method, string $path, array $body): Response

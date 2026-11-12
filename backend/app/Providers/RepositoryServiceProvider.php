@@ -82,6 +82,7 @@ use HiEvents\Repository\Eloquent\SmsReplyTemplateRepository;
 use HiEvents\Repository\Eloquent\SmsLineKeywordRepository;
 use HiEvents\Repository\Eloquent\SmsLineFormerMemberRepository;
 use HiEvents\Repository\Eloquent\SmsUnattributedMessageRepository;
+use HiEvents\Repository\Eloquent\SmsUnattributedOutboundMessageRepository;
 use HiEvents\Repository\Eloquent\SmsWatchdogAlertRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarAccessRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarCodeRepository;
@@ -189,6 +190,7 @@ use HiEvents\Repository\Interfaces\SmsReplyTemplateRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsLineKeywordRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsLineFormerMemberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsUnattributedOutboundMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsWatchdogAlertRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarAccessRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarCodeRepositoryInterface;
@@ -268,6 +270,7 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsLineKeywordRepositoryInterface::class => SmsLineKeywordRepository::class,
         SmsLineFormerMemberRepositoryInterface::class => SmsLineFormerMemberRepository::class,
         SmsUnattributedMessageRepositoryInterface::class => SmsUnattributedMessageRepository::class,
+        SmsUnattributedOutboundMessageRepositoryInterface::class => SmsUnattributedOutboundMessageRepository::class,
         SmsWatchdogAlertRepositoryInterface::class => SmsWatchdogAlertRepository::class,
         OrganizerCalendarRepositoryInterface::class => OrganizerCalendarRepository::class,
         OrganizerCalendarMediaRepositoryInterface::class => OrganizerCalendarMediaRepository::class,

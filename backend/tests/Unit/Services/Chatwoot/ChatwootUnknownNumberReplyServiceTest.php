@@ -4,12 +4,14 @@ namespace Tests\Unit\Services\Chatwoot;
 
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
 use HiEvents\DomainObjects\SmsUnattributedMessageDomainObject;
+use HiEvents\DomainObjects\SmsUnattributedOutboundMessageDomainObject;
 use HiEvents\DomainObjects\Status\SmsMessageStatus;
 use HiEvents\Exceptions\SmsGatewayException;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
 use HiEvents\Exceptions\SmsRecipientOptedOutException;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsUnattributedOutboundMessageRepositoryInterface;
 use HiEvents\Services\Domain\Chatwoot\ChatwootSmsMirrorService;
 use HiEvents\Services\Domain\Chatwoot\ChatwootUnknownNumberReplyService;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
@@ -23,6 +25,8 @@ use Tests\TestCase;
 class ChatwootUnknownNumberReplyServiceTest extends TestCase
 {
     private SmsUnattributedMessageRepositoryInterface|MockInterface $unattributedRepository;
+
+    private SmsUnattributedOutboundMessageRepositoryInterface|MockInterface $outboundRepository;
 
     private OrganizerSmsSettingRepositoryInterface|MockInterface $settingsRepository;
 
@@ -39,6 +43,8 @@ class ChatwootUnknownNumberReplyServiceTest extends TestCase
         parent::setUp();
 
         $this->unattributedRepository = Mockery::mock(SmsUnattributedMessageRepositoryInterface::class);
+        $this->outboundRepository = Mockery::mock(SmsUnattributedOutboundMessageRepositoryInterface::class);
+        $this->outboundRepository->shouldReceive('findWhere')->andReturn(collect())->byDefault();
         $this->settingsRepository = Mockery::mock(OrganizerSmsSettingRepositoryInterface::class);
         $this->conversationService = Mockery::mock(SmsConversationService::class);
         $this->conversationService->shouldReceive('isOptedOut')->andReturnFalse()->byDefault();
@@ -47,6 +53,7 @@ class ChatwootUnknownNumberReplyServiceTest extends TestCase
 
         $this->service = new ChatwootUnknownNumberReplyService(
             $this->unattributedRepository,
+            $this->outboundRepository,
             $this->settingsRepository,
             $this->conversationService,
             $this->httpSmsClient,
@@ -95,6 +102,22 @@ class ChatwootUnknownNumberReplyServiceTest extends TestCase
         $this->httpSmsClient->shouldNotReceive('sendMessage');
 
         $this->assertFalse($this->service->reply(71, 900, 'On vous rappelle'));
+    }
+
+    public function test_conversation_with_only_sms_sent_for_no_organizer_is_answered_from_their_line(): void
+    {
+        $this->unattributedRepository->shouldReceive('findWhere')->andReturn(collect());
+        $this->outboundRepository->shouldReceive('findWhere')->andReturn(collect([
+            (new SmsUnattributedOutboundMessageDomainObject)->setId(30)->setLineSettingsId(5)->setPhone('+262639222222')->setChatwootConversationId(71),
+        ]));
+        $this->settingsRepository->shouldReceive('findFirstWhere')->with(['id' => 5])->andReturn(
+            (new OrganizerSmsSettingDomainObject)->setId(5)->setOrganizerId(1)->setApiKey('key')->setFromNumber('+262639000000'),
+        );
+        $this->httpSmsClient->shouldReceive('sendMessage')->once()
+            ->with('key', '+262639000000', '+262639222222', 'Merci Youmna', 'picha-chatwoot-71-901')
+            ->andReturn('prov-2');
+
+        $this->assertTrue($this->service->reply(71, 901, 'Merci Youmna'));
     }
 
     public function test_number_that_said_stop_is_not_sent_to(): void

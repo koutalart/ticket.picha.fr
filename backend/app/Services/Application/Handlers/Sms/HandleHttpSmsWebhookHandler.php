@@ -29,6 +29,7 @@ use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsLineKeywordService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
+use HiEvents\Services\Domain\Sms\SmsUnattributedOutboundService;
 use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
 use HiEvents\Services\Domain\Sms\Team\SmsTeamInboundService;
 use Illuminate\Support\Collection;
@@ -74,6 +75,7 @@ class HandleHttpSmsWebhookHandler
         private readonly SmsFileSyncService $fileSyncService,
         private readonly SmsLineKeywordService $keywordService,
         private readonly ChatwootUnknownNumberReplyService $chatwootUnknownNumberReplyService,
+        private readonly SmsUnattributedOutboundService $unattributedOutboundService,
     ) {}
 
     /**
@@ -257,10 +259,15 @@ class HandleHttpSmsWebhookHandler
 
         $owner = $this->outboundOwner($settings, $members, $messageId, $requestId);
         if ($owner === null) {
-            $this->logger->warning('httpSMS outbound SMS of the central queue not recorded: its organizer is unknown', [
-                'line_settings_id' => $settings->getId(),
-                'request_id' => $requestId,
-            ]);
+            $this->unattributedOutboundService->record(
+                line: $settings,
+                providerMessageId: $messageId,
+                contact: $data['contact'],
+                content: isset($data['content']) ? (string) $data['content'] : null,
+                requestId: $requestId,
+                status: $status,
+                errorMessage: isset($data['error_message']) ? (string) $data['error_message'] : null,
+            );
 
             return;
         }

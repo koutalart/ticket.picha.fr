@@ -19,13 +19,20 @@ class MirrorUnattributedSmsToChatwootJob implements ShouldQueue
 
     public array $backoff = [10, 30, 120, 600];
 
-    public function __construct(public readonly int $unattributedId)
-    {
+    public function __construct(
+        public readonly int $unattributedId,
+        public readonly bool $outbound = false,
+        public readonly bool $failure = false,
+    ) {
         $this->afterCommit = true;
     }
 
     public function handle(ChatwootSmsMirrorService $mirrorService): void
     {
-        $mirrorService->mirrorUnattributed($this->unattributedId);
+        match (true) {
+            $this->failure => $mirrorService->noteUnattributedOutboundFailure($this->unattributedId),
+            $this->outbound => $mirrorService->mirrorUnattributedOutbound($this->unattributedId),
+            default => $mirrorService->mirrorUnattributed($this->unattributedId),
+        };
     }
 }
