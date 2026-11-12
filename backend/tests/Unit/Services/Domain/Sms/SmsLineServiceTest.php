@@ -136,6 +136,14 @@ class SmsLineServiceTest extends TestCase
         $this->assertNull($this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456'));
     }
 
+    public function test_sms_from_a_team_number_is_never_filed_with_an_organizer(): void
+    {
+        $this->config->set('services.httpsms.internal_phones', '+262 639 00 00 01, 0639123456');
+        $this->messageRepository->shouldNotReceive('findLastSender');
+
+        $this->assertNull($this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456'));
+    }
+
     public function test_organizer_outside_the_line_never_gets_the_sms(): void
     {
         $this->messageRepository->shouldReceive('findLastSender')->andReturn(new SmsLastSenderDTO(organizerId: 99, sentAt: '2026-10-20 10:00:00'));

@@ -184,6 +184,10 @@ class SmsLineService
      */
     public function attributeInbound(OrganizerSmsSettingDomainObject $line, Collection $candidates, string $phone): ?OrganizerSmsSettingDomainObject
     {
+        if ($candidates->count() > 1 && $this->isInternalPhone($phone)) {
+            return null;
+        }
+
         if ($candidates->count() <= 1) {
             return $candidates->first() ?? $line;
         }
@@ -197,6 +201,26 @@ class SmsLineService
             || $candidate->getSharedLineSettingsId() === $line->getId());
 
         return $members->count() === 1 ? $members->first() : null;
+    }
+
+    /**
+     * Numbers of the platform team (HTTPSMS_INTERNAL_PHONES, comma separated): on a shared line, what they send is never
+     * filed with an organizer, even one that wrote to them, so no client ever reads the team's own messages.
+     */
+    public function isInternalPhone(string $phone): bool
+    {
+        $normalized = SmsPhoneNormalizer::normalize($phone);
+        if ($normalized === null) {
+            return false;
+        }
+
+        foreach (explode(',', (string) $this->config->get('services.httpsms.internal_phones', '')) as $internal) {
+            if (trim($internal) !== '' && SmsPhoneNormalizer::normalize(trim($internal)) === $normalized) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
