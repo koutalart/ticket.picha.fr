@@ -84,6 +84,8 @@ import {SaleCountdown} from "./SaleCountdown.tsx";
 import {LineDescription} from "./LineDescription.tsx";
 import {LowStockIndicator} from "../../../common/LowStockIndicator";
 import {HighlightedPromo} from "./HighlightedPromo.tsx";
+import {EmbeddedWaitlist} from "./EmbeddedWaitlist.tsx";
+import {WaitlistTarget, WaitlistTunnelContext} from "../../../common/JoinWaitlistButton/WaitlistTunnelContext.ts";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import classes from "./EmbeddedRegistration.module.scss";
@@ -248,6 +250,7 @@ export const EmbeddedRegistration = ({
     const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
     const [creationFailed, setCreationFailed] = useState(false);
     const [forceClassic, setForceClassic] = useState(false);
+    const [waitlistTarget, setWaitlistTarget] = useState<WaitlistTarget | null>(null);
     const [pendingOrder, setPendingOrder] = useState<PendingEmbeddedOrder | null>(null);
     const [protectionOptIn, setProtectionOptIn] = useState(false);
     const [codeOpen, setCodeOpen] = useState(promoCodeValid === false);
@@ -1536,7 +1539,20 @@ export const EmbeddedRegistration = ({
     }
 
     if (forceClassic || cannotEmbed) {
-        return <>{renderFallback(adoptCodeFromFallback)}</>;
+        if (waitlistTarget) {
+            return (
+                <section className={rootClassName} data-variant={variant} ref={sectionRef} id="tickets" aria-label={t`Waiting list`}>
+                    <div className={classes.panel}>
+                        <EmbeddedWaitlist event={event} target={waitlistTarget} onBack={() => setWaitlistTarget(null)}/>
+                    </div>
+                </section>
+            );
+        }
+        return (
+            <WaitlistTunnelContext.Provider value={setWaitlistTarget}>
+                {renderFallback(adoptCodeFromFallback)}
+            </WaitlistTunnelContext.Provider>
+        );
     }
 
     const isLoading = isPaidMode
