@@ -815,6 +815,26 @@ export const router: RouteObject[] = [
         errorElement: <ErrorPage />,
     },
     {
+        path: "/lecture",
+        errorElement: <ErrorPage />,
+        children: [
+            {
+                index: true,
+                async lazy() {
+                    const ViewerHome = await import("./components/routes/viewer/Home");
+                    return { Component: ViewerHome.default };
+                }
+            },
+            {
+                path: "event/:eventId",
+                async lazy() {
+                    const ViewerEvent = await import("./components/routes/viewer/Event");
+                    return { Component: ViewerEvent.default };
+                }
+            },
+        ]
+    },
+    {
         path: "/kiosk",
         errorElement: <ErrorPage />,
         children: [

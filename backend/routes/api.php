@@ -121,6 +121,7 @@ use HiEvents\Http\Actions\Auth\ValidateResetPasswordTokenAction;
 use HiEvents\Http\Actions\BoxOffice\CheckInBoxOfficeAttendeeAction;
 use HiEvents\Http\Actions\BoxOffice\CreateBoxOfficeSaleAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeContextAction;
+use HiEvents\Http\Actions\EventViewers\GetViewerEventsAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeProductsAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeSalesAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeStatsAction;
@@ -705,6 +706,7 @@ $router->middleware(['auth:api'])->group(
 
         // Box Office (PICHA Kiosk v2 — operator account, D23)
         $router->get('/box-office/context', GetBoxOfficeContextAction::class);
+        $router->get('/viewer/events', GetViewerEventsAction::class);
         $router->get('/events/{event_id}/box-office/products', GetBoxOfficeProductsAction::class);
         $router->get('/events/{event_id}/box-office/attendees', SearchBoxOfficeAttendeesAction::class);
         $router->post('/events/{event_id}/box-office/attendees/{attendee_public_id}/check-in', CheckInBoxOfficeAttendeeAction::class);

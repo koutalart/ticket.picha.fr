@@ -45,6 +45,7 @@ import {useResendEmailConfirmation} from "../../../mutations/useResendEmailConfi
 import {useState} from "react";
 import {eventHomepageUrl} from "../../../utilites/urlHelper.ts";
 import {isBoxOfficeOperator} from "../../../utilites/kioskAuth.ts";
+import {EVENT_VIEWER_HOME, isEventViewer} from "../../../utilites/eventViewerAuth.ts";
 import {useIsCurrentUserAdmin} from "../../../hooks/useIsCurrentUserAdmin.ts";
 
 const EventLayout = () => {
@@ -65,6 +66,10 @@ const EventLayout = () => {
 
     if (isMeSuccess && isBoxOfficeOperator(me)) {
         return <Navigate to="/kiosk" replace/>;
+    }
+
+    if (isMeSuccess && isEventViewer(me)) {
+        return <Navigate to={EVENT_VIEWER_HOME} replace/>;
     }
 
     const resendEmailConfirmationMutation = useResendEmailConfirmation();

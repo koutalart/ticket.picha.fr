@@ -113,7 +113,7 @@ export interface User {
     pending_email?: string;
     last_login_at?: string;
     status?: 'ACTIVE' | 'INACTIVE' | 'INVITED';
-    role?: 'ADMIN' | 'ORGANIZER' | 'SUPERADMIN' | 'BOX_OFFICE_OPERATOR';
+    role?: 'ADMIN' | 'ORGANIZER' | 'SUPERADMIN' | 'BOX_OFFICE_OPERATOR' | 'EVENT_VIEWER';
     is_account_owner?: boolean;
     locale?: SupportedLocales;
     marketing_opted_in_at?: string | null;
