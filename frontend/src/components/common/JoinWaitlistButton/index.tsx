@@ -3,6 +3,7 @@ import {useDisclosure} from "@mantine/hooks";
 import {JoinWaitlistModal} from "../../modals/JoinWaitlistModal";
 import {t} from "@lingui/macro";
 import {useWaitlistJoined} from "../../../hooks/useWaitlistJoined.ts";
+import {useWaitlistTunnel} from "./WaitlistTunnelContext.ts";
 
 interface JoinWaitlistButtonProps {
     product: Product;
@@ -14,6 +15,7 @@ interface JoinWaitlistButtonProps {
 export const JoinWaitlistButton = ({product, event, productPriceId, priceLabel}: JoinWaitlistButtonProps) => {
     const [modalOpen, {open: openModal, close: closeModal}] = useDisclosure(false);
     const {joined: hasJoined, markJoined} = useWaitlistJoined(event.id, productPriceId);
+    const openInTunnel = useWaitlistTunnel();
 
     return (
         <>
@@ -23,6 +25,10 @@ export const JoinWaitlistButton = ({product, event, productPriceId, priceLabel}:
                 onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    if (openInTunnel) {
+                        openInTunnel({product, productPriceId, priceLabel});
+                        return;
+                    }
                     openModal();
                 }}
                 disabled={hasJoined}
