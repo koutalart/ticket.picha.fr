@@ -11,8 +11,9 @@ const PlatformRoot = () => {
     useEffect(() => {
         if (me.isSuccess) {
             const searchParams = typeof window !== 'undefined' ? window.location.search : '';
-            const isOperator = me.data?.role === 'BOX_OFFICE_OPERATOR';
-            setRedirectPath((isOperator ? "/kiosk" : "/manage/events") + searchParams);
+            const role = me.data?.role;
+            const home = role === 'BOX_OFFICE_OPERATOR' ? "/kiosk" : role === 'EVENT_VIEWER' ? "/lecture" : "/manage/events";
+            setRedirectPath(home + searchParams);
         }
     }, [me.isSuccess, me.data?.role]);
 
