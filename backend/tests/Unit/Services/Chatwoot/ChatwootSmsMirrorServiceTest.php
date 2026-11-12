@@ -94,6 +94,7 @@ class ChatwootSmsMirrorServiceTest extends TestCase
         $this->conversationRepository->shouldReceive('findFirstWhere')->andReturn($this->conversation(null));
         $this->organizerRepository->shouldReceive('findFirstWhere')->andReturn((new OrganizerDomainObject)->setId(4)->setName('Innocent Event'));
         $this->client->shouldReceive('findOrCreateContact')->once()->with('+262639000000', 'Awa')->andReturn(7);
+        $this->client->shouldReceive('contactConversations')->once()->with(7)->andReturn([]);
         $this->client->shouldReceive('createConversation')->once()
             ->with(7, 'picha-sms-live-3', ['organisateur' => 'Innocent Event', 'conversation_picha' => 3])
             ->andReturn(60);
@@ -181,6 +182,58 @@ class ChatwootSmsMirrorServiceTest extends TestCase
             ->with(20, ['chatwoot_conversation_id' => 1600, 'chatwoot_message_id' => 952]);
 
         $this->service->mirrorUnattributed(20);
+    }
+
+    public function test_conversation_created_by_sms_tiers_is_reused_whatever_its_source(): void
+    {
+        $this->unattributedRepository->shouldReceive('findFirstWhere')->andReturn($this->unattributed());
+        $this->unattributedRepository->shouldReceive('findWhere')->andReturn(collect());
+        $this->outboundRepository->shouldReceive('findWhere')->andReturn(collect());
+        $this->client->shouldReceive('findOrCreateContact')->once()->with('+262639111111', '+262639111111')->andReturn(8);
+        $this->client->shouldReceive('contactConversations')->with(8)->andReturn([['id' => 1622, 'inbox_id' => 2]]);
+        $this->conversationRepository->shouldReceive('findFirstWhere')->with(['chatwoot_conversation_id' => 1622])->andReturnNull();
+        $this->client->shouldNotReceive('createConversation');
+        $this->client->shouldReceive('recentMessages')->with(1622)->andReturn([]);
+        $this->client->shouldReceive('createMessage')->once()->with(1622, 'Salut, c\'est pour quoi ?', true)->andReturn(953);
+        $this->unattributedRepository->shouldReceive('updateFromArray')->once()
+            ->with(20, ['chatwoot_conversation_id' => 1622, 'chatwoot_message_id' => 953]);
+
+        $this->service->mirrorUnattributed(20);
+    }
+
+    public function test_number_whose_only_thread_belongs_to_an_organizer_keeps_that_thread(): void
+    {
+        $this->unattributedRepository->shouldReceive('findFirstWhere')->andReturn($this->unattributed());
+        $this->unattributedRepository->shouldReceive('findWhere')->andReturn(collect());
+        $this->outboundRepository->shouldReceive('findWhere')->andReturn(collect());
+        $this->client->shouldReceive('findOrCreateContact')->andReturn(8);
+        $this->client->shouldReceive('contactConversations')->with(8)->andReturn([['id' => 1500, 'inbox_id' => 2]]);
+        $this->conversationRepository->shouldReceive('findFirstWhere')->with(['chatwoot_conversation_id' => 1500])
+            ->andReturn((new SmsConversationDomainObject)->setId(3));
+        $this->client->shouldNotReceive('createConversation');
+        $this->client->shouldReceive('recentMessages')->with(1500)->andReturn([]);
+        $this->client->shouldReceive('createMessage')->once()->with(1500, 'Salut, c\'est pour quoi ?', true)->andReturn(954);
+        $this->unattributedRepository->shouldReceive('updateFromArray')->once()
+            ->with(20, ['chatwoot_conversation_id' => 1500, 'chatwoot_message_id' => 954]);
+
+        $this->service->mirrorUnattributed(20);
+    }
+
+    public function test_organizer_conversation_takes_over_the_thread_a_script_opened_for_the_number(): void
+    {
+        $this->messageRepository->shouldReceive('findFirstWhere')->andReturn($this->message(SmsMessageDirection::INBOUND));
+        $this->conversationRepository->shouldReceive('findFirstWhere')->with(['id' => 3])->andReturn($this->conversation(null));
+        $this->organizerRepository->shouldReceive('findFirstWhere')->andReturn((new OrganizerDomainObject)->setId(4)->setName('Innocent Event'));
+        $this->client->shouldReceive('findOrCreateContact')->andReturn(7);
+        $this->client->shouldReceive('contactConversations')->with(7)->andReturn([['id' => 1621, 'inbox_id' => 2]]);
+        $this->conversationRepository->shouldReceive('findFirstWhere')->with(['chatwoot_conversation_id' => 1621])->andReturnNull();
+        $this->client->shouldNotReceive('createConversation');
+        $this->conversationRepository->shouldReceive('updateFromArray')->once()->with(3, ['chatwoot_conversation_id' => 1621]);
+        $this->client->shouldReceive('createMessage')->once()->with(1621, Mockery::type('string'), false, true)->andReturn(1);
+        $this->client->shouldReceive('createMessage')->once()->with(1621, 'Bonjour', true)->andReturn(904);
+        $this->messageRepository->shouldReceive('updateFromArray')->once()->with(10, ['chatwoot_message_id' => 904]);
+
+        $this->service->mirror(10);
     }
 
     public function test_text_already_posted_in_the_last_ten_minutes_is_not_posted_again(): void

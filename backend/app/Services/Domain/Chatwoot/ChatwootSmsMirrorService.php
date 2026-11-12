@@ -265,10 +265,11 @@ class ChatwootSmsMirrorService
             $conversation->getContactName() ?: $conversation->getPhone(),
         );
 
-        $chatwootConversationId = $this->client->createConversation($contactId, 'picha-sms-live-'.$conversation->getId(), [
-            'organisateur' => $organizerName,
-            'conversation_picha' => $conversation->getId(),
-        ]);
+        $chatwootConversationId = $this->firstUnlinked($this->smsConversationIds($contactId))
+            ?? $this->client->createConversation($contactId, 'picha-sms-live-'.$conversation->getId(), [
+                'organisateur' => $organizerName,
+                'conversation_picha' => $conversation->getId(),
+            ]);
 
         $this->conversationRepository->updateFromArray($conversation->getId(), [
             SmsConversationDomainObjectAbstract::CHATWOOT_CONVERSATION_ID => $chatwootConversationId,
@@ -332,9 +333,9 @@ class ChatwootSmsMirrorService
     }
 
     /**
-     * The Chatwoot conversation of a number that belongs to no organizer: the one already used for its SMS, else an
-     * open conversation of the contact in the SMS inbox that no organizer conversation uses (one an earlier script
-     * opened), else a new one.
+     * The Chatwoot conversation of a number that belongs to no organizer: the one already used for its SMS, else a
+     * conversation of the contact in the SMS inbox (preferably one no organizer conversation uses, like those a script
+     * of Anicka opened), else a new one. A number never gets two threads.
      *
      * @throws ChatwootUnavailableException
      */
@@ -348,14 +349,10 @@ class ChatwootSmsMirrorService
 
         $contactId = $this->client->findOrCreateContact($phone, $phone);
 
-        $existing = collect($this->client->contactConversations($contactId))
-            ->filter(fn (array $conversation) => $conversation['inbox_id'] === $this->client->smsInboxId())
-            ->sortByDesc('id')
-            ->first(fn (array $conversation) => $this->conversationRepository->findFirstWhere([
-                SmsConversationDomainObjectAbstract::CHATWOOT_CONVERSATION_ID => $conversation['id'],
-            ]) === null);
+        $threads = $this->smsConversationIds($contactId);
+        $existing = $this->firstUnlinked($threads) ?? $threads[0] ?? null;
         if ($existing !== null) {
-            return $existing['id'];
+            return $existing;
         }
 
         $chatwootConversationId = $this->client->createConversation($contactId, 'picha-sms-inconnu-'.ltrim($phone, '+'), [
@@ -371,6 +368,40 @@ class ChatwootSmsMirrorService
         );
 
         return $chatwootConversationId;
+    }
+
+    /**
+     * Conversations of the contact in the SMS inbox, newest first, whatever their source (PICHA, a script of Anicka…),
+     * so a number keeps a single thread.
+     *
+     * @return array<int, int>
+     *
+     * @throws ChatwootUnavailableException
+     */
+    private function smsConversationIds(int $contactId): array
+    {
+        return collect($this->client->contactConversations($contactId))
+            ->filter(fn (array $conversation) => $conversation['inbox_id'] === $this->client->smsInboxId())
+            ->pluck('id')
+            ->sortDesc()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  array<int, int>  $chatwootConversationIds
+     */
+    private function firstUnlinked(array $chatwootConversationIds): ?int
+    {
+        foreach ($chatwootConversationIds as $chatwootConversationId) {
+            if ($this->conversationRepository->findFirstWhere([
+                SmsConversationDomainObjectAbstract::CHATWOOT_CONVERSATION_ID => $chatwootConversationId,
+            ]) === null) {
+                return $chatwootConversationId;
+            }
+        }
+
+        return null;
     }
 
     private function lastConversationId(RepositoryInterface $repository, string $phoneField, string $phone): ?int
