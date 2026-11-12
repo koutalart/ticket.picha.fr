@@ -15,6 +15,7 @@ use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
 use HiEvents\Services\Application\Handlers\LiveChat\Approval\DecideLiveChatRefundHandler;
 use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
+use HiEvents\Services\Domain\Chatwoot\ChatwootUnknownNumberReplyService;
 use HiEvents\Services\Domain\LiveChat\Question\LiveChatQuestionService;
 use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
@@ -28,6 +29,7 @@ use HiEvents\Services\Domain\Sms\SmsInboundService;
 use HiEvents\Services\Domain\Sms\SmsLineKeywordService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
+use HiEvents\Services\Domain\Sms\SmsUnattributedOutboundService;
 use HiEvents\Services\Domain\Sms\SmsUnattributedSmsService;
 use HiEvents\Services\Domain\Sms\Team\SmsTeamInboundService;
 use Illuminate\Support\Collection;
@@ -72,6 +74,8 @@ class HandleHttpSmsWebhookHandler
         private readonly LiveChatQuestionService $questionService,
         private readonly SmsFileSyncService $fileSyncService,
         private readonly SmsLineKeywordService $keywordService,
+        private readonly ChatwootUnknownNumberReplyService $chatwootUnknownNumberReplyService,
+        private readonly SmsUnattributedOutboundService $unattributedOutboundService,
     ) {}
 
     /**
@@ -230,9 +234,19 @@ class HandleHttpSmsWebhookHandler
             return;
         }
 
+        $requestId = isset($data['request_id']) && is_scalar($data['request_id']) && $data['request_id'] !== '' ? (string) $data['request_id'] : null;
+
+        if ($this->chatwootUnknownNumberReplyService->handleDeliveryEvent(
+            $requestId,
+            $status,
+            isset($data['error_message']) ? (string) $data['error_message'] : null,
+            isset($data['content']) ? (string) $data['content'] : null,
+        )) {
+            return;
+        }
+
         $members = $this->lineService->candidates($settings);
         $organizerIds = $members->map(fn (OrganizerSmsSettingDomainObject $member) => $member->getOrganizerId())->values()->all();
-        $requestId = isset($data['request_id']) && is_scalar($data['request_id']) && $data['request_id'] !== '' ? (string) $data['request_id'] : null;
 
         $this->campaignDeliveryService->applyProviderStatus(
             organizerIds: $organizerIds,
@@ -245,10 +259,15 @@ class HandleHttpSmsWebhookHandler
 
         $owner = $this->outboundOwner($settings, $members, $messageId, $requestId);
         if ($owner === null) {
-            $this->logger->warning('httpSMS outbound SMS of the central queue not recorded: its organizer is unknown', [
-                'line_settings_id' => $settings->getId(),
-                'request_id' => $requestId,
-            ]);
+            $this->unattributedOutboundService->record(
+                line: $settings,
+                providerMessageId: $messageId,
+                contact: $data['contact'],
+                content: isset($data['content']) ? (string) $data['content'] : null,
+                requestId: $requestId,
+                status: $status,
+                errorMessage: isset($data['error_message']) ? (string) $data['error_message'] : null,
+            );
 
             return;
         }
