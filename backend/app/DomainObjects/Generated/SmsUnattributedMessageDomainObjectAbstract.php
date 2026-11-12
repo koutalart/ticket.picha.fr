@@ -22,6 +22,8 @@ abstract class SmsUnattributedMessageDomainObjectAbstract extends \HiEvents\Doma
     final public const ASSIGNED_AT = 'assigned_at';
     final public const CREATED_AT = 'created_at';
     final public const UPDATED_AT = 'updated_at';
+    final public const CHATWOOT_CONVERSATION_ID = 'chatwoot_conversation_id';
+    final public const CHATWOOT_MESSAGE_ID = 'chatwoot_message_id';
 
     protected int $id;
     protected int $line_settings_id;
@@ -35,6 +37,8 @@ abstract class SmsUnattributedMessageDomainObjectAbstract extends \HiEvents\Doma
     protected ?string $assigned_at = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+    protected ?int $chatwoot_conversation_id = null;
+    protected ?int $chatwoot_message_id = null;
 
     public function toArray(): array
     {
@@ -51,6 +55,8 @@ abstract class SmsUnattributedMessageDomainObjectAbstract extends \HiEvents\Doma
                     'assigned_at' => $this->assigned_at ?? null,
                     'created_at' => $this->created_at ?? null,
                     'updated_at' => $this->updated_at ?? null,
+                    'chatwoot_conversation_id' => $this->chatwoot_conversation_id ?? null,
+                    'chatwoot_message_id' => $this->chatwoot_message_id ?? null,
                 ];
     }
 
@@ -184,5 +190,27 @@ abstract class SmsUnattributedMessageDomainObjectAbstract extends \HiEvents\Doma
     public function getUpdatedAt(): ?string
     {
         return $this->updated_at;
+    }
+
+    public function setChatwootConversationId(?int $chatwoot_conversation_id): self
+    {
+        $this->chatwoot_conversation_id = $chatwoot_conversation_id;
+        return $this;
+    }
+
+    public function getChatwootConversationId(): ?int
+    {
+        return $this->chatwoot_conversation_id;
+    }
+
+    public function setChatwootMessageId(?int $chatwoot_message_id): self
+    {
+        $this->chatwoot_message_id = $chatwoot_message_id;
+        return $this;
+    }
+
+    public function getChatwootMessageId(): ?int
+    {
+        return $this->chatwoot_message_id;
     }
 }

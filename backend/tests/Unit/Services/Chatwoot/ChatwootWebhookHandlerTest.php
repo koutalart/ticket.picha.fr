@@ -11,6 +11,7 @@ use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Chatwoot\HandleChatwootWebhookHandler;
 use HiEvents\Services\Application\Handlers\Sms\SendSmsReplyHandler;
 use HiEvents\Services\Domain\Chatwoot\ChatwootSmsMirrorService;
+use HiEvents\Services\Domain\Chatwoot\ChatwootUnknownNumberReplyService;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository as CacheRepository;
 use Illuminate\Config\Repository as ConfigRepository;
@@ -33,6 +34,8 @@ class ChatwootWebhookHandlerTest extends TestCase
 
     private ChatwootSmsMirrorService|MockInterface $mirrorService;
 
+    private ChatwootUnknownNumberReplyService|MockInterface $unknownNumberReplyService;
+
     private HandleChatwootWebhookHandler $handler;
 
     protected function setUp(): void
@@ -44,6 +47,7 @@ class ChatwootWebhookHandlerTest extends TestCase
         $this->messageRepository = Mockery::mock(SmsMessageRepositoryInterface::class);
         $this->replyHandler = Mockery::mock(SendSmsReplyHandler::class);
         $this->mirrorService = Mockery::mock(ChatwootSmsMirrorService::class);
+        $this->unknownNumberReplyService = Mockery::mock(ChatwootUnknownNumberReplyService::class);
 
         $this->handler = new HandleChatwootWebhookHandler(
             new ConfigRepository(['services' => ['chatwoot' => ['webhook_token' => self::TOKEN, 'sms_inbox_id' => 2, 'gateway_user_id' => 0]]]),
@@ -53,6 +57,7 @@ class ChatwootWebhookHandlerTest extends TestCase
             $this->replyHandler,
             $this->mirrorService,
             new NullLogger,
+            $this->unknownNumberReplyService,
         );
     }
 
@@ -104,6 +109,37 @@ class ChatwootWebhookHandlerTest extends TestCase
         $this->messageRepository->shouldReceive('findFirstWhere')->andReturn(null);
         $this->conversationRepository->shouldReceive('findFirstWhere')->andReturn((new SmsConversationDomainObject)->setId(3)->setOrganizerId(4));
         $this->replyHandler->shouldReceive('handle')->andThrow(new SmsRecipientOptedOutException('stop'));
+        $this->mirrorService->shouldReceive('postNote')->once()->with(55, Mockery::type('string'));
+
+        $this->handler->handle(self::TOKEN, $this->event());
+    }
+
+    public function test_reply_in_the_conversation_of_a_number_without_conversation_is_sent_from_its_line(): void
+    {
+        $this->messageRepository->shouldReceive('findFirstWhere')->andReturn(null);
+        $this->conversationRepository->shouldReceive('findFirstWhere')->andReturn(null);
+        $this->replyHandler->shouldNotReceive('handle');
+        $this->unknownNumberReplyService->shouldReceive('reply')->once()->with(55, 900, 'On vous rappelle')->andReturnTrue();
+        $this->mirrorService->shouldNotReceive('postNote');
+
+        $this->handler->handle(self::TOKEN, $this->event());
+    }
+
+    public function test_reply_in_an_unknown_chatwoot_conversation_gets_a_private_note(): void
+    {
+        $this->messageRepository->shouldReceive('findFirstWhere')->andReturn(null);
+        $this->conversationRepository->shouldReceive('findFirstWhere')->andReturn(null);
+        $this->unknownNumberReplyService->shouldReceive('reply')->once()->andReturnFalse();
+        $this->mirrorService->shouldReceive('postNote')->once()->with(55, Mockery::type('string'));
+
+        $this->handler->handle(self::TOKEN, $this->event());
+    }
+
+    public function test_reply_to_a_number_without_conversation_that_said_stop_gets_a_private_note(): void
+    {
+        $this->messageRepository->shouldReceive('findFirstWhere')->andReturn(null);
+        $this->conversationRepository->shouldReceive('findFirstWhere')->andReturn(null);
+        $this->unknownNumberReplyService->shouldReceive('reply')->once()->andThrow(new SmsRecipientOptedOutException('stop'));
         $this->mirrorService->shouldReceive('postNote')->once()->with(55, Mockery::type('string'));
 
         $this->handler->handle(self::TOKEN, $this->event());
