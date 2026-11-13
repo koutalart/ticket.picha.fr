@@ -83,6 +83,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
         $this->assistantService = Mockery::mock(SmsAssistantService::class);
         $this->assistantService->shouldReceive('queueDraftIfEligible')->byDefault();
         $this->lineService = Mockery::mock(SmsLineService::class);
+        $this->lineService->shouldReceive('isInternalPhone')->andReturnFalse()->byDefault();
         $this->lineService->shouldReceive('candidates')->andReturnUsing(fn ($line) => collect([$line]))->byDefault();
         $this->unattributedService = Mockery::mock(SmsUnattributedSmsService::class);
         $this->unattributedService->shouldReceive('isKnown')->andReturnFalse()->byDefault();

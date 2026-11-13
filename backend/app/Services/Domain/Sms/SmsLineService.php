@@ -184,8 +184,15 @@ class SmsLineService
      */
     public function attributeInbound(OrganizerSmsSettingDomainObject $line, Collection $candidates, string $phone): ?OrganizerSmsSettingDomainObject
     {
-        if ($candidates->count() > 1 && $this->isInternalPhone($phone)) {
-            return null;
+        if ($this->isInternalPhone($phone)) {
+            $internalOrganizerId = $this->internalOrganizerId();
+            $internal = $internalOrganizerId === null ? null : $candidates->first(
+                fn (OrganizerSmsSettingDomainObject $candidate) => $candidate->getOrganizerId() === $internalOrganizerId
+            );
+
+            if ($internal !== null || $candidates->count() > 1) {
+                return $internal;
+            }
         }
 
         if ($candidates->count() <= 1) {
@@ -205,22 +212,37 @@ class SmsLineService
 
     /**
      * Numbers of the platform team (HTTPSMS_INTERNAL_PHONES, comma separated): on a shared line, what they send is never
-     * filed with an organizer, even one that wrote to them, so no client ever reads the team's own messages.
+     * filed with a client organizer, even one that wrote to them. It goes to the internal organizer
+     * (HTTPSMS_INTERNAL_ORGANIZER_ID, « Anicka ») when it is on the line, otherwise it stays unattributed.
      */
     public function isInternalPhone(string $phone): bool
     {
         $normalized = SmsPhoneNormalizer::normalize($phone);
-        if ($normalized === null) {
-            return false;
-        }
 
-        foreach (explode(',', (string) $this->config->get('services.httpsms.internal_phones', '')) as $internal) {
-            if (trim($internal) !== '' && SmsPhoneNormalizer::normalize(trim($internal)) === $normalized) {
-                return true;
-            }
-        }
+        return $normalized !== null && in_array($normalized, $this->internalPhones(), true);
+    }
 
-        return false;
+    /**
+     * @return string[] The numbers of HTTPSMS_INTERNAL_PHONES, normalized
+     */
+    public function internalPhones(): array
+    {
+        return collect(explode(',', (string) $this->config->get('services.httpsms.internal_phones', '')))
+            ->map(fn (string $phone) => trim($phone) === '' ? null : SmsPhoneNormalizer::normalize(trim($phone)))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * The internal organizer (« Anicka ») that receives the SMS of the platform team.
+     */
+    public function internalOrganizerId(): ?int
+    {
+        $id = (int) $this->config->get('services.httpsms.internal_organizer_id');
+
+        return $id > 0 ? $id : null;
     }
 
     /**
