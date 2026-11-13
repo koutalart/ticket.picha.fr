@@ -176,7 +176,8 @@ class HandleHttpSmsWebhookHandler
 
             $candidates = $this->lineService->candidates($settings);
 
-            $teamRoute = $this->teamInboundService->route($candidates, $sms->contact);
+            $isInternalPhone = $this->lineService->isInternalPhone($sms->contact);
+            $teamRoute = $isInternalPhone ? null : $this->teamInboundService->route($candidates, $sms->contact);
             if ($teamRoute !== null) {
                 $message = $this->inboundService->recordInbound($teamRoute->settings, $sms, lineSettingsId: $settings->getId());
 
@@ -207,7 +208,7 @@ class HandleHttpSmsWebhookHandler
                 return;
             }
 
-            $target = $candidates->count() > 1 ? $this->attributeInbound($settings, $candidates, $sms) : $settings;
+            $target = $candidates->count() > 1 || $isInternalPhone ? $this->attributeInbound($settings, $candidates, $sms) : $settings;
             if ($target === null) {
                 return;
             }
