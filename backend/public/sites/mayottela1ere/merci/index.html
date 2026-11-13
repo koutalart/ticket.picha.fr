@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Votre avis : le Concert des Générations</title>
+<meta name="description" content="Merci d'être venus au Concert des Générations pour les 40 ans de Mayotte La 1ère. Notez la soirée en une minute. Diffusion le 21 décembre.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Votre avis sur le Concert des Générations">
+<meta property="og:description" content="Notez la soirée en une minute. Rendez-vous le 21 décembre sur Mayotte La 1ère.">
+<meta property="og:image" content="https://mayottela1ere.fr/merci/hero.webp">
+<meta name="theme-color" content="#06192b">
+<link rel="preload" as="image" href="hero.webp">
+<style>
+:root{--nuit:#06192b;--nuit2:#0c2b47;--or:#f9b617;--fond:#f4f2ee;--ligne:#e3ded4;--texte:#1b2430;--doux:#5f6b78;
+--s1:#c8493a;--s2:#e07b2f;--s3:#f0a81c;--s4:#f9b617;--s5:#06192b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--fond);color:var(--texte);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+.haut{background:var(--nuit);color:#fff}
+.hero{position:relative;max-width:780px;margin:0 auto}
+.hero img{width:100%;aspect-ratio:780/400;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:auto 0 0;height:45%;background:linear-gradient(transparent,var(--nuit))}
+.entete{max-width:600px;margin:0 auto;padding:0 16px 26px}
+.sur{color:var(--or);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+h1{font-size:28px;line-height:1.15;font-weight:800;margin:6px 0 10px}
+h1 b{color:var(--or)}
+.intro{color:#d6e0ea;font-size:15px}
+main{max-width:600px;margin:-14px auto 0;padding:0 16px 48px;position:relative}
+.carte{background:#fff;border:1px solid var(--ligne);border-radius:14px;padding:20px 18px;margin-bottom:14px}
+.carte h2{font-size:19px;line-height:1.25;margin-bottom:4px}
+.aide{font-size:14px;color:var(--doux);margin-bottom:14px}
+.note{display:flex;gap:6px}
+.note input{position:absolute;opacity:0;width:1px;height:1px}
+.note label{width:52px;height:52px;border-radius:6px;background:#dcd8cf;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .15s}
+.note label svg{width:30px;height:30px;fill:#fff;transition:fill .15s}
+.note.top label svg{fill:var(--or)}
+.note label:active{transform:scale(.94)}
+.note input:focus-visible+label{outline:3px solid var(--nuit);outline-offset:2px}
+.libelle{font-weight:700;margin-top:10px;min-height:24px}
+.q{margin-top:18px}
+.q:first-child{margin-top:0}
+.q b{display:block;font-size:15px;margin-bottom:8px}
+.choix{display:flex;flex-wrap:wrap;gap:8px}
+.choix input{position:absolute;opacity:0;width:1px;height:1px}
+.choix label{border:1.5px solid var(--ligne);border-radius:999px;padding:7px 14px;font-size:15px;cursor:pointer;background:#fff}
+.choix input:checked+label{background:var(--nuit);border-color:var(--nuit);color:var(--or)}
+.choix input:focus-visible+label{outline:2px solid var(--or)}
+input[type=text],textarea{width:100%;border:1.5px solid var(--ligne);border-radius:8px;padding:11px 12px;font:inherit;color:var(--texte);background:#fff}
+input[type=text]:focus,textarea:focus{outline:none;border-color:var(--nuit)}
+textarea{min-height:110px;resize:vertical}
+.compte{font-size:12px;color:var(--doux);text-align:right;margin-top:4px}
+.champ{display:block;margin-top:16px}
+.champ>span{display:block;font-weight:700;font-size:15px;margin-bottom:6px}
+.accord{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--doux);margin-top:14px}
+.accord input{margin-top:3px;width:18px;height:18px;accent-color:var(--nuit);flex:none}
+button{width:100%;border:0;border-radius:10px;background:var(--nuit);color:#fff;font:inherit;font-weight:700;font-size:17px;padding:15px;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+.err{color:var(--s1);font-size:14px;margin-top:10px;display:none}
+form{margin-bottom:22px}
+.merci{display:none;text-align:center}
+.merci .cases{display:flex;justify-content:center;gap:4px;margin:4px 0 12px}
+.merci .cases i{width:26px;height:26px;border-radius:4px;background:var(--or);display:flex;align-items:center;justify-content:center}
+.merci .cases svg{width:16px;height:16px;fill:#fff}
+.rdv{background:var(--nuit);color:#fff;border-radius:14px;padding:18px;display:flex;gap:14px;align-items:center}
+.rdv .j{flex:none;width:62px;text-align:center;border:1.5px solid var(--or);border-radius:10px;padding:6px 0;line-height:1.1}
+.rdv .j b{display:block;font-size:24px;color:var(--or)}
+.rdv .j span{font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+.rdv p{font-size:14px;color:#d6e0ea}
+.rdv strong{display:block;color:#fff;font-size:16px}
+footer{text-align:center;color:var(--doux);font-size:12px;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="haut">
+<div class="hero"><img src="hero.webp" width="780" height="400" alt="Les 8 artistes du Concert des Générations, 40 ans de Mayotte La 1ère" fetchpriority="high"></div>
+<div class="entete">
+<p class="sur">40 ans de Mayotte La 1ère</p>
+<h1>Merci d'avoir fait vibrer le <b>Concert des Générations</b></h1>
+<p class="intro">Le 14 novembre aux Hauts Vallons, avec RH, Maliza, DjeMs, Annice, Kemaal &amp; O.B., Chaldi, Méli et Bodo. Dites-nous comment vous avez vécu la soirée.</p>
+</div>
+</div>
+
+<main>
+<form id="avis" novalidate>
+<div class="carte">
+<h2>Notez la soirée</h2>
+<p class="aide">Touchez une case.</p>
+<div class="note" id="note"></div>
+<p class="libelle" id="libelle" aria-live="polite"></p>
+</div>
+
+<div class="carte">
+<div class="q"><b>Votre coup de cœur</b><div class="choix" id="artistes"></div></div>
+<div class="q"><b>L'accueil et l'entrée</b><div class="choix" id="accueil"></div></div>
+<div class="q"><b>Une prochaine édition, vous revenez ?</b><div class="choix" id="revenir"></div></div>
+</div>
+
+<div class="carte">
+<h2>Racontez votre soirée</h2>
+<p class="aide">Facultatif. Un moment, une chanson, un mot pour les 40 ans.</p>
+<label class="champ"><span>Votre avis en une phrase</span><input type="text" name="titre" maxlength="80" placeholder="Ex. : Une soirée qui rassemble toutes les générations"></label>
+<label class="champ"><span>Votre message</span><textarea name="mot" maxlength="600" id="mot" placeholder="Ce que vous avez aimé, ce qu'on peut faire mieux"></textarea></label>
+<p class="compte"><span id="nb">0</span> / 600</p>
+<label class="champ"><span>Votre prénom</span><input type="text" name="prenom" maxlength="40" autocomplete="given-name"></label>
+<label class="accord"><input type="checkbox" name="publier" value="oui">J'accepte que Mayotte La 1ère publie mon avis avec mon prénom, sur ses réseaux et sur son site.</label>
+</div>
+
+<button type="submit" id="go" disabled>Publier mon avis</button>
+<p class="err" id="err">L'envoi n'a pas marché. Vérifiez votre connexion et réessayez.</p>
+</form>
+
+<div class="carte merci" id="ok">
+<div class="cases" id="ok-cases"></div>
+<h2>Merci, votre avis est bien reçu</h2>
+<p class="aide" style="margin:4px 0 0">Il sera lu par l'équipe de Mayotte La 1ère.</p>
+</div>
+
+<div class="rdv"><div class="j"><b>21</b><span>déc.</span></div><p><strong>Revivez la soirée à la télé</strong>Diffusion le 21 décembre sur Mayotte La 1ère, rediffusion le 31 décembre.</p></div>
+<footer>Mayotte La 1ère et Kultur'M, avec PICHA Ticket</footer>
+</main>
+
+<script>
+(function(){
+var STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.4 7 .7-5.3 4.7 1.6 6.9L12 17.6l-6.2 3.6 1.6-6.9L2.1 9.6l7-.7z"/></svg>';
+var LIB=["","Décevant","Moyen","Bien","Très bien","Inoubliable"];
+var COUL=["","var(--s1)","var(--s2)","var(--s3)","var(--s4)","var(--s5)"];
+var box=document.getElementById("note"),lib=document.getElementById("libelle"),go=document.getElementById("go"),choisie=0;
+for(var i=1;i<=5;i++)box.insertAdjacentHTML("beforeend",'<input type="radio" name="note" id="n'+i+'" value="'+i+'"><label for="n'+i+'" aria-label="'+i+' sur 5, '+LIB[i]+'" data-n="'+i+'">'+STAR+'</label>');
+var cases=box.querySelectorAll("label");
+function peindre(n){box.classList.toggle("top",n===5);for(var k=0;k<5;k++)cases[k].style.background=k<n?COUL[n]:"";lib.textContent=n?LIB[n]:""}
+cases.forEach(function(c){c.addEventListener("mouseenter",function(){peindre(+c.dataset.n)})});
+box.addEventListener("mouseleave",function(){peindre(choisie)});
+box.addEventListener("change",function(e){choisie=+e.target.value;peindre(choisie);go.disabled=false});
+var Q={artistes:["RH","Maliza","DjeMs","Annice","Kemaal & O.B.","Chaldi","Méli","Bodo","Tous !"],accueil:["Très bien","Bien","Un peu d'attente","À revoir"],revenir:["Oui, sans hésiter","Peut-être","Non"]};
+Object.keys(Q).forEach(function(k){var b=document.getElementById(k);Q[k].forEach(function(v,i){b.insertAdjacentHTML("beforeend",'<input type="radio" name="'+k+'" id="'+k+i+'" value="'+v.replace(/"/g,"&quot;")+'"><label for="'+k+i+'">'+v.replace(/&/g,"&amp;")+'</label>')})});
+var mot=document.getElementById("mot"),nb=document.getElementById("nb");
+mot.addEventListener("input",function(){nb.textContent=mot.value.length});
+var f=document.getElementById("avis"),c=new URLSearchParams(location.search).get("c")||"";
+f.addEventListener("submit",function(e){e.preventDefault();if(!choisie)return;
+var o={c:c};new FormData(f).forEach(function(v,k){o[k]=v});
+go.disabled=true;document.getElementById("err").style.display="none";
+fetch("/merci/avis",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(o)}).then(function(r){if(!r.ok)throw 0;
+f.style.display="none";var ok=document.getElementById("ok"),oc=document.getElementById("ok-cases");
+for(var k=0;k<choisie;k++)oc.insertAdjacentHTML("beforeend","<i>"+STAR+"</i>");ok.style.display="block";ok.scrollIntoView({behavior:"smooth",block:"center"})
+}).catch(function(){go.disabled=false;document.getElementById("err").style.display="block"})});
+})();
+</script>
+</body>
+</html>
