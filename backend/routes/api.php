@@ -1,5 +1,7 @@
 <?php
 
+use HiEvents\Http\Actions\EventFeedback\ExportEventFeedbackAction;
+use HiEvents\Http\Actions\EventFeedback\SubmitEventFeedbackActionPublic;
 use HiEvents\Http\Actions\Social\AppendSocialMediaChunkAction;
 use HiEvents\Http\Actions\Social\CompleteSocialMediaUploadAction;
 use HiEvents\Http\Actions\Social\GetSocialCommentsAction;
@@ -808,6 +810,7 @@ $router->middleware(['auth:api'])->group(
 
         // Waitlist
         $router->get('/events/{event_id}/waitlist', GetWaitlistEntriesAction::class);
+        $router->get('/events/{event_id}/feedback/export', ExportEventFeedbackAction::class);
         $router->get('/events/{event_id}/waitlist/stats', GetWaitlistStatsAction::class);
         $router->post('/events/{event_id}/waitlist/offer-next', OfferWaitlistEntryAction::class);
         $router->delete('/events/{event_id}/waitlist/{entry_id}', CancelWaitlistEntryAction::class);
@@ -1020,6 +1023,10 @@ $router->prefix('/public')->group(
         // Newsletter
         $router->post('/events/{event_id}/newsletter-subscriptions', SubscribeToOrganizerNewsletterPublicAction::class)
             ->middleware('throttle:5,1');
+
+        // Page « Merci + avis »
+        $router->post('/events/{event_id}/feedback', SubmitEventFeedbackActionPublic::class)
+            ->middleware('throttle:10,1');
 
         // Waitlist
         $router->post('/events/{event_id}/waitlist', CreateWaitlistEntryActionPublic::class)

@@ -158,6 +158,14 @@ abstract class BaseAction extends Controller
         return Response::make($xmlContent, $statusCode, $allHeaders);
     }
 
+    protected function csvResponse(string $content, string $filename): LaravelResponse
+    {
+        return new LaravelResponse($content, ResponseCodes::HTTP_OK, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.str_replace('"', '', $filename).'"',
+        ]);
+    }
+
     protected function textResponse(string $content, int $statusCode = ResponseCodes::HTTP_OK): LaravelResponse
     {
         return new LaravelResponse($content, $statusCode, ['Content-Type' => 'text/plain; charset=UTF-8']);

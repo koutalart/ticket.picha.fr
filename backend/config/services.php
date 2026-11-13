@@ -40,6 +40,9 @@ return [
         'gateway_user_id' => (int) env('CHATWOOT_GATEWAY_USER_ID', 0),
         'timeout_seconds' => (int) env('CHATWOOT_TIMEOUT_SECONDS', 10),
     ],
+    'feedback' => [
+        'event_ids' => env('FEEDBACK_EVENT_IDS', ''),
+    ],
     'httpsms' => [
         'base_url' => env('HTTPSMS_BASE_URL', 'https://api.httpsms.com/v1'),
         'timeout_seconds' => (int) env('HTTPSMS_TIMEOUT_SECONDS', 15),
