@@ -1,0 +1,37 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Présence · Concert des Générations</title>
+<style>
+:root{--bg:#0b1630;--card:#13224a;--or:#d9b56a;--txt:#fff;--mut:#aab6d3;--vert:#3ecf8e;--rouge:#ff7a7a}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;padding:20px 16px}
+main{max-width:460px;margin:0 auto}h1{color:var(--or);font-size:22px;text-align:center}.s{color:var(--mut);text-align:center;margin:6px 0 20px;font-size:14px}
+form{background:var(--card);border-radius:18px;padding:20px;display:grid;gap:14px}
+label{font-size:14px;color:var(--mut);display:grid;gap:6px}
+input{font-size:20px;padding:14px;border-radius:12px;border:2px solid #2a3c6e;background:#0b1630;color:#fff;width:100%}
+input:focus{outline:none;border-color:var(--or)}
+button{font-size:20px;font-weight:700;padding:16px;border:0;border-radius:12px;background:var(--or);color:#06192b;cursor:pointer}
+button:disabled{opacity:.6}.msg{text-align:center;font-weight:600;min-height:24px;margin-top:14px}.ok{color:var(--vert)}.ko{color:var(--rouge)}
+.compte{color:var(--mut);text-align:center;font-size:13px;margin-top:8px}
+</style></head><body><main>
+<h1>Concert des Générations</h1><p class="s">Présence des invités non scannés · prénom et téléphone</p>
+<form id="f" autocomplete="off">
+<label>Prénom *<input name="prenom" required maxlength="40" autocapitalize="words"></label>
+<label>Nom<input name="nom" maxlength="60" autocapitalize="words"></label>
+<label>Téléphone *<input name="telephone" required inputmode="tel" maxlength="20" placeholder="06 39 12 34 56"></label>
+<label>Votre prénom (staff)<input name="staff" id="staff" maxlength="30"></label>
+<button id="b">Enregistrer</button>
+</form>
+<p class="msg" id="m"></p><p class="compte" id="c"></p>
+</main><script>
+const f=document.getElementById('f'),m=document.getElementById('m'),b=document.getElementById('b'),st=document.getElementById('staff'),c=document.getElementById('c');
+const L=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let file=L('presence_file')||[],n=L('presence_n')||0;st.value=L('staff')||'';
+const maj=()=>{c.textContent=(n?n+' enregistré'+(n>1?'s':'')+' depuis ce téléphone':'')+(file.length?' · '+file.length+" en attente d'envoi":'')};maj();
+async function envoyer(d){const r=await fetch('/api/public/events/14/presence',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(d)});if(!r.ok)throw r.status}
+async function vider(){if(!file.length)return;const reste=[];for(const d of file){try{await envoyer(d)}catch(e){reste.push(d)}}file=reste;S('presence_file',file);maj()}
+setInterval(vider,15000);vider();
+f.addEventListener('submit',async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(f));d.saisi_le=new Date().toISOString();
+if(String(d.telephone).replace(/\D/g,'').length<9){m.className='msg ko';m.textContent='Numéro incomplet';return}
+b.disabled=true;S('staff',d.staff||'');
+try{await envoyer(d)}catch(err){file.push(d);S('presence_file',file)}
+n++;S('presence_n',n);m.className='msg ok';m.textContent='Merci, '+d.prenom+' est bien noté(e)';
+f.prenom.value='';f.nom.value='';f.telephone.value='';f.prenom.focus();maj();b.disabled=false;});
+</script></body></html>
