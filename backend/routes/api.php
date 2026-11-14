@@ -2,6 +2,7 @@
 
 use HiEvents\Http\Actions\EventFeedback\ExportEventFeedbackAction;
 use HiEvents\Http\Actions\EventFeedback\SubmitEventFeedbackActionPublic;
+use HiEvents\Http\Actions\EventPresence\SubmitEventPresenceActionPublic;
 use HiEvents\Http\Actions\Social\AppendSocialMediaChunkAction;
 use HiEvents\Http\Actions\Social\CompleteSocialMediaUploadAction;
 use HiEvents\Http\Actions\Social\GetSocialCommentsAction;
@@ -1027,6 +1028,8 @@ $router->prefix('/public')->group(
         // Page « Merci + avis »
         $router->post('/events/{event_id}/feedback', SubmitEventFeedbackActionPublic::class)
             ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/presence', SubmitEventPresenceActionPublic::class)
+            ->middleware('throttle:60,1');
 
         // Waitlist
         $router->post('/events/{event_id}/waitlist', CreateWaitlistEntryActionPublic::class)

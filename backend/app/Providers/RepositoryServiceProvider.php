@@ -20,6 +20,7 @@ use HiEvents\Repository\Eloquent\CheckInListRepository;
 use HiEvents\Repository\Eloquent\EmailTemplateRepository;
 use HiEvents\Repository\Eloquent\EventBoxOfficeOperatorRepository;
 use HiEvents\Repository\Eloquent\EventFeedbackRepository;
+use HiEvents\Repository\Eloquent\EventPresenceRepository;
 use HiEvents\Repository\Eloquent\EventViewerRepository;
 use HiEvents\Repository\Eloquent\EventDailyStatisticRepository;
 use HiEvents\Repository\Eloquent\EventRepository;
@@ -130,6 +131,7 @@ use HiEvents\Repository\Interfaces\CheckInListRepositoryInterface;
 use HiEvents\Repository\Interfaces\EmailTemplateRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventBoxOfficeOperatorRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventFeedbackRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventPresenceRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventViewerRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventDailyStatisticRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -333,6 +335,7 @@ class RepositoryServiceProvider extends ServiceProvider
         BoxOfficeSaleRepositoryInterface::class => BoxOfficeSaleRepository::class,
         EventBoxOfficeOperatorRepositoryInterface::class => EventBoxOfficeOperatorRepository::class,
         EventFeedbackRepositoryInterface::class => EventFeedbackRepository::class,
+        EventPresenceRepositoryInterface::class => EventPresenceRepository::class,
         EventViewerRepositoryInterface::class => EventViewerRepository::class,
         PrintJobRepositoryInterface::class => PrintJobRepository::class,
         BoxOfficePrinterPreferenceRepositoryInterface::class => BoxOfficePrinterPreferenceRepository::class,
