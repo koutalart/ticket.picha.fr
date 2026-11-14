@@ -36,6 +36,7 @@ return [
         'account_id' => (int) env('CHATWOOT_ACCOUNT_ID', 1),
         'api_token' => env('CHATWOOT_API_TOKEN'),
         'sms_inbox_id' => (int) env('CHATWOOT_SMS_INBOX_ID', 0),
+        'live_chat_inbox_id' => (int) env('CHATWOOT_LIVE_CHAT_INBOX_ID', 0),
         'webhook_token' => env('CHATWOOT_WEBHOOK_TOKEN'),
         'gateway_user_id' => (int) env('CHATWOOT_GATEWAY_USER_ID', 0),
         'timeout_seconds' => (int) env('CHATWOOT_TIMEOUT_SECONDS', 10),
@@ -55,6 +56,13 @@ return [
     ],
 
     // Central SMS queue (picha-sms-file): urgent SMS are handed over at once, campaigns are paced by the queue.
+    'une_anicka' => [
+        'enabled' => filter_var(env('UNE_ANICKA_ENABLED', false), FILTER_VALIDATE_BOOLEAN),
+        'url' => env('UNE_ANICKA_URL', env('SMS_FILE_URL', 'http://172.22.0.1:8097')),
+        'key' => env('UNE_ANICKA_KEY', env('SMS_FILE_KEY', env('FILE_SMS_KEY'))),
+        'timeout_seconds' => (int) env('UNE_ANICKA_TIMEOUT_SECONDS', 4),
+    ],
+
     'sms_file' => [
         'enabled' => filter_var(env('SMS_FILE_ENABLED', false), FILTER_VALIDATE_BOOLEAN),
         'url' => env('SMS_FILE_URL', 'http://172.22.0.1:8097'),
