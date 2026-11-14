@@ -178,7 +178,7 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
             agent_user_id: $user->id,
             product_id: $product->id,
             product_price_id: $productPrice->id,
-            phone: '639780773',
+            phone: '12345678',
             first_name: 'Jane',
             last_name: '',
             email: null,
