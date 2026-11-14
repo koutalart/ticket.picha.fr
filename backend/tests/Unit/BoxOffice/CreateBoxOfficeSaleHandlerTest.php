@@ -98,6 +98,36 @@ class CreateBoxOfficeSaleHandlerTest extends TestCase
         self::assertSame('', $result->attendee->getLastName());
         self::assertTrue(\HiEvents\Helper\KioskSentinelEmail::isKioskSentinelEmail($result->attendee->getEmail()));
         self::assertSame('+33612345678', DB::table('box_office_sales')->where('id', $result->saleId)->value('phone'));
+        self::assertSame('+33612345678', DB::table('attendees')->where('id', $result->attendee->getId())->value('phone'));
+    }
+
+    public function test_sale_with_phone_queues_ticket_sms_right_away(): void
+    {
+        Queue::fake();
+        [$event, $product, $productPrice, $user] = $this->createEventWithProduct(price: 25.00);
+        $this->attachCheckInList($event, $product);
+
+        $result = app(CreateBoxOfficeSaleHandler::class)->handle(new CreateBoxOfficeSaleDTO(
+            event_id: $event->id,
+            agent_user_id: $user->id,
+            product_id: $product->id,
+            product_price_id: $productPrice->id,
+            phone: '639780773',
+            first_name: 'Awa',
+            last_name: '',
+            email: '',
+            locale: 'fr',
+            amount: 25.00,
+            payment_method: BoxOfficePaymentMethod::CASH,
+            amount_collected: 25.00,
+            idempotency_key: \Illuminate\Support\Str::uuid()->toString(),
+            phone_calling_code: '262',
+        ));
+
+        Queue::assertPushed(
+            \HiEvents\Jobs\BoxOffice\SendBoxOfficeTicketSmsJob::class,
+            fn ($job) => $job->attendeeIds === [$result->attendee->getId()] && $job->eventId === $event->id,
+        );
     }
 
     public function test_mayotte_event_country_prefixes_262_not_33(): void
