@@ -1,0 +1,36 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Contrôle d'accès · Concert des Générations</title>
+<style>
+:root{--bg:#0b1630;--card:#13224a;--or:#d9b56a;--txt:#fff;--mut:#aab6d3;--vert:#3ecf8e}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
+h1{font-size:clamp(18px,3vw,28px);color:var(--or);font-weight:600;text-align:center}
+.sous{color:var(--mut);margin-top:6px;font-size:14px;text-align:center}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;width:100%;max-width:1000px;margin-top:28px}
+.c{background:var(--card);border-radius:18px;padding:24px;text-align:center}
+.l{color:var(--mut);font-size:15px;text-transform:uppercase;letter-spacing:.08em}
+.n{font-size:clamp(56px,11vw,120px);font-weight:700;line-height:1.05;margin-top:8px;font-variant-numeric:tabular-nums}
+.site .n{color:var(--vert)}.venir .n{color:var(--or)}
+.barre{width:100%;max-width:1000px;height:18px;background:var(--card);border-radius:9px;margin-top:24px;overflow:hidden}
+.barre i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--vert),var(--or));transition:width .6s}
+.pied{color:var(--mut);font-size:13px;margin-top:14px;text-align:center}.err{color:#ff7a7a}
+</style></head><body>
+<h1>Le Concert des Générations · Contrôle d'accès</h1>
+<p class="sous">Entrée du public · mis à jour toutes les 10 secondes</p>
+<div class="grille">
+<div class="c site"><div class="l">Sur site</div><div class="n" id="site">–</div></div>
+<div class="c venir"><div class="l">Restent à venir</div><div class="n" id="venir">–</div></div>
+<div class="c"><div class="l">Billets inscrits</div><div class="n" id="total">–</div></div>
+</div>
+<div class="barre"><i id="b"></i></div>
+<p class="pied" id="pied">Chargement…</p>
+<p class="pied">Compté par billet scanné. Une invitation pour 2 compte pour un billet.</p>
+<script>
+const U='/api/public/check-in-lists/cil_3l9kxoxTiFRq9';
+const f=n=>n.toLocaleString('fr-FR');
+async function maj(){try{const r=await fetch(U,{cache:'no-store'});const d=(await r.json()).data;
+const t=d.total_attendees,s=d.checked_in_attendees;
+document.getElementById('site').textContent=f(s);document.getElementById('venir').textContent=f(Math.max(t-s,0));document.getElementById('total').textContent=f(t);
+document.getElementById('b').style.width=(t?Math.round(s*100/t):0)+'%';
+document.getElementById('pied').className='pied';document.getElementById('pied').textContent=(t?Math.round(s*100/t):0)+' % arrivés · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}catch(e){const p=document.getElementById('pied');p.className='pied err';p.textContent='Connexion perdue, nouvel essai dans 10 s';}}
+maj();setInterval(maj,10000);
+</script></body></html>

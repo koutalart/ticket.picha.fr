@@ -22,6 +22,7 @@ use HiEvents\Exceptions\UnauthorizedException;
 use HiEvents\Helper\KioskSentinelEmail;
 use HiEvents\Helper\PhoneCallingCode;
 use HiEvents\Helper\PhoneNormalizer;
+use HiEvents\Jobs\BoxOffice\SendBoxOfficeTicketSmsJob;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
 use HiEvents\Repository\Interfaces\BoxOfficeSaleRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -82,6 +83,7 @@ class CreateBoxOfficeSaleHandler
     public function handle(CreateBoxOfficeSaleDTO $dto, ?UserDomainObject $agent = null): BoxOfficeSaleResultDTO
     {
         return $this->databaseManager->transaction(function () use ($dto, $agent) {
+            $phone = null;
             // AC-10: a sequential replay with the same idempotency_key
             // returns the sale already completed by the first call.
             if ($existing = $this->findCompletedSale($dto->idempotency_key)) {
@@ -106,7 +108,7 @@ class CreateBoxOfficeSaleHandler
                     BoxOfficeSaleDomainObjectAbstract::AMOUNT => $dto->amount,
                     BoxOfficeSaleDomainObjectAbstract::AMOUNT_COLLECTED => $dto->amount_collected,
                     BoxOfficeSaleDomainObjectAbstract::STATUS => BoxOfficeSaleStatus::PENDING->name,
-                    'phone' => PhoneNormalizer::normalize($dto->phone, $this->resolveCallingCode($dto)),
+                    'phone' => $phone = PhoneNormalizer::normalize($dto->phone, $this->resolveCallingCode($dto)),
                 ]);
             } catch (QueryException $exception) {
                 // 23505 = unique_violation (Postgres). Anything else (a
@@ -171,6 +173,12 @@ class CreateBoxOfficeSaleHandler
             ));
 
             $firstAttendee = $attendees[0];
+
+            if ($phone !== null && $phone !== '') {
+                $attendeeIds = array_map(static fn (AttendeeDomainObject $attendee) => $attendee->getId(), $attendees);
+                $this->attendeeRepository->updateWhere(['phone' => $phone], [['id', 'in', $attendeeIds]]);
+                SendBoxOfficeTicketSmsJob::dispatch($attendeeIds, $dto->event_id)->afterCommit();
+            }
 
             $this->boxOfficeSaleRepository->updateFromArray($sale->getId(), [
                 BoxOfficeSaleDomainObjectAbstract::ORDER_ID => $order->getId(),
