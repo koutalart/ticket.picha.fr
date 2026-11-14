@@ -45,7 +45,33 @@ class PhoneNormalizerTest extends TestCase
     public function test_local_phone_without_calling_code_throws(): void
     {
         $this->expectException(MissingPhoneCallingCodeException::class);
-        PhoneNormalizer::normalize('639780773', '');
+        PhoneNormalizer::normalize('12345678', '');
+    }
+
+    public function test_french_numbers_are_fixed_without_calling_code(): void
+    {
+        self::assertSame('+262639780773', PhoneNormalizer::normalize('0639 78 07 73', ''));
+        self::assertSame('+262693123456', PhoneNormalizer::normalize('06.93.12.34.56', ''));
+        self::assertSame('+262692123456', PhoneNormalizer::normalize('0692-12-34-56', ''));
+        self::assertSame('+262269611234', PhoneNormalizer::normalize('0269 61 12 34', ''));
+        self::assertSame('+262262123456', PhoneNormalizer::normalize('0262123456', ''));
+        self::assertSame('+33612345678', PhoneNormalizer::normalize('06 12 34 56 78', ''));
+        self::assertSame('+33712345678', PhoneNormalizer::normalize('07 12 34 56 78', ''));
+        self::assertSame('+262639780773', PhoneNormalizer::normalize('639780773', ''));
+        self::assertSame('+33612345678', PhoneNormalizer::normalize('612345678', ''));
+    }
+
+    public function test_metropole_mobile_wins_over_station_262(): void
+    {
+        self::assertSame('+33612345678', PhoneNormalizer::normalize('0612345678', '262'));
+        self::assertSame('+262639780773', PhoneNormalizer::normalize('0639780773', '33'));
+    }
+
+    public function test_international_prefixes_are_kept(): void
+    {
+        self::assertSame('+261341234567', PhoneNormalizer::normalize('00261 34 12 345 67', ''));
+        self::assertSame('+262639780773', PhoneNormalizer::normalize('262639780773', ''));
+        self::assertSame('+33612345678', PhoneNormalizer::normalize('33612345678', ''));
     }
 
     public function test_unknown_iso2_has_no_calling_code(): void
