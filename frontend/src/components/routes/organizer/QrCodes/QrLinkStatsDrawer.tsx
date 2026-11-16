@@ -1,17 +1,22 @@
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useParams} from "react-router";
 import {t} from "@lingui/macro";
-import {Alert, Drawer, Progress, SegmentedControl, SimpleGrid, Skeleton, Stack, Text} from "@mantine/core";
+import {Alert, Badge, Button, CopyButton, Drawer, Group, Progress, SegmentedControl, SimpleGrid, Skeleton, Stack, Text} from "@mantine/core";
+import {IconCheck, IconCopy, IconDownload, IconExternalLink, IconPencil, IconPhoto} from "@tabler/icons-react";
 import {AreaChart, BarChart} from "@mantine/charts";
 import {QrLink, QrLinkBreakdownItem} from "../../../../types.ts";
 import {useGetQrLinkStats} from "../../../../queries/useGetQrLinkStats.ts";
 import {formatCurrency} from "../../../../utilites/currency.ts";
+import {downloadQrPng, QrCodeImage} from "./QrCodeImage.tsx";
+import {destinationLabel, hasPosterDesign, usePosterDownload} from "./qrLinkHelpers.tsx";
 import classes from "./QrCodes.module.scss";
 
 interface QrLinkStatsDrawerProps {
     qrLink: QrLink | null;
+    shortName?: string;
     currency: string;
     onClose: () => void;
+    onEdit: () => void;
 }
 
 const PERIODS = ['7', '30', '90', 'all'];
@@ -59,8 +64,10 @@ const Breakdown = ({title, items, label = (key) => key || t`Unknown`}: {
     );
 };
 
-export const QrLinkStatsDrawer = ({qrLink, currency, onClose}: QrLinkStatsDrawerProps) => {
+export const QrLinkStatsDrawer = ({qrLink, shortName, currency, onClose, onEdit}: QrLinkStatsDrawerProps) => {
     const {organizerId} = useParams();
+    const qrRef = useRef<HTMLDivElement>(null);
+    const poster = usePosterDownload(organizerId!);
     const [period, setPeriod] = useState('30');
     const days = period === 'all' ? null : Number(period);
     const statsQuery = useGetQrLinkStats(organizerId!, qrLink?.id, days);
@@ -81,9 +88,52 @@ export const QrLinkStatsDrawer = ({qrLink, currency, onClose}: QrLinkStatsDrawer
             onClose={onClose}
             position="right"
             size="xl"
-            title={<Text fw={700}>{qrLink?.name}</Text>}
+            title={<Text fw={700} title={qrLink?.name}>{shortName || qrLink?.name}</Text>}
         >
             <Stack gap="lg">
+                {qrLink && (
+                    <div className={classes.drawerHeader}>
+                        <QrCodeImage ref={qrRef} value={qrLink.public_url} design={qrLink.design} size={96}/>
+                        <div className={classes.drawerHeaderMain}>
+                            <Group gap={6}>
+                                <Badge size="sm" variant="light" radius="sm">{destinationLabel(qrLink.destination_type)}</Badge>
+                                {qrLink.status === 'PAUSED' && <Badge size="sm" color="gray" radius="sm">{t`Paused`}</Badge>}
+                            </Group>
+                            {shortName && shortName !== qrLink.name && (
+                                <Text size="xs" c="dimmed">{qrLink.name}</Text>
+                            )}
+                            <CopyButton value={qrLink.public_url}>
+                                {({copied, copy}) => (
+                                    <button type="button" className={classes.drawerLink} onClick={copy}>
+                                        <span>{qrLink.public_url.replace(/^https?:\/\//, '')}</span>
+                                        {copied ? <IconCheck size={14}/> : <IconCopy size={14}/>}
+                                    </button>
+                                )}
+                            </CopyButton>
+                            <div className={classes.drawerActions}>
+                                {hasPosterDesign(qrLink) ? (
+                                    <Button size="xs" leftSection={<IconPhoto size={14}/>} loading={poster.isDownloading}
+                                            onClick={() => poster.download(qrLink)}>
+                                        {t`Download the visual`}
+                                    </Button>
+                                ) : (
+                                    <Button size="xs" leftSection={<IconDownload size={14}/>}
+                                            onClick={() => downloadQrPng(qrRef.current, qrLink.name, qrLink.design)}>
+                                        {t`Download PNG`}
+                                    </Button>
+                                )}
+                                <Button size="xs" variant="default" leftSection={<IconPencil size={14}/>} onClick={onEdit}>
+                                    {t`Edit`}
+                                </Button>
+                                <Button size="xs" variant="subtle" component="a" href={qrLink.public_url} target="_blank"
+                                        leftSection={<IconExternalLink size={14}/>}>
+                                    {t`Open`}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <SegmentedControl
                     value={period}
                     onChange={setPeriod}
@@ -109,6 +159,8 @@ export const QrLinkStatsDrawer = ({qrLink, currency, onClose}: QrLinkStatsDrawer
                         {stats.scans === 0 && (
                             <Alert variant="light" color="gray">
                                 {t`No scans on this period yet. Print or share the QR code: scans appear here in real time.`}
+                                {' '}
+                                {t`Tip: tap the short link above to copy it, then paste it into your bio, a story or a message.`}
                             </Alert>
                         )}
 
