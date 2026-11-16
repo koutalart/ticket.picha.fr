@@ -161,9 +161,28 @@ class SmsSendServiceTest extends TestCase
         $this->assertSame('prov-13', $message->getProviderMessageId());
     }
 
+    public function test_sms_to_a_staff_number_is_stored_with_the_organizer_of_the_conversation(): void
+    {
+        $internalConversation = (new SmsConversationDomainObject)->setId(90)->setOrganizerId(19)->setPhone('+262639123456');
+
+        $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings());
+        $this->conversationService->shouldReceive('isOptedOut')->andReturnFalse();
+        $this->conversationService->shouldReceive('findOrCreate')->once()->andReturn($internalConversation);
+        $this->conversationService->shouldReceive('recordActivity')->once()->withArgs(fn ($conversation) => $conversation === $internalConversation);
+        $this->conversationRepository->shouldReceive('updateFromArray')->with(90, Mockery::any());
+        $this->messageRepository->shouldReceive('create')
+            ->once()
+            ->withArgs(fn (array $attributes) => $attributes['organizer_id'] === 19 && $attributes['sms_conversation_id'] === 90)
+            ->andReturn((new SmsMessageDomainObject)->setId(12)->setOrganizerId(19));
+        $this->messageRepository->shouldReceive('updateFromArray')->andReturn((new SmsMessageDomainObject)->setId(12)->setOrganizerId(19));
+        $this->client->shouldReceive('sendMessage')->once()->andReturn('prov-12');
+
+        $this->assertSame(19, $this->service->send($this->dto())->getOrganizerId());
+    }
+
     private function expectMessageCreated(): void
     {
-        $conversation = (new SmsConversationDomainObject)->setId(7)->setPhone('+262639123456');
+        $conversation = (new SmsConversationDomainObject)->setId(7)->setOrganizerId(4)->setPhone('+262639123456');
 
         $this->settingsRepository->shouldReceive('findFirstWhere')->andReturn($this->settings());
         $this->conversationService->shouldReceive('isOptedOut')->andReturnFalse();
