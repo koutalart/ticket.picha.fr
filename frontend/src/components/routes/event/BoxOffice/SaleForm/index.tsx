@@ -135,7 +135,7 @@ export const SaleForm = ({
     const errorHandler = useFormErrorResponseHandler();
     const isAdmin = useIsCurrentUserAdmin();
     const createSale = useCreateBoxOfficeSale();
-    const callingCodeDigits = phoneCallingCode.replace(/\D/g, '');
+    const callingCodeDigits = phoneCallingCode.replace(/\D/g, '') || '262';
     const {printTickets, printerPromptModal, isReprinting} = useKioskTicketPrinter({
         eventId,
         printMode,

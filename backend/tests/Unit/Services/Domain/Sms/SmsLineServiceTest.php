@@ -144,6 +144,33 @@ class SmsLineServiceTest extends TestCase
         $this->assertNull($this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456'));
     }
 
+    public function test_sms_from_a_team_number_goes_to_the_internal_organizer_on_the_line(): void
+    {
+        $anicka = (new OrganizerSmsSettingDomainObject)->setId(3)->setAccountId(10)->setOrganizerId(30)->setSharedLineSettingsId(1);
+        $this->config->set('services.httpsms.internal_phones', '0639123456');
+        $this->config->set('services.httpsms.internal_organizer_id', '30');
+        $this->messageRepository->shouldNotReceive('findLastSender');
+
+        $this->assertSame($anicka, $this->service->attributeInbound($this->line, collect([$this->line, $this->member, $anicka]), '+262639123456'));
+    }
+
+    public function test_sms_from_a_team_number_stays_unattributed_when_the_internal_organizer_is_not_on_the_line(): void
+    {
+        $this->config->set('services.httpsms.internal_phones', '0639123456');
+        $this->config->set('services.httpsms.internal_organizer_id', 30);
+        $this->messageRepository->shouldNotReceive('findLastSender');
+
+        $this->assertNull($this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456'));
+    }
+
+    public function test_sms_from_a_team_number_on_a_private_line_still_goes_to_its_owner(): void
+    {
+        $this->config->set('services.httpsms.internal_phones', '0639123456');
+        $this->config->set('services.httpsms.internal_organizer_id', 30);
+
+        $this->assertSame($this->line, $this->service->attributeInbound($this->line, collect([$this->line]), '+262639123456'));
+    }
+
     public function test_organizer_outside_the_line_never_gets_the_sms(): void
     {
         $this->messageRepository->shouldReceive('findLastSender')->andReturn(new SmsLastSenderDTO(organizerId: 99, sentAt: '2026-10-20 10:00:00'));

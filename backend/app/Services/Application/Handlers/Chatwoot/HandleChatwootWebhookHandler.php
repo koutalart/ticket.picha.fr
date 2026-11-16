@@ -17,6 +17,7 @@ use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Sms\SendSmsReplyHandler;
 use HiEvents\Services\Domain\Chatwoot\ChatwootSmsMirrorService;
+use HiEvents\Services\Domain\Chatwoot\ChatwootUnknownNumberReplyService;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Psr\Log\LoggerInterface;
@@ -35,6 +36,7 @@ class HandleChatwootWebhookHandler
         private readonly SendSmsReplyHandler $replyHandler,
         private readonly ChatwootSmsMirrorService $mirrorService,
         private readonly LoggerInterface $logger,
+        private readonly ChatwootUnknownNumberReplyService $unknownNumberReplyService,
     ) {}
 
     /**
@@ -68,7 +70,7 @@ class HandleChatwootWebhookHandler
             SmsConversationDomainObjectAbstract::CHATWOOT_CONVERSATION_ID => $chatwootConversationId,
         ]);
         if ($conversation === null) {
-            $this->mirrorService->postNote($chatwootConversationId, __('Not sent: this conversation is not linked to a PICHA SMS conversation.'));
+            $this->replyToUnknownNumber($chatwootConversationId, $chatwootMessageId, $content);
 
             return;
         }
@@ -97,6 +99,23 @@ class HandleChatwootWebhookHandler
         $this->messageRepository->updateFromArray($message->getId(), [
             SmsMessageDomainObjectAbstract::CHATWOOT_MESSAGE_ID => $chatwootMessageId,
         ]);
+    }
+
+    private function replyToUnknownNumber(int $chatwootConversationId, int $chatwootMessageId, string $content): void
+    {
+        try {
+            if (! $this->unknownNumberReplyService->reply($chatwootConversationId, $chatwootMessageId, $content)) {
+                $this->mirrorService->postNote($chatwootConversationId, __('Not sent: this conversation is not linked to a PICHA SMS conversation.'));
+            }
+        } catch (SmsRecipientOptedOutException) {
+            $this->mirrorService->postNote($chatwootConversationId, __('Not sent: this number asked not to receive SMS any more.'));
+        } catch (SmsGatewayNotConfiguredException|SmsGatewayException $exception) {
+            $this->logger->warning('Chatwoot reply to a number without conversation not sent as SMS', [
+                'chatwoot_conversation_id' => $chatwootConversationId,
+                'error' => $exception->getMessage(),
+            ]);
+            $this->mirrorService->postNote($chatwootConversationId, __('SMS not sent: :error', ['error' => $exception->getMessage()]));
+        }
     }
 
     private function isAgentReply(array $event): bool

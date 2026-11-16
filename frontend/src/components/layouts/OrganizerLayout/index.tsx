@@ -33,6 +33,7 @@ import { useGetAccount } from "../../../queries/useGetAccount.ts";
 import { StripeConnectButton } from "../../common/StripeConnectButton";
 import { useGetMe } from "../../../queries/useGetMe.ts";
 import { isBoxOfficeOperator } from "../../../utilites/kioskAuth.ts";
+import {EVENT_VIEWER_HOME, isEventViewer} from "../../../utilites/eventViewerAuth.ts";
 import { useGetSmsUnreadCount } from "../../../queries/useGetSmsUnreadCount.ts";
 import { hiddenSectionRedirect, isSectionEnabled } from "../../../utilites/organizerSections.ts";
 
@@ -52,6 +53,10 @@ const OrganizerLayout = () => {
 
     if (isMeSuccess && isBoxOfficeOperator(me)) {
         return <Navigate to="/kiosk" replace />;
+    }
+
+    if (isMeSuccess && isEventViewer(me)) {
+        return <Navigate to={EVENT_VIEWER_HOME} replace/>;
     }
 
     const sectionRedirect = hiddenSectionRedirect(organizer, location.pathname);

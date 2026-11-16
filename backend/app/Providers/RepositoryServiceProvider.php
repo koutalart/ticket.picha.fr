@@ -19,6 +19,9 @@ use HiEvents\Repository\Eloquent\CapacityAssignmentRepository;
 use HiEvents\Repository\Eloquent\CheckInListRepository;
 use HiEvents\Repository\Eloquent\EmailTemplateRepository;
 use HiEvents\Repository\Eloquent\EventBoxOfficeOperatorRepository;
+use HiEvents\Repository\Eloquent\EventFeedbackRepository;
+use HiEvents\Repository\Eloquent\EventPresenceRepository;
+use HiEvents\Repository\Eloquent\EventViewerRepository;
 use HiEvents\Repository\Eloquent\EventDailyStatisticRepository;
 use HiEvents\Repository\Eloquent\EventRepository;
 use HiEvents\Repository\Eloquent\EventSettingsRepository;
@@ -82,6 +85,7 @@ use HiEvents\Repository\Eloquent\SmsReplyTemplateRepository;
 use HiEvents\Repository\Eloquent\SmsLineKeywordRepository;
 use HiEvents\Repository\Eloquent\SmsLineFormerMemberRepository;
 use HiEvents\Repository\Eloquent\SmsUnattributedMessageRepository;
+use HiEvents\Repository\Eloquent\SmsUnattributedOutboundMessageRepository;
 use HiEvents\Repository\Eloquent\SmsWatchdogAlertRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarAccessRepository;
 use HiEvents\Repository\Eloquent\OrganizerCalendarCodeRepository;
@@ -126,6 +130,9 @@ use HiEvents\Repository\Interfaces\CapacityAssignmentRepositoryInterface;
 use HiEvents\Repository\Interfaces\CheckInListRepositoryInterface;
 use HiEvents\Repository\Interfaces\EmailTemplateRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventBoxOfficeOperatorRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventFeedbackRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventPresenceRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventViewerRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventDailyStatisticRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
@@ -189,6 +196,7 @@ use HiEvents\Repository\Interfaces\SmsReplyTemplateRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsLineKeywordRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsLineFormerMemberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsUnattributedMessageRepositoryInterface;
+use HiEvents\Repository\Interfaces\SmsUnattributedOutboundMessageRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsWatchdogAlertRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarAccessRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerCalendarCodeRepositoryInterface;
@@ -268,6 +276,7 @@ class RepositoryServiceProvider extends ServiceProvider
         SmsLineKeywordRepositoryInterface::class => SmsLineKeywordRepository::class,
         SmsLineFormerMemberRepositoryInterface::class => SmsLineFormerMemberRepository::class,
         SmsUnattributedMessageRepositoryInterface::class => SmsUnattributedMessageRepository::class,
+        SmsUnattributedOutboundMessageRepositoryInterface::class => SmsUnattributedOutboundMessageRepository::class,
         SmsWatchdogAlertRepositoryInterface::class => SmsWatchdogAlertRepository::class,
         OrganizerCalendarRepositoryInterface::class => OrganizerCalendarRepository::class,
         OrganizerCalendarMediaRepositoryInterface::class => OrganizerCalendarMediaRepository::class,
@@ -325,6 +334,9 @@ class RepositoryServiceProvider extends ServiceProvider
         ContactImportRepositoryInterface::class => ContactImportRepository::class,
         BoxOfficeSaleRepositoryInterface::class => BoxOfficeSaleRepository::class,
         EventBoxOfficeOperatorRepositoryInterface::class => EventBoxOfficeOperatorRepository::class,
+        EventFeedbackRepositoryInterface::class => EventFeedbackRepository::class,
+        EventPresenceRepositoryInterface::class => EventPresenceRepository::class,
+        EventViewerRepositoryInterface::class => EventViewerRepository::class,
         PrintJobRepositoryInterface::class => PrintJobRepository::class,
         BoxOfficePrinterPreferenceRepositoryInterface::class => BoxOfficePrinterPreferenceRepository::class,
         KioskPrintJobRepositoryInterface::class => KioskPrintJobRepository::class,

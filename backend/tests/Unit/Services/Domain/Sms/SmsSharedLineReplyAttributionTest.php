@@ -8,6 +8,7 @@ use HiEvents\Models\OrganizerSmsSetting;
 use HiEvents\Models\SmsConversation;
 use HiEvents\Models\SmsMessage;
 use HiEvents\Models\SmsUnattributedMessage;
+use HiEvents\Models\SmsUnattributedOutboundMessage;
 use HiEvents\Services\Application\Handlers\Sms\DTO\HttpSmsWebhookDTO;
 use HiEvents\Services\Application\Handlers\Sms\HandleHttpSmsWebhookHandler;
 use HiEvents\Services\Domain\Sms\DTO\SendSmsDTO;
@@ -193,6 +194,7 @@ class SmsSharedLineReplyAttributionTest extends TestCase
 
         $this->assertSame(0, SmsMessage::query()->where('provider_message_id', 'picha-903')->count());
         $this->assertSame(0, SmsConversation::query()->where('organizer_id', $this->innocentId)->count());
+        $this->assertSame(1, SmsUnattributedOutboundMessage::query()->where('provider_message_id', 'picha-903')->where('request_id', 'file-903')->count());
     }
 
     public function test_reply_goes_to_the_organizer_who_wrote_last_when_two_did(): void

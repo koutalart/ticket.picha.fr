@@ -8,6 +8,7 @@ use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\Status\BoxOfficeOperatorStatus;
+use HiEvents\DomainObjects\Status\EventViewerStatus;
 use HiEvents\DomainObjects\Status\UserStatus;
 use HiEvents\DomainObjects\TaxAndFeesDomainObject;
 use HiEvents\DomainObjects\UserDomainObject;
@@ -16,6 +17,7 @@ use HiEvents\Repository\Interfaces\AccountRepositoryInterface;
 use HiEvents\Repository\Interfaces\AccountUserRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventBoxOfficeOperatorRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventViewerRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\TaxAndFeeRepositoryInterface;
@@ -25,13 +27,16 @@ use Illuminate\Foundation\Application;
 
 readonly class IsAuthorizedService
 {
+    private const EVENT_VIEWER_ALLOWED_REQUESTS = [
+        'GET' => ['', '/stats', '/attendees', '/orders'],
+        'POST' => ['/attendees/export', '/orders/export'],
+    ];
+
     public function __construct(
-        private Application                    $app,
+        private Application $app,
         private AccountUserRepositoryInterface $accountUserRepository,
-        private AuthManager                    $auth,
-    )
-    {
-    }
+        private AuthManager $auth,
+    ) {}
 
     /**
      * @todo This is a very simplistic way of handling roles. Currently we have an ADMIN and ORGANIZER role, but we
@@ -46,6 +51,12 @@ readonly class IsAuthorizedService
         // closed here in one place.
         if ($authUser->getCurrentAccountUser()?->getRole() === Role::BOX_OFFICE_OPERATOR->name
             && $minimumRole !== Role::BOX_OFFICE_OPERATOR
+        ) {
+            throw new UnauthorizedException(__('You are not authorized to perform this action.'));
+        }
+
+        if ($authUser->getCurrentAccountUser()?->getRole() === Role::EVENT_VIEWER->name
+            && $minimumRole !== Role::EVENT_VIEWER
         ) {
             throw new UnauthorizedException(__('You are not authorized to perform this action.'));
         }
@@ -82,13 +93,13 @@ readonly class IsAuthorizedService
         $accountId = $accountUser?->getAccountId();
 
         if ($accountId === null) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException;
         }
 
         $event = $this->app->make(EventRepositoryInterface::class)->findById($eventId);
 
         if ($event?->getAccountId() !== $accountId) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException;
         }
 
         if (in_array($role, [Role::SUPERADMIN->name, Role::ADMIN->name, Role::ORGANIZER->name], true)) {
@@ -107,18 +118,24 @@ readonly class IsAuthorizedService
             }
         }
 
-        throw new UnauthorizedException();
+        throw new UnauthorizedException;
     }
 
     public function isActionAuthorized(
-        int              $entityId,
-        string           $entityType,
+        int $entityId,
+        string $entityType,
         UserDomainObject $authUser,
-        int              $authAccountId,
-        Role             $minimumRole
-    ): void
-    {
+        int $authAccountId,
+        Role $minimumRole
+    ): void {
         $this->validateUserStatus($authUser);
+
+        if ($authUser->getCurrentAccountUser()?->getRole() === Role::EVENT_VIEWER->name) {
+            $this->validateEventViewerAccess($entityId, $entityType, $authUser, $authAccountId);
+
+            return;
+        }
+
         $this->validateUserRole($minimumRole, $authUser);
 
         $repository = match ($entityType) {
@@ -141,9 +158,55 @@ readonly class IsAuthorizedService
             TaxAndFeesDomainObject::class => $this->validateTax($entity, $authAccountId),
         };
 
-        if (!$result) {
-            throw new UnauthorizedException();
+        if (! $result) {
+            throw new UnauthorizedException;
         }
+    }
+
+    /**
+     * @throws UnauthorizedException
+     */
+    private function validateEventViewerAccess(
+        int $entityId,
+        string $entityType,
+        UserDomainObject $authUser,
+        int $authAccountId,
+    ): void {
+        if ($entityType !== EventDomainObject::class || ! $this->isEventViewerRequestAllowed($entityId)) {
+            throw new UnauthorizedException(__('You are not authorized to perform this action.'));
+        }
+
+        $event = $this->app->make(EventRepositoryInterface::class)->findById($entityId);
+
+        if ($event?->getAccountId() !== $authAccountId) {
+            throw new UnauthorizedException;
+        }
+
+        $assignment = $this->app->make(EventViewerRepositoryInterface::class)->findFirstWhere([
+            'event_id' => $entityId,
+            'user_id' => $authUser->getId(),
+            'status' => EventViewerStatus::ACTIVE->name,
+        ]);
+
+        if ($assignment === null) {
+            throw new UnauthorizedException;
+        }
+    }
+
+    private function isEventViewerRequestAllowed(int $eventId): bool
+    {
+        $request = $this->app->make('request');
+        $allowedSuffixes = self::EVENT_VIEWER_ALLOWED_REQUESTS[strtoupper($request->method())] ?? [];
+
+        if (! preg_match('~^(?:.*/)?events/(\d+)(/.*)?$~', trim($request->path(), '/'), $matches)) {
+            return false;
+        }
+
+        if ((int) $matches[1] !== $eventId) {
+            return false;
+        }
+
+        return in_array(rtrim($matches[2] ?? '', '/'), $allowedSuffixes, true);
     }
 
     private function validateUserUpdate(?UserDomainObject $user, int $authAccountId): bool

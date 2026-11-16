@@ -40,6 +40,9 @@ return [
         'gateway_user_id' => (int) env('CHATWOOT_GATEWAY_USER_ID', 0),
         'timeout_seconds' => (int) env('CHATWOOT_TIMEOUT_SECONDS', 10),
     ],
+    'feedback' => [
+        'event_ids' => env('FEEDBACK_EVENT_IDS', ''),
+    ],
     'httpsms' => [
         'base_url' => env('HTTPSMS_BASE_URL', 'https://api.httpsms.com/v1'),
         'timeout_seconds' => (int) env('HTTPSMS_TIMEOUT_SECONDS', 15),
@@ -47,6 +50,7 @@ return [
         'reminder_pause_ms' => (int) env('HTTPSMS_REMINDER_PAUSE_MS', 250),
         'shared_line_attribution_days' => (int) env('HTTPSMS_SHARED_LINE_ATTRIBUTION_DAYS', 30),
         'internal_phones' => env('HTTPSMS_INTERNAL_PHONES', ''),
+        'internal_organizer_id' => env('HTTPSMS_INTERNAL_ORGANIZER_ID'),
         'detached_line_transition_days' => (int) env('HTTPSMS_DETACHED_LINE_TRANSITION_DAYS', 30),
     ],
 

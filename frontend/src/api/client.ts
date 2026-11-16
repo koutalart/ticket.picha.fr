@@ -71,6 +71,13 @@ api.interceptors.response.use(
             return Promise.reject(error);
         }
 
+        if (currentPath.startsWith('/lecture')) {
+            if (status === 401) {
+                window?.location?.replace(LOGIN_PATH);
+            }
+            return Promise.reject(error);
+        }
+
         if (isAuthError && (!isAllowedUnauthenticatedPath || isManageEventPath)) {
             // Store the current URL before redirecting to the login page
             window?.localStorage?.setItem(PREVIOUS_URL_KEY, window?.location.href);

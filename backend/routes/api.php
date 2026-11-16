@@ -1,5 +1,8 @@
 <?php
 
+use HiEvents\Http\Actions\EventFeedback\ExportEventFeedbackAction;
+use HiEvents\Http\Actions\EventFeedback\SubmitEventFeedbackActionPublic;
+use HiEvents\Http\Actions\EventPresence\SubmitEventPresenceActionPublic;
 use HiEvents\Http\Actions\Social\AppendSocialMediaChunkAction;
 use HiEvents\Http\Actions\Social\CompleteSocialMediaUploadAction;
 use HiEvents\Http\Actions\Social\GetSocialCommentsAction;
@@ -121,6 +124,7 @@ use HiEvents\Http\Actions\Auth\ValidateResetPasswordTokenAction;
 use HiEvents\Http\Actions\BoxOffice\CheckInBoxOfficeAttendeeAction;
 use HiEvents\Http\Actions\BoxOffice\CreateBoxOfficeSaleAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeContextAction;
+use HiEvents\Http\Actions\EventViewers\GetViewerEventsAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeProductsAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeSalesAction;
 use HiEvents\Http\Actions\BoxOffice\GetBoxOfficeStatsAction;
@@ -705,6 +709,7 @@ $router->middleware(['auth:api'])->group(
 
         // Box Office (PICHA Kiosk v2 — operator account, D23)
         $router->get('/box-office/context', GetBoxOfficeContextAction::class);
+        $router->get('/viewer/events', GetViewerEventsAction::class);
         $router->get('/events/{event_id}/box-office/products', GetBoxOfficeProductsAction::class);
         $router->get('/events/{event_id}/box-office/attendees', SearchBoxOfficeAttendeesAction::class);
         $router->post('/events/{event_id}/box-office/attendees/{attendee_public_id}/check-in', CheckInBoxOfficeAttendeeAction::class);
@@ -806,6 +811,7 @@ $router->middleware(['auth:api'])->group(
 
         // Waitlist
         $router->get('/events/{event_id}/waitlist', GetWaitlistEntriesAction::class);
+        $router->get('/events/{event_id}/feedback/export', ExportEventFeedbackAction::class);
         $router->get('/events/{event_id}/waitlist/stats', GetWaitlistStatsAction::class);
         $router->post('/events/{event_id}/waitlist/offer-next', OfferWaitlistEntryAction::class);
         $router->delete('/events/{event_id}/waitlist/{entry_id}', CancelWaitlistEntryAction::class);
@@ -1018,6 +1024,12 @@ $router->prefix('/public')->group(
         // Newsletter
         $router->post('/events/{event_id}/newsletter-subscriptions', SubscribeToOrganizerNewsletterPublicAction::class)
             ->middleware('throttle:5,1');
+
+        // Page « Merci + avis »
+        $router->post('/events/{event_id}/feedback', SubmitEventFeedbackActionPublic::class)
+            ->middleware('throttle:10,1');
+        $router->post('/events/{event_id}/presence', SubmitEventPresenceActionPublic::class)
+            ->middleware('throttle:60,1');
 
         // Waitlist
         $router->post('/events/{event_id}/waitlist', CreateWaitlistEntryActionPublic::class)

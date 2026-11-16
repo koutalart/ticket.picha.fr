@@ -20,6 +20,14 @@ enum Role: string
      */
     case BOX_OFFICE_OPERATOR = 'BOX_OFFICE_OPERATOR';
 
+    /**
+     * Read-only viewer of specific events. Deliberately NOT in
+     * getAssignableRoles(): granted only with the event-viewer:grant command.
+     * Its access is scoped per event via event_viewers and limited by
+     * IsAuthorizedService to an allowlist of read and export endpoints.
+     */
+    case EVENT_VIEWER = 'EVENT_VIEWER';
+
     public static function getAssignableRoles(): array
     {
         return [

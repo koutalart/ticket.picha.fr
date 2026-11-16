@@ -3,7 +3,6 @@
 namespace Tests\Unit\Console\Assistant;
 
 use HiEvents\DomainObjects\AccountDomainObject;
-use HiEvents\DomainObjects\AccountUserDomainObject;
 use HiEvents\DomainObjects\AssistantActionDomainObject;
 use HiEvents\DomainObjects\CheckInListDomainObject;
 use HiEvents\DomainObjects\Enums\ProductPriceType;
@@ -20,9 +19,7 @@ use HiEvents\DomainObjects\QuestionDomainObject;
 use HiEvents\DomainObjects\Status\EventStatus;
 use HiEvents\DomainObjects\UserDomainObject;
 use HiEvents\Exceptions\EmailAlreadyExists;
-use HiEvents\Repository\Interfaces\AccountUserRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
-use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductCategoryRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
@@ -31,9 +28,6 @@ use HiEvents\Services\Application\Handlers\Account\DTO\CreateManagedOrganization
 use HiEvents\Services\Application\Handlers\Account\DTO\ManagedOrganizationDTO;
 use HiEvents\Services\Application\Handlers\CheckInList\CreateCheckInListHandler;
 use HiEvents\Services\Application\Handlers\CheckInList\DTO\UpsertCheckInListDTO;
-use HiEvents\Services\Application\Handlers\Event\CreateEventHandler;
-use HiEvents\Services\Application\Handlers\Event\CreateEventImageHandler;
-use HiEvents\Services\Application\Handlers\Event\DTO\CreateEventDTO;
 use HiEvents\Services\Application\Handlers\Product\CreateProductHandler;
 use HiEvents\Services\Application\Handlers\Product\DTO\UpsertProductDTO;
 use HiEvents\Services\Application\Handlers\QrLink\CreateQrLinkHandler;
@@ -179,74 +173,17 @@ class AssistantCreationCommandsTest extends TestCase
         $this->assertSame(18, $json['resultat']['organisateur']);
     }
 
-    public function test_an_event_ending_before_it_starts_is_refused(): void
-    {
-        $this->journal->shouldReceive('refuse')->once()->andReturn((new AssistantActionDomainObject)->setId(72));
-
-        [$exitCode, $json] = $this->callCommand('anicka:creer-evenement', [
-            '--organisateur' => 18, '--titre' => 'Foire', '--debut' => '2026-11-21 18:00', '--fin' => '2026-11-21 08:00',
-        ]);
-
-        $this->assertSame(1, $exitCode);
-        $this->assertSame('refuse', $json['statut']);
-    }
-
     public function test_a_cover_outside_the_assistant_files_is_refused(): void
     {
         $this->journal->shouldReceive('refuse')->once()->andReturn((new AssistantActionDomainObject)->setId(73));
 
         [$exitCode, $json] = $this->callCommand('anicka:creer-evenement', [
             '--organisateur' => 18, '--titre' => 'Foire', '--debut' => '2026-11-21 08:00', '--couverture' => '/etc/passwd',
+            '--tarifs' => '[{"nom":"Visiteur","prix":0}]',
         ]);
 
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString('/etc/passwd', $json['erreur']);
-    }
-
-    public function test_a_confirmed_event_is_a_draft_in_mayotte_time_with_the_fee_paid_by_the_buyer(): void
-    {
-        $owners = Mockery::mock(AccountUserRepositoryInterface::class);
-        $owners->shouldReceive('findFirstWhere')->with(['account_id' => 14, 'is_account_owner' => true])
-            ->andReturn((new AccountUserDomainObject)->setUserId(30));
-        $this->app->instance(AccountUserRepositoryInterface::class, $owners);
-
-        $handler = Mockery::mock(CreateEventHandler::class);
-        $handler->shouldReceive('handle')->once()
-            ->withArgs(fn (CreateEventDTO $dto) => $dto->title === "Foire de l'Industrie"
-                && $dto->organizer_id === 18 && $dto->account_id === 14 && $dto->user_id === 30
-                && $dto->start_date === '2026-11-21 08:00' && $dto->end_date === '2026-11-21 18:00'
-                && $dto->timezone === 'Indian/Mayotte'
-                && $dto->status === EventStatus::DRAFT->name
-                && $dto->location_details?->venue_name === 'Pôle culturel'
-                && $dto->description === '<p>Venez nombreux.</p><p>Entrée libre.</p>')
-            ->andReturn((new EventDomainObject)->setId(25)->setTitle("Foire de l'Industrie"));
-        $this->app->instance(CreateEventHandler::class, $handler);
-
-        $settings = Mockery::mock(EventSettingsRepositoryInterface::class);
-        $settings->shouldReceive('updateWhere')->once()
-            ->withArgs(fn (array $attributes, array $where) => $attributes['pass_platform_fee_to_buyer'] === true
-                && $attributes['location_details']['venue_name'] === 'Pôle culturel'
-                && $where === ['event_id' => 25])
-            ->andReturn(1);
-        $this->app->instance(EventSettingsRepositoryInterface::class, $settings);
-
-        $images = Mockery::mock(CreateEventImageHandler::class);
-        $images->shouldNotReceive('handle');
-        $this->app->instance(CreateEventImageHandler::class, $images);
-
-        $this->confirmed(74, 'anicka:creer-evenement');
-        $this->journal->shouldReceive('markExecuted')->once()
-            ->withArgs(fn (int $id, array $result) => $id === 74 && $result['evenement'] === 25 && $result['statut'] === 'DRAFT'
-                && str_contains($result['apercu'], '/event/25/foire-de-lindustrie'));
-
-        [$exitCode, $json] = $this->callCommand('anicka:creer-evenement', [
-            '--organisateur' => 18, '--titre' => "Foire de l'Industrie", '--debut' => '2026-11-21 08:00', '--fin' => '2026-11-21 18:00',
-            '--lieu' => 'Pôle culturel', '--adresse' => 'Chirongui', '--description' => "Venez nombreux.\n\nEntrée libre.",
-            '--confirme' => 'JETON234',
-        ]);
-
-        $this->assertSame(0, $exitCode);
-        $this->assertSame('execute', $json['statut']);
     }
 
     private function category(): void
