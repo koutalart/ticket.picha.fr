@@ -24,5 +24,6 @@ class CreateDraftEventDTO extends BaseDataObject
         public readonly ?string $end_date = null,
         public readonly ?string $description = null,
         public readonly ?string $venue_name = null,
+        public readonly ?string $address = null,
     ) {}
 }

@@ -57,7 +57,9 @@ class CreateDraftEventHandler
                 end_date: $data->end_date,
                 description: $data->description,
                 timezone: $data->timezone,
-                location_details: $data->venue_name !== null ? new AddressDTO(venue_name: $data->venue_name) : null,
+                location_details: $data->venue_name !== null || $data->address !== null
+                    ? new AddressDTO(venue_name: $data->venue_name, address_line_1: $data->address)
+                    : null,
                 status: EventStatus::DRAFT->name,
             ));
 
