@@ -51,6 +51,7 @@ use HiEvents\Services\Domain\LiveChat\TicketResend\DTO\LiveChatTicketResendReply
 use HiEvents\Services\Domain\LiveChat\TicketResend\LiveChatTicketResendService;
 use HiEvents\Services\Domain\Sms\DTO\SmsAssistantEventInfoDTO;
 use HiEvents\Services\Domain\Sms\SmsAssistantEventCatalogService;
+use HiEvents\Services\Infrastructure\UneAnicka\UneAnickaClient;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Config\Repository;
 use Illuminate\Database\DatabaseManager;
@@ -152,6 +153,7 @@ class LiveChatService
         private readonly ImageRepositoryInterface $imageRepository,
         private readonly LiveChatTicketResendService $ticketResendService,
         private readonly LiveChatPromoContextBuilder $promoContextBuilder,
+        private readonly ?UneAnickaClient $router = null,
     ) {}
 
     public function getConfig(int $organizerId, ?int $eventId = null): LiveChatConfigDTO
@@ -475,6 +477,10 @@ class LiveChatService
             } else {
                 $contactAgain = true;
             }
+        }
+
+        if (! $this->routerAllows($session, $content)) {
+            return new LiveChatTurnDTO(session: $session, messages: collect([$visitorMessage]));
         }
 
         if (! $this->generator->isUnderDailyLimit($session->getOrganizerId())) {
@@ -1009,6 +1015,21 @@ class LiveChatService
         ]);
 
         return $message;
+    }
+
+    /**
+     * The single router of Anicka decides whether the assistant may answer: Jo or another channel may already be
+     * talking to this visitor. Held: nothing automatic is written, the router leaves a note and a task for a human.
+     */
+    private function routerAllows(LiveChatSessionDomainObject $session, string $content): bool
+    {
+        if ($this->router === null) {
+            return true;
+        }
+
+        $contact = $session->getVisitorPhone() ?? $session->getVisitorEmail() ?? 'chat:'.$session->getPublicId();
+
+        return $this->router->decide('billetterie-chat', $contact, 'chat', $content, $session->getOrganizerId())->allowed;
     }
 
     private function contactKnown(LiveChatSessionDomainObject $session): bool

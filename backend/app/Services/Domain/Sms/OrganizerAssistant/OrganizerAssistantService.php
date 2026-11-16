@@ -41,6 +41,7 @@ use HiEvents\Services\Domain\Sms\SmsAssistantService;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
 use HiEvents\Services\Domain\Sms\SmsSendService;
 use HiEvents\Services\Domain\Sms\Team\PlatformSupervisionAlertService;
+use HiEvents\Services\Infrastructure\UneAnicka\UneAnickaClient;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\Collection;
 use Psr\Log\LoggerInterface;
@@ -70,6 +71,7 @@ class OrganizerAssistantService
         private readonly OrganizerRepositoryInterface $organizerRepository,
         private readonly Dispatcher $dispatcher,
         private readonly LoggerInterface $logger,
+        private readonly ?UneAnickaClient $router = null,
     ) {}
 
     public function isActiveFor(?OrganizerSmsSettingDomainObject $settings): bool
@@ -160,6 +162,11 @@ class OrganizerAssistantService
                 needsHuman: true,
                 summary: $result->summary,
             );
+        }
+
+        if ($this->router !== null
+            && ! $this->router->decide('billetterie-assistant', $conversation->getPhone(), 'sms', (string) $result->reply, $organizerId)->allowed) {
+            return null;
         }
 
         $this->send($organizerId, $conversation, $messageId, $result, $contact);
