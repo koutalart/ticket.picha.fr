@@ -1,4 +1,4 @@
-import {type CSSProperties, useMemo, useState} from "react";
+import {type CSSProperties, type ReactNode, useMemo, useState} from "react";
 import {useParams} from "react-router";
 import {useForm} from "@mantine/form";
 import {t} from "@lingui/macro";
@@ -8,8 +8,8 @@ import {
     Button,
     ColorInput,
     Group,
-    Radio,
     FileButton,
+    Progress,
     Select,
     SimpleGrid,
     Slider,
@@ -18,7 +18,8 @@ import {
     Textarea,
     TextInput,
 } from "@mantine/core";
-import {IconPhoto, IconPlus, IconQrcode, IconTrash, IconUpload} from "@tabler/icons-react";
+import {useMediaQuery} from "@mantine/hooks";
+import {IconArrowLeft, IconArrowRight, IconCheck, IconPhoto, IconPlus, IconQrcode, IconTrash, IconUpload} from "@tabler/icons-react";
 import {Modal} from "../../../common/Modal";
 import {IdParam, QrCampaign, QrLink, QrLinkDesign, QrLinkDestinationType, QrLinkSocialLink, QrLinkSocialPlatform, QrPosterLogo, QrPosterTemplate} from "../../../../types.ts";
 import {imageClient} from "../../../../api/image.client.ts";
@@ -27,6 +28,7 @@ import {QrPosterPreview} from "./QrPosterPreview.tsx";
 import {posterLogoOptions, suggestPosterLogo} from "./posterLogos.tsx";
 import {QrLinkRequest} from "../../../../api/qr-link.client.ts";
 import {useCreateQrLink} from "../../../../mutations/useCreateQrLink.ts";
+import {useUpsertQrCampaign} from "../../../../mutations/useUpsertQrCampaign.ts";
 import {useUpdateQrLink} from "../../../../mutations/useUpdateQrLink.ts";
 import {useGetOrganizerEvents} from "../../../../queries/useGetOrganizerEvents.ts";
 import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx";
@@ -71,6 +73,21 @@ interface FormValues {
     poster_logo: QrPosterLogo | null;
 }
 
+const STEP_COUNT = 4;
+
+const FIELD_STEPS: Record<string, number> = {
+    name: 0,
+    destination_type: 1,
+    destination_url: 1,
+    app_store_url: 1,
+    play_store_url: 1,
+    event_id: 1,
+    title: 1,
+    description: 1,
+    social_links: 1,
+    qr_campaign_id: 2,
+};
+
 export interface QrPosterBackground {
     id: number;
     url: string;
@@ -90,7 +107,12 @@ interface QrLinkFormModalProps {
 
 export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgrounds, organizerName, organizerLogoUrl, onClose}: QrLinkFormModalProps) => {
     const [isUploading, setIsUploading] = useState(false);
+    const [step, setStep] = useState(0);
+    const [newCampaignName, setNewCampaignName] = useState('');
+    const isWizard = !qrLink;
+    const isSmallScreen = useMediaQuery('(max-width: 600px)');
     const {organizerId} = useParams();
+    const campaignMutation = useUpsertQrCampaign();
     const createMutation = useCreateQrLink();
     const updateMutation = useUpdateQrLink();
     const formErrorHandle = useFormErrorResponseHandler();
@@ -224,7 +246,53 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
             .finally(() => setIsUploading(false));
     };
 
+    const validateStep = (index: number) => {
+        const values = form.values;
+        const errors: Record<string, string> = {};
+        if (index === 0 && !values.name.trim()) {
+            errors.name = t`Please give this QR code a name`;
+        }
+        if (index === 1) {
+            if (values.destination_type === 'URL' && !values.destination_url.trim()) {
+                errors.destination_url = t`Please enter a link`;
+            }
+            if (values.destination_type === 'APP') {
+                if (!values.app_store_url.trim()) errors.app_store_url = t`Please enter a link`;
+                if (!values.play_store_url.trim()) errors.play_store_url = t`Please enter a link`;
+            }
+            if (values.destination_type === 'EVENT' && !values.event_id) {
+                errors.event_id = t`Please choose an event`;
+            }
+        }
+        form.setErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const goNext = () => {
+        if (validateStep(step)) {
+            setStep(current => Math.min(current + 1, STEP_COUNT - 1));
+        }
+    };
+
+    const createCampaign = () => {
+        const name = newCampaignName.trim();
+        if (!name) return;
+        campaignMutation.mutate({organizerId: organizerId!, name}, {
+            onSuccess: ({data}) => {
+                form.setFieldValue('qr_campaign_id', String(data.id));
+                setNewCampaignName('');
+                showSuccess(t`Campaign created`);
+            },
+            onError: () => showError(t`Unable to create the campaign`),
+        });
+    };
+
     const submit = (values: FormValues) => {
+        if (isWizard && step < STEP_COUNT - 1) {
+            goNext();
+            return;
+        }
+
         if (values.template === 'custom' && !values.background_image) {
             form.setFieldError('background_image', t`Please upload a background image`);
             return;
@@ -252,7 +320,14 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
                 showSuccess(qrLink ? t`QR code updated` : t`QR code created`);
                 onClose();
             },
-            onError: (error: any) => formErrorHandle(form, error),
+            onError: (error: any) => {
+                formErrorHandle(form, error);
+                const fields = Object.keys(error?.response?.data?.errors || {});
+                const steps = fields.map(field => FIELD_STEPS[field.split('.')[0]]).filter(value => value !== undefined);
+                if (isWizard && steps.length) {
+                    setStep(Math.min(...steps));
+                }
+            },
         };
 
         if (qrLink) {
@@ -262,269 +337,394 @@ export const QrLinkFormModal = ({qrLink, campaigns, defaultCampaignId, backgroun
         }
     };
 
-    return (
-        <Modal opened onClose={onClose} heading={qrLink ? t`Edit QR code` : t`New QR code`}>
-            <form onSubmit={form.onSubmit(submit)}>
-                <div className={classes.formLayout}>
-                    <Stack gap="md">
-                        <TextInput
-                            {...form.getInputProps('name')}
-                            required
-                            label={t`Where will this QR code be displayed?`}
-                            description={t`One QR code per medium lets you compare them: poster, flyer, screen, stand...`}
-                            placeholder={t`Market poster`}
-                        />
+    const destinationChoices: { value: QrLinkDestinationType, label: string, description: string }[] = [
+        {value: 'LINK_PAGE', label: t`Link page (recommended)`, description: t`Your social networks and a ticket button, on a page where your pixel can measure visits.`},
+        {value: 'EVENT', label: t`Event page`, description: t`Opens the ticketing page directly. Sales are attributed to this QR code.`},
+        {value: 'URL', label: t`Another link`, description: t`Instagram profile, video, website... Scans are counted, but no pixel can be triggered.`},
+        {value: 'APP', label: t`Mobile app`, description: t`One QR code for both stores: iPhones open the App Store, Android phones open Google Play.`},
+    ];
 
-                        {campaigns.length > 0 && (
+    const choice = (key: string, letter: string, isActive: boolean, onClick: () => void, label: ReactNode, description?: string) => (
+        <button type="button" key={key} className={classes.choice} data-active={isActive} onClick={onClick}
+                aria-pressed={isActive}>
+            <span className={classes.choiceKey}>{isActive ? <IconCheck size={14}/> : letter}</span>
+            <span className={classes.choiceText}>
+                <span className={classes.choiceLabel}>{label}</span>
+                {description && <span className={classes.choiceDescription}>{description}</span>}
+            </span>
+        </button>
+    );
 
-                            <Select
+    const nameField = (
+        <TextInput
+            {...form.getInputProps('name')}
+            required={!isWizard}
+            size={isWizard ? 'lg' : 'sm'}
+            label={isWizard ? undefined : t`Where will this QR code be displayed?`}
+            aria-label={t`Where will this QR code be displayed?`}
+            description={isWizard ? undefined : t`One QR code per medium lets you compare them: poster, flyer, screen, stand...`}
+            placeholder={t`Market poster`}
+            data-autofocus
+        />
+    );
 
-                                {...form.getInputProps('qr_campaign_id')}
+    const destinationTypeField = isWizard ? (
+        <div className={classes.choices}>
+            {destinationChoices.map((option, index) => choice(
+                option.value,
+                String.fromCharCode(65 + index),
+                type === option.value,
+                () => form.setFieldValue('destination_type', option.value),
+                option.label,
+                option.description,
+            ))}
+        </div>
+    ) : (
+        <Select
+            {...form.getInputProps('destination_type')}
+            label={t`What does it open?`}
+            allowDeselect={false}
+            data={destinationChoices.map(option => ({value: option.value, label: option.label}))}
+            description={destinationChoices.find(option => option.value === type)?.description}
+        />
+    );
 
-                                label={t`Campaign`}
+    const destinationDetails = (
+        <>
+            {type === 'URL' && (
+                <TextInput
+                    {...form.getInputProps('destination_url')}
+                    required
+                    label={t`Link`}
+                    placeholder="https://instagram.com/..."
+                />
+            )}
 
-                                data={campaigns.map(campaign => ({value: String(campaign.id), label: campaign.name}))}
+            {type === 'APP' && (
+                <>
+                    <TextInput
+                        {...form.getInputProps('app_store_url')}
+                        required
+                        label={t`App Store link (iPhone, iPad)`}
+                        placeholder="https://apps.apple.com/app/..."
+                    />
+                    <TextInput
+                        {...form.getInputProps('play_store_url')}
+                        required
+                        label={t`Google Play link (Android)`}
+                        placeholder="https://play.google.com/store/apps/details?id=..."
+                    />
+                    <TextInput
+                        {...form.getInputProps('destination_url')}
+                        label={t`Link for computers (optional)`}
+                        description={t`Opened when the QR code is scanned from another device. By default: the App Store page.`}
+                        placeholder="https://..."
+                    />
+                </>
+            )}
 
-                                placeholder={t`No campaign`}
+            {type !== 'URL' && type !== 'APP' && (
+                <Select
+                    {...form.getInputProps('event_id')}
+                    required={type === 'EVENT'}
+                    clearable={type === 'LINK_PAGE'}
+                    searchable
+                    data={eventOptions}
+                    label={type === 'EVENT' ? t`Event` : t`Ticket button`}
+                    description={type === 'LINK_PAGE' ? t`Without an event, the button opens your organizer page.` : undefined}
+                    placeholder={t`Choose an event`}
+                />
+            )}
 
-                                clearable
-
-                            />
-
-                        )}
-
-
-                        <Radio.Group {...form.getInputProps('destination_type')} label={t`What does it open?`}>
-                            <Stack gap="xs" mt="xs">
-                                <Radio value="LINK_PAGE" label={t`Link page (recommended)`}
-                                       description={t`Your social networks and a ticket button, on a page where your pixel can measure visits.`}/>
-                                <Radio value="EVENT" label={t`Event page`}
-                                       description={t`Opens the ticketing page directly. Sales are attributed to this QR code.`}/>
-                                <Radio value="URL" label={t`Another link`}
-                                       description={t`Instagram profile, video, website... Scans are counted, but no pixel can be triggered.`}/>
-                                <Radio value="APP" label={t`Mobile app`}
-                                       description={t`One QR code for both stores: iPhones open the App Store, Android phones open Google Play.`}/>
-                            </Stack>
-                        </Radio.Group>
-
-                        {type === 'URL' && (
-                            <TextInput
-                                {...form.getInputProps('destination_url')}
-                                required
-                                label={t`Link`}
-                                placeholder="https://instagram.com/..."
-                            />
-                        )}
-
-                        {type === 'APP' && (
-                            <>
-                                <TextInput
-                                    {...form.getInputProps('app_store_url')}
-                                    required
-                                    label={t`App Store link (iPhone, iPad)`}
-                                    placeholder="https://apps.apple.com/app/..."
-                                />
-                                <TextInput
-                                    {...form.getInputProps('play_store_url')}
-                                    required
-                                    label={t`Google Play link (Android)`}
-                                    placeholder="https://play.google.com/store/apps/details?id=..."
-                                />
-                                <TextInput
-                                    {...form.getInputProps('destination_url')}
-                                    label={t`Link for computers (optional)`}
-                                    description={t`Opened when the QR code is scanned from another device. By default: the App Store page.`}
-                                    placeholder="https://..."
-                                />
-                            </>
-                        )}
-
-                        {type !== 'URL' && type !== 'APP' && (
-                            <Select
-                                {...form.getInputProps('event_id')}
-                                required={type === 'EVENT'}
-                                clearable={type === 'LINK_PAGE'}
-                                searchable
-                                data={eventOptions}
-                                label={type === 'EVENT' ? t`Event` : t`Ticket button`}
-                                description={type === 'LINK_PAGE' ? t`Without an event, the button opens your organizer page.` : undefined}
-                                placeholder={t`Choose an event`}
-                            />
-                        )}
-
-                        {type === 'LINK_PAGE' && (
-                            <>
-                                <TextInput {...form.getInputProps('title')} label={t`Page title`}
-                                           placeholder={t`Defaults to the event or organizer name`}/>
-                                <Textarea {...form.getInputProps('description')} label={t`Short text`} autosize minRows={2}
-                                          maxLength={500}/>
-                                <div>
-                                    <Text size="sm" fw={500}>{t`Social networks`}</Text>
-                                    <Text size="xs" c="dimmed" mb="xs">
-                                        {t`Leave empty to use the links from your organizer settings.`}
-                                    </Text>
-                                    <Stack gap="xs">
-                                        {form.values.social_links.map((_, index) => (
-                                            <Group key={index} gap="xs" wrap="nowrap">
-                                                <Select
-                                                    {...form.getInputProps(`social_links.${index}.platform`)}
-                                                    data={PLATFORMS}
-                                                    w={140}
-                                                    allowDeselect={false}
-                                                />
-                                                <TextInput
-                                                    {...form.getInputProps(`social_links.${index}.url`)}
-                                                    placeholder="https://"
-                                                    style={{flex: 1}}
-                                                />
-                                                <ActionIcon variant="subtle" color="red" aria-label={t`Remove`}
-                                                            onClick={() => form.removeListItem('social_links', index)}>
-                                                    <IconTrash size={16}/>
-                                                </ActionIcon>
-                                            </Group>
-                                        ))}
-                                        {form.values.social_links.length < 12 && (
-                                            <Button variant="subtle" size="xs" leftSection={<IconPlus size={14}/>}
-                                                    w="fit-content"
-                                                    onClick={() => form.insertListItem('social_links', {platform: 'instagram', url: ''})}>
-                                                {t`Add a network`}
-                                            </Button>
-                                        )}
-                                    </Stack>
-                                </div>
-                            </>
-                        )}
-
-                        <div>
-                            <Text size="sm" fw={500}>{t`Visual`}</Text>
-                            <Text size="xs" c="dimmed" mb="xs">
-                                {t`Download the QR code alone, or a ready-to-share visual with the QR code on it.`}
-                            </Text>
-                            <div className={classes.templateGrid}>
-                                {templateOptions.map(option => (
-                                    <button
-                                        type="button"
-                                        key={option.value}
-                                        className={classes.templateOption}
-                                        data-active={form.values.template === option.value}
-                                        onClick={() => chooseTemplate(option.value)}
-                                    >
-                                        <span className={classes.templateThumb} style={option.thumb}>
-                                            {option.icon}
-                                        </span>
-                                        {option.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {form.values.template === 'custom' && (
-                            <Stack gap="sm">
-                                <div>
-                                    <Text size="sm" fw={500}>{t`Background image`}</Text>
-                                    <Text size="xs" c="dimmed" mb="xs">
-                                        {t`Your own design (JPG, PNG or WebP, up to 8 MB). Leave an empty area where the QR code goes.`}
-                                    </Text>
-                                    <div className={classes.backgroundChoices}>
-                                        {mergedBackgrounds.map(background => (
-                                            <button
-                                                type="button"
-                                                key={background.id}
-                                                className={classes.backgroundChoice}
-                                                data-active={form.values.background_image?.id === background.id}
-                                                style={{backgroundImage: `url(${background.url})`}}
-                                                onClick={() => form.setFieldValue('background_image', background)}
-                                                aria-label={t`Use this background`}
-                                            />
-                                        ))}
-                                        <FileButton onChange={uploadBackground} accept="image/png,image/jpeg,image/webp">
-                                            {(props) => (
-                                                <Button {...props} variant="light" size="xs" h={72}
-                                                        loading={isUploading}
-                                                        leftSection={<IconUpload size={14}/>}>
-                                                    {t`Upload`}
-                                                </Button>
-                                            )}
-                                        </FileButton>
-                                    </div>
-                                    {form.errors.background_image && (
-                                        <Text size="xs" c="red" mt={4}>{form.errors.background_image}</Text>
-                                    )}
-                                </div>
-                                <div>
-                                    <Text size="xs" fw={500}>{t`QR code height`}</Text>
-                                    <Slider {...form.getInputProps('qr_position')} min={10} max={90}
-                                            label={(value) => `${value} %`}/>
-                                </div>
-                                <div>
-                                    <Text size="xs" fw={500}>{t`QR code size`}</Text>
-                                    <Slider {...form.getInputProps('qr_scale')} min={15} max={80}
-                                            label={(value) => `${value} %`}/>
-                                </div>
-                            </Stack>
-                        )}
-
-                        {form.values.template !== 'none' && (
-                            <Group grow align="flex-start">
-                                <TextInput {...form.getInputProps('poster_title')}
-                                           label={t`Title above the QR code`}
-                                           description={form.values.template === 'custom' ? undefined : t`Replaces the page title on the visual.`}
-                                           maxLength={40} placeholder={t`E.g. TikTok`}/>
-                                {form.values.template === 'custom' && (
-                                    <Select {...form.getInputProps('poster_logo')} label={t`Logo`}
-                                            data={posterLogoOptions()} placeholder={t`No logo`} clearable searchable/>
-                                )}
-                            </Group>
-                        )}
-
-                        {form.values.template !== 'none' && (
-                            <Group grow align="flex-start">
-                                <TextInput {...form.getInputProps('caption')} label={t`Text under the QR code`}
-                                           maxLength={60} placeholder={t`Scan me`}/>
-                                {form.values.template === 'custom' && (
-                                    <ColorInput {...form.getInputProps('caption_color')} label={t`Text color`}
-                                                format="hex"/>
-                                )}
-                            </Group>
-                        )}
-
-                        {(type === 'URL' || type === 'APP') && (
-                            <Alert color="yellow" variant="light">
-                                {t`With a direct link, visitors leave immediately: your Meta pixel cannot record them. Choose the link page to build retargeting audiences.`}
-                            </Alert>
-                        )}
-                    </Stack>
-
-                    <Stack gap="md" align="center" className={classes.previewColumn}>
-                        {form.values.template === 'none' ? (
-                            <QrCodeImage
-                                value={previewUrl}
-                                design={{foreground: form.values.foreground, background: form.values.background}}
-                                size={150}
-                            />
-                        ) : (
-                            <QrPosterPreview
-                                value={previewUrl}
-                                design={buildDesign(form.values)}
-                                title={previewTitle}
-                                organizerLogoUrl={organizerLogoUrl}
-                                width={form.values.template === 'square' ? 190 : 160}
-                            />
-                        )}
-                        <SimpleGrid cols={1} spacing="xs" w="100%">
-                            <ColorInput {...form.getInputProps('foreground')} label={t`Color`} format="hex" size="xs"/>
-                            <ColorInput {...form.getInputProps('background')} label={t`Background`} format="hex" size="xs"/>
-                        </SimpleGrid>
-                        <Text size="xs" c="dimmed" ta="center">
-                            {t`Keep a dark color on a light background so every phone can scan it.`}
+            {type === 'LINK_PAGE' && (
+                <>
+                    <TextInput {...form.getInputProps('title')} label={t`Page title`}
+                               placeholder={t`Defaults to the event or organizer name`}/>
+                    <Textarea {...form.getInputProps('description')} label={t`Short text`} autosize minRows={2}
+                              maxLength={500}/>
+                    <div>
+                        <Text size="sm" fw={500}>{t`Social networks`}</Text>
+                        <Text size="xs" c="dimmed" mb="xs">
+                            {t`Leave empty to use the links from your organizer settings.`}
                         </Text>
-                    </Stack>
-                </div>
+                        <Stack gap="xs">
+                            {form.values.social_links.map((_, index) => (
+                                <Group key={index} gap="xs" wrap="nowrap">
+                                    <Select
+                                        {...form.getInputProps(`social_links.${index}.platform`)}
+                                        data={PLATFORMS}
+                                        w={120}
+                                        allowDeselect={false}
+                                    />
+                                    <TextInput
+                                        {...form.getInputProps(`social_links.${index}.url`)}
+                                        placeholder="https://"
+                                        style={{flex: 1, minWidth: 0}}
+                                    />
+                                    <ActionIcon variant="subtle" color="red" aria-label={t`Remove`}
+                                                onClick={() => form.removeListItem('social_links', index)}>
+                                        <IconTrash size={16}/>
+                                    </ActionIcon>
+                                </Group>
+                            ))}
+                            {form.values.social_links.length < 12 && (
+                                <Button variant="subtle" size="xs" leftSection={<IconPlus size={14}/>}
+                                        w="fit-content"
+                                        onClick={() => form.insertListItem('social_links', {platform: 'instagram', url: ''})}>
+                                    {t`Add a network`}
+                                </Button>
+                            )}
+                        </Stack>
+                    </div>
+                </>
+            )}
 
-                <Group justify="flex-end" mt="xl">
-                    <Button variant="default" onClick={onClose}>{t`Cancel`}</Button>
-                    <Button type="submit" loading={isPending}>{qrLink ? t`Save` : t`Create the QR code`}</Button>
-                </Group>
+            {(type === 'URL' || type === 'APP') && (
+                <Alert color="yellow" variant="light">
+                    {t`With a direct link, visitors leave immediately: your Meta pixel cannot record them. Choose the link page to build retargeting audiences.`}
+                </Alert>
+            )}
+        </>
+    );
+
+    const campaignField = isWizard ? (
+        <Stack gap="sm">
+            <div className={classes.choices}>
+                {choice('none', 'A', !form.values.qr_campaign_id, () => form.setFieldValue('qr_campaign_id', null), t`No campaign`)}
+                {campaigns.map((campaign, index) => choice(
+                    String(campaign.id),
+                    String.fromCharCode(66 + (index % 25)),
+                    form.values.qr_campaign_id === String(campaign.id),
+                    () => form.setFieldValue('qr_campaign_id', String(campaign.id)),
+                    campaign.name,
+                ))}
+            </div>
+            <Group gap="xs" wrap="nowrap" align="flex-start">
+                <TextInput
+                    value={newCampaignName}
+                    onChange={(event) => setNewCampaignName(event.currentTarget.value)}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+                            createCampaign();
+                        }
+                    }}
+                    aria-label={t`New campaign`}
+                    placeholder={t`Or create a campaign: Open day 2026`}
+                    maxLength={80}
+                    style={{flex: 1, minWidth: 0}}
+                />
+                <Button variant="light" onClick={createCampaign} loading={campaignMutation.isPending}
+                        disabled={!newCampaignName.trim()}>
+                    {t`Create`}
+                </Button>
+            </Group>
+        </Stack>
+    ) : campaigns.length > 0 ? (
+        <Select
+            {...form.getInputProps('qr_campaign_id')}
+            label={t`Campaign`}
+            data={campaigns.map(campaign => ({value: String(campaign.id), label: campaign.name}))}
+            placeholder={t`No campaign`}
+            clearable
+        />
+    ) : null;
+
+    const designFields = (
+        <>
+            <div>
+                {!isWizard && <Text size="sm" fw={500}>{t`Visual`}</Text>}
+                <Text size="xs" c="dimmed" mb="xs">
+                    {t`Download the QR code alone, or a ready-to-share visual with the QR code on it.`}
+                </Text>
+                <div className={classes.templateGrid}>
+                    {templateOptions.map(option => (
+                        <button
+                            type="button"
+                            key={option.value}
+                            className={classes.templateOption}
+                            data-active={form.values.template === option.value}
+                            onClick={() => chooseTemplate(option.value)}
+                        >
+                            <span className={classes.templateThumb} style={option.thumb}>
+                                {option.icon}
+                            </span>
+                            {option.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {form.values.template === 'custom' && (
+                <Stack gap="sm">
+                    <div>
+                        <Text size="sm" fw={500}>{t`Background image`}</Text>
+                        <Text size="xs" c="dimmed" mb="xs">
+                            {t`Your own design (JPG, PNG or WebP, up to 8 MB). Leave an empty area where the QR code goes.`}
+                        </Text>
+                        <div className={classes.backgroundChoices}>
+                            {mergedBackgrounds.map(background => (
+                                <button
+                                    type="button"
+                                    key={background.id}
+                                    className={classes.backgroundChoice}
+                                    data-active={form.values.background_image?.id === background.id}
+                                    style={{backgroundImage: `url(${background.url})`}}
+                                    onClick={() => form.setFieldValue('background_image', background)}
+                                    aria-label={t`Use this background`}
+                                />
+                            ))}
+                            <FileButton onChange={uploadBackground} accept="image/png,image/jpeg,image/webp">
+                                {(props) => (
+                                    <Button {...props} variant="light" size="xs" h={72}
+                                            loading={isUploading}
+                                            leftSection={<IconUpload size={14}/>}>
+                                        {t`Upload`}
+                                    </Button>
+                                )}
+                            </FileButton>
+                        </div>
+                        {form.errors.background_image && (
+                            <Text size="xs" c="red" mt={4}>{form.errors.background_image}</Text>
+                        )}
+                    </div>
+                    <div>
+                        <Text size="xs" fw={500}>{t`QR code height`}</Text>
+                        <Slider {...form.getInputProps('qr_position')} min={10} max={90}
+                                label={(value) => `${value} %`}/>
+                    </div>
+                    <div>
+                        <Text size="xs" fw={500}>{t`QR code size`}</Text>
+                        <Slider {...form.getInputProps('qr_scale')} min={15} max={80}
+                                label={(value) => `${value} %`}/>
+                    </div>
+                </Stack>
+            )}
+
+            {form.values.template !== 'none' && (
+                <SimpleGrid cols={{base: 1, xs: form.values.template === 'custom' ? 2 : 1}} spacing="sm">
+                    <TextInput {...form.getInputProps('poster_title')}
+                               label={t`Title above the QR code`}
+                               description={form.values.template === 'custom' ? undefined : t`Replaces the page title on the visual.`}
+                               maxLength={40} placeholder={t`E.g. TikTok`}/>
+                    {form.values.template === 'custom' && (
+                        <Select {...form.getInputProps('poster_logo')} label={t`Logo`}
+                                data={posterLogoOptions()} placeholder={t`No logo`} clearable searchable/>
+                    )}
+                </SimpleGrid>
+            )}
+
+            {form.values.template !== 'none' && (
+                <SimpleGrid cols={{base: 1, xs: form.values.template === 'custom' ? 2 : 1}} spacing="sm">
+                    <TextInput {...form.getInputProps('caption')} label={t`Text under the QR code`}
+                               maxLength={60} placeholder={t`Scan me`}/>
+                    {form.values.template === 'custom' && (
+                        <ColorInput {...form.getInputProps('caption_color')} label={t`Text color`}
+                                    format="hex"/>
+                    )}
+                </SimpleGrid>
+            )}
+        </>
+    );
+
+    const previewColumn = (
+        <Stack gap="md" align="center" className={classes.previewColumn}>
+            {form.values.template === 'none' ? (
+                <QrCodeImage
+                    value={previewUrl}
+                    design={{foreground: form.values.foreground, background: form.values.background}}
+                    size={150}
+                />
+            ) : (
+                <QrPosterPreview
+                    value={previewUrl}
+                    design={buildDesign(form.values)}
+                    title={previewTitle}
+                    organizerLogoUrl={organizerLogoUrl}
+                    width={form.values.template === 'square' ? 190 : 160}
+                />
+            )}
+            <SimpleGrid cols={{base: 2, sm: 1}} spacing="xs" w="100%">
+                <ColorInput {...form.getInputProps('foreground')} label={t`Color`} format="hex" size="xs"/>
+                <ColorInput {...form.getInputProps('background')} label={t`Background`} format="hex" size="xs"/>
+            </SimpleGrid>
+            <Text size="xs" c="dimmed" ta="center">
+                {t`Keep a dark color on a light background so every phone can scan it.`}
+            </Text>
+        </Stack>
+    );
+
+    const questions = [
+        {title: t`Where will this QR code be displayed?`, help: t`One QR code per medium lets you compare them: poster, flyer, screen, stand...`},
+        {title: t`What does it open?`, help: t`You can change it later without reprinting the QR code.`},
+        {title: t`Which campaign does it belong to?`, help: t`A campaign groups the QR codes of one operation and adds up their results.`},
+        {title: t`What should it look like?`, help: t`Choose a style, check the preview, then create it.`},
+    ];
+
+    const wizardBody = (
+        <div className={classes.wizard}>
+            <Progress value={(step + 1) / STEP_COUNT * 100} size="sm" radius="xl" mb="md"
+                      aria-label={t`Progress`}/>
+            <Text size="xs" c="dimmed" fw={600} tt="uppercase">{t`Step ${step + 1} of ${STEP_COUNT}`}</Text>
+            <h2 className={classes.wizardQuestion}>{questions[step].title}</h2>
+            <p className={classes.wizardHelp}>{questions[step].help}</p>
+
+            {step === 0 && nameField}
+            {step === 1 && (
+                <Stack gap="md">
+                    {destinationTypeField}
+                    {destinationDetails}
+                </Stack>
+            )}
+            {step === 2 && campaignField}
+            {step === 3 && (
+                <div className={classes.formLayout}>
+                    <Stack gap="md">{designFields}</Stack>
+                    {previewColumn}
+                </div>
+            )}
+        </div>
+    );
+
+    return (
+        <Modal opened onClose={onClose} heading={qrLink ? t`Edit QR code` : t`New QR code`}
+               fullScreen={!!isSmallScreen}>
+            <form onSubmit={form.onSubmit(submit)}>
+                {isWizard ? wizardBody : (
+                    <div className={classes.formLayout}>
+                        <Stack gap="md">
+                            {nameField}
+                            {campaignField}
+                            {destinationTypeField}
+                            {destinationDetails}
+                            {designFields}
+                        </Stack>
+                        {previewColumn}
+                    </div>
+                )}
+
+                {isWizard ? (
+                    <div className={classes.wizardFooter}>
+                        {step > 0 ? (
+                            <Button variant="subtle" color="gray" leftSection={<IconArrowLeft size={16}/>}
+                                    onClick={() => setStep(step - 1)}>
+                                {t`Back`}
+                            </Button>
+                        ) : <span/>}
+                        {step < STEP_COUNT - 1 ? (
+                            <Button type="submit" size="md" rightSection={<IconArrowRight size={16}/>}>
+                                {t`Continue`}
+                            </Button>
+                        ) : (
+                            <Button type="submit" size="md" loading={isPending}>{t`Create the QR code`}</Button>
+                        )}
+                    </div>
+                ) : (
+                    <Group justify="flex-end" mt="xl">
+                        <Button variant="default" onClick={onClose}>{t`Cancel`}</Button>
+                        <Button type="submit" loading={isPending}>{t`Save`}</Button>
+                    </Group>
+                )}
             </form>
         </Modal>
     );
