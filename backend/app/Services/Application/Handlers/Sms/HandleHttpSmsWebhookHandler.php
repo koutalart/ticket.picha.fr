@@ -215,7 +215,8 @@ class HandleHttpSmsWebhookHandler
 
             $message = $this->inboundService->recordInbound($target, $sms, lineSettingsId: $settings->getId());
 
-            if ($message !== null) {
+            // A number of the PICHA staff is filed with the internal organizer: the client neither gets an alert nor a draft.
+            if ($message !== null && $message->getOrganizerId() === $target->getOrganizerId()) {
                 $this->alertService->notifyInbound($target, $message);
                 if (! $this->teamInboundService->isSupervisor($sms->contact)) {
                     $this->assistantService->queueDraftIfEligible($target, $message);

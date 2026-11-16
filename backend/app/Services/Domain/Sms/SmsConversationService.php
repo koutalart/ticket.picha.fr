@@ -26,12 +26,21 @@ class SmsConversationService
         private readonly SmsConversationRepositoryInterface $conversationRepository,
         private readonly SmsOptOutRepositoryInterface $optOutRepository,
         private readonly OrganizerTeamContactRepositoryInterface $teamContactRepository,
+        private readonly SmsInternalStaffGuard $staffGuard,
     ) {}
 
+    /**
+     * The conversation with this number. A number of the PICHA staff is always filed with the internal organizer, never
+     * with a client: callers store their messages with the organizer of the returned conversation.
+     */
     public function findOrCreate(OrganizerSmsSettingDomainObject $settings, string $phone): SmsConversationDomainObject
     {
+        $internal = $this->staffGuard->rerouteTarget($settings->getOrganizerId(), $phone);
+        $organizerId = $internal?->getId() ?? $settings->getOrganizerId();
+        $accountId = $internal?->getAccountId() ?? $settings->getAccountId();
+
         $where = [
-            SmsConversationDomainObjectAbstract::ORGANIZER_ID => $settings->getOrganizerId(),
+            SmsConversationDomainObjectAbstract::ORGANIZER_ID => $organizerId,
             SmsConversationDomainObjectAbstract::PHONE => $phone,
         ];
 
@@ -43,16 +52,16 @@ class SmsConversationService
 
         /** @var OrganizerTeamContactDomainObject|null $teamContact */
         $teamContact = $this->teamContactRepository->findFirstWhere([
-            OrganizerTeamContactDomainObjectAbstract::ORGANIZER_ID => $settings->getOrganizerId(),
+            OrganizerTeamContactDomainObjectAbstract::ORGANIZER_ID => $organizerId,
             OrganizerTeamContactDomainObjectAbstract::PHONE => $phone,
         ]);
 
         try {
             return $this->conversationRepository->create([
                 ...$where,
-                SmsConversationDomainObjectAbstract::ACCOUNT_ID => $settings->getAccountId(),
+                SmsConversationDomainObjectAbstract::ACCOUNT_ID => $accountId,
                 SmsConversationDomainObjectAbstract::CONTACT_NAME => $teamContact?->getName() ?? $this->conversationRepository
-                    ->findContactNameByPhone($settings->getOrganizerId(), $phone),
+                    ->findContactNameByPhone($organizerId, $phone),
                 SmsConversationDomainObjectAbstract::STATUS => SmsConversationStatus::OPEN->name,
                 SmsConversationDomainObjectAbstract::IS_TEAM => $teamContact !== null,
             ]);

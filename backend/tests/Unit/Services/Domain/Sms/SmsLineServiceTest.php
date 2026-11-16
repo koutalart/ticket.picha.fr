@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Domain\Sms;
 
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\OrganizerSmsSettingDomainObject;
+use HiEvents\DomainObjects\OrganizerTeamContactDomainObject;
 use HiEvents\DomainObjects\SmsConversationDomainObject;
 use HiEvents\DomainObjects\SmsLineFormerMemberDomainObject;
 use HiEvents\Exceptions\SmsGatewayNotConfiguredException;
@@ -14,6 +15,8 @@ use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsLineFormerMemberRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Services\Domain\Sms\DTO\SmsLastSenderDTO;
+use HiEvents\Repository\Interfaces\OrganizerTeamContactRepositoryInterface;
+use HiEvents\Services\Domain\Sms\SmsInternalStaffGuard;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\SmsSettingsService;
 use Illuminate\Config\Repository as ConfigRepository;
@@ -39,6 +42,8 @@ class SmsLineServiceTest extends TestCase
 
     private SmsConversationRepositoryInterface|MockInterface $conversationRepository;
 
+    private OrganizerTeamContactRepositoryInterface|MockInterface $teamContactRepository;
+
     private SmsLineService $service;
 
     private OrganizerSmsSettingDomainObject $line;
@@ -58,6 +63,8 @@ class SmsLineServiceTest extends TestCase
         $this->config = new ConfigRepository(['services' => ['httpsms' => []]]);
         $this->formerMemberRepository = Mockery::mock(SmsLineFormerMemberRepositoryInterface::class);
         $this->conversationRepository = Mockery::mock(SmsConversationRepositoryInterface::class);
+        $this->teamContactRepository = Mockery::mock(OrganizerTeamContactRepositoryInterface::class);
+        $this->teamContactRepository->shouldReceive('findWhereIn')->andReturn(collect())->byDefault();
         $databaseManager = Mockery::mock(DatabaseManager::class);
         $databaseManager->shouldReceive('transaction')->andReturnUsing(fn (callable $callback) => $callback());
 
@@ -70,6 +77,7 @@ class SmsLineServiceTest extends TestCase
             $this->formerMemberRepository,
             $this->conversationRepository,
             $databaseManager,
+            new SmsInternalStaffGuard($this->config, $this->teamContactRepository, $this->organizerRepository),
         );
 
         $this->line = (new OrganizerSmsSettingDomainObject)
@@ -161,6 +169,26 @@ class SmsLineServiceTest extends TestCase
         $this->messageRepository->shouldNotReceive('findLastSender');
 
         $this->assertNull($this->service->attributeInbound($this->line, collect([$this->line, $this->member]), '+262639123456'));
+    }
+
+    public function test_sms_from_a_staff_contact_of_the_internal_organizer_goes_to_it_on_the_line(): void
+    {
+        $anicka = (new OrganizerSmsSettingDomainObject)->setId(3)->setAccountId(10)->setOrganizerId(30)->setSharedLineSettingsId(1);
+        $this->config->set('services.httpsms.internal_organizer_id', 30);
+        $this->teamContactRepository->shouldReceive('findWhereIn')
+            ->with('phone', ['+262639123456', '+33639123456'], ['organizer_id' => 30])
+            ->andReturn(collect([new OrganizerTeamContactDomainObject]));
+        $this->messageRepository->shouldNotReceive('findLastSender');
+
+        $this->assertTrue($this->service->isInternalPhone('0639123456'));
+        $this->assertSame($anicka, $this->service->attributeInbound($this->line, collect([$this->line, $this->member, $anicka]), '+262639123456'));
+    }
+
+    public function test_staff_contacts_are_not_looked_up_without_an_internal_organizer(): void
+    {
+        $this->teamContactRepository->shouldNotReceive('findWhereIn');
+
+        $this->assertFalse($this->service->isInternalPhone('0639123456'));
     }
 
     public function test_sms_from_a_team_number_on_a_private_line_still_goes_to_its_owner(): void

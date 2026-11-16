@@ -49,6 +49,7 @@ class SmsLineService
         private readonly SmsLineFormerMemberRepositoryInterface $formerMemberRepository,
         private readonly SmsConversationRepositoryInterface $conversationRepository,
         private readonly DatabaseManager $databaseManager,
+        private readonly SmsInternalStaffGuard $staffGuard,
     ) {}
 
     /**
@@ -211,15 +212,17 @@ class SmsLineService
     }
 
     /**
-     * Numbers of the platform team (HTTPSMS_INTERNAL_PHONES, comma separated): on a shared line, what they send is never
-     * filed with a client organizer, even one that wrote to them. It goes to the internal organizer
-     * (HTTPSMS_INTERNAL_ORGANIZER_ID, « Anicka ») when it is on the line, otherwise it stays unattributed.
+     * Numbers of the platform team (HTTPSMS_INTERNAL_PHONES, comma separated, and the team contacts of the internal
+     * organizer): on a shared line, what they send is never filed with a client organizer, even one that wrote to them.
+     * It goes to the internal organizer (HTTPSMS_INTERNAL_ORGANIZER_ID, « Anicka ») when it is on the line, otherwise
+     * it stays unattributed.
      */
     public function isInternalPhone(string $phone): bool
     {
         $normalized = SmsPhoneNormalizer::normalize($phone);
 
-        return $normalized !== null && in_array($normalized, $this->internalPhones(), true);
+        return $normalized !== null
+            && (in_array($normalized, $this->internalPhones(), true) || $this->staffGuard->isStaffPhone($normalized));
     }
 
     /**
@@ -240,9 +243,7 @@ class SmsLineService
      */
     public function internalOrganizerId(): ?int
     {
-        $id = (int) $this->config->get('services.httpsms.internal_organizer_id');
-
-        return $id > 0 ? $id : null;
+        return $this->staffGuard->internalOrganizerId();
     }
 
     /**
