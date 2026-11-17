@@ -81,6 +81,8 @@ import {AnalyticsEvents, trackEvent} from "../../../../utilites/analytics.ts";
 import {getPrivacyPolicyUrl, getTermsOfSaleUrl} from "../../../../utilites/branding.ts";
 import {UserGeneratedContent} from "../../../common/UserGeneratedContent";
 import {SaleCountdown} from "./SaleCountdown.tsx";
+import {useGetServerClockOffset} from "../../../../queries/useGetServerClockOffset.ts";
+import {millisecondsUntil} from "../../../../utilites/serverClock.ts";
 import {LineDescription} from "./LineDescription.tsx";
 import {LowStockIndicator} from "../../../common/LowStockIndicator";
 import {HighlightedPromo} from "./HighlightedPromo.tsx";
@@ -269,6 +271,7 @@ export const EmbeddedRegistration = ({
     const [memoryReady, setMemoryReady] = useState(false);
     const [restoreStepId, setRestoreStepId] = useState<string | null>(null);
     const [awaitingPayment, setAwaitingPayment] = useState<DraftAwaitingPayment | null>(null);
+    const {offset: clockOffset} = useGetServerClockOffset(!!awaitingPayment);
     const [rememberedProfile, setRememberedProfile] = useState<BuyerContact | null>(null);
     const profileRef = useRef<BuyerContact | null | undefined>(undefined);
     const latestDraft = useRef<CheckoutDraft | null>(null);
@@ -920,8 +923,8 @@ export const EmbeddedRegistration = ({
         const resumeSignature = `${signature}#${JSON.stringify(completePayload)}`;
 
         if (awaitingPayment) {
-            const stillReserved = !awaitingPayment.reservedUntil
-                || dayjs.utc(awaitingPayment.reservedUntil).valueOf() > Date.now() + 30_000;
+            const remaining = millisecondsUntil(awaitingPayment.reservedUntil, clockOffset);
+            const stillReserved = !awaitingPayment.reservedUntil || (remaining !== null && remaining > 30_000);
             if (stillReserved && awaitingPayment.signature === resumeSignature) {
                 draftClosed.current = true;
                 navigate(eventCheckoutPath(eventId as number, awaitingPayment.shortId, 'payment'), {state: paymentPageState()});

@@ -18,6 +18,7 @@ import {withLoadingNotification} from "../../../utilites/withLoadingNotification
 import {useAbandonOrderPublic} from "../../../mutations/useAbandonOrderPublic.ts";
 import {showError, showInfo} from "../../../utilites/notifications.tsx";
 import {isDateInFuture, parseUtcTimestamp} from "../../../utilites/dates.ts";
+import {useGetServerClockOffset} from "../../../queries/useGetServerClockOffset.ts";
 import {detectMode, getDarkSurfaceColor} from "../../../utilites/themeUtils.ts";
 import {CheckoutThemeProvider} from "./CheckoutThemeProvider.tsx";
 import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
@@ -63,10 +64,11 @@ const Checkout = () => {
     };
     const currentStep = getCurrentStep();
 
+    const {offset: clockOffset, isSettled: isClockSettled} = useGetServerClockOffset(orderIsReserved);
     const hasValidReservationDeadline = parseUtcTimestamp(order?.reserved_until) !== null;
 
     const isOrderReservedAndNotExpired = orderIsReserved && order?.reserved_until
-        && isDateInFuture(order.reserved_until);
+        && isDateInFuture(order.reserved_until, clockOffset);
 
     const blocker = useBlocker(
         ({currentLocation, nextLocation}) => {
@@ -268,7 +270,7 @@ const Checkout = () => {
                                         </span>
                                     )}
 
-                                    {orderIsReserved && hasValidReservationDeadline && (
+                                    {orderIsReserved && hasValidReservationDeadline && isClockSettled && (
                                         <Group gap="5px" className={classes.timerGroup}>
                                             <span className={classes.timerLabel}>
                                                 {t`Time left:`}
@@ -278,6 +280,7 @@ const Checkout = () => {
                                                 className={classes.countdown}
                                                 closeToExpiryClassName={classes.countdownCloseToExpiry}
                                                 targetDate={order.reserved_until}
+                                                clockOffset={clockOffset}
                                                 onExpiry={handleExpiry}
                                             />
                                         </Group>
