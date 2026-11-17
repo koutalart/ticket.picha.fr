@@ -11,6 +11,8 @@ RUN echo "" >> /usr/local/etc/php-fpm.d/docker-php-serversideup-pool.conf && \
 
 RUN install-php-extensions intl imagick gd
 
+RUN apk add --no-cache ffmpeg
+
 COPY --chown=www-data:www-data . .
 
 RUN chmod -R 755 storage  \

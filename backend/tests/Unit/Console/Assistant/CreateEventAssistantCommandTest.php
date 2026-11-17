@@ -11,7 +11,9 @@ use HiEvents\DomainObjects\Status\EventStatus;
 use HiEvents\Repository\Interfaces\AccountUserRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
+use HiEvents\Services\Application\Handlers\Event\ApplyEventPosterHandler;
 use HiEvents\Services\Application\Handlers\Event\CreateDraftEventHandler;
+use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\AppliedEventPosterDTO;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\CreatedDraftEventDTO;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\CreateDraftEventDTO;
 use HiEvents\Services\Domain\Assistant\AssistantActionJournal;
@@ -30,6 +32,8 @@ class CreateEventAssistantCommandTest extends TestCase
 
     private MockInterface $handler;
 
+    private MockInterface $poster;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,6 +43,7 @@ class CreateEventAssistantCommandTest extends TestCase
         $this->journal = Mockery::mock(AssistantActionJournal::class);
         $this->events = Mockery::mock(EventRepositoryInterface::class);
         $this->handler = Mockery::mock(CreateDraftEventHandler::class);
+        $this->poster = Mockery::mock(ApplyEventPosterHandler::class);
         $organizers = Mockery::mock(OrganizerRepositoryInterface::class);
         $accountUsers = Mockery::mock(AccountUserRepositoryInterface::class);
 
@@ -47,6 +52,7 @@ class CreateEventAssistantCommandTest extends TestCase
         $this->app->instance(OrganizerRepositoryInterface::class, $organizers);
         $this->app->instance(AccountUserRepositoryInterface::class, $accountUsers);
         $this->app->instance(CreateDraftEventHandler::class, $this->handler);
+        $this->app->instance(ApplyEventPosterHandler::class, $this->poster);
 
         $organizers->shouldReceive('findFirstWhere')->with(['id' => 4])->andReturn(
             (new OrganizerDomainObject)->setId(4)->setAccountId(3)->setName('Innocent Event')
@@ -127,6 +133,9 @@ class CreateEventAssistantCommandTest extends TestCase
                 ticket_ids: [80, 81],
                 question_ids: [90, 91, 92, 93],
             ));
+        $this->poster->shouldReceive('handle')->once()
+            ->with(25, 4, 3, 11, null)
+            ->andReturn(new AppliedEventPosterDTO(accent: '#faa200ff', video: false));
         $this->journal->shouldReceive('markExecuted')->once()->with(70, Mockery::on(fn (array $result) => $result['evenement_id'] === 25));
 
         [$exitCode, $json] = $this->callCommand($this->commandOptions());
@@ -136,6 +145,29 @@ class CreateEventAssistantCommandTest extends TestCase
         $this->assertSame('DRAFT', $json['resultat']['statut']);
         $this->assertSame([80, 81], $json['resultat']['tarifs']);
         $this->assertSame('https://ticket.picha.fr/manage/event/25', $json['resultat']['gerer']);
+        $this->assertSame(['modele' => true, 'couleur' => '#faa200ff', 'video' => false], $json['resultat']['page']);
+    }
+
+    public function test_the_poster_gives_the_page_its_colour_and_header_video(): void
+    {
+        $poster = tempnam(sys_get_temp_dir(), 'affiche');
+        $this->events->shouldReceive('findFirstWhere')->once()->andReturnNull();
+        $this->journal->shouldReceive('start')->once()->andReturn((new AssistantActionDomainObject)->setId(73));
+        $this->handler->shouldReceive('handle')->once()->andReturn(new CreatedDraftEventDTO(
+            event: (new EventDomainObject)->setId(26)->setStatus(EventStatus::DRAFT->name),
+            ticket_ids: [82],
+            question_ids: [],
+        ));
+        $this->poster->shouldReceive('handle')->once()
+            ->with(26, 4, 3, 11, $poster)
+            ->andReturn(new AppliedEventPosterDTO(accent: '#1f8fffff', video: true));
+        $this->journal->shouldReceive('markExecuted')->once();
+
+        [$exitCode, $json] = $this->callCommand($this->commandOptions(['--affiche' => $poster]));
+        @unlink($poster);
+
+        $this->assertSame(0, $exitCode);
+        $this->assertSame(['modele' => true, 'couleur' => '#1f8fffff', 'video' => true], $json['resultat']['page']);
     }
 
     public function test_an_event_that_already_exists_is_refused(): void
@@ -180,6 +212,7 @@ class CreateEventAssistantCommandTest extends TestCase
             'bad quantity' => [['--tarifs' => '[{"nom":"A","prix":5,"quantite":0}]'], 'quantite'],
             'unknown question type' => [['--questions' => '[{"libelle":"Photo","type":"fichier"}]'], 'type'],
             'choice without options' => [['--questions' => '[{"libelle":"Repas","type":"choix","options":["Viande"]}]'], 'choix'],
+            'unreadable poster' => [['--affiche' => '/tmp/affiche-qui-n-existe-pas.jpg'], 'affiche-qui-n-existe-pas'],
         ];
     }
 }

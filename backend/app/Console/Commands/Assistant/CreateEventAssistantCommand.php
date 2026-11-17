@@ -7,12 +7,17 @@ namespace HiEvents\Console\Commands\Assistant;
 use Carbon\Carbon;
 use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
 use HiEvents\Exceptions\AssistantActionRefusedException;
+use HiEvents\Exceptions\PosterMediaException;
+use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
+use HiEvents\Services\Application\Handlers\Event\ApplyEventPosterHandler;
 use HiEvents\Services\Application\Handlers\Event\CreateDraftEventHandler;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\CreateDraftEventDTO;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\DraftQuestionDTO;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\DraftTicketDTO;
 use HiEvents\Services\Domain\Assistant\DTO\AssistantScopeDTO;
+use HiEvents\Services\Infrastructure\Image\Exception\CouldNotUploadImageException;
+use Illuminate\Support\Facades\Http;
 use JsonException;
 
 /**
@@ -46,7 +51,8 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
         {--fin= : End, "Y-m-d H:i", Mayotte time}
         {--lieu= : Venue}
         {--tarifs= : JSON list of tickets: [{"nom":"Prévente","prix":15,"quantite":200}], prix without fees, 0 = free (required)}
-        {--questions= : JSON list of order form questions: [{"libelle":"Ville","type":"texte|nombre|telephone|choix","obligatoire":true,"options":["A","B"]}]}';
+        {--questions= : JSON list of order form questions: [{"libelle":"Ville","type":"texte|nombre|telephone|choix","obligatoire":true,"options":["A","B"]}]}
+        {--affiche= : Poster (file path or https URL): accent colour, flyer, short banner and header video}';
 
     protected $description = 'Assistant, level 1: create a draft event (never published) with its tickets and order form';
 
@@ -72,6 +78,12 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
 
         $this->tickets();
         $this->questions();
+
+        $poster = $this->optionalString('affiche');
+
+        if ($poster !== null && ! str_starts_with($poster, 'https://') && ! is_readable($poster)) {
+            throw new AssistantActionRefusedException(__('The poster file :path cannot be read.', ['path' => $poster]));
+        }
     }
 
     protected function describe(AssistantScopeDTO $scope): string
@@ -129,8 +141,60 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
             'statut' => $result->event->getStatus(),
             'tarifs' => $result->ticket_ids,
             'questions' => $result->question_ids,
+            'page' => $this->applyPage($scope, $eventId),
             'gerer' => rtrim((string) config('app.frontend_url'), '/').'/manage/event/'.$eventId,
         ];
+    }
+
+    /**
+     * The event exists whatever happens here: a poster problem is reported, never fatal.
+     */
+    private function applyPage(AssistantScopeDTO $scope, int $eventId): array
+    {
+        try {
+            $applied = $this->laravel->make(ApplyEventPosterHandler::class)->handle(
+                eventId: $eventId,
+                organizerId: $scope->organizer->getId(),
+                accountId: $scope->accountId(),
+                userId: $this->accountOwnerUserId($scope),
+                posterPath: $this->poster(),
+            );
+        } catch (PosterMediaException|CouldNotUploadImageException|ResourceNotFoundException|AssistantActionRefusedException $e) {
+            return ['modele' => false, 'erreur' => $e->getMessage()];
+        }
+
+        return ['modele' => true, 'couleur' => $applied->accent, 'video' => $applied->video];
+    }
+
+    /**
+     * @throws AssistantActionRefusedException
+     */
+    private function poster(): ?string
+    {
+        $value = $this->optionalString('affiche');
+
+        if ($value === null) {
+            return null;
+        }
+
+        if (str_starts_with($value, 'https://')) {
+            $response = Http::timeout(30)->get($value);
+
+            if (! $response->successful()) {
+                throw new AssistantActionRefusedException(__('The poster could not be downloaded.'));
+            }
+
+            $path = tempnam(sys_get_temp_dir(), 'affiche');
+            file_put_contents($path, $response->body());
+
+            return $path;
+        }
+
+        if (! is_file($value) || ! is_readable($value)) {
+            throw new AssistantActionRefusedException(__('The poster file :path cannot be read.', ['path' => $value]));
+        }
+
+        return $value;
     }
 
     /**
