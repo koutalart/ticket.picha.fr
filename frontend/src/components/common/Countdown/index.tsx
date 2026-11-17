@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {t} from '@lingui/macro';
 import classNames from "classnames";
-import {parseUtcTimestamp} from "../../../utilites/dates.ts";
+import {parseUtcTimestamp, serverNow} from "../../../utilites/serverClock.ts";
 
 interface CountdownProps {
     targetDate: string;
@@ -9,6 +9,7 @@ interface CountdownProps {
     className?: string;
     closeToExpiryClassName?: string;
     displayType?: 'short' | 'long';
+    clockOffset?: number;
 }
 
 const formatTimeLeft = (diff: number, displayType: 'short' | 'long'): string => {
@@ -46,7 +47,8 @@ export const Countdown = ({
                               onExpiry,
                               className = '',
                               displayType = 'long',
-                              closeToExpiryClassName = ''
+                              closeToExpiryClassName = '',
+                              clockOffset = 0,
                           }: CountdownProps) => {
     const [timeLeft, setTimeLeft] = useState<string | null>(null);
     const [closeToExpiry, setCloseToExpiry] = useState(false);
@@ -64,7 +66,7 @@ export const Countdown = ({
         let interval: ReturnType<typeof setInterval> | undefined;
 
         const tick = (): boolean => {
-            const diff = target - Date.now();
+            const diff = target - serverNow(clockOffset);
             setTimeLeft(formatTimeLeft(diff, displayType));
             setCloseToExpiry(diff > 0 && diff < 5 * 60 * 1000);
 
@@ -88,7 +90,7 @@ export const Countdown = ({
                 clearInterval(interval);
             }
         };
-    }, [targetDate, displayType]);
+    }, [targetDate, displayType, clockOffset]);
 
     if (timeLeft === null) {
         return null;
