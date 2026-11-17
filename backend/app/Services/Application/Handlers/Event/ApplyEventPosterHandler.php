@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace HiEvents\Services\Application\Handlers\Event;
 
 use HiEvents\DomainObjects\Enums\ImageType;
-use HiEvents\Exceptions\CoverVideoUploadException;
 use HiEvents\Exceptions\PosterMediaException;
 use HiEvents\Exceptions\ResourceNotFoundException;
-use HiEvents\Services\Application\Handlers\Event\CoverVideo\DTO\UploadEventCoverVideoDTO;
-use HiEvents\Services\Application\Handlers\Event\CoverVideo\UploadEventCoverVideoHandler;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\AppliedEventPosterDTO;
 use HiEvents\Services\Application\Handlers\Images\CreateImageHandler;
 use HiEvents\Services\Application\Handlers\Images\DTO\CreateImageDTO;
@@ -21,8 +18,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 /**
- * Gives a new event the default PICHA page. With a poster: the poster's colour, the full poster as flyer,
- * a short banner as cover and a looping header video built from the artists' faces.
+ * Gives a new event the default PICHA page. With a poster: the poster's colour, the full poster as flyer
+ * and a short banner as cover.
  */
 class ApplyEventPosterHandler
 {
@@ -30,7 +27,6 @@ class ApplyEventPosterHandler
         private readonly EventPresentationTemplateService $templateService,
         private readonly PosterMediaService $posterMediaService,
         private readonly CreateImageHandler $createImageHandler,
-        private readonly UploadEventCoverVideoHandler $uploadEventCoverVideoHandler,
     ) {}
 
     /**
@@ -43,7 +39,7 @@ class ApplyEventPosterHandler
         if ($posterPath === null) {
             $this->templateService->apply($eventId, $organizerId);
 
-            return new AppliedEventPosterDTO(accent: EventPresentationTemplateService::DEFAULT_ACCENT, video: false);
+            return new AppliedEventPosterDTO(accent: EventPresentationTemplateService::DEFAULT_ACCENT);
         }
 
         $workDir = storage_path('app/tmp/poster-'.Str::random(12));
@@ -56,10 +52,7 @@ class ApplyEventPosterHandler
             $this->uploadImage($posterPath, ImageType::EVENT_FLYER, $eventId, $accountId, $userId, $workDir);
             $this->uploadImage($media->banner_path, ImageType::EVENT_COVER, $eventId, $accountId, $userId, $workDir);
 
-            $video = $this->uploadVideo($media->video_path, $eventId, $accountId, false)
-                && $this->uploadVideo($media->mobile_video_path, $eventId, $accountId, true);
-
-            return new AppliedEventPosterDTO(accent: $media->accent, video: $video);
+            return new AppliedEventPosterDTO(accent: $media->accent);
         } finally {
             File::deleteDirectory($workDir);
         }
@@ -80,25 +73,5 @@ class ApplyEventPosterHandler
             imageType: $type,
             entityId: $eventId,
         ));
-    }
-
-    private function uploadVideo(?string $path, int $eventId, int $accountId, bool $mobile): bool
-    {
-        if ($path === null) {
-            return false;
-        }
-
-        try {
-            $this->uploadEventCoverVideoHandler->handle(new UploadEventCoverVideoDTO(
-                eventId: $eventId,
-                accountId: $accountId,
-                video: new UploadedFile($path, basename($path), 'video/mp4', null, true),
-                mobile: $mobile,
-            ));
-        } catch (CoverVideoUploadException) {
-            return false;
-        }
-
-        return true;
     }
 }

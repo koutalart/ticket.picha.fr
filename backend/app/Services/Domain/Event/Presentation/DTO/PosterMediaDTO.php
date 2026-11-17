@@ -11,7 +11,5 @@ class PosterMediaDTO extends BaseDataObject
     public function __construct(
         public readonly string $accent,
         public readonly string $banner_path,
-        public readonly ?string $video_path,
-        public readonly ?string $mobile_video_path,
     ) {}
 }

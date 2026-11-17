@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\File;
 use Imagick;
 use ImagickDraw;
 use ImagickPixel;
-use Symfony\Component\Process\ExecutableFinder;
 use Tests\TestCase;
 
 class PosterMediaServiceTest extends TestCase
@@ -64,22 +63,12 @@ class PosterMediaServiceTest extends TestCase
         $this->assertSame(EventPresentationTemplateService::DEFAULT_ACCENT, $accent);
     }
 
-    public function test_it_builds_a_short_banner_and_a_header_video_when_ffmpeg_is_installed(): void
+    public function test_it_builds_a_short_banner_around_the_faces(): void
     {
         $media = (new PosterMediaService)->build($this->poster('#101010', '#ff7a00'), $this->dir);
 
         $banner = new Imagick($media->banner_path);
         $this->assertSame([1600, 560], [$banner->getImageWidth(), $banner->getImageHeight()]);
-
-        if ((new ExecutableFinder)->find('ffmpeg') === null) {
-            $this->assertNull($media->video_path);
-            $this->assertNull($media->mobile_video_path);
-
-            return;
-        }
-
-        $this->assertFileExists($media->video_path);
-        $this->assertFileExists($media->mobile_video_path);
     }
 
     public function test_a_file_that_is_not_an_image_is_refused(): void

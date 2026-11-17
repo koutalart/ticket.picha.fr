@@ -9,12 +9,10 @@ use HiEvents\Services\Domain\Event\Presentation\DTO\PosterMediaDTO;
 use Imagick;
 use ImagickException;
 use ImagickPixel;
-use Symfony\Component\Process\ExecutableFinder;
-use Symfony\Component\Process\Process;
 
 /**
- * Builds the event header from the poster: accent colour, short banner, looping header video
- * (slow pan over the artists' faces, pulsing light). Artists' faces sit in the upper part of a portrait poster.
+ * Builds the event header from the poster: accent colour and a short banner around the artists' faces,
+ * which sit in the upper part of a portrait poster. The header video is cut from the artist's official clip, not from the poster.
  */
 class PosterMediaService
 {
@@ -22,15 +20,7 @@ class PosterMediaService
 
     private const BANNER_HEIGHT = 560;
 
-    private const MOBILE_WIDTH = 900;
-
-    private const MOBILE_HEIGHT = 316;
-
     private const FACES_CENTER = 0.22;
-
-    private const VIDEO_SECONDS = 5;
-
-    private const FFMPEG_TIMEOUT_SECONDS = 180;
 
     /**
      * @throws PosterMediaException
@@ -47,13 +37,9 @@ class PosterMediaService
             throw new PosterMediaException(__('The banner could not be created: :error', ['error' => $e->getMessage()]));
         }
 
-        $ffmpeg = (new ExecutableFinder)->find('ffmpeg');
-
         return new PosterMediaDTO(
             accent: $accent,
             banner_path: $banner,
-            video_path: $ffmpeg ? $this->video($ffmpeg, $poster, self::BANNER_WIDTH, self::BANNER_HEIGHT, $workDir.'/video.mp4') : null,
-            mobile_video_path: $ffmpeg ? $this->video($ffmpeg, $poster, self::MOBILE_WIDTH, self::MOBILE_HEIGHT, $workDir.'/video-mobile.mp4') : null,
         );
     }
 
@@ -130,37 +116,6 @@ class PosterMediaService
         $band->setImageCompressionQuality(85);
 
         return $band;
-    }
-
-    /**
-     * @throws PosterMediaException
-     */
-    private function video(string $ffmpeg, Imagick $poster, int $width, int $height, string $output): ?string
-    {
-        try {
-            $source = $this->bandAroundFaces($poster, (int) round($width * 1.15), (int) round($height * 1.3), 1.0);
-            $sourcePath = $output.'.jpg';
-            $source->writeImage($sourcePath);
-        } catch (ImagickException $e) {
-            throw new PosterMediaException($e->getMessage());
-        }
-
-        $seconds = self::VIDEO_SECONDS;
-        $filter = sprintf(
-            "[0]crop=%d:%d:'(iw-%d)*t/%d':'(ih-%d)*t/%d',eq=brightness='0.03*sin(2*PI*t*1.6)':saturation=1.15,format=yuv420p,split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1[v]",
-            $width, $height, $width, $seconds, $height, $seconds,
-        );
-
-        $process = new Process([
-            $ffmpeg, '-loglevel', 'error', '-y', '-loop', '1', '-framerate', '30', '-t', (string) $seconds, '-i', $sourcePath,
-            '-filter_complex', $filter, '-map', '[v]', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23',
-            '-movflags', '+faststart', '-an', $output,
-        ]);
-        $process->setTimeout(self::FFMPEG_TIMEOUT_SECONDS);
-        $process->run();
-        @unlink($sourcePath);
-
-        return $process->isSuccessful() && is_file($output) ? $output : null;
     }
 
     /**

@@ -10,6 +10,5 @@ class AppliedEventPosterDTO extends BaseDataObject
 {
     public function __construct(
         public readonly string $accent,
-        public readonly bool $video,
     ) {}
 }

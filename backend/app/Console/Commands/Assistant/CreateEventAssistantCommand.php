@@ -52,7 +52,7 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
         {--lieu= : Venue}
         {--tarifs= : JSON list of tickets: [{"nom":"Prévente","prix":15,"quantite":200}], prix without fees, 0 = free (required)}
         {--questions= : JSON list of order form questions: [{"libelle":"Ville","type":"texte|nombre|telephone|choix","obligatoire":true,"options":["A","B"]}]}
-        {--affiche= : Poster (file path or https URL): accent colour, flyer, short banner and header video}';
+        {--affiche= : Poster (file path or https URL): accent colour, flyer and short banner}';
 
     protected $description = 'Assistant, level 1: create a draft event (never published) with its tickets and order form';
 
@@ -163,7 +163,7 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
             return ['modele' => false, 'erreur' => $e->getMessage()];
         }
 
-        return ['modele' => true, 'couleur' => $applied->accent, 'video' => $applied->video];
+        return ['modele' => true, 'couleur' => $applied->accent];
     }
 
     /**

@@ -4,8 +4,6 @@ USER root
 
 RUN install-php-extensions intl imagick gd
 
-RUN apk add --no-cache ffmpeg
-
 COPY --chown=www-data:www-data . .
 
 RUN chmod -R 755 storage \
