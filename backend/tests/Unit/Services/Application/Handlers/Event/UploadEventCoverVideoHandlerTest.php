@@ -10,6 +10,8 @@ use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Event\CoverVideo\DTO\UploadEventCoverVideoDTO;
 use HiEvents\Services\Application\Handlers\Event\CoverVideo\UploadEventCoverVideoHandler;
+use HiEvents\Services\Domain\Social\Media\DTO\SocialMediaMetadataDTO;
+use HiEvents\Services\Domain\Social\Media\SocialMediaProbe;
 use HiEvents\Services\Infrastructure\Image\DTO\ImageStorageResponseDTO;
 use HiEvents\Services\Infrastructure\Image\Exception\CouldNotUploadImageException;
 use HiEvents\Services\Infrastructure\Image\ImageStorageService;
@@ -37,12 +39,15 @@ class UploadEventCoverVideoHandlerTest extends TestCase
         $this->storage = m::mock(ImageStorageService::class);
         $databaseManager = m::mock(DatabaseManager::class);
         $databaseManager->shouldReceive('transaction')->andReturnUsing(fn (callable $callback) => $callback());
+        $probe = m::mock(SocialMediaProbe::class);
+        $probe->shouldReceive('probe')->andReturn(new SocialMediaMetadataDTO(width: 1920, height: 540));
 
         $this->handler = new UploadEventCoverVideoHandler(
             $this->eventRepository,
             $this->imageRepository,
             $this->storage,
             $databaseManager,
+            $probe,
         );
     }
 
@@ -77,6 +82,8 @@ class UploadEventCoverVideoHandlerTest extends TestCase
             ->with(m::on(fn (array $data) => $data['type'] === 'EVENT_COVER_VIDEO'
                 && $data['entity_id'] === 12
                 && $data['account_id'] === 6
+                && $data['width'] === 1920
+                && $data['height'] === 540
                 && $data['mime_type'] === 'video/mp4'
                 && $data['path'] === 'event_cover_video/teaser-abcde.mp4'))
             ->andReturn($created);
