@@ -5,10 +5,12 @@ namespace Tests\Unit\Services\Domain\Event\Presentation;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\DomainObjects\QuestionDomainObject;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
+use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
 use HiEvents\Services\Domain\Event\Presentation\EventPresentationTemplateService;
 use Mockery;
 use Mockery\MockInterface;
@@ -22,6 +24,8 @@ class EventPresentationTemplateServiceTest extends TestCase
 
     private MockInterface $images;
 
+    private MockInterface $questions;
+
     private EventPresentationTemplateService $service;
 
     protected function setUp(): void
@@ -31,7 +35,8 @@ class EventPresentationTemplateServiceTest extends TestCase
         $this->settings = Mockery::mock(EventSettingsRepositoryInterface::class);
         $this->events = Mockery::mock(EventRepositoryInterface::class);
         $this->images = Mockery::mock(ImageRepositoryInterface::class);
-        $this->service = new EventPresentationTemplateService($this->settings, $this->events, $this->images);
+        $this->questions = Mockery::mock(QuestionRepositoryInterface::class);
+        $this->service = new EventPresentationTemplateService($this->settings, $this->events, $this->images, $this->questions);
     }
 
     protected function tearDown(): void
@@ -57,6 +62,13 @@ class EventPresentationTemplateServiceTest extends TestCase
             return true;
         }));
         $this->events->shouldReceive('updateWhere')->once()->with(['category' => 'MUSIC'], ['id' => 23]);
+        $this->questions->shouldReceive('findFirstWhere')->once()
+            ->with(['event_id' => 23, 'type' => 'PHONE', 'belongs_to' => 'ORDER'])->andReturnNull();
+        $this->questions->shouldReceive('create')->once()->with(Mockery::on(fn (array $question) => $question['event_id'] === 23
+            && $question['title'] === 'Numéro de téléphone'
+            && $question['required'] === true
+            && $question['type'] === 'PHONE'
+            && $question['belongs_to'] === 'ORDER'));
 
         $this->service->apply(23, 20, '#1f8fffff');
 
@@ -84,6 +96,8 @@ class EventPresentationTemplateServiceTest extends TestCase
             return true;
         }));
         $this->events->shouldReceive('updateWhere')->once();
+        $this->questions->shouldReceive('findFirstWhere')->andReturn((new QuestionDomainObject)->setId(54));
+        $this->questions->shouldNotReceive('create');
 
         $this->service->apply(24, 20);
 

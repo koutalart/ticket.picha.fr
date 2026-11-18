@@ -6,6 +6,8 @@ namespace HiEvents\Services\Domain\Event\Presentation;
 
 use HiEvents\DomainObjects\Enums\EventCategory;
 use HiEvents\DomainObjects\Enums\ImageType;
+use HiEvents\DomainObjects\Enums\QuestionBelongsTo;
+use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
@@ -13,10 +15,11 @@ use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
+use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
 
 /**
  * The default PICHA event page: the layout of Innocent Event's Halloween page (event 7), short header,
- * blurred cover behind the card, "Acheter" button, branded ticket. Content and brand colours stay the event's own.
+ * blurred cover behind the card, "Acheter" button, branded ticket, buyer's phone required. Content and brand colours stay the event's own.
  */
 class EventPresentationTemplateService
 {
@@ -28,10 +31,13 @@ class EventPresentationTemplateService
 
     private const BUY_BUTTON_TEXT = 'Acheter';
 
+    private const PHONE_QUESTION_TITLE = 'Numéro de téléphone';
+
     public function __construct(
         private readonly EventSettingsRepositoryInterface $eventSettingsRepository,
         private readonly EventRepositoryInterface $eventRepository,
         private readonly ImageRepositoryInterface $imageRepository,
+        private readonly QuestionRepositoryInterface $questionRepository,
     ) {}
 
     /**
@@ -91,5 +97,30 @@ class EventPresentationTemplateService
             attributes: ['category' => EventCategory::MUSIC->value],
             where: ['id' => $eventId],
         );
+
+        $this->requireBuyerPhone($eventId);
+    }
+
+    private function requireBuyerPhone(int $eventId): void
+    {
+        $existing = $this->questionRepository->findFirstWhere([
+            'event_id' => $eventId,
+            'type' => QuestionTypeEnum::PHONE->name,
+            'belongs_to' => QuestionBelongsTo::ORDER->name,
+        ]);
+
+        if ($existing !== null) {
+            return;
+        }
+
+        $this->questionRepository->create([
+            'event_id' => $eventId,
+            'title' => self::PHONE_QUESTION_TITLE,
+            'required' => true,
+            'type' => QuestionTypeEnum::PHONE->name,
+            'belongs_to' => QuestionBelongsTo::ORDER->name,
+            'order' => 1,
+            'is_hidden' => false,
+        ]);
     }
 }
