@@ -5,11 +5,17 @@ namespace Tests\Unit\Services\Domain\Event\Presentation;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
+use HiEvents\DomainObjects\ProductCategoryDomainObject;
+use HiEvents\DomainObjects\ProductDomainObject;
+use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\QuestionDomainObject;
 use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
+use HiEvents\Repository\Interfaces\ProductCategoryRepositoryInterface;
+use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
+use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
 use HiEvents\Services\Domain\Event\Presentation\EventPresentationTemplateService;
 use Mockery;
@@ -26,6 +32,12 @@ class EventPresentationTemplateServiceTest extends TestCase
 
     private MockInterface $questions;
 
+    private MockInterface $products;
+
+    private MockInterface $prices;
+
+    private MockInterface $categories;
+
     private EventPresentationTemplateService $service;
 
     protected function setUp(): void
@@ -36,7 +48,18 @@ class EventPresentationTemplateServiceTest extends TestCase
         $this->events = Mockery::mock(EventRepositoryInterface::class);
         $this->images = Mockery::mock(ImageRepositoryInterface::class);
         $this->questions = Mockery::mock(QuestionRepositoryInterface::class);
-        $this->service = new EventPresentationTemplateService($this->settings, $this->events, $this->images, $this->questions);
+        $this->products = Mockery::mock(ProductRepositoryInterface::class);
+        $this->prices = Mockery::mock(ProductPriceRepositoryInterface::class);
+        $this->categories = Mockery::mock(ProductCategoryRepositoryInterface::class);
+        $this->service = new EventPresentationTemplateService(
+            $this->settings,
+            $this->events,
+            $this->images,
+            $this->questions,
+            $this->products,
+            $this->prices,
+            $this->categories,
+        );
     }
 
     protected function tearDown(): void
@@ -70,7 +93,36 @@ class EventPresentationTemplateServiceTest extends TestCase
             && $question['type'] === 'PHONE'
             && $question['belongs_to'] === 'ORDER'));
 
+        $template = (new ProductDomainObject)->setId(13)->setEventId(7)->setProductCategoryId(3)
+            ->setTitle('Option sérénité / commande')->setIsRefundProtection(true)->setUnlockAfterProductId(10)
+            ->setSaleEndDate('2026-10-31 23:59:00')->setSalesVolume(51.94);
+        $this->products->shouldReceive('findFirstWhere')->with(['event_id' => 23, 'is_refund_protection' => true])->andReturnNull();
+        $this->products->shouldReceive('findFirstWhere')->with(['event_id' => 7, 'is_refund_protection' => true])->andReturn($template);
+        $this->categories->shouldReceive('findFirstWhere')->with(['event_id' => 23])->andReturn((new ProductCategoryDomainObject)->setId(33));
+        $copied = null;
+        $this->products->shouldReceive('create')->once()->with(Mockery::on(function (array $product) use (&$copied) {
+            $copied = $product;
+
+            return true;
+        }))->andReturn((new ProductDomainObject)->setId(56));
+        $this->prices->shouldReceive('findWhere')->with(['product_id' => 13])->andReturn(collect([
+            (new ProductPriceDomainObject)->setId(14)->setProductId(13)->setPrice(0.49)->setQuantitySold(106)->setInitialQuantityAvailable(null),
+        ]));
+        $this->prices->shouldReceive('create')->once()->with(Mockery::on(fn (array $price) => $price['product_id'] === 56
+            && $price['price'] === 0.49
+            && $price['quantity_sold'] === 0
+            && ! array_key_exists('id', $price)));
+
         $this->service->apply(23, 20, '#1f8fffff');
+
+        $this->assertSame(23, $copied['event_id']);
+        $this->assertSame(33, $copied['product_category_id']);
+        $this->assertTrue($copied['is_refund_protection']);
+        $this->assertSame('Option sérénité / commande', $copied['title']);
+        $this->assertNull($copied['unlock_after_product_id']);
+        $this->assertNull($copied['sale_end_date']);
+        $this->assertSame(0, $copied['sales_volume']);
+        $this->assertArrayNotHasKey('id', $copied);
 
         $this->assertSame('Acheter', $saved['continue_button_text']);
         $this->assertTrue($saved['hide_getting_started_page']);
@@ -98,6 +150,9 @@ class EventPresentationTemplateServiceTest extends TestCase
         $this->events->shouldReceive('updateWhere')->once();
         $this->questions->shouldReceive('findFirstWhere')->andReturn((new QuestionDomainObject)->setId(54));
         $this->questions->shouldNotReceive('create');
+        $this->products->shouldReceive('findFirstWhere')->with(['event_id' => 24, 'is_refund_protection' => true])
+            ->andReturn((new ProductDomainObject)->setId(57));
+        $this->products->shouldNotReceive('create');
 
         $this->service->apply(24, 20);
 
