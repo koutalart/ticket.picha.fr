@@ -80,7 +80,7 @@ export const PosterTemplate = ({
         {page: 'evenements', label: t`Events`},
         ...(hasServices ? [{page: 'services' as OrganizerSitePage, label: t`Services`}] : []),
         {page: 'a-propos', label: t`The universe`},
-        {page: 'partenaires', label: t`Partners`},
+        ...(content.is_venue && !(content.partners || []).length ? [] : [{page: 'partenaires' as OrganizerSitePage, label: t`Partners`}]),
         {page: 'contact', label: t`Contact`},
     ];
 
