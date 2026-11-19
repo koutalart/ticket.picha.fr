@@ -36,6 +36,14 @@ export const MarketingFooter = () => {
                         <li><Link to="/auth/login">{t`Log in`}</Link></li>
                     </ul>
                 </nav>
+                <nav aria-labelledby="footer-universes">
+                    <h2 id="footer-universes" className={classes.heading}>PICHA</h2>
+                    <ul>
+                        <li><a href="https://picha.fr/">picha.fr</a></li>
+                        <li><a href="https://studio.picha.fr/">PICHA Studio</a></li>
+                        <li><a href="https://picha.fr/affichage-dynamique/">PICHA Display</a></li>
+                    </ul>
+                </nav>
             </div>
             <PoweredByFooter className={classes.legal}/>
         </footer>

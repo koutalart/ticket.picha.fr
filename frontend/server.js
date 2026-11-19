@@ -239,6 +239,11 @@ async function main() {
         'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'CCBot', 'meta-externalagent',
     ];
 
+    const INDEXNOW_KEY = '10f9be7c90e0525e2027369925b6544f';
+    app.get(`/${INDEXNOW_KEY}.txt`, (req, res) => {
+        res.type('text/plain').send(INDEXNOW_KEY);
+    });
+
     app.get('/robots.txt', async (req, res) => {
         const customDomain = await resolveCustomDomain(normalizeHost(req.get('host')));
         const frontendUrl = customDomain
