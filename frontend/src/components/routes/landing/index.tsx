@@ -100,7 +100,9 @@ const Landing = () => {
                 url: brandUrl,
                 logo: absoluteLogoUrl,
                 email: CONTACT_EMAIL,
-                address: {"@type": "PostalAddress", addressCountry: "FR"},
+                address: {"@type": "PostalAddress", addressRegion: "Mayotte", addressCountry: "FR"},
+                areaServed: ["Mayotte", "La Réunion", "France"],
+                sameAs: ["https://picha.fr/", "https://studio.picha.fr/", "https://picha.fr/affichage-dynamique/"],
             },
             {
                 "@type": "SoftwareApplication",
