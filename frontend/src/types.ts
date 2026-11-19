@@ -538,6 +538,7 @@ export interface OrganizerStats {
 }
 
 export interface OrganizerSiteContent {
+    is_venue?: boolean | null;
     tagline?: string | null;
     area?: string | null;
     about_headline?: string | null;

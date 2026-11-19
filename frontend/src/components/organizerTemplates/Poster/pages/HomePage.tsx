@@ -8,6 +8,7 @@ import {
     IconLock,
     IconMail,
     IconMapPin,
+    IconPhone,
     IconTicket,
 } from "@tabler/icons-react";
 import {formatCurrency} from "../../../../utilites/currency.ts";
@@ -31,6 +32,12 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
     const allSoldOut = tiers.length > 0 && tiers.every(tier => tier.soldOut);
     const bookingLabel = allSoldOut ? t`Sold out, join the waitlist` : t`Book my tickets`;
     const hasUniverse = Boolean(content.tagline || content.story || content.vision || content.stats?.length);
+    const isVenue = Boolean(content.is_venue);
+    const address = organizer.settings?.location_details || organizer.location_details;
+    const addressLine = [address?.address_line_1, [address?.zip_or_postal_code, address?.city].filter(Boolean).join(' ')]
+        .filter(Boolean).join(', ');
+    const phone = organizer.phone?.replace(/\s+/g, '');
+    const practical = (content.practical || []).filter(item => item.title);
 
     return (
         <>
@@ -40,7 +47,32 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
                 )}
                 <div className={classes.heroGlow} aria-hidden="true"/>
 
-                {featured ? (
+                {isVenue ? (
+                    <div className={classes.heroInner}>
+                        <div className={classes.heroText}>
+                            <h1 id="hero-title" className={classes.heroHeading}>
+                                {content.area && <span className={classes.eyebrow}>{content.area}</span>}
+                                <span className={classes.heroTitle}>{organizer.name}</span>
+                            </h1>
+                            {content.tagline && <p className={classes.heroLead}>{content.tagline}</p>}
+                            {addressLine && (
+                                <p className={classes.heroMeta}><span><IconMapPin size={18}/> {addressLine}</span></p>
+                            )}
+                            <div className={classes.heroActions}>
+                                {phone ? (
+                                    <a href={`tel:${phone}`} className={classes.primaryCta}>
+                                        <IconPhone size={20}/> {t`Book a table`}
+                                    </a>
+                                ) : (
+                                    <button type="button" className={classes.primaryCta} onClick={openContact}>{t`Book a table`}</button>
+                                )}
+                                <a href={featured ? '#next-event' : sitePath('evenements')} className={classes.secondaryCta}>
+                                    {t`See the nights`} <IconChevronDown size={18}/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                ) : featured ? (
                     <div className={classes.heroInner}>
                         <div className={classes.heroText}>
                             <h1 id="hero-title" className={classes.heroHeading}>
@@ -104,6 +136,54 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
                     </div>
                 )}
             </section>
+
+            {isVenue && practical.length > 0 && (
+                <section className={classes.section} aria-labelledby="venue-info-title">
+                    <SectionHead id="venue-info-title" eyebrow={t`Practical info`} title={t`Come and see us.`}/>
+                    <div className={classes.infoGrid}>
+                        {practical.map(item => (
+                            <div key={item.title} className={classes.infoItem}>
+                                <h3>{item.title}</h3>
+                                {item.text && <p>{item.text}</p>}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {isVenue && featured && (
+                <section id="next-event" className={classes.section} aria-labelledby="next-event-title">
+                    <div className={classes.heroInner}>
+                        <div className={classes.heroText}>
+                            <h2 id="next-event-title" className={classes.heroHeading}>
+                                <span className={classes.eyebrow}>{t`Next night`}</span>
+                                <span className={classes.nextEventTitle}>{featured.title}</span>
+                            </h2>
+                            <p className={classes.heroMeta}>
+                                <span className={classes.capitalize}>{longDate(featured)}</span>
+                                <span>{time(featured.start_date, featured)}</span>
+                            </p>
+                            <Countdown startDate={featured.start_date}/>
+                            <div className={classes.heroActions}>
+                                <Link to={bookingPath} className={classes.primaryCta}>
+                                    {bookingLabel}
+                                    {fromPrice && !allSoldOut && <span className={classes.ctaPrice}>{fromPrice}</span>}
+                                </Link>
+                            </div>
+                        </div>
+                        {(featuredCover || featuredVideo) && (
+                            <Link to={bookingPath} className={classes.heroPoster} aria-label={t`Book ${featured.title}`}>
+                                {featuredVideoSource ? (
+                                    <video src={featuredVideoSource} poster={featuredCover} autoPlay muted loop playsInline
+                                           preload="metadata" aria-label={t`Poster of ${featured.title}`}/>
+                                ) : featuredCover && (
+                                    <img src={featuredCover} alt={t`Poster of ${featured.title}`}/>
+                                )}
+                            </Link>
+                        )}
+                    </div>
+                </section>
+            )}
 
             {featured && tiers.length > 0 && (
                 <section id="tickets" className={classes.section} aria-labelledby="tickets-title">
@@ -196,7 +276,7 @@ export const HomePage = ({organizer, eventsData, featured, tiers, fromPrice, sit
             {content.services && content.services.length > 0 && (
                 <section className={classes.section} aria-labelledby="services-teaser-title">
                     <div className={classes.sectionHeadRow}>
-                        <SectionHead id="services-teaser-title" eyebrow={t`Services`} title={t`Our expertise.`}/>
+                        <SectionHead id="services-teaser-title" eyebrow={t`Services`} title={isVenue ? t`On the menu.` : t`Our expertise.`}/>
                         <Link to={sitePath('services')} className={classes.textLink}>
                             {t`Discover our services`} <IconArrowRight size={14}/>
                         </Link>
