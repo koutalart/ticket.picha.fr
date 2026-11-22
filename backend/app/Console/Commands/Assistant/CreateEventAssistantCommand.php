@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiEvents\Console\Commands\Assistant;
 
 use Carbon\Carbon;
+use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
 use HiEvents\Exceptions\AssistantActionRefusedException;
 use HiEvents\Exceptions\PosterMediaException;
@@ -12,16 +13,20 @@ use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Event\ApplyEventPosterHandler;
 use HiEvents\Services\Application\Handlers\Event\CreateDraftEventHandler;
+use HiEvents\Services\Application\Handlers\Event\CreateEventImageHandler;
+use HiEvents\Services\Application\Handlers\Event\DTO\CreateEventImageDTO;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\CreateDraftEventDTO;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\DraftQuestionDTO;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\DraftTicketDTO;
 use HiEvents\Services\Domain\Assistant\DTO\AssistantScopeDTO;
 use HiEvents\Services\Infrastructure\Image\Exception\CouldNotUploadImageException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use JsonException;
 
 /**
  * Level 1: the event is created as a draft, nobody sees it until it is published with anicka:statut-evenement (level 2).
+ * The cover must first be copied by the server into storage/app/anicka-fichiers (billetterie.py does it from /data/fichiers).
  *
  * Example: php artisan anicka:creer-evenement --organisateur=4 --titre="Soirée Gala" --debut="2026-12-24 20:00"
  *   --fin="2026-12-25 04:00" --lieu="Pôle culturel, Chirongui"
@@ -31,6 +36,10 @@ use JsonException;
 class CreateEventAssistantCommand extends AbstractAssistantCommand
 {
     public const TIMEZONE = 'Indian/Mayotte';
+
+    public const FILES_DIRECTORY = 'app/anicka-fichiers';
+
+    private const COVER_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
     private const MAX_TICKETS = 20;
 
@@ -50,6 +59,8 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
         {--debut= : Start, "Y-m-d H:i", Mayotte time (required)}
         {--fin= : End, "Y-m-d H:i", Mayotte time}
         {--lieu= : Venue}
+        {--adresse= : Address of the venue}
+        {--couverture= : Cover image, file name inside storage/app/anicka-fichiers}
         {--tarifs= : JSON list of tickets: [{"nom":"Prévente","prix":15,"quantite":200}], prix without fees, 0 = free (required)}
         {--questions= : JSON list of order form questions: [{"libelle":"Ville","type":"texte|nombre|telephone|choix","obligatoire":true,"options":["A","B"]}]}
         {--affiche= : Poster (file path or https URL): accent colour, flyer and short banner}';
@@ -78,11 +89,12 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
 
         $this->tickets();
         $this->questions();
+        $this->coverPath();
 
         $poster = $this->optionalString('affiche');
 
-        if ($poster !== null && ! str_starts_with($poster, 'https://') && ! is_readable($poster)) {
-            throw new AssistantActionRefusedException(__('The poster file :path cannot be read.', ['path' => $poster]));
+        if ($poster !== null && ! str_starts_with($poster, 'https://')) {
+            $this->localPosterPath($poster);
         }
     }
 
@@ -132,15 +144,27 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
             end_date: $end?->format('Y-m-d H:i:s'),
             description: $this->optionalString('description'),
             venue_name: $this->optionalString('lieu'),
+            address: $this->optionalString('adresse'),
         ));
 
         $eventId = $result->event->getId();
+        $coverPath = $this->coverPath();
+
+        if ($coverPath !== null) {
+            $this->laravel->make(CreateEventImageHandler::class)->handle(new CreateEventImageDTO(
+                eventId: $eventId,
+                accountId: $scope->accountId(),
+                image: new UploadedFile($coverPath, basename($coverPath), mime_content_type($coverPath) ?: null, null, true),
+                imageType: ImageType::EVENT_COVER,
+            ));
+        }
 
         return [
             'evenement_id' => $eventId,
             'statut' => $result->event->getStatus(),
             'tarifs' => $result->ticket_ids,
             'questions' => $result->question_ids,
+            'couverture' => $coverPath !== null,
             'page' => $this->applyPage($scope, $eventId),
             'gerer' => rtrim((string) config('app.frontend_url'), '/').'/manage/event/'.$eventId,
         ];
@@ -190,11 +214,23 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
             return $path;
         }
 
-        if (! is_file($value) || ! is_readable($value)) {
+        return $this->localPosterPath($value);
+    }
+
+    /**
+     * A file name alone points inside storage/app/anicka-fichiers, where billetterie.py copies the client files.
+     *
+     * @throws AssistantActionRefusedException
+     */
+    private function localPosterPath(string $value): string
+    {
+        $path = str_starts_with($value, '/') ? $value : storage_path(self::FILES_DIRECTORY.'/'.basename($value));
+
+        if (! is_file($path) || ! is_readable($path)) {
             throw new AssistantActionRefusedException(__('The poster file :path cannot be read.', ['path' => $value]));
         }
 
-        return $value;
+        return $path;
     }
 
     /**
@@ -326,6 +362,31 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
                 description: $typeName === 'nombre' ? __('Answer in figures.') : null,
             );
         }, $items, array_keys($items));
+    }
+
+    /**
+     * @throws AssistantActionRefusedException
+     */
+    private function coverPath(): ?string
+    {
+        $value = $this->optionalString('couverture');
+
+        if ($value === null) {
+            return null;
+        }
+
+        $directory = realpath(storage_path(self::FILES_DIRECTORY));
+        $path = realpath(str_starts_with($value, '/') ? $value : storage_path(self::FILES_DIRECTORY.'/'.$value));
+
+        if ($directory === false || $path === false || ! str_starts_with($path, $directory.DIRECTORY_SEPARATOR) || ! is_file($path)) {
+            throw new AssistantActionRefusedException(__('The cover :file was not found in the files given to the assistant.', ['file' => $value]));
+        }
+
+        if (! in_array(mime_content_type($path), self::COVER_MIME_TYPES, true)) {
+            throw new AssistantActionRefusedException(__('The cover must be a JPEG, PNG or WebP image.'));
+        }
+
+        return $path;
     }
 
     private function isYes(mixed $value): bool
