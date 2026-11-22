@@ -30,5 +30,6 @@ class TicketDataDTO extends BaseDataObject
         public readonly ?string $footerDomain = null,
         public readonly ?string $footerLogo = null,
         public readonly ?TicketCardDesignDTO $cardDesign = null,
+        public readonly bool $showSeller = true,
     ) {}
 }

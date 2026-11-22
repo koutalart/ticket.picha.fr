@@ -99,17 +99,20 @@ class TicketLayoutBuilder
      */
     private function title(string $eventTitle): array
     {
-        $title = $this->field($eventTitle, 38);
+        $title = $this->field($eventTitle, 76);
         $length = mb_strlen($title);
         [$y, $height, $width] = match (true) {
             $length <= 22 => [168, 66, 58],
             $length <= 30 => [178, 52, 44],
-            default => [186, 40, 32],
+            $length <= 38 => [186, 40, 32],
+            default => [172, 30, 25],
         };
 
         return [
             new TicketTextElement(37, 150, 15, 15, $this->spaced(mb_strtoupper(__('Event')))),
-            new TicketTextElement(37, $y, $height, $width, $title),
+            $length <= 38
+                ? new TicketTextElement(37, $y, $height, $width, $title)
+                : new TicketTextElement(37, $y, $height, $width, $title, 565, 'L', 2),
             new TicketBoxElement(37, 236, 100, 6, 3, 1),
         ];
     }
@@ -157,7 +160,7 @@ class TicketLayoutBuilder
         $publicId = $this->field($ticket->publicId, 48);
         $elements = [];
 
-        $seller = $this->field($ticket->sellerName, 30);
+        $seller = $ticket->showSeller ? $this->field($ticket->sellerName, 30) : '';
         if ($seller !== '') {
             $elements[] = new TicketTextElement(324, 254, 17, 15, $this->field(__('Seller: :name', ['name' => $seller]), 40), 272, 'C');
         }

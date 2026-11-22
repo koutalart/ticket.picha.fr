@@ -108,7 +108,7 @@ class AttendeeTicketZplServiceTest extends TestCase
         self::assertStringContainsString('^FO37,52^A0N,40,34^FB565,2,0,C^FDPicha Live\\&^FS', $zpl);
     }
 
-    public function test_long_titles_use_smaller_font(): void
+    public function test_long_titles_wrap_on_two_lines(): void
     {
         $zpl = $this->service()->generate(new TicketDataDTO(
             publicId: 'A-SAFE',
@@ -116,7 +116,7 @@ class AttendeeTicketZplServiceTest extends TestCase
             productTitle: 'PASS',
         ));
 
-        self::assertStringContainsString('^FO37,186^A0N,40,32^FDFestival international des musiques de^FS', $zpl);
+        self::assertStringContainsString('^FB565,2,0,L^FDFestival international des musiques de Mayotte', $zpl);
     }
 
     public function test_omits_empty_rows_and_name(): void
