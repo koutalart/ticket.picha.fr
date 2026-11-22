@@ -10,9 +10,11 @@ use HiEvents\DomainObjects\Generated\SmsConversationDomainObjectAbstract;
 use HiEvents\DomainObjects\OrganizerTeamContactDomainObject;
 use HiEvents\Exceptions\InvalidSmsPhoneNumberException;
 use HiEvents\Exceptions\OrganizerTeamContactException;
+use HiEvents\Exceptions\SmsInternalStaffPhoneException;
 use HiEvents\Helper\SmsPhoneNormalizer;
 use HiEvents\Repository\Interfaces\OrganizerTeamContactRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
+use HiEvents\Services\Domain\Sms\SmsInternalStaffGuard;
 use Illuminate\Support\Collection;
 
 /**
@@ -27,6 +29,7 @@ class OrganizerTeamContactService
         private readonly OrganizerTeamContactRepositoryInterface $contactRepository,
         private readonly SmsConversationRepositoryInterface $conversationRepository,
         private readonly PlatformSupervisorService $supervisorService,
+        private readonly SmsInternalStaffGuard $staffGuard,
     ) {}
 
     /**
@@ -51,6 +54,7 @@ class OrganizerTeamContactService
      *
      * @throws InvalidSmsPhoneNumberException
      * @throws OrganizerTeamContactException
+     * @throws SmsInternalStaffPhoneException
      */
     public function save(int $organizerId, string $phone, ?string $name, OrganizerTeamContactRole $role): OrganizerTeamContactDomainObject
     {
@@ -58,6 +62,10 @@ class OrganizerTeamContactService
 
         if ($this->supervisorService->isSupervisor($normalized)) {
             throw new OrganizerTeamContactException(__('This number belongs to the platform supervision and cannot join a team'));
+        }
+
+        if ($this->staffGuard->isStaffPhoneForClient($organizerId, $normalized)) {
+            throw new SmsInternalStaffPhoneException(__('This number belongs to the PICHA team and cannot join the team of an organizer'));
         }
 
         $name = trim((string) $name);

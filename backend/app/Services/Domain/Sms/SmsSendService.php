@@ -131,7 +131,7 @@ class SmsSendService
         /** @var SmsMessageDomainObject $message */
         $message = $this->messageRepository->create([
             SmsMessageDomainObjectAbstract::SMS_CONVERSATION_ID => $conversation->getId(),
-            SmsMessageDomainObjectAbstract::ORGANIZER_ID => $sms->organizerId,
+            SmsMessageDomainObjectAbstract::ORGANIZER_ID => $conversation->getOrganizerId(),
             SmsMessageDomainObjectAbstract::DIRECTION => SmsMessageDirection::OUTBOUND->name,
             SmsMessageDomainObjectAbstract::AUTHOR_TYPE => $sms->authorType->name,
             SmsMessageDomainObjectAbstract::SENT_BY_USER_ID => $sms->sentByUserId,

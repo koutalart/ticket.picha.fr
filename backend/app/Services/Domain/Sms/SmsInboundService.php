@@ -41,6 +41,7 @@ class SmsInboundService
         private readonly SmsOptOutRepositoryInterface $optOutRepository,
         private readonly SmsConversationService $conversationService,
         private readonly DatabaseManager $databaseManager,
+        private readonly SmsInternalStaffGuard $staffGuard,
     ) {}
 
     /**
@@ -68,7 +69,7 @@ class SmsInboundService
             /** @var SmsMessageDomainObject $message */
             $message = $this->messageRepository->create([
                 SmsMessageDomainObjectAbstract::SMS_CONVERSATION_ID => $conversation->getId(),
-                SmsMessageDomainObjectAbstract::ORGANIZER_ID => $settings->getOrganizerId(),
+                SmsMessageDomainObjectAbstract::ORGANIZER_ID => $conversation->getOrganizerId(),
                 SmsMessageDomainObjectAbstract::DIRECTION => SmsMessageDirection::INBOUND->name,
                 SmsMessageDomainObjectAbstract::AUTHOR_TYPE => SmsMessageAuthorType::CONTACT->name,
                 SmsMessageDomainObjectAbstract::CONTENT => $sms->content,
@@ -88,7 +89,7 @@ class SmsInboundService
                 occurredAt: $fromHistory || $createdAt !== null ? ($this->parseTimestamp($sms->timestamp) ?? $createdAt) : null,
                 lineSettingsId: $lineSettingsId,
             );
-            $this->applyKeyword($settings->getOrganizerId(), $phone, $sms->content);
+            $this->applyKeyword($conversation->getOrganizerId(), $phone, $sms->content);
 
             return $message;
         });
@@ -111,6 +112,10 @@ class SmsInboundService
         ?int $lineSettingsId = null,
     ): ?SmsMessageDomainObject {
         $organizerIds ??= [$settings->getOrganizerId()];
+        $internalOrganizerId = $this->staffGuard->internalOrganizerId();
+        if ($internalOrganizerId !== null && ! in_array($internalOrganizerId, $organizerIds, true)) {
+            $organizerIds[] = $internalOrganizerId;
+        }
 
         $byProviderId = $this->findByProviderId($event->providerMessageId);
         if ($byProviderId !== null && ! in_array($byProviderId->getOrganizerId(), $organizerIds, true)) {
@@ -133,7 +138,7 @@ class SmsInboundService
             /** @var SmsMessageDomainObject $message */
             $message = $this->messageRepository->create([
                 SmsMessageDomainObjectAbstract::SMS_CONVERSATION_ID => $conversation->getId(),
-                SmsMessageDomainObjectAbstract::ORGANIZER_ID => $settings->getOrganizerId(),
+                SmsMessageDomainObjectAbstract::ORGANIZER_ID => $conversation->getOrganizerId(),
                 SmsMessageDomainObjectAbstract::DIRECTION => SmsMessageDirection::OUTBOUND->name,
                 SmsMessageDomainObjectAbstract::AUTHOR_TYPE => SmsMessageAuthorType::CAMPAIGN->name,
                 SmsMessageDomainObjectAbstract::CONTENT => $content,

@@ -14,6 +14,7 @@ use HiEvents\Services\Domain\Sms\DTO\InboundSmsDTO;
 use HiEvents\Services\Domain\Sms\DTO\OutboundSmsEventDTO;
 use HiEvents\Services\Domain\Sms\SmsConversationService;
 use HiEvents\Services\Domain\Sms\SmsInboundService;
+use HiEvents\Services\Domain\Sms\SmsInternalStaffGuard;
 use Illuminate\Database\DatabaseManager;
 use Mockery;
 use Mockery\MockInterface;
@@ -26,6 +27,8 @@ class SmsInboundServiceTest extends TestCase
     private SmsOptOutRepositoryInterface|MockInterface $optOutRepository;
 
     private SmsConversationService|MockInterface $conversationService;
+
+    private SmsInternalStaffGuard|MockInterface $staffGuard;
 
     private SmsInboundService $service;
 
@@ -40,6 +43,8 @@ class SmsInboundServiceTest extends TestCase
         $this->messageRepository = Mockery::mock(SmsMessageRepositoryInterface::class);
         $this->optOutRepository = Mockery::mock(SmsOptOutRepositoryInterface::class);
         $this->conversationService = Mockery::mock(SmsConversationService::class);
+        $this->staffGuard = Mockery::mock(SmsInternalStaffGuard::class);
+        $this->staffGuard->shouldReceive('internalOrganizerId')->andReturnNull()->byDefault();
         $databaseManager = Mockery::mock(DatabaseManager::class);
         $databaseManager->shouldReceive('transaction')->andReturnUsing(fn ($callback) => $callback());
 
@@ -48,6 +53,7 @@ class SmsInboundServiceTest extends TestCase
             $this->optOutRepository,
             $this->conversationService,
             $databaseManager,
+            $this->staffGuard,
         );
 
         $this->settings = (new OrganizerSmsSettingDomainObject)
@@ -92,6 +98,45 @@ class SmsInboundServiceTest extends TestCase
         $this->messageRepository->shouldNotReceive('hasSameInboundOnLineSince');
 
         $this->assertFalse($this->service->isRecentDuplicate(1, $this->inbound('  ')));
+    }
+
+    public function test_inbound_sms_of_a_staff_number_is_stored_with_the_organizer_of_the_conversation(): void
+    {
+        $internalConversation = (new SmsConversationDomainObject)->setId(90)->setOrganizerId(19)->setPhone('+262639123456')
+            ->setStatus('OPEN')->setUnreadCount(0);
+
+        $this->messageRepository->shouldReceive('findFirstWhere')->andReturnNull();
+        $this->conversationService->shouldReceive('findOrCreate')->with($this->settings, '+262639123456')->andReturn($internalConversation);
+        $this->conversationService->shouldReceive('recordActivity')->once();
+        $this->conversationService->shouldReceive('isOptedOut')->never();
+        $this->messageRepository->shouldReceive('create')
+            ->once()
+            ->withArgs(fn (array $attributes) => $attributes['organizer_id'] === 19 && $attributes['sms_conversation_id'] === 90)
+            ->andReturn((new SmsMessageDomainObject)->setId(99)->setOrganizerId(19));
+
+        $message = $this->service->recordInbound($this->settings, $this->inbound('Scan ok'));
+
+        $this->assertSame(19, $message->getOrganizerId());
+    }
+
+    public function test_status_events_also_look_for_messages_of_the_internal_organizer(): void
+    {
+        $this->staffGuard->shouldReceive('internalOrganizerId')->andReturn(19);
+        $existing = (new SmsMessageDomainObject)->setId(5)->setOrganizerId(19)->setStatus('PENDING')->setProviderMessageId('prov-5');
+
+        $this->messageRepository->shouldReceive('findFirstWhere')->with(['provider_message_id' => 'prov-5'])->andReturn($existing);
+        $this->messageRepository->shouldReceive('updateFromArray')->once()->withArgs(fn (int $id, array $attributes) => $id === 5
+            && $attributes['status'] === SmsMessageStatus::DELIVERED->name)->andReturn($existing);
+
+        $this->service->recordOutboundEvent($this->settings, new OutboundSmsEventDTO(
+            status: SmsMessageStatus::DELIVERED,
+            providerMessageId: 'prov-5',
+            contact: '+262639123456',
+            content: 'Point du soir',
+            requestId: null,
+            errorMessage: null,
+            timestamp: null,
+        ));
     }
 
     public function test_inbound_message_is_stored_and_marks_conversation_unread(): void

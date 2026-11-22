@@ -24,6 +24,8 @@ use HiEvents\Services\Domain\Sms\SmsConversationService;
 use HiEvents\Services\Domain\Sms\SmsLineService;
 use HiEvents\Services\Domain\Sms\Team\OrganizerTeamContactService;
 use HiEvents\Services\Domain\Sms\Team\PlatformSupervisorService;
+use HiEvents\Services\Infrastructure\UneAnicka\DTO\UneAnickaDecisionDTO;
+use HiEvents\Services\Infrastructure\UneAnicka\UneAnickaClient;
 use Illuminate\Support\Facades\Bus;
 use Mockery;
 use Mockery\MockInterface;
@@ -103,6 +105,29 @@ class SmsAutoReplyServiceTest extends TestCase
         $this->assertSkipped(SmsAutoReplySkipReason::TEAM_CONTACT, null, self::HOLDING);
         self::assertFalse($this->service()->queueIfEligible(3, 9, new SmsAssistantResultDTO(SmsAssistantOutcome::NEEDS_HUMAN, null, 'Invitation', holdingReply: self::HOLDING)));
         Bus::assertNotDispatched(SendSmsAutoReplyJob::class);
+    }
+
+    public function test_router_holds_the_holding_reply_when_someone_else_is_talking_to_the_person(): void
+    {
+        $router = Mockery::mock(UneAnickaClient::class);
+        $router->shouldReceive('decide')
+            ->withArgs(fn (string $system, string $contact, string $channel) => $system === 'billetterie-attente' && $contact === '+262639000001' && $channel === 'sms')
+            ->andReturn(new UneAnickaDecisionDTO(false, 'R3', 'session-claude a écrit à 08:09'));
+
+        $check = $this->service($router)->check(3, 9, null, self::HOLDING);
+
+        self::assertFalse($check->isAllowed());
+        self::assertSame(SmsAutoReplySkipReason::ROUTER_HELD, $check->skipReason);
+    }
+
+    public function test_router_lets_the_answer_leave_when_nobody_else_is_talking_to_the_person(): void
+    {
+        $router = Mockery::mock(UneAnickaClient::class);
+        $router->shouldReceive('decide')
+            ->withArgs(fn (string $system) => $system === 'billetterie-assistant')
+            ->andReturn(new UneAnickaDecisionDTO(true, 'OK', 'permis'));
+
+        self::assertTrue($this->service($router)->check(3, 9, self::REPLY, self::HOLDING)->isAllowed());
     }
 
     public function test_team_conversation_gets_no_automatic_reply(): void
@@ -442,7 +467,7 @@ class SmsAutoReplyServiceTest extends TestCase
         $this->messageRepository->shouldReceive('hasOutboundToPhoneAfter')->andReturnFalse()->byDefault();
     }
 
-    private function service(): SmsAutoReplyService
+    private function service(?UneAnickaClient $router = null): SmsAutoReplyService
     {
         return new SmsAutoReplyService(
             $this->assistantService,
@@ -454,6 +479,7 @@ class SmsAutoReplyServiceTest extends TestCase
             $this->customerLocaleResolver = new StaticCustomerLocaleResolver,
             $this->teamContactService,
             $this->supervisorService,
+            $router,
         );
     }
 

@@ -45,6 +45,10 @@ msgstr "(Emojis oder Sonderzeichen: 70 Zeichen pro SMS)"
 msgid "(empty)"
 msgstr "(leer)"
 
+#: src/components/routes/organizer/QrCodes/QrCampaignCard.tsx:36
+msgid "{0, plural, one {# QR code} other {# QR codes}}"
+msgstr "{0, plural, one {# QR-Code} other {# QR-Codes}}"
+
 #: src/components/routes/event/EventDashboard/QuestionBreakdown.tsx:23
 msgid "{0, plural, one {# response} other {# responses}}"
 msgstr "{0, plural, one {# Antwort} other {# Antworten}}"
@@ -168,6 +172,10 @@ msgstr ""
 msgid "{0} from {1} to {2}"
 msgstr ""
 
+#: src/components/routes/organizer/OrganizerDashboard/QrLinksOverview.tsx:80
+msgid "{0} links"
+msgstr "{0} Links"
+
 #: src/components/layouts/AppLayout/Sidebar/index.tsx:81
 #: src/components/layouts/AuthLayout/index.tsx:138
 #: src/components/layouts/ManageShell/index.tsx:131
@@ -196,9 +204,13 @@ msgstr "{0} Veranstalter"
 msgid "{0} places left"
 msgstr ""
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:47
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:79
 msgid "{0} presents"
 msgstr ""
+
+#: src/components/routes/organizer/OrganizerDashboard/QrLinksOverview.tsx:84
+msgid "{0} scans · {1} clicks"
+msgstr "{0} Scans · {1} Klicks"
 
 #: src/components/routes/organizer/Contacts/index.tsx:330
 msgid "{0} selected contacts"
@@ -281,7 +293,7 @@ msgstr "{availableCount} von {totalCount} verfügbar"
 msgid "{COMMENT_MAX_LENGTH} characters maximum."
 msgstr "Maximal {COMMENT_MAX_LENGTH} Zeichen."
 
-#: src/components/common/Countdown/index.tsx:36
+#: src/components/common/Countdown/index.tsx:37
 msgid "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds"
 msgstr "{days} Tage, {hours} Stunden, {minutes} Minuten und {seconds} Sekunden"
 
@@ -294,7 +306,7 @@ msgstr ""
 msgid "{eventCount} events"
 msgstr "{eventCount} Ereignisse"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1923
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1926
 msgid "{formattedUnitPrice} per place"
 msgstr "{formattedUnitPrice} pro Platz"
 
@@ -306,7 +318,7 @@ msgstr "{guestName} wurde hinzugefügt. Das Ticket wurde per E-Mail gesendet."
 msgid "{hours} h ago"
 msgstr "vor {hours} Std."
 
-#: src/components/common/Countdown/index.tsx:39
+#: src/components/common/Countdown/index.tsx:40
 msgid "{hours} hours, {minutes} minutes, and {seconds} seconds"
 msgstr "{hours} Stunden, {minutes} Minuten und {seconds} Sekunden"
 
@@ -318,9 +330,13 @@ msgstr "{kilobytes} KB"
 msgid "{minutes} min ago"
 msgstr "vor {minutes} Min."
 
-#: src/components/common/Countdown/index.tsx:41
+#: src/components/common/Countdown/index.tsx:42
 msgid "{minutes} minutes and {seconds} seconds"
 msgstr "{minutes} Minuten und {seconds} Sekunden"
+
+#: src/components/routes/organizer/QrCodes/QrCampaignCard.tsx:37
+msgid "{orders, plural, one {# order} other {# orders}}"
+msgstr "{orders, plural, one {# Bestellung} other {# Bestellungen}}"
 
 #: src/components/common/OrganizerDocumentHead/index.tsx:16
 msgid "{organizerName} - Events"
@@ -330,8 +346,8 @@ msgstr "{organizerName} - Veranstaltungen"
 msgid "{organizerName}'s first event"
 msgstr "Erste Veranstaltung von {organizerName}"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1878
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1895
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1881
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1898
 msgid "{participantsCount} of {maxParticipants} places"
 msgstr "{participantsCount} von {maxParticipants} Plätzen"
 
@@ -380,7 +396,7 @@ msgstr "{uses} / {max} genutzt"
 msgid "{uses} used"
 msgstr "{uses} genutzt"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:92
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:142
 msgid "{value} days"
 msgstr ""
 
@@ -389,7 +405,7 @@ msgid "/ {0} scanned"
 msgstr ""
 
 #: src/components/routes/event/EventDashboard/index.tsx:99
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:107
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:109
 msgid "+ {0} awaiting payment collection"
 msgstr "+ {0} ausstehende Zahlung"
 
@@ -398,7 +414,7 @@ msgstr "+ {0} ausstehende Zahlung"
 msgid "+ {formattedFees} in fees"
 msgstr "+ {formattedFees} Gebühren"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1585
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1588
 msgid "+ service fees, detailed before payment"
 msgstr "+ Servicegebühren, vor der Zahlung aufgeschlüsselt"
 
@@ -439,7 +455,7 @@ msgstr "<0>Webhooks benachrichtigen externe Dienste sofort, wenn Ereignisse eint
 msgid "≈ {0} at current rate"
 msgstr "≈ {0} zum aktuellen Kurs"
 
-#: src/components/common/Countdown/index.tsx:16
+#: src/components/common/Countdown/index.tsx:17
 msgid "0 minutes and 0 seconds"
 msgstr "0 Minuten und 0 Sekunden"
 
@@ -475,6 +491,10 @@ msgstr "1 Tag vor der Veranstaltung"
 #: src/components/modals/SendMessageModal/index.tsx:116
 msgid "1 hour before event"
 msgstr "1 Stunde vor der Veranstaltung"
+
+#: src/components/routes/organizer/OrganizerDashboard/QrLinksOverview.tsx:80
+msgid "1 link"
+msgstr "1 Link"
 
 #: src/components/forms/ProductForm/index.tsx:506
 msgid "1 per order"
@@ -543,6 +563,10 @@ msgstr "94103"
 msgid "A <0>flawless</0> event welcome, from the first registrant to the last badge."
 msgstr "Ein <0>tadelloser</0> Empfang – von der ersten Anmeldung bis zum letzten Namensschild."
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:660
+msgid "A campaign groups the QR codes of one operation and adds up their results."
+msgstr "Eine Kampagne bündelt die QR-Codes einer Aktion und addiert ihre Ergebnisse."
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:261
 msgid "A cancellation notice has been sent to"
 msgstr "Eine Stornierungsbenachrichtigung wurde gesendet an"
@@ -575,7 +599,7 @@ msgstr "Eine Gebühr, beispielsweise eine Buchungsgebühr oder eine Servicegebü
 msgid "A few details are missing, they're marked in red."
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1770
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1773
 msgid "A few details for each participant."
 msgstr "Ein paar Angaben zu jeder teilnehmenden Person."
 
@@ -693,7 +717,7 @@ msgid "A token is saved. Paste a new one to replace it."
 msgstr ""
 
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:190
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:711
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:714
 msgid "A valid email is required"
 msgstr "Eine gültige E-Mail-Adresse ist erforderlich"
 
@@ -705,7 +729,7 @@ msgstr "Eine gültige Telefonnummer ist erforderlich"
 msgid "A welcome without queues"
 msgstr "Empfang ohne Warteschlange"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:163
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:185
 msgid "A4 poster"
 msgstr ""
 
@@ -767,7 +791,7 @@ msgstr "Einladung annehmen"
 msgid "Accept SMS"
 msgstr "Akzeptieren SMS"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2143
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2146
 msgid "Accepted cards: Visa, Mastercard"
 msgstr "Akzeptierte Karten: Visa, Mastercard"
 
@@ -881,7 +905,7 @@ msgstr "Handlung erforderlich: Umsatzsteuerinformationen benötigt"
 #: src/components/common/WaitlistTable/index.tsx:55
 #: src/components/common/WaitlistTable/index.tsx:215
 #: src/components/routes/admin/FailedJobs/index.tsx:167
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:109
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:72
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -903,7 +927,6 @@ msgstr "Aktivierungsdatum"
 #: src/components/modals/EditUserModal/index.tsx:110
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:105
 #: src/components/routes/event/BoxOffice/Operators/index.tsx:116
-#: src/components/routes/organizer/QrCodes/index.tsx:283
 #: src/components/routes/organizer/Sms/KeywordsView.tsx:87
 #: src/components/routes/organizer/Sms/KeywordsView.tsx:93
 #: src/components/routes/viewer/Event.tsx:105
@@ -946,7 +969,7 @@ msgstr ""
 msgid "Add a link"
 msgstr "Link hinzufügen"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:390
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:474
 msgid "Add a network"
 msgstr ""
 
@@ -954,8 +977,8 @@ msgstr ""
 msgid "Add a note"
 msgstr "Notiz hinzufügen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1875
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1892
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1878
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1895
 msgid "Add a participant"
 msgstr "Teilnehmer hinzufügen"
 
@@ -1063,7 +1086,7 @@ msgstr "Meinen Gast hinzufügen"
 msgid "Add New"
 msgstr "Neue hinzufügen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1949
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1952
 msgid "Add one"
 msgstr "Einen Platz hinzufügen"
 
@@ -1092,7 +1115,7 @@ msgstr "Steuern oder Gebühren hinzufügen"
 msgid "Add the number"
 msgstr "Nummer hinzufügen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1989
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1992
 msgid "Add the peace of mind option for {amount}"
 msgstr ""
 
@@ -1100,7 +1123,7 @@ msgstr ""
 msgid "Add the peace of mind option for {price}"
 msgstr "Sorglos-Option für {price} hinzufügen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1988
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1991
 msgid "Add the peace of mind option to your other tickets for {amount}"
 msgstr ""
 
@@ -1340,15 +1363,15 @@ msgstr "Alle"
 msgid "All"
 msgstr "Alle"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:74
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:76
 msgctxt "events tab"
 msgid "All"
 msgstr "Alle"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:282
-msgctxt "qr status filter"
-msgid "All"
-msgstr "Alle"
+#~ msgctxt "qr status filter"
+#~ msgid "All"
+#~ msgstr "Alle"
 
 #: src/components/routes/events/Dashboard/index.tsx:76
 msgid "All Archived Events"
@@ -1379,7 +1402,7 @@ msgstr "Fertig! Sie verwenden jetzt unser verbessertes Zahlungssystem."
 msgid "All Ended Events"
 msgstr "Alle beendeten Veranstaltungen"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:187
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:267
 msgid "All events"
 msgstr ""
 
@@ -1398,8 +1421,8 @@ msgstr "Alle Jobs zur Wiederholung eingereiht"
 #: src/components/routes/organizer/QrCodes/index.tsx:159
 #: src/components/routes/organizer/QrCodes/index.tsx:164
 #: src/components/routes/organizer/QrCodes/index.tsx:205
-msgid "All QR codes"
-msgstr ""
+#~ msgid "All QR codes"
+#~ msgstr ""
 
 #: src/components/routes/event/SoldOutWaitlist/index.tsx:64
 msgid "All Statuses"
@@ -1481,8 +1504,8 @@ msgid "Already Refunded"
 msgstr "Bereits erstattet"
 
 #: src/components/layouts/EventHomepage/AttendanceAccess/index.tsx:43
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1532
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2410
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1535
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2413
 msgid "Already registered? Manage my attendance"
 msgstr "Bereits angemeldet? Meine Teilnahme verwalten"
 
@@ -1490,7 +1513,7 @@ msgstr "Bereits angemeldet? Meine Teilnahme verwalten"
 msgid "Also cancel this order"
 msgstr "Diese Bestellung auch stornieren"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:185
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:265
 msgid "Also coming up."
 msgstr ""
 
@@ -1601,11 +1624,11 @@ msgstr "Anicka:"
 msgid "Annual Convention"
 msgstr "Jahreskonvent"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:303
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:343
 msgid "Another link"
 msgstr ""
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:255
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:335
 msgid "Another question? Contact the organizer"
 msgstr ""
 
@@ -1646,11 +1669,11 @@ msgstr "Alle Anfragen von Produktinhabern werden an diese E-Mail-Adresse gesende
 msgid "API key removed"
 msgstr "API-Schlüssel entfernt"
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:48
+#: src/components/routes/organizer/QrCodes/qrLinkHelpers.tsx:37
 msgid "App"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:324
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:408
 msgid "App Store link (iPhone, iPad)"
 msgstr ""
 
@@ -1680,7 +1703,7 @@ msgstr "Gilt für 1 Produkt"
 
 #: src/components/common/FilterModal/index.tsx:284
 #: src/components/routes/product-widget/EmbeddedRegistration/HighlightedPromo.tsx:98
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2223
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2226
 msgid "Apply"
 msgstr "Anwenden"
 
@@ -1821,7 +1844,7 @@ msgstr "Sind Sie sicher, dass Sie diese Vorlage löschen möchten? Diese Aktion 
 msgid "Are you sure you want to delete this webhook?"
 msgstr "Bist du sicher, dass du diesen Webhook löschen möchtest?"
 
-#: src/components/layouts/Checkout/index.tsx:373
+#: src/components/layouts/Checkout/index.tsx:376
 msgid "Are you sure you want to leave?"
 msgstr "Möchten Sie wirklich gehen?"
 
@@ -1913,7 +1936,7 @@ msgstr "Künstler"
 msgid "Artists on the line-up"
 msgstr "Künstler im Line-up"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1681
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1684
 msgid "As shown on your identity document."
 msgstr "Wie im Ausweisdokument angegeben."
 
@@ -2158,7 +2181,7 @@ msgid "attendees since 2019"
 msgstr ""
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:86
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:403
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:406
 msgid "Attendees under {ageLimit} must be accompanied by an adult registered in the same order."
 msgstr "Teilnehmer unter {ageLimit} Jahren müssen von einem Erwachsenen begleitet werden, der in derselben Bestellung angemeldet ist."
 
@@ -2312,6 +2335,7 @@ msgstr "Awesome Organizer Ltd."
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:289
 #: src/components/routes/organizer/EventAssistant/index.tsx:508
 #: src/components/routes/organizer/EventAssistant/index.tsx:575
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:711
 #: src/components/routes/organizer/Sms/ConversationThread.tsx:134
 msgid "Back"
 msgstr "Zurück"
@@ -2332,7 +2356,7 @@ msgid "Back to Event"
 msgstr "Zurück zum Event"
 
 #: src/components/common/ErrorDisplay/index.tsx:35
-#: src/components/layouts/Checkout/index.tsx:250
+#: src/components/layouts/Checkout/index.tsx:252
 msgid "Back to event page"
 msgstr "Zurück zur Veranstaltungsseite"
 
@@ -2359,7 +2383,7 @@ msgstr "Zurück zu den Tickets"
 msgid "Back to top"
 msgstr "Nach oben"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:516
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:649
 msgid "Background"
 msgstr ""
 
@@ -2368,7 +2392,7 @@ msgstr ""
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:424
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:561
 msgid "Background image"
 msgstr ""
 
@@ -2385,7 +2409,7 @@ msgstr "Badge + Einlass"
 msgid "Badge printing…"
 msgstr "Namensschild wird gedruckt…"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:122
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:124
 msgid "Balance due to PICHA"
 msgstr "Offener Betrag an PICHA"
 
@@ -2398,7 +2422,7 @@ msgstr "Grundinformationen"
 msgid "Beautiful checkout experience on any device"
 msgstr "Schönes Checkout-Erlebnis auf jedem Gerät"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:237
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:317
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:40
 msgid "Become a partner"
 msgstr ""
@@ -2447,15 +2471,21 @@ msgstr "Bold (700)"
 msgid "Book"
 msgstr ""
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:77
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:109
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:175
 msgid "Book {0}"
 msgstr ""
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:32
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:64
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:67
+msgid "Book a table"
+msgstr "Tisch reservieren"
+
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:33
 msgid "Book my tickets"
 msgstr ""
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:260
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:340
 msgid "Book now"
 msgstr ""
 
@@ -2630,22 +2660,21 @@ msgstr "Kamera-Scanner"
 
 #: src/components/routes/admin/Attribution/index.tsx:107
 #: src/components/routes/event/Reports/SalesBySourceReport/index.tsx:80
-#: src/components/routes/organizer/QrCodes/index.tsx:161
-#: src/components/routes/organizer/QrCodes/index.tsx:238
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:284
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:526
 #: src/components/routes/organizer/Sms/labels.ts:45
 msgid "Campaign"
 msgstr "Kampagne"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:245
+#: src/components/routes/organizer/QrCodes/QrCampaignCard.tsx:59
 msgid "Campaign actions"
 msgstr ""
 
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:28
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:284
 msgid "Campaign created"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:152
+#: src/components/routes/organizer/QrCodes/index.tsx:160
 msgid "Campaign deleted"
 msgstr ""
 
@@ -2665,8 +2694,7 @@ msgstr ""
 msgid "Campaign source (utm parameters), referring site and landing page, kept 90 days on this site to count visits and sales per channel. Exempt from consent, you can object to it."
 msgstr "Kampagnenquelle (utm-Parameter), verweisende Website und Einstiegsseite, 90 Tage auf dieser Website gespeichert, um Besuche und Verkäufe pro Kanal zu zählen. Einwilligungsfrei, Sie können widersprechen."
 
-#: src/components/routes/organizer/QrCodes/index.tsx:201
-#: src/components/routes/organizer/QrCodes/index.tsx:209
+#: src/components/routes/organizer/QrCodes/index.tsx:230
 #: src/components/routes/organizer/Sms/index.tsx:116
 msgid "Campaigns"
 msgstr "Kampagnen"
@@ -2703,12 +2731,12 @@ msgstr "Du kannst doch nicht kommen? Dein Ticket wird erstattet."
 #: src/components/routes/organizer/Publications/PostCard.tsx:83
 #: src/components/routes/organizer/Publications/RequestChangesModal.tsx:69
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:47
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:525
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:724
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:68
 #: src/components/routes/organizer/Settings/Sections/SocialPublishingSettings/index.tsx:143
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:287
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1824
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2233
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1827
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2236
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:85
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:85
 #: src/utilites/confirmationDialog.tsx:17
@@ -3015,7 +3043,7 @@ msgstr "Nur einchecken"
 msgid "Check Out"
 msgstr "Auschecken"
 
-#: src/components/layouts/Checkout/index.tsx:290
+#: src/components/layouts/Checkout/index.tsx:293
 msgid "Check out this event!"
 msgstr "Schau dir dieses Event an!"
 
@@ -3167,6 +3195,10 @@ msgstr "PDF-Datei auswählen (max. 5 MB)"
 msgid "Choose a price"
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:661
+msgid "Choose a style, check the preview, then create it."
+msgstr "Wähle einen Stil, prüfe die Vorschau und erstelle ihn."
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:358
 msgid "Choose a type"
 msgstr ""
@@ -3180,13 +3212,13 @@ msgid "Choose an account"
 msgstr "Wähle einen Account"
 
 #: src/components/routes/kiosk/SelectEvent/index.tsx:41
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:351
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:435
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:84
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:187
 msgid "Choose an event"
 msgstr "Event wählen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1627
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1630
 msgid "Choose an option"
 msgstr "Option wählen"
 
@@ -3194,7 +3226,7 @@ msgstr "Option wählen"
 msgid "Choose an Organizer"
 msgstr "Wählen Sie einen Veranstalter"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:698
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:701
 msgid "Choose at least {min} for {title}."
 msgstr "Wähle mindestens {min} für {title}."
 
@@ -3202,7 +3234,7 @@ msgstr "Wähle mindestens {min} für {title}."
 msgid "Choose at least one network"
 msgstr "Wähle mindestens ein Netzwerk"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:680
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:683
 msgid "Choose at least one ticket."
 msgstr "Wähle mindestens ein Ticket."
 
@@ -3254,6 +3286,10 @@ msgstr "Veröffentlichungszeit wählen"
 msgid "Choose the tickets to cancel."
 msgstr "Wähle die Tickets, die storniert werden sollen."
 
+#: src/components/routes/organizer/QrCodes/index.tsx:219
+msgid "Choose what it opens: your link page, an event, a website."
+msgstr "Wähle, was er öffnet: deine Linkseite, ein Event, eine Website."
+
 #: src/components/routes/organizer/EventAssistant/index.tsx:232
 msgid "Choose who is organizing this event."
 msgstr ""
@@ -3262,7 +3298,7 @@ msgstr ""
 msgid "Choose who pays the platform fee. This does not affect additional fees you've configured in your account settings."
 msgstr "Wählen Sie, wer die Plattformgebühr zahlt. Dies hat keine Auswirkungen auf zusätzliche Gebühren, die Sie in Ihren Kontoeinstellungen konfiguriert haben."
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:110
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:190
 msgid "Choose your ticket."
 msgstr ""
 
@@ -3313,8 +3349,12 @@ msgstr "Klicken, um Notizen anzuzeigen"
 msgid "Clicked"
 msgstr "Geklickt"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:72
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:151
+#: src/components/routes/organizer/OrganizerDashboard/QrLinksOverview.tsx:65
+msgid "Clicks"
+msgstr "Klicks"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:79
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:203
 msgid "Clicks on the page"
 msgstr ""
 
@@ -3377,7 +3417,7 @@ msgstr "Abschlusstitel"
 msgid "Code"
 msgstr "Code"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2193
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2196
 msgid "Code {promoCode} applied"
 msgstr "Code {promoCode} angewendet"
 
@@ -3425,7 +3465,7 @@ msgstr "Erfassen Sie Teilnehmerdetails für jedes gekaufte Ticket."
 
 #: src/components/routes/event/HomepageDesigner/index.tsx:502
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:260
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:515
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:648
 msgid "Color"
 msgstr "Farbe"
 
@@ -3454,6 +3494,10 @@ msgstr "Spalte in Ihrer Datei"
 msgid "Columns"
 msgstr "Spalten"
 
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:142
+msgid "Come and see us."
+msgstr "Besuchen Sie uns."
+
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:96
 msgid "Comedy show"
 msgstr "Comedy-Show"
@@ -3468,7 +3512,7 @@ msgid "Coming Soon"
 msgstr "Demnächst"
 
 #: src/components/organizerTemplates/Poster/pages/EventsPage.tsx:23
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:185
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:265
 msgid "Coming up"
 msgstr ""
 
@@ -3566,7 +3610,7 @@ msgstr "Komponentencode"
 msgid "Compose"
 msgstr "Verfassen"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:37
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:42
 msgid "Computer"
 msgstr ""
 
@@ -3643,7 +3687,7 @@ msgstr "Bestätigen"
 msgid "Confirm Email Change"
 msgstr "E-Mail-Änderung bestätigen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2325
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2328
 msgid "Confirm my registration"
 msgstr "Anmeldung bestätigen"
 
@@ -3926,6 +3970,7 @@ msgstr "Inhalt"
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:425
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:249
 #: src/components/routes/organizer/EventAssistant/index.tsx:513
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:716
 #: src/components/routes/product-widget/SelectProducts/index.tsx:722
 msgid "Continue"
 msgstr "Weitermachen"
@@ -3975,7 +4020,7 @@ msgid "Conversations"
 msgstr "Unterhaltungen"
 
 #: src/components/routes/event/Reports/SalesBySourceReport/index.tsx:108
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:75
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:82
 msgid "Conversion"
 msgstr ""
 
@@ -4007,7 +4052,7 @@ msgstr ""
 #: src/components/modals/EventLiveCelebrationModal/index.tsx:75
 #: src/components/modals/ShareModal/index.tsx:255
 #: src/components/routes/kiosk/Settings/PrintRelaySettings.tsx:34
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:119
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:83
 msgid "Copied"
 msgstr "Kopiert"
 
@@ -4075,7 +4120,7 @@ msgstr "Meine Daten kopieren an:"
 msgid "Copy the code"
 msgstr "Code kopieren"
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:119
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:83
 msgid "Copy the link"
 msgstr ""
 
@@ -4124,7 +4169,7 @@ msgstr ""
 msgid "Could not send the tickets to the print queue."
 msgstr "Die Tickets konnten nicht an die Druckwarteschlange gesendet werden."
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:155
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:207
 msgid "Countries"
 msgstr ""
 
@@ -4168,8 +4213,9 @@ msgstr "Titelvideo entfernt"
 msgid "Cover video saved"
 msgstr "Titelvideo gespeichert"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:193
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:199
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:48
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:519
 msgid "Create"
 msgstr "Erstellen"
 
@@ -4182,8 +4228,8 @@ msgid "Create {0} Template"
 msgstr "{0}-Vorlage erstellen"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:221
-msgid "Create a campaign to group the QR codes of one operation."
-msgstr ""
+#~ msgid "Create a campaign to group the QR codes of one operation."
+#~ msgstr ""
 
 #: src/components/common/PromoCodeTable/index.tsx:129
 #: src/components/routes/event/promo-codes.tsx:35
@@ -4206,6 +4252,10 @@ msgstr "Passwort erstellen"
 #: src/components/modals/CreateCapacityAssignmentModal/index.tsx:59
 msgid "Create a Product"
 msgstr "Ein Produkt erstellen"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:223
+msgid "Create a QR code"
+msgstr "QR-Code erstellen"
 
 #: src/components/modals/CreateCheckInListModal/index.tsx:64
 msgid "Create a Ticket"
@@ -4279,7 +4329,7 @@ msgstr "Benutzerdefinierte Vorlage erstellen"
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
 #: src/components/layouts/OrganizerLayout/index.tsx:174
 #: src/components/routes/organizer/Events/index.tsx:66
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:230
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:236
 msgid "Create Event"
 msgstr "Ereignis erstellen"
 
@@ -4325,11 +4375,11 @@ msgstr "Kontakt erstellen"
 msgid "Create the event"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:526
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:719
 msgid "Create the QR code"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:329
+#: src/components/routes/organizer/QrCodes/index.tsx:307
 msgid "Create the QR codes of this campaign: poster, flyer, story..."
 msgstr ""
 
@@ -4367,6 +4417,10 @@ msgstr "Erstellen Sie Ihre erste Veranstaltung"
 #: src/components/common/PromoCodeTable/index.tsx:126
 msgid "Create your first promo code"
 msgstr "Erstellen Sie Ihren ersten Aktionscode"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:216
+msgid "Create your first QR code"
+msgstr "Erstelle deinen ersten QR-Code"
 
 #: src/components/layouts/EventHomepage/EventNotAvailable/index.tsx:13
 #: src/components/layouts/PublicOrganizer/OrganizerNotFound/index.tsx:12
@@ -4644,7 +4698,7 @@ msgstr "Daten werden auf Servern in Frankreich (OVHcloud) gespeichert und niemal
 msgid "Data Ownership"
 msgstr "Dateneigentum"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2140
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2143
 msgid "Data protected (GDPR)"
 msgstr "Daten geschützt (DSGVO)"
 
@@ -4652,7 +4706,7 @@ msgstr "Daten geschützt (DSGVO)"
 #: src/components/common/OrderDetails/index.tsx:42
 #: src/components/common/QuestionsTable/index.tsx:73
 #: src/components/forms/QuestionForm/index.tsx:144
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:143
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:223
 #: src/components/routes/event/Reports/DailySalesReport/index.tsx:29
 #: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:124
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:120
@@ -4674,12 +4728,12 @@ msgstr "Datum und Uhrzeiten"
 #: src/components/common/AttendeeDetails/index.tsx:44
 #: src/components/common/QuestionsTable/index.tsx:373
 #: src/components/routes/product-widget/CollectInformation/index.tsx:787
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1849
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1852
 msgid "Date of birth"
 msgstr "Geburtsdatum"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:136
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:731
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:734
 msgid "Date of birth is required"
 msgstr "Das Geburtsdatum ist erforderlich"
 
@@ -4746,7 +4800,7 @@ msgstr "Standardvorlage wird verwendet"
 msgid "Default ticket language"
 msgstr "Standard-Ticketsprache"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:358
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:442
 msgid "Defaults to the event or organizer name"
 msgstr ""
 
@@ -4764,7 +4818,7 @@ msgstr "löschen"
 #: src/components/routes/event/EventPages/index.tsx:101
 #: src/components/routes/event/EventPages/index.tsx:102
 #: src/components/routes/organizer/Publications/PostCard.tsx:93
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:142
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:112
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:87
 msgid "Delete"
 msgstr "Löschen"
@@ -4816,11 +4870,11 @@ msgstr "Veranstalter löschen"
 msgid "Delete Template"
 msgstr "Vorlage löschen"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:256
+#: src/components/routes/organizer/QrCodes/QrCampaignCard.tsx:69
 msgid "Delete the campaign"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:148
+#: src/components/routes/organizer/QrCodes/index.tsx:156
 msgid "Delete the campaign \"{0}\"? Its QR codes are kept and keep working, they just move to \"No campaign\"."
 msgstr ""
 
@@ -4836,7 +4890,7 @@ msgstr "Abonnenten löschen"
 msgid "Delete this post from the log?"
 msgstr "Diesen Beitrag aus dem Protokoll löschen?"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:139
+#: src/components/routes/organizer/QrCodes/index.tsx:147
 msgid "Delete this QR code? Printed copies will stop working and its statistics will be lost."
 msgstr ""
 
@@ -4906,7 +4960,7 @@ msgstr "Einzelheiten"
 msgid "Device token"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:152
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:204
 msgid "Devices"
 msgstr ""
 
@@ -4924,7 +4978,7 @@ msgstr "Digitale Anwesenheitsliste"
 msgid "Direct"
 msgstr "Direkt"
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:47
+#: src/components/routes/organizer/QrCodes/qrLinkHelpers.tsx:36
 msgid "Direct link"
 msgstr ""
 
@@ -4960,7 +5014,7 @@ msgstr "Rabatt %"
 msgid "Discount in {0}"
 msgstr "Rabatt in {0}"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:201
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:281
 msgid "Discover our services"
 msgstr ""
 
@@ -4968,7 +5022,7 @@ msgstr ""
 msgid "Discover our story and vision"
 msgstr ""
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:100
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:132
 msgid "Discover our universe"
 msgstr ""
 
@@ -5028,7 +5082,7 @@ msgstr "Nicht vergessen!"
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "Haben Sie noch kein Konto? <0>Registrieren</0>"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:261
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:341
 msgid "Don't miss {0}."
 msgstr ""
 
@@ -5068,11 +5122,19 @@ msgstr "Datei herunterladen"
 msgid "Download invoice"
 msgstr "Rechnung herunterladen"
 
-#: src/components/layouts/Checkout/index.tsx:310
+#: src/components/layouts/Checkout/index.tsx:313
 msgid "Download Invoice"
 msgstr "Rechnung herunterladen"
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:130
+#: src/components/routes/organizer/QrCodes/index.tsx:220
+msgid "Download it and print it, or share its short link."
+msgstr "Lade ihn herunter und drucke ihn aus oder teile seinen Kurzlink."
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:122
+msgid "Download PNG"
+msgstr "PNG herunterladen"
+
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:100
 msgid "Download PNG (QR only)"
 msgstr ""
 
@@ -5088,7 +5150,7 @@ msgstr ""
 msgid "Download sales, attendee, and financial reports for all completed orders."
 msgstr "Laden Sie Verkaufs-, Teilnehmer- und Finanzberichte für alle abgeschlossenen Bestellungen herunter."
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:134
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:104
 msgid "Download SVG (print)"
 msgstr ""
 
@@ -5096,12 +5158,17 @@ msgstr ""
 msgid "Download the press kit"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:401
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:538
 msgid "Download the QR code alone, or a ready-to-share visual with the QR code on it."
 msgstr ""
 
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:95
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:117
+msgid "Download the visual"
+msgstr "Visual herunterladen"
+
 #: src/components/common/OrdersTable/index.tsx:99
-#: src/components/layouts/Checkout/index.tsx:99
+#: src/components/layouts/Checkout/index.tsx:101
 #: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Downloading Invoice"
 msgstr "Rechnung wird heruntergeladen"
@@ -5118,7 +5185,7 @@ msgstr "Entwurf"
 msgid "Draft saved"
 msgstr "Entwurf gespeichert"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:77
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:79
 #: src/components/routes/organizer/Publications/labels.ts:63
 msgid "Drafts"
 msgstr "Entwürfe"
@@ -5228,7 +5295,7 @@ msgstr ""
 msgid "e.g. SUMMER5"
 msgstr "z. B. SOMMER5"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:472
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:609
 msgid "E.g. TikTok"
 msgstr ""
 
@@ -5278,8 +5345,8 @@ msgstr "Früher Vogel"
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:358
 #: src/components/routes/event/GettingStarted/index.tsx:76
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:153
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:65
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:114
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:78
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:126
 #: src/components/routes/organizer/Settings/Sections/SmsReplyTemplates/index.tsx:84
 #: src/components/routes/organizer/Sms/ReminderList.tsx:100
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:290
@@ -5367,7 +5434,7 @@ msgstr "Produktkategorie bearbeiten"
 msgid "Edit Promo Code"
 msgstr "Aktionscode bearbeiten"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:266
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:690
 msgid "Edit QR code"
 msgstr ""
 
@@ -5485,7 +5552,7 @@ msgstr "E-Mail-Adresse"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:771
 #: src/components/routes/product-widget/CollectInformation/index.tsx:772
 #: src/components/routes/product-widget/EmbeddedRegistration/EmbeddedWaitlist.tsx:144
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1720
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1723
 msgid "Email Address"
 msgstr "E-Mail-Adresse"
 
@@ -5804,7 +5871,7 @@ msgstr "Gib die E-Mail-Adresse oder Telefonnummer ein, die du bei der Anmeldung 
 msgid "Enter the font name first (letters, numbers, spaces, dots, hyphens and underscores)."
 msgstr "Gib zuerst den Namen der Schrift ein (Buchstaben, Ziffern, Leerzeichen, Punkte, Bindestriche und Unterstriche)."
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1770
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1773
 msgid "Enter the name of each participant."
 msgstr "Gib den Namen jeder teilnehmenden Person an."
 
@@ -5891,7 +5958,7 @@ msgstr "Gerätemiete"
 
 #: src/components/common/OrdersTable/index.tsx:107
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
-#: src/components/layouts/Checkout/index.tsx:107
+#: src/components/layouts/Checkout/index.tsx:109
 #: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Error"
 msgstr "Fehler"
@@ -5953,7 +6020,7 @@ msgstr "EUR"
 #: src/components/routes/event/Settings/Sections/SeoSettings/index.tsx:93
 #: src/components/routes/events/Dashboard/index.tsx:183
 #: src/components/routes/kiosk/Settings/index.tsx:234
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:349
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:433
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:19
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:41
 #: src/components/routes/organizer/Reports/PlatformFeesReport/index.tsx:43
@@ -6022,7 +6089,7 @@ msgstr "Veranstaltungsbeschreibung"
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:38
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:73
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:175
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:255
 #: src/components/routes/event/GettingStarted/index.tsx:92
 msgid "Event details"
 msgstr "Veranstaltungsdetails"
@@ -6048,7 +6115,7 @@ msgstr "Veranstaltungsplakat"
 msgid "Event Full Address"
 msgstr "Vollständige Veranstaltungsadresse"
 
-#: src/components/layouts/Checkout/index.tsx:255
+#: src/components/layouts/Checkout/index.tsx:257
 msgid "Event Homepage"
 msgstr "Veranstaltungsstartseite"
 
@@ -6102,8 +6169,8 @@ msgid "Event page"
 msgstr "Veranstaltungsseite"
 
 #: src/components/layouts/EventDedicatedPage/index.tsx:172
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:301
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:46
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:342
+#: src/components/routes/organizer/QrCodes/qrLinkHelpers.tsx:35
 msgid "Event page"
 msgstr "Veranstaltungsseite"
 
@@ -6227,7 +6294,7 @@ msgstr "Veranstaltungen"
 msgid "Events and concerts{where}: line-up and archives | {0}"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:24
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:29
 msgid "Events button"
 msgstr ""
 
@@ -6280,7 +6347,7 @@ msgstr ""
 msgid "Everything you need to know before coming to {title}."
 msgstr "Alles, was du vor deinem Besuch von {title} wissen musst."
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:139
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:219
 msgid "Everything you need to know."
 msgstr ""
 
@@ -6453,7 +6520,7 @@ msgstr "Fehlgeschlagen am"
 msgid "Failed Jobs"
 msgstr "Fehlgeschlagene Jobs"
 
-#: src/components/layouts/Checkout/index.tsx:122
+#: src/components/layouts/Checkout/index.tsx:124
 msgid "Failed to abandon order. Please try again."
 msgstr "Bestellung konnte nicht abgebrochen werden. Bitte versuchen Sie es erneut."
 
@@ -6521,7 +6588,7 @@ msgid "Failed to delete template"
 msgstr "Vorlage konnte nicht gelöscht werden"
 
 #: src/components/common/OrdersTable/index.tsx:108
-#: src/components/layouts/Checkout/index.tsx:108
+#: src/components/layouts/Checkout/index.tsx:110
 #: src/components/routes/event/OrdersPage/OrderList.tsx:85
 msgid "Failed to download invoice. Please try again."
 msgstr "Rechnung konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut."
@@ -6689,7 +6756,7 @@ msgstr "Fehler beim Hochladen des Bildes. Bitte versuchen Sie es erneut."
 msgid "Failed to verify email"
 msgstr "E-Mail konnte nicht verifiziert werden"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:245
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:325
 #: src/components/routes/landing/MarketingHeader/index.tsx:54
 msgid "FAQ"
 msgstr "FAQ"
@@ -6722,7 +6789,7 @@ msgstr "Gebührenbehandlung"
 #: src/components/forms/ProductForm/index.tsx:453
 #: src/components/routes/event/Reports/DailySalesReport/index.tsx:50
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:60
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2050
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2053
 msgid "Fees"
 msgstr "Gebühren"
 
@@ -6799,7 +6866,7 @@ msgstr "Filter"
 msgid "Filters ({activeFilterCount})"
 msgstr "Filter ({activeFilterCount})"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:132
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:212
 msgid "Final price shown before payment, fees included. Tickets are limited to available capacity."
 msgstr ""
 
@@ -6868,8 +6935,8 @@ msgstr "Vorname"
 #: src/components/routes/product-widget/CollectInformation/index.tsx:533
 #: src/components/routes/product-widget/CollectInformation/index.tsx:755
 #: src/components/routes/product-widget/EmbeddedRegistration/EmbeddedWaitlist.tsx:134
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1686
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1834
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1689
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1837
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:53
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:53
 #: src/components/routes/profile/ManageProfile/index.tsx:152
@@ -6887,7 +6954,7 @@ msgstr "Vorname ist erforderlich"
 msgid "First name must be between 1 and 50 characters"
 msgstr "Der Vorname muss zwischen 1 und 50 Zeichen lang sein"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:705
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:708
 msgid "First name must be under 40 characters"
 msgstr "Der Vorname muss kürzer als 40 Zeichen sein"
 
@@ -7017,12 +7084,12 @@ msgstr "Format"
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:177
 #: src/components/modals/CreateAttendeeModal/index.tsx:144
 #: src/components/organizerTemplates/Poster/eventData.ts:54
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:117
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:197
 #: src/components/organizerTemplates/Tour/index.tsx:230
 #: src/components/routes/kiosk/Orders/index.tsx:289
 #: src/components/routes/kiosk/Orders/index.tsx:330
 #: src/components/routes/organizer/EventAssistant/index.tsx:433
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1923
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1926
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:69
 msgid "Free"
 msgstr "Frei"
@@ -7078,7 +7145,7 @@ msgstr "Häufige Fragen"
 msgid "Frequently asked questions about {title}. {firstQuestion}"
 msgstr "Häufige Fragen zu {title}. {firstQuestion}"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:245
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:325
 msgid "Frequently asked questions."
 msgstr ""
 
@@ -7199,7 +7266,7 @@ msgstr "Code generieren"
 msgid "German"
 msgstr "Deutsch"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:164
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:244
 msgid "Get directions"
 msgstr ""
 
@@ -7272,7 +7339,7 @@ msgstr "Gute Lesbarkeit"
 msgid "Google Calendar"
 msgstr "Google Kalender"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:330
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:414
 msgid "Google Play link (Android)"
 msgstr ""
 
@@ -7318,7 +7385,7 @@ msgstr "Hat ein Ticket für {0}"
 msgid "Has not replied yet"
 msgstr "Hat noch nicht geantwortet"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2247
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2250
 #: src/components/routes/product-widget/SelectProducts/index.tsx:392
 msgid "Have a promo code?"
 msgstr "Haben Sie einen Promo-Code?"
@@ -7598,7 +7665,7 @@ msgstr "Wie lange ein Kunde nach Erhalt eines Angebots Zeit hat, den Kauf abzusc
 msgid "How many minutes the customer has to complete their order. We recommend at least 15 minutes"
 msgstr "Wie viele Minuten hat der Kunde Zeit, um seine Bestellung abzuschließen. Wir empfehlen mindestens 15 Minuten"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1910
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1913
 msgid "How many participants?"
 msgstr "Wie viele Teilnehmende?"
 
@@ -7639,7 +7706,7 @@ msgstr "https://webhook-domain.com/webhook"
 msgid "Hungarian"
 msgstr "Ungarisch"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2027
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2030
 msgid "I accept the <0>terms of sale</0> and the <1>privacy policy</1>"
 msgstr "Ich akzeptiere die <0>Verkaufsbedingungen</0> und die <1>Datenschutzerklärung</1>"
 
@@ -7669,7 +7736,7 @@ msgstr "Ich bestätige, dass dies eine Transaktionsnachricht im Zusammenhang mit
 msgid "I don't have a poster yet"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2247
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2250
 msgid "I have an invitation code"
 msgstr "Ich habe einen Einladungscode"
 
@@ -7685,7 +7752,7 @@ msgstr "Ich benachrichtige Sie per E-Mail, sobald ein Platz frei wird."
 msgid "I will let you know by SMS as soon as a place frees up."
 msgstr "Ich benachrichtige Sie per SMS, sobald ein Platz frei wird."
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2040
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2043
 msgid "I would like to receive news and offers from the organizer"
 msgstr "Ich möchte Neuigkeiten und Angebote des Veranstalters erhalten"
 
@@ -7910,7 +7977,7 @@ msgstr "Fügen Sie Verbindungsdetails für Ihr Online-Event hinzu. Diese Details
 msgid "Include tax and fees in the price"
 msgstr "Steuern und Gebühren im Preis einbeziehen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1593
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1596
 #: src/components/routes/product-widget/SelectProducts/index.tsx:599
 msgid "Included by default"
 msgstr "Automatisch enthalten"
@@ -7987,7 +8054,7 @@ msgstr "Einfügen:"
 msgid "Instagram"
 msgstr "Instagram"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:304
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:343
 msgid "Instagram profile, video, website... Scans are counted, but no pixel can be triggered."
 msgstr ""
 
@@ -8003,7 +8070,7 @@ msgstr "Instagram-Storys"
 msgid "Install the PICHA SMS app on your Android phone and sign in on <0>sms.picha.fr</0>."
 msgstr "Installiere die PICHA SMS-App auf deinem Android-Telefon und melde dich auf <0>sms.picha.fr</0> an."
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:72
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:104
 msgid "Instant e-ticket"
 msgstr ""
 
@@ -8076,11 +8143,11 @@ msgstr "Ungültige Telefonnummer"
 msgid "Invalid VAT number format"
 msgstr "Ungültiges Format der Umsatzsteuer-Identifikationsnummer"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2215
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2218
 msgid "Invitation code"
 msgstr "Einladungscode"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2194
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2197
 msgid "Invitation code {promoCode} applied: {0}"
 msgstr "Einladungscode {promoCode} angewendet: {0}"
 
@@ -8179,7 +8246,7 @@ msgid "Invoice"
 msgstr "Rechnung"
 
 #: src/components/common/OrdersTable/index.tsx:104
-#: src/components/layouts/Checkout/index.tsx:104
+#: src/components/layouts/Checkout/index.tsx:106
 #: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Invoice downloaded successfully"
 msgstr "Rechnung erfolgreich heruntergeladen"
@@ -8324,7 +8391,7 @@ msgstr "gerade eben"
 msgid "Keep"
 msgstr "Behalten"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:519
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:652
 msgid "Keep a dark color on a light background so every phone can scan it."
 msgstr ""
 
@@ -8476,8 +8543,8 @@ msgstr "Letzte Nachricht gesendet {0}"
 #: src/components/routes/organizer/Contacts/CreateContactModal.tsx:42
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:57
 #: src/components/routes/product-widget/AttendeeAttendance/index.tsx:214
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1696
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1840
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1699
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1843
 msgid "Last name"
 msgstr "Nachname"
 
@@ -8507,7 +8574,7 @@ msgstr "Nachname (optional)"
 msgid "Last name is required"
 msgstr "Nachname ist erforderlich"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:706
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:709
 msgid "Last name must be under 40 characters"
 msgstr "Der Nachname muss kürzer als 40 Zeichen sein"
 
@@ -8550,12 +8617,12 @@ msgid "Later"
 msgstr "Später"
 
 #: src/components/routes/event/EventDashboard/index.tsx:267
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:240
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:246
 msgid "Latest orders"
 msgstr ""
 
 #: src/components/routes/event/EventDashboard/index.tsx:267
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:240
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:246
 msgid "Latest registrations"
 msgstr ""
 
@@ -8575,7 +8642,7 @@ msgstr "Leer lassen, um das Standardwort \"Rechnung\" zu verwenden"
 msgid "Leave empty for no limit, put 0 if you don't sell that way."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:364
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:448
 msgid "Leave empty to use the links from your organizer settings."
 msgstr ""
 
@@ -8661,7 +8728,7 @@ msgstr "Zeilen abgelehnt"
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:90
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:141
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:219
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:314
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:398
 msgid "Link"
 msgstr "Link"
 
@@ -8673,7 +8740,7 @@ msgstr "Link kopiert: Der Code wird automatisch angewendet"
 msgid "Link Expired or Invalid"
 msgstr "Link abgelaufen oder ungültig"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:335
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:419
 msgid "Link for computers (optional)"
 msgstr ""
 
@@ -8681,15 +8748,15 @@ msgstr ""
 msgid "Link not valid"
 msgstr "Ungültiger Link"
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:45
+#: src/components/routes/organizer/QrCodes/qrLinkHelpers.tsx:34
 msgid "Link page"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:299
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:341
 msgid "Link page (recommended)"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:160
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:212
 msgid "Link previews (WhatsApp, Facebook...) and robots are not counted. A unique visitor is a phone that scanned this QR code for the first time."
 msgstr ""
 
@@ -8708,6 +8775,10 @@ msgstr "LinkedIn"
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:338
 msgid "Links Allowed"
 msgstr "Links erlaubt"
+
+#: src/components/routes/organizer/OrganizerDashboard/QrLinksOverview.tsx:53
+msgid "Links and QR codes"
+msgstr "Links und QR-Codes"
 
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:71
 msgid "Links in the \"The event\" column"
@@ -8783,7 +8854,7 @@ msgstr "Webhooks werden geladen"
 #: src/components/common/ReportTable/index.tsx:210
 #: src/components/routes/event/Settings/Sections/DangerZoneSettings/index.tsx:87
 #: src/components/routes/organizer/Settings/Sections/DangerZoneSettings/index.tsx:93
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2359
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2362
 msgid "Loading..."
 msgstr "Wird geladen..."
 
@@ -8826,7 +8897,7 @@ msgstr "Einloggen"
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:366
 #: src/components/routes/event/TicketDesigner/index.tsx:144
 #: src/components/routes/organizer/OrganizerHomepageDesigner/index.tsx:225
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:474
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:611
 msgid "Logo"
 msgstr "Logo"
 
@@ -8992,7 +9063,7 @@ msgstr "Teilnehmer manuell hinzufügen"
 msgid "Mark as paid"
 msgstr "Als bezahlt markieren"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:275
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:366
 msgid "Market poster"
 msgstr ""
 
@@ -9004,7 +9075,7 @@ msgstr "Max. Nachrichten / 24h"
 msgid "Max Recipients / Message"
 msgstr "Max. Empfänger / Nachricht"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1899
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1902
 msgid "Maximum number of places reached for this order."
 msgstr "Maximale Anzahl an Plätzen für diese Bestellung erreicht."
 
@@ -9186,12 +9257,12 @@ msgstr "Telefonvorwahl fehlt — bitte in den Stationseinstellungen eintragen."
 msgid "Missing: {0}"
 msgstr "Es fehlen: {0}"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:35
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:40
 msgid "Mobile"
 msgstr ""
 
 #: src/components/routes/organizer/QrCodes/posterLogos.tsx:43
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:305
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:344
 msgid "Mobile app"
 msgstr ""
 
@@ -9274,24 +9345,24 @@ msgid "More than 1,000"
 msgstr "Mehr als 1.000"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:291
-msgid "Most orders"
-msgstr ""
+#~ msgid "Most orders"
+#~ msgstr ""
 
 #: src/components/organizerTemplates/Poster/eventData.ts:37
 msgid "Most popular"
 msgstr ""
 
 #: src/components/routes/organizer/QrCodes/index.tsx:289
-msgid "Most recent"
-msgstr ""
+#~ msgid "Most recent"
+#~ msgstr ""
 
 #: src/components/routes/organizer/QrCodes/index.tsx:291
-msgid "Most sales"
-msgstr ""
+#~ msgid "Most sales"
+#~ msgstr ""
 
 #: src/components/routes/organizer/QrCodes/index.tsx:290
-msgid "Most scanned"
-msgstr ""
+#~ msgid "Most scanned"
+#~ msgstr ""
 
 #: src/components/routes/admin/Dashboard/index.tsx:294
 msgid "Most Viewed Events (Last 14 Days)"
@@ -9355,7 +9426,7 @@ msgstr "Mein toller Veranstaltungstitel …"
 msgid "My events"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:167
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:189
 msgid "My image"
 msgstr ""
 
@@ -9409,8 +9480,8 @@ msgid "Name"
 msgstr "Name"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:292
-msgid "Name (A-Z)"
-msgstr ""
+#~ msgid "Name (A-Z)"
+#~ msgstr ""
 
 #: src/components/common/QuestionsTable/index.tsx:437
 msgid "Name and email of each attendee."
@@ -9443,6 +9514,10 @@ msgstr "Name oder Nummer"
 #: src/components/routes/organizer/Settings/Sections/EmailSenderSettings/index.tsx:67
 msgid "Name shown as the sender of emails sent to your attendees. The sending address stays the platform one. Leave empty for PICHA Ticket."
 msgstr "Name, der als Absender der E-Mails an Ihre Teilnehmer angezeigt wird. Die Absenderadresse bleibt die der Plattform. Leer lassen für PICHA Ticket."
+
+#: src/components/routes/organizer/QrCodes/index.tsx:218
+msgid "Name the medium where it will appear: poster, flyer, story..."
+msgstr "Benenne das Medium, auf dem er erscheint: Plakat, Flyer, Story..."
 
 #: src/components/routes/kiosk/Orders/index.tsx:238
 msgid "Name, e-mail, phone, order or ticket number — or scan the QR code"
@@ -9485,9 +9560,10 @@ msgstr "Niemals"
 msgid "New artist"
 msgstr "Neuer Künstler"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:184
-#: src/components/routes/organizer/QrCodes/index.tsx:231
+#: src/components/routes/organizer/QrCodes/index.tsx:188
+#: src/components/routes/organizer/QrCodes/index.tsx:247
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:37
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:512
 msgid "New campaign"
 msgstr ""
 
@@ -9496,7 +9572,7 @@ msgstr ""
 msgid "new contacts"
 msgstr "neue Kontakte"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:95
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:127
 msgid "New dates are coming soon. Follow us so you don't miss the on-sale date."
 msgstr ""
 
@@ -9522,9 +9598,9 @@ msgstr "Neue Berechtigungen erteilen"
 msgid "New post"
 msgstr "Neuer Beitrag"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:188
-#: src/components/routes/organizer/QrCodes/index.tsx:333
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:266
+#: src/components/routes/organizer/QrCodes/index.tsx:192
+#: src/components/routes/organizer/QrCodes/index.tsx:311
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:690
 msgid "New QR code"
 msgstr ""
 
@@ -9568,13 +9644,17 @@ msgstr "Newsletter-Abonnenten"
 msgid "Newsletter title"
 msgstr "Titel des Newsletters"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2325
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2328
 msgid "Next"
 msgstr "Weiter"
 
 #: src/components/routes/organizer/Publications/PostMedia.tsx:71
 msgid "Next image"
 msgstr "Nächstes Bild"
+
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:159
+msgid "Next night"
+msgstr "Nächster Abend"
 
 #: src/components/routes/organizer/Publications/PostViewer.tsx:115
 msgid "Next post"
@@ -9664,10 +9744,9 @@ msgstr "Keine Attributionsdaten gefunden"
 msgid "No box office ticket is on sale. Check on the Tickets page that a ticket is sold at the box office, that its sale is turned on, and that it is on a check-in list."
 msgstr "Kein Kassenticket ist im Verkauf. Prüfen Sie auf der Ticketseite, dass ein Ticket an der Kasse verkauft wird, der Verkauf aktiviert ist und es auf einer Check-in-Liste steht."
 
-#: src/components/routes/organizer/QrCodes/index.tsx:160
-#: src/components/routes/organizer/QrCodes/index.tsx:166
-#: src/components/routes/organizer/QrCodes/index.tsx:227
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:288
+#: src/components/routes/organizer/QrCodes/index.tsx:82
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:493
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:528
 msgid "No campaign"
 msgstr ""
 
@@ -9739,7 +9818,7 @@ msgstr "Keine Daten für die ausgewählten Filter gefunden. Versuchen Sie, den D
 msgid "No data to show. Please select a date range"
 msgstr "Keine Daten verfügbar. Bitte wählen Sie einen Datumsbereich aus."
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:50
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:55
 msgid "No data yet"
 msgstr ""
 
@@ -9773,7 +9852,7 @@ msgid "No event has been assigned to you."
 msgstr "Ihnen wurde keine Veranstaltung zugewiesen."
 
 #: src/components/routes/organizer/Events/index.tsx:96
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:225
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:231
 msgid "No event matches your search."
 msgstr ""
 
@@ -9785,7 +9864,7 @@ msgstr "Keine Veranstaltungen"
 msgid "No events found"
 msgstr "Keine Events gefunden"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:226
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:232
 msgid "No events here yet."
 msgstr ""
 
@@ -9838,7 +9917,7 @@ msgstr "Noch kein Schlüsselwort."
 msgid "No kiosk operators yet"
 msgstr "Noch keine Kiosk-Betreiber"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:475
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:612
 msgid "No logo"
 msgstr ""
 
@@ -9906,7 +9985,7 @@ msgid "No orders to show"
 msgstr "Keine Bestellungen anzuzeigen"
 
 #: src/components/routes/event/EventDashboard/index.tsx:273
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:247
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:253
 msgid "No orders yet."
 msgstr ""
 
@@ -9975,13 +10054,17 @@ msgstr ""
 msgid "No Products Yet"
 msgstr "Noch keine Produkte"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:323
+#: src/components/routes/organizer/QrCodes/index.tsx:279
 msgid "No QR code matches these filters"
 msgstr ""
 
 #: src/components/routes/organizer/QrCodes/index.tsx:323
-msgid "No QR codes here yet"
-msgstr ""
+#~ msgid "No QR codes here yet"
+#~ msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrCampaignCard.tsx:50
+msgid "No QR codes yet"
+msgstr "Noch keine QR-Codes"
 
 #: src/components/routes/event/EventPages/index.tsx:365
 msgid "No question yet."
@@ -10054,13 +10137,18 @@ msgid "No restriction"
 msgstr "Keine Einschränkung"
 
 #: src/components/common/NoResultsSplash/index.tsx:24
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1628
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1631
 msgid "No results"
 msgstr "Keine Ergebnisse"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:111
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:161
 msgid "No scans on this period yet. Print or share the QR code: scans appear here in real time."
 msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:256
+#: src/components/routes/organizer/QrCodes/QrCampaignCard.tsx:50
+msgid "No scans yet"
+msgstr "Noch keine Scans"
 
 #: src/components/common/ProductsTable/ProductsBlankSlate/index.tsx:20
 msgid "No Search Results"
@@ -10152,7 +10240,7 @@ msgstr "Keine Webhooks"
 msgid "No Zebra printer IP is set for this station. Enter it to print, or open the tickets as PDF."
 msgstr "Für diese Station ist keine Zebra-Drucker-IP festgelegt. Geben Sie sie zum Drucken ein oder öffnen Sie die Tickets als PDF."
 
-#: src/components/layouts/Checkout/index.tsx:383
+#: src/components/layouts/Checkout/index.tsx:386
 msgid "No, keep me here"
 msgstr "Nein, hier bleiben"
 
@@ -10216,7 +10304,7 @@ msgstr "Nicht eingelassen"
 msgid "Not entered yet"
 msgstr "Noch nicht eingelassen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2269
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2272
 msgid "Not me"
 msgstr ""
 
@@ -10357,7 +10445,7 @@ msgstr "Angebote verfallen nach {timeoutHours} Stunden."
 msgid "Office or venue name"
 msgstr "Name des Büros oder Veranstaltungsorts"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:91
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:123
 msgid "Official website"
 msgstr ""
 
@@ -10417,13 +10505,17 @@ msgstr "Im Angebot"
 msgid "On sale {0}"
 msgstr "Im Angebot {0}"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:122
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:202
 msgid "On sale soon"
 msgstr ""
 
 #: src/components/organizerTemplates/Poster/siteLabels.ts:32
 msgid "On site, on our communication materials and on social media."
 msgstr ""
+
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:279
+msgid "On the menu."
+msgstr "Auf der Karte."
 
 #: src/components/common/EventPagesContent/index.tsx:202
 msgid "On this page"
@@ -10481,17 +10573,22 @@ msgstr "Eine Plattform für jede Art von Veranstaltung"
 msgid "One poster per date"
 msgstr "Ein Plakat pro Termin"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:306
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:344
 msgid "One QR code for both stores: iPhones open the App Store, Android phones open Google Play."
 msgstr ""
 
 #: src/components/routes/organizer/QrCodes/index.tsx:178
-msgid "One QR code per medium (poster, flyer, screen...), grouped by campaign. Change where a QR code leads at any time without reprinting it."
-msgstr ""
+#~ msgid "One QR code per medium (poster, flyer, screen...), grouped by campaign. Change where a QR code leads at any time without reprinting it."
+#~ msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:274
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:365
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:658
 msgid "One QR code per medium lets you compare them: poster, flyer, screen, stand..."
 msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:181
+msgid "One QR code per medium, grouped by campaign. You can change where it leads without reprinting it."
+msgstr "Ein QR-Code pro Medium, nach Kampagne gruppiert. Du kannst das Ziel ändern, ohne neu zu drucken."
 
 #: src/components/routes/landing/index.tsx:139
 msgid "One scan of the QR code and the entry is recorded: the badge prints or the wristband is handed over right away. Last-minute registrations are done on a tablet."
@@ -10542,7 +10639,7 @@ msgstr ""
 msgid "Online and box office sales"
 msgstr ""
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:158
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:238
 #: src/components/routes/product-widget/AttendeeAttendance/index.tsx:94
 msgid "Online event"
 msgstr ""
@@ -10634,7 +10731,8 @@ msgstr "Nur ankreuzen, wenn die Person zugestimmt hat. Eine Telefonnummer ist er
 msgid "Only your team can see these notes"
 msgstr "Nur Ihr Team sieht diese Notizen"
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:125
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:89
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:130
 msgid "Open"
 msgstr ""
 
@@ -10708,7 +10806,7 @@ msgstr "Dieses Ticket öffnen, wenn dieses Ticket ausverkauft ist"
 msgid "Open tickets as PDF"
 msgstr "Tickets als PDF öffnen"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:154
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:206
 msgid "Opened from"
 msgstr ""
 
@@ -10716,7 +10814,7 @@ msgstr ""
 msgid "Opened from the Contact buttons of your pages, in a side panel."
 msgstr "Wird über die Kontakt-Buttons deiner Seiten in einem Seitenbereich geöffnet."
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:336
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:420
 msgid "Opened when the QR code is scanned from another device. By default: the App Store page."
 msgstr ""
 
@@ -10724,7 +10822,7 @@ msgstr ""
 msgid "Opening hours"
 msgstr "Öffnungszeiten"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:302
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:342
 msgid "Opens the ticketing page directly. Sales are attributed to this QR code."
 msgstr ""
 
@@ -10732,7 +10830,7 @@ msgstr ""
 msgid "Opens when \"{unlockSourceTitle}\" is sold out"
 msgstr "Öffnet, wenn „{unlockSourceTitle}“ ausverkauft ist"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:153
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:205
 msgid "Operating systems"
 msgstr ""
 
@@ -10810,7 +10908,11 @@ msgstr "Optionen"
 msgid "or"
 msgstr "oder"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2329
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:513
+msgid "Or create a campaign: Open day 2026"
+msgstr "Oder erstelle eine Kampagne: Tag der offenen Tür 2026"
+
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2332
 msgid "or press Enter"
 msgstr "oder Eingabetaste drücken"
 
@@ -11047,11 +11149,9 @@ msgstr "Bestellung wurde storniert"
 #: src/components/routes/event/Reports/SalesBySourceReport/index.tsx:92
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:171
 #: src/components/routes/organizer/Contacts/ContactDetail/index.tsx:234
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:102
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:110
-#: src/components/routes/organizer/QrCodes/index.tsx:269
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:84
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:73
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:104
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:112
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:80
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:103
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:66
 #: src/components/routes/organizer/Reports/TaxSummaryReport/index.tsx:55
@@ -11215,7 +11315,7 @@ msgstr "Veranstalter, Domains & Vorlagen"
 #: src/components/common/OrdersTable/index.tsx:399
 #: src/components/common/QuestionsTable/index.tsx:371
 #: src/components/routes/landing/DemoRequestForm/index.tsx:69
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:38
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:43
 #: src/constants/eventCategories.ts:9
 msgid "Other"
 msgstr "Sonstiges"
@@ -11236,7 +11336,7 @@ msgstr "Unsere Zusagen"
 msgid "Our connected staff handle your attendees' welcome, with the equipment installed and configured."
 msgstr "Unser vernetztes Personal übernimmt den Empfang Ihrer Gäste, mit installierten und eingerichteten Geräten."
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:199
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:279
 #: src/components/organizerTemplates/Poster/pages/ServicesPage.tsx:21
 msgid "Our expertise."
 msgstr ""
@@ -11275,7 +11375,7 @@ msgstr "von {0} erwartet"
 msgid "Outgoing Messages"
 msgstr "Ausgehende Nachrichten"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:146
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:148
 msgctxt "organizer home"
 msgid "Overview"
 msgstr "Übersicht"
@@ -11304,7 +11404,7 @@ msgstr "Seite nicht gefunden"
 msgid "Page online"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:357
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:441
 msgid "Page title"
 msgstr ""
 
@@ -11379,7 +11479,7 @@ msgstr "Teilweise erstattet: {0}"
 msgid "Participant {0}"
 msgstr "Teilnehmer {0}"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1790
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1793
 msgid "Participant {participantNumber}"
 msgstr "Teilnehmer {participantNumber}"
 
@@ -11389,7 +11489,7 @@ msgstr "Teilnehmer"
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:290
 #: src/components/organizerTemplates/Poster/index.tsx:83
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:235
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:315
 #: src/components/organizerTemplates/Poster/pages/PartnersPage.tsx:26
 #: src/components/organizerTemplates/Tour/index.tsx:389
 msgid "Partners"
@@ -11461,7 +11561,7 @@ msgstr "Passwörter sind nicht gleich"
 msgid "Past"
 msgstr "Vergangenheit"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:76
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:78
 msgctxt "events tab"
 msgid "Past"
 msgstr "Vergangenheit"
@@ -11498,15 +11598,15 @@ msgstr "Patrick"
 msgid "patrick@acme.com"
 msgstr "patrick@acme.com"
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:139
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:109
 msgid "Pause"
 msgstr ""
 
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:111
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:129
 #: src/components/forms/WebhookForm/index.tsx:28
-#: src/components/routes/organizer/QrCodes/index.tsx:284
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:75
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:54
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:100
 msgid "Paused"
 msgstr "Pausiert"
 
@@ -11523,7 +11623,7 @@ msgstr "Nutzlast"
 #: src/components/common/ProgressStepper/index.tsx:19
 #: src/components/forms/StripeCheckoutForm/index.tsx:126
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:443
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2325
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2328
 msgid "Payment"
 msgstr "Zahlung"
 
@@ -11618,7 +11718,7 @@ msgid "Payments will continue to flow without interruption"
 msgstr "Zahlungen fließen weiterhin ohne Unterbrechung"
 
 #: src/components/common/Currency/index.tsx:100
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2091
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2094
 msgid "Peace of mind option included"
 msgstr ""
 
@@ -11868,7 +11968,7 @@ msgstr "{0} abspielen"
 msgid "Play the video"
 msgstr "Video abspielen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:717
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:720
 msgid "Please accept the terms of sale and the privacy policy."
 msgstr "Bitte akzeptiere die Verkaufsbedingungen und die Datenschutzerklärung."
 
@@ -11898,6 +11998,10 @@ msgstr "Bitte überprüfen Sie Ihre E-Mail, um Ihre E-Mail-Adresse zu bestätige
 msgid "Please choose a number of attendees"
 msgstr "Bitte wählen Sie eine Teilnehmerzahl"
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:264
+msgid "Please choose an event"
+msgstr "Bitte wähle ein Event"
+
 #: src/components/routes/landing/DemoRequestForm/index.tsx:50
 msgid "Please choose an event type"
 msgstr "Bitte wählen Sie eine Veranstaltungsart"
@@ -11914,6 +12018,12 @@ msgstr "Bitte erstellen Sie ein Produkt"
 msgid "Please create a ticket"
 msgstr "Bitte erstellen Sie ein Ticket"
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:257
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:260
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:261
+msgid "Please enter a link"
+msgstr "Bitte gib einen Link ein"
+
 #: src/components/layouts/EventHomepage/RichFooter/index.tsx:77
 msgid "Please enter a valid e-mail address"
 msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein"
@@ -11928,7 +12038,7 @@ msgid "Please enter a valid image URL that points to an image."
 msgstr "Bitte geben Sie eine gültige Bild-URL ein, die auf ein Bild verweist."
 
 #: src/components/common/CheckoutQuestion/index.tsx:125
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:670
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:673
 msgid "Please enter a valid phone number (digits, spaces, +, -, ( ) only, minimum 8 characters)"
 msgstr "Bitte gib eine gültige Telefonnummer ein (nur Ziffern, Leerzeichen, +, -, ( ), mindestens 8 Zeichen)"
 
@@ -11973,7 +12083,8 @@ msgstr "Bitte geben Sie Ihre Umsatzsteuer-ID ein"
 msgid "Please give the campaign a name"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:141
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:163
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:253
 msgid "Please give this QR code a name"
 msgstr ""
 
@@ -11989,7 +12100,7 @@ msgstr "Bitte ein Bild angeben."
 msgid "Please restart the checkout process."
 msgstr "Bitte starten Sie den Bestellvorgang neu."
 
-#: src/components/layouts/Checkout/index.tsx:352
+#: src/components/layouts/Checkout/index.tsx:355
 msgid "Please return to the event page to start over."
 msgstr "Bitte kehre zur Veranstaltungsseite zurück, um neu zu beginnen."
 
@@ -12013,7 +12124,7 @@ msgstr "Bitte wählen Sie mindestens ein Produkt aus"
 msgid "Please try again."
 msgstr "Bitte versuchen Sie es erneut."
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:229
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:297
 msgid "Please upload a background image"
 msgstr ""
 
@@ -12042,7 +12153,7 @@ msgid "Please wait while we prepare your contacts."
 msgstr "Bitte warten Sie, während wir Ihre Kontakte vorbereiten."
 
 #: src/components/common/OrdersTable/index.tsx:100
-#: src/components/layouts/Checkout/index.tsx:100
+#: src/components/layouts/Checkout/index.tsx:102
 #: src/components/routes/event/OrdersPage/OrderList.tsx:83
 msgid "Please wait while we prepare your invoice..."
 msgstr "Bitte warten Sie, während wir Ihre Rechnung vorbereiten..."
@@ -12052,8 +12163,8 @@ msgid "Please wait while we prepare your orders for export..."
 msgstr "Bitte warten Sie, während wir Ihre Bestellungen für den Export vorbereiten..."
 
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:99
-msgid "PNG"
-msgstr ""
+#~ msgid "PNG"
+#~ msgstr ""
 
 #: src/components/routes/organizer/QrCodes/posterLogos.tsx:42
 msgid "Podcast"
@@ -12100,8 +12211,10 @@ msgstr "Beitrag geplant"
 msgid "Poster"
 msgstr ""
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:80
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:82
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:112
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:114
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:178
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:180
 msgid "Poster of {0}"
 msgstr ""
 
@@ -12119,7 +12232,8 @@ msgstr "Plakate"
 msgid "Powered by"
 msgstr "Bereitgestellt von"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:139
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:142
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:219
 #: src/components/organizerTemplates/Tour/index.tsx:369
 msgid "Practical info"
 msgstr ""
@@ -12232,7 +12346,7 @@ msgid "Preview: Immediate answer, {relayLabel} can take over"
 msgstr "Vorschau: Sofortige Antwort, {relayLabel} kann übernehmen"
 
 #: src/components/routes/product-widget/EmbeddedRegistration/EmbeddedWaitlist.tsx:198
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2311
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2314
 msgid "Previous"
 msgstr "Zurück"
 
@@ -12282,7 +12396,7 @@ msgstr ""
 msgid "Price: {price}"
 msgstr "Preis: {price}"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:172
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:252
 msgid "Prices"
 msgstr ""
 
@@ -12310,7 +12424,7 @@ msgstr "Druckwarteschlange nicht erreichbar"
 msgid "Print Ticket"
 msgstr "Ticket drucken"
 
-#: src/components/layouts/Checkout/index.tsx:298
+#: src/components/layouts/Checkout/index.tsx:301
 #: src/components/routes/my-tickets/index.tsx:119
 msgid "Print Tickets"
 msgstr "Tickets drucken"
@@ -12469,12 +12583,16 @@ msgstr "Profil"
 msgid "Profile updated successfully"
 msgstr "Profil erfolgreich aktualisiert"
 
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:667
+msgid "Progress"
+msgstr "Fortschritt"
+
 #: src/components/routes/product-widget/SelectProducts/index.tsx:287
 msgid "Promo {promo_code} code applied"
 msgstr "Aktionscode {promo_code} angewendet"
 
 #: src/components/common/OrderDetails/index.tsx:89
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2215
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2218
 msgid "Promo code"
 msgstr "Gutscheincode"
 
@@ -12618,27 +12736,27 @@ msgstr "Zutrittskontrolle per QR-Code"
 msgid "QR Code Check-in"
 msgstr "QR-Code-Check-in"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:252
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:320
 msgid "QR code created"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:141
+#: src/components/routes/organizer/QrCodes/index.tsx:149
 msgid "QR code deleted"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:455
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:592
 msgid "QR code height"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:133
+#: src/components/routes/organizer/QrCodes/index.tsx:141
 msgid "QR code paused"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:133
+#: src/components/routes/organizer/QrCodes/index.tsx:141
 msgid "QR code reactivated"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:460
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:597
 msgid "QR code size"
 msgstr ""
 
@@ -12650,13 +12768,12 @@ msgstr "Tickets mit QR-Code"
 msgid "QR code unavailable"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:252
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:320
 msgid "QR code updated"
 msgstr ""
 
 #: src/components/layouts/OrganizerLayout/index.tsx:89
-#: src/components/routes/organizer/QrCodes/index.tsx:176
-#: src/components/routes/organizer/QrCodes/index.tsx:264
+#: src/components/routes/organizer/QrCodes/index.tsx:179
 msgid "QR codes"
 msgstr ""
 
@@ -12664,7 +12781,7 @@ msgstr ""
 msgid "QR codes, SMS, campaign links and referring sites that bring registrations"
 msgstr "QR-Codes, SMS, Kampagnenlinks und verweisende Websites, die Anmeldungen bringen"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:161
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:183
 msgid "QR only"
 msgstr ""
 
@@ -12673,7 +12790,7 @@ msgid "Qty"
 msgstr "Anz."
 
 #: src/components/forms/ProductForm/index.tsx:500
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1967
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1970
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:94
 msgid "Quantity"
 msgstr "Menge"
@@ -12683,7 +12800,7 @@ msgstr "Menge"
 msgid "Quantity Available"
 msgstr "Verfügbare Menge"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1933
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1936
 msgid "Quantity for {label}"
 msgstr "Anzahl für {label}"
 
@@ -12765,7 +12882,7 @@ msgstr "Platz erneut anbieten"
 msgid "Reach an engaged audience"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:139
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:109
 msgid "Reactivate"
 msgstr ""
 
@@ -12912,7 +13029,7 @@ msgstr "Empfehlungskonten"
 msgid "Referring site"
 msgstr "Verweisende Website"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:156
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:208
 msgid "Referring sites"
 msgstr ""
 
@@ -13070,12 +13187,12 @@ msgstr "Registrierte Teilnehmer"
 #: src/components/routes/event/orders.tsx:86
 #: src/components/routes/event/Reports/DailySalesReport/index.tsx:41
 #: src/components/routes/event/Reports/ProductSalesReport/index.tsx:27
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:101
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:103
 msgid "Registered people"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1522
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2354
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1525
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2357
 msgid "Registration"
 msgstr "Anmeldung"
 
@@ -13091,7 +13208,7 @@ msgstr "Anmeldebestätigung per SMS"
 msgid "Registration confirmed"
 msgstr "Anmeldung bestätigt"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2076
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2079
 msgid "Registration in the name of {name}"
 msgstr "Anmeldung auf den Namen {name}"
 
@@ -13107,7 +13224,7 @@ msgstr "Anmeldung ab {day} um {time}"
 msgid "Registration page in your colors"
 msgstr "Anmeldeseite in Ihren Farben"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2365
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2368
 msgid "Registration progress"
 msgstr "Fortschritt der Anmeldung"
 
@@ -13218,14 +13335,14 @@ msgstr "entfernen"
 #: src/components/routes/event/HomepageDesigner/index.tsx:341
 #: src/components/routes/organizer/Publications/MediaUploader.tsx:121
 #: src/components/routes/organizer/Publications/PostFormModal.tsx:187
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:380
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:464
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:149
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:176
 #: src/components/routes/organizer/Settings/Sections/SmsOptOuts/index.tsx:118
 #: src/components/routes/organizer/Sms/KeywordsView.tsx:100
 #: src/components/routes/organizer/Sms/TeamView.tsx:110
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1799
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2197
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1802
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2200
 #: src/components/routes/product-widget/SelectProducts/index.tsx:741
 msgid "Remove"
 msgstr "Entfernen"
@@ -13247,12 +13364,12 @@ msgstr "Datei entfernen"
 msgid "Remove filter"
 msgstr "Filter entfernen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1939
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1942
 msgid "Remove one"
 msgstr "Einen Platz entfernen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1798
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1806
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1801
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1809
 msgid "Remove participant {participantNumber}"
 msgstr "Teilnehmer {participantNumber} entfernen"
 
@@ -13309,11 +13426,11 @@ msgstr "Diese Schriftdatei entfernen?"
 msgid "Remove ticket"
 msgstr "Ticket entfernen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1807
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1810
 msgid "Remove?"
 msgstr "Entfernen?"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:252
+#: src/components/routes/organizer/QrCodes/QrCampaignCard.tsx:65
 msgid "Rename"
 msgstr ""
 
@@ -13356,7 +13473,7 @@ msgstr "Durch eine neue Version zur Freigabe ersetzt."
 msgid "Replaces the footer of the page when the full screen header and the embedded registration are used: newsletter, social networks, useful links and legal information."
 msgstr "Ersetzt die Fußzeile, wenn der Vollbild-Kopfbereich und die integrierte Anmeldung verwendet werden: Newsletter, soziale Netzwerke, nützliche Links und rechtliche Hinweise."
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:471
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:608
 msgid "Replaces the page title on the visual."
 msgstr ""
 
@@ -13596,7 +13713,7 @@ msgstr "Job wiederholen"
 msgid "Return to Event"
 msgstr "Zurück zum Event"
 
-#: src/components/layouts/Checkout/index.tsx:359
+#: src/components/layouts/Checkout/index.tsx:362
 msgid "Return to Event Page"
 msgstr "Zur Veranstaltungsseite zurückkehren"
 
@@ -13604,9 +13721,7 @@ msgstr "Zur Veranstaltungsseite zurückkehren"
 #: src/components/common/EventCard/index.tsx:235
 #: src/components/routes/admin/Attribution/index.tsx:137
 #: src/components/routes/event/Reports/SalesBySourceReport/index.tsx:102
-#: src/components/routes/organizer/QrCodes/index.tsx:272
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:86
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:74
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:81
 #: src/components/routes/organizer/Sms/CampaignList.tsx:55
 msgid "Revenue"
 msgstr "Einnahmen"
@@ -13795,7 +13910,7 @@ msgstr "San Francisco"
 #: src/components/routes/event/Settings/Sections/WaitlistSettings/index.tsx:76
 #: src/components/routes/organizer/Contacts/ContactDetail/EditContactModal.tsx:61
 #: src/components/routes/organizer/QrCodes/QrCampaignModal.tsx:48
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:526
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:725
 #: src/components/routes/organizer/Settings/Sections/AddressSettings/index.tsx:116
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:132
 #: src/components/routes/organizer/Settings/Sections/CustomerAddressFormSettings/index.tsx:64
@@ -13886,20 +14001,24 @@ msgstr ""
 msgid "Scan failed"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:197
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:483
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:219
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:620
 msgid "Scan me"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:265
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:82
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:70
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:129
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:146
+#: src/components/routes/organizer/OrganizerDashboard/QrLinksOverview.tsx:61
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:77
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:181
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:198
 msgid "Scans"
-msgstr ""
+msgstr "Scans"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:116
+#: src/components/routes/organizer/QrCodes/QrCampaignCard.tsx:33
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:65
+msgid "scans + clicks"
+msgstr "Scans + Klicks"
+
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:168
 msgid "Scans per day"
 msgstr ""
 
@@ -13981,7 +14100,7 @@ msgstr "Name, E-Mail oder Telefonnummer suchen"
 msgid "Search a name, an email or an order number…"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/index.tsx:278
+#: src/components/routes/organizer/QrCodes/index.tsx:266
 msgid "Search a QR code or an event…"
 msgstr ""
 
@@ -13994,7 +14113,7 @@ msgid "Search affiliates..."
 msgstr "Partner suchen..."
 
 #: src/components/routes/organizer/Events/index.tsx:60
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:134
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:136
 msgid "Search an event…"
 msgstr ""
 
@@ -14096,12 +14215,12 @@ msgstr "Sekunden"
 msgid "Secure Checkout"
 msgstr "Sichere Kasse"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:71
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:103
 #: src/components/organizerTemplates/Tour/index.tsx:86
 msgid "Secure payment"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2135
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2138
 msgid "Secure payment by Stripe"
 msgstr "Sichere Zahlung über Stripe"
 
@@ -14110,8 +14229,9 @@ msgid "Secured access"
 msgstr "Gesicherter Zugang"
 
 #: src/components/routes/event/EventDashboard/index.tsx:269
+#: src/components/routes/organizer/OrganizerDashboard/QrLinksOverview.tsx:54
 msgid "See all"
-msgstr ""
+msgstr "Alle anzeigen"
 
 #: src/components/routes/landing/index.tsx:462
 msgid "See all case studies"
@@ -14148,7 +14268,7 @@ msgstr "Mehr anzeigen"
 msgid "See our events"
 msgstr ""
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:65
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:97
 msgid "See prices"
 msgstr ""
 
@@ -14161,16 +14281,20 @@ msgid "See the event"
 msgstr ""
 
 #: src/components/layouts/QrLinkPage/index.tsx:179
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:98
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:130
 #: src/components/organizerTemplates/Poster/pages/UniversePage.tsx:91
 msgid "See the events"
 msgstr ""
+
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:70
+msgid "See the nights"
+msgstr "Die Abende ansehen"
 
 #: src/components/layouts/EventHomepage/EventEndedNotice/index.tsx:26
 msgid "See the organizer's other events"
 msgstr "Weitere Veranstaltungen des Veranstalters ansehen"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2295
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2298
 msgid "See the other ticket options"
 msgstr "Andere Ticketoptionen anzeigen"
 
@@ -14183,7 +14307,7 @@ msgstr "Empfänger anzeigen"
 msgid "See you soon! If your plans change, you can still let us know below."
 msgstr "Bis bald! Falls sich deine Pläne ändern, kannst du uns unten noch Bescheid geben."
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:125
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:205
 msgid "Select"
 msgstr ""
 
@@ -14620,7 +14744,7 @@ msgstr "Servicegebühren und Stornoschutz sind nicht erstattungsfähig."
 
 #: src/components/modals/EditOrganizerSiteContentModal/index.tsx:287
 #: src/components/organizerTemplates/Poster/index.tsx:81
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:199
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:279
 msgid "Services"
 msgstr ""
 
@@ -14776,9 +14900,13 @@ msgid "Short biography"
 msgstr "Kurzbiografie"
 
 #: src/components/common/QuestionsTable/index.tsx:68
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:359
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:443
 msgid "Short text"
 msgstr ""
+
+#: src/components/routes/organizer/QrCodes/index.tsx:273
+msgid "Show all campaigns"
+msgstr "Alle Kampagnen anzeigen"
 
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:232
 msgid "Show all platforms ({0} more with values)"
@@ -14899,7 +15027,7 @@ msgstr "Simpson"
 msgid "Since"
 msgstr "Seit"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:92
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:142
 msgid "Since creation"
 msgstr ""
 
@@ -15007,7 +15135,7 @@ msgstr "Social-Media-Links"
 msgid "Social Links & Website"
 msgstr "Social-Media-Links & Website"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:362
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:446
 msgid "Social networks"
 msgstr ""
 
@@ -15040,7 +15168,7 @@ msgstr ""
 #: src/components/common/ProductPriceAvailability/index.tsx:19
 #: src/components/common/ProductPriceAvailability/index.tsx:50
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:446
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:120
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:200
 #: src/components/organizerTemplates/Tour/index.tsx:238
 #: src/components/routes/event/BoxOffice/SaleForm/index.tsx:852
 #: src/components/routes/event/EventDashboard/index.tsx:201
@@ -15052,7 +15180,7 @@ msgstr "Ausverkauft"
 msgid "Sold Out"
 msgstr "Ausverkauft"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:32
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:33
 msgid "Sold out, join the waitlist"
 msgstr "Ausverkauft, auf die Warteliste"
 
@@ -15136,7 +15264,7 @@ msgstr "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut."
 #: src/components/routes/organizer/Contacts/ImportContactsModal.tsx:37
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:64
 #: src/components/routes/organizer/Settings/Sections/ImageAssetSettings/index.tsx:79
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:790
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:793
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
 #: src/components/routes/refund-approval/index.tsx:54
@@ -15148,8 +15276,8 @@ msgid "Sorry, this promo code is not recognized"
 msgstr "Dieser Aktionscode wird leider nicht erkannt"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:294
-msgid "Sort"
-msgstr ""
+#~ msgid "Sort"
+#~ msgstr ""
 
 #: src/components/routes/admin/Attribution/index.tsx:106
 #: src/components/routes/event/Reports/SalesBySourceReport/index.tsx:68
@@ -15188,7 +15316,7 @@ msgstr "Sport"
 msgid "Sports event"
 msgstr "Sportveranstaltung"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:164
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:186
 msgid "Square"
 msgstr ""
 
@@ -15237,8 +15365,8 @@ msgid "Start with the country code, e.g. +262 639…"
 msgstr "Beginnen Sie mit der Landesvorwahl, z. B. +262 639…"
 
 #: src/components/routes/organizer/QrCodes/index.tsx:330
-msgid "Start with the poster for your next event."
-msgstr ""
+#~ msgid "Start with the poster for your next event."
+#~ msgstr ""
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:285
 msgid "Start with your poster, it will be the cover of your event."
@@ -15268,8 +15396,7 @@ msgid "Station name"
 msgstr "Stationsname"
 
 #: src/components/common/AdminEventsTable/index.tsx:110
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:102
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:103
+#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:77
 msgid "Statistics"
 msgstr "Statistiken"
 
@@ -15309,8 +15436,12 @@ msgstr "Status"
 msgid "Stay informed"
 msgstr "Bleiben Sie informiert"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2369
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2374
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:668
+msgid "Step {0} of {STEP_COUNT}"
+msgstr "Schritt {0} von {STEP_COUNT}"
+
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2372
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2377
 msgid "Step {currentStepNumber} of {totalSteps}"
 msgstr "Schritt {currentStepNumber} von {totalSteps}"
 
@@ -15335,7 +15466,7 @@ msgid "Stories"
 msgstr "Storys"
 
 #: src/components/routes/organizer/Publications/labels.ts:54
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:162
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:184
 msgid "Story"
 msgstr "Story"
 
@@ -15423,7 +15554,7 @@ msgstr "Zwischensumme"
 
 #: src/components/common/OrdersTable/index.tsx:103
 #: src/components/common/OrganizerWebhookTable/index.tsx:149
-#: src/components/layouts/Checkout/index.tsx:103
+#: src/components/layouts/Checkout/index.tsx:105
 #: src/components/routes/event/OrdersPage/OrderList.tsx:84
 msgid "Success"
 msgstr "Erfolg"
@@ -15661,7 +15792,7 @@ msgstr "Systemstandard"
 msgid "T-shirt"
 msgstr "T-Shirt"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:36
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:41
 msgid "Tablet"
 msgstr ""
 
@@ -15758,7 +15889,7 @@ msgstr "Steuerübersicht"
 #: src/components/common/InlineOrderSummary/index.tsx:176
 #: src/components/forms/ProductForm/index.tsx:450
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:54
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2056
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2059
 msgid "Taxes"
 msgstr "Steuern"
 
@@ -15878,7 +16009,7 @@ msgstr "Verbindung testen"
 msgid "Text"
 msgstr "Text"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:485
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:622
 msgid "Text color"
 msgstr ""
 
@@ -15890,7 +16021,7 @@ msgstr "Text könnte schwer lesbar sein"
 msgid "Text post"
 msgstr "Textbeitrag"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:482
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:619
 msgid "Text under the QR code"
 msgstr ""
 
@@ -15914,9 +16045,9 @@ msgstr "Vielen Dank für Ihre Unterstützung, während wir unsere Plattform weit
 msgid "That invitation code is invalid"
 msgstr "Dieser Einladungscode ist ungültig"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1349
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1360
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1367
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1352
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1363
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1370
 #: src/components/routes/product-widget/SelectProducts/index.tsx:202
 #: src/components/routes/product-widget/SelectProducts/index.tsx:295
 msgid "That promo code is invalid"
@@ -16353,7 +16484,7 @@ msgid "The title of the event that will be displayed in search engine results an
 msgstr "Der Titel der Veranstaltung, der in Suchmaschinenergebnissen und beim Teilen in sozialen Medien angezeigt wird. Standardmäßig wird der Veranstaltungstitel verwendet"
 
 #: src/components/organizerTemplates/Poster/index.tsx:82
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:219
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:299
 msgid "The universe"
 msgstr ""
 
@@ -16507,7 +16638,7 @@ msgstr "Diese Eincheckliste ist noch nicht aktiv"
 msgid "This check-in list is not yet active and is not available for check-ins."
 msgstr "Diese Eincheckliste ist noch nicht aktiv und steht nicht für Eincheckungen zur Verfügung."
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1383
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1386
 msgid "This code does not unlock any invitation for this event."
 msgstr "Dieser Code schaltet keine Einladung für diese Veranstaltung frei."
 
@@ -16541,11 +16672,11 @@ msgid "This event is not published yet"
 msgstr "Diese Veranstaltung ist noch nicht veröffentlicht"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:85
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:402
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:405
 msgid "This event is restricted to attendees aged {ageLimit} or over."
 msgstr "Diese Veranstaltung ist Teilnehmern ab {ageLimit} Jahren vorbehalten."
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:661
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:664
 msgid "This field is required"
 msgstr "Dieses Feld ist erforderlich"
 
@@ -16561,10 +16692,10 @@ msgstr ""
 msgid "This information will be shown on the payment page, order summary page, and order confirmation email."
 msgstr "Diese Informationen werden auf der Zahlungsseite, der Bestellübersichtsseite und in der Bestellbestätigungs-E-Mail angezeigt."
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:258
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1367
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1378
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1393
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:260
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1370
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1381
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1396
 msgid "This invitation code is not valid."
 msgstr "Dieser Einladungscode ist ungültig."
 
@@ -16653,7 +16784,7 @@ msgstr "Diese Bestellung wurde abgebrochen. Sie können jederzeit eine neue Best
 msgid "This order was cancelled. You can start a new order anytime."
 msgstr "Diese Bestellung wurde storniert. Sie können jederzeit eine neue Bestellung aufgeben."
 
-#: src/components/routes/organizer/QrCodes/index.tsx:195
+#: src/components/routes/organizer/QrCodes/index.tsx:200
 msgid "This organizer could not be found. Choose your organizer from the menu, then open QR codes again."
 msgstr ""
 
@@ -16689,7 +16820,7 @@ msgstr "Dieses Produkt ist ausverkauft"
 msgid "This QR code is no longer active"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1773
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1776
 msgid "This registration is for one person."
 msgstr "Diese Anmeldung gilt für eine Person."
 
@@ -16754,8 +16885,8 @@ msgstr "Ticket"
 msgid "Ticket"
 msgstr "Ticket"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:349
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:22
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:433
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:27
 msgid "Ticket button"
 msgstr ""
 
@@ -16870,7 +17001,7 @@ msgctxt "event menu"
 msgid "Tickets"
 msgstr "Tickets"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:110
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:190
 #: src/components/organizerTemplates/Poster/shared.tsx:55
 #: src/components/organizerTemplates/Tour/index.tsx:153
 #: src/components/organizerTemplates/Tour/index.tsx:238
@@ -16908,7 +17039,7 @@ msgstr "Tickets für"
 msgid "tickets in the basket"
 msgstr "Tickets im Warenkorb"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2076
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2079
 msgid "Tickets in the name of {name}"
 msgstr "Tickets auf den Namen {name}"
 
@@ -16919,7 +17050,7 @@ msgstr "Tickets im Verkauf an der Kasse"
 #: src/components/routes/event/EventDashboard/index.tsx:102
 #: src/components/routes/event/EventDashboard/index.tsx:258
 #: src/components/routes/event/Reports/DailySalesReport/index.tsx:41
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:109
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:111
 msgid "Tickets sold"
 msgstr ""
 
@@ -16960,7 +17091,7 @@ msgstr "Gestufte Produkte ermöglichen es Ihnen, mehrere Preisoptionen für dass
 msgid "TikTok"
 msgstr "TikTok"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:148
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:228
 #: src/components/routes/event/Settings/Sections/SmsCancellationSettings/index.tsx:125
 #: src/components/routes/event/Settings/Sections/SmsConfirmationSettings/index.tsx:121
 #: src/components/routes/organizer/Sms/ReminderFormModal.tsx:177
@@ -16975,11 +17106,11 @@ msgstr "Zeit bis zur Öffnung der Anmeldung"
 msgid "Time left before the event"
 msgstr ""
 
-#: src/components/layouts/Checkout/index.tsx:274
+#: src/components/layouts/Checkout/index.tsx:276
 msgid "Time left:"
 msgstr "Verbleibende Zeit:"
 
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:136
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:188
 msgid "Time of scan"
 msgstr ""
 
@@ -17002,12 +17133,16 @@ msgstr "Anzahl der Verwendungen"
 msgid "Timezone"
 msgstr "Zeitzone"
 
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:163
+msgid "Tip: tap the short link above to copy it, then paste it into your bio, a story or a message."
+msgstr "Tipp: Tippe auf den Kurzlink oben, um ihn zu kopieren, und füge ihn in deine Bio, eine Story oder eine Nachricht ein."
+
 #: src/components/routes/event/EventPages/index.tsx:265
 #: src/components/routes/event/HomepageDesigner/FooterSettingsPanel.tsx:133
 msgid "Title"
 msgstr "Titel"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:470
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:607
 msgid "Title above the QR code"
 msgstr ""
 
@@ -17040,6 +17175,10 @@ msgstr "Um Konfigurationen zu bearbeiten, gehen Sie zum Bereich Konfigurationen 
 #: src/components/routes/organizer/Sms/LiveChatList.tsx:67
 msgid "To follow up"
 msgstr "Nachverfolgen"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:258
+msgid "To get your first ones, download a QR code (⋮ menu, then PNG or visual) and put it on your poster, or copy its short link into your bio, a story or a WhatsApp message."
+msgstr "Für die ersten Scans: Lade einen QR-Code herunter (Menü ⋮, dann PNG oder Visual) und bring ihn auf dein Plakat, oder kopiere seinen Kurzlink in deine Bio, eine Story oder eine WhatsApp-Nachricht."
 
 #: src/components/routes/organizer/Settings/Sections/SmsSettings/SmsAssistantSettings.tsx:199
 #: src/components/routes/organizer/Sms/ConversationList.tsx:72
@@ -17120,8 +17259,8 @@ msgstr "Top Veranstalter (Letzte 14 Tage)"
 #: src/components/common/InlineOrderSummary/index.tsx:206
 #: src/components/common/OrderSummary/index.tsx:92
 #: src/components/routes/organizer/Contacts/index.tsx:116
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1581
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2061
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1584
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2064
 #: src/components/routes/viewer/Event.tsx:148
 msgid "Total"
 msgstr "Gesamt"
@@ -17182,7 +17321,7 @@ msgstr "Insgesamt erstattet"
 msgid "Total Tax"
 msgstr "Gesamtsteuer"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1973
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1976
 msgid "Total tickets"
 msgstr "Tickets gesamt"
 
@@ -17209,6 +17348,10 @@ msgstr "Verfolgen Sie das Kontowachstum und die Leistung nach Attributionsquelle
 #: src/components/layouts/AuthLayout/index.tsx:41
 msgid "Track sales, revenue, and attendance with detailed reports"
 msgstr "Verfolgen Sie Verkäufe, Einnahmen und Teilnahme mit detaillierten Berichten"
+
+#: src/components/routes/organizer/OrganizerDashboard/QrLinksOverview.tsx:69
+msgid "Tracked links"
+msgstr "Verfolgte Links"
 
 #: src/components/routes/organizer/Settings/index.tsx:92
 #: src/components/routes/organizer/Settings/Sections/TrackingPixelSettings/index.tsx:171
@@ -17338,7 +17481,11 @@ msgstr "Produkt konnte nicht erstellt werden. Bitte überprüfen Sie Ihre Angabe
 msgid "Unable to create question. Please check the your details"
 msgstr "Frage konnte nicht erstellt werden. Bitte überprüfen Sie Ihre Angaben"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:154
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:286
+msgid "Unable to create the campaign"
+msgstr "Kampagne konnte nicht erstellt werden"
+
+#: src/components/routes/organizer/QrCodes/index.tsx:162
 msgid "Unable to delete the campaign"
 msgstr ""
 
@@ -17346,7 +17493,7 @@ msgstr ""
 msgid "Unable to delete the post"
 msgstr "Beitrag konnte nicht gelöscht werden"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:142
+#: src/components/routes/organizer/QrCodes/index.tsx:150
 msgid "Unable to delete the QR code"
 msgstr ""
 
@@ -17378,7 +17525,7 @@ msgstr "Teilnehmer konnte nicht abgerufen werden"
 msgid "Unable to generate a new signing key"
 msgstr "Neuer Signaturschlüssel konnte nicht erzeugt werden"
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:59
+#: src/components/routes/organizer/QrCodes/qrLinkHelpers.tsx:51
 msgid "Unable to generate the visual"
 msgstr ""
 
@@ -17446,11 +17593,11 @@ msgstr "Unterhaltung konnte nicht aktualisiert werden"
 msgid "Unable to update the peace of mind option. Please try again."
 msgstr "Die Sorglos-Option konnte nicht aktualisiert werden. Bitte versuche es erneut."
 
-#: src/components/routes/organizer/QrCodes/index.tsx:134
+#: src/components/routes/organizer/QrCodes/index.tsx:142
 msgid "Unable to update the QR code"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:223
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:245
 msgid "Unable to upload the image"
 msgstr ""
 
@@ -17463,8 +17610,8 @@ msgid "Unchecked, nothing leaves in that case and the conversation stays \"To ha
 msgstr "Nicht angehakt, wird in diesem Fall nichts gesendet und die Unterhaltung bleibt „Zu bearbeiten“. Ihre Teamkontakte und die Plattformaufsicht erhalten nie eine automatische Antwort."
 
 #: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:83
-msgid "Unique"
-msgstr ""
+#~ msgid "Unique"
+#~ msgstr ""
 
 #: src/components/routes/event/Reports/PromoCodesReport/index.tsx:30
 msgid "Unique Customers"
@@ -17474,9 +17621,8 @@ msgstr "Einzigartige Kunden"
 msgid "Unique order reference"
 msgstr "Eindeutige Bestellreferenz"
 
-#: src/components/routes/organizer/QrCodes/index.tsx:266
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:71
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:130
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:78
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:182
 msgid "Unique visitors"
 msgstr ""
 
@@ -17509,8 +17655,8 @@ msgstr "Titel der Seite „Das Universum“ (Suchmaschinen)"
 #: src/components/common/MessageList/index.tsx:49
 #: src/components/routes/event/messages.tsx:27
 #: src/components/routes/event/messages.tsx:66
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:28
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:40
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:33
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:45
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -17572,7 +17718,7 @@ msgstr "Unbezahlte Bestellung"
 msgid "Unread"
 msgstr "Ungelesen"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:114
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:116
 msgid "Unread messages"
 msgstr "Ungelesene Nachrichten"
 
@@ -17606,7 +17752,7 @@ msgstr "Bis zu 3 Links zu anderen Websites, mit optionalem Bild."
 #: src/components/common/EventStatusBadge/index.tsx:16
 #: src/components/layouts/OrganizerHomepage/index.tsx:296
 #: src/components/routes/organizer/Events/index.tsx:43
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:75
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:77
 #: src/components/routes/organizer/Reports/EventsPerformanceReport/index.tsx:33
 msgid "Upcoming"
 msgstr "Bevorstehende"
@@ -17648,7 +17794,7 @@ msgid "Upgrade Available"
 msgstr "Upgrade verfügbar"
 
 #: src/components/common/OrganizerFontManager/index.tsx:195
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:445
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:582
 msgid "Upload"
 msgstr "Hochladen"
 
@@ -17763,7 +17909,7 @@ msgstr "Verwenden Sie Bestelldetails für alle Teilnehmer. Teilnehmernamen und E
 msgid "Use the Contact button on this page, we will get back to you quickly."
 msgstr "Nutze den Kontakt-Button auf dieser Seite, wir antworten schnell."
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:437
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:574
 msgid "Use this background"
 msgstr ""
 
@@ -17959,7 +18105,7 @@ msgstr "Umsatzsteuerbehandlung für Plattformgebühren: EU-umsatzsteuerregistrie
 msgid "VAT validation service temporarily unavailable"
 msgstr "Umsatzsteuer-Validierungsdienst vorübergehend nicht verfügbar"
 
-#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:157
+#: src/components/organizerTemplates/Poster/pages/HomePage.tsx:237
 msgid "Venue"
 msgstr ""
 
@@ -18169,12 +18315,11 @@ msgstr "Besucher wählen zuerst einen Weg (eine große Schaltfläche pro Ticketk
 msgid "Visits"
 msgstr "Besuche"
 
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:56
+#: src/components/routes/organizer/QrCodes/qrLinkHelpers.tsx:48
 msgid "visual"
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:399
-#: src/components/routes/organizer/QrCodes/QrLinkRow.tsx:94
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:536
 msgid "Visual"
 msgstr ""
 
@@ -18202,7 +18347,7 @@ msgstr "Wartet auf deine Entscheidung"
 msgid "Waiting for your reply since {0}"
 msgstr "Wartet seit {0} auf deine Antwort"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1544
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1547
 msgid "Waiting list"
 msgstr "Warteliste"
 
@@ -18423,7 +18568,7 @@ msgstr "Webhooks"
 #: src/components/routes/event/EventPages/index.tsx:233
 #: src/components/routes/event/EventPages/index.tsx:234
 #: src/components/routes/organizer/QrCodes/posterLogos.tsx:40
-#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:26
+#: src/components/routes/organizer/QrCodes/QrLinkStatsDrawer.tsx:31
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:102
 msgid "Website"
 msgstr "Website"
@@ -18493,7 +18638,8 @@ msgstr "Willkommen bei {0}, hier ist eine Übersicht all Ihrer Veranstaltungen"
 msgid "What are Tiered Products?"
 msgstr "Was sind gestufte Produkte?"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:297
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:385
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:659
 msgid "What does it open?"
 msgstr ""
 
@@ -18505,7 +18651,7 @@ msgstr ""
 msgid "What is a Category?"
 msgstr "Was ist eine Kategorie?"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1680
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1683
 msgid "What is your name?"
 msgstr "Wie heißt du?"
 
@@ -18516,6 +18662,10 @@ msgstr "Für welche Produkte gilt dieser Code?"
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:48
 msgid "What products should this capacity apply to?"
 msgstr "Für welche Produkte soll diese Kapazität gelten?"
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:661
+msgid "What should it look like?"
+msgstr "Wie soll er aussehen?"
 
 #: src/components/forms/PromoCodeForm/index.tsx:79
 msgid "What should this code do?"
@@ -18673,11 +18823,11 @@ msgstr "Wo wird es verkauft?"
 msgid "Where it all began."
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1710
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1713
 msgid "Where should we send your confirmation?"
 msgstr "Wohin sollen wir deine Bestätigung senden?"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1710
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1713
 msgid "Where should we send your tickets?"
 msgstr "Wohin sollen wir deine Tickets senden?"
 
@@ -18685,13 +18835,19 @@ msgstr "Wohin sollen wir deine Tickets senden?"
 msgid "Where we are going."
 msgstr ""
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:273
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:363
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:364
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:658
 msgid "Where will this QR code be displayed?"
 msgstr ""
 
 #: src/components/routes/organizer/EventAssistant/index.tsx:413
 msgid "Where?"
 msgstr ""
+
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:660
+msgid "Which campaign does it belong to?"
+msgstr "Zu welcher Kampagne gehört er?"
 
 #: src/components/forms/CheckInListForm/index.tsx:43
 msgid "Which tickets should be associated with this check-in list?"
@@ -18709,7 +18865,7 @@ msgstr "Wer übernehmen kann"
 msgid "Who fills in the details?"
 msgstr ""
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1767
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1770
 msgid "Who is coming?"
 msgstr "Wer kommt?"
 
@@ -18737,7 +18893,7 @@ msgstr "Widget-Einstellungen"
 msgid "Will you be there? Your answer helps the organizer plan the event and offer free places to people on the waiting list."
 msgstr "Bist du dabei? Deine Antwort hilft dem Veranstalter bei der Planung und dabei, freie Plätze an Personen auf der Warteliste zu vergeben."
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:493
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:484
 msgid "With a direct link, visitors leave immediately: your Meta pixel cannot record them. Choose the link page to build retargeting audiences."
 msgstr ""
 
@@ -18750,11 +18906,11 @@ msgstr "Mit Telefonnummer"
 msgid "with the link"
 msgstr "über den Link"
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:124
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:126
 msgid "Withheld on your next sales"
 msgstr "Wird von Ihren nächsten Verkäufen einbehalten"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:350
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:434
 msgid "Without an event, the button opens your organizer page."
 msgstr ""
 
@@ -18840,7 +18996,7 @@ msgstr "ja"
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:340
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:367
 #: src/components/routes/organizer/Sms/CampaignRecipientsDrawer.tsx:104
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1814
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1817
 msgid "Yes"
 msgstr "Ja"
 
@@ -18848,7 +19004,7 @@ msgstr "Ja"
 msgid "Yes - I have a valid EU VAT registration number"
 msgstr "Ja - Ich habe eine gültige EU-Umsatzsteuer-ID"
 
-#: src/components/layouts/Checkout/index.tsx:391
+#: src/components/layouts/Checkout/index.tsx:394
 msgid "Yes, cancel my order"
 msgstr "Ja, Bestellung stornieren"
 
@@ -18872,7 +19028,7 @@ msgstr ""
 msgid "Yes. Your teams can run the welcome themselves and only rent the equipment you need."
 msgstr "Ja. Ihre Teams übernehmen den Empfang selbst, und Sie mieten nur die benötigten Geräte."
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1789
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1792
 msgid "you"
 msgstr "du"
 
@@ -18910,7 +19066,11 @@ msgstr "Du bist angemeldet"
 #~ msgid "You can add the person coming with you. They will get their own ticket."
 #~ msgstr "Du kannst die Person hinzufügen, die dich begleitet. Sie erhält ein eigenes Ticket."
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:696
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:659
+msgid "You can change it later without reprinting the QR code."
+msgstr "Du kannst das später ändern, ohne den QR-Code neu zu drucken."
+
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:699
 msgid "You can choose up to {max} for {title}."
 msgstr "Du kannst bis zu {max} für {title} wählen."
 
@@ -18922,7 +19082,7 @@ msgstr "Sie können zusätzliche Servicegebühren und Steuern in Ihren Kontoeins
 msgid "You can create a promo code which targets this product on the"
 msgstr "Sie können einen Promo-Code erstellen, der sich auf dieses Produkt richtet auf der"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1772
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:1775
 msgid "You can register up to {maxParticipants} people, including yourself."
 msgstr "Du kannst bis zu {maxParticipants} Personen anmelden, dich eingeschlossen."
 
@@ -18979,7 +19139,7 @@ msgstr "Sie haben keine ausstehende E-Mail-Änderung."
 msgid "You have reached your messaging limit."
 msgstr "Sie haben Ihr Nachrichtenlimit erreicht."
 
-#: src/components/layouts/Checkout/index.tsx:349
+#: src/components/layouts/Checkout/index.tsx:352
 msgid "You have run out of time to complete your order."
 msgstr "Die Zeit für die Bestellung ist abgelaufen."
 
@@ -19137,7 +19297,7 @@ msgstr "Ihr Kommentar"
 msgid "Your contacts have been exported."
 msgstr "Ihre Kontakte wurden exportiert."
 
-#: src/components/layouts/Checkout/index.tsx:376
+#: src/components/layouts/Checkout/index.tsx:379
 msgid "Your current order will be lost."
 msgstr "Ihre aktuelle Bestellung geht verloren."
 
@@ -19145,7 +19305,7 @@ msgstr "Ihre aktuelle Bestellung geht verloren."
 msgid "Your Details"
 msgstr "Deine Details"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2267
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2270
 msgid "Your details stay on this device."
 msgstr ""
 
@@ -19198,7 +19358,7 @@ msgstr ""
 msgid "Your event, from idea to stage."
 msgstr ""
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:189
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:195
 msgid "Your events"
 msgstr ""
 
@@ -19248,7 +19408,7 @@ msgstr "Ihr neues Passwort muss mindestens 8 Zeichen lang sein."
 msgid "Your number or your email"
 msgstr "Deine Nummer oder E-Mail"
 
-#: src/components/layouts/Checkout/index.tsx:267
+#: src/components/layouts/Checkout/index.tsx:269
 msgid "Your Order"
 msgstr "Deine Bestellung"
 
@@ -19260,7 +19420,7 @@ msgstr "Ihre Bestelldetails wurden aktualisiert. Eine Bestätigungs-E-Mail wurde
 msgid "Your order has been cancelled"
 msgstr "Deine Bestellung wurde storniert"
 
-#: src/components/layouts/Checkout/index.tsx:125
+#: src/components/layouts/Checkout/index.tsx:127
 msgid "Your order has been cancelled."
 msgstr "Ihre Bestellung wurde storniert."
 
@@ -19268,7 +19428,7 @@ msgstr "Ihre Bestellung wurde storniert."
 msgid "Your order is awaiting payment"
 msgstr "Ihre Bestellung wartet auf Zahlung"
 
-#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2287
+#: src/components/routes/product-widget/EmbeddedRegistration/index.tsx:2290
 msgid "Your order is still reserved. Continue to payment to finish it."
 msgstr ""
 
@@ -19281,7 +19441,7 @@ msgstr "Deine Bestellungen wurden erfolgreich exportiert."
 msgid "Your orders will appear here once they start rolling in."
 msgstr "Sobald Ihre Bestellungen eintreffen, werden sie hier angezeigt."
 
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:145
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:147
 msgid "Your organization"
 msgstr ""
 
@@ -19289,7 +19449,7 @@ msgstr ""
 msgid "Your organizer address"
 msgstr "Adresse Ihres Veranstalters"
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:426
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:563
 msgid "Your own design (JPG, PNG or WebP, up to 8 MB). Leave an empty area where the QR code goes."
 msgstr ""
 
@@ -19383,7 +19543,7 @@ msgstr "Ihre Anfrage:"
 #: src/components/routes/event/EventDashboard/index.tsx:253
 #: src/components/routes/event/orders.tsx:88
 #: src/components/routes/event/Reports/DailySalesReport/index.tsx:34
-#: src/components/routes/organizer/OrganizerDashboard/index.tsx:105
+#: src/components/routes/organizer/OrganizerDashboard/index.tsx:107
 #: src/components/routes/organizer/Reports/RevenueSummaryReport/index.tsx:30
 msgid "Your sales"
 msgstr "Ihre Verkäufe"
@@ -19392,7 +19552,7 @@ msgstr "Ihre Verkäufe"
 msgid "Your SMS are sent with a line shared and managed by PICHA, from the number {sharedNumber}. Customer replies appear in SMS messages and only your team can see your conversations."
 msgstr "Deine SMS werden über eine von PICHA geteilte und verwaltete Leitung mit der Nummer {sharedNumber} gesendet. Antworten deiner Kunden erscheinen in den SMS-Nachrichten und nur dein Team sieht deine Unterhaltungen."
 
-#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:300
+#: src/components/routes/organizer/QrCodes/QrLinkFormModal.tsx:341
 msgid "Your social networks and a ticket button, on a page where your pixel can measure visits."
 msgstr ""
 

@@ -28,6 +28,40 @@ class ChatwootClient
         return (int) $this->config->get('services.chatwoot.sms_inbox_id');
     }
 
+    public function liveChatInboxId(): int
+    {
+        return (int) $this->config->get('services.chatwoot.live_chat_inbox_id');
+    }
+
+    public function isLiveChatEnabled(): bool
+    {
+        return $this->config->get('services.chatwoot.base_url')
+            && $this->config->get('services.chatwoot.api_token')
+            && $this->liveChatInboxId() > 0;
+    }
+
+    /**
+     * Contact of a live chat visitor: found by phone, then by e-mail, otherwise created (anonymous when neither is known).
+     *
+     * @throws ChatwootUnavailableException
+     */
+    public function findOrCreateVisitorContact(?string $phone, ?string $email, string $name): int
+    {
+        foreach (array_filter([$phone, $email]) as $key) {
+            foreach ($this->call('GET', 'contacts/search', ['q' => $key])->json('payload') ?? [] as $contact) {
+                if (in_array($key, [($contact['phone_number'] ?? null), strtolower((string) ($contact['email'] ?? ''))], true)) {
+                    return (int) $contact['id'];
+                }
+            }
+        }
+
+        return (int) $this->call('POST', 'contacts', array_filter([
+            'name' => $name,
+            'phone_number' => $phone,
+            'email' => $email,
+        ]))->json('payload.contact.id');
+    }
+
     /**
      * @throws ChatwootUnavailableException
      */
@@ -46,16 +80,17 @@ class ChatwootClient
     /**
      * @throws ChatwootUnavailableException
      */
-    public function createConversation(int $contactId, string $sourceId, array $attributes): int
+    public function createConversation(int $contactId, string $sourceId, array $attributes, ?int $inboxId = null): int
     {
+        $inboxId ??= $this->smsInboxId();
         $this->call('POST', "contacts/{$contactId}/contact_inboxes", [
-            'inbox_id' => $this->smsInboxId(),
+            'inbox_id' => $inboxId,
             'source_id' => $sourceId,
         ]);
 
         return (int) $this->call('POST', 'conversations', [
             'source_id' => $sourceId,
-            'inbox_id' => $this->smsInboxId(),
+            'inbox_id' => $inboxId,
             'contact_id' => $contactId,
             'status' => 'open',
             'additional_attributes' => $attributes,

@@ -25,4 +25,5 @@ enum SmsAutoReplySkipReason: string
     case HOLDING_DISABLED = 'HOLDING_DISABLED';
     case TEAM_CONTACT = 'TEAM_CONTACT';
     case SUPERVISOR = 'SUPERVISOR';
+    case ROUTER_HELD = 'ROUTER_HELD';
 }

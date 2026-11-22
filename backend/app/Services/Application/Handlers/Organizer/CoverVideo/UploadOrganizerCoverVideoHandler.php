@@ -3,12 +3,14 @@
 namespace HiEvents\Services\Application\Handlers\Organizer\CoverVideo;
 
 use HiEvents\DomainObjects\Enums\ImageType;
+use HiEvents\DomainObjects\Enums\SocialMediaType;
 use HiEvents\DomainObjects\ImageDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Exceptions\CoverVideoUploadException;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Organizer\CoverVideo\DTO\UploadOrganizerCoverVideoDTO;
+use HiEvents\Services\Domain\Social\Media\SocialMediaProbe;
 use HiEvents\Services\Infrastructure\Image\Exception\CouldNotUploadImageException;
 use HiEvents\Services\Infrastructure\Image\ImageStorageService;
 use Illuminate\Database\DatabaseManager;
@@ -20,6 +22,7 @@ class UploadOrganizerCoverVideoHandler
         private readonly ImageRepositoryInterface $imageRepository,
         private readonly ImageStorageService $imageStorageService,
         private readonly DatabaseManager $databaseManager,
+        private readonly SocialMediaProbe $mediaProbe,
     ) {}
 
     /**
@@ -38,13 +41,15 @@ class UploadOrganizerCoverVideoHandler
 
         $type = $dto->mobile ? ImageType::ORGANIZER_COVER_VIDEO_MOBILE : ImageType::ORGANIZER_COVER_VIDEO;
 
+        $metadata = $this->mediaProbe->probe((string) $dto->video->getRealPath(), SocialMediaType::VIDEO);
+
         try {
             $stored = $this->imageStorageService->store($dto->video, $type->name);
         } catch (CouldNotUploadImageException) {
             throw new CoverVideoUploadException(__('The video could not be saved. Please try again.'));
         }
 
-        return $this->databaseManager->transaction(function () use ($dto, $stored, $type) {
+        return $this->databaseManager->transaction(function () use ($dto, $stored, $type, $metadata) {
             $this->imageRepository->deleteWhere([
                 'entity_id' => $dto->organizerId,
                 'entity_type' => OrganizerDomainObject::class,
@@ -61,6 +66,8 @@ class UploadOrganizerCoverVideoHandler
                 'path' => $stored->path,
                 'size' => $stored->size,
                 'mime_type' => $stored->mime_type,
+                'width' => $metadata->width,
+                'height' => $metadata->height,
             ]);
         });
     }

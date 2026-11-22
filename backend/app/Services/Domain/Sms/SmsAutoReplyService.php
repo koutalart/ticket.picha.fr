@@ -30,6 +30,7 @@ use HiEvents\Services\Domain\Sms\DTO\SmsAssistantResultDTO;
 use HiEvents\Services\Domain\Sms\DTO\SmsAutoReplyCheckDTO;
 use HiEvents\Services\Domain\Sms\Team\OrganizerTeamContactService;
 use HiEvents\Services\Domain\Sms\Team\PlatformSupervisorService;
+use HiEvents\Services\Infrastructure\UneAnicka\UneAnickaClient;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -39,7 +40,8 @@ use Illuminate\Support\Collection;
  * for the team) only a holding reply leaves, which promises nothing, and the conversation stays waiting for the team.
  * At most one automatic reply per customer SMS, and none once somebody wrote to the contact after it. A team contact of
  * any organizer of the line and a platform supervisor never get any automatic reply, and the organizer can turn the
- * holding reply off.
+ * holding reply off. Last of all, the single router of Anicka must agree, before anything is written: another system or
+ * a human may already be talking to this person.
  */
 class SmsAutoReplyService
 {
@@ -63,6 +65,7 @@ class SmsAutoReplyService
         private readonly CustomerLocaleResolver $customerLocaleResolver,
         private readonly OrganizerTeamContactService $teamContactService,
         private readonly PlatformSupervisorService $supervisorService,
+        private readonly ?UneAnickaClient $router = null,
     ) {}
 
     public function isEnabledFor(?OrganizerSmsSettingDomainObject $settings): bool
@@ -171,7 +174,7 @@ class SmsAutoReplyService
         if ($answer !== null) {
             $answerSkip = $this->findAnswerSkipReason($conversation, $message, $answer);
             if ($answerSkip === null) {
-                return new SmsAutoReplyCheckDTO(null, $conversation, SmsAutoReplyType::ANSWER, $answer);
+                return $this->routed(new SmsAutoReplyCheckDTO(null, $conversation, SmsAutoReplyType::ANSWER, $answer));
             }
 
             if ($answerSkip === SmsAutoReplySkipReason::DRAFT_CHANGED) {
@@ -191,7 +194,24 @@ class SmsAutoReplyService
             return new SmsAutoReplyCheckDTO(SmsAutoReplySkipReason::HOLDING_ALREADY_SENT, $conversation);
         }
 
-        return new SmsAutoReplyCheckDTO(null, $conversation, SmsAutoReplyType::HOLDING, $holdingReply);
+        return $this->routed(new SmsAutoReplyCheckDTO(null, $conversation, SmsAutoReplyType::HOLDING, $holdingReply));
+    }
+
+    private function routed(SmsAutoReplyCheckDTO $check): SmsAutoReplyCheckDTO
+    {
+        if ($this->router === null || $check->conversation === null) {
+            return $check;
+        }
+
+        $decision = $this->router->decide(
+            $check->type === SmsAutoReplyType::HOLDING ? 'billetterie-attente' : 'billetterie-assistant',
+            $check->conversation->getPhone(),
+            'sms',
+            (string) $check->content,
+            $check->conversation->getOrganizerId(),
+        );
+
+        return $decision->allowed ? $check : new SmsAutoReplyCheckDTO(SmsAutoReplySkipReason::ROUTER_HELD, $check->conversation);
     }
 
     /**

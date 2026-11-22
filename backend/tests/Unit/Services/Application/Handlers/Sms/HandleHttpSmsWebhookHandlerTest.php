@@ -174,7 +174,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
     public function test_recorded_message_is_handed_to_the_assistant(): void
     {
         $this->expectVerified();
-        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3);
+        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3)->setOrganizerId(4);
 
         $this->inboundService->shouldReceive('recordInbound')->once()->andReturn($message);
         $this->assistantService->shouldReceive('queueDraftIfEligible')->once()->with($this->settings, $message);
@@ -241,7 +241,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
     public function test_new_received_message_triggers_inbound_alert(): void
     {
         $this->expectVerified();
-        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3);
+        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3)->setOrganizerId(4);
 
         $this->inboundService->shouldReceive('recordInbound')->once()->andReturn($message);
         $this->alertService->shouldReceive('markPhoneActive')->once()->with($this->settings)->andReturn($this->settings);
@@ -331,7 +331,7 @@ class HandleHttpSmsWebhookHandlerTest extends TestCase
     public function test_line_with_a_single_organizer_keeps_everything_for_it(): void
     {
         $this->expectVerified();
-        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3);
+        $message = (new SmsMessageDomainObject)->setId(9)->setSmsConversationId(3)->setOrganizerId(4);
 
         $this->lineService->shouldNotReceive('attributeInbound');
         $this->unattributedService->shouldNotReceive('record');

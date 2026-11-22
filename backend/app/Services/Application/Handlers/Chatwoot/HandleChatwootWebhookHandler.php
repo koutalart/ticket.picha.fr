@@ -16,6 +16,7 @@ use HiEvents\Exceptions\SmsRecipientOptedOutException;
 use HiEvents\Repository\Interfaces\SmsConversationRepositoryInterface;
 use HiEvents\Repository\Interfaces\SmsMessageRepositoryInterface;
 use HiEvents\Services\Application\Handlers\Sms\SendSmsReplyHandler;
+use HiEvents\Services\Domain\Chatwoot\ChatwootLiveChatReplyService;
 use HiEvents\Services\Domain\Chatwoot\ChatwootSmsMirrorService;
 use HiEvents\Services\Domain\Chatwoot\ChatwootUnknownNumberReplyService;
 use Illuminate\Config\Repository;
@@ -37,6 +38,7 @@ class HandleChatwootWebhookHandler
         private readonly ChatwootSmsMirrorService $mirrorService,
         private readonly LoggerInterface $logger,
         private readonly ChatwootUnknownNumberReplyService $unknownNumberReplyService,
+        private readonly ?ChatwootLiveChatReplyService $liveChatReplyService = null,
     ) {}
 
     /**
@@ -47,6 +49,13 @@ class HandleChatwootWebhookHandler
         $expected = (string) $this->config->get('services.chatwoot.webhook_token');
         if ($expected === '' || ! hash_equals($expected, $webhookToken)) {
             throw new ChatwootWebhookUnauthorizedException('Unknown Chatwoot webhook');
+        }
+
+        if ($this->liveChatReplyService !== null && $this->isHumanReply($event)
+            && $this->liveChatReplyService->isLiveChatInbox((int) ($event['inbox']['id'] ?? 0))) {
+            $this->liveChatReplyService->relay((int) ($event['conversation']['id'] ?? 0), trim((string) $event['content']));
+
+            return;
         }
 
         if (! $this->isAgentReply($event)) {
@@ -120,13 +129,18 @@ class HandleChatwootWebhookHandler
 
     private function isAgentReply(array $event): bool
     {
+        return $this->isHumanReply($event)
+            && (int) ($event['inbox']['id'] ?? 0) === (int) $this->config->get('services.chatwoot.sms_inbox_id');
+    }
+
+    private function isHumanReply(array $event): bool
+    {
         $senderType = strtolower((string) ($event['sender']['type'] ?? ''));
         $gatewayUserId = (int) $this->config->get('services.chatwoot.gateway_user_id');
 
         return ($event['event'] ?? null) === 'message_created'
             && ($event['message_type'] ?? null) === 'outgoing'
             && ($event['private'] ?? true) === false
-            && (int) ($event['inbox']['id'] ?? 0) === (int) $this->config->get('services.chatwoot.sms_inbox_id')
             && $senderType === 'user'
             && ($gatewayUserId === 0 || (int) ($event['sender']['id'] ?? 0) !== $gatewayUserId)
             && trim((string) ($event['content'] ?? '')) !== '';

@@ -1,8 +1,8 @@
 import {useMemo, useState} from "react";
 import {useParams, useSearchParams} from "react-router";
 import {t} from "@lingui/macro";
-import {ActionIcon, Alert, Button, Menu, SegmentedControl, Select, Skeleton, Text, TextInput} from "@mantine/core";
-import {IconDotsVertical, IconFolder, IconFolderPlus, IconPencil, IconPlus, IconQrcode, IconSearch, IconTrash} from "@tabler/icons-react";
+import {Alert, Button, Skeleton, Text, TextInput} from "@mantine/core";
+import {IconBulb, IconFolderPlus, IconPlus, IconQrcode, IconSearch, IconX} from "@tabler/icons-react";
 import {IdParam, QrCampaign, QrLink} from "../../../../types.ts";
 import {useGetQrLinks} from "../../../../queries/useGetQrLinks.ts";
 import {useGetQrCampaigns} from "../../../../queries/useGetQrCampaigns.ts";
@@ -12,20 +12,27 @@ import {useDeleteQrLink} from "../../../../mutations/useDeleteQrLink.ts";
 import {useDeleteQrCampaign} from "../../../../mutations/useDeleteQrCampaign.ts";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
-import {formatCurrency} from "../../../../utilites/currency.ts";
 import {formatNumber} from "../../../../utilites/helpers.ts";
 import {PageBody} from "../../../common/PageBody";
 import {QrLinkRow} from "./QrLinkRow.tsx";
 import {QrLinkFormModal, QrPosterBackground} from "./QrLinkFormModal.tsx";
 import {QrLinkStatsDrawer} from "./QrLinkStatsDrawer.tsx";
 import {QrCampaignModal} from "./QrCampaignModal.tsx";
+import {QrCampaignCard} from "./QrCampaignCard.tsx";
+import {qrTotal, shortQrName} from "./qrLinkHelpers.tsx";
 import classes from "./QrCodes.module.scss";
 
-const ALL = 'all';
 const NO_CAMPAIGN = 'none';
 
-type StatusFilter = 'all' | 'ACTIVE' | 'PAUSED';
-type SortKey = 'recent' | 'scans' | 'orders' | 'name';
+interface CampaignGroup {
+    key: string;
+    campaign: QrCampaign | null;
+    name: string;
+    links: QrLink[];
+}
+
+const byPerformance = (a: QrLink, b: QrLink) =>
+    qrTotal(b) - qrTotal(a) || b.orders_count - a.orders_count || b.created_at.localeCompare(a.created_at);
 
 const QrCodes = () => {
     const {organizerId} = useParams();
@@ -38,22 +45,19 @@ const QrCodes = () => {
     const deleteCampaignMutation = useDeleteQrCampaign();
 
     const [formTarget, setFormTarget] = useState<QrLink | 'new' | null>(null);
+    const [newDefaultCampaign, setNewDefaultCampaign] = useState<IdParam | undefined>();
     const [statsTarget, setStatsTarget] = useState<QrLink | null>(null);
     const [campaignTarget, setCampaignTarget] = useState<QrCampaign | 'new' | null>(null);
     const [search, setSearch] = useState('');
-    const [status, setStatus] = useState<StatusFilter>('all');
-    const [sort, setSort] = useState<SortKey>('recent');
 
     const qrLinks = qrLinksQuery.data;
     const campaigns = campaignsQuery.data ?? [];
     const currency = organizer?.currency || 'EUR';
-    const selected = searchParams.get('campagne') || ALL;
-    const selectedCampaign = campaigns.find(campaign => String(campaign.id) === selected);
-    const showRevenue = (qrLinks ?? []).some(qrLink => qrLink.revenue_gross > 0);
+    const selected = searchParams.get('campagne');
 
-    const selectCampaign = (value: string) => {
+    const selectCampaign = (value: string | null) => {
         const next = new URLSearchParams(searchParams);
-        if (value === ALL) {
+        if (!value || value === selected) {
             next.delete('campagne');
         } else {
             next.set('campagne', value);
@@ -61,42 +65,39 @@ const QrCodes = () => {
         setSearchParams(next, {replace: true});
     };
 
-    const countFor = (campaignId: IdParam | null) =>
-        (qrLinks ?? []).filter(qrLink => String(qrLink.qr_campaign_id ?? '') === String(campaignId ?? '')).length;
+    const groups = useMemo<CampaignGroup[]>(() => {
+        const all = qrLinks ?? [];
+        const campaignGroups: CampaignGroup[] = campaigns.map(campaign => ({
+            key: String(campaign.id),
+            campaign,
+            name: campaign.name,
+            links: all.filter(qrLink => String(qrLink.qr_campaign_id ?? '') === String(campaign.id)).sort(byPerformance),
+        }));
+        const total = (group: CampaignGroup) => group.links.reduce((sum, qrLink) => sum + qrTotal(qrLink), 0);
+        campaignGroups.sort((a, b) => total(b) - total(a) || b.links.length - a.links.length);
 
-    const inScope = useMemo(() => (qrLinks ?? []).filter(qrLink => {
-        if (selected === ALL) return true;
-        if (selected === NO_CAMPAIGN) return !qrLink.qr_campaign_id;
-        return String(qrLink.qr_campaign_id) === selected;
-    }), [qrLinks, selected]);
+        const known = new Set(campaigns.map(campaign => String(campaign.id)));
+        const orphans = all.filter(qrLink => !qrLink.qr_campaign_id || !known.has(String(qrLink.qr_campaign_id)));
+        if (orphans.length) {
+            campaignGroups.push({key: NO_CAMPAIGN, campaign: null, name: t`No campaign`, links: orphans.sort(byPerformance)});
+        }
 
-    const visible = useMemo(() => {
+        return campaignGroups;
+    }, [qrLinks, campaigns]);
+
+    const visibleGroups = useMemo(() => {
         const query = search.trim().toLowerCase();
-        const filtered = inScope.filter(qrLink =>
-            (status === 'all' || qrLink.status === status)
-            && (!query || qrLink.name.toLowerCase().includes(query) || (qrLink.event_title || '').toLowerCase().includes(query))
-        );
-
-        return [...filtered].sort((a, b) => {
-            switch (sort) {
-                case 'scans':
-                    return b.scans_count - a.scans_count;
-                case 'orders':
-                    return b.orders_count - a.orders_count || b.revenue_gross - a.revenue_gross;
-                case 'name':
-                    return a.name.localeCompare(b.name);
-                default:
-                    return b.created_at.localeCompare(a.created_at);
-            }
-        });
-    }, [inScope, search, status, sort]);
-
-    const totals = useMemo(() => inScope.reduce((sum, qrLink) => ({
-        scans: sum.scans + qrLink.scans_count,
-        unique: sum.unique + qrLink.unique_scans_count,
-        orders: sum.orders + qrLink.orders_count,
-        revenue: sum.revenue + qrLink.revenue_gross,
-    }), {scans: 0, unique: 0, orders: 0, revenue: 0}), [inScope]);
+        return groups
+            .filter(group => !selected || group.key === selected)
+            .map(group => ({
+                ...group,
+                links: query
+                    ? group.links.filter(qrLink => qrLink.name.toLowerCase().includes(query)
+                        || (qrLink.event_title || '').toLowerCase().includes(query))
+                    : group.links,
+            }))
+            .filter(group => !query || group.links.length > 0);
+    }, [groups, selected, search]);
 
     const backgrounds = useMemo<QrPosterBackground[]>(() => {
         const unique = new Map<number, QrPosterBackground>();
@@ -113,6 +114,11 @@ const QrCodes = () => {
         return [...unique.values()];
     }, [qrLinks]);
 
+    const openCreate = (campaignId?: IdParam) => {
+        setNewDefaultCampaign(campaignId ?? (selected && selected !== NO_CAMPAIGN ? selected : undefined));
+        setFormTarget('new');
+    };
+
     const toggleStatus = (qrLink: QrLink) => {
         updateMutation.mutate({
             organizerId: organizerId!,
@@ -121,6 +127,8 @@ const QrCodes = () => {
                 name: qrLink.name,
                 destination_type: qrLink.destination_type,
                 destination_url: qrLink.destination_url,
+                app_store_url: qrLink.app_store_url,
+                play_store_url: qrLink.play_store_url,
                 event_id: qrLink.event_id,
                 qr_campaign_id: qrLink.qr_campaign_id,
                 title: qrLink.title,
@@ -148,7 +156,7 @@ const QrCodes = () => {
         confirmationDialog(t`Delete the campaign "${campaign.name}"? Its QR codes are kept and keep working, they just move to "No campaign".`, () => {
             deleteCampaignMutation.mutate({organizerId: organizerId!, campaignId: campaign.id}, {
                 onSuccess: () => {
-                    selectCampaign(ALL);
+                    selectCampaign(null);
                     showSuccess(t`Campaign deleted`);
                 },
                 onError: () => showError(t`Unable to delete the campaign`),
@@ -156,17 +164,12 @@ const QrCodes = () => {
         });
     };
 
-    const scopeTitle = selected === ALL ? t`All QR codes`
-        : selected === NO_CAMPAIGN ? t`No campaign`
-            : selectedCampaign?.name ?? t`Campaign`;
-
-    const scopeOptions = [
-        {value: ALL, label: `${t`All QR codes`} (${qrLinks?.length ?? 0})`},
-        ...campaigns.map(campaign => ({value: String(campaign.id), label: `${campaign.name} (${countFor(campaign.id)})`})),
-        {value: NO_CAMPAIGN, label: `${t`No campaign`} (${countFor(null)})`},
-    ];
-
     const isLoading = !qrLinks && !qrLinksQuery.isError;
+    const hasLinks = (qrLinks?.length ?? 0) > 0;
+    const isEmpty = !!qrLinks && !hasLinks && campaigns.length === 0;
+    const allAtZero = hasLinks && (qrLinks ?? []).every(qrLink => qrTotal(qrLink) === 0);
+    const campaignNameOf = (qrLink: QrLink) =>
+        campaigns.find(campaign => String(campaign.id) === String(qrLink.qr_campaign_id))?.name;
 
     return (
         <PageBody>
@@ -175,19 +178,21 @@ const QrCodes = () => {
                     <div>
                         <h1 className={classes.pageTitle}>{t`QR codes`}</h1>
                         <p className={classes.pageIntro}>
-                            {t`One QR code per medium (poster, flyer, screen...), grouped by campaign. Change where a QR code leads at any time without reprinting it.`}
+                            {t`One QR code per medium, grouped by campaign. You can change where it leads without reprinting it.`}
                         </p>
                     </div>
-                    <div className={classes.pageActions}>
-                        <Button variant="default" leftSection={<IconFolderPlus size={16}/>}
-                                onClick={() => setCampaignTarget('new')} disabled={qrLinksQuery.isError}>
-                            {t`New campaign`}
-                        </Button>
-                        <Button leftSection={<IconPlus size={16}/>} onClick={() => setFormTarget('new')}
-                                disabled={qrLinksQuery.isError}>
-                            {t`New QR code`}
-                        </Button>
-                    </div>
+                    {!isEmpty && (
+                        <div className={classes.pageActions}>
+                            <Button variant="default" leftSection={<IconFolderPlus size={16}/>}
+                                    onClick={() => setCampaignTarget('new')} disabled={qrLinksQuery.isError}>
+                                {t`New campaign`}
+                            </Button>
+                            <Button leftSection={<IconPlus size={16}/>} onClick={() => openCreate()}
+                                    disabled={qrLinksQuery.isError}>
+                                {t`New QR code`}
+                            </Button>
+                        </div>
+                    )}
                 </header>
 
                 {qrLinksQuery.isError && (
@@ -196,157 +201,128 @@ const QrCodes = () => {
                     </Alert>
                 )}
 
-                {!qrLinksQuery.isError && (
-                    <div className={classes.layout}>
-                        <nav className={classes.campaigns} aria-label={t`Campaigns`}>
-                            <button type="button" className={classes.campaignItem} data-active={selected === ALL}
-                                    onClick={() => selectCampaign(ALL)}>
-                                <IconQrcode size={16}/>
-                                <span>{t`All QR codes`}</span>
-                                <span className={classes.campaignCount}>{qrLinks?.length ?? 0}</span>
-                            </button>
+                {isLoading && (
+                    <>
+                        <div className={classes.campaignStrip}>
+                            {[...Array(3)].map((_, index) => <Skeleton key={index} height={150} radius="lg"/>)}
+                        </div>
+                        {[...Array(3)].map((_, index) => <Skeleton key={index} height={64} radius="md" mb={8}/>)}
+                    </>
+                )}
 
-                            <div className={classes.campaignsLabel}>{t`Campaigns`}</div>
-                            {campaigns.map(campaign => (
-                                <button type="button" key={campaign.id} className={classes.campaignItem}
-                                        data-active={selected === String(campaign.id)}
-                                        onClick={() => selectCampaign(String(campaign.id))}>
-                                    <IconFolder size={16}/>
-                                    <span className={classes.campaignName}>{campaign.name}</span>
-                                    <span className={classes.campaignCount}>{countFor(campaign.id)}</span>
-                                </button>
-                            ))}
-                            {campaigns.length === 0 && (
-                                <Text size="xs" c="dimmed" px={10} pb={6}>
-                                    {t`Create a campaign to group the QR codes of one operation.`}
-                                </Text>
-                            )}
-                            <button type="button" className={classes.campaignItem} data-active={selected === NO_CAMPAIGN}
-                                    onClick={() => selectCampaign(NO_CAMPAIGN)}>
-                                <IconFolder size={16} opacity={0.4}/>
-                                <span>{t`No campaign`}</span>
-                                <span className={classes.campaignCount}>{countFor(null)}</span>
-                            </button>
-                            <button type="button" className={classes.campaignAdd} onClick={() => setCampaignTarget('new')}>
-                                <IconPlus size={14}/> {t`New campaign`}
-                            </button>
-                        </nav>
-
-                        <section className={classes.content}>
-                            <Select className={classes.scopeSelect} data={scopeOptions} value={selected}
-                                    onChange={(value) => selectCampaign(value || ALL)} allowDeselect={false}
-                                    leftSection={<IconFolder size={16}/>} aria-label={t`Campaign`}/>
-
-                            <div className={classes.scopeHeader}>
-                                <h2 className={classes.scopeTitle}>{scopeTitle}</h2>
-                                {selectedCampaign && (
-                                    <Menu position="bottom-end" withinPortal shadow="md">
-                                        <Menu.Target>
-                                            <ActionIcon variant="subtle" color="gray" aria-label={t`Campaign actions`}>
-                                                <IconDotsVertical size={18}/>
-                                            </ActionIcon>
-                                        </Menu.Target>
-                                        <Menu.Dropdown>
-                                            <Menu.Item leftSection={<IconPencil size={14}/>}
-                                                       onClick={() => setCampaignTarget(selectedCampaign)}>
-                                                {t`Rename`}
-                                            </Menu.Item>
-                                            <Menu.Item color="red" leftSection={<IconTrash size={14}/>}
-                                                       onClick={() => removeCampaign(selectedCampaign)}>
-                                                {t`Delete the campaign`}
-                                            </Menu.Item>
-                                        </Menu.Dropdown>
-                                    </Menu>
-                                )}
-                            </div>
-
-                            <div className={classes.totals}>
-                                <div><strong>{formatNumber(inScope.length)}</strong><span>{t`QR codes`}</span></div>
-                                <div><strong>{formatNumber(totals.scans)}</strong><span>{t`Scans`}</span></div>
-                                <div><strong>{formatNumber(totals.unique)}</strong><span>{t`Unique visitors`}</span></div>
-                                <div>
-                                    <strong>{formatNumber(totals.orders)}</strong>
-                                    <span>{t`Orders`}</span>
-                                </div>
-                                {showRevenue && (
-                                    <div><strong>{formatCurrency(totals.revenue, currency)}</strong><span>{t`Revenue`}</span></div>
-                                )}
-                            </div>
-
-                            <div className={classes.toolbar}>
-                                <TextInput className={classes.toolbarSearch} leftSection={<IconSearch size={16}/>}
-                                           placeholder={t`Search a QR code or an event…`} value={search}
-                                           onChange={(event) => setSearch(event.currentTarget.value)}/>
-                                <SegmentedControl size="sm" value={status} onChange={(value) => setStatus(value as StatusFilter)}
-                                                  data={[
-                                                      {value: 'all', label: t({message: 'All', context: 'qr status filter'})},
-                                                      {value: 'ACTIVE', label: t`Active`},
-                                                      {value: 'PAUSED', label: t`Paused`},
-                                                  ]}/>
-                                <Select className={classes.toolbarSort} value={sort} allowDeselect={false}
-                                        onChange={(value) => setSort((value as SortKey) || 'recent')}
-                                        data={[
-                                            {value: 'recent', label: t`Most recent`},
-                                            {value: 'scans', label: t`Most scanned`},
-                                            {value: 'orders', label: showRevenue ? t`Most sales` : t`Most orders`},
-                                            {value: 'name', label: t`Name (A-Z)`},
-                                        ]}
-                                        aria-label={t`Sort`}/>
-                            </div>
-
-                            {isLoading && [...Array(3)].map((_, index) => <Skeleton key={index} height={72} radius="md" mb={8}/>)}
-
-                            {qrLinks && visible.length > 0 && (
-                                <div className={classes.rows}>
-                                    {visible.map(qrLink => (
-                                        <QrLinkRow
-                                            key={qrLink.id}
-                                            qrLink={qrLink}
-                                            currency={currency}
-                                            showRevenue={showRevenue}
-                                            campaignName={selected === ALL
-                                                ? campaigns.find(campaign => String(campaign.id) === String(qrLink.qr_campaign_id))?.name
-                                                : undefined}
-                                            onEdit={() => setFormTarget(qrLink)}
-                                            onStats={() => setStatsTarget(qrLink)}
-                                            onToggleStatus={() => toggleStatus(qrLink)}
-                                            onDelete={() => removeQrLink(qrLink)}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-
-                            {qrLinks && visible.length === 0 && (
-                                <div className={classes.emptyState}>
-                                    <IconQrcode size={36} stroke={1.5}/>
-                                    <Text fw={600} mt="sm">
-                                        {inScope.length === 0 ? t`No QR codes here yet` : t`No QR code matches these filters`}
-                                    </Text>
-                                    {inScope.length === 0 && (
-                                        <>
-                                            <Text size="sm" c="dimmed" mb="md">
-                                                {selectedCampaign
-                                                    ? t`Create the QR codes of this campaign: poster, flyer, story...`
-                                                    : t`Start with the poster for your next event.`}
-                                            </Text>
-                                            <Button leftSection={<IconPlus size={16}/>} onClick={() => setFormTarget('new')}>
-                                                {t`New QR code`}
-                                            </Button>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-                        </section>
+                {isEmpty && (
+                    <div className={classes.welcome}>
+                        <span className={classes.welcomeIcon}><IconQrcode size={32} stroke={1.5}/></span>
+                        <h2 className={classes.welcomeTitle}>{t`Create your first QR code`}</h2>
+                        <ol className={classes.welcomeSteps}>
+                            <li>{t`Name the medium where it will appear: poster, flyer, story...`}</li>
+                            <li>{t`Choose what it opens: your link page, an event, a website.`}</li>
+                            <li>{t`Download it and print it, or share its short link.`}</li>
+                        </ol>
+                        <Button size="md" leftSection={<IconPlus size={18}/>} onClick={() => openCreate()}>
+                            {t`Create a QR code`}
+                        </Button>
                     </div>
                 )}
 
+                {qrLinks && !isEmpty && (
+                    <>
+                        <section aria-label={t`Campaigns`}>
+                            <div className={classes.campaignStrip}>
+                                {groups.map(group => (
+                                    <QrCampaignCard
+                                        key={group.key}
+                                        name={group.name}
+                                        links={group.links}
+                                        isMuted={!group.campaign}
+                                        isActive={selected === group.key}
+                                        onSelect={() => selectCampaign(group.key)}
+                                        onRename={group.campaign ? () => setCampaignTarget(group.campaign) : undefined}
+                                        onDelete={group.campaign ? () => removeCampaign(group.campaign!) : undefined}
+                                    />
+                                ))}
+                                <button type="button" className={classes.campaignCardAdd}
+                                        onClick={() => setCampaignTarget('new')}>
+                                    <IconFolderPlus size={20}/>
+                                    {t`New campaign`}
+                                </button>
+                            </div>
+                        </section>
+
+                        {allAtZero && (
+                            <div className={classes.zeroTip}>
+                                <IconBulb size={20} className={classes.zeroTipIcon}/>
+                                <div>
+                                    <Text fw={600} size="sm">{t`No scans yet`}</Text>
+                                    <Text size="sm" c="dimmed">
+                                        {t`To get your first ones, download a QR code (⋮ menu, then PNG or visual) and put it on your poster, or copy its short link into your bio, a story or a WhatsApp message.`}
+                                    </Text>
+                                </div>
+                            </div>
+                        )}
+
+                        {hasLinks && (qrLinks.length > 6 || search) && (
+                            <TextInput className={classes.search} leftSection={<IconSearch size={16}/>}
+                                       placeholder={t`Search a QR code or an event…`} value={search}
+                                       onChange={(event) => setSearch(event.currentTarget.value)}/>
+                        )}
+
+                        {selected && (
+                            <Button variant="subtle" size="compact-sm" leftSection={<IconX size={14}/>} mb="sm"
+                                    onClick={() => selectCampaign(null)}>
+                                {t`Show all campaigns`}
+                            </Button>
+                        )}
+
+                        {visibleGroups.length === 0 && search && (
+                            <div className={classes.emptyState}>
+                                <Text fw={600}>{t`No QR code matches these filters`}</Text>
+                            </div>
+                        )}
+
+                        {visibleGroups.map(group => (
+                            <section key={group.key} className={classes.group}>
+                                <div className={classes.groupHeader}>
+                                    <h2 className={classes.groupTitle}>{group.name}</h2>
+                                    <span className={classes.groupCount}>{formatNumber(group.links.length)}</span>
+                                </div>
+
+                                {group.links.length > 0 ? (
+                                    <div className={classes.rows}>
+                                        {group.links.map(qrLink => (
+                                            <QrLinkRow
+                                                key={qrLink.id}
+                                                qrLink={qrLink}
+                                                campaignName={group.campaign?.name}
+                                                onOpen={() => setStatsTarget(qrLink)}
+                                                onEdit={() => setFormTarget(qrLink)}
+                                                onToggleStatus={() => toggleStatus(qrLink)}
+                                                onDelete={() => removeQrLink(qrLink)}
+                                            />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={classes.emptyState}>
+                                        <Text size="sm" c="dimmed" mb="sm">
+                                            {t`Create the QR codes of this campaign: poster, flyer, story...`}
+                                        </Text>
+                                        <Button size="xs" variant="light" leftSection={<IconPlus size={14}/>}
+                                                onClick={() => openCreate(group.campaign?.id)}>
+                                            {t`New QR code`}
+                                        </Button>
+                                    </div>
+                                )}
+                            </section>
+                        ))}
+                    </>
+                )}
             </div>
 
             {formTarget && (
                 <QrLinkFormModal
                     qrLink={formTarget === 'new' ? undefined : formTarget}
                     campaigns={campaigns}
-                    defaultCampaignId={selectedCampaign?.id}
+                    defaultCampaignId={newDefaultCampaign}
                     backgrounds={backgrounds}
                     organizerName={organizer?.name}
                     organizerLogoUrl={organizer?.images?.find(image => image.type === 'ORGANIZER_LOGO')?.url}
@@ -358,11 +334,26 @@ const QrCodes = () => {
                 <QrCampaignModal
                     campaign={campaignTarget === 'new' ? undefined : campaignTarget}
                     onClose={() => setCampaignTarget(null)}
-                    onSaved={(campaign) => selectCampaign(String(campaign.id))}
+                    onSaved={(campaign) => {
+                        if (campaignTarget === 'new') {
+                            selectCampaign(String(campaign.id));
+                        }
+                    }}
                 />
             )}
 
-            <QrLinkStatsDrawer qrLink={statsTarget} currency={currency} onClose={() => setStatsTarget(null)}/>
+            <QrLinkStatsDrawer
+                qrLink={statsTarget ? (qrLinks?.find(qrLink => qrLink.id === statsTarget.id) ?? statsTarget) : null}
+                shortName={statsTarget ? shortQrName(statsTarget.name, campaignNameOf(statsTarget)) : undefined}
+                currency={currency}
+                onClose={() => setStatsTarget(null)}
+                onEdit={() => {
+                    if (statsTarget) {
+                        setFormTarget(qrLinks?.find(qrLink => qrLink.id === statsTarget.id) ?? statsTarget);
+                        setStatsTarget(null);
+                    }
+                }}
+            />
         </PageBody>
     );
 };

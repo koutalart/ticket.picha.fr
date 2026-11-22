@@ -8,7 +8,10 @@ use Carbon\Carbon;
 use HiEvents\DomainObjects\Enums\ImageType;
 use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
 use HiEvents\Exceptions\AssistantActionRefusedException;
+use HiEvents\Exceptions\PosterMediaException;
+use HiEvents\Exceptions\ResourceNotFoundException;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
+use HiEvents\Services\Application\Handlers\Event\ApplyEventPosterHandler;
 use HiEvents\Services\Application\Handlers\Event\CreateDraftEventHandler;
 use HiEvents\Services\Application\Handlers\Event\CreateEventImageHandler;
 use HiEvents\Services\Application\Handlers\Event\DTO\CreateEventImageDTO;
@@ -16,7 +19,9 @@ use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\CreateDraftEvent
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\DraftQuestionDTO;
 use HiEvents\Services\Application\Handlers\Event\DTO\DraftEvent\DraftTicketDTO;
 use HiEvents\Services\Domain\Assistant\DTO\AssistantScopeDTO;
+use HiEvents\Services\Infrastructure\Image\Exception\CouldNotUploadImageException;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use JsonException;
 
 /**
@@ -57,7 +62,8 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
         {--adresse= : Address of the venue}
         {--couverture= : Cover image, file name inside storage/app/anicka-fichiers}
         {--tarifs= : JSON list of tickets: [{"nom":"Prévente","prix":15,"quantite":200}], prix without fees, 0 = free (required)}
-        {--questions= : JSON list of order form questions: [{"libelle":"Ville","type":"texte|nombre|telephone|choix","obligatoire":true,"options":["A","B"]}]}';
+        {--questions= : JSON list of order form questions: [{"libelle":"Ville","type":"texte|nombre|telephone|choix","obligatoire":true,"options":["A","B"]}]}
+        {--affiche= : Poster (file path or https URL): accent colour, flyer and short banner}';
 
     protected $description = 'Assistant, level 1: create a draft event (never published) with its tickets and order form';
 
@@ -84,6 +90,12 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
         $this->tickets();
         $this->questions();
         $this->coverPath();
+
+        $poster = $this->optionalString('affiche');
+
+        if ($poster !== null && ! str_starts_with($poster, 'https://')) {
+            $this->localPosterPath($poster);
+        }
     }
 
     protected function describe(AssistantScopeDTO $scope): string
@@ -153,8 +165,72 @@ class CreateEventAssistantCommand extends AbstractAssistantCommand
             'tarifs' => $result->ticket_ids,
             'questions' => $result->question_ids,
             'couverture' => $coverPath !== null,
+            'page' => $this->applyPage($scope, $eventId),
             'gerer' => rtrim((string) config('app.frontend_url'), '/').'/manage/event/'.$eventId,
         ];
+    }
+
+    /**
+     * The event exists whatever happens here: a poster problem is reported, never fatal.
+     */
+    private function applyPage(AssistantScopeDTO $scope, int $eventId): array
+    {
+        try {
+            $applied = $this->laravel->make(ApplyEventPosterHandler::class)->handle(
+                eventId: $eventId,
+                organizerId: $scope->organizer->getId(),
+                accountId: $scope->accountId(),
+                userId: $this->accountOwnerUserId($scope),
+                posterPath: $this->poster(),
+            );
+        } catch (PosterMediaException|CouldNotUploadImageException|ResourceNotFoundException|AssistantActionRefusedException $e) {
+            return ['modele' => false, 'erreur' => $e->getMessage()];
+        }
+
+        return ['modele' => true, 'couleur' => $applied->accent];
+    }
+
+    /**
+     * @throws AssistantActionRefusedException
+     */
+    private function poster(): ?string
+    {
+        $value = $this->optionalString('affiche');
+
+        if ($value === null) {
+            return null;
+        }
+
+        if (str_starts_with($value, 'https://')) {
+            $response = Http::timeout(30)->get($value);
+
+            if (! $response->successful()) {
+                throw new AssistantActionRefusedException(__('The poster could not be downloaded.'));
+            }
+
+            $path = tempnam(sys_get_temp_dir(), 'affiche');
+            file_put_contents($path, $response->body());
+
+            return $path;
+        }
+
+        return $this->localPosterPath($value);
+    }
+
+    /**
+     * A file name alone points inside storage/app/anicka-fichiers, where billetterie.py copies the client files.
+     *
+     * @throws AssistantActionRefusedException
+     */
+    private function localPosterPath(string $value): string
+    {
+        $path = str_starts_with($value, '/') ? $value : storage_path(self::FILES_DIRECTORY.'/'.basename($value));
+
+        if (! is_file($path) || ! is_readable($path)) {
+            throw new AssistantActionRefusedException(__('The poster file :path cannot be read.', ['path' => $value]));
+        }
+
+        return $path;
     }
 
     /**

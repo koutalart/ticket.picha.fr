@@ -18,6 +18,8 @@ import {getEventQueryFiltersWithParams} from "../../../../utilites/eventsPageFil
 import {currenciesMap} from "../../../../../data/currencies.ts";
 import {Event, EventStatus, Order, QueryFilterOperator, QueryFilters} from '../../../../types';
 import {OrganizerEventRow} from "./OrganizerEventRow.tsx";
+import {QrLinksOverview} from "./QrLinksOverview.tsx";
+import {isSectionEnabled} from "../../../../utilites/organizerSections.ts";
 import classes from './OrganizerDashboard.module.scss';
 
 type EventsTab = 'all' | 'upcoming' | 'ended' | 'drafts';
@@ -183,6 +185,10 @@ export const OrganizerDashboard = () => {
                     </Menu>
                 )}
             </section>
+
+            {organizerId && organizer && isSectionEnabled(organizer, 'qr-codes') && (
+                <QrLinksOverview organizerId={organizerId}/>
+            )}
 
             <section className={classes.section}>
                 <div className={classes.sectionHead}>
