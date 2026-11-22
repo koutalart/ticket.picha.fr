@@ -8,7 +8,7 @@ use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
-use HiEvents\Resources\Attendee\AttendeeResourcePublic;
+use HiEvents\Resources\Attendee\AttendeeTicketResourcePublic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -42,6 +42,6 @@ class GetAttendeeActionPublic extends BaseAction
             return $this->notFoundResponse();
         }
 
-        return $this->resourceResponse(AttendeeResourcePublic::class, $attendee);
+        return $this->resourceResponse(AttendeeTicketResourcePublic::class, $attendee);
     }
 }

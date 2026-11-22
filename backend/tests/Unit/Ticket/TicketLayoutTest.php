@@ -124,4 +124,32 @@ class TicketLayoutTest extends TestCase
     {
         self::assertNotContains('Sponsor', $this->texts($this->ticket()));
     }
+
+    public function test_free_ticket_has_no_seller_line(): void
+    {
+        app()->setLocale('fr');
+        $free = new TicketDataDTO(publicId: 'A-1', eventTitle: 'Foire', productTitle: 'Inscription', sellerName: 'CCI Mayotte', showSeller: false);
+        $paid = new TicketDataDTO(publicId: 'A-1', eventTitle: 'Foire', productTitle: 'Entrée', sellerName: 'CCI Mayotte');
+
+        $texts = fn (TicketDataDTO $t) => implode('|', array_map(
+            fn ($e) => $e->text,
+            array_filter($this->builder()->build($t)->elements, fn ($e) => $e instanceof TicketTextElement),
+        ));
+
+        self::assertStringNotContainsString(__('Seller: :name', ['name' => 'CCI Mayotte']), $texts($free));
+        self::assertStringContainsString(__('Seller: :name', ['name' => 'CCI Mayotte']), $texts($paid));
+    }
+
+    public function test_long_title_wraps_on_two_lines_instead_of_being_cut(): void
+    {
+        app()->setLocale('fr');
+        $title = 'La Foire de l\'Industrie de Mayotte 2026, Mamoudzou';
+        $layout = $this->builder()->build(new TicketDataDTO(publicId: 'A-1', eventTitle: $title, productTitle: 'Inscription'));
+
+        $element = array_values(array_filter($layout->elements, fn ($e) => $e instanceof TicketTextElement && $e->text === $title));
+
+        self::assertCount(1, $element);
+        self::assertSame(2, $element[0]->maxLines);
+        self::assertSame(565, $element[0]->blockWidth);
+    }
 }

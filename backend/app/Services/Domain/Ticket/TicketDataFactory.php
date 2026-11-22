@@ -15,6 +15,7 @@ use HiEvents\DomainObjects\Status\AttendeeStatus;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
+use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Services\Domain\PublicUrl\PublicBaseUrlResolver;
 use HiEvents\Services\Domain\Ticket\DTO\TicketCardDesignDTO;
@@ -36,6 +37,7 @@ class TicketDataFactory
         private readonly ProductRepositoryInterface $productRepository,
         private readonly FilesystemManager $filesystemManager,
         private readonly LoggerInterface $logger,
+        private readonly ?ProductPriceRepositoryInterface $productPriceRepository = null,
     ) {}
 
     public function forAttendee(AttendeeDomainObject $attendee): TicketDataDTO
@@ -50,6 +52,7 @@ class TicketDataFactory
             publicId: $attendee->getPublicId(),
             productTitle: $product->getTitle(),
             attendeeName: trim($attendee->getFirstName().' '.$attendee->getLastName()),
+            showSeller: ! $this->isFreeTicket($attendee),
             status: match ($attendee->getStatus()) {
                 AttendeeStatus::CANCELLED->name => TicketDataDTO::STATUS_CANCELLED,
                 AttendeeStatus::AWAITING_PAYMENT->name => TicketDataDTO::STATUS_AWAITING_PAYMENT,
@@ -101,6 +104,7 @@ class TicketDataFactory
         string $productTitle,
         string $attendeeName,
         string $status,
+        bool $showSeller = true,
     ): TicketDataDTO {
         $settings = $this->eventSettingsRepository->findFirstWhere(['event_id' => $event->getId()]);
         [$date, $time] = $this->eventDateAndTime($event, $this->dateDisplayMode($settings?->getTicketDesignSettings()));
@@ -117,6 +121,7 @@ class TicketDataFactory
             eventTime: $time,
             venue: $this->eventVenue($event, $settings?->getLocationDetails()),
             sellerName: $organizer?->getName() ?? '',
+            showSeller: $showSeller,
             organizerLogo: $this->readImage($event->getImages(), ImageType::TICKET_LOGO)
                 ?? $this->readImage($organizer?->getImages(), ImageType::ORGANIZER_LOGO),
             sponsorLogo: $this->readImage($event->getImages(), ImageType::TICKET_SPONSOR_LOGO),
@@ -226,5 +231,17 @@ class TicketDataFactory
         $clean = preg_replace('/[\x{1F000}-\x{1FAFF}\x{2600}-\x{27BF}\x{FE0F}\x{200D}]/u', '', $text) ?? $text;
 
         return trim(preg_replace('/\s+/', ' ', $clean) ?? $clean);
+    }
+
+    private function isFreeTicket(AttendeeDomainObject $attendee): bool
+    {
+        if (! $attendee->getProductPriceId()) {
+            return false;
+        }
+
+        $price = ($this->productPriceRepository ?? app(ProductPriceRepositoryInterface::class))
+            ->findFirstWhere(['id' => $attendee->getProductPriceId()]);
+
+        return $price !== null && (float) $price->getPrice() === 0.0;
     }
 }
