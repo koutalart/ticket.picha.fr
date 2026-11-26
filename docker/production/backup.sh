@@ -61,7 +61,7 @@ mv "$DB_FILE.part" "$DB_FILE"
 
 # Une seule sauvegarde de la base par jour : la plus récente remplace celles du même jour
 # (sauvegarde de 3 h, puis celles faites avant chaque mise en ligne).
-find "$BACKUP_DIR" -maxdepth 1 -name "picha-ticket-${STAMP%-*}-*.sql.gz" ! -name "picha-ticket-$STAMP.sql.gz" -delete
+find "$BACKUP_DIR/" -maxdepth 1 -name "picha-ticket-${STAMP%-*}-*.sql.gz" ! -name "picha-ticket-$STAMP.sql.gz" -delete
 
 # Fichiers téléversés (logos, couvertures, sponsors) : volume backend_storage.
 # Une seule archive par jour : les sauvegardes faites avant chaque mise en ligne ne gardent que la base.
@@ -77,9 +77,9 @@ else
     FILES_PATH="$FILES_FILE"
 fi
 
-find "$BACKUP_DIR" -name 'picha-ticket-*.sql.gz' -mtime +"$RETENTION_DAYS" -delete
-find "$BACKUP_DIR" -name 'picha-ticket-files-*.tar.gz' -mtime +"$((FILES_RETENTION_DAYS - 1))" -delete
-find "$BACKUP_DIR" -name 'picha-ticket-*.part' -delete
+find "$BACKUP_DIR/" -name 'picha-ticket-*.sql.gz' -mtime +"$RETENTION_DAYS" -delete
+find "$BACKUP_DIR/" -name 'picha-ticket-files-*.tar.gz' -mtime +"$((FILES_RETENTION_DAYS - 1))" -delete
+find "$BACKUP_DIR/" -name 'picha-ticket-*.part' -delete
 
 if [ -n "$OFFSITE_REMOTE" ]; then
     RCLONE="docker run --rm -v $RCLONE_CONFIG_DIR:/config/rclone -v $BACKUP_DIR:/data:ro rclone/rclone:1"
