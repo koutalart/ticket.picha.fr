@@ -85,7 +85,7 @@ class EventPresentationTemplateService
                 'accent' => $accent,
                 'background' => self::BACKGROUND,
                 'font_family' => self::FONT,
-                'hero_layout' => 'CARD',
+                'hero_layout' => 'FULLSCREEN',
                 'background_type' => 'MIRROR_COVER_IMAGE',
             ],
             'ticket_design_settings' => [

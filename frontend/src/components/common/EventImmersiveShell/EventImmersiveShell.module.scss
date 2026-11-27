@@ -95,6 +95,10 @@
 
 .invertedLogo {
   filter: brightness(0) invert(1);
+  &[data-opaque] {
+    filter: grayscale(1) invert(1) contrast(4);
+    mix-blend-mode: screen;
+  }
 }
 
 .main {
