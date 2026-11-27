@@ -226,6 +226,9 @@ const largeFieldClassNames = {
  * Set to true to show them again on the contact step (the payment page then skips the option).
  */
 const SHOW_PROTECTION_AND_TOTAL_ON_CONTACT_STEP = false;
+
+const AUTO_ADVANCE_DELAY_MS = 350;
+
 const FORM_IN_PROGRESS_ATTR = 'data-picha-form-in-progress';
 
 export const EmbeddedRegistration = ({
@@ -264,6 +267,8 @@ export const EmbeddedRegistration = ({
     const pendingFocus = useRef<'step' | 'error' | string | null>(null);
     const codeInputRef = useRef<HTMLInputElement>(null);
     const nextRef = useRef<() => void>(() => undefined);
+    const autoAdvanceTimer = useRef<number | null>(null);
+    const lastChoicePointer = useRef(0);
     const autofillSynced = useRef(false);
     const leaveTimer = useRef<number | undefined>(undefined);
     const [leaving, setLeaving] = useState<{ step: Step, direction: 'forward' | 'backward' } | null>(null);
@@ -592,6 +597,13 @@ export const EmbeddedRegistration = ({
     }, [orderQuestions, isPaidMode, needsParticipantsStep, phoneQuestionIndex]);
 
     const safeStepIndex = Math.min(stepIndex, steps.length - 1);
+
+    useEffect(() => () => {
+        if (autoAdvanceTimer.current !== null) {
+            window.clearTimeout(autoAdvanceTimer.current);
+            autoAdvanceTimer.current = null;
+        }
+    }, [safeStepIndex]);
     const step = steps[safeStepIndex];
     const isLastStep = safeStepIndex === steps.length - 1;
 
@@ -1637,9 +1649,9 @@ export const EmbeddedRegistration = ({
                         />
                     );
                 }
-                return renderChoiceGroup(question, inputProps, common);
+                return renderChoiceGroup(question, inputProps, common, large && path.startsWith('order.'));
             case QuestionType.RADIO:
-                return renderChoiceGroup(question, inputProps, common);
+                return renderChoiceGroup(question, inputProps, common, large && path.startsWith('order.'));
             case QuestionType.CHECKBOX:
                 return (
                     <Checkbox.Group {...inputProps} {...common}>
@@ -1660,9 +1672,27 @@ export const EmbeddedRegistration = ({
         }
     };
 
-    const renderChoiceGroup = (question: Question, inputProps: ReturnType<typeof form.getInputProps>, common: Record<string, any>) => (
-        <Radio.Group {...inputProps} {...common}>
-            <div className={classes.choices}>
+    const renderChoiceGroup = (question: Question, inputProps: ReturnType<typeof form.getInputProps>, common: Record<string, any>, autoAdvance = false) => (
+        <Radio.Group
+            {...inputProps}
+            {...common}
+            onChange={(value: string) => {
+                inputProps.onChange(value);
+                if (!autoAdvance || Date.now() - lastChoicePointer.current > 1000) {
+                    return;
+                }
+                if (autoAdvanceTimer.current !== null) {
+                    window.clearTimeout(autoAdvanceTimer.current);
+                }
+                autoAdvanceTimer.current = window.setTimeout(() => {
+                    autoAdvanceTimer.current = null;
+                    nextRef.current();
+                }, AUTO_ADVANCE_DELAY_MS);
+            }}
+        >
+            <div className={classes.choices} onPointerUp={() => {
+                lastChoicePointer.current = Date.now();
+            }}>
                 {question.options?.map(option => (
                     <Radio.Card key={option} value={option} className={classes.choiceCard} radius="md">
                         <span className={classes.choiceInner}>
