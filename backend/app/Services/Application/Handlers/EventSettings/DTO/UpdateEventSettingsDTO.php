@@ -142,7 +142,7 @@ class UpdateEventSettingsDTO extends BaseDTO
             homepage_secondary_color: '#7b5eb9',
             homepage_secondary_text_color: '#ffffff',
             homepage_body_background_color: '#7a5eb9',
-            homepage_background_type: HomepageBackgroundType::COLOR,
+            homepage_background_type: HomepageBackgroundType::MIRROR_COVER_IMAGE,
             require_attendee_details: false,
             attendee_details_collection_method: AttendeeDetailsCollectionMethod::PER_TICKET,
             order_timeout_in_minutes: 0,
@@ -196,10 +196,12 @@ class UpdateEventSettingsDTO extends BaseDTO
 
             // Homepage theme defaults (simplified 2-color + mode system)
             homepage_theme_settings: [
-                'accent' => '#8b5cf6',
-                'background' => '#f5f3ff',
+                'accent' => '#faa200',
+                'background' => '#171717',
                 'mode' => 'light',
-                'background_type' => 'COLOR',
+                'background_type' => 'MIRROR_COVER_IMAGE',
+                'font_family' => 'Outfit',
+                'hero_layout' => 'CARD',
             ],
 
             // Self-service defaults
@@ -212,7 +214,7 @@ class UpdateEventSettingsDTO extends BaseDTO
             age_restriction_rule: AgeRestrictionRule::NONE,
             age_restriction_minimum_age: 18,
 
-            embedded_registration_enabled: false,
+            embedded_registration_enabled: true,
 
             rich_footer_enabled: false,
             homepage_footer_settings: null,

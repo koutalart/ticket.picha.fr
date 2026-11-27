@@ -179,12 +179,12 @@ export function computeThemeVariables(
 
 export function getDefaultThemeSettings(): HomepageThemeSettings {
     return {
-        accent: '#8b5cf6',
-        background: '#f5f3ff',
+        accent: '#faa200',
+        background: '#171717',
         mode: 'light',
-        background_type: 'COLOR',
+        background_type: 'MIRROR_COVER_IMAGE',
         font_family: DEFAULT_HOMEPAGE_FONT,
-        hero_layout: 'FULLSCREEN',
+        hero_layout: 'CARD',
     };
 }
 
@@ -238,7 +238,7 @@ export function validateThemeSettings(
         mode: settings.mode || detectMode(settings.background || defaults.background),
         background_type: settings.background_type || defaults.background_type,
         font_family: settings.font_family || defaults.font_family,
-        hero_layout: 'FULLSCREEN',
+        hero_layout: settings.hero_layout || defaults.hero_layout,
         hero_title: settings.hero_title || undefined,
         hero_subtitle: settings.hero_subtitle || undefined,
         hero_tagline: settings.hero_tagline || undefined,

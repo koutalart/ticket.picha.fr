@@ -181,19 +181,14 @@ class CreateEventService
         $organizerSettings = $organizer->getOrganizerSettings();
         $organizerThemeSettings = $organizerSettings->getHomepageThemeSettings() ?? [];
 
-        // Build the new homepage_theme_settings from organizer settings
         $homepageThemeSettings = [
-            'accent' => $organizerThemeSettings['accent'] ?? '#8b5cf6',
-            'background' => $organizerThemeSettings['background'] ?? '#f5f3ff',
-            'mode' => $organizerThemeSettings['mode'] ?? 'light',
-            'background_type' => $eventCoverCreated
-                ? HomepageBackgroundType::MIRROR_COVER_IMAGE->name
-                : ($organizerThemeSettings['background_type'] ?? HomepageBackgroundType::COLOR->name),
+            'accent' => $organizerThemeSettings['accent'] ?? '#faa200',
+            'background' => '#171717',
+            'mode' => 'light',
+            'background_type' => HomepageBackgroundType::MIRROR_COVER_IMAGE->name,
+            'font_family' => $organizerThemeSettings['font_family'] ?? 'Outfit',
+            'hero_layout' => 'CARD',
         ];
-
-        if (!empty($organizerThemeSettings['font_family'])) {
-            $homepageThemeSettings['font_family'] = $organizerThemeSettings['font_family'];
-        }
 
         $this->eventSettingsRepository->create([
             'event_id' => $event->getId(),
@@ -212,6 +207,7 @@ class CreateEventService
 
             'continue_button_text' => __('Continue'),
             'support_email' => $organizer->getEmail(),
+            'embedded_registration_enabled' => true,
 
             'payment_providers' => [PaymentProviders::STRIPE->value],
             'offline_payment_instructions' => null,
