@@ -12,7 +12,8 @@ import {
     IconUsersGroup,
     IconQrcode,
     IconMessage,
-    IconSpeakerphone
+    IconSpeakerphone,
+    IconCards
 } from "@tabler/icons-react";
 import { t } from "@lingui/macro";
 import { NavItem } from "../AppLayout/types.ts";
@@ -89,6 +90,7 @@ const OrganizerLayout = () => {
     const qrCodesItem: NavItem = {link: 'qr-codes', label: t`QR codes`, icon: IconQrcode};
     const smsItem: NavItem = {link: 'sms', label: t`SMS`, icon: IconMessage, badge: smsUnreadCount ? smsUnreadCount : undefined};
     const publicationsItem: NavItem = {link: 'publications', label: t`Publications`, icon: IconSpeakerphone};
+    const loyaltyItem: NavItem = {link: 'fidelite', label: t`Loyalty card`, icon: IconCards};
 
     const sectionItems: [OrganizerSection, NavItem][] = [
         ['dashboard', homeItem],
@@ -98,6 +100,7 @@ const OrganizerLayout = () => {
         ['qr-codes', qrCodesItem],
         ['sms', smsItem],
         ['publications', publicationsItem],
+        ['loyalty', loyaltyItem],
     ];
     const navItems: NavItem[] = sectionItems.filter(([section]) => allows(section)).map(([, item]) => item);
 
@@ -125,6 +128,7 @@ const OrganizerLayout = () => {
     const mobileMoreItems: NavItem[] = [
         ...(allows('contacts') ? [contactsItem] : []),
         ...(allows('qr-codes') ? [qrCodesItem] : []),
+        ...(allows('loyalty') ? [loyaltyItem] : []),
         ...bottomItems,
     ];
 

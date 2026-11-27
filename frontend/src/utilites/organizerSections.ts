@@ -1,6 +1,6 @@
 import {Organizer, OrganizerSection} from "../types.ts";
 
-const LANDING_ORDER: OrganizerSection[] = ['dashboard', 'events', 'publications', 'sms', 'qr-codes', 'contacts', 'reports'];
+const LANDING_ORDER: OrganizerSection[] = ['dashboard', 'events', 'publications', 'sms', 'qr-codes', 'contacts', 'reports', 'loyalty'];
 
 const SECTION_BY_SEGMENT: Record<string, OrganizerSection> = {
     '': 'dashboard',
@@ -14,10 +14,16 @@ const SECTION_BY_SEGMENT: Record<string, OrganizerSection> = {
     'qr-codes': 'qr-codes',
     'sms': 'sms',
     'publications': 'publications',
+    'fidelite': 'loyalty',
 };
+
+const OPT_IN_SECTIONS: OrganizerSection[] = ['loyalty'];
 
 export const isSectionEnabled = (organizer: Organizer | undefined, section: OrganizerSection): boolean => {
     const sections = organizer?.enabled_sections;
+    if (OPT_IN_SECTIONS.includes(section)) {
+        return !!sections?.includes(section);
+    }
     return !sections || sections.includes(section);
 };
 

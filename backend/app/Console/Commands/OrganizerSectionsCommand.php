@@ -12,7 +12,7 @@ class OrganizerSectionsCommand extends Command
 {
     protected $signature = 'organizer:sections
         {organizer : Organizer ID}
-        {--only= : Comma separated list of sections to show (dashboard, events, contacts, reports, qr-codes, sms, publications)}
+        {--only= : Comma separated list of sections to show (dashboard, events, contacts, reports, qr-codes, sms, publications, loyalty)}
         {--all : Show every section again (default behaviour)}
         {--dry-run : Show what would change without saving}';
 

@@ -94,6 +94,13 @@ use HiEvents\Http\Actions\Attendees\ExportAttendeeEntryControlListAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeAction;
 use HiEvents\Http\Actions\Attendees\GetAttendeeActionPublic;
 use HiEvents\Http\Actions\Organizers\Settings\TestMetaConversionsApiAction;
+use HiEvents\Http\Actions\Loyalty\EnrollLoyaltyCardPublicAction;
+use HiEvents\Http\Actions\Loyalty\GetLoyaltyApplePassPublicAction;
+use HiEvents\Http\Actions\Loyalty\GetLoyaltyGooglePassPublicAction;
+use HiEvents\Http\Actions\Loyalty\GetLoyaltyProgramAction;
+use HiEvents\Http\Actions\Loyalty\GetLoyaltyProgramPublicAction;
+use HiEvents\Http\Actions\Loyalty\StampLoyaltyCardAction;
+use HiEvents\Http\Actions\Loyalty\UpsertLoyaltyProgramAction;
 use HiEvents\Http\Actions\QrCampaigns\CreateQrCampaignAction;
 use HiEvents\Http\Actions\QrCampaigns\DeleteQrCampaignAction;
 use HiEvents\Http\Actions\QrCampaigns\GetQrCampaignsAction;
@@ -571,6 +578,12 @@ $router->middleware(['auth:api'])->group(
         $router->post('/organizers/{organizer_id}/qr-campaigns', CreateQrCampaignAction::class);
         $router->put('/organizers/{organizer_id}/qr-campaigns/{qr_campaign_id}', UpdateQrCampaignAction::class);
         $router->delete('/organizers/{organizer_id}/qr-campaigns/{qr_campaign_id}', DeleteQrCampaignAction::class);
+
+        // Loyalty cards (Apple Wallet / Google Wallet)
+        $router->get('/organizers/{organizer_id}/loyalty-program', GetLoyaltyProgramAction::class);
+        $router->put('/organizers/{organizer_id}/loyalty-program', UpsertLoyaltyProgramAction::class);
+        $router->post('/organizers/{organizer_id}/loyalty-cards/stamp', StampLoyaltyCardAction::class)
+            ->middleware('throttle:120,1');
         $router->get('/organizers/{organizer_id}/qr-links', GetQrLinksAction::class);
         $router->post('/organizers/{organizer_id}/qr-links', CreateQrLinkAction::class);
         $router->put('/organizers/{organizer_id}/qr-links/{qr_link_id}', UpdateQrLinkAction::class);
@@ -935,6 +948,20 @@ $router->prefix('/public')->group(
             ->middleware('throttle:10,1,refund-approval');
         $router->get('/custom-domains/{domain}', GetOrganizerByCustomDomainPublicAction::class);
 
+        // Loyalty cards
+        $router->get('/organizers/{organizer_id}/loyalty-program', GetLoyaltyProgramPublicAction::class)
+            ->where('organizer_id', '[0-9]+')
+            ->middleware('throttle:60,1');
+        $router->post('/organizers/{organizer_id}/loyalty-cards', EnrollLoyaltyCardPublicAction::class)
+            ->where('organizer_id', '[0-9]+')
+            ->middleware('throttle:10,1');
+        $router->get('/loyalty-cards/{public_id}/apple-pass', GetLoyaltyApplePassPublicAction::class)
+            ->where('public_id', '[A-Za-z0-9]{16,40}')
+            ->middleware('throttle:30,1');
+        $router->get('/loyalty-cards/{public_id}/google-pass', GetLoyaltyGooglePassPublicAction::class)
+            ->where('public_id', '[A-Za-z0-9]{16,40}')
+            ->middleware('throttle:30,1');
+
         // Facebook / Instagram connection (Meta OAuth redirect)
         $router->get('/social/meta/callback', HandleMetaOAuthCallbackActionPublic::class)
             ->middleware('throttle:20,1');
@@ -1098,3 +1125,6 @@ $router->get('/question-files/{file_id}/download', DownloadQuestionAnswerFileAct
     ->name(QuestionAnswerFileUrlGenerator::DOWNLOAD_ROUTE_NAME);
 
 include_once __DIR__ . '/mail.php';
+
+// Apple Wallet web service (device registration and pass updates) for loyalty cards
+Illuminate\Support\Facades\Route::mobilePass();

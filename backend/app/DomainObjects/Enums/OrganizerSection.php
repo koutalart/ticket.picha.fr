@@ -15,4 +15,5 @@ enum OrganizerSection: string
     case QR_CODES = 'qr-codes';
     case SMS = 'sms';
     case PUBLICATIONS = 'publications';
+    case LOYALTY = 'loyalty';
 }

@@ -50,6 +50,8 @@ use HiEvents\Repository\Eloquent\ProductCategoryRepository;
 use HiEvents\Repository\Eloquent\ProductPriceRepository;
 use HiEvents\Repository\Eloquent\ProductRepository;
 use HiEvents\Repository\Eloquent\PromoCodeRepository;
+use HiEvents\Repository\Eloquent\LoyaltyCardRepository;
+use HiEvents\Repository\Eloquent\LoyaltyProgramRepository;
 use HiEvents\Repository\Eloquent\QrCampaignRepository;
 use HiEvents\Repository\Eloquent\OrganizerFontRepository;
 use HiEvents\Repository\Eloquent\OrganizerSmsSettingRepository;
@@ -161,6 +163,8 @@ use HiEvents\Repository\Interfaces\ProductCategoryRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\PromoCodeRepositoryInterface;
+use HiEvents\Repository\Interfaces\LoyaltyCardRepositoryInterface;
+use HiEvents\Repository\Interfaces\LoyaltyProgramRepositoryInterface;
 use HiEvents\Repository\Interfaces\QrCampaignRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerFontRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerSmsSettingRepositoryInterface;
@@ -242,6 +246,8 @@ class RepositoryServiceProvider extends ServiceProvider
         AffiliateRepositoryInterface::class => AffiliateRepository::class,
         QrLinkRepositoryInterface::class => QrLinkRepository::class,
         QrCampaignRepositoryInterface::class => QrCampaignRepository::class,
+        LoyaltyProgramRepositoryInterface::class => LoyaltyProgramRepository::class,
+        LoyaltyCardRepositoryInterface::class => LoyaltyCardRepository::class,
         OrganizerSmsSettingRepositoryInterface::class => OrganizerSmsSettingRepository::class,
         OrganizerSocialConnectionRepositoryInterface::class => OrganizerSocialConnectionRepository::class,
         SocialPostRepositoryInterface::class => SocialPostRepository::class,

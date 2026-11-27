@@ -5,6 +5,7 @@ import { eventDedicatedPageRouteLoader } from "./routeLoaders/eventDedicatedPage
 import { EVENT_PAGE_SLUGS } from "./utilites/eventPages.ts";
 import { publicOrganizerRouteLoader } from "./routeLoaders/publicOrganizerRouteLoader.ts";
 import { qrLinkPageLoader } from "./routeLoaders/qrLinkPageLoader.ts";
+import { customDomainLoyaltyCardLoader } from "./routeLoaders/loyaltyCardPageLoader.ts";
 import { organizerPreviewRouteLoader } from "./routeLoaders/organizerPreviewRouteLoader.ts";
 import { SOLUTION_SLUGS } from "./components/routes/solutions/slugs.ts";
 import {
@@ -359,6 +360,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "fidelite",
+                async lazy() {
+                    const Loyalty = await import("./components/routes/organizer/Loyalty");
+                    return { Component: Loyalty.default };
+                }
+            },
+            {
                 path: "subscribers",
                 element: <Navigate to="../contacts?tab=subscribers" replace/>,
             },
@@ -602,6 +610,23 @@ export const router: RouteObject[] = [
         async lazy() {
             const RefundApproval = await import("./components/routes/refund-approval");
             return {Component: RefundApproval.default};
+        },
+        errorElement: <ErrorPage/>,
+    },
+    {
+        path: "/fidelite/:organizerId",
+        async lazy() {
+            const LoyaltyCardPage = await import("./components/routes/loyalty");
+            return {Component: LoyaltyCardPage.default};
+        },
+        errorElement: <ErrorPage/>,
+    },
+    {
+        path: "/fidelite",
+        loader: customDomainLoyaltyCardLoader,
+        async lazy() {
+            const LoyaltyCardPage = await import("./components/routes/loyalty");
+            return {Component: LoyaltyCardPage.default};
         },
         errorElement: <ErrorPage/>,
     },
