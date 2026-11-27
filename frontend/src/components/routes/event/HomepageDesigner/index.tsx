@@ -9,7 +9,7 @@ import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
 import {t} from "@lingui/macro";
 import {useForm} from "@mantine/form";
 import {Button, FileButton, Group, TextInput, Textarea, Accordion, Stack, Text} from "@mantine/core";
-import {IconColorPicker, IconHelp, IconLayoutBottombar, IconPhoto, IconPalette, IconTrash, IconTypography, IconVideo} from "@tabler/icons-react";
+import {IconColorPicker, IconHelp, IconLayoutBottombar, IconLayoutNavbar, IconMaximize, IconPhoto, IconPalette, IconTrash, IconTypography, IconVideo} from "@tabler/icons-react";
 import {Tooltip} from "../../../common/Tooltip";
 import {CustomSelect} from "../../../common/CustomSelect";
 import {GET_EVENT_IMAGES_QUERY_KEY, useGetEventImages} from "../../../../queries/useGetEventImages.ts";
@@ -73,7 +73,6 @@ const HomepageDesigner = () => {
                 mode: 'light',
                 background_type: 'COLOR',
                 font_family: DEFAULT_HOMEPAGE_FONT,
-                hero_layout: 'FULLSCREEN',
             },
             continue_button_text: '',
             rich_footer_enabled: false,
@@ -231,6 +230,14 @@ const HomepageDesigner = () => {
         form.setFieldValue('homepage_theme_settings', {
             ...form.values.homepage_theme_settings,
             background_type: value as 'COLOR' | 'MIRROR_COVER_IMAGE',
+        });
+    };
+
+    const handleHeroLayoutChange = (heroLayout: string | string[]) => {
+        const value = Array.isArray(heroLayout) ? heroLayout[0] : heroLayout;
+        form.setFieldValue('homepage_theme_settings', {
+            ...form.values.homepage_theme_settings,
+            hero_layout: value as 'CARD' | 'FULLSCREEN',
         });
     };
 
@@ -429,6 +436,28 @@ const HomepageDesigner = () => {
                                 <form onSubmit={form.onSubmit(handleSubmit)}>
                                     <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending} className={classes.fieldset}>
                                         <Stack gap="md">
+                                            <CustomSelect
+                                                optionList={[
+                                                    {
+                                                        icon: <IconLayoutNavbar/>,
+                                                        label: t`Classic`,
+                                                        value: 'CARD',
+                                                        description: t`The cover is shown at the top of the event card`,
+                                                    },
+                                                    {
+                                                        icon: <IconMaximize/>,
+                                                        label: t`Full screen`,
+                                                        value: 'FULLSCREEN',
+                                                        description: t`The cover video or image fills the screen, with your logo in the center and a link to the tickets at the bottom`,
+                                                        disabled: !existingCover && !existingCoverVideo,
+                                                    },
+                                                ]}
+                                                label={t`Header layout`}
+                                                name={'homepage_theme_settings.hero_layout'}
+                                                value={form.values.homepage_theme_settings.hero_layout || 'CARD'}
+                                                onChange={handleHeroLayoutChange}
+                                            />
+
                                             {form.values.homepage_theme_settings.hero_layout === 'FULLSCREEN' && (
                                                 <>
                                                     <Textarea

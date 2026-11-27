@@ -361,7 +361,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const lowestPriceLabel = lowestPrice !== null ? formatCompactCurrency(lowestPrice, event.currency) : '';
     const canShowRecentPurchases = statusBadge?.variant === 'success';
 
-    const isFullscreenHero = themeSettings.hero_layout === 'FULLSCREEN';
+    const isFullscreenHero = themeSettings.hero_layout === 'FULLSCREEN' && !!(coverVideo || coverImage);
     const isFreeEvent = (event.products || event.product_categories?.flatMap(c => c.products || []) || [])
         .every(p => !p.prices?.some(price => Number(price.price) > 0));
 
