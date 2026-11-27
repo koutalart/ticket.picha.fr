@@ -48,7 +48,7 @@ import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isEventEnded} from "../../../utilites/eventEnded.ts";
 import {EventEndedNotice} from "./EventEndedNotice";
-import {useOpaqueLogo} from "../../../hooks/useOpaqueLogo.ts";
+import {useLogoPlate} from "../../../hooks/useLogoPlate.ts";
 import {hasVisibleHtmlContent} from "../../../utilites/helpers.ts";
 import {RichDescription} from "../../common/RichDescription";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
@@ -306,7 +306,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const organizerLogo = organizerLogoUrl(organizer?.images, cssVars['--theme-surface'])
         ?? imageUrl('ORGANIZER_LOGO', organizer?.images);
     const heroOrganizerLogo = organizerLogoUrl(organizer?.images, 'dark');
-    const heroOrganizerLogoOpaque = useOpaqueLogo(heroOrganizerLogo);
+    const heroOrganizerLogoPlate = useLogoPlate(heroOrganizerLogo);
     const footerOrganizerLogo = organizerLogoUrl(organizer?.images, themeSettings.accent);
     const loaderOrganizerLogo = organizerLogoUrl(organizer?.images, ssrLoaderBackground({
         background: themeSettings.background,
@@ -501,7 +501,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     <img src={heroBrandLogo} alt={organizer.name} className={classes.fullscreenBrandCustom}/>
                                 ) : heroOrganizerLogo && (
                                     <img src={heroOrganizerLogo} alt={organizer.name} className={classes.fullscreenBrand}
-                                         data-opaque={heroOrganizerLogoOpaque || undefined}/>
+                                         data-plate={heroOrganizerLogoPlate}/>
                                 )}
                             </div>
                             <div className={classes.fullscreenCenter}>
