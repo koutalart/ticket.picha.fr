@@ -121,3 +121,15 @@ export const ticketPreviewImageUrl = (eventId: IdParam, version?: string) => {
     const query = version ? `?v=${encodeURIComponent(version)}` : '';
     return `${apiBaseUrl()}/events/${eventId}/ticket-preview.png${query}`;
 };
+
+/**
+ * Public "add my loyalty card" page: on the organizer's own domain when it has one.
+ */
+export const loyaltyCardPageUrl = (organizer: Pick<Organizer, 'id' | 'custom_domain'>) => {
+    const origin = customDomainOrigin(organizer);
+    return origin ? `${origin}/fidelite` : `${platformBaseUrl()}/fidelite/${organizer.id}`;
+};
+
+export const loyaltyApplePassUrl = (publicId: string) => `${apiBaseUrl()}/public/loyalty-cards/${publicId}/apple-pass`;
+
+export const loyaltyGooglePassUrl = (publicId: string) => `${apiBaseUrl()}/public/loyalty-cards/${publicId}/google-pass`;

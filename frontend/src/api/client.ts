@@ -41,6 +41,7 @@ const ALLOWED_UNAUTHENTICATED_PATHS = [
     '/partenaires',
     '/contact',
     '/evenements',
+    '/fidelite',
     ...SOLUTION_SLUGS.map((slug) => `/${slug}`),
 ];
 

@@ -626,7 +626,7 @@ export interface Organizer {
     enabled_sections?: OrganizerSection[] | null;
 }
 
-export type OrganizerSection = 'dashboard' | 'events' | 'contacts' | 'reports' | 'qr-codes' | 'sms' | 'publications';
+export type OrganizerSection = 'dashboard' | 'events' | 'contacts' | 'reports' | 'qr-codes' | 'sms' | 'publications' | 'loyalty';
 
 export type OrganizerFontFormat = 'woff2' | 'woff' | 'truetype' | 'opentype';
 
@@ -2035,4 +2035,58 @@ export interface SocialComment {
     is_from_page: boolean;
     replied_by_user_id: number | null;
     commented_at: string | null;
+}
+
+export interface LoyaltyLocation {
+    latitude: number;
+    longitude: number;
+    relevant_text?: string | null;
+}
+
+export interface LoyaltyProgram {
+    id?: IdParam;
+    organizer_id?: IdParam;
+    name: string;
+    reward_description: string;
+    stamps_required: number;
+    background_color: string;
+    foreground_color: string;
+    label_color: string;
+    logo_url?: string | null;
+    locations: LoyaltyLocation[];
+    max_distance?: number | null;
+    beacon_uuid?: string | null;
+    beacon_major?: number | null;
+    beacon_minor?: number | null;
+    beacon_relevant_text?: string | null;
+    is_active: boolean;
+}
+
+export interface LoyaltyProgramSettings {
+    program: LoyaltyProgram | null;
+    apple_enabled: boolean;
+    google_enabled: boolean;
+}
+
+export interface LoyaltyProgramPublic extends Pick<LoyaltyProgram, 'name' | 'reward_description' | 'stamps_required' | 'background_color' | 'foreground_color' | 'label_color' | 'logo_url'> {
+    organizer_id: IdParam;
+    apple_enabled: boolean;
+    google_enabled: boolean;
+}
+
+export interface LoyaltyCard {
+    id?: IdParam;
+    public_id?: string;
+    first_name: string;
+    email?: string | null;
+    phone?: string | null;
+    stamps: number;
+    rewards_earned: number;
+    total_stamps?: number;
+    last_stamped_at?: string | null;
+}
+
+export interface LoyaltyStampResult {
+    card: LoyaltyCard;
+    reward_unlocked: boolean;
 }
