@@ -18,6 +18,7 @@ use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventStatisticRepositoryInterface;
 use HiEvents\Repository\Interfaces\ImageRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
+use HiEvents\Services\Domain\Question\BuyerPhoneQuestionService;
 use HiEvents\Services\Infrastructure\HtmlPurifier\HtmlPurifierService;
 use Illuminate\Config\Repository;
 use Illuminate\Database\DatabaseManager;
@@ -36,6 +37,7 @@ class CreateEventService
         private readonly ImageRepositoryInterface          $imageRepository,
         private readonly Repository                        $config,
         private readonly FilesystemManager                 $filesystemManager,
+        private readonly BuyerPhoneQuestionService         $buyerPhoneQuestionService,
     )
     {
     }
@@ -66,6 +68,8 @@ class CreateEventService
             );
 
             $this->createEventStatistics($event);
+
+            $this->buyerPhoneQuestionService->ensureRequired($event->getId());
 
             return $event;
         });
