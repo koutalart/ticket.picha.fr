@@ -1338,6 +1338,13 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   margin-bottom: 8px;
 }
 
+.fullscreenHero[data-no-media="true"] {
+  background:
+    radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--event-primary-color, #E4173D) 45%, transparent), transparent 70%),
+    radial-gradient(90% 60% at 50% 110%, color-mix(in srgb, var(--event-primary-color, #E4173D) 25%, transparent), transparent 70%),
+    var(--event-dark-surface, #000);
+}
+
 .fullscreenMedia {
   position: absolute;
   inset: 0;
@@ -1495,6 +1502,10 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   height: auto;
   filter: brightness(0) invert(1);
   opacity: 0.9;
+  &[data-opaque] {
+    filter: grayscale(1) invert(1) contrast(4);
+    mix-blend-mode: screen;
+  }
 }
 
 .fullscreenSubtitle {

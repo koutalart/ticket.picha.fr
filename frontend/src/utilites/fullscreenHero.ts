@@ -11,7 +11,7 @@ export const getFullscreenHero = (event?: Event) => {
     const coverImage = findImageUrl(event?.images, 'EVENT_COVER');
 
     return {
-        enabled: settings.hero_layout === 'FULLSCREEN' && !!(coverVideo || coverImage),
+        enabled: settings.hero_layout === 'FULLSCREEN',
         settings,
         coverVideo,
         coverVideoMobile: findImageUrl(event?.images, 'EVENT_COVER_VIDEO_MOBILE'),

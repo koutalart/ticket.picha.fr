@@ -13,6 +13,8 @@ RUN install-php-extensions intl imagick gd
 
 COPY --chown=www-data:www-data . .
 
+COPY docker/nginx/performance.conf /etc/nginx/server-opts.d/performance.conf
+
 RUN chmod -R 755 storage  \
     && mkdir -p bootstrap/cache \
     && chmod -R 775 bootstrap/cache \

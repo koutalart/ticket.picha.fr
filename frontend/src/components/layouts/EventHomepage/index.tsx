@@ -48,6 +48,7 @@ import {EventDateRange} from "../../common/EventDateRange";
 import {CalendarOptionsPopover} from "../../common/CalendarOptionsPopover";
 import {isEventEnded} from "../../../utilites/eventEnded.ts";
 import {EventEndedNotice} from "./EventEndedNotice";
+import {useOpaqueLogo} from "../../../hooks/useOpaqueLogo.ts";
 import {hasVisibleHtmlContent} from "../../../utilites/helpers.ts";
 import {RichDescription} from "../../common/RichDescription";
 import {SsrLoaderStyle} from "../../common/SsrLoaderStyle";
@@ -305,6 +306,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const organizerLogo = organizerLogoUrl(organizer?.images, cssVars['--theme-surface'])
         ?? imageUrl('ORGANIZER_LOGO', organizer?.images);
     const heroOrganizerLogo = organizerLogoUrl(organizer?.images, 'dark');
+    const heroOrganizerLogoOpaque = useOpaqueLogo(heroOrganizerLogo);
     const footerOrganizerLogo = organizerLogoUrl(organizer?.images, themeSettings.accent);
     const loaderOrganizerLogo = organizerLogoUrl(organizer?.images, ssrLoaderBackground({
         background: themeSettings.background,
@@ -359,7 +361,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     const lowestPriceLabel = lowestPrice !== null ? formatCompactCurrency(lowestPrice, event.currency) : '';
     const canShowRecentPurchases = statusBadge?.variant === 'success';
 
-    const isFullscreenHero = themeSettings.hero_layout === 'FULLSCREEN' && !!(coverVideo || coverImage);
+    const isFullscreenHero = themeSettings.hero_layout === 'FULLSCREEN';
     const isFreeEvent = (event.products || event.product_categories?.flatMap(c => c.products || []) || [])
         .every(p => !p.prices?.some(price => Number(price.price) > 0));
 
@@ -468,6 +470,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             ref={fullscreenHeroRef}
                             data-pause-on-scroll={isEmbeddedRegistration ? 'true' : undefined}
                             data-sale-countdown={isEmbeddedRegistration && isWaitingForSaleStart ? 'true' : undefined}
+                            data-no-media={!coverVideoSource && !coverImage ? 'true' : undefined}
                         >
                             {coverVideoSource && (
                                 <video
@@ -497,7 +500,8 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                 {heroBrandLogo ? (
                                     <img src={heroBrandLogo} alt={organizer.name} className={classes.fullscreenBrandCustom}/>
                                 ) : heroOrganizerLogo && (
-                                    <img src={heroOrganizerLogo} alt={organizer.name} className={classes.fullscreenBrand}/>
+                                    <img src={heroOrganizerLogo} alt={organizer.name} className={classes.fullscreenBrand}
+                                         data-opaque={heroOrganizerLogoOpaque || undefined}/>
                                 )}
                             </div>
                             <div className={classes.fullscreenCenter}>

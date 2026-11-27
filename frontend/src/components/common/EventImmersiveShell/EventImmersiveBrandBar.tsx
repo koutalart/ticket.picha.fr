@@ -1,4 +1,5 @@
 import classes from "./EventImmersiveShell.module.scss";
+import {useOpaqueLogo} from "../../../hooks/useOpaqueLogo.ts";
 
 interface EventImmersiveBrandBarProps {
     partnerLogo?: string;
@@ -15,6 +16,8 @@ export const EventImmersiveBrandBar = ({
                                            organizerName,
                                            homepageUrl,
                                        }: EventImmersiveBrandBarProps) => {
+    const organizerLogoOpaque = useOpaqueLogo(brandLogo ? undefined : organizerLogo);
+
     if (!partnerLogo && !brandLogo && !organizerLogo) {
         return null;
     }
@@ -22,7 +25,8 @@ export const EventImmersiveBrandBar = ({
     const rightLogo = brandLogo ? (
         <img src={brandLogo} alt={organizerName || ''}/>
     ) : organizerLogo ? (
-        <img src={organizerLogo} alt={organizerName || ''} className={classes.invertedLogo}/>
+        <img src={organizerLogo} alt={organizerName || ''} className={classes.invertedLogo}
+             data-opaque={organizerLogoOpaque || undefined}/>
     ) : null;
 
     return (

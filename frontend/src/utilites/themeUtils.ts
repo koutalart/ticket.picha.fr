@@ -184,7 +184,7 @@ export function getDefaultThemeSettings(): HomepageThemeSettings {
         mode: 'light',
         background_type: 'COLOR',
         font_family: DEFAULT_HOMEPAGE_FONT,
-        hero_layout: 'CARD',
+        hero_layout: 'FULLSCREEN',
     };
 }
 
@@ -238,7 +238,7 @@ export function validateThemeSettings(
         mode: settings.mode || detectMode(settings.background || defaults.background),
         background_type: settings.background_type || defaults.background_type,
         font_family: settings.font_family || defaults.font_family,
-        hero_layout: settings.hero_layout || defaults.hero_layout,
+        hero_layout: 'FULLSCREEN',
         hero_title: settings.hero_title || undefined,
         hero_subtitle: settings.hero_subtitle || undefined,
         hero_tagline: settings.hero_tagline || undefined,
