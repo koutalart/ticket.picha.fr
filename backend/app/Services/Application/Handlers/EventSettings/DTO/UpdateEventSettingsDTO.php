@@ -214,7 +214,7 @@ class UpdateEventSettingsDTO extends BaseDTO
             age_restriction_rule: AgeRestrictionRule::NONE,
             age_restriction_minimum_age: 18,
 
-            embedded_registration_enabled: false,
+            embedded_registration_enabled: true,
 
             rich_footer_enabled: false,
             homepage_footer_settings: null,

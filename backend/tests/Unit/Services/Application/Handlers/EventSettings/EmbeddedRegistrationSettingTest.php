@@ -21,7 +21,7 @@ class EmbeddedRegistrationSettingTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function test_defaults_to_false(): void
+    public function test_defaults_to_true(): void
     {
         $dto = UpdateEventSettingsDTO::createWithDefaults(
             1,
@@ -29,7 +29,7 @@ class EmbeddedRegistrationSettingTest extends TestCase
             (new OrganizerDomainObject)->setId(7)->setName('Kultur')->setEmail('kultur@example.com'),
         );
 
-        $this->assertFalse($dto->embedded_registration_enabled);
+        $this->assertTrue($dto->embedded_registration_enabled);
         $this->assertFalse((new EventSettingDomainObject)->getEmbeddedRegistrationEnabled());
     }
 

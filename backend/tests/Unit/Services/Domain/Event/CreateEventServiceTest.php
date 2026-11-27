@@ -170,7 +170,9 @@ class CreateEventServiceTest extends TestCase
         $this->eventSettingsRepository->shouldReceive('create')
             ->with(Mockery::on(function ($arg) use ($eventData, $organizer) {
                 return $arg['event_id'] === $eventData->getId() &&
-                    $arg['homepage_background_type'] === HomepageBackgroundType::COLOR->name &&
+                    $arg['homepage_background_type'] === HomepageBackgroundType::MIRROR_COVER_IMAGE->name &&
+                    $arg['homepage_theme_settings']['hero_layout'] === 'CARD' &&
+                    $arg['embedded_registration_enabled'] === true &&
                     $arg['support_email'] === $organizer->getEmail();
             }));
 
@@ -338,8 +340,7 @@ class CreateEventServiceTest extends TestCase
 
         $this->eventSettingsRepository->shouldReceive('create')
             ->with(Mockery::on(function ($arg) {
-                // When no cover is created, background type should be COLOR
-                return $arg['homepage_background_type'] === HomepageBackgroundType::COLOR->name;
+                return $arg['homepage_background_type'] === HomepageBackgroundType::MIRROR_COVER_IMAGE->name;
             }));
 
         $this->eventStatisticsRepository->shouldReceive('create');
@@ -424,7 +425,7 @@ class CreateEventServiceTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testCreateEventOmitsFontFamilyWhenOrganizerHasNone(): void
+    public function testCreateEventDefaultsToOutfitWhenOrganizerHasNoFont(): void
     {
         $eventData = $this->createMockEventDomainObjectWithCategory('MUSIC');
         $organizer = $this->createMockOrganizerDomainObject()
@@ -465,7 +466,7 @@ class CreateEventServiceTest extends TestCase
 
         $this->eventSettingsRepository->shouldReceive('create')
             ->with(Mockery::on(function ($arg) {
-                return !array_key_exists('font_family', $arg['homepage_theme_settings'] ?? []);
+                return ($arg['homepage_theme_settings']['font_family'] ?? null) === 'Outfit';
             }));
 
         $this->eventStatisticsRepository->shouldReceive('create');
