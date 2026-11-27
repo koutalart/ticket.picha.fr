@@ -1502,9 +1502,13 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   height: auto;
   filter: brightness(0) invert(1);
   opacity: 0.9;
-  &[data-opaque] {
+  &[data-plate="light"] {
     filter: grayscale(1) invert(1) contrast(4);
-    mix-blend-mode: screen;
+  }
+  &[data-plate="dark"] {
+    filter: none;
+    opacity: 1;
+    border-radius: 6px;
   }
 }
 
@@ -1696,4 +1700,8 @@ $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   &:hover {
     opacity: 1;
   }
+}
+
+.fullscreenTopBar:has(img[data-plate="light"]) {
+  mix-blend-mode: screen;
 }
