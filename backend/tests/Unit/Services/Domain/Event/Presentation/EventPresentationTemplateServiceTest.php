@@ -128,7 +128,7 @@ class EventPresentationTemplateServiceTest extends TestCase
         $this->assertTrue($saved['hide_getting_started_page']);
         $this->assertSame('MIRROR_COVER_IMAGE', $saved['homepage_background_type']);
         $this->assertSame('#1f8fffff', $saved['homepage_primary_color']);
-        $this->assertSame('CARD', $saved['homepage_theme_settings']['hero_layout']);
+        $this->assertSame('FULLSCREEN', $saved['homepage_theme_settings']['hero_layout']);
         $this->assertSame('#1f8fffff', $saved['homepage_theme_settings']['accent']);
         $this->assertSame('Outfit', $saved['homepage_theme_settings']['font_family']);
         $this->assertTrue($saved['ticket_design_settings']['enabled']);
