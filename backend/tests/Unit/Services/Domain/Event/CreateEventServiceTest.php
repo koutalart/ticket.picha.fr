@@ -13,6 +13,7 @@ use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventSettingsRepositoryInterface;
 use HiEvents\Repository\Interfaces\EventStatisticRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrganizerRepositoryInterface;
+use HiEvents\Services\Domain\Question\BuyerPhoneQuestionService;
 use HiEvents\Services\Domain\Event\CreateEventService;
 use HiEvents\Services\Infrastructure\HtmlPurifier\HtmlPurifierService;
 use Illuminate\Database\DatabaseManager;
@@ -35,6 +36,8 @@ class CreateEventServiceTest extends TestCase
     private Repository $config;
     private FilesystemManager $filesystemManager;
 
+    private BuyerPhoneQuestionService|Mockery\MockInterface $buyerPhoneQuestionService;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -49,6 +52,9 @@ class CreateEventServiceTest extends TestCase
         $this->config = Mockery::mock(Repository::class);
         $this->filesystemManager = Mockery::mock(FilesystemManager::class);
 
+        $this->buyerPhoneQuestionService = Mockery::mock(BuyerPhoneQuestionService::class);
+        $this->buyerPhoneQuestionService->shouldReceive('ensureRequired');
+
         $this->createEventService = new CreateEventService(
             $this->eventRepository,
             $this->eventSettingsRepository,
@@ -59,6 +65,7 @@ class CreateEventServiceTest extends TestCase
             $this->imageRepository,
             $this->config,
             $this->filesystemManager,
+            $this->buyerPhoneQuestionService,
         );
     }
 

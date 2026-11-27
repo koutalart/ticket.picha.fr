@@ -17,6 +17,7 @@ use HiEvents\Repository\Interfaces\ProductCategoryRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductPriceRepositoryInterface;
 use HiEvents\Repository\Interfaces\ProductRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
+use HiEvents\Services\Domain\Question\BuyerPhoneQuestionService;
 use HiEvents\Services\Domain\Event\Presentation\EventPresentationTemplateService;
 use Mockery;
 use Mockery\MockInterface;
@@ -55,7 +56,7 @@ class EventPresentationTemplateServiceTest extends TestCase
             $this->settings,
             $this->events,
             $this->images,
-            $this->questions,
+            new BuyerPhoneQuestionService($this->questions),
             $this->products,
             $this->prices,
             $this->categories,
@@ -148,7 +149,7 @@ class EventPresentationTemplateServiceTest extends TestCase
             return true;
         }));
         $this->events->shouldReceive('updateWhere')->once();
-        $this->questions->shouldReceive('findFirstWhere')->andReturn((new QuestionDomainObject)->setId(54));
+        $this->questions->shouldReceive('findFirstWhere')->andReturn((new QuestionDomainObject)->setId(54)->setRequired(true));
         $this->questions->shouldNotReceive('create');
         $this->products->shouldReceive('findFirstWhere')->with(['event_id' => 24, 'is_refund_protection' => true])
             ->andReturn((new ProductDomainObject)->setId(57));
